@@ -1,17 +1,14 @@
-import { useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
-import Navigation from "@/components/Navigation";
-import CircuitBackground from "@/components/CircuitBackground";
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import CircuitBackground from '@/components/CircuitBackground'
+import Navigation from '@/components/Navigation'
 
 const NotFound = () => {
-  const location = useLocation();
+  const location = useLocation()
 
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname,
-    );
-  }, [location.pathname]);
+    console.error('404 Error: User attempted to access non-existent route:', location.pathname)
+  }, [location.pathname])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden">
@@ -21,12 +18,8 @@ const NotFound = () => {
       <div className="relative z-10 min-h-screen flex items-center justify-center">
         <div className="container mx-auto px-6 md:px-12 lg:px-20 py-20">
           <div className="max-w-2xl mx-auto text-center space-y-6">
-            <h1 className="text-8xl md:text-9xl font-bold text-cyan-400">
-              404
-            </h1>
-            <p className="text-2xl md:text-3xl text-white/90 font-medium">
-              Oops! Page not found
-            </p>
+            <h1 className="text-8xl md:text-9xl font-bold text-cyan-400">404</h1>
+            <p className="text-2xl md:text-3xl text-white/90 font-medium">Oops! Page not found</p>
             <p className="text-white/70 text-lg">
               The page you're looking for doesn't exist or has been moved.
             </p>
@@ -40,7 +33,7 @@ const NotFound = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound

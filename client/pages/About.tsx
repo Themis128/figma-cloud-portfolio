@@ -1,16 +1,9 @@
-import { AnimatedSection } from "@/components/AnimatedSection";
-import CircuitBackground from "@/components/CircuitBackground";
-import { HoverCard } from "@/components/HoverAnimations";
-import Navigation from "@/components/Navigation";
-import {
-  Award,
-  Briefcase,
-  Cloud,
-  Cpu,
-  GraduationCap,
-  Shield,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import { HoverCard } from '@/components/HoverAnimations'
+import Navigation from '@/components/Navigation'
 
 export default function About() {
   return (
@@ -35,9 +28,8 @@ export default function About() {
                 Cloud Architect & Cybersecurity Specialist
               </p>
               <p className="text-white/80 text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-                Technical Leadership and Cloud Innovation with 15+ years of IT
-                expertise, specializing in Azure AD, Microsoft 365, and
-                multi-cloud environments.
+                Technical Leadership and Cloud Innovation with 15+ years of IT expertise,
+                specializing in Azure AD, Microsoft 365, and multi-cloud environments.
               </p>
             </AnimatedSection>
           </AnimatedSection>
@@ -52,33 +44,27 @@ export default function About() {
                 </h2>
                 <div className="text-white/80 space-y-4 leading-relaxed">
                   <p>
-                    With 15+ years of IT expertise, I architect and deliver
-                    enterprise-grade cloud solutions specializing in Azure AD,
-                    Microsoft 365, and multi-cloud environments. My foundation
-                    combines a Computer Science degree with industry
-                    certifications (AWS Cloud Practitioner, Cisco DevNet
-                    Associate) and hands-on experience across network
-                    infrastructure, cybersecurity, and cloud migration
-                    strategies.
+                    With 15+ years of IT expertise, I architect and deliver enterprise-grade cloud
+                    solutions specializing in Azure AD, Microsoft 365, and multi-cloud environments.
+                    My foundation combines a Computer Science degree with industry certifications
+                    (AWS Cloud Practitioner, Cisco DevNet Associate) and hands-on experience across
+                    network infrastructure, cybersecurity, and cloud migration strategies.
                   </p>
                   <p>
-                    I excel at transforming complex technical challenges into
-                    scalable, resilient systems that drive business outcomes. My
-                    approach merges technical precision with strategic
-                    thinking—leveraging emerging technologies like AI/ML
-                    integration, zero-trust security models, and
-                    infrastructure-as-code to build future-ready solutions.
+                    I excel at transforming complex technical challenges into scalable, resilient
+                    systems that drive business outcomes. My approach merges technical precision
+                    with strategic thinking—leveraging emerging technologies like AI/ML integration,
+                    zero-trust security models, and infrastructure-as-code to build future-ready
+                    solutions.
                   </p>
                   <p>
-                    Beyond technical expertise, I'm passionate about technology
-                    as a catalyst for positive change. During COVID-19, I
-                    supported vulnerable communities through telecommunications
-                    services, then contributed to Athens International Airport's
-                    critical infrastructure rebuild—enabling safe travel and
-                    economic recovery. Currently completing my Master's research
-                    in data-driven agricultural innovations, I'm exploring how
-                    smart technology can empower sustainable farming and rural
-                    communities.
+                    Beyond technical expertise, I'm passionate about technology as a catalyst for
+                    positive change. During COVID-19, I supported vulnerable communities through
+                    telecommunications services, then contributed to Athens International Airport's
+                    critical infrastructure rebuild—enabling safe travel and economic recovery.
+                    Currently completing my Master's research in data-driven agricultural
+                    innovations, I'm exploring how smart technology can empower sustainable farming
+                    and rural communities.
                   </p>
                 </div>
               </div>
@@ -96,8 +82,7 @@ export default function About() {
                       Cloud Architecture
                     </h3>
                     <p className="text-white/70 text-sm leading-relaxed">
-                      Azure, AWS, Multi-cloud Migration & Infrastructure
-                      Automation
+                      Azure, AWS, Multi-cloud Migration & Infrastructure Automation
                     </p>
                   </div>
                 </HoverCard>
@@ -110,8 +95,7 @@ export default function About() {
                       Cybersecurity
                     </h3>
                     <p className="text-white/70 text-sm leading-relaxed">
-                      Zero-Trust Security, Identity Management & Threat
-                      Protection
+                      Zero-Trust Security, Identity Management & Threat Protection
                     </p>
                   </div>
                 </HoverCard>
@@ -139,9 +123,7 @@ export default function About() {
                     <div className="inline-flex items-center justify-center w-10 h-10 bg-cyan-400/10 rounded-lg">
                       <Award className="w-5 h-5 text-cyan-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">
-                      Top Skills
-                    </h3>
+                    <h3 className="text-2xl font-bold text-white">Top Skills</h3>
                   </div>
                   <ul className="space-y-4">
                     <li className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
@@ -153,8 +135,7 @@ export default function About() {
                     <li className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
                       <div className="w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0" />
                       <span className="text-white/90 font-medium">
-                        Certified Information Systems Security Professional
-                        (CISSP)
+                        Certified Information Systems Security Professional (CISSP)
                       </span>
                     </li>
                     <li className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
@@ -183,9 +164,7 @@ export default function About() {
                     <div className="inline-flex items-center justify-center w-10 h-10 bg-cyan-400/10 rounded-lg">
                       <GraduationCap className="w-5 h-5 text-cyan-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">
-                      Certifications
-                    </h3>
+                    <h3 className="text-2xl font-bold text-white">Certifications</h3>
                   </div>
                   <ul className="space-y-4">
                     <li className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
@@ -226,21 +205,15 @@ export default function About() {
             {/* Languages */}
             <AnimatedSection delay={0.3}>
               <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-2xl font-bold text-white mb-6">
-                  Languages
-                </h3>
+                <h3 className="text-2xl font-bold text-white mb-6">Languages</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="flex justify-between items-center">
                     <span className="text-white/80">English</span>
-                    <span className="text-cyan-400 font-medium">
-                      Full Professional
-                    </span>
+                    <span className="text-cyan-400 font-medium">Full Professional</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-white/80">Greek</span>
-                    <span className="text-cyan-400 font-medium">
-                      Native/Bilingual
-                    </span>
+                    <span className="text-cyan-400 font-medium">Native/Bilingual</span>
                   </div>
                 </div>
               </div>
@@ -257,21 +230,15 @@ export default function About() {
                   <li className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2" />
                     <div>
-                      <div className="font-medium">
-                        3rd Place – Cisco Incubator 12.0
-                      </div>
-                      <div className="text-white/60 text-sm">
-                        Customer Experience Track
-                      </div>
+                      <div className="font-medium">3rd Place – Cisco Incubator 12.0</div>
+                      <div className="text-white/60 text-sm">Customer Experience Track</div>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2" />
                     <div>
                       <div className="font-medium">Scholarship Recipient</div>
-                      <div className="text-white/60 text-sm">
-                        Academic Excellence
-                      </div>
+                      <div className="text-white/60 text-sm">Academic Excellence</div>
                     </div>
                   </li>
                 </ul>
@@ -293,5 +260,5 @@ export default function About() {
         </div>
       </div>
     </div>
-  );
+  )
 }
