@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Modern Tech Resume - Cloud Architect & Cybersecurity Specialist
+    </title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8f9fa;
+      }
+
+      .resume-container {
+        max-width: 210mm;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        min-height: 297mm;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+
+      .header h2 {
+        font-size: 1.2em;
+        opacity: 0.9;
+        margin-bottom: 20px;
+        font-weight: 400;
+      }
+
+      .contact-info {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        font-size: 0.9em;
+      }
+
+      .main-content {
+        display: flex;
+        flex: 1;
+      }
+
+      .left-column {
+        width: 35%;
+        background: #f8f9fa;
+        padding: 30px;
+      }
+
+      .right-column {
+        width: 65%;
+        padding: 30px;
+      }
+
+      .section {
+        margin-bottom: 30px;
+      }
+
+      .section-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #1e3a8a;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #3b82f6;
+        padding-bottom: 5px;
+      }
+
+      .skill-category {
+        margin-bottom: 20px;
+      }
+
+      .skill-category h4 {
+        font-size: 0.9em;
+        color: #1e3a8a;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .skill-bar {
+        background: #e5e7eb;
+        height: 6px;
+        border-radius: 3px;
+        margin-bottom: 8px;
+        overflow: hidden;
+      }
+
+      .skill-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #1e3a8a);
+        border-radius: 3px;
+      }
+
+      .certification-item {
+        margin-bottom: 12px;
+        padding: 8px 0;
+        border-left: 3px solid #3b82f6;
+        padding-left: 12px;
+      }
+
+      .certification-item strong {
+        display: block;
+        color: #1e3a8a;
+      }
+
+      .certification-item small {
+        color: #6b7280;
+      }
+
+      .experience-item {
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .experience-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+
+      .job-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #1e3a8a;
+      }
+
+      .company {
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .date {
+        color: #6b7280;
+        font-size: 0.9em;
+      }
+
+      .achievement-list {
+        margin-left: 20px;
+      }
+
+      .achievement-item {
+        margin-bottom: 8px;
+        position: relative;
+        padding-left: 15px;
+      }
+
+      .achievement-item::before {
+        content: "▸";
+        color: #3b82f6;
+        position: absolute;
+        left: 0;
+      }
+
+      .education-item {
+        margin-bottom: 15px;
+      }
+
+      .degree {
+        font-weight: 600;
+        color: #1e3a8a;
+      }
+
+      .institution {
+        color: #374151;
+        margin: 2px 0;
+      }
+
+      .summary {
+        background: #f0f9ff;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
+        margin-bottom: 30px;
+      }
+
+      .summary p {
+        font-size: 1em;
+        line-height: 1.7;
+        color: #374151;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .resume-container {
+          box-shadow: none;
+          margin: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="resume-container">
+      <header class="header">
+        <h1>Themistoklis Baltzakis</h1>
+        <h2>Cloud Architect & Cybersecurity Specialist</h2>
+        <div class="contact-info">
+          <span>📧 baltzakis.themis@gmail.com</span>
+          <span>📱 Athens, Greece</span>
+          <span>🔗 linkedin.com/in/baltzakis-themis</span>
+          <span>🌐 www.baltzakisthemis.com</span>
+        </div>
+      </header>
+
+      <div class="main-content">
+        <div class="left-column">
+          <div class="section">
+            <h3 class="section-title">Technical Skills</h3>
+
+            <div class="skill-category">
+              <h4>Cloud Platforms</h4>
+              <div class="skill-item">
+                <div class="skill-name">Microsoft Azure</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 95%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">Azure AD & Identity</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 98%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">Microsoft 365</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 92%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">AWS</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 85%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-category">
+              <h4>Security Technologies</h4>
+              <div class="skill-item">
+                <div class="skill-name">Microsoft Defender Suite</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 95%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">Azure Sentinel & SIEM</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 90%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">Zero Trust Architecture</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 93%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">Compliance (GDPR, ISO 27001)</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 88%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-category">
+              <h4>Identity & Infrastructure</h4>
+              <div class="skill-item">
+                <div class="skill-name">Active Directory</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 90%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">Windows Server</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 85%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">PowerShell & Automation</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 88%"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-name">VMware & Virtualization</div>
+                <div class="skill-bar">
+                  <div class="skill-fill" style="width: 82%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Certifications</h3>
+            <div class="certification-item">
+              <strong
+                >Microsoft Certified: Azure Solutions Architect Expert</strong
+              >
+              <small>Microsoft • 2023</small>
+            </div>
+            <div class="certification-item">
+              <strong
+                >Microsoft Certified: Security, Compliance, and Identity
+                Fundamentals</strong
+              >
+              <small>Microsoft • 2023</small>
+            </div>
+            <div class="certification-item">
+              <strong
+                >Certified Information Systems Security Professional
+                (CISSP)</strong
+              >
+              <small>ISC² • 2022</small>
+            </div>
+            <div class="certification-item">
+              <strong
+                >Microsoft Certified: Azure Administrator Associate</strong
+              >
+              <small>Microsoft • 2021</small>
+            </div>
+            <div class="certification-item">
+              <strong>Certified Ethical Hacker (CEH)</strong>
+              <small>EC-Council • 2020</small>
+            </div>
+            <div class="certification-item">
+              <strong>ITIL Foundation Certification</strong>
+              <small>AXELOS • 2018</small>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Education</h3>
+            <div class="education-item">
+              <div class="degree">Bachelor of Science in Computer Science</div>
+              <div class="institution">
+                National Technical University of Athens
+              </div>
+              <div class="date">2007 - 2011</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-column">
+          <div class="summary">
+            <p>
+              Results-driven Cloud Architect and Cybersecurity Specialist with
+              15+ years of IT expertise, specializing in Azure AD, Microsoft
+              365, and multi-cloud environments. Proven track record in
+              designing secure, scalable cloud solutions and leading digital
+              transformation initiatives. Expert in identity management,
+              compliance frameworks, and enterprise security architecture.
+            </p>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Professional Experience</h3>
+
+            <div class="experience-item">
+              <div class="experience-header">
+                <div>
+                  <div class="job-title">Senior Cloud Architect</div>
+                  <div class="company">TechCorp Solutions, Athens, Greece</div>
+                </div>
+                <div class="date">2022 - Present</div>
+              </div>
+              <div class="achievement-list">
+                <div class="achievement-item">
+                  Architected and implemented zero-trust security model for
+                  Fortune 500 client using Azure AD Premium and Microsoft
+                  Defender suite
+                </div>
+                <div class="achievement-item">
+                  Led migration of 50,000+ users from on-premises AD to Azure
+                  AD, reducing authentication issues by 85%
+                </div>
+                <div class="achievement-item">
+                  Designed multi-cloud disaster recovery solution spanning
+                  Azure, AWS, and GCP with 99.9% uptime SLA
+                </div>
+                <div class="achievement-item">
+                  Implemented automated compliance monitoring using Azure Policy
+                  and Azure Monitor, achieving 100% CIS compliance
+                </div>
+                <div class="achievement-item">
+                  Mentored junior architects and conducted security awareness
+                  training for 200+ employees
+                </div>
+              </div>
+            </div>
+
+            <div class="experience-item">
+              <div class="experience-header">
+                <div>
+                  <div class="job-title">Cybersecurity Consultant</div>
+                  <div class="company">SecureCloud Systems, Remote</div>
+                </div>
+                <div class="date">2019 - 2021</div>
+              </div>
+              <div class="achievement-list">
+                <div class="achievement-item">
+                  Conducted comprehensive security assessments for financial
+                  institutions under PSD2 and GDPR requirements
+                </div>
+                <div class="achievement-item">
+                  Designed and deployed Microsoft 365 security stack for
+                  enterprise clients, including Defender for Endpoint and
+                  Identity
+                </div>
+                <div class="achievement-item">
+                  Developed custom security monitoring solutions using Azure
+                  Sentinel and KQL queries
+                </div>
+                <div class="achievement-item">
+                  Led incident response for major data breaches, minimizing
+                  impact and ensuring regulatory compliance
+                </div>
+                <div class="achievement-item">
+                  Created security documentation and procedures for ISO 27001
+                  certification
+                </div>
+              </div>
+            </div>
+
+            <div class="experience-item">
+              <div class="experience-header">
+                <div>
+                  <div class="job-title">IT Infrastructure Manager</div>
+                  <div class="company">
+                    GlobalTech Enterprises, Athens, Greece
+                  </div>
+                </div>
+                <div class="date">2015 - 2019</div>
+              </div>
+              <div class="achievement-list">
+                <div class="achievement-item">
+                  Managed enterprise IT infrastructure serving 10,000+ users
+                  across 15 countries
+                </div>
+                <div class="achievement-item">
+                  Led migration from legacy systems to Microsoft 365, improving
+                  productivity by 40%
+                </div>
+                <div class="achievement-item">
+                  Implemented Azure AD Connect and Azure AD Premium for hybrid
+                  identity management
+                </div>
+                <div class="achievement-item">
+                  Developed business continuity and disaster recovery plans with
+                  4-hour RTO
+                </div>
+                <div class="achievement-item">
+                  Managed vendor relationships and negotiated contracts saving
+                  €500K annually
+                </div>
+              </div>
+            </div>
+
+            <div class="experience-item">
+              <div class="experience-header">
+                <div>
+                  <div class="job-title">Systems Administrator</div>
+                  <div class="company">TechSolutions Ltd, Athens, Greece</div>
+                </div>
+                <div class="date">2011 - 2015</div>
+              </div>
+              <div class="achievement-list">
+                <div class="achievement-item">
+                  Administered Windows Server environments and Active Directory
+                  infrastructure
+                </div>
+                <div class="achievement-item">
+                  Implemented backup and recovery solutions using Veeam and
+                  Azure Backup
+                </div>
+                <div class="achievement-item">
+                  Deployed and managed VMware virtualization environment
+                </div>
+                <div class="achievement-item">
+                  Provided technical support and troubleshooting for enterprise
+                  applications
+                </div>
+                <div class="achievement-item">
+                  Participated in infrastructure upgrade projects and capacity
+                  planning
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

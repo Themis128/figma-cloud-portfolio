@@ -16,7 +16,13 @@ export default function AIBrain() {
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id="brainGradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.8" />
             <stop offset="100%" stopColor="#0099cc" stopOpacity="0.6" />
           </linearGradient>
@@ -67,13 +73,61 @@ export default function AIBrain() {
           />
 
           {/* Neural connections */}
-          <line x1="-30" y1="-15" x2="-15" y2="-5" stroke="#00d4ff" strokeWidth="1.5" opacity="0.7" />
-          <line x1="-25" y1="0" x2="-10" y2="10" stroke="#00d4ff" strokeWidth="1.5" opacity="0.7" />
-          <line x1="-20" y1="15" x2="-5" y2="20" stroke="#00d4ff" strokeWidth="1.5" opacity="0.7" />
-          
-          <line x1="30" y1="-15" x2="15" y2="-5" stroke="#00d4ff" strokeWidth="1.5" opacity="0.7" />
-          <line x1="25" y1="0" x2="10" y2="10" stroke="#00d4ff" strokeWidth="1.5" opacity="0.7" />
-          <line x1="20" y1="15" x2="5" y2="20" stroke="#00d4ff" strokeWidth="1.5" opacity="0.7" />
+          <line
+            x1="-30"
+            y1="-15"
+            x2="-15"
+            y2="-5"
+            stroke="#00d4ff"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
+          <line
+            x1="-25"
+            y1="0"
+            x2="-10"
+            y2="10"
+            stroke="#00d4ff"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
+          <line
+            x1="-20"
+            y1="15"
+            x2="-5"
+            y2="20"
+            stroke="#00d4ff"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
+
+          <line
+            x1="30"
+            y1="-15"
+            x2="15"
+            y2="-5"
+            stroke="#00d4ff"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
+          <line
+            x1="25"
+            y1="0"
+            x2="10"
+            y2="10"
+            stroke="#00d4ff"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
+          <line
+            x1="20"
+            y1="15"
+            x2="5"
+            y2="20"
+            stroke="#00d4ff"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
 
           {/* Central processor */}
           <rect
@@ -86,19 +140,45 @@ export default function AIBrain() {
             className="animate-pulse"
             style={{ animationDuration: "2s" }}
           />
-          <rect
-            x="-6"
-            y="-6"
-            width="12"
-            height="12"
-            fill="#1a2849"
-          />
+          <rect x="-6" y="-6" width="12" height="12" fill="#1a2849" />
 
           {/* Circuit lines from processor */}
-          <line x1="0" y1="8" x2="0" y2="40" stroke="#00d4ff" strokeWidth="2" opacity="0.8" />
-          <line x1="0" y1="-8" x2="0" y2="-40" stroke="#00d4ff" strokeWidth="2" opacity="0.8" />
-          <line x1="8" y1="0" x2="40" y2="0" stroke="#00d4ff" strokeWidth="2" opacity="0.8" />
-          <line x1="-8" y1="0" x2="-40" y2="0" stroke="#00d4ff" strokeWidth="2" opacity="0.8" />
+          <line
+            x1="0"
+            y1="8"
+            x2="0"
+            y2="40"
+            stroke="#00d4ff"
+            strokeWidth="2"
+            opacity="0.8"
+          />
+          <line
+            x1="0"
+            y1="-8"
+            x2="0"
+            y2="-40"
+            stroke="#00d4ff"
+            strokeWidth="2"
+            opacity="0.8"
+          />
+          <line
+            x1="8"
+            y1="0"
+            x2="40"
+            y2="0"
+            stroke="#00d4ff"
+            strokeWidth="2"
+            opacity="0.8"
+          />
+          <line
+            x1="-8"
+            y1="0"
+            x2="-40"
+            y2="0"
+            stroke="#00d4ff"
+            strokeWidth="2"
+            opacity="0.8"
+          />
 
           {/* Circuit nodes */}
           <circle cx="0" cy="40" r="3" fill="#00d4ff" filter="url(#glow)" />

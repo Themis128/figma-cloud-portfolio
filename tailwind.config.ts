@@ -99,7 +99,7 @@ export default {
             height: "0",
           },
         },
-        "blink": {
+        blink: {
           "0%, 49%": { opacity: "1" },
           "50%, 100%": { opacity: "0" },
         },
@@ -107,7 +107,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "blink": "blink 1s infinite",
+        blink: "blink 1s infinite",
       },
       fontFamily: {
         mono: ["'Fira Code'", "'Consolas'", "'Monaco'", "monospace"],
