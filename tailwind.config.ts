@@ -57,6 +57,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        terminal: {
+          black: "#0d1117",
+          "dark-gray": "#161b22",
+          "light-gray": "#30363d",
+          success: "#3fb950",
+          warning: "#d29922",
+          error: "#f85149",
+          info: "#79c0ff",
+          default: "#c9d1d9",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,10 +90,18 @@ export default {
             height: "0",
           },
         },
+        "blink": {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "blink": "blink 1s infinite",
+      },
+      fontFamily: {
+        mono: ["'Fira Code'", "'Consolas'", "'Monaco'", "monospace"],
       },
     },
   },
