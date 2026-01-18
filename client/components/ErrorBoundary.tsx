@@ -1,8 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
-// Declare window for TypeScript
-declare const window: any;
-
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -49,11 +46,6 @@ class ErrorBoundary extends Component<Props, State> {
             </p>
             <button
               type="button"
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  window.location.reload();
-                }
-              }}
               className="px-6 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md transition-colors duration-300 font-medium"
             >
               Refresh Page
