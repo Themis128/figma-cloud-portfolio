@@ -2,6 +2,7 @@ import { defineBackend, defineFunction } from "@aws-amplify/backend";
 
 const backend = defineBackend({});
 
+// API Function for handling backend requests
 const apiFunction = defineFunction({
   name: "api",
 });
