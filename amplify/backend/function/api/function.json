@@ -1,0 +1,10 @@
+{
+  "functionName": "api",
+  "runtime": {
+    "name": "nodejs",
+    "version": "18"
+  },
+  "handler": "index.handler",
+  "environmentVariables": {},
+  "dependsOn": []
+}
