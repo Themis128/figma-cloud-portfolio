@@ -63,7 +63,7 @@ export function NotificationButton() {
           await subscribe()
           showNotification(
             'Notifications enabled!',
-            "You'll now receive updates from Fusion Starter.",
+            "You'll now receive updates from Baltzakis Themistoklis.",
           )
         } catch (error) {
           console.error('Failed to subscribe to push notifications:', error)
@@ -144,8 +144,8 @@ export function NotificationButton() {
           <div className="flex-1 min-w-0">
             <h3 className="text-white font-semibold text-sm mb-1">Stay Updated</h3>
             <p className="text-slate-300 text-xs mb-3">
-              Get notified about new features, updates, and important announcements from Fusion
-              Starter.
+              Get notified about new features, updates, and important announcements from Baltzakis
+              Themistoklis.
             </p>
             <div className="flex gap-2">
               <Button

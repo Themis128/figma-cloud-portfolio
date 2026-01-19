@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
+interface PushSubscriptionData {
+  endpoint: string
+  keys: {
+    p256dh: string
+    auth: string
+  }
+}
+
 export function PushNotificationTester() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
@@ -61,16 +69,23 @@ export function PushNotificationTester() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          subscriptions: subsData.list.map((sub: any) => ({
+          subscriptions: subsData.list.map((sub: PushSubscriptionData) => ({
             endpoint: sub.endpoint,
-            keys: {
-              p256dh: localStorage.getItem('push-subscription')
-                ? JSON.parse(localStorage.getItem('push-subscription')!).keys.p256dh
-                : '',
-              auth: localStorage.getItem('push-subscription')
-                ? JSON.parse(localStorage.getItem('push-subscription')!).keys.auth
-                : '',
-            },
+            keys: (() => {
+              const stored = localStorage.getItem('push-subscription')
+              if (stored) {
+                try {
+                  const parsed = JSON.parse(stored)
+                  return {
+                    p256dh: parsed.keys?.p256dh || '',
+                    auth: parsed.keys?.auth || '',
+                  }
+                } catch {
+                  return { p256dh: '', auth: '' }
+                }
+              }
+              return { p256dh: '', auth: '' }
+            })(),
           })),
           message: {
             title: 'Custom Test Notification',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export interface PushSubscriptionData {
   endpoint: string
@@ -14,16 +14,7 @@ export function usePushNotifications() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [vapidPublicKey, setVapidPublicKey] = useState<string | null>(null)
 
-  useEffect(() => {
-    // Check if push notifications are supported
-    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
-      setIsSupported(true)
-      checkSubscription()
-      fetchVapidPublicKey()
-    }
-  }, [checkSubscription, fetchVapidPublicKey])
-
-  const fetchVapidPublicKey = async () => {
+  const fetchVapidPublicKey = useCallback(async () => {
     try {
       const response = await fetch('/api/push-notifications?action=vapid-public-key')
       const data = await response.json()
@@ -31,9 +22,9 @@ export function usePushNotifications() {
     } catch (error) {
       console.error('Error fetching VAPID public key:', error)
     }
-  }
+  }, [])
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     try {
       if (!('serviceWorker' in navigator)) return
 
@@ -45,7 +36,16 @@ export function usePushNotifications() {
     } catch (error) {
       console.error('Error checking push subscription:', error)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // Check if push notifications are supported
+    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
+      setIsSupported(true)
+      checkSubscription()
+      fetchVapidPublicKey()
+    }
+  }, [checkSubscription, fetchVapidPublicKey])
 
   const subscribe = async () => {
     try {

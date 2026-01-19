@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '../lib/utils'
 
 interface SkeletonProps {
   className?: string
@@ -29,7 +29,7 @@ export function SkeletonText({ lines = 1, className }: { lines?: number; classNa
     <div data-testid="skeleton-text" className={cn('space-y-2', className)}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
-          key={`skeleton-line-${i}`}
+          key={`skeleton-line-${lines}-${i}`}
           className={cn(
             'h-4',
             i === lines - 1 ? 'w-3/4' : 'w-full', // Last line is shorter

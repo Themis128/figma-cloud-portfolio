@@ -70,6 +70,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
 
   return (
     <style
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: Required for dynamic CSS variable injection in charts
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(

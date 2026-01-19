@@ -1,6 +1,6 @@
-# Fusion Starter
+# Baltzakis Themistoklis Portfolio
 
-A production-ready full-stack React application template with integrated Express server, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod, PWA capabilities, and Web Push API notifications.
+A production-ready full-stack React application for a professional portfolio, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod, PWA capabilities, and Web Push API notifications.
 
 While the starter comes with a express server, only create endpoint when strictly necessary, for example to encapsulate logic that must leave in the server, such as private keys handling, or certain DB operations, db...
 
@@ -71,14 +71,32 @@ className={cn(
 
 ### Express Server Integration
 
-- **Development**: Single port (8080) for both frontend/backend
+- **Development**: 
+  - Vite dev server runs on port **8081** (frontend)
+  - Express API server runs on port **3000** (backend)
+  - Vite proxies `/api` requests to the Express server automatically
+- **Production**: Single port serves both frontend and API
 - **Hot reload**: Both client and server code
 - **API endpoints**: Prefixed with `/api/`
+
+#### Running Development Servers
+
+```bash
+# Terminal 1: Start Vite dev server (frontend)
+pnpm dev
+
+# Terminal 2: Start Express API server (for VAPID keys and push notifications)
+npx tsx server/node-build.ts
+```
 
 #### Example API Routes
 
 - `GET /api/ping` - Simple ping api
 - `GET /api/demo` - Demo endpoint
+- `GET /api/push-notifications?action=vapid-public-key` - Get VAPID public key for push notifications
+- `PUT /api/push-notifications` - Store push subscription
+- `POST /api/push-notifications` - Send push notification
+- `DELETE /api/push-notifications` - Remove subscription
 
 ### Shared Types
 
@@ -96,12 +114,15 @@ Path aliases:
 ## Development Commands
 
 ```bash
-pnpm dev        # Start dev server (client + server)
-pnpm build      # Production build
-pnpm start      # Start production server
-pnpm typecheck  # TypeScript validation
-pnpm test          # Run Vitest tests
+pnpm dev                        # Start Vite dev server (frontend on port 8081)
+npx tsx server/node-build.ts    # Start Express API server (backend on port 3000)
+pnpm build                      # Production build
+pnpm start                      # Start production server (serves both frontend + API)
+pnpm typecheck                  # TypeScript validation
+pnpm test                       # Run Vitest tests
 ```
+
+> **Note**: For push notifications to work in development, you need both servers running. The Vite dev server proxies `/api` requests to the Express server.
 
 ## Adding Features
 
@@ -169,9 +190,11 @@ const data: MyRouteResponse = await response.json();
 
 ## Architecture Notes
 
-- Single-port development with Vite + Express integration
+- **Development**: Two-server setup (Vite on 8081, Express on 3000) with API proxy
+- **Production**: Single-port deployment with Express serving both frontend and API
 - TypeScript throughout (client, server, shared)
 - Full hot reload for rapid development
 - Production-ready with multiple deployment options
 - Comprehensive UI component library included
 - Type-safe API communication via shared interfaces
+- Web Push API for notifications (requires Express server for VAPID key handling)

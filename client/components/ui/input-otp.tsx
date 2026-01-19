@@ -59,8 +59,8 @@ InputOTPSlot.displayName = 'InputOTPSlot'
 const InputOTPSeparator = React.forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<'div'>
->(({ ...props }, ref) => (
-  <div ref={ref} role="separator" {...props}>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn('flex items-center justify-center', className)} {...props}>
     <Dot />
   </div>
 ))

@@ -8,7 +8,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./tests/setup.ts'],
+    setupFiles: ['./tests/vitest-setup.ts'],
     include: ['./tests/**/*.{spec,test}.{ts,tsx}'],
     exclude: ['./tests/app.spec.ts', './tests/logo.spec.ts'], // Exclude Playwright tests
   },
@@ -17,5 +17,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './client'),
       '@shared': path.resolve(__dirname, './shared'),
     },
+  },
+  define: {
+    global: 'globalThis',
   },
 })

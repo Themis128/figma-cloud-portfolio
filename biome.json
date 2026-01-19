@@ -1,5 +1,4 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "linter": {
     "enabled": true,
     "rules": {
@@ -25,12 +24,6 @@
     }
   },
   "files": {
-    "includes": [
-      "*.{js,ts,json}",
-      "client/**/*.{js,jsx,ts,tsx}",
-      "server/**/*.{js,ts}",
-      "shared/**/*.{js,ts}"
-    ],
     "ignoreUnknown": true
   }
 }

@@ -75,8 +75,7 @@ export function PWAUpdateNotification() {
           <div className="flex-1 min-w-0">
             <h3 className="text-white font-semibold text-sm mb-1">Update Available</h3>
             <p className="text-slate-300 text-xs mb-3">
-              A new version of Fusion Starter is ready. Update now for the latest features and
-              improvements.
+              A new version is ready. Update now for the latest features and improvements.
             </p>
             <div className="flex gap-2">
               <Button

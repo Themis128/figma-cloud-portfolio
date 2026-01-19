@@ -74,7 +74,7 @@ export function PWAInstallButton() {
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-white font-semibold text-sm mb-1">Install Fusion Starter</h3>
+            <h3 className="text-white font-semibold text-sm mb-1">Install App</h3>
             <p className="text-slate-300 text-xs mb-3">
               Get the full experience with offline access, faster loading, and native app features.
             </p>

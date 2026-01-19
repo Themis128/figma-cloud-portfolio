@@ -15,6 +15,7 @@ If you need to update the resume content and regenerate the PDF:
 2. Install dependencies (if not already installed):
 
    ```bash
+   cd project
    pnpm add -D puppeteer
    npx puppeteer browsers install chrome
    ```
@@ -22,6 +23,7 @@ If you need to update the resume content and regenerate the PDF:
 3. Run the conversion script:
 
    ```bash
+   cd project
    node -e "
    import fs from 'fs';
    import path from 'path';
@@ -63,5 +65,13 @@ The resume template includes:
 Run the Playwright tests to verify the download functionality:
 
 ```bash
+cd project
+pnpm test:e2e --grep "resume"
+```
+
+Or run all portfolio-related tests:
+
+```bash
+cd project
 npx playwright test tests/portfolio.spec.ts --project=chromium
 ```

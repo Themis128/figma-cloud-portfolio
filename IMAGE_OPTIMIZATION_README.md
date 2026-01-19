@@ -1,6 +1,6 @@
 # 🖼️ Image Optimization Guide
 
-This document outlines the comprehensive image optimization implementation for the Fusion Starter project.
+This document outlines the comprehensive image optimization implementation for this portfolio project.
 
 ## 📋 Overview
 

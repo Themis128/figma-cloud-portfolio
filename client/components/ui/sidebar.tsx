@@ -76,7 +76,16 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        if ('cookieStore' in window) {
+          // Use modern Cookie Store API if available
+          window.cookieStore.set(SIDEBAR_COOKIE_NAME, openState.toString(), {
+            path: '/',
+            maxAge: SIDEBAR_COOKIE_MAX_AGE,
+          })
+        } else {
+          // Fallback to document.cookie for older browsers
+          document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        }
       },
       [setOpenProp, open],
     )

@@ -14,14 +14,22 @@ export default defineConfig(({ mode }) => ({
   publicDir: '../public',
   server: {
     host: 'localhost',
-    port: 8080,
+    port: 8081,
     strictPort: true,
     hmr: {
-      port: 24678, // Use a different port for HMR
+      port: 24679, // Use a different port for HMR
     },
     fs: {
       allow: ['.', '../client', '../shared'],
       deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '../server/**'],
+    },
+    // Proxy API requests to Express server (run with: npx tsx server/node-build.ts)
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   build: {
@@ -32,12 +40,20 @@ export default defineConfig(({ mode }) => ({
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          three: ['three', '@react-three/fiber', '@react-three/drei'],
+          utils: ['clsx', 'tailwind-merge', 'date-fns'],
+          forms: ['react-hook-form', '@hookform/resolvers'],
         },
       },
     },
     // Performance budgets
     chunkSizeWarningLimit: 600, // Warn if chunks exceed 600kb
     reportCompressedSize: true,
+    // Additional optimizations
+    minify: 'esbuild',
+    sourcemap: false, // Disable sourcemaps in production for better performance
+    cssCodeSplit: true, // Split CSS for better caching
+    target: 'esnext', // Use modern JS for better performance
   },
   plugins: [
     react(),
@@ -65,10 +81,10 @@ export default defineConfig(({ mode }) => ({
       filename: 'sw.js',
       strategies: 'injectManifest',
       manifest: {
-        name: 'Fusion Starter - AI Agent Builder',
-        short_name: 'Fusion Starter',
+        name: 'Themistoklis Baltzakis - Cloud Architect',
+        short_name: 'T. Baltzakis',
         description:
-          'Build and deploy AI agents with ease - Professional portfolio and agent creation platform',
+          'Cloud Architect & Cybersecurity Specialist - Professional portfolio showcasing 15+ years of IT expertise',
         theme_color: '#1e293b',
         background_color: '#0f172a',
         display: 'standalone',
@@ -128,14 +144,14 @@ export default defineConfig(({ mode }) => ({
             sizes: '1280x720',
             type: 'image/png',
             form_factor: 'wide',
-            label: 'Fusion Starter - AI Agent Builder Interface',
+            label: 'Themistoklis Baltzakis - Portfolio Interface',
           },
           {
             src: 'screenshot-narrow.png',
             sizes: '390x844',
             type: 'image/png',
             form_factor: 'narrow',
-            label: 'Fusion Starter Mobile Interface',
+            label: 'Themistoklis Baltzakis Mobile Interface',
           },
         ],
       },
@@ -150,6 +166,39 @@ export default defineConfig(({ mode }) => ({
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'google-fonts',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+            },
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/.*\.(js|css)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources',
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
               },
             },
           },
