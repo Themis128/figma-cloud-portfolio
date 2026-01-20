@@ -47,3 +47,39 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# Lambda deployment artifacts
+lambda-deploy/
+lambda-deploy/**/*.zip
+
+# Test results and reports
+test-results/
+playwright-report/
+playwright-report-*/
+
+# Build outputs
+build/
+dist/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
