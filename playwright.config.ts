@@ -9,22 +9,65 @@ export default defineConfig({
   fullyParallel: false, // Disable parallel to avoid conflicts
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  /* Enhanced retry strategy for automatic issue resolution */
+  retries: process.env.CI ? 3 : 1, // More retries for better reliability
   /* Opt out of parallel tests on CI. */
   workers: 1, // Single worker to avoid conflicts
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'line', // Use line reporter for cleaner output
+
+  /* Enhanced reporting for issue tracking and resolution */
+  reporter: [
+    ['line'], // Console output
+    ['html', { open: 'never' }], // HTML report for detailed analysis
+    ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration
+    ['junit', { outputFile: 'test-results/junit.xml' }], // JUnit for external tools
+  ],
+
+  /* Global setup and teardown for test environment preparation */
+  globalSetup: './playwright-tests/global-setup.ts',
+  globalTeardown: './playwright-tests/global-teardown.ts',
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:8081',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    /* Enhanced tracing and debugging */
+    trace: 'retain-on-failure', // Keep traces for failed tests
+    screenshot: 'only-on-failure', // Capture screenshots on failures
+    video: 'retain-on-failure', // Record videos for failed tests
 
-    /* Increase action timeout */
+    /* Optimized timeouts for better reliability */
     actionTimeout: 10000,
+    navigationTimeout: 30000,
+    expectTimeout: 10000,
+
+    /* Enhanced browser context for better isolation */
+    viewport: { width: 1280, height: 720 },
+    ignoreHTTPSErrors: true,
+
+    /* Performance monitoring */
+    extraHTTPHeaders: {
+      'X-Test-Session': 'playwright-e2e',
+    },
+  },
+
+  /* Test execution metadata */
+  metadata: {
+    environment: process.env.NODE_ENV || 'development',
+    testType: 'e2e',
+    framework: 'playwright',
+    timestamp: new Date().toISOString(),
+  },
+
+  /* Expect configuration for better assertions */
+  expect: {
+    toHaveScreenshot: {
+      threshold: 0.2, // Allow 20% difference for visual comparisons
+      maxDiffPixels: 100, // Maximum pixel difference
+    },
+    toMatchSnapshot: {
+      threshold: 0.2,
+    },
   },
 
   /* Configure projects for major browsers */

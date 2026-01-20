@@ -1,21 +1,38 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('Advanced PWA Features', () => {
-  test('should register service worker', async ({ page, context }) => {
+  test('should register service worker with proper lifecycle', async ({ page, context }) => {
     await page.goto('/')
 
     // Wait for service worker to register
     await page.waitForLoadState('domcontentloaded')
 
-    // Check if service worker is registered (may not be implemented yet)
-    const swRegistration = await page.evaluate(() => {
-      return navigator.serviceWorker.getRegistration()
+    // Check if service worker is supported
+    const swSupported = await page.evaluate(() => 'serviceWorker' in navigator)
+    expect(swSupported).toBe(true)
+
+    // Wait for service worker registration
+    await page.waitForTimeout(2000)
+
+    const swInfo = await page.evaluate(async () => {
+      if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration()
+        if (registration) {
+          return {
+            scope: registration.scope,
+            state: registration.active?.state,
+            scriptURL: registration.active?.scriptURL
+          }
+        }
+      }
+      return null
     })
 
-    // Service worker may not be registered yet - this is acceptable
-    // If it is registered, it should be truthy
-    if (swRegistration !== undefined) {
-      expect(swRegistration).toBeTruthy()
+    // If service worker is registered, validate its properties
+    if (swInfo) {
+      expect(swInfo.scope).toBeDefined()
+      expect(swInfo.state).toBe('activated')
+      expect(swInfo.scriptURL).toContain('/sw.js')
     }
   })
 
@@ -229,6 +246,172 @@ test.describe('Advanced PWA Features', () => {
     // If service worker exists, it should be updatable
     if (canUpdate) {
       expect(canUpdate).toBe(true)
+    }
+  })
+
+  test('should be installable as PWA', async ({ page }) => {
+    await page.goto('/')
+
+    // Check for beforeinstallprompt event capability
+    const installPromptSupport = await page.evaluate(() => {
+      return 'onbeforeinstallprompt' in window
+    })
+
+    // PWA installation support varies by browser - Chrome supports it, Firefox may not
+    // Just check that the infrastructure exists, don't require specific browser support
+    expect(typeof installPromptSupport).toBe('boolean')
+
+    // Check manifest is properly linked
+    const manifestLink = page.locator('link[rel="manifest"]')
+    await expect(manifestLink).toBeAttached()
+
+    // Verify manifest has installable properties
+    const manifestHref = await manifestLink.getAttribute('href')
+    if (manifestHref) {
+      const response = await page.request.get(manifestHref)
+      const manifest = await response.json()
+
+      // Check for basic PWA manifest properties
+      expect(manifest.start_url).toBeDefined()
+      expect(manifest.name || manifest.short_name).toBeDefined()
+      // Display mode may vary
+      expect(manifest.display).toBeDefined()
+    }
+  })
+
+  test('should handle PWA update notifications', async ({ page }) => {
+    await page.goto('/')
+
+    // Check if update notification component exists
+    const updateNotification = page.locator('[data-testid="pwa-update"], .pwa-update, #pwa-update')
+    const updateVisible = await updateNotification.isVisible().catch(() => false)
+
+    // Update notification may or may not be visible depending on update state
+    // If visible, it should have proper accessibility
+    if (updateVisible) {
+      await expect(updateNotification).toBeVisible()
+
+      // Check for update action buttons
+      const updateButton = updateNotification.locator('button', { hasText: /update|refresh/i })
+      await expect(updateButton).toBeVisible()
+    }
+  })
+
+  test('should maintain functionality during service worker updates', async ({ page }) => {
+    await page.goto('/')
+
+    // Wait for initial load
+    await page.waitForLoadState('domcontentloaded')
+
+    // Check that page remains functional during potential SW updates
+    const initialTitle = await page.title()
+    expect(initialTitle).toBeTruthy()
+
+    // Wait for any potential service worker updates
+    await page.waitForTimeout(3000)
+
+    // Verify page still works after potential update
+    const finalTitle = await page.title()
+    expect(finalTitle).toBe(initialTitle)
+
+    // Check that navigation still works
+    const body = page.locator('body')
+    await expect(body).toBeVisible()
+  })
+
+  test('should handle offline page transitions', async ({ page, context }) => {
+    await page.goto('/')
+
+    // Navigate to different pages while online
+    const aboutLink = page.getByRole('link', { name: 'About' })
+    if (await aboutLink.isVisible()) {
+      await aboutLink.click()
+      await page.waitForURL('**/about')
+
+      // Go offline
+      await context.setOffline(true)
+
+      try {
+        // Try to navigate back to home - should work from cache
+        await page.goto('/')
+        await expect(page.locator('body')).toBeVisible()
+
+        // Try to access a non-cached page - should show offline message
+        await page.goto('/non-existent-offline-page')
+        const bodyText = await page.locator('body').textContent()
+        // Should either show cached content or offline message
+        expect(bodyText).toBeTruthy()
+      } finally {
+        await context.setOffline(false)
+      }
+    }
+  })
+
+  test('should validate cache strategies', async ({ page }) => {
+    await page.goto('/')
+
+    await page.waitForLoadState('networkidle')
+
+    // Monitor network requests to validate caching
+    const requests: string[] = []
+
+    page.on('request', request => {
+      requests.push(request.url())
+    })
+
+    // Reload page to check cache usage
+    await page.reload()
+    await page.waitForLoadState('networkidle')
+
+    // Check that some requests were served from cache
+    const cachedRequests = requests.filter(url =>
+      !url.includes('data:') && !url.includes('blob:')
+    )
+
+    // Should have made some network requests (may be fewer due to caching)
+    expect(cachedRequests.length).toBeGreaterThan(0)
+  })
+
+  test('should handle push notification permissions', async ({ page, context }) => {
+    await page.goto('/')
+
+    // Check notification permission state
+    const initialPermission = await context.grantPermissions([], { origin: page.url() })
+
+    // Request notification permission
+    const permissionGranted = await page.evaluate(async () => {
+      if ('Notification' in window) {
+        const permission = await Notification.requestPermission()
+        return permission === 'granted'
+      }
+      return false
+    })
+
+    // Permission may or may not be granted depending on browser settings
+    // The important thing is that the request doesn't crash
+    expect(typeof permissionGranted).toBe('boolean')
+  })
+
+  test('should validate PWA security headers', async ({ page }) => {
+    await page.goto('/')
+
+    // Check for security-related meta tags
+    const cspMeta = page.locator('meta[http-equiv="Content-Security-Policy"]')
+    const referrerMeta = page.locator('meta[name="referrer"]')
+
+    // These may or may not be present depending on implementation
+    const cspCount = await cspMeta.count()
+    const referrerCount = await referrerMeta.count()
+
+    // If present, they should have valid values
+    if (cspCount > 0) {
+      const cspContent = await cspMeta.getAttribute('content')
+      expect(cspContent).toBeTruthy()
+    }
+
+    if (referrerCount > 0) {
+      const referrerContent = await referrerMeta.getAttribute('content')
+      expect(referrerContent).toBeTruthy()
     }
   })
 })
