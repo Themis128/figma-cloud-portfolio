@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
+import { RealtimeTest } from '@/components/RealtimeTest'
 import { useTheme } from '@/components/ThemeProvider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -191,6 +192,19 @@ export default function Settings() {
                     View Changelog
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+          </AnimatedSection>
+
+          {/* Real-time Features Test */}
+          <AnimatedSection delay={0.5}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Real-time Features (Beta)</CardTitle>
+                <CardDescription>Test WebSocket connections and real-time functionality</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RealtimeTest />
               </CardContent>
             </Card>
           </AnimatedSection>

@@ -1,0 +1,84 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to rollback'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      target_commit:
+        description: 'Target commit hash to rollback to (optional - defaults to previous deployment)'
+        required: false
+        type: string
+
+concurrency:
+  group: rollback-${{ github.event.inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Determine app ID and branch
+      id: app-config
+      run: |
+        if [ "${{ github.event.inputs.environment }}" = "production" ]; then
+          echo "app_id=${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}" >> $GITHUB_OUTPUT
+          echo "branch=main" >> $GITHUB_OUTPUT
+        else
+          echo "app_id=${{ secrets.AMPLIFY_STAGING_APP_ID }}" >> $GITHUB_OUTPUT
+          echo "branch=staging" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Rollback deployment
+      uses: aws-actions/amplify-cli-wrapper@1.2.0
+      with:
+        args: publish --app-id ${{ steps.app-config.outputs.app_id }} --branch-name ${{ steps.app-config.outputs.branch }} --rollback ${{ github.event.inputs.target_commit }}
+      env:
+        NODE_ENV: ${{ github.event.inputs.environment }}
+        VITE_APP_ENV: ${{ github.event.inputs.environment }}
+
+    - name: Create rollback notification
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const environment = '${{ github.event.inputs.environment }}';
+          const targetCommit = '${{ github.event.inputs.target_commit }}' || 'previous deployment';
+          const title = `🔄 ${environment.charAt(0).toUpperCase() + environment.slice(1)} Rollback Completed`;
+          const body = `## Rollback Successful\n\n**Environment:** ${environment}\n**Target:** ${targetCommit}\n**Triggered by:** @${context.actor}\n**Timestamp:** ${new Date().toISOString()}\n\n### Rollback Details\n- ✅ Previous deployment restored\n- 🔍 Check application functionality\n- 📊 Monitor error rates\n\nIf issues persist, consider redeploying with fixes.`;
+
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['rollback', environment, 'deployment']
+          })
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: rollback
+    if: always()
+
+    steps:
+    - name: Send notification
+      run: |
+        echo "Rollback workflow completed"
+        # Add notification logic here (Slack, Discord, etc.)

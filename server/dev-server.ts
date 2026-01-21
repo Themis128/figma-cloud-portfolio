@@ -1,4 +1,4 @@
-import { createServer } from './index'
+import { createServer, initializeSocketIO } from './index'
 
 const app = createServer()
 const port = process.env.PORT || 0
@@ -12,6 +12,10 @@ const server = app.listen(port, () => {
   const addr = server.address()
   console.log(`Server address details:`, JSON.stringify(addr, null, 2))
 })
+
+// Initialize Socket.IO
+const io = initializeSocketIO(server)
+console.log('🔌 WebSocket server initialized')
 
 server.on('error', (err) => {
   console.error('Server error:', err)

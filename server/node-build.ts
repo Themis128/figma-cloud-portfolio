@@ -1,6 +1,6 @@
 import path from 'node:path'
 import * as express from 'express'
-import { createServer } from './index'
+import { createServer, initializeSocketIO } from './index'
 
 const app = createServer()
 const port = process.env.PORT || 3000
@@ -22,11 +22,15 @@ app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`🚀 Baltzakis Themistoklis server running on port ${port}`)
   console.log(`📱 Frontend: http://localhost:${port}`)
   console.log(`🔧 API: http://localhost:${port}/api`)
 })
+
+// Initialize Socket.IO
+const io = initializeSocketIO(server)
+console.log('🔌 WebSocket server initialized')
 
 // Graceful shutdown
 process.on('SIGTERM', () => {

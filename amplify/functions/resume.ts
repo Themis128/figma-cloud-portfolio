@@ -895,7 +895,7 @@ export const handler: Handler = async (event) => {
         'Content-Disposition': `attachment; filename="${resume.name.replace(/\s+/g, '_')}_Resume.pdf"`,
         'Access-Control-Allow-Origin': '*',
       },
-      body: pdfBuffer.toString('base64'),
+      body: (pdfBuffer as Buffer).toString('base64'),
       isBase64Encoded: true,
     }
   } catch (error) {

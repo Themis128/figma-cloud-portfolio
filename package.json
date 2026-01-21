@@ -39,12 +39,15 @@
     "firebase": "^12.8.0",
     "react-ga4": "^2.1.0",
     "react-google-recaptcha-v3": "^1.11.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "web-push": "^3.6.7",
     "web-vitals": "^5.1.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.20.0",
+    "@aws-sdk/client-amplify": "^3.972.0",
     "@biomejs/biome": "^2.3.11",
     "@hookform/resolvers": "^5.2.1",
     "@playwright/test": "^1.57.0",

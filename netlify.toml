@@ -13,3 +13,15 @@
   from = "/api/*"
   status = 200
   to = "/.netlify/functions/api/:splat"
+
+# Ensure JS files are served with correct MIME type
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+
+# Ensure service worker is served with correct MIME type
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Content-Type = "application/javascript"

@@ -1,0 +1,98 @@
+name: Update Deployment Status
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Staging", "Deploy to Production", "Rollback Deployment"]
+    types:
+      - completed
+
+jobs:
+  update-badges:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get deployment status
+      id: deployment-status
+      run: |
+        # Get the latest workflow run status
+        WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+        CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+
+        if [ "$WORKFLOW_NAME" = "Deploy to Production" ]; then
+          if [ "$CONCLUSION" = "success" ]; then
+            echo "badge_color=brightgreen" >> $GITHUB_OUTPUT
+            echo "badge_text=production%20deployed" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "badge_color=red" >> $GITHUB_OUTPUT
+            echo "badge_text=production%20failed" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+          fi
+        elif [ "$WORKFLOW_NAME" = "Deploy to Staging" ]; then
+          if [ "$CONCLUSION" = "success" ]; then
+            echo "badge_color=green" >> $GITHUB_OUTPUT
+            echo "badge_text=staging%20deployed" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          else
+            echo "badge_color=red" >> $GITHUB_OUTPUT
+            echo "badge_text=staging%20failed" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+        elif [ "$WORKFLOW_NAME" = "Rollback Deployment" ]; then
+          echo "badge_color=yellow" >> $GITHUB_OUTPUT
+          echo "badge_text=rollback%20completed" >> $GITHUB_OUTPUT
+          echo "environment=rollback" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Update deployment status badge
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const badgeColor = '${{ steps.deployment-status.outputs.badge_color }}';
+          const badgeText = '${{ steps.deployment-status.outputs.badge_text }}';
+          const environment = '${{ steps.deployment-status.outputs.environment }}';
+
+          // Create or update a status file that can be used for badges
+          const statusData = {
+            environment: environment,
+            status: badgeColor === 'brightgreen' || badgeColor === 'green' ? 'success' : 'failed',
+            lastUpdated: new Date().toISOString(),
+            badgeUrl: `https://img.shields.io/badge/${badgeText}-${badgeColor}`
+          };
+
+          // Write to a JSON file that can be served statically
+          fs.writeFileSync(`public/deployment-status-${environment}.json`, JSON.stringify(statusData, null, 2));
+
+          console.log(`Updated deployment status for ${environment}`);
+
+  create-issue-summary:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+
+    steps:
+    - name: Create deployment summary
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const workflowName = '${{ github.event.workflow_run.name }}';
+          const runId = '${{ github.event.workflow_run.id }}';
+          const conclusion = '${{ github.event.workflow_run.conclusion }}';
+
+          if (workflowName.includes('Deploy') && conclusion === 'success') {
+            // Create a summary issue or update existing deployment tracking
+            const title = `📊 Deployment Summary - ${new Date().toISOString().split('T')[0]}`;
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: `## Deployment Summary\n\n**Workflow:** ${workflowName}\n**Status:** ✅ Success\n**Run ID:** ${runId}\n**Timestamp:** ${new Date().toISOString()}\n\n### Recent Deployments\n- Check Actions tab for detailed logs\n- Monitor application health\n- Review any new features deployed\n\n---\n*This issue was automatically created by the deployment status workflow.*`,
+              labels: ['deployment-summary', 'automated']
+            });
+          }
