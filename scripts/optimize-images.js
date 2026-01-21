@@ -5,9 +5,9 @@
  * This script optimizes images for the project using various tools
  */
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -43,14 +43,16 @@ if (images.length === 0) {
 }
 
 console.log(`📁 Found ${images.length} image(s) to optimize:`)
-images.forEach((img) => console.log(`  - ${path.relative(publicDir, img)}`))
+images.forEach((img) => {
+  console.log(`  - ${path.relative(publicDir, img)}`)
+})
 
 // Check if sharp is available for optimization
 let sharp = null
 try {
   sharp = (await import('sharp')).default
   console.log('🛠️  Using Sharp for image optimization...')
-} catch (error) {
+} catch (_error) {
   console.log('⚠️  Sharp not available, falling back to basic checks...')
 
   // Basic file size reporting

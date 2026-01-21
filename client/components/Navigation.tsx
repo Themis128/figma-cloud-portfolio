@@ -133,6 +133,13 @@ export default function Navigation() {
               Experience
             </Link>
             <Link
+              to="/resume"
+              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              aria-label="Resume"
+            >
+              Resume
+            </Link>
+            <Link
               to="/contact"
               className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
               aria-label="Contact"
@@ -165,6 +172,7 @@ export default function Navigation() {
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
+              data-testid="mobile-menu-toggle"
             >
               <svg
                 className="w-5 h-5"
@@ -233,6 +241,14 @@ export default function Navigation() {
               aria-label="Experience"
             >
               Experience
+            </Link>
+            <Link
+              to="/resume"
+              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              onClick={closeMobileMenu}
+              aria-label="Resume"
+            >
+              Resume
             </Link>
             <Link
               to="/contact"

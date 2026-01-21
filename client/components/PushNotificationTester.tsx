@@ -1,14 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
-interface PushSubscriptionData {
-  endpoint: string
-  keys: {
-    p256dh: string
-    auth: string
-  }
-}
-
 export function PushNotificationTester() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
@@ -52,7 +44,7 @@ export function PushNotificationTester() {
     setResult(null)
 
     try {
-      // First get all subscriptions
+      // Check if there are any subscriptions first
       const subsResponse = await fetch('/api/push-notifications?action=subscriptions')
       const subsData = await subsResponse.json()
 
@@ -62,31 +54,13 @@ export function PushNotificationTester() {
         return
       }
 
-      // Send to all subscriptions
+      // Send custom message to all stored subscriptions on server
       const response = await fetch('/api/push-notifications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          subscriptions: subsData.list.map((sub: PushSubscriptionData) => ({
-            endpoint: sub.endpoint,
-            keys: (() => {
-              const stored = localStorage.getItem('push-subscription')
-              if (stored) {
-                try {
-                  const parsed = JSON.parse(stored)
-                  return {
-                    p256dh: parsed.keys?.p256dh || '',
-                    auth: parsed.keys?.auth || '',
-                  }
-                } catch {
-                  return { p256dh: '', auth: '' }
-                }
-              }
-              return { p256dh: '', auth: '' }
-            })(),
-          })),
           message: {
             title: 'Custom Test Notification',
             body: 'This is a custom push notification using Web Push API!',

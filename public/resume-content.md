@@ -2,7 +2,7 @@
 
 ## Cloud Architect & Cybersecurity Specialist
 
-📧 <baltzakis.themis@gmail.com> | 📱 LinkedIn: [baltzakis-themis](https://www.linkedin.com/in/baltzakis-themis) | 🌐 [www.baltzakisthemis.com](https://www.baltzakisthemis.com)
+📧 baltzakis.themis@gmail.com | 📱 LinkedIn: [baltzakis-themis](https://www.linkedin.com/in/baltzakis-themis) | 🌐 [www.baltzakisthemis.com](https://www.baltzakisthemis.com)
 
 ---
 

@@ -51,7 +51,9 @@ test.describe('API Endpoints', () => {
     expect(vapidRegex.test(data.publicKey)).toBe(true)
   })
 
-  test('should handle 404 for non-existent API endpoints with proper error response', async ({ request }) => {
+  test('should handle 404 for non-existent API endpoints with proper error response', async ({
+    request,
+  }) => {
     const response = await request.get('/api/non-existent')
     expect(response.status()).toBe(404)
 
@@ -69,7 +71,7 @@ test.describe('API Endpoints', () => {
   test('should handle malformed JSON requests', async ({ request }) => {
     const response = await request.post('/api/demo', {
       data: '{invalid json',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     })
     expect(response.status()).toBe(400)
   })
@@ -84,22 +86,23 @@ test.describe('API Endpoints', () => {
     const responses = await Promise.all(requests)
 
     // At least some requests should succeed
-    const successCount = responses.filter(r => r.status() === 200).length
+    const successCount = responses.filter((r) => r.status() === 200).length
     expect(successCount).toBeGreaterThan(5)
 
     // If rate limiting is implemented, some might be 429
-    const rateLimitedCount = responses.filter(r => r.status() === 429).length
+    const _rateLimitedCount = responses.filter((r) => r.status() === 429).length
     // This is optional - rate limiting may not be implemented
   })
 
   test('should handle API endpoint with query parameters', async ({ request }) => {
-    const response = await request.get('/api/demo?format=full')
-    expect([200, 400]).toContain(response.status()) // Either accepts or rejects query params
+    // Test that API accepts query parameters without breaking
+    const response = await request.get('/api/demo?test=value&format=json&debug=true')
+    expect(response.status()).toBe(200) // API should accept query parameters
 
-    if (response.status() === 200) {
-      const data = await response.json()
-      expect(data).toHaveProperty('format', 'full')
-    }
+    const data = await response.json()
+    expect(data).toHaveProperty('message')
+    expect(data.message).toBe('Hello from Express server')
+    // Query parameters are accepted but response remains the same
   })
 
   test('should validate API response schema', async ({ request }) => {
@@ -110,7 +113,7 @@ test.describe('API Endpoints', () => {
 
     // Validate response structure - only message field is present
     expect(data).toEqual({
-      message: expect.any(String)
+      message: expect.any(String),
     })
 
     // Validate message content
@@ -118,9 +121,14 @@ test.describe('API Endpoints', () => {
   })
 
   test('should handle API timeout gracefully', async ({ request }) => {
-    // Test with a very short timeout
-    const response = await request.get('/api/demo', { timeout: 1 })
-    // Should either succeed quickly or timeout
-    expect([200, 'timeout']).toContain(response.status() === 200 ? 200 : 'timeout')
+    // Test with a very short timeout - should either succeed or timeout gracefully
+    try {
+      const response = await request.get('/api/demo', { timeout: 1 })
+      // If we get here, the request succeeded despite short timeout
+      expect(response.status()).toBe(200)
+    } catch (error) {
+      // Timeout occurred - this is also acceptable behavior
+      expect(error.message).toContain('Timeout')
+    }
   })
 })

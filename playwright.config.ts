@@ -14,22 +14,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: 1, // Single worker to avoid conflicts
 
-  /* Enhanced reporting for issue tracking and resolution */
-  reporter: [
-    ['line'], // Console output
-    ['html', { open: 'never' }], // HTML report for detailed analysis
-    ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration
-    ['junit', { outputFile: 'test-results/junit.xml' }], // JUnit for external tools
-  ],
-
-  /* Global setup and teardown for test environment preparation */
-  globalSetup: './playwright-tests/global-setup.ts',
-  globalTeardown: './playwright-tests/global-teardown.ts',
-
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:8081',
+    baseURL: 'http://127.0.0.1:8083',
 
     /* Enhanced tracing and debugging */
     trace: 'retain-on-failure', // Keep traces for failed tests
@@ -50,6 +38,18 @@ export default defineConfig({
       'X-Test-Session': 'playwright-e2e',
     },
   },
+
+  /* Enhanced reporting for issue tracking and resolution */
+  reporter: [
+    ['line'], // Console output
+    ['html', { open: 'never' }], // HTML report for detailed analysis
+    ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration
+    ['junit', { outputFile: 'test-results/junit.xml' }], // JUnit for external tools
+  ],
+
+  /* Global setup and teardown for test environment preparation */
+  globalSetup: './playwright-tests/global-setup.ts',
+  globalTeardown: './playwright-tests/global-teardown.ts',
 
   /* Test execution metadata */
   metadata: {
@@ -107,10 +107,22 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'pnpm run dev',
-    url: 'http://localhost:8081',
-    reuseExistingServer: !process.env.CI,
-    timeout: 180 * 1000,
-  },
+  webServer: [
+    // Production server using Node.js http-server for better Windows compatibility
+    {
+      command: 'npx http-server dist/spa -p 8083 --host 127.0.0.1 -c-1 --silent',
+      url: 'http://127.0.0.1:8083',
+      reuseExistingServer: false, // Always start fresh for stability
+      timeout: 30 * 1000, // Reduced timeout for faster failure detection
+      cwd: process.cwd(), // Ensure correct working directory
+    },
+    // Development server as fallback with improved stability
+    {
+      command: 'pnpm run dev',
+      url: 'http://localhost:8081',
+      reuseExistingServer: false, // Always start fresh
+      timeout: 60 * 1000, // Reduced timeout
+      cwd: process.cwd(),
+    },
+  ],
 })

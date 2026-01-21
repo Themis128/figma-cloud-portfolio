@@ -11,7 +11,7 @@
    * Tailwind CSS theme
    * tailwind.config.ts expects the following color variables to be expressed as HSL values.
    * A different format will require also updating the theme in tailwind.config.ts.
-  */
+   */
   :root {
     --background: 218 45% 15%;
     --foreground: 210 40% 98%;

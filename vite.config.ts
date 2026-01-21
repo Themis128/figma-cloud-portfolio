@@ -23,6 +23,8 @@ export default defineConfig(({ mode }) => ({
       allow: ['.', '../client', '../shared'],
       deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '../server/**'],
     },
+    // SPA routing support - serve index.html for all routes
+    middlewareMode: false,
     // Proxy API requests to Express server (run with: npx tsx server/node-build.ts)
     proxy: {
       '/api': {

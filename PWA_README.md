@@ -239,14 +239,14 @@ The Vite config includes a proxy that forwards `/api` requests to the Express se
 
 ### API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/push-notifications?action=vapid-public-key` | GET | Get VAPID public key |
-| `/api/push-notifications?action=subscriptions` | GET | List all subscriptions |
-| `/api/push-notifications` | GET | Send test notification to all subscribers |
-| `/api/push-notifications` | PUT | Store a new subscription |
-| `/api/push-notifications` | POST | Send notification to specific subscriptions |
-| `/api/push-notifications?endpoint=...` | DELETE | Remove a subscription |
+| Endpoint                                          | Method | Description                                 |
+| ------------------------------------------------- | ------ | ------------------------------------------- |
+| `/api/push-notifications?action=vapid-public-key` | GET    | Get VAPID public key                        |
+| `/api/push-notifications?action=subscriptions`    | GET    | List all subscriptions                      |
+| `/api/push-notifications`                         | GET    | Send test notification to all subscribers   |
+| `/api/push-notifications`                         | PUT    | Store a new subscription                    |
+| `/api/push-notifications`                         | POST   | Send notification to specific subscriptions |
+| `/api/push-notifications?endpoint=...`            | DELETE | Remove a subscription                       |
 
 ### VAPID Keys
 

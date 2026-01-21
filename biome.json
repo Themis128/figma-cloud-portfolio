@@ -7,7 +7,8 @@
         "noUnusedVariables": "warn"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "noUnknownAtRules": "off"
       }
     }
   },
@@ -24,6 +25,17 @@
     }
   },
   "files": {
+    "includes": [
+      "client/**/*.{js,jsx,ts,tsx}",
+      "server/**/*.{js,ts}",
+      "shared/**/*.{js,ts}",
+      "scripts/**/*.{js,ts}",
+      "tests/**/*.{js,ts,tsx}",
+      "isolated-tests/**/*.{js,ts,tsx}",
+      "playwright-tests/**/*.{js,ts,tsx}",
+      "*.{js,ts,tsx}",
+      "*.config.{js,ts}"
+    ],
     "ignoreUnknown": true
   }
 }

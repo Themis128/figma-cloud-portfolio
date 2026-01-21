@@ -1,4 +1,6 @@
+import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { useTheme } from '@/components/ThemeProvider'
 import { Button } from '@/components/ui/button'
@@ -10,6 +12,7 @@ import { Switch } from '@/components/ui/switch'
 
 export default function Settings() {
   const { theme, setTheme } = useTheme()
+  const navigate = useNavigate()
   const [notifications, setNotifications] = useState(true)
   const [animations, setAnimations] = useState(true)
   const [reducedMotion, setReducedMotion] = useState(false)
@@ -19,6 +22,10 @@ export default function Settings() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <AnimatedSection>
           <div className="mb-8">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Button>
             <h1 className="text-3xl font-bold tracking-tight mb-2">Settings</h1>
             <p className="text-muted-foreground">Customize your experience and preferences</p>
           </div>

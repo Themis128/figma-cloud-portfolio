@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useDeviceType, useOptimizedAnimation } from '../client/hooks/useDeviceType'
 import { usePWA } from '../client/hooks/usePWA'
 
@@ -9,7 +9,7 @@ const mockNavigator = {
 }
 
 // Mock window.matchMedia
-const mockMatchMedia = vi.fn().mockImplementation((query) => ({
+const mockMatchMedia = vi.fn().mockImplementation((_query) => ({
   matches: false,
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
@@ -86,7 +86,7 @@ describe('usePWA', () => {
 
     // Simulate beforeinstallprompt event
     act(() => {
-      window.dispatchEvent(new CustomEvent('beforeinstallprompt', mockEvent))
+      window.dispatchEvent(new CustomEvent('beforeinstallprompt', { detail: mockEvent }))
     })
 
     expect(result.current.isInstallable).toBe(true)

@@ -1,646 +1,656 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modern Tech Resume - Themistoklis Baltzakis</title>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Tech Resume - Themistoklis Baltzakis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #334155;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .resume-container {
+      max-width: 210mm;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06);
+      min-height: 297mm;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      padding: 50px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.03"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.03"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 3em;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, white 0%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header h2 {
+      font-size: 1.3em;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 25px;
+      letter-spacing: 0.01em;
+    }
+
+    .contact-info {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      font-size: 0.95em;
+      flex-wrap: wrap;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .main-content {
+      display: flex;
+      flex: 1;
+    }
+
+    .left-column {
+      width: 35%;
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      padding: 35px;
+      border-right: 1px solid #e2e8f0;
+    }
+
+    .right-column {
+      width: 65%;
+      padding: 35px;
+    }
+
+    .section {
+      margin-bottom: 35px;
+    }
+
+    .section-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 20px;
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, #06b6d4, #67e8f9);
+      border-radius: 2px;
+    }
+
+    .skill-category {
+      margin-bottom: 25px;
+    }
+
+    .skill-category h4 {
+      font-size: 0.9em;
+      color: #1e293b;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .skill-item {
+      margin-bottom: 12px;
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .skill-name {
+      font-weight: 500;
+      color: #334155;
+      font-size: 0.9em;
+    }
+
+    .skill-percentage {
+      font-size: 0.8em;
+      color: #06b6d4;
+      font-weight: 600;
+    }
+
+    .skill-bar {
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #06b6d4, #67e8f9);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .skill-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
       }
 
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .certification-item {
+      margin-bottom: 15px;
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #10b981;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease;
+    }
+
+    .certification-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .certification-item strong {
+      display: block;
+      color: #1e293b;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .certification-item .issuer {
+      color: #64748b;
+      font-size: 0.85em;
+    }
+
+    .certification-item .year {
+      color: #06b6d4;
+      font-size: 0.8em;
+      font-weight: 500;
+    }
+
+    .experience-item {
+      margin-bottom: 30px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .experience-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      background: #06b6d4;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+
+    .experience-header {
+      margin-bottom: 12px;
+    }
+
+    .job-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 2px;
+    }
+
+    .company {
+      font-weight: 500;
+      color: #334155;
+      font-size: 0.95em;
+    }
+
+    .date {
+      color: #64748b;
+      font-size: 0.85em;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .achievement-list {
+      margin-top: 12px;
+    }
+
+    .achievement-item {
+      margin-bottom: 8px;
+      position: relative;
+      padding-left: 16px;
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+
+    .achievement-item::before {
+      content: "→";
+      color: #06b6d4;
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    .education-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #f59e0b;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .degree {
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 2px;
+    }
+
+    .institution {
+      color: #334155;
+      font-size: 0.9em;
+      margin-bottom: 2px;
+    }
+
+    .education-date {
+      color: #64748b;
+      font-size: 0.85em;
+      font-weight: 500;
+    }
+
+    .summary {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      padding: 25px;
+      border-radius: 12px;
+      border-left: 4px solid #06b6d4;
+      margin-bottom: 35px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary::before {
+      content: '"';
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      font-size: 4em;
+      color: rgba(6, 182, 212, 0.1);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    .summary p {
+      font-size: 1em;
+      line-height: 1.7;
+      color: #334155;
+      position: relative;
+      z-index: 1;
+      margin-left: 20px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .metric-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e2e8f0;
+    }
+
+    .metric-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #06b6d4;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .metric-label {
+      font-size: 0.8em;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    @media print {
       body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        line-height: 1.6;
-        color: #334155;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+        background: white;
       }
 
       .resume-container {
-        max-width: 210mm;
-        margin: 0 auto;
-        background: #ffffff;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06);
-        min-height: 297mm;
-        display: flex;
-        flex-direction: column;
-        border-radius: 12px;
-        overflow: hidden;
-      }
-
-      .header {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        color: white;
-        padding: 50px 40px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.03"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.03"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        opacity: 0.1;
-      }
-
-      .header-content {
-        position: relative;
-        z-index: 1;
-        text-align: center;
-      }
-
-      .header h1 {
-        font-size: 3em;
-        font-weight: 700;
-        margin-bottom: 8px;
-        letter-spacing: -0.02em;
-        background: linear-gradient(135deg, white 0%, #67e8f9 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .header h2 {
-        font-size: 1.3em;
-        font-weight: 400;
-        opacity: 0.9;
-        margin-bottom: 25px;
-        letter-spacing: 0.01em;
-      }
-
-      .contact-info {
-        display: flex;
-        justify-content: center;
-        gap: 25px;
-        font-size: 0.95em;
-        flex-wrap: wrap;
+        box-shadow: none;
+        margin: 0;
+        border-radius: 0;
       }
 
       .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 8px 12px;
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(30, 41, 59, 0.1);
       }
+    }
 
+    @media (max-width: 768px) {
       .main-content {
-        display: flex;
-        flex: 1;
+        flex-direction: column;
       }
 
-      .left-column {
-        width: 35%;
-        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-        padding: 35px;
-        border-right: 1px solid #e2e8f0;
-      }
-
+      .left-column,
       .right-column {
-        width: 65%;
-        padding: 35px;
+        width: 100%;
       }
 
-      .section {
-        margin-bottom: 35px;
+      .header h1 {
+        font-size: 2.5em;
       }
 
-      .section-title {
-        font-size: 1.2em;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 20px;
-        position: relative;
-        padding-bottom: 8px;
+      .contact-info {
+        flex-direction: column;
+        gap: 10px;
       }
+    }
+  </style>
+</head>
 
-      .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 40px;
-        height: 3px;
-        background: linear-gradient(90deg, #06b6d4, #67e8f9);
-        border-radius: 2px;
-      }
-
-      .skill-category {
-        margin-bottom: 25px;
-      }
-
-      .skill-category h4 {
-        font-size: 0.9em;
-        color: #1e293b;
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-      }
-
-      .skill-item {
-        margin-bottom: 12px;
-      }
-
-      .skill-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-      }
-
-      .skill-name {
-        font-weight: 500;
-        color: #334155;
-        font-size: 0.9em;
-      }
-
-      .skill-percentage {
-        font-size: 0.8em;
-        color: #06b6d4;
-        font-weight: 600;
-      }
-
-      .skill-bar {
-        background: #e2e8f0;
-        height: 8px;
-        border-radius: 4px;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .skill-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #06b6d4, #67e8f9);
-        border-radius: 4px;
-        transition: width 0.3s ease;
-        position: relative;
-      }
-
-      .skill-fill::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        animation: shimmer 2s infinite;
-      }
-
-      @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-      }
-
-      .certification-item {
-        margin-bottom: 15px;
-        padding: 12px;
-        background: white;
-        border-radius: 8px;
-        border-left: 4px solid #10b981;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-        transition: transform 0.2s ease;
-      }
-
-      .certification-item:hover {
-        transform: translateY(-2px);
-      }
-
-      .certification-item strong {
-        display: block;
-        color: #1e293b;
-        font-weight: 600;
-        margin-bottom: 2px;
-      }
-
-      .certification-item .issuer {
-        color: #64748b;
-        font-size: 0.85em;
-      }
-
-      .certification-item .year {
-        color: #06b6d4;
-        font-size: 0.8em;
-        font-weight: 500;
-      }
-
-      .experience-item {
-        margin-bottom: 30px;
-        position: relative;
-        padding-left: 20px;
-      }
-
-      .experience-item::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 8px;
-        width: 8px;
-        height: 8px;
-        background: #06b6d4;
-        border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
-      }
-
-      .experience-header {
-        margin-bottom: 12px;
-      }
-
-      .job-title {
-        font-size: 1.1em;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 2px;
-      }
-
-      .company {
-        font-weight: 500;
-        color: #334155;
-        font-size: 0.95em;
-      }
-
-      .date {
-        color: #64748b;
-        font-size: 0.85em;
-        font-weight: 500;
-        margin-top: 4px;
-      }
-
-      .achievement-list {
-        margin-top: 12px;
-      }
-
-      .achievement-item {
-        margin-bottom: 8px;
-        position: relative;
-        padding-left: 16px;
-        font-size: 0.9em;
-        line-height: 1.5;
-      }
-
-      .achievement-item::before {
-        content: "→";
-        color: #06b6d4;
-        position: absolute;
-        left: 0;
-        font-weight: bold;
-      }
-
-      .education-item {
-        margin-bottom: 20px;
-        padding: 15px;
-        background: white;
-        border-radius: 8px;
-        border-left: 4px solid #f59e0b;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-      }
-
-      .degree {
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 2px;
-      }
-
-      .institution {
-        color: #334155;
-        font-size: 0.9em;
-        margin-bottom: 2px;
-      }
-
-      .education-date {
-        color: #64748b;
-        font-size: 0.85em;
-        font-weight: 500;
-      }
-
-      .summary {
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        padding: 25px;
-        border-radius: 12px;
-        border-left: 4px solid #06b6d4;
-        margin-bottom: 35px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .summary::before {
-        content: '"';
-        position: absolute;
-        top: 15px;
-        left: 20px;
-        font-size: 4em;
-        color: rgba(6, 182, 212, 0.1);
-        font-family: Georgia, serif;
-        line-height: 1;
-      }
-
-      .summary p {
-        font-size: 1em;
-        line-height: 1.7;
-        color: #334155;
-        position: relative;
-        z-index: 1;
-        margin-left: 20px;
-      }
-
-      .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        margin-top: 20px;
-      }
-
-      .metric-item {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-        border: 1px solid #e2e8f0;
-      }
-
-      .metric-value {
-        font-size: 1.5em;
-        font-weight: 700;
-        color: #06b6d4;
-        display: block;
-        margin-bottom: 4px;
-      }
-
-      .metric-label {
-        font-size: 0.8em;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-      }
-
-      @media print {
-        body {
-          background: white;
-        }
-
-        .resume-container {
-          box-shadow: none;
-          margin: 0;
-          border-radius: 0;
-        }
-
-        .contact-item {
-          background: rgba(30, 41, 59, 0.1);
-        }
-      }
-
-      @media (max-width: 768px) {
-        .main-content {
-          flex-direction: column;
-        }
-
-        .left-column, .right-column {
-          width: 100%;
-        }
-
-        .header h1 {
-          font-size: 2.5em;
-        }
-
-        .contact-info {
-          flex-direction: column;
-          gap: 10px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="resume-container">
-      <header class="header">
-        <div class="header-content">
-          <h1>Themistoklis Baltzakis</h1>
-          <h2>Cloud Architect & Cybersecurity Specialist</h2>
-          <div class="contact-info">
-            <div class="contact-item">📧 <baltzakis.themis@gmail.com></div>
-            <div class="contact-item">💼 baltzakis-themis</div>
-            <div class="contact-item">🌐 www.baltzakisthemis.com</div>
-          </div>
+<body>
+  <div class="resume-container">
+    <header class="header">
+      <div class="header-content">
+        <h1>Themistoklis Baltzakis</h1>
+        <h2>Cloud Architect & Cybersecurity Specialist</h2>
+        <div class="contact-info">
+          <div class="contact-item">📧 baltzakis.themis@gmail.com</div>
+          <div class="contact-item">💼 baltzakis-themis</div>
+          <div class="contact-item">🌐 www.baltzakisthemis.com</div>
         </div>
-      </header>
+      </div>
+    </header>
 
-      <div class="main-content">
-        <div class="left-column">
-          <div class="section">
-            <h3 class="section-title">💡 Core Competencies</h3>
+    <div class="main-content">
+      <div class="left-column">
+        <div class="section">
+          <h3 class="section-title">💡 Core Competencies</h3>
 
-            
-            <div class="skill-category">
-              <h4>Cloud Platforms & Infrastructure</h4>
-              
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Microsoft Azure</span>
-                    <span class="skill-percentage">95%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 95%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">AWS & GCP</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Infrastructure as Code</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-            </div>
-            
-            <div class="skill-category">
-              <h4>Identity & Access Management</h4>
-              
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Azure Active Directory</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Microsoft 365 Security</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Federation & SSO</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-            </div>
-            
-            <div class="skill-category">
-              <h4>Cybersecurity & Compliance</h4>
-              
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Security Frameworks</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Threat Detection</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Risk Management</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-            </div>
-            
-            <div class="skill-category">
-              <h4>Enterprise Solutions</h4>
-              
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Collaboration Tools</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">Productivity Suite</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-                <div class="skill-item">
-                  <div class="skill-header">
-                    <span class="skill-name">DevOps & CI/CD</span>
-                    <span class="skill-percentage">85%</span>
-                  </div>
-                  <div class="skill-bar">
-                    <div class="skill-fill" style="width: 85%"></div>
-                  </div>
-                </div>
-                
-            </div>
-            
-            <div class="skill-category">
-              <h4>**Cloud Platforms**</h4>
-              
-            </div>
-            
-            <div class="skill-category">
-              <h4>**Security Tools**</h4>
-              
-            </div>
-            
-            <div class="skill-category">
-              <h4>**Programming & Scripting**</h4>
-              
-            </div>
-            
-            <div class="skill-category">
-              <h4>**Operating Systems**</h4>
-              
-            </div>
-            
-            <div class="skill-category">
-              <h4>**Soft Skills**</h4>
-              
-            </div>
-            
 
-            
+          <div class="skill-category">
+            <h4>Cloud Platforms & Infrastructure</h4>
 
-          
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Microsoft Azure</span>
+                <span class="skill-percentage">95%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 95%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">AWS & GCP</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Infrastructure as Code</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>Identity & Access Management</h4>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Azure Active Directory</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Microsoft 365 Security</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Federation & SSO</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>Cybersecurity & Compliance</h4>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Security Frameworks</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Threat Detection</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Risk Management</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>Enterprise Solutions</h4>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Collaboration Tools</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">Productivity Suite</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">DevOps & CI/CD</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-fill" style="width: 85%"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>**Cloud Platforms**</h4>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>**Security Tools**</h4>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>**Programming & Scripting**</h4>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>**Operating Systems**</h4>
+
+          </div>
+
+          <div class="skill-category">
+            <h4>**Soft Skills**</h4>
+
+          </div>
+
+
+
+
+
           <div class="section">
             <h3 class="section-title">🎓 Education</h3>
-            
+
             <div class="education-item">
               <div class="degree">Bachelor of Science in Computer Science</div>
               <div class="institution">National Technical University of Athens, Greece</div>
               <div class="education-date">2007 - 2011</div>
             </div>
-            
+
           </div>
-            
+
         </div>
 
         <div class="right-column">
-          
-          <div class="summary">
-            <p>Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments. Proven track record in designing secure, scalable cloud solutions and leading digital transformation initiatives. Expert in identity management, compliance frameworks, and enterprise security architecture.</p>
-          </div>
-            
 
-          
+          <div class="summary">
+            <p>Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT expertise, specializing
+              in Azure AD, Microsoft 365, and multi-cloud environments. Proven track record in designing secure,
+              scalable cloud solutions and leading digital transformation initiatives. Expert in identity management,
+              compliance frameworks, and enterprise security architecture.</p>
+          </div>
+
+
+
           <div class="section">
             <h3 class="section-title">🚀 Professional Experience</h3>
 
-            
+
             <div class="experience-item">
               <div class="experience-header">
                 <div class="job-title">Senior Cloud Architect</div>
@@ -648,26 +658,32 @@
                 <div class="date">January 2022 - Present</div>
               </div>
               <div class="achievement-list">
-                
-                <div class="achievement-item">Architected and implemented zero-trust security model for Fortune 500 client using Azure AD Premium and Microsoft Defender suite</div>
-                
-                <div class="achievement-item">Led migration of 50,000+ users from on-premises AD to Azure AD, reducing authentication issues by 85%</div>
-                
-                <div class="achievement-item">Designed multi-cloud disaster recovery solution spanning Azure, AWS, and GCP with 99.9% uptime SLA</div>
-                
-                <div class="achievement-item">Implemented automated compliance monitoring using Azure Policy and Azure Monitor, achieving 100% CIS compliance</div>
-                
-                <div class="achievement-item">Mentored junior architects and conducted security awareness training for 200+ employees</div>
-                
+
+                <div class="achievement-item">Architected and implemented zero-trust security model for Fortune 500
+                  client using Azure AD Premium and Microsoft Defender suite</div>
+
+                <div class="achievement-item">Led migration of 50,000+ users from on-premises AD to Azure AD, reducing
+                  authentication issues by 85%</div>
+
+                <div class="achievement-item">Designed multi-cloud disaster recovery solution spanning Azure, AWS, and
+                  GCP with 99.9% uptime SLA</div>
+
+                <div class="achievement-item">Implemented automated compliance monitoring using Azure Policy and Azure
+                  Monitor, achieving 100% CIS compliance</div>
+
+                <div class="achievement-item">Mentored junior architects and conducted security awareness training for
+                  200+ employees</div>
+
                 <div class="achievement-item">Reduced security incidents by 60% through proactive threat hunting</div>
-                
-                <div class="achievement-item">Saved €2.5M annually through cloud optimization and reserved instances</div>
-                
+
+                <div class="achievement-item">Saved €2.5M annually through cloud optimization and reserved instances
+                </div>
+
                 <div class="achievement-item">Implemented automated backup solutions reducing RTO by 75%</div>
-                
+
               </div>
             </div>
-            
+
             <div class="experience-item">
               <div class="experience-header">
                 <div class="job-title">Cybersecurity Consultant</div>
@@ -675,26 +691,32 @@
                 <div class="date">March 2019 - December 2021</div>
               </div>
               <div class="achievement-list">
-                
-                <div class="achievement-item">Conducted comprehensive security assessments for financial institutions under PSD2 and GDPR requirements</div>
-                
-                <div class="achievement-item">Designed and deployed Microsoft 365 security stack for enterprise clients, including Defender for Endpoint and Identity</div>
-                
-                <div class="achievement-item">Developed custom security monitoring solutions using Azure Sentinel and KQL queries</div>
-                
-                <div class="achievement-item">Led incident response for major data breaches, minimizing impact and ensuring regulatory compliance</div>
-                
-                <div class="achievement-item">Created security documentation and procedures for ISO 27001 certification</div>
-                
+
+                <div class="achievement-item">Conducted comprehensive security assessments for financial institutions
+                  under PSD2 and GDPR requirements</div>
+
+                <div class="achievement-item">Designed and deployed Microsoft 365 security stack for enterprise clients,
+                  including Defender for Endpoint and Identity</div>
+
+                <div class="achievement-item">Developed custom security monitoring solutions using Azure Sentinel and
+                  KQL queries</div>
+
+                <div class="achievement-item">Led incident response for major data breaches, minimizing impact and
+                  ensuring regulatory compliance</div>
+
+                <div class="achievement-item">Created security documentation and procedures for ISO 27001 certification
+                </div>
+
                 <div class="achievement-item">Achieved SOC 2 Type II compliance for 3 major clients</div>
-                
-                <div class="achievement-item">Developed automated vulnerability scanning reducing exposure time by 80%</div>
-                
+
+                <div class="achievement-item">Developed automated vulnerability scanning reducing exposure time by 80%
+                </div>
+
                 <div class="achievement-item">Trained 150+ IT professionals in cloud security best practices</div>
-                
+
               </div>
             </div>
-            
+
             <div class="experience-item">
               <div class="experience-header">
                 <div class="job-title">IT Infrastructure Manager</div>
@@ -702,26 +724,32 @@
                 <div class="date">June 2015 - February 2019</div>
               </div>
               <div class="achievement-list">
-                
-                <div class="achievement-item">Managed enterprise IT infrastructure serving 10,000+ users across 15 countries</div>
-                
-                <div class="achievement-item">Led migration from legacy systems to Microsoft 365, improving productivity by 40%</div>
-                
-                <div class="achievement-item">Implemented Azure AD Connect and Azure AD Premium for hybrid identity management</div>
-                
-                <div class="achievement-item">Developed business continuity and disaster recovery plans with 4-hour RTO</div>
-                
-                <div class="achievement-item">Managed vendor relationships and negotiated contracts saving €500K annually</div>
-                
+
+                <div class="achievement-item">Managed enterprise IT infrastructure serving 10,000+ users across 15
+                  countries</div>
+
+                <div class="achievement-item">Led migration from legacy systems to Microsoft 365, improving productivity
+                  by 40%</div>
+
+                <div class="achievement-item">Implemented Azure AD Connect and Azure AD Premium for hybrid identity
+                  management</div>
+
+                <div class="achievement-item">Developed business continuity and disaster recovery plans with 4-hour RTO
+                </div>
+
+                <div class="achievement-item">Managed vendor relationships and negotiated contracts saving €500K
+                  annually</div>
+
                 <div class="achievement-item">Successfully migrated 100+ applications to cloud with zero downtime</div>
-                
-                <div class="achievement-item">Implemented multi-factor authentication reducing unauthorized access by 95%</div>
-                
+
+                <div class="achievement-item">Implemented multi-factor authentication reducing unauthorized access by
+                  95%</div>
+
                 <div class="achievement-item">Established ITIL-based service management processes</div>
-                
+
               </div>
             </div>
-            
+
             <div class="experience-item">
               <div class="experience-header">
                 <div class="job-title">Systems Administrator</div>
@@ -729,22 +757,26 @@
                 <div class="date">January 2011 - May 2015</div>
               </div>
               <div class="achievement-list">
-                
-                <div class="achievement-item">Administered Windows Server environments and Active Directory infrastructure</div>
-                
-                <div class="achievement-item">Implemented backup and recovery solutions using Veeam and Azure Backup</div>
-                
+
+                <div class="achievement-item">Administered Windows Server environments and Active Directory
+                  infrastructure</div>
+
+                <div class="achievement-item">Implemented backup and recovery solutions using Veeam and Azure Backup
+                </div>
+
                 <div class="achievement-item">Deployed and managed VMware virtualization environment</div>
-                
-                <div class="achievement-item">Provided technical support and troubleshooting for enterprise applications</div>
-                
-                <div class="achievement-item">Participated in infrastructure upgrade projects and capacity planning</div>
-                
+
+                <div class="achievement-item">Provided technical support and troubleshooting for enterprise applications
+                </div>
+
+                <div class="achievement-item">Participated in infrastructure upgrade projects and capacity planning
+                </div>
+
               </div>
             </div>
-            
+
           </div>
-            
+
 
           <!-- Key Metrics Section -->
           <div class="section">
@@ -771,5 +803,6 @@
         </div>
       </div>
     </div>
-  </body>
+</body>
+
 </html>

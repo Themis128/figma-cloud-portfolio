@@ -1,16 +1,20 @@
-import { FullConfig } from '@playwright/test'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-import fs from 'fs/promises'
-import path from 'path'
+import { exec } from 'node:child_process'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { promisify } from 'node:util'
+import type { FullConfig } from '@playwright/test'
 
 const execAsync = promisify(exec)
+
+// Import server process reference from global setup
+// Note: In a real implementation, you'd use a shared state management
+// For now, we'll clean up any running servers on the test ports
 
 /**
  * Global teardown for Playwright tests
  * Cleans up test environment and generates reports
  */
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown(_config: FullConfig) {
   console.log('🧹 Starting Playwright global teardown...')
 
   try {
@@ -30,7 +34,6 @@ async function globalTeardown(config: FullConfig) {
     await sendTestNotifications()
 
     console.log('✅ Global teardown completed successfully')
-
   } catch (error) {
     console.error('❌ Global teardown failed:', error)
     // Don't throw error in teardown to avoid masking test failures
@@ -67,10 +70,12 @@ async function generateTestSummary() {
       const summaryPath = path.join(process.cwd(), 'test-results', 'test-summary.json')
       await fs.writeFile(summaryPath, JSON.stringify(summary, null, 2))
 
-      console.log(`📈 Test Summary: ${summary.passed}/${summary.totalTests} passed (${summary.passRate}%)`)
+      console.log(
+        `📈 Test Summary: ${summary.passed}/${summary.totalTests} passed (${summary.passRate}%)`,
+      )
     }
-  } catch (error) {
-    console.warn('⚠️  Failed to generate test summary:', error.message)
+  } catch (_error) {
+    console.warn('⚠️  Failed to generate test summary:', _error.message)
   }
 }
 
@@ -106,7 +111,9 @@ async function archiveFailedTestArtifacts() {
         await moveFile(trace, path.join(archiveDir, path.basename(trace)))
       }
 
-      console.log(`📁 Archived ${screenshots.length + videos.length + traces.length} failed test artifacts`)
+      console.log(
+        `📁 Archived ${screenshots.length + videos.length + traces.length} failed test artifacts`,
+      )
     }
   } catch (error) {
     console.warn('⚠️  Failed to archive test artifacts:', error.message)
@@ -123,8 +130,8 @@ async function cleanupTempFiles() {
     if (await fileExists(reportsDir)) {
       const entries = await fs.readdir(reportsDir, { withFileTypes: true })
       const reportDirs = entries
-        .filter(entry => entry.isDirectory())
-        .map(entry => ({
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => ({
           name: entry.name,
           path: path.join(reportsDir, entry.name),
           mtime: 0,
@@ -135,7 +142,7 @@ async function cleanupTempFiles() {
         try {
           const stats = await fs.stat(report.path)
           report.mtime = stats.mtime.getTime()
-        } catch (error) {
+        } catch (_error) {
           // Ignore stat errors
         }
       }
@@ -147,7 +154,7 @@ async function cleanupTempFiles() {
       for (const report of toDelete) {
         try {
           await execAsync(`rm -rf "${report.path}"`)
-        } catch (error) {
+        } catch (_error) {
           // Ignore deletion errors
         }
       }
@@ -189,7 +196,7 @@ async function checkForFailedTests(testResultsDir: string): Promise<boolean> {
       const results = JSON.parse(await fs.readFile(resultsPath, 'utf-8'))
       return (results.stats?.failed || 0) > 0
     }
-  } catch (error) {
+  } catch (_error) {
     // Ignore errors
   }
   return false
@@ -199,9 +206,9 @@ async function findFiles(dir: string, pattern: string): Promise<string[]> {
   try {
     const files = await fs.readdir(dir, { recursive: true })
     return files
-      .filter(file => typeof file === 'string' && file.includes(pattern))
-      .map(file => path.join(dir, file as string))
-  } catch (error) {
+      .filter((file) => typeof file === 'string' && file.includes(pattern))
+      .map((file) => path.join(dir, file as string))
+  } catch (_error) {
     return []
   }
 }
@@ -210,7 +217,7 @@ async function moveFile(src: string, dest: string): Promise<void> {
   try {
     await fs.copyFile(src, dest)
     await fs.unlink(src)
-  } catch (error) {
+  } catch (_error) {
     // Ignore move errors
   }
 }

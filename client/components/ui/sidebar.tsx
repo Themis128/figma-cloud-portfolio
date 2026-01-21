@@ -1,7 +1,7 @@
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { PanelLeft } from 'lucide-react'
-import * as React from 'react'
+import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -78,12 +78,14 @@ const SidebarProvider = React.forwardRef<
         // This sets the cookie to keep the sidebar state.
         if ('cookieStore' in window) {
           // Use modern Cookie Store API if available
-          window.cookieStore.set(SIDEBAR_COOKIE_NAME, openState.toString(), {
+          // biome-ignore lint/suspicious/noExplicitAny: CookieStore types are incomplete
+          ;(window.cookieStore as any).set(SIDEBAR_COOKIE_NAME, openState.toString(), {
             path: '/',
-            maxAge: SIDEBAR_COOKIE_MAX_AGE,
+            expires: new Date(Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000),
           })
         } else {
           // Fallback to document.cookie for older browsers
+          // biome-ignore lint/suspicious/noDocumentCookie: Necessary fallback for browser compatibility
           document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
         }
       },

@@ -1,5 +1,6 @@
 import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
@@ -7,6 +8,8 @@ import { HoverButton, HoverCard } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
 
 export default function Contact() {
+  const { executeRecaptcha } = useGoogleReCaptcha()
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,16 +29,47 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Disable button immediately when form is submitted
     setIsSubmitting(true)
     setSubmitStatus('idle')
 
-    // Simulate form submission (replace with actual API call)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulate API delay
-      setSubmitStatus('success')
-      setFormData({ name: '', email: '', subject: '', message: '' })
-    } catch (_error) {
+      // Check if reCAPTCHA is available
+      if (!executeRecaptcha) {
+        console.error('reCAPTCHA not loaded')
+        setSubmitStatus('error')
+        // Keep button disabled for a short time to show feedback
+        setTimeout(() => setIsSubmitting(false), 2000)
+        return
+      }
+
+      // Execute reCAPTCHA
+      const recaptchaToken = await executeRecaptcha('contact_form_submit')
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      } else {
+        setSubmitStatus('error')
+        console.error('Form submission failed:', data.message)
+      }
+    } catch (error) {
       setSubmitStatus('error')
+      console.error('Form submission error:', error)
     } finally {
       setIsSubmitting(false)
     }
@@ -175,9 +209,7 @@ export default function Contact() {
 
                 {submitStatus === 'success' && (
                   <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                    <p className="text-green-400 font-medium">
-                      ✅ Message sent successfully! I'll get back to you within 24 hours.
-                    </p>
+                    <p className="text-green-400 font-medium">Message sent successfully!</p>
                   </div>
                 )}
 

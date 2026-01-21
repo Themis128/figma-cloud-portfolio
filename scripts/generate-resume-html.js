@@ -1,7 +1,7 @@
-import fs from 'fs'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { marked } from 'marked'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -31,7 +31,7 @@ function parseResumeMarkdown(markdownContent) {
 
   let currentSection = ''
   let currentItem = null
-  const inList = false
+  const _inList = false
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim()
@@ -75,7 +75,7 @@ function parseResumeMarkdown(markdownContent) {
       !line.startsWith('-') &&
       !line.startsWith('---')
     ) {
-      resume.summary += line + ' '
+      resume.summary += `${line} `
     } else if (currentSection === 'competencies') {
       if (line.startsWith('### ')) {
         const category = line.replace('### ', '')
@@ -83,7 +83,7 @@ function parseResumeMarkdown(markdownContent) {
         currentItem = category
       } else if (line.startsWith('- **')) {
         const skillLine = line.replace('- **', '').replace('**', '')
-        const [skill, description] = skillLine.split(': ')
+        const [skill, _description] = skillLine.split(': ')
         if (currentItem && resume.competencies[currentItem]) {
           resume.competencies[currentItem].push(skill.trim())
         }
@@ -96,7 +96,7 @@ function parseResumeMarkdown(markdownContent) {
       } else if (line.startsWith('- ')) {
         const skillLine = line.replace('- ', '')
         if (skillLine.includes('(')) {
-          const [skill, level] = skillLine.split(' (')
+          const [skill, _level] = skillLine.split(' (')
           if (currentItem && resume.competencies[currentItem]) {
             resume.competencies[currentItem].push(skill.trim())
           }

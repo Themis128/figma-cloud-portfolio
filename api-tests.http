@@ -1,0 +1,191 @@
+# Baltzakis Themistoklis Portfolio - API Testing
+# REST Client Configuration for Development
+#
+# Usage:
+# 1. Install REST Client extension
+# 2. Open this file in VS Code
+# 3. Click "Send Request" above any request
+# 4. Make sure your dev server is running: pnpm run dev:all
+#
+# Environment: Automatically uses 'development' from .vscode/settings.json
+# Base URL: http://localhost:3000 (configured in VS Code settings)
+
+## Variables
+@baseUrl = {{baseUrl}}
+
+## ============================================================================
+## HEALTH CHECKS
+## ============================================================================
+
+### Ping - Health Check (Direct URL Test)
+GET http://localhost:9999/api/ping
+
+### Ping - Health Check (Environment Variable)
+GET {{baseUrl}}/api/ping
+
+### Demo - Server Info
+GET {{baseUrl}}/api/demo
+
+## ============================================================================
+## CONTACT FORM
+## ============================================================================
+
+### Contact Form - Valid Submission
+POST {{baseUrl}}/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "subject": "Test Subject",
+  "message": "This is a test message from REST Client",
+  "recaptchaToken": "test-token"
+}
+
+### Contact Form - Missing Fields (Error Test)
+POST {{baseUrl}}/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User"
+}
+
+### Contact Form - Invalid Email (Error Test)
+POST {{baseUrl}}/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "invalid-email-format",
+  "subject": "Test Subject",
+  "message": "Valid message",
+  "recaptchaToken": "test-token"
+}
+
+## ============================================================================
+## RESUME DOWNLOAD
+## ============================================================================
+
+### Resume Download - GET (uses public/resume-content.md)
+GET {{baseUrl}}/api/resume/download
+
+### Resume Download - POST (custom data)
+POST {{baseUrl}}/api/resume/download
+Content-Type: application/json
+
+{
+  "name": "Themistoklis Baltzakis",
+  "title": "Cloud Architect & Cybersecurity Specialist",
+  "contact": {
+    "email": "baltzakis.themis@gmail.com",
+    "linkedin": "baltzakis-themis",
+    "website": "www.baltzakisthemis.com"
+  },
+  "summary": "Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments.",
+  "competencies": {
+    "Cloud Platforms & Infrastructure": [
+      "Microsoft Azure (Expert)",
+      "Amazon Web Services (Advanced)",
+      "Google Cloud Platform (Advanced)"
+    ],
+    "Identity & Access Management": [
+      "Azure Active Directory",
+      "Microsoft 365 Security",
+      "Federation & SSO"
+    ]
+  },
+  "experience": [
+    {
+      "title": "Senior Cloud Architect",
+      "company": "TechCorp Solutions | Athens, Greece",
+      "date": "January 2022 - Present",
+      "achievements": [
+        "Architected and implemented zero-trust security model for Fortune 500 client using Azure AD Premium and Microsoft Defender suite",
+        "Led migration of 50,000+ users from on-premises AD to Azure AD, reducing authentication issues by 85%"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "institution": "National Technical University of Athens, Greece",
+      "date": "2007 - 2011"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Microsoft Certified: Azure Solutions Architect Expert",
+      "issuer": "Microsoft",
+      "year": "2023"
+    }
+  ]
+}
+
+## ============================================================================
+## PUSH NOTIFICATIONS
+## ============================================================================
+
+### Get VAPID Public Key
+GET {{baseUrl}}/api/push-notifications?action=vapid-public-key
+
+### Register Push Subscription
+POST {{baseUrl}}/api/push-notifications
+Content-Type: application/json
+
+{
+  "endpoint": "https://fcm.googleapis.com/fcm/send/test-endpoint",
+  "keys": {
+    "p256dh": "test-p256dh-key",
+    "auth": "test-auth-key"
+  }
+}
+
+### Send Push Notification
+PUT {{baseUrl}}/api/push-notifications
+Content-Type: application/json
+
+{
+  "title": "Test Notification",
+  "body": "This is a test push notification from REST Client",
+  "icon": "/logo.jpg",
+  "badge": "/logo.jpg"
+}
+
+### Remove Push Subscription
+DELETE {{baseUrl}}/api/push-notifications
+Content-Type: application/json
+
+{
+  "endpoint": "https://fcm.googleapis.com/fcm/send/test-endpoint"
+}
+
+## ============================================================================
+## ERROR TESTING
+## ============================================================================
+
+### Invalid API Endpoint (404 Test)
+GET {{baseUrl}}/api/nonexistent
+
+### Contact Form - Too Long Subject (Validation Test)
+POST {{baseUrl}}/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "subject": "x".repeat(201),
+  "message": "Valid message",
+  "recaptchaToken": "test-token"
+}
+
+### Contact Form - Too Long Message (Validation Test)
+POST {{baseUrl}}/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "subject": "Test Subject",
+  "message": "x".repeat(10001),
+  "recaptchaToken": "test-token"
+}

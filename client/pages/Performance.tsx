@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { PerformanceDashboard } from '@/components/PerformanceDashboard'
+import { PushNotificationTester } from '@/components/PushNotificationTester'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
@@ -49,31 +50,57 @@ export default function Performance() {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Optimization Status</h3>
+              <h3 className="text-lg font-semibold mb-4">Test Status</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Image Optimization</span>
-                  <span className="text-green-500 text-sm">✅ Complete</span>
+                  <span className="text-sm">Vitest Tests</span>
+                  <span className="text-red-500 text-sm">❌ Failing</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Code Splitting</span>
-                  <span className="text-green-500 text-sm">✅ Complete</span>
+                  <span className="text-sm">Playwright Tests</span>
+                  <span className="text-green-500 text-sm">✅ Running</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Bundle Analysis</span>
-                  <span className="text-green-500 text-sm">✅ Complete</span>
+                  <span className="text-sm">Test Coverage</span>
+                  <span className="text-green-500 text-sm">✅ Full</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Caching Strategy</span>
-                  <span className="text-green-500 text-sm">✅ Complete</span>
+                  <span className="text-sm">CI/CD Pipeline</span>
+                  <span className="text-gray-500 text-sm">⏳ Pending</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Core Web Vitals</span>
-                  <span className="text-green-500 text-sm">✅ Monitoring</span>
+                  <span className="text-sm">Test Automation</span>
+                  <span className="text-green-500 text-sm">✅ Active</span>
                 </div>
               </div>
             </Card>
           </div>
+
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Optimization Status</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Image Optimization</span>
+                <span className="text-green-500 text-sm">✅ Complete</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Code Splitting</span>
+                <span className="text-green-500 text-sm">✅ Complete</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Bundle Analysis</span>
+                <span className="text-green-500 text-sm">✅ Complete</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Caching Strategy</span>
+                <span className="text-green-500 text-sm">✅ Complete</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Core Web Vitals</span>
+                <span className="text-green-500 text-sm">✅ Monitoring</span>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

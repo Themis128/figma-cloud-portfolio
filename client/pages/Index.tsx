@@ -1,11 +1,11 @@
 // Import components directly instead of lazy loading for now
 
-import { Globe as GlobeIcon, Linkedin, Mail } from 'lucide-react'
 import AIBrain from '@/components/AIBrain'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverButton, HoverIcon } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
+import { Globe as GlobeIcon, Linkedin, Mail } from 'lucide-react'
 
 export default function Index() {
   return (
@@ -65,11 +65,10 @@ export default function Index() {
                 </HoverButton>
                 <HoverButton>
                   <a
-                    href="/resume.pdf"
-                    download="Themistoklis_Baltzakis_Resume.pdf"
+                    href="/resume"
                     className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-white/30 hover:border-white/60 text-white/80 hover:text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-white/10 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-[44px] flex items-center justify-center"
                   >
-                    <span className="relative z-10">Download Resume</span>
+                    <span className="relative z-10">Build Resume</span>
                     <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300 rounded-md" />
                   </a>
                 </HoverButton>

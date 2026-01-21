@@ -27,12 +27,13 @@ export function SkeletonText({ lines = 1, className }: { lines?: number; classNa
 
   return (
     <div data-testid="skeleton-text" className={cn('space-y-2', className)}>
-      {Array.from({ length: lines }).map((_, i) => (
+      {Array.from({ length: lines }).map((_, index) => (
         <Skeleton
-          key={`skeleton-line-${lines}-${i}`}
+          // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton lines have stable order
+          key={`skeleton-line-${lines}-line-${index}`}
           className={cn(
             'h-4',
-            i === lines - 1 ? 'w-3/4' : 'w-full', // Last line is shorter
+            index === lines - 1 ? 'w-3/4' : 'w-full', // Last line is shorter
           )}
         />
       ))}
