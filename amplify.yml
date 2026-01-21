@@ -18,6 +18,23 @@ frontend:
     paths:
       - node_modules/**
 
+# Custom headers to fix MIME type issues
+customHeaders:
+  - pattern: '**/*.js'
+    headers:
+      - key: 'Content-Type'
+        value: 'application/javascript'
+  - pattern: '**/*.mjs'
+    headers:
+      - key: 'Content-Type'
+        value: 'application/javascript'
+  - pattern: '**/sw.js'
+    headers:
+      - key: 'Content-Type'
+        value: 'application/javascript'
+      - key: 'Service-Worker-Allowed'
+        value: '/'
+
 backend:
   phases:
     build:
