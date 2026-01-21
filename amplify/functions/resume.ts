@@ -1,3 +1,4 @@
+// @ts-ignore
 import chromium from '@sparticuz/chromium'
 import type { Handler } from 'aws-lambda'
 import puppeteer from 'puppeteer-core'

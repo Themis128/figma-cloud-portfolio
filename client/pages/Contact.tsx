@@ -1,11 +1,12 @@
-import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
-import { useState } from 'react'
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
-import { Link } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverButton, HoverCard } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
+import { submitContactForm } from '@/lib/api'
+import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
+import { useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { Link } from 'react-router-dom'
 
 export default function Contact() {
   const { executeRecaptcha } = useGoogleReCaptcha()
@@ -50,20 +51,12 @@ export default function Contact() {
         console.warn('reCAPTCHA not loaded, using test token')
       }
 
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          recaptchaToken,
-        }),
+      const response = await submitContactForm({
+        ...formData,
+        recaptchaToken,
       })
 
-      const data = await response.json()
-
-      if (response.ok && data.success) {
+      if (response.success) {
         setSubmitStatus('success')
         setFormData({ name: '', email: '', subject: '', message: '' })
         // Keep success state for a moment before re-enabling
@@ -73,7 +66,7 @@ export default function Contact() {
         }, 3000)
       } else {
         setSubmitStatus('error')
-        console.error('Form submission failed:', data.message)
+        console.error('Form submission failed:', response.message)
         // Keep button disabled for a short time to show error feedback
         setTimeout(() => setIsSubmitting(false), 2000)
       }

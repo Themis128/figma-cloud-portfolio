@@ -1,4 +1,5 @@
 import type { Handler } from 'aws-lambda'
+// @ts-ignore: No type definitions for 'web-push'
 import webpush from 'web-push'
 
 // VAPID keys for Web Push API
