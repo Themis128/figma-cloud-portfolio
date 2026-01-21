@@ -6,6 +6,8 @@ This document describes the implementation of Google reCAPTCHA v3 in the Baltzak
 
 reCAPTCHA v3 provides invisible bot protection by analyzing user interactions and assigning a score from 0.0 to 1.0, where 1.0 indicates a high likelihood of legitimate human interaction. The implementation protects the contact form from spam and abuse.
 
+**Note**: reCAPTCHA integration is optional. The application functions normally without valid keys, though bot protection will be disabled.
+
 ## Architecture
 
 ### Client-Side Implementation
@@ -72,18 +74,21 @@ The server validates reCAPTCHA tokens by calling Google's verification API.
    - Provides appropriate error messages
    - Logs verification failures for monitoring
 
-#### Code Example
+#### Server-Side Code Example
 
 ```typescript
 // Verify reCAPTCHA token
-const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body: new URLSearchParams({
-    secret: process.env.RECAPTCHA_SECRET_KEY,
-    response: recaptchaToken,
-  }),
-})
+const recaptchaResponse = await fetch(
+  'https://www.google.com/recaptcha/api/siteverify',
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      secret: process.env.RECAPTCHA_SECRET_KEY,
+      response: recaptchaToken,
+    }),
+  },
+)
 
 const recaptchaData = await recaptchaResponse.json()
 
@@ -110,10 +115,12 @@ if (recaptchaData.score < 0.5) {
 Add the following to your `.env` file:
 
 ```bash
-# reCAPTCHA Configuration
-RECAPTCHA_SITE_KEY=your_site_key_here
-RECAPTCHA_SECRET_KEY=your_secret_key_here
+# reCAPTCHA Configuration (optional - app works without it)
+VITE_RECAPTCHA_SITE_KEY=your_site_key_here
+VITE_RECAPTCHA_SECRET_KEY=your_secret_key_here
 ```
+
+**Note**: If no valid reCAPTCHA keys are provided, the application will function normally but without bot protection. Contact forms will use test tokens for submission.
 
 ### Getting reCAPTCHA Keys
 
@@ -129,6 +136,7 @@ RECAPTCHA_SECRET_KEY=your_secret_key_here
 Processes contact form submissions with reCAPTCHA verification.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -140,6 +148,7 @@ Processes contact form submissions with reCAPTCHA verification.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -148,6 +157,7 @@ Processes contact form submissions with reCAPTCHA verification.
 ```
 
 **Error Responses:**
+
 - `400`: Missing required fields or reCAPTCHA verification failed
 - `500`: Server error
 

@@ -32,44 +32,51 @@ const queryClient = new QueryClient()
 
 const App = () => {
   const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || import.meta.env.RECAPTCHA_SITE_KEY
+  const hasRecaptcha = recaptchaKey && recaptchaKey.trim() !== ''
 
-  return (
-    <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey || ''}>
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <PWAInstallButton />
-              <PWAUpdateNotification />
-              <BrowserRouter
-                future={{
-                  v7_startTransition: true,
-                  v7_relativeSplatPath: true,
-                }}
-              >
-                <GoogleAnalytics />
-                <PerformanceMonitor />
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/product" element={<Product />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/performance" element={<Performance />} />
-                    <Route path="/resume" element={<Resume />} />
-                    <Route path="/settings" element={<Settings />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </BrowserRouter>
-            </TooltipProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
+  const AppContent = () => (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <PWAInstallButton />
+            <PWAUpdateNotification />
+            <BrowserRouter
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true,
+              }}
+            >
+              <GoogleAnalytics />
+              <PerformanceMonitor />
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/product" element={<Product />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/performance" element={<Performance />} />
+                  <Route path="/resume" element={<Resume />} />
+                  <Route path="/settings" element={<Settings />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  )
+
+  return hasRecaptcha ? (
+    <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
+      <AppContent />
     </GoogleReCaptchaProvider>
+  ) : (
+    <AppContent />
   )
 }
 
