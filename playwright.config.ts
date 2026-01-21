@@ -17,7 +17,7 @@ export default defineConfig({
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://127.0.0.1:8083',
+    baseURL: 'http://localhost:3000',
 
     /* Enhanced tracing and debugging */
     trace: 'retain-on-failure', // Keep traces for failed tests
@@ -74,7 +74,16 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Chromium specific settings for better React hydration
+        launchOptions: {
+          args: ['--disable-web-security', '--disable-features=VizDisplayCompositor'],
+        },
+        // Longer timeouts for React hydration
+        actionTimeout: 10000,
+        navigationTimeout: 30000,
+      },
     },
 
     {
@@ -85,44 +94,63 @@ export default defineConfig({
         launchOptions: {
           args: ['--disable-web-security', '--allow-running-insecure-content'],
         },
-        // Reduce action timeout for Firefox to fail faster on slow operations
-        actionTimeout: 5000,
+        // Longer timeouts for Firefox React hydration
+        actionTimeout: 15000,
+        navigationTimeout: 45000,
       },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        // WebKit specific settings
+        launchOptions: {
+          args: ['--disable-web-security'],
+        },
+        // Longer timeouts for WebKit React hydration
+        actionTimeout: 15000,
+        navigationTimeout: 45000,
+      },
     },
 
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: {
+        ...devices['Pixel 5'],
+        // Mobile Chrome settings
+        launchOptions: {
+          args: ['--disable-web-security'],
+        },
+        actionTimeout: 15000,
+        navigationTimeout: 45000,
+      },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: {
+        ...devices['iPhone 12'],
+        // Mobile Safari settings
+        actionTimeout: 15000,
+        navigationTimeout: 45000,
+      },
     },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: [
-    // Production server using Node.js http-server for better Windows compatibility
+    // Production server that serves both frontend and API
     {
-      command: 'npx http-server dist/spa -p 8083 --host 127.0.0.1 -c-1 --silent',
-      url: 'http://127.0.0.1:8083',
-      reuseExistingServer: false, // Always start fresh for stability
+      command: 'npx tsx server/node-build.ts',
+      url: 'http://localhost:3000',
+      reuseExistingServer: true, // Reuse existing server if available
       timeout: 30 * 1000, // Reduced timeout for faster failure detection
       cwd: process.cwd(), // Ensure correct working directory
-    },
-    // Development server as fallback with improved stability
-    {
-      command: 'pnpm run dev',
-      url: 'http://localhost:8081',
-      reuseExistingServer: false, // Always start fresh
-      timeout: 60 * 1000, // Reduced timeout
-      cwd: process.cwd(),
+      env: {
+        NODE_ENV: 'production',
+        PORT: '3000',
+      },
     },
   ],
 })

@@ -45,14 +45,10 @@ async function globalSetup(_config: FullConfig) {
       return false
     }
 
-    // Check production frontend server with retries
-    const frontendReady = await checkServer('http://127.0.0.1:8083', 'Production Frontend server')
-    if (!frontendReady) {
-      console.log('⚠️  Production server not ready, trying development server...')
-      const devFrontendReady = await checkServer('http://localhost:8081', 'Development Frontend server')
-      if (!devFrontendReady) {
-        throw new Error('Both production and development frontend servers failed health check')
-      }
+    // Check production server with retries
+    const serverReady = await checkServer('http://localhost:3000', 'Production server')
+    if (!serverReady) {
+      throw new Error('Production server failed health check')
     }
 
     // Check backend API with retries (optional)
@@ -67,7 +63,7 @@ async function globalSetup(_config: FullConfig) {
     const page = await browser.newPage()
 
     try {
-      await page.goto('http://127.0.0.1:8083', { waitUntil: 'networkidle' })
+      await page.goto('http://localhost:3000', { waitUntil: 'networkidle' })
       await page.waitForTimeout(2000) // Allow time for service worker registration
 
       // Verify critical elements are present

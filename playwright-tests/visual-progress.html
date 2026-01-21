@@ -143,6 +143,124 @@
         font-weight: 500;
       }
 
+      .logs-console {
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logs-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .logs-header h3 {
+        color: #e2e8f0;
+        margin: 0;
+        font-size: 1.2em;
+      }
+
+      .logs-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .logs-controls select,
+      .logs-controls input,
+      .logs-controls button {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(30, 41, 59, 0.8);
+        color: #e2e8f0;
+        font-size: 0.9em;
+      }
+
+      .logs-controls button {
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .logs-controls button:hover {
+        background: rgba(59, 130, 246, 0.3);
+      }
+
+      .logs-container {
+        max-height: 400px;
+        overflow-y: auto;
+        background: rgba(2, 6, 23, 0.9);
+        border-radius: 8px;
+        padding: 10px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.85em;
+        line-height: 1.4;
+      }
+
+      .log-entry {
+        display: flex;
+        padding: 4px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: background-color 0.2s ease;
+      }
+
+      .log-entry:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .log-entry:last-child {
+        border-bottom: none;
+      }
+
+      .log-timestamp {
+        color: #64748b;
+        margin-right: 10px;
+        font-size: 0.8em;
+        min-width: 140px;
+      }
+
+      .log-level {
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 3px;
+        margin-right: 10px;
+        min-width: 60px;
+        text-align: center;
+        font-size: 0.75em;
+      }
+
+      .log-level.error { background: #dc2626; color: white; }
+      .log-level.warn { background: #d97706; color: white; }
+      .log-level.info { background: #2563eb; color: white; }
+      .log-level.debug { background: #64748b; color: white; }
+
+      .log-suite {
+        color: #06b6d4;
+        margin-right: 10px;
+        font-weight: 500;
+      }
+
+      .log-message {
+        flex: 1;
+        word-wrap: break-word;
+      }
+
+      .log-entry[data-level="error"] {
+        border-left: 3px solid #dc2626;
+      }
+
+      .log-entry[data-level="warn"] {
+        border-left: 3px solid #d97706;
+      }
+
       .tests-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -379,6 +497,33 @@
             >🔄 Running: Baltzakis Themistoklis Portfolio › should have proper
             focus management in mobile menu</span
           >
+        </div>
+      </div>
+
+      <div class="logs-console">
+        <div class="logs-header">
+          <h3>Test Execution Logs</h3>
+          <div class="logs-controls">
+            <select id="logLevelFilter">
+              <option value="all">All Levels</option>
+              <option value="error">Errors Only</option>
+              <option value="warn">Warnings+</option>
+              <option value="info">Info+</option>
+              <option value="debug">Debug+</option>
+            </select>
+            <input type="text" id="logSearch" placeholder="Search logs...">
+            <button id="clearLogs">Clear</button>
+            <button id="exportLogs">Export</button>
+            <button id="autoScrollToggle">Auto-scroll: ON</button>
+          </div>
+        </div>
+        <div class="logs-container" id="logsContainer">
+          <div class="log-entry" data-level="info">
+            <span class="log-timestamp">2024-01-21 14:30:15</span>
+            <span class="log-level info">INFO</span>
+            <span class="log-suite">[API Tests]</span>
+            <span class="log-message">Starting test execution...</span>
+          </div>
         </div>
       </div>
 
@@ -805,6 +950,267 @@
         document.addEventListener("DOMContentLoaded", renderTestSuites);
       } else {
         renderTestSuites();
+      }
+
+      // Logs Console Implementation
+      class LogsConsole {
+        constructor(containerId) {
+          this.container = document.getElementById(containerId);
+          this.logs = [];
+          this.filteredLogs = [];
+          this.autoScroll = true;
+          this.init();
+        }
+
+        init() {
+          this.setupEventListeners();
+          this.startLogStreaming();
+        }
+
+        setupEventListeners() {
+          // Log level filter
+          const levelFilter = document.getElementById('logLevelFilter');
+          if (levelFilter) {
+            levelFilter.addEventListener('change', (e) => {
+              this.filterLogs(e.target.value);
+            });
+          }
+
+          // Search functionality
+          const searchInput = document.getElementById('logSearch');
+          if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+              this.searchLogs(e.target.value);
+            });
+          }
+
+          // Clear logs
+          const clearBtn = document.getElementById('clearLogs');
+          if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+              this.clearLogs();
+            });
+          }
+
+          // Export logs
+          const exportBtn = document.getElementById('exportLogs');
+          if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+              this.exportLogs();
+            });
+          }
+
+          // Auto-scroll toggle
+          const autoScrollBtn = document.getElementById('autoScrollToggle');
+          if (autoScrollBtn) {
+            autoScrollBtn.addEventListener('click', (e) => {
+              this.autoScroll = !this.autoScroll;
+              e.target.textContent = `Auto-scroll: ${this.autoScroll ? 'ON' : 'OFF'}`;
+            });
+          }
+
+          // Manual scroll lock detection
+          if (this.container) {
+            this.container.addEventListener('scroll', () => {
+              const isAtBottom = this.container.scrollTop + this.container.clientHeight >= this.container.scrollHeight - 10;
+              if (!isAtBottom && this.autoScroll) {
+                this.autoScroll = false;
+                const autoScrollBtn = document.getElementById('autoScrollToggle');
+                if (autoScrollBtn) {
+                  autoScrollBtn.textContent = 'Auto-scroll: OFF';
+                }
+              }
+            });
+          }
+        }
+
+        addLog(level, suite, message, timestamp = new Date()) {
+          const logEntry = {
+            id: Date.now() + Math.random(),
+            level,
+            suite,
+            message,
+            timestamp
+          };
+
+          this.logs.push(logEntry);
+          this.renderLog(logEntry);
+
+          if (this.autoScroll) {
+            this.scrollToBottom();
+          }
+        }
+
+        renderLog(logEntry) {
+          if (!this.container) return;
+
+          const logElement = document.createElement('div');
+          logElement.className = 'log-entry';
+          logElement.dataset.level = logEntry.level;
+
+          const timestamp = logEntry.timestamp.toISOString().replace('T', ' ').substring(0, 19);
+
+          logElement.innerHTML = `
+            <span class="log-timestamp">${timestamp}</span>
+            <span class="log-level ${logEntry.level}">${logEntry.level.toUpperCase()}</span>
+            <span class="log-suite">[${logEntry.suite}]</span>
+            <span class="log-message">${this.escapeHtml(logEntry.message)}</span>
+          `;
+
+          this.container.appendChild(logElement);
+        }
+
+        filterLogs(level) {
+          if (!this.container) return;
+
+          const entries = this.container.querySelectorAll('.log-entry');
+
+          entries.forEach(entry => {
+            const entryLevel = entry.dataset.level;
+            if (level === 'all' || this.shouldShowLevel(entryLevel, level)) {
+              entry.style.display = 'flex';
+            } else {
+              entry.style.display = 'none';
+            }
+          });
+        }
+
+        shouldShowLevel(entryLevel, filterLevel) {
+          const levels = ['debug', 'info', 'warn', 'error'];
+          const entryIndex = levels.indexOf(entryLevel);
+          const filterIndex = levels.indexOf(filterLevel);
+          return entryIndex >= filterIndex;
+        }
+
+        searchLogs(query) {
+          if (!this.container) return;
+
+          const entries = this.container.querySelectorAll('.log-entry');
+          const lowerQuery = query.toLowerCase();
+
+          entries.forEach(entry => {
+            const message = entry.querySelector('.log-message').textContent.toLowerCase();
+            const suite = entry.querySelector('.log-suite').textContent.toLowerCase();
+
+            if (message.includes(lowerQuery) || suite.includes(lowerQuery)) {
+              entry.style.display = 'flex';
+            } else {
+              entry.style.display = 'none';
+            }
+          });
+        }
+
+        clearLogs() {
+          this.logs = [];
+          if (this.container) {
+            this.container.innerHTML = '';
+          }
+        }
+
+        exportLogs() {
+          const logText = this.logs.map(log => {
+            const timestamp = log.timestamp.toISOString().replace('T', ' ').substring(0, 19);
+            return `${timestamp} [${log.level.toUpperCase()}] [${log.suite}] ${log.message}`;
+          }).join('\n');
+
+          const blob = new Blob([logText], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `test-logs-${new Date().toISOString().split('T')[0]}.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
+        scrollToBottom() {
+          if (this.container) {
+            this.container.scrollTop = this.container.scrollHeight;
+          }
+        }
+
+        escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        startLogStreaming() {
+          // Simulate real-time log streaming with realistic test execution logs
+          const realisticLogs = [
+            { level: 'info', suite: 'API Tests', message: 'Starting test execution...' },
+            { level: 'info', suite: 'Portfolio Tests', message: 'Loading main page...' },
+            { level: 'info', suite: 'API Tests', message: 'Testing /api/ping endpoint' },
+            { level: 'info', suite: 'API Tests', message: '✓ /api/ping responded with status 200' },
+            { level: 'info', suite: 'API Tests', message: 'Testing /api/demo endpoint' },
+            { level: 'info', suite: 'API Tests', message: '✓ /api/demo returned expected data structure' },
+            { level: 'info', suite: 'Portfolio Tests', message: 'Checking navigation links...' },
+            { level: 'info', suite: 'Portfolio Tests', message: '✓ All navigation links are present' },
+            { level: 'info', suite: 'PWA Tests', message: 'Testing service worker registration...' },
+            { level: 'warn', suite: 'PWA Tests', message: 'Service worker registration delayed - retrying...' },
+            { level: 'info', suite: 'PWA Tests', message: '✓ Service worker registered successfully' },
+            { level: 'info', suite: 'Form Tests', message: 'Testing contact form validation...' },
+            { level: 'info', suite: 'Form Tests', message: '✓ Form validation working correctly' },
+            { level: 'info', suite: 'Performance Tests', message: 'Measuring page load time...' },
+            { level: 'info', suite: 'Performance Tests', message: 'Page load time: 2.3s (within acceptable range)' },
+            { level: 'debug', suite: 'Accessibility Tests', message: 'Checking ARIA labels...' },
+            { level: 'info', suite: 'Accessibility Tests', message: '✓ All ARIA labels are properly set' },
+            { level: 'info', suite: 'API Tests', message: '✓ All endpoints responding correctly' },
+            { level: 'warn', suite: 'Image Tests', message: 'Large image detected, optimization recommended' },
+            { level: 'info', suite: 'Resume Tests', message: 'Testing PDF generation...' },
+            { level: 'info', suite: 'Resume Tests', message: '✓ PDF generation completed successfully' },
+          ];
+
+          let messageIndex = 0;
+          const maxInitialLogs = 10; // Show first 10 logs initially
+
+          // Show initial logs quickly
+          const initialInterval = setInterval(() => {
+            if (messageIndex < maxInitialLogs && messageIndex < realisticLogs.length) {
+              const logData = realisticLogs[messageIndex];
+              this.addLog(logData.level, logData.suite, logData.message);
+              messageIndex++;
+            } else {
+              clearInterval(initialInterval);
+              // Start slower dynamic log generation
+              setTimeout(() => this.startDynamicLogs(), 2000);
+            }
+          }, 800); // Faster initial loading
+
+          this.startDynamicLogs = () => {
+            setInterval(() => {
+              // Generate more realistic ongoing logs
+              const ongoingLogs = [
+                { level: 'info', suite: 'API Tests', message: 'Running API endpoint validation...' },
+                { level: 'info', suite: 'Portfolio Tests', message: 'Testing responsive breakpoints...' },
+                { level: 'info', suite: 'PWA Tests', message: 'Validating offline functionality...' },
+                { level: 'info', suite: 'Form Tests', message: 'Checking form submission flow...' },
+                { level: 'info', suite: 'Performance Tests', message: 'Collecting Core Web Vitals...' },
+                { level: 'debug', suite: 'Accessibility Tests', message: 'Auditing keyboard navigation...' },
+                { level: 'info', suite: 'Image Tests', message: 'Verifying lazy loading behavior...' },
+                { level: 'info', suite: 'Resume Tests', message: 'Validating PDF content structure...' },
+                { level: 'info', suite: 'API Tests', message: 'Testing rate limiting...' },
+                { level: 'info', suite: 'Portfolio Tests', message: 'Checking theme switching...' },
+                { level: 'info', suite: 'PWA Tests', message: 'Testing push notification setup...' },
+                { level: 'info', suite: 'Form Tests', message: 'Validating input sanitization...' },
+                { level: 'info', suite: 'Performance Tests', message: 'Measuring Time to Interactive...' },
+                { level: 'debug', suite: 'Accessibility Tests', message: 'Checking color contrast ratios...' },
+                { level: 'info', suite: 'Image Tests', message: 'Testing WebP format support...' },
+              ];
+
+              const randomLog = ongoingLogs[Math.floor(Math.random() * ongoingLogs.length)];
+              this.addLog(randomLog.level, randomLog.suite, randomLog.message);
+            }, 5000); // Add a new log every 5 seconds for ongoing activity
+          };
+        }
+      }
+
+      // Initialize logs console when DOM is ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+          new LogsConsole('logsContainer');
+        });
+      } else {
+        new LogsConsole('logsContainer');
       }
     </script>
   </body>

@@ -20,5 +20,11 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+    // Ensure React uses development build for testing
+    'process.env.NODE_ENV': JSON.stringify('development'),
+  },
+  optimizeDeps: {
+    // Ensure React dev build is used
+    include: ['react', 'react-dom'],
   },
 })

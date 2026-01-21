@@ -24,7 +24,7 @@
 
 ## Main README
 
-# Baltzakis Themistoklis Portfolio
+## Baltzakis Themistoklis Portfolio
 
 A production-ready full-stack React application for a professional portfolio, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod, PWA capabilities, and Web Push API notifications.
 
@@ -40,7 +40,7 @@ A production-ready full-stack React application for a professional portfolio, fe
 
 ## Project Structure
 
-```
+```text
 client/                   # React SPA frontend
   pages/                # Route components (Index.tsx = home)
   components/ui/        # Pre-built UI component library
@@ -153,7 +153,7 @@ This project is private and proprietary.
 
 ## Author
 
-**Themistoklis Baltzakis**
+### Themistoklis Baltzakis
 
 - Portfolio: [Your Portfolio URL]
 - LinkedIn: [Your LinkedIn]
@@ -163,7 +163,7 @@ This project is private and proprietary.
 
 ## Agents
 
-# Baltzakis Themistoklis Portfolio
+## Baltzakis Themistoklis Portfolio
 
 A production-ready full-stack React application for a professional portfolio, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod, PWA capabilities, and Web Push API notifications.
 
@@ -182,7 +182,7 @@ While the starter comes with a express server, only create endpoint when strictl
 
 ## Project Structure
 
-```
+```text
 client/                   # React SPA frontend
 ├── pages/                # Route components (Index.tsx = home)
 ├── components/ui/        # Pre-built UI component library
@@ -391,7 +391,7 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 
 ## AI Agents
 
-# AI Agents Implementation
+## AI Agents Implementation
 
 This document describes the AI agent features implemented in the Baltzakis Themistoklis Portfolio application, leveraging Microsoft Agent Framework for streamlined AI agent and workflow development.
 
@@ -567,13 +567,13 @@ When adding new agent features:
 
 ---
 
-_Last Updated: January 20, 2026_
+**Last Updated: January 20, 2026**
 
 ---
 
 ## Figma Integration
 
-# Figma Integration
+## Figma Integration
 
 This document describes the Figma integration features in the Baltzakis Themistoklis Portfolio application, enabling seamless import and management of design assets from Figma Cloud.
 
@@ -761,13 +761,13 @@ When adding Figma integration features:
 
 ---
 
-_Last Updated: January 20, 2026_
+**Last Updated: January 20, 2026**
 
 ---
 
 ## Google Analytics Integration
 
-# Google Analytics 4 (GA4) Integration
+## Google Analytics 4 (GA4) Integration
 
 This document describes the implementation of Google Analytics 4 in the Baltzakis Themistoklis portfolio application.
 
@@ -1087,7 +1087,7 @@ ReactGA.gtag('event', 'optimize.callback', {
 
 ## Image Optimization
 
-# 🖼️ Image Optimization Guide
+## 🖼️ Image Optimization Guide
 
 This document outlines the comprehensive image optimization implementation for this portfolio project.
 
@@ -1352,7 +1352,7 @@ npm run dev
 
 ## PWA
 
-# Progressive Web App (PWA) Implementation
+## Progressive Web App (PWA) Implementation
 
 This document describes the PWA implementation for the Baltzakis Themistoklis portfolio application.
 
