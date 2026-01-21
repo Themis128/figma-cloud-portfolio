@@ -1,11 +1,11 @@
 // Import components directly instead of lazy loading for now
 
+import { Globe as GlobeIcon, Linkedin, Mail } from 'lucide-react'
 import AIBrain from '@/components/AIBrain'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverButton, HoverIcon } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
-import { Globe as GlobeIcon, Linkedin, Mail } from 'lucide-react'
 
 export default function Index() {
   return (

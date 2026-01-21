@@ -21,7 +21,11 @@ export const handleContactForm: RequestHandler = async (req, res) => {
     const sanitizedMessage = message.trim()
 
     // Length validation
-    if (sanitizedName.length > 100 || sanitizedSubject.length > 200 || sanitizedMessage.length > 10000) {
+    if (
+      sanitizedName.length > 100 ||
+      sanitizedSubject.length > 200 ||
+      sanitizedMessage.length > 10000
+    ) {
       const response: ContactFormResponse = {
         success: false,
         message: 'Input exceeds maximum length limits.',
@@ -60,7 +64,11 @@ export const handleContactForm: RequestHandler = async (req, res) => {
     const allInputs = [sanitizedName, sanitizedEmail, sanitizedSubject, sanitizedMessage].join(' ')
     for (const pattern of dangerousPatterns) {
       if (pattern.test(allInputs)) {
-        console.warn('Potentially malicious input detected:', { name: sanitizedName, email: sanitizedEmail, subject: sanitizedSubject })
+        console.warn('Potentially malicious input detected:', {
+          name: sanitizedName,
+          email: sanitizedEmail,
+          subject: sanitizedSubject,
+        })
         const response: ContactFormResponse = {
           success: false,
           message: 'Invalid input detected. Please check your submission.',

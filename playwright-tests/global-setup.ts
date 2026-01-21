@@ -1,11 +1,11 @@
-import { exec, spawn } from 'node:child_process'
+import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 import { chromium, type FullConfig } from '@playwright/test'
 
 const execAsync = promisify(exec)
 
-// Global server process reference for cleanup
-let serverProcess: ReturnType<typeof spawn> | null = null
+// Global server process reference for cleanup (reserved for future use)
+// const serverProcess: ReturnType<typeof spawn> | null = null
 
 /**
  * Global setup for Playwright tests
@@ -25,7 +25,7 @@ async function globalSetup(_config: FullConfig) {
           console.log(`🔍 Checking ${name} (attempt ${attempt}/${maxRetries})...`)
           const response = await fetch(url, {
             signal: AbortSignal.timeout(5000), // 5 second timeout
-            headers: { 'Cache-Control': 'no-cache' }
+            headers: { 'Cache-Control': 'no-cache' },
           })
 
           if (response.ok) {
@@ -38,7 +38,7 @@ async function globalSetup(_config: FullConfig) {
           console.log(`❌ ${name} check failed (attempt ${attempt}):`, error.message)
           if (attempt < maxRetries) {
             console.log(`⏳ Waiting 2 seconds before retry...`)
-            await new Promise(resolve => setTimeout(resolve, 2000))
+            await new Promise((resolve) => setTimeout(resolve, 2000))
           }
         }
       }

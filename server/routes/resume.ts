@@ -1,7 +1,7 @@
-import type { Request, Response } from 'express'
-import { marked } from 'marked'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import type { Request, Response } from 'express'
+import { marked } from 'marked'
 import puppeteer from 'puppeteer'
 
 // Configure marked for better HTML output
