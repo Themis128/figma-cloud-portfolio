@@ -67,7 +67,8 @@ export function ThemeProvider({
         'meta[name="theme-color"]',
       ) as HTMLMetaElement | null
       if (metaThemeColor) {
-        metaThemeColor.setAttribute('content', resolvedTheme === 'dark' ? '#0f172a' : '#ffffff')
+        const color = resolvedTheme === 'dark' ? '#0f172a' : '#ffffff'
+        metaThemeColor.setAttribute('content', color)
       }
     }
 
@@ -85,10 +86,12 @@ export function ThemeProvider({
 
   // Save theme to localStorage
   const handleSetTheme = (newTheme: Theme) => {
+    console.log('ThemeProvider: Setting theme to', newTheme)
     if (typeof window === 'undefined') return
 
     try {
       window.localStorage.setItem(storageKey, newTheme)
+      console.log('ThemeProvider: Saved to localStorage')
     } catch (error) {
       console.warn('Failed to save theme to localStorage:', error)
     }

@@ -105,7 +105,7 @@ export default function Navigation() {
                 <div className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-sm" />
               </div>
             </div>
-            <span className="text-white/90 font-semibold text-xs md:text-sm tracking-wider uppercase hidden lg:block">
+            <span className="text-foreground/90 font-semibold text-xs md:text-sm tracking-wider uppercase hidden lg:block">
               Themistoklis Baltzakis
             </span>
           </Link>
@@ -113,42 +113,42 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-8 lg:gap-12">
             <Link
               to="/"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
               aria-label="Home"
             >
               Home
             </Link>
             <Link
               to="/about"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
               aria-label="About"
             >
               About
             </Link>
             <Link
               to="/product"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
               aria-label="Experience"
             >
               Experience
             </Link>
             <Link
               to="/resume"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
               aria-label="Resume"
             >
               Resume
             </Link>
             <Link
               to="/contact"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
               aria-label="Contact"
             >
               Contact
             </Link>
             <Link
               to="/settings"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
               aria-label="Settings"
             >
               Settings
@@ -167,7 +167,7 @@ export default function Navigation() {
             </div>
             <button
               type="button"
-              className="md:hidden text-white/90 hover:text-cyan-400 transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="md:hidden text-foreground/90 hover:text-cyan-400 transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={toggleMobileMenu}
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
@@ -206,7 +206,7 @@ export default function Navigation() {
         <div
           ref={mobileMenuRef}
           id="mobile-menu"
-          className={`md:hidden absolute top-full left-0 right-0 bg-navy-900/95 backdrop-blur-md border-t border-white/10 transition-all duration-300 ${
+          className={`md:hidden absolute top-full left-0 right-0 bg-popover/95 backdrop-blur-md border-t border-border transition-all duration-300 ${
             isMobileMenuOpen
               ? 'opacity-100 visible translate-y-0'
               : 'opacity-0 invisible -translate-y-4'
@@ -220,7 +220,7 @@ export default function Navigation() {
             <h2 className="sr-only">Navigation Menu</h2>
             <Link
               to="/"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
               onClick={closeMobileMenu}
               aria-label="Home"
             >
@@ -228,7 +228,7 @@ export default function Navigation() {
             </Link>
             <Link
               to="/about"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
               onClick={closeMobileMenu}
               aria-label="About"
             >
@@ -236,7 +236,7 @@ export default function Navigation() {
             </Link>
             <Link
               to="/product"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
               onClick={closeMobileMenu}
               aria-label="Experience"
             >
@@ -244,7 +244,7 @@ export default function Navigation() {
             </Link>
             <Link
               to="/resume"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
               onClick={closeMobileMenu}
               aria-label="Resume"
             >
@@ -252,7 +252,7 @@ export default function Navigation() {
             </Link>
             <Link
               to="/contact"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
               onClick={closeMobileMenu}
               aria-label="Contact"
             >
@@ -260,13 +260,13 @@ export default function Navigation() {
             </Link>
             <Link
               to="/settings"
-              className="text-white/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-navy-900 rounded-md"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
               onClick={closeMobileMenu}
               aria-label="Settings"
             >
               Settings
             </Link>
-            <div className="pt-2 border-t border-white/10 flex gap-2">
+            <div className="pt-2 border-t border-border flex gap-2">
               <ThemeToggle />
               <PWAInstallButton />
             </div>
