@@ -2,7 +2,7 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ production ]
+    branches: [production]
   workflow_dispatch:
 
 permissions:
@@ -21,60 +21,60 @@ jobs:
     environment: production
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: Install Chrome for Puppeteer (PDF generation)
-      run: |
-        pnpm exec puppeteer browsers install chrome
-      env:
-        PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
+      - name: Install Chrome for Puppeteer (PDF generation)
+        run: |
+          pnpm exec puppeteer browsers install chrome
+        env:
+          PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
-    - name: Build application
-      run: pnpm build
-      env:
-        PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
+      - name: Build application
+        run: pnpm build
+        env:
+          PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Deploy to Amplify (Production)
-      run: |
-        npm install -g @aws-amplify/cli
-        amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --yes
-      env:
-        NODE_ENV: production
-        VITE_APP_ENV: production
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Deploy to Amplify (Production)
+        run: |
+          npm install -g @aws-amplify/cli
+          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --yes --verbose
+        env:
+          NODE_ENV: production
+          VITE_APP_ENV: production
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
-    - name: Create deployment notification
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: `🚀 Production Deployment ${new Date().toISOString().split('T')[0]}`,
-            body: `## Production Deployment Successful\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Deployed by:** @${context.actor}\n\n### Deployment Details\n- ✅ Build completed\n- ✅ Tests passed\n- ✅ Security scan passed\n- ✅ Deployed to AWS Amplify\n\nCheck AWS Amplify console for deployment URL.`,
-            labels: ['deployment', 'production']
-          })
+      - name: Create deployment notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚀 Production Deployment ${new Date().toISOString().split('T')[0]}`,
+              body: `## Production Deployment Successful\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Deployed by:** @${context.actor}\n\n### Deployment Details\n- ✅ Build completed\n- ✅ Tests passed\n- ✅ Security scan passed\n- ✅ Deployed to AWS Amplify\n\nCheck AWS Amplify console for deployment URL.`,
+              labels: ['deployment', 'production']
+            })
 
   health-check:
     runs-on: ubuntu-latest
@@ -82,10 +82,10 @@ jobs:
     if: always() && needs.deploy-amplify-production.result == 'success'
 
     steps:
-    - name: Health check
-      run: |
-        echo "Production deployment completed successfully"
-        echo "Health checks would be implemented here"
+      - name: Health check
+        run: |
+          echo "Production deployment completed successfully"
+          echo "Health checks would be implemented here"
 
   rollback:
     runs-on: ubuntu-latest
@@ -93,33 +93,33 @@ jobs:
     if: failure() && github.event_name == 'push'
 
     steps:
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Rollback deployment
-      run: |
-        npm install -g @aws-amplify/cli
-        amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback --yes
-      env:
-        NODE_ENV: production
-        VITE_APP_ENV: production
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Rollback deployment
+        run: |
+          npm install -g @aws-amplify/cli
+          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback --yes --verbose
+        env:
+          NODE_ENV: production
+          VITE_APP_ENV: production
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
-    - name: Create rollback notification
-      uses: actions/github-script@v7
-      if: always()
-      with:
-        script: |
-          github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: `⚠️ Production Rollback ${new Date().toISOString().split('T')[0]}`,
-            body: `## Production Deployment Failed - Rollback Initiated\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Triggered by:** @${context.actor}\n\n### Action Required\n- 🔍 Check deployment logs\n- 🐛 Fix issues in codebase\n- 🚀 Redeploy after fixes\n\nCheck AWS Amplify console for details.`,
-            labels: ['deployment', 'production', 'rollback', 'urgent']
-          })
+      - name: Create rollback notification
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `⚠️ Production Rollback ${new Date().toISOString().split('T')[0]}`,
+              body: `## Production Deployment Failed - Rollback Initiated\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Triggered by:** @${context.actor}\n\n### Action Required\n- 🔍 Check deployment logs\n- 🐛 Fix issues in codebase\n- 🚀 Redeploy after fixes\n\nCheck AWS Amplify console for details.`,
+              labels: ['deployment', 'production', 'rollback', 'urgent']
+            })
