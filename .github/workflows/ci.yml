@@ -89,10 +89,19 @@ jobs:
       run: pnpm install --frozen-lockfile
 
     - name: Install Chrome for Puppeteer (PDF generation)
-      run: npx puppeteer browsers install chrome
+      run: |
+        # Install Chrome browser for Puppeteer
+        pnpm exec puppeteer browsers install chrome
+        # Verify installation
+        echo "Chrome installed at:"
+        find ~/.cache/puppeteer -name "chrome" -type f 2>/dev/null || echo "Chrome binary not found in default cache"
+      env:
+        PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
     - name: Build application
       run: pnpm build
+      env:
+        PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
