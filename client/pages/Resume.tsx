@@ -3,6 +3,9 @@ import { ArrowLeft, Download, Save } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import Navigation from '@/components/Navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -110,32 +113,39 @@ export default function Resume() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-            </Link>
-            <h1 className="text-3xl font-bold text-slate-800">Resume Builder</h1>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => toast.info('Resume saved locally')}>
-              <Save className="w-4 h-4 mr-2" />
-              Save Draft
-            </Button>
-            <Button onClick={handleDownload} disabled={isGenerating}>
-              <Download className="w-4 h-4 mr-2" />
-              {isGenerating ? 'Generating...' : 'Download PDF'}
-            </Button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
+      {/* Circuit background */}
+      <CircuitBackground />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Navigation */}
+      <Navigation />
+
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Home
+                </Button>
+              </Link>
+              <h1 className="text-3xl font-bold text-white">Resume Builder</h1>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => toast.info('Resume saved locally')} className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                <Save className="w-4 h-4 mr-2" />
+                Save Draft
+              </Button>
+              <Button onClick={handleDownload} disabled={isGenerating} className="bg-cyan-400 hover:bg-cyan-500 text-white">
+                <Download className="w-4 h-4 mr-2" />
+                {isGenerating ? 'Generating...' : 'Download PDF'}
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Personal Information */}
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
@@ -347,6 +357,7 @@ export default function Resume() {
               ))}
             </div>
           </Card>
+          </div>
         </div>
       </div>
     </div>
