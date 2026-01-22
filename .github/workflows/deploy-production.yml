@@ -49,9 +49,9 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Deploy to Amplify (Production)
-      uses: webfactory/amplify-cli-action@v2
-      with:
-        amplify-command: publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main
+      run: |
+        npm install -g @aws-amplify/cli
+        amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --yes
       env:
         NODE_ENV: production
         VITE_APP_ENV: production
@@ -96,9 +96,9 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Rollback deployment
-      uses: webfactory/amplify-cli-action@v2
-      with:
-        amplify-command: publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback
+      run: |
+        npm install -g @aws-amplify/cli
+        amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback --yes
       env:
         NODE_ENV: production
         VITE_APP_ENV: production
