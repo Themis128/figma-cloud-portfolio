@@ -17,7 +17,7 @@ export default defineConfig({
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.NODE_ENV === 'production' ? 'http://localhost:3000' : 'http://localhost:8081',
+    baseURL: 'http://localhost:8081',
 
     /* Enhanced tracing and debugging */
     trace: 'retain-on-failure', // Keep traces for failed tests
@@ -42,17 +42,20 @@ export default defineConfig({
   /* Enhanced reporting for issue tracking and resolution */
   reporter: [
     ['line'], // Console output with Inter font styling
-    ['html', {
-      open: 'never',
-      // Custom HTML report styling to match app fonts
-      attachmentsBaseURL: 'file://' + process.cwd() + '/playwright-report/',
-    }], // HTML report for detailed analysis
+    [
+      'html',
+      {
+        open: 'never',
+        // Custom HTML report styling to match app fonts
+        attachmentsBaseURL: 'file://' + process.cwd() + '/playwright-report/',
+      },
+    ], // HTML report for detailed analysis
     ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration
     ['junit', { outputFile: 'test-results/junit.xml' }], // JUnit for external tools
   ],
 
   /* Global setup and teardown for test environment preparation */
-  globalSetup: './playwright-tests/global-setup.ts',
+  // globalSetup: './playwright-tests/global-setup.ts',
   globalTeardown: './playwright-tests/global-teardown.ts',
 
   /* Test execution metadata */
@@ -82,7 +85,10 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         // Chromium specific settings for better React hydration
         launchOptions: {
-          args: ['--disable-web-security', '--disable-features=VizDisplayCompositor'],
+          args: [
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+          ],
         },
         // Longer timeouts for React hydration
         actionTimeout: 10000,
@@ -143,18 +149,18 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: [
-    // Production server that serves both frontend and API
-    {
-      command: 'npx tsx server/node-build.ts',
-      url: 'http://localhost:3000',
-      reuseExistingServer: true, // Reuse existing server if available
-      timeout: 30 * 1000, // Reduced timeout for faster failure detection
-      cwd: process.cwd(), // Ensure correct working directory
-      env: {
-        NODE_ENV: 'production',
-        PORT: '3000',
-      },
-    },
-  ],
+  // webServer: [
+  //   // Production server that serves both frontend and API
+  //   {
+  //     command: 'npx tsx server/node-build.ts',
+  //     url: 'http://localhost:3000',
+  //     reuseExistingServer: true, // Reuse existing server if available
+  //     timeout: 30 * 1000, // Reduced timeout for faster failure detection
+  //     cwd: process.cwd(), // Ensure correct working directory
+  //     env: {
+  //       NODE_ENV: 'production',
+  //       PORT: '3000',
+  //     },
+  //   },
+  // ],
 })

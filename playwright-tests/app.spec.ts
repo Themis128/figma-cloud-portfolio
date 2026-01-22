@@ -516,6 +516,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
         console.log(' Network idle - all resources loaded')
       } catch (networkError) {
         console.log('� Network idle timeout, continuing anyway')
+        console.log('Network error details:', networkError.message)
       }
 
       // Check if JavaScript is executing
@@ -1393,22 +1394,13 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     })
 
     test('should load performance page with dashboard', async ({ page }) => {
-      // Check that the performance page loads
-      await page.waitForSelector('h1', { timeout: 10000 })
+      // Check that the performance page loads with the correct title
+      await expect(
+        page.locator('h1').filter({ hasText: 'Performance Dashboard' }),
+      ).toBeVisible()
 
-      // Check for any heading or main content
-      const headings = page.locator('h1, h2, h3')
-      if ((await headings.count()) > 0) {
-        await expect(headings.first()).toBeVisible()
-      }
-
-      // Check back navigation if it exists
-      const backButtons = page
-        .locator('button, a')
-        .filter({ hasText: /back|home/i })
-      if ((await backButtons.count()) > 0) {
-        await expect(backButtons.first()).toBeVisible()
-      }
+      // Check back navigation button
+      await expect(page.getByText('Back to Home')).toBeVisible()
     })
 
     test('should display performance dashboard', async ({ page }) => {
@@ -1453,18 +1445,23 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     })
 
     test('should display performance tips', async ({ page }) => {
-      // Check that the performance page loads and has some content
-      await page.waitForSelector('h1', { timeout: 10000 })
+      // Check that the performance page loads and has the performance tips section
+      await expect(
+        page.locator('h1').filter({ hasText: 'Performance Dashboard' }),
+      ).toBeVisible()
 
-      // Look for any text content on the page
-      const pageText = await page.locator('body').textContent()
-      expect(pageText?.length).toBeGreaterThan(10) // Should have some content
+      // Check for performance tips heading
+      await expect(page.getByText('Performance Tips')).toBeVisible()
 
-      // Check for any headings or sections
-      const headings = page.locator('h1, h2, h3, h4, h5, h6')
-      if ((await headings.count()) > 0) {
-        await expect(headings.first()).toBeVisible()
-      }
+      // Check for some performance tip content within the Performance Tips section
+      const performanceTipsSection = page
+        .locator('h3')
+        .filter({ hasText: 'Performance Tips' })
+        .locator('..')
+        .locator('..')
+      await expect(performanceTipsSection.getByText('LCP')).toBeVisible()
+      await expect(performanceTipsSection.getByText('CLS')).toBeVisible()
+      await expect(performanceTipsSection.getByText('FCP')).toBeVisible()
     })
 
     test('should display optimization status', async ({ page }) => {

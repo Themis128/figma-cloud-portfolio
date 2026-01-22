@@ -4,14 +4,13 @@ frontend:
     preBuild:
       commands:
         - npm install -g pnpm
-        - pnpm install
+        - pnpm install --frozen-lockfile
     build:
       commands:
-        - echo "Building client application..."
-        - pnpm run build:resume
-        - pnpm run build:client
+        - echo "Building application..."
+        - pnpm build
   artifacts:
-    baseDirectory: dist
+    baseDirectory: dist/spa
     files:
       - '**/*'
   cache:
