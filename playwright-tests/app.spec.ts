@@ -1,9 +1,7 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test'
 
 test.describe('Baltzakis Themistoklis Portfolio', () => {
-  test('should load the main page with comprehensive performance metrics', async ({
-    page,
-  }) => {
+  test('should load the main page with comprehensive performance metrics', async ({ page }) => {
     // Capture all console messages
     const consoleMessages: Array<{ type: string; text: string }> = []
     page.on('console', (msg) => {
@@ -22,8 +20,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     // Performance assertion - page should load within reasonable time (adjusted for different browsers)
     // Firefox tends to be slower, so we allow more time
-    const isFirefox =
-      page.context().browser()?.browserType().name() === 'firefox'
+    const isFirefox = page.context().browser()?.browserType().name() === 'firefox'
     const maxLoadTime = isFirefox ? 5000 : 3000
     expect(loadTime).toBeLessThan(maxLoadTime)
 
@@ -106,8 +103,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
           const subtitleText = await subtitle.textContent()
           if (
             subtitleText &&
-            (subtitleText.includes('Cloud') ||
-              subtitleText.includes('Architect'))
+            (subtitleText.includes('Cloud') || subtitleText.includes('Architect'))
           ) {
             subtitleFound = true
             break
@@ -120,19 +116,11 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     // Subtitle is optional - page should still work without it
     if (!subtitleFound) {
-      console.log(
-        'Subtitle not found with expected selectors - this is acceptable',
-      )
+      console.log('Subtitle not found with expected selectors - this is acceptable')
     }
 
     // Check for main content areas with multiple selectors
-    const mainSelectors = [
-      'main',
-      '[role="main"]',
-      '#main-content',
-      '.main-content',
-      'article',
-    ]
+    const mainSelectors = ['main', '[role="main"]', '#main-content', '.main-content', 'article']
     let mainFound = false
     for (const selector of mainSelectors) {
       try {
@@ -258,9 +246,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     await expect(h1).toHaveCount(1)
   })
 
-  test('should have proper focus management in mobile menu', async ({
-    page,
-  }) => {
+  test('should have proper focus management in mobile menu', async ({ page }) => {
     await page.goto('/')
     await page.setViewportSize({ width: 375, height: 667 })
 
@@ -522,9 +508,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       // Check if JavaScript is executing
       const jsWorking = await page.evaluate(() => {
         try {
-          return (
-            typeof window !== 'undefined' && typeof document !== 'undefined'
-          )
+          return typeof window !== 'undefined' && typeof document !== 'undefined'
         } catch {
           return false
         }
@@ -546,10 +530,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
       // Strategy 1: Check for React root element content
       try {
-        const rootContent = await page.$eval(
-          '#root',
-          (el) => el.innerHTML.length > 100,
-        )
+        const rootContent = await page.$eval('#root', (el) => el.innerHTML.length > 100)
         if (rootContent) {
           console.log(' React root has content')
           reactReady = true
@@ -601,9 +582,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(page.locator('body')).toBeVisible()
     })
 
-    test('should display contact form with all required fields', async ({
-      page,
-    }) => {
+    test('should display contact form with all required fields', async ({ page }) => {
       // Check form is visible
       await expect(page.locator('form')).toBeVisible()
 
@@ -614,9 +593,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(page.locator('#message')).toBeVisible()
 
       // Check submit button
-      await expect(
-        page.getByRole('button', { name: 'Send Message' }),
-      ).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Send Message' })).toBeVisible()
 
       // Check required field indicators
       await expect(page.getByText('* Required fields')).toBeVisible()
@@ -640,9 +617,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(messageField).toHaveAttribute('required')
     })
 
-    test('should fill and submit contact form successfully', async ({
-      page,
-    }) => {
+    test('should fill and submit contact form successfully', async ({ page }) => {
       // Fill form fields
       await page.fill('#name', 'John Doe')
       await page.fill('#email', 'john.doe@example.com')
@@ -712,9 +687,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
       await page.keyboard.press('Tab')
       // Should focus on submit button
-      await expect(
-        page.getByRole('button', { name: 'Send Message' }),
-      ).toBeFocused()
+      await expect(page.getByRole('button', { name: 'Send Message' })).toBeFocused()
     })
 
     test('should display contact information correctly', async ({ page }) => {
@@ -745,10 +718,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
         name: /baltzakisthemis\.com/i,
       })
       await expect(portfolioLink).toBeVisible()
-      await expect(portfolioLink).toHaveAttribute(
-        'href',
-        'https://www.baltzakisthemis.com',
-      )
+      await expect(portfolioLink).toHaveAttribute('href', 'https://www.baltzakisthemis.com')
     })
 
     test('should display quick action links', async ({ page }) => {
@@ -784,9 +754,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(page.locator('#message')).toHaveAttribute('id', 'message')
     })
 
-    test('should handle responsive design on contact page', async ({
-      page,
-    }) => {
+    test('should handle responsive design on contact page', async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 })
       await expect(page.locator('form')).toBeVisible()
@@ -842,9 +810,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       } catch {
         // If no message appears, that's acceptable - the form may be blocked by reCAPTCHA
         // or the submission may be asynchronous
-        console.log(
-          'No immediate feedback message - form submission may be asynchronous',
-        )
+        console.log('No immediate feedback message - form submission may be asynchronous')
 
         // Just verify the page is still functional
         await expect(page.locator('body')).toBeVisible()
@@ -861,10 +827,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       const longMessage = 'A'.repeat(1000)
       await page.fill('#name', 'Very Long Name That Might Cause Issues')
       await page.fill('#email', 'very-long-email-address@example-domain.co.uk')
-      await page.fill(
-        '#subject',
-        'A Very Long Subject Line That Tests Input Limits',
-      )
+      await page.fill('#subject', 'A Very Long Subject Line That Tests Input Limits')
       await page.fill('#message', longMessage)
 
       // Form should still be submittable
@@ -921,11 +884,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       const themeButton = page
         .locator('button')
         .filter({ hasText: /Toggle theme|theme/i })
-        .or(
-          page
-            .locator('button')
-            .filter({ has: page.locator('.lucide-sun, .lucide-moon') }),
-        )
+        .or(page.locator('button').filter({ has: page.locator('.lucide-sun, .lucide-moon') }))
         .first()
 
       // Theme toggle is optional - skip test if not found
@@ -948,18 +907,14 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       const _initialTheme = initialClasses?.includes('dark') ? 'dark' : 'light'
 
       // Find theme toggle dropdown trigger - may not exist
-      const _themeTrigger = page
-        .locator('button[data-testid="theme-toggle"]')
-        .first()
+      const _themeTrigger = page.locator('button[data-testid="theme-toggle"]').first()
 
       // Theme toggle functionality may not be fully implemented yet
       // Just check that the page loads without errors
       await expect(page.locator('h1')).toBeVisible()
     })
 
-    test('should persist theme preference in localStorage', async ({
-      page,
-    }) => {
+    test('should persist theme preference in localStorage', async ({ page }) => {
       await page.goto('/')
       await page.waitForSelector('h1', { timeout: 10000 })
 
@@ -967,9 +922,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.evaluate(() => localStorage.removeItem('theme'))
 
       // Find theme toggle dropdown trigger - may not exist
-      const _themeTrigger = page
-        .locator('button[data-testid="theme-toggle"]')
-        .first()
+      const _themeTrigger = page.locator('button[data-testid="theme-toggle"]').first()
 
       // Just verify the page loads
       await expect(page.locator('h1')).toBeVisible()
@@ -1002,9 +955,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       expect(htmlClasses).toBeTruthy()
     })
 
-    test('should update meta theme-color for mobile browsers', async ({
-      page,
-    }) => {
+    test('should update meta theme-color for mobile browsers', async ({ page }) => {
       await page.goto('/')
       await page.waitForSelector('h1', { timeout: 10000 })
 
@@ -1022,9 +973,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.waitForSelector('h1', { timeout: 10000 })
 
       // Look for dropdown theme toggle - may not exist
-      const dropdownToggle = page
-        .locator('button[data-testid="theme-toggle"]')
-        .first()
+      const dropdownToggle = page.locator('button[data-testid="theme-toggle"]').first()
 
       if (await dropdownToggle.isVisible()) {
         // Just verify the dropdown toggle exists and is clickable
@@ -1033,16 +982,12 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       }
     })
 
-    test('should handle keyboard navigation in theme dropdown', async ({
-      page,
-    }) => {
+    test('should handle keyboard navigation in theme dropdown', async ({ page }) => {
       await page.goto('/')
       await page.waitForSelector('h1', { timeout: 10000 })
 
       // Find dropdown toggle - may not exist
-      const dropdownToggle = page
-        .locator('button[data-testid="theme-toggle"]')
-        .first()
+      const dropdownToggle = page.locator('button[data-testid="theme-toggle"]').first()
 
       if (await dropdownToggle.isVisible()) {
         // Just verify the dropdown toggle can be focused
@@ -1051,9 +996,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       }
     })
 
-    test('should handle theme changes with prefers-color-scheme media query', async ({
-      page,
-    }) => {
+    test('should handle theme changes with prefers-color-scheme media query', async ({ page }) => {
       await page.goto('/')
       await page.waitForSelector('h1', { timeout: 10000 })
 
@@ -1117,9 +1060,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.waitForSelector('h1', { timeout: 10000 })
 
       // Just verify the page loads
-      const _themeButton = page
-        .locator('button[data-testid="theme-toggle"]')
-        .first()
+      const _themeButton = page.locator('button[data-testid="theme-toggle"]').first()
       // Theme button may not exist - don't fail
       await expect(page.locator('h1')).toBeVisible()
     })
@@ -1131,9 +1072,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.waitForSelector('h1', { timeout: 10000 })
     })
 
-    test('should load about page with professional content', async ({
-      page,
-    }) => {
+    test('should load about page with professional content', async ({ page }) => {
       // Check page title and main heading
       await expect(page.locator('h1')).toContainText(/about|About/i)
       await expect(page.locator('h1')).toBeVisible()
@@ -1145,45 +1084,29 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(expertiseText.first()).toBeVisible()
 
       // Check key focus areas
-      await expect(
-        page.getByRole('heading', { name: 'Cloud Architecture' }),
-      ).toBeVisible()
-      await expect(
-        page.getByRole('heading', { name: 'Cybersecurity' }),
-      ).toBeVisible()
-      await expect(
-        page.getByRole('heading', { name: 'AI/ML Integration' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Cloud Architecture' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Cybersecurity' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'AI/ML Integration' })).toBeVisible()
 
       // Check skills section
-      await expect(
-        page.getByRole('heading', { name: 'Top Skills' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Top Skills' })).toBeVisible()
       await expect(page.locator('text=/Azure AD/').first()).toBeVisible()
       await expect(page.locator('text=/CISSP/').first()).toBeVisible()
 
       // Check certifications
-      await expect(
-        page.getByRole('heading', { name: 'Certifications' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Certifications' })).toBeVisible()
       await expect(page.locator('text=/Zero Trust/').first()).toBeVisible()
 
       // Check languages
-      await expect(
-        page.getByRole('heading', { name: 'Languages' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Languages' })).toBeVisible()
       await expect(page.locator('text=/English/').first()).toBeVisible()
       await expect(page.locator('text=/Greek/').first()).toBeVisible()
 
       // Check honors and awards
-      await expect(
-        page.getByRole('heading', { name: 'Honors & Awards' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Honors & Awards' })).toBeVisible()
     })
 
-    test('should display contact information on about page', async ({
-      page,
-    }) => {
+    test('should display contact information on about page', async ({ page }) => {
       // Check for contact-related content (may be in different sections)
       const contactElements = page.locator(
         'a[href*="linkedin"], a[href*="baltzakis"], a[href*="gmail"]',
@@ -1259,9 +1182,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     test('should load settings page with all sections', async ({ page }) => {
       // Check main heading using role selector to avoid strict mode violation
-      await expect(
-        page.getByRole('heading', { name: 'Settings' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
       await expect(page.getByText('Customize your experience')).toBeVisible()
 
       // Check main sections - just verify page loads with some content
@@ -1292,9 +1213,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     test('should handle animation settings', async ({ page }) => {
       // Check for any switches or toggles on the settings page
-      const switches = page.locator(
-        '[role="switch"], input[type="checkbox"], input[type="radio"]',
-      )
+      const switches = page.locator('[role="switch"], input[type="checkbox"], input[type="radio"]')
 
       // If switches exist, test them
       if ((await switches.count()) > 0) {
@@ -1308,9 +1227,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     test('should handle notification settings', async ({ page }) => {
       // Check for any notification-related elements
-      const notificationElements = page.locator(
-        'text=/notification|subscribe|push/i',
-      )
+      const notificationElements = page.locator('text=/notification|subscribe|push/i')
 
       // If notification elements exist, test them
       if ((await notificationElements.count()) > 0) {
@@ -1331,60 +1248,38 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(page.getByText('Data Management')).toBeVisible()
 
       // Check buttons
-      await expect(
-        page.getByRole('button', { name: 'Export Data' }),
-      ).toBeVisible()
-      await expect(
-        page.getByRole('button', { name: 'Clear Cache' }),
-      ).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Export Data' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Clear Cache' })).toBeVisible()
     })
 
     test('should display about information', async ({ page }) => {
       // Check version information using more specific selectors
-      await expect(
-        page.locator('label').filter({ hasText: 'Version' }),
-      ).toBeVisible()
+      await expect(page.locator('label').filter({ hasText: 'Version' })).toBeVisible()
       await expect(page.getByText('1.0.0')).toBeVisible()
 
-      await expect(
-        page.locator('label').filter({ hasText: 'Framework' }),
-      ).toBeVisible()
+      await expect(page.locator('label').filter({ hasText: 'Framework' })).toBeVisible()
       await expect(page.getByText('React + Vite')).toBeVisible()
 
-      await expect(
-        page.locator('label').filter({ hasText: 'PWA' }),
-      ).toBeVisible()
+      await expect(page.locator('label').filter({ hasText: 'PWA' })).toBeVisible()
       await expect(page.getByText('Enabled')).toBeVisible()
 
       // Check action buttons
-      await expect(
-        page.getByRole('button', { name: 'Check for Updates' }),
-      ).toBeVisible()
-      await expect(
-        page.getByRole('button', { name: 'View Changelog' }),
-      ).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Check for Updates' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'View Changelog' })).toBeVisible()
     })
 
-    test('should handle responsive design on settings page', async ({
-      page,
-    }) => {
+    test('should handle responsive design on settings page', async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 })
-      await expect(
-        page.getByRole('heading', { name: 'Settings' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
       // Test tablet viewport
       await page.setViewportSize({ width: 768, height: 1024 })
-      await expect(
-        page.getByRole('heading', { name: 'Settings' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
       // Test desktop viewport
       await page.setViewportSize({ width: 1920, height: 1080 })
-      await expect(
-        page.getByRole('heading', { name: 'Settings' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
     })
   })
 
@@ -1395,9 +1290,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     test('should load performance page with dashboard', async ({ page }) => {
       // Check that the performance page loads with the correct title
-      await expect(
-        page.locator('h1').filter({ hasText: 'Performance Dashboard' }),
-      ).toBeVisible()
+      await expect(page.locator('h1').filter({ hasText: 'Performance Dashboard' })).toBeVisible()
 
       // Check back navigation button
       await expect(page.getByText('Back to Home')).toBeVisible()
@@ -1408,9 +1301,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.waitForSelector('h1', { timeout: 10000 })
 
       // Check for any performance-related content
-      const performanceContent = page.locator(
-        'text=/performance|metrics|dashboard|web vitals/i',
-      )
+      const performanceContent = page.locator('text=/performance|metrics|dashboard|web vitals/i')
 
       // If performance content exists, check it
       if ((await performanceContent.count()) > 0) {
@@ -1425,9 +1316,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     test('should display push notification tester', async ({ page }) => {
       // Check for any push notification related content
-      const pushContent = page.locator(
-        'text=/push|notification|subscribe|tester/i',
-      )
+      const pushContent = page.locator('text=/push|notification|subscribe|tester/i')
 
       // If push content exists, check it
       if ((await pushContent.count()) > 0) {
@@ -1446,9 +1335,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
     test('should display performance tips', async ({ page }) => {
       // Check that the performance page loads and has the performance tips section
-      await expect(
-        page.locator('h1').filter({ hasText: 'Performance Dashboard' }),
-      ).toBeVisible()
+      await expect(page.locator('h1').filter({ hasText: 'Performance Dashboard' })).toBeVisible()
 
       // Check for performance tips heading
       await expect(page.getByText('Performance Tips')).toBeVisible()
@@ -1558,9 +1445,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
       // Check that content is still visible after scroll
       // Use role selector to avoid strict mode violation
-      await expect(
-        page.getByRole('heading', { name: 'Certifications' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Certifications' })).toBeVisible()
       await expect(page.getByText('Languages')).toBeVisible()
     })
 
@@ -1605,16 +1490,12 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       expect(['default', 'granted', 'denied']).toContain(permission)
     })
 
-    test('should display push notification tester on performance page', async ({
-      page,
-    }) => {
+    test('should display push notification tester on performance page', async ({ page }) => {
       await page.goto('/performance')
       await page.waitForSelector('h1', { timeout: 10000 })
 
       // Check for any push notification related content
-      const pushContent = page.locator(
-        'text=/push|notification|subscribe|tester/i',
-      )
+      const pushContent = page.locator('text=/push|notification|subscribe|tester/i')
 
       // If push content exists, check it
       if ((await pushContent.count()) > 0) {
@@ -1631,9 +1512,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.goto('/')
 
       // Check for PWA install button
-      const _installButton = page
-        .locator('button')
-        .filter({ hasText: /install|download|get app/i })
+      const _installButton = page.locator('button').filter({ hasText: /install|download|get app/i })
 
       // Button visibility depends on browser support and installation state
       // Just verify page loads
@@ -1666,9 +1545,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.goto('/')
 
       // Look for resume generation elements
-      const _resumeElements = page
-        .locator('button, a')
-        .filter({ hasText: /resume|cv|download/i })
+      const _resumeElements = page.locator('button, a').filter({ hasText: /resume|cv|download/i })
 
       // Resume functionality may be in different locations
       // Just verify page loads without errors
@@ -1691,18 +1568,14 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.setViewportSize({ width: 375, height: 667 })
 
       // Look for mobile menu button using specific testid
-      const mobileMenuButton = page.locator(
-        '[data-testid="mobile-menu-toggle"]',
-      )
+      const mobileMenuButton = page.locator('[data-testid="mobile-menu-toggle"]')
 
       if (await mobileMenuButton.isVisible()) {
         // Click to open menu
         await mobileMenuButton.click()
 
         // Check menu is open
-        const menu = page.locator(
-          '[role="dialog"], [role="menu"], .mobile-menu',
-        )
+        const menu = page.locator('[role="dialog"], [role="menu"], .mobile-menu')
         await expect(menu).toBeVisible()
 
         // Close menu
@@ -1743,9 +1616,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.goto('/')
 
       // Look for skeleton components during loading
-      const _skeletons = page.locator(
-        '[class*="skeleton"], [data-testid*="skeleton"]',
-      )
+      const _skeletons = page.locator('[class*="skeleton"], [data-testid*="skeleton"]')
 
       // Skeletons may or may not be visible depending on loading state
       // Just verify page loads
@@ -1876,9 +1747,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
       // Should have at least some ARIA landmarks or proper semantic elements
       const landmarkCount = await landmarks.count()
-      const semanticElements = await page
-        .locator('main, nav, header, footer')
-        .count()
+      const semanticElements = await page.locator('main, nav, header, footer').count()
 
       // Either ARIA landmarks or semantic HTML should be present
       expect(landmarkCount + semanticElements).toBeGreaterThan(0)
@@ -1888,9 +1757,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.goto('/')
 
       // Check for screen reader only content (may be hidden but should exist)
-      const srContent = page.locator(
-        '.sr-only, [aria-label], [aria-labelledby]',
-      )
+      const srContent = page.locator('.sr-only, [aria-label], [aria-labelledby]')
 
       // Should have some screen reader accessible content
       await expect(srContent.first()).toBeAttached()
@@ -1913,9 +1780,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(page.locator('body')).toBeVisible()
     })
 
-    test('should handle performance dashboard interactions', async ({
-      page,
-    }) => {
+    test('should handle performance dashboard interactions', async ({ page }) => {
       await page.goto('/performance')
 
       // Look for expandable performance sections

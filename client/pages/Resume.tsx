@@ -1,3 +1,8 @@
+import type { ResumeData } from '@shared/api'
+import { ArrowLeft, Download, Save } from 'lucide-react'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import CircuitBackground from '@/components/CircuitBackground'
 import Navigation from '@/components/Navigation'
 import { Button } from '@/components/ui/button'
@@ -6,11 +11,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { generateResumePDF } from '@/lib/api'
-import type { ResumeData } from '@shared/api'
-import { ArrowLeft, Download, Save } from 'lucide-react'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { toast } from 'sonner'
 
 const defaultResume: ResumeData = {
   name: 'Themistoklis Baltzakis',
@@ -33,11 +33,7 @@ const defaultResume: ResumeData = {
       'Microsoft 365 Security',
       'Federation & SSO',
     ],
-    'Cybersecurity & Compliance': [
-      'Security Frameworks',
-      'Threat Detection',
-      'Risk Management',
-    ],
+    'Cybersecurity & Compliance': ['Security Frameworks', 'Threat Detection', 'Risk Management'],
   },
   experience: [
     {
@@ -94,10 +90,7 @@ export default function Resume() {
     }
   }
 
-  const updateResume = (
-    field: keyof ResumeData,
-    value: ResumeData[keyof ResumeData],
-  ) => {
+  const updateResume = (field: keyof ResumeData, value: ResumeData[keyof ResumeData]) => {
     setResume((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -156,9 +149,7 @@ export default function Resume() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Personal Information */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Personal Information
-              </h2>
+              <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="name">Full Name</Label>
@@ -206,9 +197,7 @@ export default function Resume() {
 
             {/* Professional Summary */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Professional Summary
-              </h2>
+              <h2 className="text-xl font-semibold mb-4">Professional Summary</h2>
               <div>
                 <Label htmlFor="summary">Summary</Label>
                 <Textarea
@@ -223,15 +212,10 @@ export default function Resume() {
 
             {/* Experience */}
             <Card className="p-6 lg:col-span-2">
-              <h2 className="text-xl font-semibold mb-4">
-                Professional Experience
-              </h2>
+              <h2 className="text-xl font-semibold mb-4">Professional Experience</h2>
               <div className="space-y-4">
                 {resume.experience.map((exp, index) => (
-                  <div
-                    key={`${exp.title}-${index}`}
-                    className="border rounded-lg p-4"
-                  >
+                  <div key={`${exp.title}-${index}`} className="border rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label>Job Title</Label>
@@ -292,10 +276,7 @@ export default function Resume() {
               <h2 className="text-xl font-semibold mb-4">Education</h2>
               <div className="space-y-4">
                 {resume.education.map((edu, index) => (
-                  <div
-                    key={`${edu.degree}-${index}`}
-                    className="border rounded-lg p-4"
-                  >
+                  <div key={`${edu.degree}-${index}`} className="border rounded-lg p-4">
                     <div>
                       <Label>Degree</Label>
                       <Input
@@ -339,10 +320,7 @@ export default function Resume() {
               <h2 className="text-xl font-semibold mb-4">Certifications</h2>
               <div className="space-y-4">
                 {resume.certifications.map((cert, index) => (
-                  <div
-                    key={`${cert.name}-${index}`}
-                    className="border rounded-lg p-4"
-                  >
+                  <div key={`${cert.name}-${index}`} className="border rounded-lg p-4">
                     <div>
                       <Label>Certification Name</Label>
                       <Input

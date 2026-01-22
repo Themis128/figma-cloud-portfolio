@@ -1,6 +1,6 @@
-import { chromium, type FullConfig } from '@playwright/test'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
+import { chromium, type FullConfig } from '@playwright/test'
 
 const execAsync = promisify(exec)
 
@@ -19,16 +19,10 @@ async function globalSetup(_config: FullConfig) {
     console.log('📡 Checking development servers...')
 
     // Health check function with retries
-    async function checkServer(
-      url: string,
-      name: string,
-      maxRetries = 5,
-    ): Promise<boolean> {
+    async function checkServer(url: string, name: string, maxRetries = 5): Promise<boolean> {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          console.log(
-            `🔍 Checking ${name} (attempt ${attempt}/${maxRetries})...`,
-          )
+          console.log(`🔍 Checking ${name} (attempt ${attempt}/${maxRetries})...`)
           const response = await fetch(url, {
             signal: AbortSignal.timeout(5000), // 5 second timeout
             headers: { 'Cache-Control': 'no-cache' },
@@ -41,10 +35,7 @@ async function globalSetup(_config: FullConfig) {
             console.log(`⚠️  ${name} returned status ${response.status}`)
           }
         } catch (error) {
-          console.log(
-            `❌ ${name} check failed (attempt ${attempt}):`,
-            error.message,
-          )
+          console.log(`❌ ${name} check failed (attempt ${attempt}):`, error.message)
           if (attempt < maxRetries) {
             console.log(`⏳ Waiting 2 seconds before retry...`)
             await new Promise((resolve) => setTimeout(resolve, 2000))
@@ -56,9 +47,7 @@ async function globalSetup(_config: FullConfig) {
 
     // Check production server with retries
     const serverUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'http://localhost:3000'
-        : 'http://localhost:8081'
+      process.env.NODE_ENV === 'production' ? 'http://localhost:3000' : 'http://localhost:8081'
     const serverReady = await checkServer(serverUrl, 'Server')
     if (!serverReady) {
       throw new Error('Server failed health check')
@@ -71,9 +60,7 @@ async function globalSetup(_config: FullConfig) {
         : 'http://localhost:8081/api/ping'
     const backendReady = await checkServer(apiUrl, 'Backend API server')
     if (!backendReady) {
-      console.log(
-        '⚠️  Backend API server not accessible - tests may have limited functionality',
-      )
+      console.log('⚠️  Backend API server not accessible - tests may have limited functionality')
     }
 
     // Pre-warm the application by loading the main page

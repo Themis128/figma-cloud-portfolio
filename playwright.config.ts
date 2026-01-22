@@ -85,10 +85,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         // Chromium specific settings for better React hydration
         launchOptions: {
-          args: [
-            '--disable-web-security',
-            '--disable-features=VizDisplayCompositor',
-          ],
+          args: ['--disable-web-security', '--disable-features=VizDisplayCompositor'],
         },
         // Longer timeouts for React hydration
         actionTimeout: 10000,

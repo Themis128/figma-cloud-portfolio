@@ -1,10 +1,10 @@
+import { ArrowLeft } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import Navigation from '@/components/Navigation'
 import { PerformanceDashboard } from '@/components/PerformanceDashboard'
 import { PushNotificationTester } from '@/components/PushNotificationTester'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
 export default function Performance() {
   return (
@@ -13,17 +13,12 @@ export default function Performance() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Link to="/">
-            <Button
-              variant="ghost"
-              className="mb-4 text-white hover:text-cyan-400"
-            >
+            <Button variant="ghost" className="mb-4 text-white hover:text-cyan-400">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>
           </Link>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Performance Dashboard
-          </h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Performance Dashboard</h1>
           <p className="text-slate-300">
             Monitor Core Web Vitals and performance metrics in real-time
           </p>
@@ -39,16 +34,13 @@ export default function Performance() {
               <h3 className="text-lg font-semibold mb-4">Performance Tips</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  • <strong>LCP</strong>: Ensure your largest content element
-                  loads quickly
+                  • <strong>LCP</strong>: Ensure your largest content element loads quickly
                 </li>
                 <li>
-                  • <strong>CLS</strong>: Avoid layout shifts by reserving space
-                  for dynamic content
+                  • <strong>CLS</strong>: Avoid layout shifts by reserving space for dynamic content
                 </li>
                 <li>
-                  • <strong>FCP</strong>: Optimize above-the-fold content
-                  loading
+                  • <strong>FCP</strong>: Optimize above-the-fold content loading
                 </li>
                 <li>
                   • <strong>TTFB</strong>: Improve server response times

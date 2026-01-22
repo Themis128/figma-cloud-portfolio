@@ -1,13 +1,11 @@
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { pushNotificationsApi } from '@/lib/api'
-import { useState } from 'react'
 
 export function PushNotificationTester() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
-  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(
-    null,
-  )
+  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(null)
 
   const checkSubscriptions = async () => {
     try {
@@ -25,13 +23,9 @@ export function PushNotificationTester() {
     try {
       const data = await pushNotificationsApi.sendTestNotification()
 
-      setResult(
-        `✅ Test notification sent to ${data.totalSubscriptions} subscription(s)!`,
-      )
+      setResult(`✅ Test notification sent to ${data.totalSubscriptions} subscription(s)!`)
     } catch (error: unknown) {
-      setResult(
-        `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      )
+      setResult(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -46,9 +40,7 @@ export function PushNotificationTester() {
       const subsData = await pushNotificationsApi.getSubscriptionCount()
 
       if (!subsData.subscriptions || subsData.subscriptions === 0) {
-        setResult(
-          '❌ No subscriptions found. Subscribe first using the Notification Button.',
-        )
+        setResult('❌ No subscriptions found. Subscribe first using the Notification Button.')
         setIsLoading(false)
         return
       }
@@ -88,21 +80,11 @@ export function PushNotificationTester() {
           Check Subscriptions
         </Button>
 
-        <Button
-          onClick={sendTestNotification}
-          disabled={isLoading}
-          variant="outline"
-          size="sm"
-        >
+        <Button onClick={sendTestNotification} disabled={isLoading} variant="outline" size="sm">
           {isLoading ? 'Sending...' : 'Send Test Notification'}
         </Button>
 
-        <Button
-          onClick={sendCustomNotification}
-          disabled={isLoading}
-          variant="outline"
-          size="sm"
-        >
+        <Button onClick={sendCustomNotification} disabled={isLoading} variant="outline" size="sm">
           {isLoading ? 'Sending...' : 'Send Custom Notification'}
         </Button>
       </div>
@@ -114,9 +96,7 @@ export function PushNotificationTester() {
       )}
 
       {result && (
-        <div className="p-3 bg-white dark:bg-slate-700 rounded border text-sm">
-          {result}
-        </div>
+        <div className="p-3 bg-white dark:bg-slate-700 rounded border text-sm">{result}</div>
       )}
 
       <div className="text-xs text-slate-500 dark:text-slate-400">

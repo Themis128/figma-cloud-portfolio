@@ -1,22 +1,16 @@
+import { ArrowLeft } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import Navigation from '@/components/Navigation'
 import { RealtimeTest } from '@/components/RealtimeTest'
 import { useTheme } from '@/components/ThemeProvider'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
-import { ArrowLeft } from 'lucide-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 export default function Settings() {
   const { theme, setTheme } = useTheme()
@@ -39,10 +33,7 @@ export default function Settings() {
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // Check if service worker has updates available
-      if (
-        'serviceWorker' in navigator &&
-        'controller' in navigator.serviceWorker
-      ) {
+      if ('serviceWorker' in navigator && 'controller' in navigator.serviceWorker) {
         const registration = await navigator.serviceWorker.ready
 
         // Check if there's a waiting service worker (update available)
@@ -90,10 +81,7 @@ export default function Settings() {
 
   const viewChangelog = () => {
     // Open GitHub releases page for the portfolio repository
-    window.open(
-      'https://github.com/Themis128/figma-cloud-portfolio/releases',
-      '_blank',
-    )
+    window.open('https://github.com/Themis128/figma-cloud-portfolio/releases', '_blank')
   }
 
   return (
@@ -102,18 +90,12 @@ export default function Settings() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <AnimatedSection>
           <div className="mb-8">
-            <Button
-              variant="ghost"
-              onClick={() => navigate(-1)}
-              className="mb-4"
-            >
+            <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
             <h1 className="text-3xl font-bold tracking-tight mb-2">Settings</h1>
-            <p className="text-muted-foreground">
-              Customize your experience and preferences
-            </p>
+            <p className="text-muted-foreground">Customize your experience and preferences</p>
           </div>
         </AnimatedSection>
 
@@ -123,18 +105,14 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle>Appearance</CardTitle>
-                <CardDescription>
-                  Customize how the application looks and feels
-                </CardDescription>
+                <CardDescription>Customize how the application looks and feels</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
                   <Label className="text-base font-medium">Theme</Label>
                   <RadioGroup
                     value={theme}
-                    onValueChange={(value) =>
-                      setTheme(value as 'light' | 'dark' | 'system')
-                    }
+                    onValueChange={(value) => setTheme(value as 'light' | 'dark' | 'system')}
                     className="grid grid-cols-3 gap-4"
                   >
                     <div className="flex items-center space-x-2">
@@ -171,10 +149,7 @@ export default function Settings() {
                         Enable smooth transitions and animations
                       </p>
                     </div>
-                    <Switch
-                      checked={animations}
-                      onCheckedChange={setAnimations}
-                    />
+                    <Switch checked={animations} onCheckedChange={setAnimations} />
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -184,10 +159,7 @@ export default function Settings() {
                         Minimize animations and transitions
                       </p>
                     </div>
-                    <Switch
-                      checked={reducedMotion}
-                      onCheckedChange={setReducedMotion}
-                    />
+                    <Switch checked={reducedMotion} onCheckedChange={setReducedMotion} />
                   </div>
                 </div>
               </CardContent>
@@ -199,9 +171,7 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle>Notifications</CardTitle>
-                <CardDescription>
-                  Manage your notification preferences
-                </CardDescription>
+                <CardDescription>Manage your notification preferences</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
@@ -211,10 +181,7 @@ export default function Settings() {
                       Receive notifications about updates and new features
                     </p>
                   </div>
-                  <Switch
-                    checked={notifications}
-                    onCheckedChange={setNotifications}
-                  />
+                  <Switch checked={notifications} onCheckedChange={setNotifications} />
                 </div>
               </CardContent>
             </Card>
@@ -225,9 +192,7 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle>Privacy</CardTitle>
-                <CardDescription>
-                  Control your privacy and data settings
-                </CardDescription>
+                <CardDescription>Control your privacy and data settings</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -262,9 +227,7 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle>About</CardTitle>
-                <CardDescription>
-                  Application information and version details
-                </CardDescription>
+                <CardDescription>Application information and version details</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -311,9 +274,7 @@ export default function Settings() {
                     onClick={checkForUpdates}
                     disabled={updateStatus === 'checking'}
                   >
-                    {updateStatus === 'checking'
-                      ? 'Checking...'
-                      : 'Check for Updates'}
+                    {updateStatus === 'checking' ? 'Checking...' : 'Check for Updates'}
                   </Button>
                   <Button variant="outline" size="sm" onClick={viewChangelog}>
                     View Changelog

@@ -1,5 +1,5 @@
-import { pushNotificationsApi } from '@/lib/api'
 import { useCallback, useEffect, useState } from 'react'
+import { pushNotificationsApi } from '@/lib/api'
 
 export interface PushSubscriptionData {
   endpoint: string
@@ -11,9 +11,7 @@ export interface PushSubscriptionData {
 
 export function usePushNotifications() {
   const [isSupported, setIsSupported] = useState(false)
-  const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null,
-  )
+  const [subscription, setSubscription] = useState<PushSubscription | null>(null)
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [vapidPublicKey, setVapidPublicKey] = useState<string | null>(null)
 
@@ -36,8 +34,7 @@ export function usePushNotifications() {
       if (!('serviceWorker' in navigator)) return
 
       const registration = await navigator.serviceWorker.ready
-      const existingSubscription =
-        await registration.pushManager.getSubscription()
+      const existingSubscription = await registration.pushManager.getSubscription()
 
       setSubscription(existingSubscription)
       setIsSubscribed(!!existingSubscription)
@@ -48,11 +45,7 @@ export function usePushNotifications() {
 
   useEffect(() => {
     // Check if push notifications are supported
-    if (
-      'serviceWorker' in navigator &&
-      'PushManager' in window &&
-      'Notification' in window
-    ) {
+    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
       setIsSupported(true)
       checkSubscription()
       fetchVapidPublicKey()
@@ -135,10 +128,7 @@ export function usePushNotifications() {
       }
 
       // Store locally for demo purposes
-      localStorage.setItem(
-        'push-subscription',
-        JSON.stringify(subscriptionData),
-      )
+      localStorage.setItem('push-subscription', JSON.stringify(subscriptionData))
 
       // Send to server
       await pushNotificationsApi.storeSubscription(subscriptionData)
@@ -150,9 +140,7 @@ export function usePushNotifications() {
     }
   }
 
-  const removeSubscriptionFromServer = async (
-    subscription: PushSubscription,
-  ) => {
+  const removeSubscriptionFromServer = async (subscription: PushSubscription) => {
     try {
       // Remove from local storage
       localStorage.removeItem('push-subscription')

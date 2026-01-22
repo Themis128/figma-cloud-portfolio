@@ -92,9 +92,10 @@ export function createServer() {
 export function initializeSocketIO(server: any) {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL || false
-        : ['http://localhost:8081', 'http://localhost:3000'],
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? process.env.FRONTEND_URL || false
+          : ['http://localhost:8081', 'http://localhost:3000'],
       methods: ['GET', 'POST'],
       credentials: true,
     },

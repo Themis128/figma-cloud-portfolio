@@ -2,9 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('reCAPTCHA and Google Analytics Integration', () => {
   test.describe('reCAPTCHA v3 Integration', () => {
-    test('should initialize reCAPTCHA context on contact page', async ({
-      page,
-    }) => {
+    test('should initialize reCAPTCHA context on contact page', async ({ page }) => {
       // Test that the contact page loads (basic functionality test)
       await page.goto('/contact')
 
@@ -26,10 +24,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await page.fill('#name', 'Test User')
       await page.fill('#email', 'test@example.com')
       await page.fill('#subject', 'Test Subject')
-      await page.fill(
-        '#message',
-        'This is a test message for reCAPTCHA validation.',
-      )
+      await page.fill('#message', 'This is a test message for reCAPTCHA validation.')
 
       // Mock the reCAPTCHA execution to return a test token
       await page.addScriptTag({
@@ -52,15 +47,11 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
 
       // Check that the form submission was attempted
       // The exact success/error message depends on server response
-      const formResponse = page
-        .locator('text=/Message sent|Failed to send|reCAPTCHA/i')
-        .first()
+      const formResponse = page.locator('text=/Message sent|Failed to send|reCAPTCHA/i').first()
       await expect(formResponse).toBeVisible()
     })
 
-    test('should handle reCAPTCHA loading errors gracefully', async ({
-      page,
-    }) => {
+    test('should handle reCAPTCHA loading errors gracefully', async ({ page }) => {
       await page.goto('/contact')
 
       // Mock reCAPTCHA script failure
@@ -81,9 +72,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
 
       // Should show error message about reCAPTCHA not being available
       await page.waitForTimeout(2000)
-      const errorMessage = page
-        .locator('text=/reCAPTCHA|Failed to send/i')
-        .first()
+      const errorMessage = page.locator('text=/reCAPTCHA|Failed to send/i').first()
       await expect(errorMessage).toBeVisible()
     })
 
@@ -157,9 +146,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await expect(page.locator('form')).toBeVisible()
     })
 
-    test('should work with different form field combinations', async ({
-      page,
-    }) => {
+    test('should work with different form field combinations', async ({ page }) => {
       await page.goto('/contact')
 
       // Mock reCAPTCHA
@@ -216,15 +203,11 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await expect(page.locator('body')).toBeVisible()
     })
 
-    test('should handle network errors during reCAPTCHA verification', async ({
-      page,
-    }) => {
+    test('should handle network errors during reCAPTCHA verification', async ({ page }) => {
       await page.goto('/contact')
 
       // Mock network failure during reCAPTCHA verification
-      await page.route('**/recaptcha/api/siteverify**', (route) =>
-        route.abort(),
-      )
+      await page.route('**/recaptcha/api/siteverify**', (route) => route.abort())
 
       // Mock reCAPTCHA execution
       await page.addScriptTag({
@@ -285,13 +268,9 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await expect(page.url()).toContain('/contact')
     })
 
-    test('should handle GA initialization errors gracefully', async ({
-      page,
-    }) => {
+    test('should handle GA initialization errors gracefully', async ({ page }) => {
       // Mock GA script failure
-      await page.route('**/googletagmanager.com/gtag/js**', (route) =>
-        route.abort(),
-      )
+      await page.route('**/googletagmanager.com/gtag/js**', (route) => route.abort())
 
       await page.goto('/')
 
@@ -396,9 +375,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       }
     })
 
-    test('should handle GA configuration from environment variables', async ({
-      page,
-    }) => {
+    test('should handle GA configuration from environment variables', async ({ page }) => {
       // Test that GA uses the correct measurement ID from env
       await page.addScriptTag({
         content: `
@@ -476,9 +453,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await expect(page.locator('body')).toBeVisible()
     })
 
-    test('should work with different browser configurations', async ({
-      page,
-    }) => {
+    test('should work with different browser configurations', async ({ page }) => {
       // Test with JavaScript disabled simulation (partial)
       await page.goto('/contact')
 
@@ -506,9 +481,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await expect(page.locator('body')).toBeVisible()
     })
 
-    test('should maintain functionality across page reloads', async ({
-      page,
-    }) => {
+    test('should maintain functionality across page reloads', async ({ page }) => {
       await page.goto('/contact')
 
       // Mock the required functions

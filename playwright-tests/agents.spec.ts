@@ -7,19 +7,13 @@ test.describe('AI Agent Templates System', () => {
       await page.waitForSelector('h1', { timeout: 10000 })
     })
 
-    test('should load agents page with template selection interface', async ({
-      page,
-    }) => {
+    test('should load agents page with template selection interface', async ({ page }) => {
       // Check main heading
-      await expect(
-        page.getByRole('heading', { name: 'AI Agent Builder' }),
-      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'AI Agent Builder' })).toBeVisible()
 
       // Check page description
       await expect(
-        page.getByText(
-          'Create intelligent AI agents using pre-built templates',
-        ),
+        page.getByText('Create intelligent AI agents using pre-built templates'),
       ).toBeVisible()
 
       // Check template selector heading
@@ -32,16 +26,17 @@ test.describe('AI Agent Templates System', () => {
       await expect(searchInput).toBeVisible()
     })
 
-    test('should display template cards with proper information', async ({
-      page,
-    }) => {
+    test('should display template cards with proper information', async ({ page }) => {
       // Wait for React to hydrate and templates to load
       await page.waitForTimeout(3000)
 
       // Debug: Check what's actually on the page
       const pageContent = await page.textContent('body')
       console.log('Page content length:', pageContent?.length || 0)
-      console.log('Page contains "Choose Your AI Agent Template":', pageContent?.includes('Choose Your AI Agent Template') || false)
+      console.log(
+        'Page contains "Choose Your AI Agent Template":',
+        pageContent?.includes('Choose Your AI Agent Template') || false,
+      )
 
       // Check that template cards are displayed
       const templateCards = page.locator('button[class*="bg-white/5"]')
@@ -97,24 +92,18 @@ test.describe('AI Agent Templates System', () => {
       await expect(advancedButton).toHaveClass(/border-cyan-400/)
 
       // Check that templates are still displayed (filtering happens on the client side)
-      const templateCards = page.locator(
-        'button[class*="bg-white/5"][class*="rounded-xl"]',
-      )
+      const templateCards = page.locator('button[class*="bg-white/5"][class*="rounded-xl"]')
       await expect(templateCards.first()).toBeVisible()
     })
 
-    test('should search templates by name and description', async ({
-      page,
-    }) => {
+    test('should search templates by name and description', async ({ page }) => {
       const searchInput = page.getByPlaceholder('Search templates...')
 
       // Search for a common term that should match templates
       await searchInput.fill('agent')
 
       // Check that search results are displayed
-      const templateCards = page.locator(
-        'button[class*="bg-white/5"][class*="rounded-xl"]',
-      )
+      const templateCards = page.locator('button[class*="bg-white/5"][class*="rounded-xl"]')
       await expect(templateCards.first()).toBeVisible()
 
       // Results should contain the search term
@@ -124,9 +113,7 @@ test.describe('AI Agent Templates System', () => {
     })
 
     test('should display template details on selection', async ({ page }) => {
-      const templateCards = page.locator(
-        'button[class*="bg-white/5"][class*="rounded-xl"]',
-      )
+      const templateCards = page.locator('button[class*="bg-white/5"][class*="rounded-xl"]')
       const firstCard = templateCards.first()
 
       // Click on template card
@@ -156,14 +143,10 @@ test.describe('AI Agent Templates System', () => {
         await cloneButton.click()
 
         // Should stay on the same page (cloning happens in the background)
-        await expect(
-          page.getByRole('heading', { name: 'AI Agent Builder' }),
-        ).toBeVisible()
+        await expect(page.getByRole('heading', { name: 'AI Agent Builder' })).toBeVisible()
       } else {
         // Clone functionality might not be implemented yet
-        console.log(
-          'Clone button not found - functionality may not be implemented yet',
-        )
+        console.log('Clone button not found - functionality may not be implemented yet')
       }
     })
   })
@@ -200,9 +183,7 @@ test.describe('AI Agent Templates System', () => {
 
     test('should display template count', async ({ page }) => {
       // Check template count display at the bottom
-      const templateCountText = page.locator(
-        'text=/Showing \\d+ of \\d+ templates/',
-      )
+      const templateCountText = page.locator('text=/Showing \\d+ of \\d+ templates/')
       await expect(templateCountText).toBeVisible()
     })
 
@@ -238,9 +219,7 @@ test.describe('AI Agent Templates System', () => {
       await page.setViewportSize({ width: 375, height: 667 })
 
       // Template cards should still be visible and usable
-      const templateCards = page.locator(
-        'button[class*="bg-white/5"][class*="rounded-xl"]',
-      )
+      const templateCards = page.locator('button[class*="bg-white/5"][class*="rounded-xl"]')
       await expect(templateCards.first()).toBeVisible()
 
       // Category buttons should be accessible
@@ -249,9 +228,7 @@ test.describe('AI Agent Templates System', () => {
 
     test('should have proper ARIA labels', async ({ page }) => {
       // Template cards should have proper labels
-      const templateCards = page.locator(
-        'button[class*="bg-white/5"][class*="rounded-xl"]',
-      )
+      const templateCards = page.locator('button[class*="bg-white/5"][class*="rounded-xl"]')
       const firstCard = templateCards.first()
 
       // Check for aria-label or aria-labelledby (may not be implemented yet)
@@ -270,15 +247,11 @@ test.describe('AI Agent Templates System', () => {
 
     test('should support screen readers', async ({ page }) => {
       // Check for screen reader content
-      const srContent = page.locator(
-        '.sr-only, [aria-label], [aria-labelledby]',
-      )
+      const srContent = page.locator('.sr-only, [aria-label], [aria-labelledby]')
       await expect(srContent.first()).toBeAttached()
 
       // Template cards should have descriptive text
-      const templateCards = page.locator(
-        'button[class*="bg-white/5"][class*="rounded-xl"]',
-      )
+      const templateCards = page.locator('button[class*="bg-white/5"][class*="rounded-xl"]')
       const firstCard = templateCards.first()
 
       const cardText = await firstCard.textContent()

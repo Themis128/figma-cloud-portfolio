@@ -1,12 +1,12 @@
+import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
+import { useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { Link } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverButton, HoverCard } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
 import { submitContactForm } from '@/lib/api'
-import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
-import { useState } from 'react'
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
-import { Link } from 'react-router-dom'
 
 export default function Contact() {
   const { executeRecaptcha } = useGoogleReCaptcha()
@@ -18,13 +18,9 @@ export default function Contact() {
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle')
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
@@ -48,10 +44,7 @@ export default function Contact() {
           // Execute reCAPTCHA
           recaptchaToken = await executeRecaptcha('contact_form_submit')
         } catch (recaptchaError) {
-          console.warn(
-            'reCAPTCHA execution failed, using test token:',
-            recaptchaError,
-          )
+          console.warn('reCAPTCHA execution failed, using test token:', recaptchaError)
           // Continue with test token for development/testing
         }
       } else {
@@ -99,8 +92,8 @@ export default function Contact() {
               </h1>
               <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full" />
               <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-4">
-                Let's connect and discuss how we can work together on your next
-                cloud, cybersecurity, or digital transformation project.
+                Let's connect and discuss how we can work together on your next cloud,
+                cybersecurity, or digital transformation project.
               </p>
             </AnimatedSection>
 
@@ -237,17 +230,14 @@ export default function Contact() {
 
                 {submitStatus === 'success' && (
                   <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                    <p className="text-green-400 font-medium">
-                      Message sent successfully!
-                    </p>
+                    <p className="text-green-400 font-medium">Message sent successfully!</p>
                   </div>
                 )}
 
                 {submitStatus === 'error' && (
                   <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
                     <p className="text-red-400 font-medium">
-                      ❌ Failed to send message. Please try again or contact me
-                      directly via email.
+                      ❌ Failed to send message. Please try again or contact me directly via email.
                     </p>
                   </div>
                 )}
@@ -294,9 +284,7 @@ export default function Contact() {
                         <div className="text-white font-medium mb-1 text-sm md:text-base">
                           Mobile
                         </div>
-                        <div className="text-white/70 text-sm md:text-base">
-                          +30 697 777 7838
-                        </div>
+                        <div className="text-white/70 text-sm md:text-base">+30 697 777 7838</div>
                       </div>
                     </div>
                   </HoverCard>
@@ -438,56 +426,39 @@ export default function Contact() {
                 <div className="inline-flex items-center justify-center w-10 h-10 bg-cyan-400/10 rounded-lg">
                   <Send className="w-5 h-5 text-cyan-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">
-                  Why Work With Me?
-                </h3>
+                <h3 className="text-2xl font-bold text-white">Why Work With Me?</h3>
               </div>
               <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <HoverCard>
                   <div className="text-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="text-3xl font-bold text-cyan-400 mb-2">
-                      15+
-                    </div>
-                    <div className="text-white/80 font-medium">
-                      Years of IT Experience
-                    </div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">15+</div>
+                    <div className="text-white/80 font-medium">Years of IT Experience</div>
                   </div>
                 </HoverCard>
                 <HoverCard>
                   <div className="text-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="text-3xl font-bold text-cyan-400 mb-2">
-                      100+
-                    </div>
-                    <div className="text-white/80 font-medium">
-                      Projects Delivered
-                    </div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">100+</div>
+                    <div className="text-white/80 font-medium">Projects Delivered</div>
                   </div>
                 </HoverCard>
                 <HoverCard>
                   <div className="text-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="text-3xl font-bold text-cyan-400 mb-2">
-                      5+
-                    </div>
-                    <div className="text-white/80 font-medium">
-                      Industry Certifications
-                    </div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">5+</div>
+                    <div className="text-white/80 font-medium">Industry Certifications</div>
                   </div>
                 </HoverCard>
               </div>
               <div className="text-white/70 text-center leading-relaxed">
                 <p>
-                  Specializing in cloud architecture, cybersecurity, and digital
-                  transformation with a proven track record of delivering
-                  scalable, resilient solutions that drive business outcomes.
+                  Specializing in cloud architecture, cybersecurity, and digital transformation with
+                  a proven track record of delivering scalable, resilient solutions that drive
+                  business outcomes.
                 </p>
               </div>
             </AnimatedSection>
 
             {/* Call to Action */}
-            <AnimatedSection
-              delay={0.35}
-              className="text-center mt-12 md:mt-16"
-            >
+            <AnimatedSection delay={0.35} className="text-center mt-12 md:mt-16">
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <HoverButton>
                   <Link
