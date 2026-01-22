@@ -53,11 +53,34 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Verify Required Secrets
+        run: |
+          set -euo pipefail
+          echo "🔍 Verifying required secrets..."
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then echo "❌ AWS_ACCESS_KEY_ID is not set" && exit 1; fi
+          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then echo "❌ AWS_SECRET_ACCESS_KEY is not set" && exit 1; fi
+          if [ -z "${{ secrets.AWS_REGION }}" ]; then echo "❌ AWS_REGION is not set" && exit 1; fi
+          if [ -z "${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}" ]; then echo "❌ AMPLIFY_PRODUCTION_APP_ID is not set" && exit 1; fi
+          echo "✅ All required secrets are present"
+          echo "AWS Region: ${{ secrets.AWS_REGION }}"
+          echo "Amplify App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
+
+      - name: Test AWS Credentials
+        run: |
+          set -euo pipefail
+          echo "🔐 Testing AWS credentials..."
+          aws sts get-caller-identity || (echo "❌ AWS credentials are invalid" && exit 1)
+          echo "✅ AWS credentials are valid"
+
       - name: Verify Amplify App Configuration
         run: |
+          set -euo pipefail
           npm install -g @aws-amplify/cli
           echo "Verifying Amplify app configuration..."
-          amplify status --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --verbose
+          echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
+          echo "Region: ${{ secrets.AWS_REGION }}"
+          amplify status --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --verbose || (echo "❌ Amplify status check failed" && exit 1)
+          echo "✅ Amplify app configuration verified"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -65,8 +88,14 @@ jobs:
 
       - name: Deploy to Amplify (Production)
         run: |
+          set -euo pipefail
           npm install -g @aws-amplify/cli
-          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --yes --verbose
+          echo "🚀 Starting Amplify deployment..."
+          echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
+          echo "Branch: main"
+          echo "Environment: production"
+          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --yes --verbose || (echo "❌ Amplify deployment failed" && exit 1)
+          echo "✅ Deployment completed successfully"
         env:
           NODE_ENV: production
           VITE_APP_ENV: production
@@ -112,8 +141,13 @@ jobs:
 
       - name: Rollback deployment
         run: |
+          set -euo pipefail
           npm install -g @aws-amplify/cli
-          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback --yes --verbose
+          echo "🔄 Starting Amplify rollback..."
+          echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
+          echo "Branch: main"
+          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback --yes --verbose || (echo "❌ Amplify rollback failed" && exit 1)
+          echo "✅ Rollback completed"
         env:
           NODE_ENV: production
           VITE_APP_ENV: production
