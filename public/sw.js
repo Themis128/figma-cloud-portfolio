@@ -1,17 +1,89 @@
 // Custom service worker for push notifications
-// This extends the auto-generated PWA service worker
+// Uses Workbox from CDN (compatible with both dev and production)
 
-// Install event - cache resources
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js')
+
+// Check if Workbox loaded successfully
+if (workbox) {
+  console.log('Workbox loaded successfully')
+
+  // Claim all clients immediately
+  workbox.core.clientsClaim()
+
+  // Skip waiting
+  workbox.core.skipWaiting()
+
+  // Precache and route - will be populated during build
+  workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || [])
+
+  // Runtime caching for API calls
+  workbox.routing.registerRoute(
+    /^https:\/\/api\./i,
+    new workbox.strategies.NetworkFirst({
+      cacheName: 'api-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+        }),
+      ],
+    })
+  )
+
+  // Runtime caching for Google Fonts
+  workbox.routing.registerRoute(
+    /^https:\/\/fonts\.(googleapis|gstatic)\.com/i,
+    new workbox.strategies.StaleWhileRevalidate({
+      cacheName: 'google-fonts',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+        }),
+      ],
+    })
+  )
+
+  // Runtime caching for images
+  workbox.routing.registerRoute(
+    /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
+    new workbox.strategies.CacheFirst({
+      cacheName: 'images',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+        }),
+      ],
+    })
+  )
+
+  // Runtime caching for static resources
+  workbox.routing.registerRoute(
+    /^https:\/\/.*\.(js|css)$/i,
+    new workbox.strategies.StaleWhileRevalidate({
+      cacheName: 'static-resources',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 20,
+          maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+        }),
+      ],
+    })
+  )
+} else {
+  console.log('Workbox failed to load')
+}
+
+// Install event
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Install event')
-  // Force the waiting service worker to become the active service worker
   self.skipWaiting()
 })
 
-// Activate event - clean up old caches
+// Activate event
 self.addEventListener('activate', (event) => {
   console.log('Service Worker: Activate event')
-  // Claim all clients so that the service worker starts controlling them immediately
   event.waitUntil(self.clients.claim())
 })
 
@@ -29,11 +101,11 @@ self.addEventListener('push', (event) => {
     console.log('Push data:', data)
 
     const options = {
-      body: data.body || 'You have a new notification from Fusion Starter',
+      body: data.body || 'You have a new notification',
       icon: data.icon || '/logo.jpg',
       badge: data.badge || '/logo.jpg',
       image: data.image,
-      tag: data.tag || 'fusion-starter-notification',
+      tag: data.tag || 'portfolio-notification',
       requireInteraction: data.requireInteraction || false,
       silent: data.silent || false,
       actions: data.actions || [],
@@ -43,22 +115,21 @@ self.addEventListener('push', (event) => {
       },
     }
 
-    event.waitUntil(self.registration.showNotification(data.title || 'Fusion Starter', options))
+    event.waitUntil(self.registration.showNotification(data.title || 'Notification', options))
   } catch (error) {
     console.error('Error processing push event:', error)
-    // Fallback notification
     event.waitUntil(
-      self.registration.showNotification('Fusion Starter', {
+      self.registration.showNotification('Notification', {
         body: 'You have a new notification',
         icon: '/logo.jpg',
         badge: '/logo.jpg',
-        tag: 'fusion-starter-notification',
-      }),
+        tag: 'portfolio-notification',
+      })
     )
   }
 })
 
-// Notification click event - handle when user clicks on notification
+// Notification click event
 self.addEventListener('notificationclick', (event) => {
   console.log('Service Worker: Notification click event', event)
 
@@ -67,44 +138,36 @@ self.addEventListener('notificationclick', (event) => {
 
   notification.close()
 
-  // Handle action clicks
   if (event.action) {
-    console.log('Action clicked:', event.action)
-
-    // You can handle different actions here
     switch (event.action) {
       case 'view':
         event.waitUntil(clients.openWindow(data.url || '/'))
         break
       case 'dismiss':
-        // Just close the notification (already done above)
         break
       default:
         event.waitUntil(clients.openWindow(data.url || '/'))
     }
   } else {
-    // Default action when notification is clicked (not an action button)
     event.waitUntil(
       clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
         const url = data.url || '/'
 
-        // Check if there's already a window open with this URL
         for (const client of clientList) {
           if (client.url === url && 'focus' in client) {
             return client.focus()
           }
         }
 
-        // If no window is open, open a new one
         if (clients.openWindow) {
           return clients.openWindow(url)
         }
-      }),
+      })
     )
   }
 })
 
-// Message event - handle messages from the main thread
+// Message event
 self.addEventListener('message', (event) => {
   console.log('Service Worker: Message event', event)
 
@@ -122,51 +185,37 @@ self.addEventListener('message', (event) => {
   }
 })
 
-// Background sync (if supported)
-if ('sync' in self.registration) {
-  self.addEventListener('sync', (event) => {
-    console.log('Service Worker: Background sync event', event)
-
-    if (event.tag === 'background-sync') {
-      event.waitUntil(doBackgroundSync())
-    }
-  })
-}
+// Background sync
+self.addEventListener('sync', (event) => {
+  console.log('Service Worker: Background sync event', event)
+  if (event.tag === 'background-sync') {
+    event.waitUntil(doBackgroundSync())
+  }
+})
 
 async function doBackgroundSync() {
   try {
-    // Implement background sync logic here
     console.log('Performing background sync...')
-
-    // For example, retry failed API calls, sync offline data, etc.
-    // This is where you would implement the actual sync logic
   } catch (error) {
     console.error('Background sync failed:', error)
   }
 }
 
-// Periodic background sync (if supported)
-if ('periodicSync' in self.registration) {
-  self.addEventListener('periodicsync', (event) => {
-    console.log('Service Worker: Periodic sync event', event)
-
-    if (event.tag === 'periodic-background-sync') {
-      event.waitUntil(doPeriodicSync())
-    }
-  })
-}
+// Periodic background sync
+self.addEventListener('periodicsync', (event) => {
+  console.log('Service Worker: Periodic sync event', event)
+  if (event.tag === 'periodic-background-sync') {
+    event.waitUntil(doPeriodicSync())
+  }
+})
 
 async function doPeriodicSync() {
   try {
     console.log('Performing periodic sync...')
-
-    // Implement periodic sync logic here
-    // For example, fetch latest news, update cache, etc.
   } catch (error) {
     console.error('Periodic sync failed:', error)
   }
 }
 
-// This is required for Workbox injectManifest to work
-// It will be replaced with the actual precache manifest during build
+// Precache manifest placeholder for Workbox injectManifest
 self.__WB_MANIFEST = []

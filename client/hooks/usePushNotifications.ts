@@ -1,3 +1,4 @@
+import { pushNotificationsApi } from '@/lib/api'
 import { useCallback, useEffect, useState } from 'react'
 
 export interface PushSubscriptionData {
@@ -10,17 +11,23 @@ export interface PushSubscriptionData {
 
 export function usePushNotifications() {
   const [isSupported, setIsSupported] = useState(false)
-  const [subscription, setSubscription] = useState<PushSubscription | null>(null)
+  const [subscription, setSubscription] = useState<PushSubscription | null>(
+    null,
+  )
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [vapidPublicKey, setVapidPublicKey] = useState<string | null>(null)
 
   const fetchVapidPublicKey = useCallback(async () => {
     try {
-      const response = await fetch('/api/push-notifications?action=vapid-public-key')
-      const data = await response.json()
+      const data = await pushNotificationsApi.getVapidPublicKey()
       setVapidPublicKey(data.publicKey)
     } catch (error) {
-      console.error('Error fetching VAPID public key:', error)
+      // Silently fail in development if API server isn't running
+      if (import.meta.env.DEV) {
+        console.debug('Push notifications API unavailable (run pnpm dev:all to enable)')
+      } else {
+        console.error('Error fetching VAPID public key:', error)
+      }
     }
   }, [])
 
@@ -29,7 +36,8 @@ export function usePushNotifications() {
       if (!('serviceWorker' in navigator)) return
 
       const registration = await navigator.serviceWorker.ready
-      const existingSubscription = await registration.pushManager.getSubscription()
+      const existingSubscription =
+        await registration.pushManager.getSubscription()
 
       setSubscription(existingSubscription)
       setIsSubscribed(!!existingSubscription)
@@ -40,7 +48,11 @@ export function usePushNotifications() {
 
   useEffect(() => {
     // Check if push notifications are supported
-    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
+    if (
+      'serviceWorker' in navigator &&
+      'PushManager' in window &&
+      'Notification' in window
+    ) {
       setIsSupported(true)
       checkSubscription()
       fetchVapidPublicKey()
@@ -123,18 +135,13 @@ export function usePushNotifications() {
       }
 
       // Store locally for demo purposes
-      localStorage.setItem('push-subscription', JSON.stringify(subscriptionData))
+      localStorage.setItem(
+        'push-subscription',
+        JSON.stringify(subscriptionData),
+      )
 
       // Send to server
-      const response = await fetch('/api/push-notifications', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscriptionData),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to store subscription on server')
-      }
+      await pushNotificationsApi.storeSubscription(subscriptionData)
 
       console.log('Subscription sent to server:', subscriptionData)
     } catch (error) {
@@ -143,20 +150,15 @@ export function usePushNotifications() {
     }
   }
 
-  const removeSubscriptionFromServer = async (subscription: PushSubscription) => {
+  const removeSubscriptionFromServer = async (
+    subscription: PushSubscription,
+  ) => {
     try {
       // Remove from local storage
       localStorage.removeItem('push-subscription')
 
       // Remove from server
-      const response = await fetch(
-        `/api/push-notifications?endpoint=${encodeURIComponent(subscription.endpoint)}`,
-        { method: 'DELETE' },
-      )
-
-      if (!response.ok) {
-        console.warn('Failed to remove subscription from server')
-      }
+      await pushNotificationsApi.removeSubscription(subscription.endpoint)
 
       console.log('Subscription removed from server')
     } catch (error) {

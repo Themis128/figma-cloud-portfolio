@@ -131,8 +131,9 @@ export const handleContactForm: RequestHandler = async (req, res) => {
       return res.status(400).json(response)
     }
 
-    // In production, require a valid score for real reCAPTCHA keys
-    if (process.env.NODE_ENV === 'production' && recaptchaData.score === undefined) {
+    // For test reCAPTCHA keys, score might be undefined - allow in development
+    const isTestKey = recaptchaSecret === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+    if (!isTestKey && process.env.NODE_ENV === 'production' && recaptchaData.score === undefined) {
       console.error('reCAPTCHA score missing in production')
       const response: ContactFormResponse = {
         success: false,

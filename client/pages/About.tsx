@@ -7,7 +7,7 @@ import Navigation from '@/components/Navigation'
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
       <CircuitBackground />
       <Navigation />
 

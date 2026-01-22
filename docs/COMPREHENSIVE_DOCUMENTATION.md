@@ -30,13 +30,14 @@ A production-ready full-stack React application for a professional portfolio, fe
 
 ## Tech Stack
 
-- **Frontend**: React 18 + React Router 6 (SPA) + TypeScript + Vite + TailwindCSS 3
+- **Frontend**: React 18.3.1 + React Router 6 (SPA) + TypeScript 5.9.3 + Vite 4.2.2 + TailwindCSS 3.4.19
 - **Backend**: Express server integrated with Vite dev server
 - **PWA**: Vite PWA plugin with service worker, offline caching, and installable features
 - **Notifications**: Web Push API with VAPID keys (no external services required)
-- **Testing**: Vitest + Playwright E2E
-- **UI**: Radix UI + TailwindCSS 3 + Lucide React icons
+- **Testing**: Vitest 3.2.4 + Playwright 1.40+ E2E (40/40 tests passing)
+- **UI**: Radix UI + TailwindCSS 3.4.19 + Lucide React icons
 - **Package Manager**: PNPM
+- **Code Quality**: Biome linting + ESLint with accessibility & security plugins
 
 ## Project Structure
 

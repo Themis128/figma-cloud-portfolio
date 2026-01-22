@@ -1,0 +1,26 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Baltzakis",
+    "Themistoklis",
+    "Vite",
+    "Vitest",
+    "jsdom",
+    "VITE",
+    "RECAPTCHA",
+    "recaptcha",
+    "Contentful",
+    "contentful",
+    "pointerdown",
+    "vite",
+    "Vite's"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    ".git/**",
+    "test-results/**",
+    "playwright-report/**"
+  ]
+}

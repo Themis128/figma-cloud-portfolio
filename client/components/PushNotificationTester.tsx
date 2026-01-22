@@ -1,15 +1,17 @@
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { pushNotificationsApi } from '@/lib/api'
+import { useState } from 'react'
 
 export function PushNotificationTester() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
-  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(null)
+  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(
+    null,
+  )
 
   const checkSubscriptions = async () => {
     try {
-      const response = await fetch('/api/push-notifications?action=subscriptions')
-      const data = await response.json()
+      const data = await pushNotificationsApi.getSubscriptionCount()
       setSubscriptionCount(data.subscriptions)
     } catch (error) {
       console.error('Error checking subscriptions:', error)
@@ -21,19 +23,15 @@ export function PushNotificationTester() {
     setResult(null)
 
     try {
-      const response = await fetch('/api/push-notifications', {
-        method: 'GET',
-      })
+      const data = await pushNotificationsApi.sendTestNotification()
 
-      const data = await response.json()
-
-      if (response.ok) {
-        setResult(`✅ Test notification sent to ${data.totalSubscriptions} subscription(s)!`)
-      } else {
-        setResult(`❌ Error: ${data.error}`)
-      }
-    } catch (error) {
-      setResult(`❌ Network error: ${(error as Error).message}`)
+      setResult(
+        `✅ Test notification sent to ${data.totalSubscriptions} subscription(s)!`,
+      )
+    } catch (error: unknown) {
+      setResult(
+        `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      )
     } finally {
       setIsLoading(false)
     }
@@ -45,45 +43,32 @@ export function PushNotificationTester() {
 
     try {
       // Check if there are any subscriptions first
-      const subsResponse = await fetch('/api/push-notifications?action=subscriptions')
-      const subsData = await subsResponse.json()
+      const subsData = await pushNotificationsApi.getSubscriptionCount()
 
       if (!subsData.subscriptions || subsData.subscriptions === 0) {
-        setResult('❌ No subscriptions found. Subscribe first using the Notification Button.')
+        setResult(
+          '❌ No subscriptions found. Subscribe first using the Notification Button.',
+        )
         setIsLoading(false)
         return
       }
 
       // Send custom message to all stored subscriptions on server
-      const response = await fetch('/api/push-notifications', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const data = await pushNotificationsApi.sendCustomNotification({
+        title: 'Custom Test Notification',
+        body: 'This is a custom push notification using Web Push API!',
+        icon: '/logo.jpg',
+        badge: '/logo.jpg',
+        url: '/about',
+        data: {
+          custom: true,
+          timestamp: new Date().toISOString(),
         },
-        body: JSON.stringify({
-          message: {
-            title: 'Custom Test Notification',
-            body: 'This is a custom push notification using Web Push API!',
-            icon: '/logo.jpg',
-            badge: '/logo.jpg',
-            url: '/about',
-            data: {
-              custom: true,
-              timestamp: new Date().toISOString(),
-            },
-          },
-        }),
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
-        setResult(
-          `✅ Custom notification sent! ${data.totalSent} successful, ${data.totalFailed} failed.`,
-        )
-      } else {
-        setResult(`❌ Error: ${data.error}`)
-      }
+      setResult(
+        `✅ Custom notification sent! ${data.totalSent} successful, ${data.totalFailed} failed.`,
+      )
     } catch (error) {
       setResult(`❌ Network error: ${(error as Error).message}`)
     } finally {
@@ -103,11 +88,21 @@ export function PushNotificationTester() {
           Check Subscriptions
         </Button>
 
-        <Button onClick={sendTestNotification} disabled={isLoading} variant="outline" size="sm">
+        <Button
+          onClick={sendTestNotification}
+          disabled={isLoading}
+          variant="outline"
+          size="sm"
+        >
           {isLoading ? 'Sending...' : 'Send Test Notification'}
         </Button>
 
-        <Button onClick={sendCustomNotification} disabled={isLoading} variant="outline" size="sm">
+        <Button
+          onClick={sendCustomNotification}
+          disabled={isLoading}
+          variant="outline"
+          size="sm"
+        >
           {isLoading ? 'Sending...' : 'Send Custom Notification'}
         </Button>
       </div>
@@ -119,7 +114,9 @@ export function PushNotificationTester() {
       )}
 
       {result && (
-        <div className="p-3 bg-white dark:bg-slate-700 rounded border text-sm">{result}</div>
+        <div className="p-3 bg-white dark:bg-slate-700 rounded border text-sm">
+          {result}
+        </div>
       )}
 
       <div className="text-xs text-slate-500 dark:text-slate-400">

@@ -17,7 +17,7 @@ While the starter comes with a express server, only create endpoint when strictl
 
 ## Project Structure
 
-```
+```bash
 client/                   # React SPA frontend
 ├── pages/                # Route components (Index.tsx = home)
 ├── components/ui/        # Pre-built UI component library

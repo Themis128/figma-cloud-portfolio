@@ -1,6 +1,6 @@
+import react from '@vitejs/plugin-react-swc'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import react from '@vitejs/plugin-react-swc'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig, type PluginOption } from 'vite'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
     port: 8081,
     strictPort: true,
     hmr: {
-      port: 24679, // Use a different port for HMR
+      port: 24680, // Use a different port for HMR
     },
     fs: {
       allow: ['.', '../client', '../shared'],
@@ -79,81 +79,23 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'logo.jpg', 'logo.jpeg', 'robots.txt'],
-      srcDir: '../public',
-      filename: 'sw.js',
-      strategies: 'injectManifest',
       manifest: {
-        name: 'Themistoklis Baltzakis - Cloud Architect',
-        short_name: 'T. Baltzakis',
-        description:
-          'Cloud Architect & Cybersecurity Specialist - Professional portfolio showcasing 15+ years of IT expertise',
-        theme_color: '#1e293b',
+        name: 'Themistoklis Baltzakis Portfolio',
+        short_name: 'TB Portfolio',
+        description: 'Cloud Architect & Cybersecurity Specialist Portfolio',
+        theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',
-        orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
-        lang: 'en-US',
-        dir: 'ltr',
-        categories: ['productivity', 'developer-tools', 'business'],
         icons: [
           {
-            src: 'logo.jpg',
+            src: '/logo-192.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any maskable',
           },
           {
-            src: 'logo.jpg',
+            src: '/logo-512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-        shortcuts: [
-          {
-            name: 'Create New Agent',
-            short_name: 'New Agent',
-            description: 'Start building a new AI agent',
-            url: '/product',
-            icons: [{ src: 'logo.jpg', sizes: '96x96' }],
-          },
-          {
-            name: 'View Portfolio',
-            short_name: 'Portfolio',
-            description: 'Explore my professional work',
-            url: '/about',
-            icons: [{ src: 'logo.jpg', sizes: '96x96' }],
-          },
-          {
-            name: 'Contact Me',
-            short_name: 'Contact',
-            description: 'Get in touch for opportunities',
-            url: '/contact',
-            icons: [{ src: 'logo.jpg', sizes: '96x96' }],
-          },
-          {
-            name: 'Performance Dashboard',
-            short_name: 'Performance',
-            description: 'Monitor app performance metrics',
-            url: '/performance',
-            icons: [{ src: 'logo.jpg', sizes: '96x96' }],
-          },
-        ],
-        screenshots: [
-          {
-            src: 'screenshot-wide.png',
-            sizes: '1280x720',
-            type: 'image/png',
-            form_factor: 'wide',
-            label: 'Themistoklis Baltzakis - Portfolio Interface',
-          },
-          {
-            src: 'screenshot-narrow.png',
-            sizes: '390x844',
-            type: 'image/png',
-            form_factor: 'narrow',
-            label: 'Themistoklis Baltzakis Mobile Interface',
           },
         ],
       },
@@ -167,7 +109,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: 'api-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
             },
           },
@@ -178,7 +120,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: 'google-fonts',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
             },
           },
@@ -189,7 +131,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: 'images',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
             },
           },
@@ -200,7 +142,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: 'static-resources',
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                maxAgeSeconds: 60 * 60 * 24 * 7,
               },
             },
           },
