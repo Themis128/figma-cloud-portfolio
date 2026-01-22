@@ -49,12 +49,15 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Deploy to Amplify (Production)
-      uses: aws-actions/amplify-cli-wrapper@1.2.0
+      uses: webfactory/amplify-cli-action@v2
       with:
-        args: publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main
+        amplify-command: publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main
       env:
         NODE_ENV: production
         VITE_APP_ENV: production
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
 
     - name: Create deployment notification
       uses: actions/github-script@v7
@@ -93,12 +96,15 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Rollback deployment
-      uses: aws-actions/amplify-cli-wrapper@1.2.0
+      uses: webfactory/amplify-cli-action@v2
       with:
-        args: publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback
+        amplify-command: publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback
       env:
         NODE_ENV: production
         VITE_APP_ENV: production
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
 
     - name: Create rollback notification
       uses: actions/github-script@v7
