@@ -2,7 +2,7 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [ production ]
   workflow_dispatch:
 
 concurrency:
@@ -58,7 +58,7 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: `🚀 Production Deployment ${new Date().toISOString().split('T')[0]}`,
-            body: `## Production Deployment Successful\n\n**Environment:** Production\n**Branch:** main\n**Commit:** ${context.sha}\n**Deployed by:** @${context.actor}\n\n### Deployment Details\n- ✅ Build completed\n- ✅ Tests passed\n- ✅ Security scan passed\n- ✅ Deployed to AWS Amplify\n\nCheck AWS Amplify console for deployment URL.`,
+            body: `## Production Deployment Successful\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Deployed by:** @${context.actor}\n\n### Deployment Details\n- ✅ Build completed\n- ✅ Tests passed\n- ✅ Security scan passed\n- ✅ Deployed to AWS Amplify\n\nCheck AWS Amplify console for deployment URL.`,
             labels: ['deployment', 'production']
           })
 
@@ -103,6 +103,6 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: `⚠️ Production Rollback ${new Date().toISOString().split('T')[0]}`,
-            body: `## Production Deployment Failed - Rollback Initiated\n\n**Environment:** Production\n**Branch:** main\n**Commit:** ${context.sha}\n**Triggered by:** @${context.actor}\n\n### Action Required\n- 🔍 Check deployment logs\n- 🐛 Fix issues in codebase\n- 🚀 Redeploy after fixes\n\nCheck AWS Amplify console for details.`,
+            body: `## Production Deployment Failed - Rollback Initiated\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Triggered by:** @${context.actor}\n\n### Action Required\n- 🔍 Check deployment logs\n- 🐛 Fix issues in codebase\n- 🚀 Redeploy after fixes\n\nCheck AWS Amplify console for details.`,
             labels: ['deployment', 'production', 'rollback', 'urgent']
           })
