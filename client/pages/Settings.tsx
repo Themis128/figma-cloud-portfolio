@@ -201,7 +201,9 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle>Real-time Features (Beta)</CardTitle>
-                <CardDescription>Test WebSocket connections and real-time functionality</CardDescription>
+                <CardDescription>
+                  Test WebSocket connections and real-time functionality
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <RealtimeTest />

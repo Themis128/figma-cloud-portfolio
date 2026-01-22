@@ -61,10 +61,55 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 <Routes>
   <Route path="/" element={<Index />} />
+  <Route path="/agents" element={<Agents />} />
   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
   <Route path="*" element={<NotFound />} />
 </Routes>;
 ```
+
+### AI Agent Templates System (`/agents`)
+
+The application includes an AI Agent Templates System accessible at `/agents`. This feature allows users to:
+
+- **Browse Pre-built Templates**: Choose from 5 professionally designed AI agent templates
+- **Clone Templates**: Create custom variations of existing templates
+- **Create Custom Templates**: Build templates from scratch with full configuration
+- **Template Management**: Search, filter, and organize templates by category and difficulty
+
+#### Available Templates
+
+1. **Basic Chatbot** - Simple conversational AI for customer support
+2. **Code Reviewer** - Automated code analysis and feedback system
+3. **Data Analyzer** - Intelligent data processing and insights generation
+4. **Content Writer** - AI-powered content creation and editing
+5. **Task Automator** - Workflow automation and task management
+
+#### Template Categories
+
+- **Basic**: Beginner-friendly templates for simple use cases
+- **Advanced**: Intermediate templates with complex workflows
+- **Specialized**: Expert-level templates for specific domains
+
+#### Template System Features
+
+- **Visual Template Browser**: Interactive cards with icons, descriptions, and metadata
+- **Search & Filtering**: Find templates by name, tags, or category
+- **Template Cloning**: Deep copy existing templates with unique IDs
+- **Custom Creation**: Comprehensive form for building templates from scratch
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation and screen reader support
+
+#### Usage
+
+Navigate to `/agents` to access the template system. The interface provides three main views:
+
+1. **Select Template**: Browse and choose from available templates
+2. **Create Template**: Build custom templates with full configuration
+3. **Configure Agent**: Review selected template details and start building
+
+#### Integration
+
+The template system integrates with the main navigation and is accessible via the "Agents" link in both desktop and mobile menus. Templates include workflow data structures that can be extended for future agent building features.
 
 ### Styling System
 
@@ -124,7 +169,7 @@ npx tsx server/node-build.ts    # Production-style server (serves static files)
 Import consistent types in both client and server:
 
 ```typescript
-import { DemoResponse } from "@shared/api";
+import { DemoResponse } from '@shared/api'
 ```
 
 Path aliases:
@@ -158,7 +203,7 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 
    ```typescript
    export interface MyRouteResponse {
-     message: string;
+     message: string
      // Add other response properties here
    }
    ```
@@ -166,33 +211,33 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 2. Create a new route handler in `server/routes/my-route.ts`:
 
    ```typescript
-   import { RequestHandler } from "express";
-   import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
+   import { RequestHandler } from 'express'
+   import { MyRouteResponse } from '@shared/api' // Optional: for type safety
 
    export const handleMyRoute: RequestHandler = (req, res) => {
      const response: MyRouteResponse = {
-       message: "Hello from my endpoint!",
-     };
-     res.json(response);
-   };
+       message: 'Hello from my endpoint!',
+     }
+     res.json(response)
+   }
    ```
 
 3. Register the route in `server/index.ts`:
 
    ```typescript
-   import { handleMyRoute } from "./routes/my-route";
+   import { handleMyRoute } from './routes/my-route'
 
    // Add to the createServer function:
-   app.get("/api/my-endpoint", handleMyRoute);
+   app.get('/api/my-endpoint', handleMyRoute)
    ```
 
 4. Use in React components with type safety:
 
    ```typescript
-   import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
+   import { MyRouteResponse } from '@shared/api' // Optional: for type safety
 
-   const response = await fetch("/api/my-endpoint");
-   const data: MyRouteResponse = await response.json();
+   const response = await fetch('/api/my-endpoint')
+   const data: MyRouteResponse = await response.json()
    ```
 
 ### New Page Route

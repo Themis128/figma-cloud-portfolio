@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { socketManager } from '@/lib/socket'
 
 interface TypingUser {
@@ -58,8 +58,8 @@ export function useTypingIndicator(options: UseTypingIndicatorOptions) {
   // Handle incoming typing events
   useEffect(() => {
     const handleTypingStart = (data: TypingUser) => {
-      setTypingUsers(prev => {
-        const exists = prev.some(user => user.userId === data.userId)
+      setTypingUsers((prev) => {
+        const exists = prev.some((user) => user.userId === data.userId)
         if (!exists) {
           return [...prev, data]
         }
@@ -68,7 +68,7 @@ export function useTypingIndicator(options: UseTypingIndicatorOptions) {
     }
 
     const handleTypingStop = (data: { userId: string }) => {
-      setTypingUsers(prev => prev.filter(user => user.userId !== data.userId))
+      setTypingUsers((prev) => prev.filter((user) => user.userId !== data.userId))
     }
 
     socketManager.on('typing:start', handleTypingStart)

@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import { useSocket } from '@/hooks/useSocket'
-import { useTypingIndicator } from '@/hooks/useTypingIndicator'
-import { useAgentRealtime } from '@/hooks/useAgentRealtime'
+import type React from 'react'
+import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { useAgentRealtime } from '@/hooks/useAgentRealtime'
+import { useSocket } from '@/hooks/useSocket'
+import { useTypingIndicator } from '@/hooks/useTypingIndicator'
 
 export function RealtimeTest() {
   const [userId] = useState(() => `user-${Date.now()}`)
@@ -53,9 +54,7 @@ export function RealtimeTest() {
             <Badge variant={isConnected ? 'default' : 'destructive'}>
               {isConnected ? 'Connected' : 'Disconnected'}
             </Badge>
-            {connectionError && (
-              <span className="text-sm text-red-500">{connectionError}</span>
-            )}
+            {connectionError && <span className="text-sm text-red-500">{connectionError}</span>}
           </div>
 
           <div>
@@ -96,9 +95,7 @@ export function RealtimeTest() {
           </div>
 
           <div>
-            <h3 className="text-sm font-medium mb-2">
-              Currently Typing ({typingUsers.length})
-            </h3>
+            <h3 className="text-sm font-medium mb-2">Currently Typing ({typingUsers.length})</h3>
             <div className="flex flex-wrap gap-2">
               {typingUsers.map((user) => (
                 <Badge key={user.userId} variant="secondary">
@@ -115,21 +112,24 @@ export function RealtimeTest() {
           <CardTitle>Agent Status Updates</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button onClick={testAgentStatus}>
-            Test Agent Status Update
-          </Button>
+          <Button onClick={testAgentStatus}>Test Agent Status Update</Button>
 
           <div>
             <h3 className="text-sm font-medium mb-2">Agent Statuses</h3>
             <div className="space-y-2">
               {agentStatuses.map((status) => (
                 <div key={status.agentId} className="flex items-center gap-2">
-                  <Badge variant={
-                    status.status === 'running' ? 'default' :
-                    status.status === 'error' ? 'destructive' :
-                    status.status === 'completed' ? 'secondary' :
-                    'outline'
-                  }>
+                  <Badge
+                    variant={
+                      status.status === 'running'
+                        ? 'default'
+                        : status.status === 'error'
+                          ? 'destructive'
+                          : status.status === 'completed'
+                            ? 'secondary'
+                            : 'outline'
+                    }
+                  >
                     {status.agentId}: {status.status}
                   </Badge>
                   <span className="text-xs text-gray-500">

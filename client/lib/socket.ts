@@ -1,4 +1,4 @@
-import { io, Socket } from 'socket.io-client'
+import { io, type Socket } from 'socket.io-client'
 
 class SocketManager {
   private socket: Socket | null = null
@@ -11,9 +11,7 @@ class SocketManager {
       return this.socket
     }
 
-    const serverUrl = import.meta.env.DEV
-      ? 'http://localhost:3000'
-      : window.location.origin
+    const serverUrl = import.meta.env.DEV ? 'http://localhost:3000' : window.location.origin
 
     this.socket = io(serverUrl, {
       transports: ['websocket', 'polling'],
@@ -58,7 +56,9 @@ class SocketManager {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++
       setTimeout(() => {
-        console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
+        console.log(
+          `Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
+        )
         this.connect(userId, userName)
       }, this.reconnectDelay * this.reconnectAttempts)
     } else {

@@ -1,3 +1,8 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { lazy, Suspense } from 'react'
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Toaster as Sonner } from 'sonner'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { PerformanceMonitor } from '@/components/PerformanceMonitor'
@@ -7,11 +12,6 @@ import { PageSkeleton } from '@/components/Skeleton'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { lazy, Suspense } from 'react'
-import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Toaster as Sonner } from 'sonner'
 
 // Import Index directly (no lazy loading for main page)
 import Index from './pages/Index'
@@ -23,6 +23,7 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Performance = lazy(() => import('./pages/Performance'))
 const Resume = lazy(() => import('./pages/Resume'))
 const Settings = lazy(() => import('./pages/Settings'))
+const Agents = lazy(() => import('./pages/Agents'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Loading component for Suspense fallback
@@ -60,6 +61,7 @@ const App = () => {
                   <Route path="/performance" element={<Performance />} />
                   <Route path="/resume" element={<Resume />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/agents" element={<Agents />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

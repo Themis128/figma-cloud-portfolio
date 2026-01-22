@@ -153,6 +153,13 @@ export default function Navigation() {
             >
               Settings
             </Link>
+            <Link
+              to="/agents"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md px-2 py-1"
+              aria-label="AI Agents"
+            >
+              Agents
+            </Link>
           </div>
 
           <div className="flex items-center gap-2">
@@ -265,6 +272,14 @@ export default function Navigation() {
               aria-label="Settings"
             >
               Settings
+            </Link>
+            <Link
+              to="/agents"
+              className="text-foreground/90 hover:text-cyan-400 focus:text-cyan-400 transition-colors text-sm font-medium tracking-wide uppercase py-3 px-2 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-background rounded-md"
+              onClick={closeMobileMenu}
+              aria-label="AI Agents"
+            >
+              Agents
             </Link>
             <div className="pt-2 border-t border-border flex gap-2">
               <ThemeToggle />
