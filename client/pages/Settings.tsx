@@ -17,6 +17,66 @@ export default function Settings() {
   const [notifications, setNotifications] = useState(true)
   const [animations, setAnimations] = useState(true)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const [updateStatus, setUpdateStatus] = useState<'idle' | 'checking' | 'available' | 'up-to-date' | 'error'>('idle')
+  const [updateMessage, setUpdateMessage] = useState('')
+
+  const checkForUpdates = async () => {
+    setUpdateStatus('checking')
+    setUpdateMessage('Checking for updates...')
+
+    try {
+      // Simulate API call to check for updates
+      // In a real app, this would call your backend API
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
+      // Check if service worker has updates available
+      if ('serviceWorker' in navigator && 'controller' in navigator.serviceWorker) {
+        const registration = await navigator.serviceWorker.ready
+
+        // Check if there's a waiting service worker (update available)
+        if (registration.waiting) {
+          setUpdateStatus('available')
+          setUpdateMessage('A new version is available! Refresh to update.')
+          return
+        }
+
+        // Check for updates by calling update()
+        registration.update().then(() => {
+          if (registration.installing) {
+            setUpdateStatus('checking')
+            setUpdateMessage('Downloading update...')
+          } else {
+            setUpdateStatus('up-to-date')
+            setUpdateMessage('You\'re running the latest version.')
+          }
+        }).catch(() => {
+          setUpdateStatus('error')
+          setUpdateMessage('Failed to check for updates.')
+        })
+      } else {
+        // Fallback: simulate version check
+        const currentVersion = '1.0.0'
+        const latestVersion = '1.0.0' // In real app, fetch from API
+
+        if (currentVersion === latestVersion) {
+          setUpdateStatus('up-to-date')
+          setUpdateMessage('You\'re running the latest version.')
+        } else {
+          setUpdateStatus('available')
+          setUpdateMessage(`Version ${latestVersion} is available!`)
+        }
+      }
+    } catch (error) {
+      setUpdateStatus('error')
+      setUpdateMessage('Failed to check for updates. Please try again.')
+      console.error('Update check failed:', error)
+    }
+  }
+
+  const viewChangelog = () => {
+    // Open GitHub releases page for the portfolio repository
+    window.open('https://github.com/Themis128/figma-cloud-portfolio/releases', '_blank')
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -182,13 +242,33 @@ export default function Settings() {
                   </div>
                 </div>
 
+                {updateMessage && (
+                  <div className={`p-3 rounded-md text-sm ${
+                    updateStatus === 'available' ? 'bg-green-50 text-green-800 border border-green-200' :
+                    updateStatus === 'up-to-date' ? 'bg-blue-50 text-blue-800 border border-blue-200' :
+                    updateStatus === 'error' ? 'bg-red-50 text-red-800 border border-red-200' :
+                    'bg-gray-50 text-gray-800 border border-gray-200'
+                  }`}>
+                    {updateMessage}
+                  </div>
+                )}
+
                 <Separator />
 
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    Check for Updates
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={checkForUpdates}
+                    disabled={updateStatus === 'checking'}
+                  >
+                    {updateStatus === 'checking' ? 'Checking...' : 'Check for Updates'}
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={viewChangelog}
+                  >
                     View Changelog
                   </Button>
                 </div>

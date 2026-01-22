@@ -1,5 +1,3 @@
-import { Clock, Search, Star, Target, Wrench, Zap } from 'lucide-react'
-import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { HoverCard } from '@/components/ui/hover-card'
 import {
@@ -9,6 +7,8 @@ import {
   getTemplatesByCategory,
   searchTemplates,
 } from '@/data/agentTemplates'
+import { Clock, Search, Star, Target, Wrench, Zap } from 'lucide-react'
+import { useState } from 'react'
 
 interface TemplateSelectorProps {
   onSelectTemplate: (template: AgentTemplate) => void
@@ -120,120 +120,121 @@ export default function TemplateSelector({
         {filteredTemplates.map((template) => {
           const IconComponent = categoryIcons[template.category] || Star
           return (
-            <HoverCard key={template.id}>
-              <button
-                type="button"
-                className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${
-                  selectedTemplateId === template.id
-                    ? 'border-cyan-400 bg-white/10'
-                    : 'border-white/10 hover:border-cyan-400/50'
-                }`}
-                onClick={() => onSelectTemplate(template)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onSelectTemplate(template)
-                  }
-                }}
-              >
-                {/* Selected Indicator and Clone Button */}
-                <div className="absolute top-4 right-4 flex items-center gap-2">
-                  {selectedTemplateId === template.id && (
-                    <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full" />
+            <div key={template.id} className="relative">
+              {/* Clone Button - Positioned outside the main button */}
+              {onCloneTemplate && (
+                <button
+                  type="button"
+                  onClick={() => onCloneTemplate(cloneTemplate(template))}
+                  className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"
+                  title="Clone template"
+                  aria-label={`Clone ${template.name} template`}
+                >
+                  <svg
+                    className="w-4 h-4 text-white/60 group-hover:text-white/90"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+              )}
+
+              <HoverCard>
+                <button
+                  type="button"
+                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${
+                    selectedTemplateId === template.id
+                      ? 'border-cyan-400 bg-white/10'
+                      : 'border-white/10 hover:border-cyan-400/50'
+                  }`}
+                  onClick={() => onSelectTemplate(template)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onSelectTemplate(template)
+                    }
+                  }}
+                >
+                  {/* Selected Indicator */}
+                  <div className="absolute top-4 right-4 flex items-center gap-2">
+                    {selectedTemplateId === template.id && (
+                      <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Icon and Category */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-3xl">{template.icon}</div>
+                    <div className="flex items-center gap-2">
+                      <IconComponent className="w-4 h-4" />
+                      <span className="text-xs text-white/60 capitalize">{template.category}</span>
                     </div>
-                  )}
-                  {onCloneTemplate && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onCloneTemplate(cloneTemplate(template))
-                      }}
-                      className="w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"
-                      title="Clone template"
-                    >
-                      <svg
-                        className="w-3 h-3 text-white/60 group-hover:text-white/90"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-label="Clone template"
-                        role="img"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-
-                {/* Icon and Category */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-3xl">{template.icon}</div>
-                  <div className="flex items-center gap-2">
-                    <IconComponent className="w-4 h-4" />
-                    <span className="text-xs text-white/60 capitalize">{template.category}</span>
                   </div>
-                </div>
 
-                {/* Title and Description */}
-                <h3 className="text-lg font-semibold text-white mb-2">{template.name}</h3>
-                <p className="text-white/70 text-sm mb-4 line-clamp-2">{template.description}</p>
+                  {/* Title and Description */}
+                  <h3 className="text-lg font-semibold text-white mb-2">{template.name}</h3>
+                  <p className="text-white/70 text-sm mb-4 line-clamp-2">{template.description}</p>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {template.tags.slice(0, 3).map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="text-xs bg-white/10 text-white/80 border-white/20"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                  {template.tags.length > 3 && (
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-white/10 text-white/80 border-white/20"
-                    >
-                      +{template.tags.length - 3}
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Features */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="text-sm font-medium text-white/90">Key Features:</h4>
-                  <ul className="space-y-1">
-                    {template.features.slice(0, 2).map((feature, featureIndex) => (
-                      <li
-                        key={`${template.id}-feature-${featureIndex}`}
-                        className="text-xs text-white/60 flex items-center gap-2"
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {template.tags.slice(0, 3).map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="text-xs bg-white/10 text-white/80 border-white/20"
                       >
-                        <div className="w-1 h-1 bg-cyan-400 rounded-full" />
-                        {feature}
-                      </li>
+                        {tag}
+                      </Badge>
                     ))}
-                  </ul>
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3 h-3 text-white/50" />
-                    <span className="text-xs text-white/60">{template.estimatedTime}</span>
+                    {template.tags.length > 3 && (
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-white/10 text-white/80 border-white/20"
+                      >
+                        +{template.tags.length - 3}
+                      </Badge>
+                    )}
                   </div>
-                  <Badge className={`text-xs border ${difficultyColors[template.difficulty]}`}>
-                    {template.difficulty}
-                  </Badge>
-                </div>
-              </button>
-            </HoverCard>
+
+                  {/* Features */}
+                  <div className="space-y-2 mb-4">
+                    <h4 className="text-sm font-medium text-white/90">Key Features:</h4>
+                    <ul className="space-y-1">
+                      {template.features.slice(0, 2).map((feature, featureIndex) => (
+                        <li
+                          key={`${template.id}-feature-${featureIndex}`}
+                          className="text-xs text-white/60 flex items-center gap-2"
+                        >
+                          <div className="w-1 h-1 bg-cyan-400 rounded-full" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3 h-3 text-white/50" />
+                      <span className="text-xs text-white/60">{template.estimatedTime}</span>
+                    </div>
+                    <Badge className={`text-xs border ${difficultyColors[template.difficulty]}`}>
+                      {template.difficulty}
+                    </Badge>
+                  </div>
+                </button>
+              </HoverCard>
+            </div>
           )
         })}
       </div>

@@ -133,7 +133,7 @@ export function RealtimeTest() {
                     {status.agentId}: {status.status}
                   </Badge>
                   <span className="text-xs text-gray-500">
-                    {status.timestamp.toLocaleTimeString()}
+                    {status.timestamp ? new Date(status.timestamp).toLocaleTimeString() : 'N/A'}
                   </span>
                 </div>
               ))}

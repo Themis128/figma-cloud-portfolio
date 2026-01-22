@@ -31,6 +31,7 @@
     "lint:all": "biome check .",
     "format": "biome format .",
     "format:fix": "biome format --write .",
+    "setup:fonts": "powershell -ExecutionPolicy Bypass -File scripts/setup-terminal-fonts.ps1",
     "typecheck": "tsc"
   },
   "dependencies": {

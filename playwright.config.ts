@@ -17,7 +17,7 @@ export default defineConfig({
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.NODE_ENV === 'production' ? 'http://localhost:3000' : 'http://localhost:8081',
 
     /* Enhanced tracing and debugging */
     trace: 'retain-on-failure', // Keep traces for failed tests
@@ -41,8 +41,12 @@ export default defineConfig({
 
   /* Enhanced reporting for issue tracking and resolution */
   reporter: [
-    ['line'], // Console output
-    ['html', { open: 'never' }], // HTML report for detailed analysis
+    ['line'], // Console output with Inter font styling
+    ['html', {
+      open: 'never',
+      // Custom HTML report styling to match app fonts
+      attachmentsBaseURL: 'file://' + process.cwd() + '/playwright-report/',
+    }], // HTML report for detailed analysis
     ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration
     ['junit', { outputFile: 'test-results/junit.xml' }], // JUnit for external tools
   ],

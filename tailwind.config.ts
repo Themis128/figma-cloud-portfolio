@@ -110,6 +110,7 @@ export default {
         blink: 'blink 1s infinite',
       },
       fontFamily: {
+        sans: ["'Inter'", 'system-ui', 'sans-serif'],
         mono: ["'Fira Code'", "'Consolas'", "'Monaco'", 'monospace'],
       },
     },
