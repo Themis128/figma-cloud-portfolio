@@ -53,6 +53,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Verify Amplify App Configuration
+        run: |
+          npm install -g @aws-amplify/cli
+          echo "Verifying Amplify app configuration..."
+          amplify status --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --verbose
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
       - name: Deploy to Amplify (Production)
         run: |
           npm install -g @aws-amplify/cli
