@@ -22,7 +22,7 @@ async function updateAmplifyRepository() {
     console.log(`📦 New Repository: ${newRepository}`);
     console.log(`🌿 Branch: ${branchName}`);
 
-    // Update build spec and other settings (repository changes require console re-authorization)
+    // Set build spec with pnpm installation
     const buildSpec = `version: 1
 frontend:
   phases:
@@ -32,38 +32,18 @@ frontend:
         - pnpm install
     build:
       commands:
-        - echo "Building client application..."
         - pnpm run build:resume
         - pnpm run build:client
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
-  cache:
-    paths:
-      - node_modules/**
 backend:
   phases:
     build:
       commands:
-        - echo "Building backend..."
         - pnpm run build:server
-        - amplifyPush --simple
-customHeaders:
-  - pattern: '**/*.js'
-    headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-  - pattern: '**/*.mjs'
-    headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-  - pattern: '**/sw.js'
-    headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-      - key: 'Service-Worker-Allowed'
-        value: '/'`;
+        - amplifyPush --simple`;
 
     const updateCommand = new UpdateAppCommand({
       appId: appId,
