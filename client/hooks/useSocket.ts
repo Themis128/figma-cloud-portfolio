@@ -60,8 +60,10 @@ export function useSocket(options: UseSocketOptions = {}) {
 
   // Handle presence updates
   useEffect(() => {
-    const handlePresenceUpdate = (users: User[]) => {
-      setPresence(users)
+    const handlePresenceUpdate = (data: unknown) => {
+      if (Array.isArray(data)) {
+        setPresence(data as User[])
+      }
     }
 
     socketManager.on('presence:update', handlePresenceUpdate)

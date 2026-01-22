@@ -111,8 +111,14 @@ jobs:
         format: 'sarif'
         output: 'trivy-results.sarif'
 
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v4
+    # Note: Uncomment below to upload results to GitHub Security tab
+    # Requires code scanning to be enabled in repository settings
+    # - name: Upload Trivy scan results to GitHub Security tab
+    #   uses: github/codeql-action/upload-sarif@v4
+    #   if: always()
+    #   with:
+    #     sarif_file: 'trivy-results.sarif'
+    
+    - name: Display Trivy scan results
       if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
+      run: cat trivy-results.sarif | jq '.runs[0].results | length' || echo "No results found"

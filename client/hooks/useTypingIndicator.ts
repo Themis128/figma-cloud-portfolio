@@ -57,18 +57,24 @@ export function useTypingIndicator(options: UseTypingIndicatorOptions) {
 
   // Handle incoming typing events
   useEffect(() => {
-    const handleTypingStart = (data: TypingUser) => {
-      setTypingUsers((prev) => {
-        const exists = prev.some((user) => user.userId === data.userId)
-        if (!exists) {
-          return [...prev, data]
-        }
-        return prev
-      })
+    const handleTypingStart = (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'userId' in data) {
+        const typingUser = data as TypingUser
+        setTypingUsers((prev) => {
+          const exists = prev.some((user) => user.userId === typingUser.userId)
+          if (!exists) {
+            return [...prev, typingUser]
+          }
+          return prev
+        })
+      }
     }
 
-    const handleTypingStop = (data: { userId: string }) => {
-      setTypingUsers((prev) => prev.filter((user) => user.userId !== data.userId))
+    const handleTypingStop = (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'userId' in data) {
+        const { userId: stoppedUserId } = data as { userId: string }
+        setTypingUsers((prev) => prev.filter((user) => user.userId !== stoppedUserId))
+      }
     }
 
     socketManager.on('typing:start', handleTypingStart)

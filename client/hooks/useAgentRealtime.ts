@@ -86,12 +86,15 @@ export function useAgentRealtime(options: UseAgentRealtimeOptions) {
 
   // Handle agent status changes
   useEffect(() => {
-    const handleStatusChange = (status: AgentStatus) => {
-      setAgentStatuses((prev) => {
-        const newStatuses = new Map(prev)
-        newStatuses.set(status.agentId, status)
-        return newStatuses
-      })
+    const handleStatusChange = (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'agentId' in data) {
+        const status = data as AgentStatus
+        setAgentStatuses((prev) => {
+          const newStatuses = new Map(prev)
+          newStatuses.set(status.agentId, status)
+          return newStatuses
+        })
+      }
     }
 
     socketManager.on('agent:status-changed', handleStatusChange)
@@ -103,14 +106,17 @@ export function useAgentRealtime(options: UseAgentRealtimeOptions) {
 
   // Handle agent updates in room
   useEffect(() => {
-    const handleAgentUpdate = (update: AgentUpdate) => {
-      // Emit custom event for room-specific updates
-      // This can be listened to by components that need real-time agent collaboration
-      window.dispatchEvent(
-        new CustomEvent('agent:realtime-update', {
-          detail: update,
-        }),
-      )
+    const handleAgentUpdate = (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'roomId' in data) {
+        const update = data as AgentUpdate
+        // Emit custom event for room-specific updates
+        // This can be listened to by components that need real-time agent collaboration
+        window.dispatchEvent(
+          new CustomEvent('agent:realtime-update', {
+            detail: update,
+          }),
+        )
+      }
     }
 
     socketManager.on('agent:update', handleAgentUpdate)
@@ -122,8 +128,8 @@ export function useAgentRealtime(options: UseAgentRealtimeOptions) {
 
   // Handle room join confirmation
   useEffect(() => {
-    const handleRoomJoined = (joinedRoomId: string) => {
-      if (joinedRoomId === roomId) {
+    const handleRoomJoined = (data: unknown) => {
+      if (typeof data === 'string' && data === roomId) {
         setRoomJoined(true)
       }
     }
