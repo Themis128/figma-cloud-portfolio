@@ -18,6 +18,20 @@ async function globalTeardown(_config: FullConfig) {
   console.log('🧹 Starting Playwright global teardown...')
 
   try {
+    // Stop the backend server
+    console.log('🛑 Stopping backend server...')
+    try {
+      // Find and kill the server process
+      if (process.platform === 'win32') {
+        await execAsync('taskkill /f /im node.exe /fi "WINDOWTITLE eq tsx server/node-build.ts"')
+      } else {
+        await execAsync('pkill -f "tsx server/node-build.ts"')
+      }
+      console.log('✅ Backend server stopped')
+    } catch (_error) {
+      console.log('⚠️  Could not stop backend server (may not be running)')
+    }
+
     // Generate test summary report
     console.log('📊 Generating test summary...')
     await generateTestSummary()

@@ -47,7 +47,7 @@ export default defineConfig({
       {
         open: 'never',
         // Custom HTML report styling to match app fonts
-        attachmentsBaseURL: 'file://' + process.cwd() + '/playwright-report/',
+        attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
       },
     ], // HTML report for detailed analysis
     ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration

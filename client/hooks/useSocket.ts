@@ -27,7 +27,7 @@ export function useSocket(options: UseSocketOptions = {}) {
     }
 
     try {
-      const socket = socketManager.connect(userId, userName)
+      const _socket = socketManager.connect(userId, userName)
       hasConnectedRef.current = true
       setConnectionError(null)
     } catch (error) {
@@ -41,7 +41,7 @@ export function useSocket(options: UseSocketOptions = {}) {
     setPresence([])
   }, [])
 
-  const emit = useCallback((event: string, data?: any) => {
+  const emit = useCallback((event: string, data?: unknown) => {
     socketManager.emit(event, data)
   }, [])
 

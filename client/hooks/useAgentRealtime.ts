@@ -4,13 +4,13 @@ import { socketManager } from '@/lib/socket'
 interface AgentStatus {
   agentId: string
   status: 'idle' | 'running' | 'processing' | 'error' | 'completed'
-  details?: any
+  details?: Record<string, unknown>
   timestamp: Date
 }
 
 interface AgentUpdate {
   roomId: string
-  updates: any
+  updates: Record<string, unknown>
   from: string
 }
 
@@ -46,7 +46,7 @@ export function useAgentRealtime(options: UseAgentRealtimeOptions) {
   }, [roomId])
 
   const updateAgent = useCallback(
-    (updates: any) => {
+    (updates: Record<string, unknown>) => {
       if (roomId) {
         socketManager.emit('agent:update', {
           roomId,
@@ -62,7 +62,7 @@ export function useAgentRealtime(options: UseAgentRealtimeOptions) {
   )
 
   const updateAgentStatus = useCallback(
-    (agentId: string, status: AgentStatus['status'], details?: any) => {
+    (agentId: string, status: AgentStatus['status'], details?: Record<string, unknown>) => {
       socketManager.emit('agent:status-update', {
         agentId,
         status,

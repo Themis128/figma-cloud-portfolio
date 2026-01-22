@@ -29,7 +29,7 @@ const server = app.listen(port, () => {
 })
 
 // Initialize Socket.IO
-const io = initializeSocketIO(server)
+const _io = initializeSocketIO(server)
 console.log('🔌 WebSocket server initialized')
 
 // Graceful shutdown

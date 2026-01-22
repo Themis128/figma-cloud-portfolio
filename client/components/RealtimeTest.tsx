@@ -76,7 +76,9 @@ export function RealtimeTest() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label htmlFor="room-id" className="text-sm font-medium">Room ID</label>
+            <label htmlFor="room-id" className="text-sm font-medium">
+              Room ID
+            </label>
             <Input
               id="room-id"
               value={roomId}
@@ -86,7 +88,9 @@ export function RealtimeTest() {
           </div>
 
           <div>
-            <label htmlFor="test-typing" className="text-sm font-medium">Test Typing</label>
+            <label htmlFor="test-typing" className="text-sm font-medium">
+              Test Typing
+            </label>
             <Input
               id="test-typing"
               value={message}

@@ -1,11 +1,11 @@
-import { exec } from 'node:child_process'
+import { exec, spawn } from 'node:child_process'
 import { promisify } from 'node:util'
 import { chromium, type FullConfig } from '@playwright/test'
 
 const execAsync = promisify(exec)
 
-// Global server process reference for cleanup (reserved for future use)
-// const serverProcess: ReturnType<typeof spawn> | null = null
+// Global server process reference for cleanup
+let serverProcess: ReturnType<typeof spawn> | null = null
 
 /**
  * Global setup for Playwright tests
@@ -15,6 +15,47 @@ async function globalSetup(_config: FullConfig) {
   console.log('🚀 Starting Playwright global setup...')
 
   try {
+    // Start the backend server
+    console.log('🔧 Starting backend server...')
+    serverProcess = spawn('npx', ['tsx', 'server/node-build.ts'], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: process.cwd(),
+      detached: false,
+    })
+
+    // Wait for backend to start
+    await new Promise((resolve, reject) => {
+      let output = ''
+      const timeout = setTimeout(() => {
+        reject(new Error('Backend server failed to start within 30 seconds'))
+      }, 30000)
+
+      const checkOutput = (data: Buffer) => {
+        output += data.toString()
+        if (
+          output.includes('Baltzakis Themistoklis server running on port 3000') ||
+          output.includes('listening on port 3000')
+        ) {
+          clearTimeout(timeout)
+          resolve(true)
+        }
+      }
+
+      if (serverProcess) {
+        serverProcess.stdout?.on('data', checkOutput)
+        serverProcess.stderr?.on('data', checkOutput)
+
+        serverProcess.on('error', (error) => {
+          clearTimeout(timeout)
+          reject(error)
+        })
+      } else {
+        reject(new Error('Failed to start server process'))
+      }
+    })
+
+    console.log('✅ Backend server started')
+
     // Verify development servers are running
     console.log('📡 Checking development servers...')
 
@@ -45,22 +86,18 @@ async function globalSetup(_config: FullConfig) {
       return false
     }
 
-    // Check production server with retries
-    const serverUrl =
-      process.env.NODE_ENV === 'production' ? 'http://localhost:3000' : 'http://localhost:8081'
-    const serverReady = await checkServer(serverUrl, 'Server')
-    if (!serverReady) {
-      throw new Error('Server failed health check')
+    // Check frontend server with retries
+    const frontendUrl = 'http://localhost:8081'
+    const frontendReady = await checkServer(frontendUrl, 'Frontend server')
+    if (!frontendReady) {
+      throw new Error('Frontend server failed health check')
     }
 
-    // Check backend API with retries (optional)
-    const apiUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'http://localhost:3000/api/ping'
-        : 'http://localhost:8081/api/ping'
+    // Check backend API with retries
+    const apiUrl = 'http://localhost:8081/api/ping'
     const backendReady = await checkServer(apiUrl, 'Backend API server')
     if (!backendReady) {
-      console.log('⚠️  Backend API server not accessible - tests may have limited functionality')
+      console.log('⚠️  Backend API server not accessible - some tests may fail')
     }
 
     // Pre-warm the application by loading the main page
@@ -69,7 +106,7 @@ async function globalSetup(_config: FullConfig) {
     const page = await browser.newPage()
 
     try {
-      await page.goto(serverUrl, { waitUntil: 'networkidle' })
+      await page.goto(frontendUrl, { waitUntil: 'networkidle' })
       await page.waitForTimeout(2000) // Allow time for service worker registration
 
       // Verify critical elements are present
@@ -95,6 +132,10 @@ async function globalSetup(_config: FullConfig) {
     console.log('🎯 Global setup completed successfully')
   } catch (error) {
     console.error('❌ Global setup failed:', error)
+    // Cleanup on failure
+    if (serverProcess) {
+      serverProcess.kill()
+    }
     throw error
   }
 }

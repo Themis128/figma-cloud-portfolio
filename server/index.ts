@@ -1,5 +1,6 @@
 import cors from 'cors'
 import 'dotenv/config'
+import type { Server as HttpServer } from 'node:http'
 import express, {
   type ErrorRequestHandler,
   type NextFunction,
@@ -89,7 +90,7 @@ export function createServer() {
   return app
 }
 
-export function initializeSocketIO(server: any) {
+export function initializeSocketIO(server: HttpServer) {
   const io = new SocketIOServer(server, {
     cors: {
       origin:
@@ -150,7 +151,7 @@ export function initializeSocketIO(server: any) {
       socket.leave(`agent:${roomId}`)
     })
 
-    socket.on('agent:update', (data: { roomId: string; updates: any }) => {
+    socket.on('agent:update', (data: { roomId: string; updates: Record<string, unknown> }) => {
       socket.to(`agent:${data.roomId}`).emit('agent:update', {
         ...data.updates,
         from: socket.id,
@@ -158,14 +159,17 @@ export function initializeSocketIO(server: any) {
     })
 
     // Handle agent status updates
-    socket.on('agent:status-update', (data: { agentId: string; status: string; details?: any }) => {
-      io.emit('agent:status-changed', {
-        agentId: data.agentId,
-        status: data.status,
-        details: data.details,
-        timestamp: new Date(),
-      })
-    })
+    socket.on(
+      'agent:status-update',
+      (data: { agentId: string; status: string; details?: Record<string, unknown> }) => {
+        io.emit('agent:status-changed', {
+          agentId: data.agentId,
+          status: data.status,
+          details: data.details,
+          timestamp: new Date(),
+        })
+      },
+    )
 
     // Handle disconnection
     socket.on('disconnect', () => {

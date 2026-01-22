@@ -83,15 +83,15 @@ class SocketManager {
   }
 
   // Convenience methods for common events
-  emit(event: string, data?: any) {
+  emit(event: string, data?: unknown) {
     this.socket?.emit(event, data)
   }
 
-  on(event: string, callback: (...args: any[]) => void) {
+  on(event: string, callback: (...args: unknown[]) => void) {
     this.socket?.on(event, callback)
   }
 
-  off(event: string, callback?: (...args: any[]) => void) {
+  off(event: string, callback?: (...args: unknown[]) => void) {
     if (callback) {
       this.socket?.off(event, callback)
     } else {
