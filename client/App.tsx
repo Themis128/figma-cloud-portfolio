@@ -44,12 +44,7 @@ const App = () => {
             <Sonner />
             <PWAInstallButton />
             <PWAUpdateNotification />
-            <BrowserRouter
-              future={{
-                v7_startTransition: true,
-                v7_relativeSplatPath: true,
-              }}
-            >
+            <BrowserRouter>
               <GoogleAnalytics />
               <PerformanceMonitor />
               <Suspense fallback={<PageLoader />}>

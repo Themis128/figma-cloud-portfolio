@@ -19,6 +19,21 @@ export function useTypingIndicator(options: UseTypingIndicatorOptions) {
   const [isTyping, setIsTyping] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
+  const stopTyping = useCallback(() => {
+    if (isTyping) {
+      setIsTyping(false)
+      socketManager.emit('typing:stop', {
+        roomId,
+        userId,
+      })
+    }
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = undefined
+    }
+  }, [isTyping, roomId, userId])
+
   const startTyping = useCallback(() => {
     if (!isTyping) {
       setIsTyping(true)
@@ -38,22 +53,7 @@ export function useTypingIndicator(options: UseTypingIndicatorOptions) {
     timeoutRef.current = setTimeout(() => {
       stopTyping()
     }, debounceMs)
-  }, [isTyping, roomId, userId, userName, debounceMs])
-
-  const stopTyping = useCallback(() => {
-    if (isTyping) {
-      setIsTyping(false)
-      socketManager.emit('typing:stop', {
-        roomId,
-        userId,
-      })
-    }
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = undefined
-    }
-  }, [isTyping, roomId, userId])
+  }, [isTyping, roomId, userId, userName, debounceMs, stopTyping])
 
   // Handle incoming typing events
   useEffect(() => {
