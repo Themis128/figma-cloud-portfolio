@@ -10,6 +10,7 @@ permissions:
   actions: read
   checks: write
   statuses: write
+  issues: write
 
 concurrency:
   group: production
@@ -108,7 +109,6 @@ jobs:
           echo "✅ Automatic deployment triggered - Amplify will build and deploy from GitHub"
           echo "📊 Check AWS Amplify Console for deployment status and logs"
 
-
         env:
           NODE_ENV: production
           VITE_APP_ENV: production
@@ -116,17 +116,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Create deployment notification
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `🚀 Production Deployment ${new Date().toISOString().split('T')[0]}`,
-              body: `## Production Deployment Successful\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Deployed by:** @${context.actor}\n\n### Deployment Details\n- ✅ Build completed\n- ✅ Tests passed\n- ✅ Security scan passed\n- ✅ Deployed to AWS Amplify\n\nCheck AWS Amplify console for deployment URL.`,
-              labels: ['deployment', 'production']
-            })
+      - name: Deployment Summary
+        run: |
+          echo "🚀 Production deployment triggered successfully!"
+          echo "📊 Check AWS Amplify Console for deployment status"
+          echo "🔗 App URL: https://${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}.amplifyapp.com"
 
   health-check:
     runs-on: ubuntu-latest
@@ -180,15 +174,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Create rollback notification
-        uses: actions/github-script@v7
+      - name: Rollback Summary
         if: always()
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `⚠️ Production Rollback ${new Date().toISOString().split('T')[0]}`,
-              body: `## Production Deployment Failed - Rollback Initiated\n\n**Environment:** Production\n**Branch:** production\n**Commit:** ${context.sha}\n**Triggered by:** @${context.actor}\n\n### Action Required\n- 🔍 Check deployment logs\n- 🐛 Fix issues in codebase\n- 🚀 Redeploy after fixes\n\nCheck AWS Amplify console for details.`,
-              labels: ['deployment', 'production', 'rollback', 'urgent']
-            })
+        run: |
+          echo "🔄 Rollback process completed"
+          echo "📊 Check AWS Amplify Console for rollback status"
