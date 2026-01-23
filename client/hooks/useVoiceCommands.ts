@@ -16,12 +16,8 @@ interface SpeechRecognition extends EventTarget {
   start(): void
   stop(): void
   onstart: ((this: SpeechRecognition, ev: Event) => void) | null
-  onresult:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void)
-    | null
-  onerror:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void)
-    | null
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null
   onend: ((this: SpeechRecognition, ev: Event) => void) | null
 }
 
@@ -87,8 +83,7 @@ export function useVoiceCommands(commands: VoiceCommand[] = []) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Check for Speech Recognition support
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition()
@@ -175,9 +170,7 @@ export function useVoiceCommands(commands: VoiceCommand[] = []) {
       }
 
       // No command matched
-      speak(
-        `I didn't understand that command. Try saying "help" for available commands.`,
-      )
+      speak(`I didn't understand that command. Try saying "help" for available commands.`)
       return false
     },
     [commands, speak],

@@ -1,8 +1,8 @@
+import type { FullConfig } from '@playwright/test'
+import { exec } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { promisify } from 'node:util'
-import { exec } from 'node:child_process'
-import type { FullConfig } from '@playwright/test'
 import { stopServers } from './test-environment'
 
 const execAsync = promisify(exec)

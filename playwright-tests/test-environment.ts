@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from 'node:child_process'
+import { type ChildProcess, spawn } from 'node:child_process'
 
 // Global server process references for cleanup
 export let serverProcess: ChildProcess | null = null
@@ -112,7 +112,7 @@ export async function stopServers(): Promise<void> {
   }
 
   // Wait a bit for processes to terminate
-  await new Promise(resolve => setTimeout(resolve, 2000))
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
   serverProcess = null
   frontendProcess = null

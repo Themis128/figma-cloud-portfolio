@@ -1,13 +1,9 @@
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { commonVoiceCommands, useVoiceCommands, type VoiceCommand } from '@/hooks/useVoiceCommands'
 import { Mic, MicOff, Volume2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useVoiceCommands, commonVoiceCommands, type VoiceCommand } from '@/hooks/useVoiceCommands'
-import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Badge } from '@/components/ui/badge'
 
 interface VoiceCommandButtonProps {
   customCommands?: VoiceCommand[]
@@ -79,11 +75,10 @@ export default function VoiceCommandButton({
           <PopoverTrigger asChild>
             <Button
               size="icon"
-              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
-                isListening
-                  ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                  : 'bg-cyan-500 hover:bg-cyan-600'
-              }`}
+              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${isListening
+                ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                : 'bg-cyan-500 hover:bg-cyan-600'
+                }`}
               onClick={isListening ? stopListening : startListening}
               aria-label={isListening ? 'Stop voice commands' : 'Start voice commands'}
             >
@@ -110,9 +105,7 @@ export default function VoiceCommandButton({
                   {isListening ? 'Listening...' : 'Ready'}
                 </Badge>
                 {confidence > 0 && (
-                  <Badge variant="outline">
-                    {Math.round(confidence * 100)}% confidence
-                  </Badge>
+                  <Badge variant="outline">{Math.round(confidence * 100)}% confidence</Badge>
                 )}
               </div>
 
@@ -135,12 +128,10 @@ export default function VoiceCommandButton({
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">Available Commands:</h4>
                 <div className="max-h-40 overflow-y-auto space-y-1">
-                  {availableCommands.slice(0, 8).map((command, index) => (
-                    <div key={index} className="flex items-center gap-2 text-xs">
+                  {availableCommands.slice(0, 8).map((command) => (
+                    <div key={command.keywords[0]} className="flex items-center gap-2 text-xs">
                       <Volume2 className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        "{command.keywords[0]}"
-                      </span>
+                      <span className="text-muted-foreground">"{command.keywords[0]}"</span>
                       <span className="text-foreground">→</span>
                       <span className="text-foreground">{command.description}</span>
                     </div>
@@ -158,17 +149,17 @@ export default function VoiceCommandButton({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => speak('Voice commands are now active. Try saying "help" for available commands.')}
+                  onClick={() =>
+                    speak(
+                      'Voice commands are now active. Try saying "help" for available commands.',
+                    )
+                  }
                   className="flex-1"
                 >
                   <Volume2 className="w-4 h-4 mr-2" />
                   Test Voice
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsOpen(false)}
-                >
+                <Button size="sm" variant="outline" onClick={() => setIsOpen(false)}>
                   Close
                 </Button>
               </div>

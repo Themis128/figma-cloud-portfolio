@@ -1,15 +1,12 @@
-import cors from 'cors'
 import 'dotenv/config'
-import type { Server as HttpServer } from 'node:http'
 import express, {
   type ErrorRequestHandler,
   type NextFunction,
   type Request,
   type Response,
 } from 'express'
+import type { Server as HttpServer } from 'node:http'
 import { Server as SocketIOServer } from 'socket.io'
-import { sentryErrorHandler, trackApiRequest } from './sentry'
-import * as Sentry from '@sentry/node'
 import { handleContactForm } from './routes/contact'
 import { handleDemo } from './routes/demo'
 import {
@@ -19,6 +16,7 @@ import {
   handlePushNotificationsPut,
 } from './routes/push-notifications'
 import { handleResumeDownload } from './routes/resume'
+import { sentryErrorHandler } from './sentry'
 
 export function createServer() {
   const app = express()
@@ -37,18 +35,19 @@ export function createServer() {
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
 
     // Content Security Policy
-    res.setHeader('Content-Security-Policy',
+    res.setHeader(
+      'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "img-src 'self' data: https: blob:; " +
-      "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
-      "frame-src 'self' https://www.recaptcha.net; " +
-      "object-src 'none'; " +
-      "base-uri 'self'; " +
-      "form-action 'self'; " +
-      "frame-ancestors 'none';"
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data: https: blob:; " +
+        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
+        "frame-src 'self' https://www.recaptcha.net; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self'; " +
+        "frame-ancestors 'none';",
     )
 
     // HTTPS Strict Transport Security (only in production)
@@ -109,7 +108,7 @@ export function createServer() {
   app.delete('/api/push-notifications', handlePushNotificationsDelete)
 
   // Health check endpoints
-  app.get('/api/health', (req, res) => {
+  app.get('/api/health', (_req, res) => {
     const startTime = Date.now()
     res.json({
       status: 'healthy',
@@ -121,7 +120,7 @@ export function createServer() {
     })
   })
 
-  app.get('/api/health/detailed', (req, res) => {
+  app.get('/api/health/detailed', (_req, res) => {
     const startTime = Date.now()
     const memUsage = process.memoryUsage()
 
@@ -132,10 +131,10 @@ export function createServer() {
       version: process.env.npm_package_version || '1.0.0',
       environment: process.env.NODE_ENV,
       memory: {
-        rss: Math.round(memUsage.rss / 1024 / 1024) + ' MB',
-        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + ' MB',
-        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + ' MB',
-        external: Math.round(memUsage.external / 1024 / 1024) + ' MB',
+        rss: `${Math.round(memUsage.rss / 1024 / 1024)} MB`,
+        heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)} MB`,
+        heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)} MB`,
+        external: `${Math.round(memUsage.external / 1024 / 1024)} MB`,
       },
       responseTime: Date.now() - startTime,
     })
