@@ -1,5 +1,9 @@
 name: Update Deployment Status
 
+permissions:
+  issues: write
+  contents: read
+
 on:
   workflow_run:
     workflows: ["Deploy to Staging", "Deploy to Production", "Rollback Deployment"]
