@@ -1,14 +1,11 @@
-import { exec } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { promisify } from 'node:util'
+import { exec } from 'node:child_process'
 import type { FullConfig } from '@playwright/test'
+import { stopServers } from './test-environment'
 
 const execAsync = promisify(exec)
-
-// Import server process reference from global setup
-// Note: In a real implementation, you'd use a shared state management
-// For now, we'll clean up any running servers on the test ports
 
 /**
  * Global teardown for Playwright tests
@@ -18,19 +15,8 @@ async function globalTeardown(_config: FullConfig) {
   console.log('🧹 Starting Playwright global teardown...')
 
   try {
-    // Stop the backend server
-    console.log('🛑 Stopping backend server...')
-    try {
-      // Find and kill the server process
-      if (process.platform === 'win32') {
-        await execAsync('taskkill /f /im node.exe /fi "WINDOWTITLE eq tsx server/node-build.ts"')
-      } else {
-        await execAsync('pkill -f "tsx server/node-build.ts"')
-      }
-      console.log('✅ Backend server stopped')
-    } catch (_error) {
-      console.log('⚠️  Could not stop backend server (may not be running)')
-    }
+    // Stop all servers using the shared environment
+    await stopServers()
 
     // Generate test summary report
     console.log('📊 Generating test summary...')

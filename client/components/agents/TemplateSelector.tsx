@@ -13,6 +13,7 @@ import {
 interface TemplateSelectorProps {
   onSelectTemplate: (template: AgentTemplate) => void
   onCloneTemplate?: (template: AgentTemplate) => void
+  onCreateTemplate?: () => void
   selectedTemplateId?: string
 }
 
@@ -31,6 +32,7 @@ const categoryIcons = {
 export default function TemplateSelector({
   onSelectTemplate,
   onCloneTemplate,
+  onCreateTemplate,
   selectedTemplateId,
 }: TemplateSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('')
@@ -113,6 +115,33 @@ export default function TemplateSelector({
             )
           })}
         </div>
+
+        {/* Create Custom Template Button */}
+        {onCreateTemplate && (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={onCreateTemplate}
+              className="flex items-center gap-3 px-6 py-3 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Create Custom Template
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Templates Grid */}

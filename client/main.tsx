@@ -1,3 +1,4 @@
+import './lib/sentry' // Initialize Sentry first
 import './global.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

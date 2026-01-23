@@ -1,11 +1,9 @@
-import { exec, spawn } from 'node:child_process'
+import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 import { chromium, type FullConfig } from '@playwright/test'
+import { startBackendServer, startFrontendServer, stopServers } from './test-environment'
 
 const execAsync = promisify(exec)
-
-// Global server process reference for cleanup
-let serverProcess: ReturnType<typeof spawn> | null = null
 
 /**
  * Global setup for Playwright tests
@@ -16,45 +14,10 @@ async function globalSetup(_config: FullConfig) {
 
   try {
     // Start the backend server
-    console.log('🔧 Starting backend server...')
-    serverProcess = spawn('npx', ['tsx', 'server/node-build.ts'], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      cwd: process.cwd(),
-      detached: false,
-    })
+    await startBackendServer()
 
-    // Wait for backend to start
-    await new Promise((resolve, reject) => {
-      let output = ''
-      const timeout = setTimeout(() => {
-        reject(new Error('Backend server failed to start within 30 seconds'))
-      }, 30000)
-
-      const checkOutput = (data: Buffer) => {
-        output += data.toString()
-        if (
-          output.includes('Baltzakis Themistoklis server running on port 3000') ||
-          output.includes('listening on port 3000')
-        ) {
-          clearTimeout(timeout)
-          resolve(true)
-        }
-      }
-
-      if (serverProcess) {
-        serverProcess.stdout?.on('data', checkOutput)
-        serverProcess.stderr?.on('data', checkOutput)
-
-        serverProcess.on('error', (error) => {
-          clearTimeout(timeout)
-          reject(error)
-        })
-      } else {
-        reject(new Error('Failed to start server process'))
-      }
-    })
-
-    console.log('✅ Backend server started')
+    // Start the frontend server
+    await startFrontendServer()
 
     // Verify development servers are running
     console.log('📡 Checking development servers...')
@@ -133,9 +96,7 @@ async function globalSetup(_config: FullConfig) {
   } catch (error) {
     console.error('❌ Global setup failed:', error)
     // Cleanup on failure
-    if (serverProcess) {
-      serverProcess.kill()
-    }
+    await stopServers()
     throw error
   }
 }

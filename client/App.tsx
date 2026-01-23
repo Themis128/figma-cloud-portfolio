@@ -12,6 +12,7 @@ import { PageSkeleton } from '@/components/Skeleton'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import VoiceCommandButton from '@/components/VoiceCommandButton'
 
 // Import Index directly (no lazy loading for main page)
 import Index from './pages/Index'
@@ -44,6 +45,7 @@ const App = () => {
             <Sonner />
             <PWAInstallButton />
             <PWAUpdateNotification />
+            <VoiceCommandButton />
             <BrowserRouter>
               <GoogleAnalytics />
               <PerformanceMonitor />

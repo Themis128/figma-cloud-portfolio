@@ -1,7 +1,7 @@
 import { createServer, initializeSocketIO } from './index'
 
 const app = createServer()
-const port = process.env.PORT || 0
+const port = process.env.PORT || 3000
 
 console.log('Starting server...')
 console.log(`Attempting to listen on port ${port}...`)
@@ -26,8 +26,3 @@ server.on('listening', () => {
 })
 
 console.log('Server setup complete, waiting for connections...')
-
-// Keep the process alive
-setInterval(() => {
-  console.log('Server still running...')
-}, 10000)

@@ -2,39 +2,34 @@
   "name": "baltzakis-portfolio",
   "private": true,
   "type": "module",
-  "pkg": {
-    "assets": [
-      "dist/spa/*"
-    ],
-    "scripts": [
-      "dist/server/**/*.js"
-    ]
-  },
   "scripts": {
+    "build": "pnpm run build:resume && pnpm run build:client && pnpm run build:server",
+    "build:analyze": "vite build --mode analyze",
+    "build:client": "vite build",
+    "build:resume": "node scripts/build-resume.js",
+    "build:server": "vite build --config vite.config.server.ts",
     "dev": "vite",
     "dev:all": "concurrently \"pnpm dev\" \"pnpm exec tsx server/node-build.ts\"",
-    "build": "pnpm run build:resume && pnpm run build:client && pnpm run build:server",
-    "build:client": "vite build",
-    "build:server": "vite build --config vite.config.server.ts",
-    "build:analyze": "vite build --mode analyze",
-    "build:resume": "node scripts/build-resume.js",
-    "optimize-images": "node scripts/optimize-images.js",
-    "generate-resume-html": "node scripts/generate-resume-html.js",
-    "generate-resume": "node scripts/generate-resume-html.js && node scripts/generate-resume.js",
-    "start": "node dist/server/node-build.mjs",
-    "test": "vitest run",
-    "test:unit": "vitest run",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "lint:all": "biome check .",
     "format": "biome format .",
     "format:fix": "biome format --write .",
+    "generate-resume": "node scripts/generate-resume-html.js && node scripts/generate-resume.js",
+    "generate-resume-html": "node scripts/generate-resume-html.js",
+    "lint": "biome check .",
+    "lint:all": "biome check .",
+    "lint:fix": "biome check --write .",
+    "optimize-images": "node scripts/optimize-images.js",
     "setup:fonts": "powershell -ExecutionPolicy Bypass -File scripts/setup-terminal-fonts.ps1",
+    "start": "node dist/server/node-build.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:unit": "vitest run",
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@sentry/node": "^10.36.0",
+    "@sentry/react": "^10.36.0",
+    "@sentry/tracing": "^7.120.4",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "firebase": "^12.8.0",
@@ -48,7 +43,7 @@
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.20.0",
-    "@aws-sdk/client-amplify": "^3.972.0",
+    "@aws-sdk/client-amplify": "^3.974.0",
     "@biomejs/biome": "^2.3.11",
     "@hookform/resolvers": "^5.2.2",
     "@playwright/test": "^1.57.0",
@@ -99,10 +94,10 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "concurrently": "^9.2.1",
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.28.1",
+    "framer-motion": "^12.29.0",
     "globals": "^16.5.0",
     "input-otp": "^1.4.2",
     "jsdom": "^27.4.0",
@@ -111,8 +106,8 @@
     "next-themes": "^0.4.6",
     "postcss": "^8.5.6",
     "prettier": "^3.8.1",
-    "puppeteer": "^24.35.0",
-    "puppeteer-core": "^24.35.0",
+    "puppeteer": "^24.36.0",
+    "puppeteer-core": "^24.36.0",
     "react": "^18.3.1",
     "react-day-picker": "^9.13.0",
     "react-dom": "^18.3.1",
@@ -141,5 +136,13 @@
     "overrides": {
       "glob": "^10.5.0"
     }
+  },
+  "pkg": {
+    "assets": [
+      "dist/spa/*"
+    ],
+    "scripts": [
+      "dist/server/**/*.js"
+    ]
   }
 }

@@ -106,10 +106,11 @@ export default function Agents() {
           {/* Content based on view mode */}
           {viewMode === 'select' && (
             <AnimatedSection delay={0.2}>
-              <TemplateSelector
-                onSelectTemplate={handleSelectTemplate}
-                onCloneTemplate={handleCloneTemplate}
-              />
+            <TemplateSelector
+              onSelectTemplate={handleSelectTemplate}
+              onCloneTemplate={handleCloneTemplate}
+              onCreateTemplate={() => setViewMode('create')}
+            />
             </AnimatedSection>
           )}
 
