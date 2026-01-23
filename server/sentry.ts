@@ -14,7 +14,7 @@ Sentry.init({
   // Performance Monitoring
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   // Release tracking
-  release: process.env.npm_package_version || '1.0.0',
+  release: process.env.npm_package_version ?? '1.0.0',
   // Error filtering
   beforeSend(event, hint) {
     const error = hint.originalException
@@ -137,3 +137,4 @@ export const trackDatabaseOperation = (
 }
 
 export { Sentry }
+

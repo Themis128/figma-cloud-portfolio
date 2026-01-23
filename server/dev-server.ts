@@ -1,7 +1,7 @@
 import { createServer, initializeSocketIO } from './index'
 
 const app = createServer()
-const port = process.env.PORT || 3000
+const port = process.env.PORT ?? 3000
 
 console.log('Starting server...')
 console.log(`Attempting to listen on port ${port}...`)

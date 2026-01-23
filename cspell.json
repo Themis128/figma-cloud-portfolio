@@ -14,7 +14,9 @@
     "contentful",
     "pointerdown",
     "vite",
-    "Vite's"
+    "Vite's",
+    "Codacy",
+    "mmin"
   ],
   "ignorePaths": [
     "node_modules/**",

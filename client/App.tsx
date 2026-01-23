@@ -19,7 +19,7 @@ import VoiceCommandButton from '@/components/VoiceCommandButton'
 
 // Import Index directly (no lazy loading for main page)
 
-// Lazy load other pages for code splitting
+// Lazy load other pages for code splitting with preloading
 const About = lazy(() => import('./pages/About'))
 const Product = lazy(() => import('./pages/Product'))
 const Contact = lazy(() => import('./pages/Contact'))
@@ -29,8 +29,20 @@ const Settings = lazy(() => import('./pages/Settings'))
 const Agents = lazy(() => import('./pages/Agents'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
-// Loading component for Suspense fallback
-const PageLoader = () => <PageSkeleton />
+// Preload critical pages on idle
+if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+  requestIdleCallback(() => {
+    // Preload critical pages after initial render
+    import('./pages/About')
+    import('./pages/Contact')
+    import('./pages/Resume')
+  })
+}
+
+// Loading component for Suspense fallback with better UX
+const PageLoader = () => (
+  <PageSkeleton />
+)
 
 const queryClient = new QueryClient()
 

@@ -22,7 +22,7 @@ export function AnimatedSection({
   const { ref, isVisible } = useScrollAnimation(0.2)
   const { duration: optimizedDuration, stiffness, damping, disabled } = useOptimizedAnimation()
 
-  const finalDuration = duration || optimizedDuration
+  const finalDuration = duration ?? optimizedDuration
 
   const getInitialPosition = () => {
     switch (direction) {

@@ -33,32 +33,57 @@ export const handleContactForm: RequestHandler = async (req, res) => {
       return res.status(400).json(response)
     }
 
-    // Basic XSS and injection prevention
+    // Enhanced XSS and injection prevention with more comprehensive patterns
     const dangerousPatterns = [
-      /<script/i,
-      /javascript:/i,
-      /on\w+\s*=/i,
-      /<iframe/i,
-      /<object/i,
-      /<embed/i,
-      /<form/i,
-      /<input/i,
-      /<meta/i,
-      /<link/i,
-      /expression\s*\(/i,
-      /vbscript:/i,
-      /data:text/i,
-      /data:javascript/i,
-      /';\s*drop\s+table/i,
-      /';\s*delete\s+from/i,
-      /';\s*update/i,
-      /union\s+select/i,
-      /\|\|/i,
-      /&&/i,
-      /`.*`/i,
-      /\$\(.*\)/i,
-      /rm\s+-rf/i,
-      /format\s+c:/i,
+      // XSS patterns
+      /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+      /<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi,
+      /<object[\s\S]*?>[\s\S]*?<\/object>/gi,
+      /<embed[\s\S]*?>/gi,
+      /<form[\s\S]*?>[\s\S]*?<\/form>/gi,
+      /<input[\s\S]*?>/gi,
+      /<meta[\s\S]*?>/gi,
+      /<link[\s\S]*?>/gi,
+      /expression\s*\(/gi,
+      /vbscript:/gi,
+      /data:text\/html/gi,
+      /data:javascript/gi,
+      
+      // SQL injection patterns
+      /';\s*drop\s+table/gi,
+      /';\s*delete\s+from/gi,
+      /';\s*update/gi,
+      /union\s+select/gi,
+      /insert\s+into/gi,
+      /create\s+table/gi,
+      /alter\s+table/gi,
+      /exec\s*\(/gi,
+      /execute\s*\(/gi,
+      
+      // Command injection patterns
+      /\|\|/gi,
+      /&&/gi,
+      /`.*`/gi,
+      /\$\(.*\)/gi,
+      /rm\s+-rf/gi,
+      /format\s+c:/gi,
+      /del\s+/gi,
+      /rmdir\s+/gi,
+      
+      // Path traversal patterns
+      /\.\.\/\.\.\//gi,
+      /\.\.\\.\.\\/gi,
+      /%2e%2e%2f/gi,
+      /%2e%2e%5c/gi,
+      
+      // NoSQL injection patterns
+      /\$where/gi,
+      /\$ne/gi,
+      /\$in/gi,
+      /\$nin/gi,
+      /\$regex/gi,
     ]
 
     const allInputs = [sanitizedName, sanitizedEmail, sanitizedSubject, sanitizedMessage].join(' ')
@@ -68,6 +93,7 @@ export const handleContactForm: RequestHandler = async (req, res) => {
           name: sanitizedName,
           email: sanitizedEmail,
           subject: sanitizedSubject,
+          pattern: pattern.toString(),
         })
         const response: ContactFormResponse = {
           success: false,
@@ -76,6 +102,21 @@ export const handleContactForm: RequestHandler = async (req, res) => {
         return res.status(400).json(response)
       }
     }
+
+    // Additional security: sanitize HTML entities
+    const sanitizeHtml = (str: string): string => {
+      return str
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '"')
+        .replace(/'/g, '&#39;')
+    }
+
+    const safeName = sanitizeHtml(sanitizedName)
+    const safeEmail = sanitizeHtml(sanitizedEmail)
+    const safeSubject = sanitizeHtml(sanitizedSubject)
+    const safeMessage = sanitizeHtml(sanitizedMessage)
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

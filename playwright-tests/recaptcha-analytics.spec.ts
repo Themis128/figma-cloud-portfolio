@@ -265,7 +265,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await page.waitForTimeout(1000)
 
       // Check that page navigation worked (GA tracking may not work in test environment)
-      await expect(page.url()).toContain('/contact')
+       expect(page.url()).toContain('/contact')
     })
 
     test('should handle GA initialization errors gracefully', async ({ page }) => {

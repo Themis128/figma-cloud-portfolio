@@ -110,7 +110,7 @@ export default function Agents() {
               <TemplateSelector
                 onSelectTemplate={handleSelectTemplate}
                 onCloneTemplate={handleCloneTemplate}
-                onCreateTemplate={() => setViewMode('create')}
+                onCreateTemplate={() => { setViewMode('create'); }}
               />
             </AnimatedSection>
           )}

@@ -1,5 +1,5 @@
-import path from 'node:path'
 import react from '@vitejs/plugin-react-swc'
+import path from 'node:path'
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 
@@ -11,6 +11,33 @@ export default defineConfig({
     setupFiles: ['./tests/vitest-setup.ts'],
     include: ['./tests/**/*.{spec,test}.{ts,tsx}'],
     exclude: ['./tests/app.spec.ts', './tests/logo.spec.ts'], // Exclude Playwright tests
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      reportsDirectory: './coverage/vitest',
+      exclude: [
+        'node_modules/',
+        'dist/',
+        'coverage/',
+        'playwright-report/',
+        'test-results/',
+        '**/*.d.ts',
+        '**/*.config.{ts,js}',
+        'scripts/',
+        '.codacy/',
+        'amplify/',
+        'public/',
+        'docs/',
+      ],
+      thresholds: {
+        global: {
+          branches: 70,
+          functions: 70,
+          lines: 70,
+          statements: 70,
+        },
+      },
+    },
   },
   resolve: {
     alias: {

@@ -43,8 +43,14 @@ jobs:
       - name: Type check
         run: pnpm typecheck
 
-      - name: Run unit tests
-        run: pnpm test:unit
+      - name: Run unit tests with coverage
+        run: pnpm test:unit --coverage
+
+      - name: Upload coverage to Codacy
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh)
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
     # E2E tests are skipped in CI for now as they require a running dev server
     # They can be run locally with: pnpm dev:all && pnpm test:e2e
@@ -120,11 +126,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@1.1.0
+        uses: codacy/codacy-analysis-cli-action@v4
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           upload: true
           verbose: true
+          output: codacy-analysis-results.sarif
+          format: sarif
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master

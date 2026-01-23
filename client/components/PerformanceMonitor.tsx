@@ -14,11 +14,10 @@ export function PerformanceMonitor() {
 
   useEffect(() => {
     // Only track in production
-     
+
     if (typeof window === 'undefined' || window.location.hostname === 'localhost') {
       return
     }
-     
 
     // Track Core Web Vitals
     const trackWebVitals = () => {
@@ -49,7 +48,6 @@ export function PerformanceMonitor() {
 
     // Track navigation performance
     const trackNavigation = () => {
-       
       if ('performance' in window && 'getEntriesByType' in window.performance) {
         const navigation = window.performance.getEntriesByType(
           'navigation',
@@ -60,7 +58,7 @@ export function PerformanceMonitor() {
           loadEventStart: number
           fetchStart: number
         }
-         
+
         if (navigation) {
           /* eslint-disable no-console */
           console.log('Navigation timing:', {
@@ -85,7 +83,6 @@ export function PerformanceMonitor() {
   // Track memory usage (if available)
   useEffect(() => {
     const trackMemory = () => {
-       
       const perfWithMemory = performance as typeof performance & {
         memory?: {
           usedJSHeapSize: number
@@ -93,7 +90,6 @@ export function PerformanceMonitor() {
           jsHeapSizeLimit: number
         }
       }
-       
 
       if (perfWithMemory.memory) {
         const memory = perfWithMemory.memory

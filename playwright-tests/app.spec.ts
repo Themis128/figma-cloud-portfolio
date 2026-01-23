@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@playwright/test';
 
 test.describe('Baltzakis Themistoklis Portfolio', () => {
   test('should load the main page with comprehensive performance metrics', async ({ page }) => {
@@ -357,7 +357,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
         const ariaLabelledBy = await input.getAttribute('aria-labelledby')
 
         // Each input should have either an id with corresponding label, or aria-label, or aria-labelledby
-        const hasLabel = id || ariaLabel || ariaLabelledBy
+        const hasLabel = (id ?? ariaLabel) || ariaLabelledBy
         expect(hasLabel).toBeTruthy()
       }
     }
@@ -565,7 +565,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       if (!reactReady) {
         try {
           const hasDynamicContent = await page.evaluate(() => {
-            const bodyText = document.body.textContent || ''
+            const bodyText = document.body.textContent ?? ''
             return bodyText.length > 200 && !bodyText.includes('Loading...')
           })
           if (hasDynamicContent) {

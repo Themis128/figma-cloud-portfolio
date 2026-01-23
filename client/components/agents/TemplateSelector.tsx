@@ -87,7 +87,7 @@ export default function TemplateSelector({
             type="text"
             placeholder="Search templates..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value); }}
             className="w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-cyan-400/50 transition-colors"
           />
         </div>
@@ -100,12 +100,11 @@ export default function TemplateSelector({
               <button
                 key={category.id}
                 type="button"
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
-                  selectedCategory === category.id
+                onClick={() => { setSelectedCategory(category.id); }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${selectedCategory === category.id
                     ? 'border-cyan-400 bg-cyan-400/10 text-cyan-400'
                     : 'border-white/10 bg-white/5 text-white/70 hover:border-cyan-400/50 hover:text-cyan-400'
-                }`}
+                  }`}
               >
                 {category.id !== 'all' && <IconComponent className="w-4 h-4" />}
                 <span className="text-sm font-medium">{category.label}</span>
@@ -155,7 +154,7 @@ export default function TemplateSelector({
               {onCloneTemplate && (
                 <button
                   type="button"
-                  onClick={() => onCloneTemplate(cloneTemplate(template))}
+                  onClick={() => { onCloneTemplate(cloneTemplate(template)); }}
                   className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"
                   title="Clone template"
                   aria-label={`Clone ${template.name} template`}
@@ -180,12 +179,11 @@ export default function TemplateSelector({
               <HoverCard>
                 <button
                   type="button"
-                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${
-                    selectedTemplateId === template.id
+                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${selectedTemplateId === template.id
                       ? 'border-cyan-400 bg-white/10'
                       : 'border-white/10 hover:border-cyan-400/50'
-                  }`}
-                  onClick={() => onSelectTemplate(template)}
+                    }`}
+                  onClick={() => { onSelectTemplate(template); }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()

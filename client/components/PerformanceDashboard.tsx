@@ -54,7 +54,9 @@ export function PerformanceDashboard({ className, compact = false }: Performance
     return (
       <Card
         className={`p-3 cursor-pointer hover:bg-muted/50 transition-colors ${className}`}
-        onClick={() => { setIsExpanded(!isExpanded); }}
+        onClick={() => {
+          setIsExpanded(!isExpanded)
+        }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

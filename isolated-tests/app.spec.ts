@@ -23,7 +23,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     for (const selector of subtitleSelectors) {
       try {
         const element = page.locator(selector)
-        subtitleText = (await element.textContent()) || ''
+        subtitleText = (await element.textContent()) ?? ''
         if (subtitleText.includes('Cloud Architect') || subtitleText.includes('Cybersecurity')) {
           subtitleFound = true
           break
@@ -413,7 +413,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       const hasAriaLabel = ariaLabel && ariaLabel.trim().length > 0
 
       // Buttons should have either text content or aria-label
-      expect(hasText || hasAriaLabel).toBe(true)
+      expect(hasText ?? hasAriaLabel).toBe(true)
     }
 
     // Check that mobile menu button has proper aria-label (only visible on mobile)
@@ -945,7 +945,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     // Should not have mixed languages (basic check)
     const hasEnglish =
       /\b(the|and|or|is|are|was|were|has|have|will|would|can|could|should|may|might|must|do|does|did|make|made|get|got|take|took|come|came|go|went|see|saw|know|knew|think|thought|say|said|tell|told|work|worked|help|helped|live|lived|play|played|run|ran|walk|walked|write|wrote|read|reading|eat|ate|drink|drank|sleep|slept|sit|sat|stand|stood|give|gave|find|found|hear|heard|feel|felt|become|became|leave|left|put|put|bring|brought|begin|began|keep|kept|hold|held|write|wrote|set|set|cut|cut|build|built|open|opened|close|closed|love|loved|like|liked|want|wanted|need|needed|use|used|find|found|give|gave|take|took|come|came|go|went)\b/i.test(
-        textContent || '',
+        textContent ?? '',
       )
     if (hasEnglish) {
       // If English content exists, lang should include "en"

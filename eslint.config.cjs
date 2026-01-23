@@ -3,6 +3,35 @@
 
 module.exports = [
   {
+    ignores: [
+      'dist/',
+      'node_modules/',
+      'playwright-report/',
+      'playwright-report/**',
+      '**/playwright-report/**',
+      'playwright-report/trace/',
+      'playwright-report/trace/**',
+      '**/playwright-report/trace/**',
+      'playwright-report/trace/**/*',
+      'amplify-build-config.json',
+      'amplify-gradle-config.json',
+      'amplifytools.xcconfig',
+      '*.min.js',
+      '*.min.css',
+      'coverage/',
+      '*.log',
+      'npm-debug.log*',
+      'yarn-debug.log*',
+      'yarn-error.log*',
+      '.vscode/',
+      '.idea/',
+      '.DS_Store',
+      'Thumbs.db',
+      '*.tmp',
+      '*.temp'
+    ]
+  },
+  {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,
@@ -31,7 +60,6 @@ module.exports = [
         },
         ecmaVersion: 2022,
         sourceType: 'module',
-        parser: require('@typescript-eslint/parser'),
       },
     },
     plugins: {

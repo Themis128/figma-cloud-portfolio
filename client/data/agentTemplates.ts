@@ -461,7 +461,7 @@ export const cloneTemplate = (template: AgentTemplate, newName?: string): AgentT
   const clonedTemplate: AgentTemplate = {
     ...template,
     id: `${template.id}-clone-${Date.now()}`,
-    name: newName || `${template.name} (Copy)`,
+    name: newName ?? `${template.name} (Copy)`,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     workflow: {

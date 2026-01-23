@@ -112,14 +112,14 @@ export default function Contact() {
                 </h2>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6" noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label
                       htmlFor="name"
                       className="block text-white/80 font-medium mb-2 text-sm md:text-base"
                     >
-                      Full Name *
+                      Full Name <span className="text-cyan-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -128,16 +128,27 @@ export default function Contact() {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-3 sm:px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px]"
+                      aria-required="true"
+                      aria-describedby="name-error"
+                      className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
+                        submitStatus === 'error' && !formData.name
+                          ? 'border-red-400/50'
+                          : 'border-white/20'
+                      }`}
                       placeholder="Your full name"
                     />
+                    {submitStatus === 'error' && !formData.name && (
+                      <p id="name-error" className="text-red-400 text-xs mt-1" role="alert">
+                        Full name is required
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
                       htmlFor="email"
                       className="block text-white/80 font-medium mb-2 text-sm md:text-base"
                     >
-                      Email Address *
+                      Email Address <span className="text-cyan-400">*</span>
                     </label>
                     <input
                       type="email"
@@ -146,9 +157,20 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-3 sm:px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px]"
+                      aria-required="true"
+                      aria-describedby="email-error"
+                      className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
+                        submitStatus === 'error' && !formData.email
+                          ? 'border-red-400/50'
+                          : 'border-white/20'
+                      }`}
                       placeholder="your.email@example.com"
                     />
+                    {submitStatus === 'error' && !formData.email && (
+                      <p id="email-error" className="text-red-400 text-xs mt-1" role="alert">
+                        Valid email address is required
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -157,7 +179,7 @@ export default function Contact() {
                     htmlFor="subject"
                     className="block text-white/80 font-medium mb-2 text-sm md:text-base"
                   >
-                    Subject *
+                    Subject <span className="text-cyan-400">*</span>
                   </label>
                   <input
                     type="text"
@@ -166,9 +188,20 @@ export default function Contact() {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 sm:px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px]"
+                    aria-required="true"
+                    aria-describedby="subject-error"
+                    className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
+                      submitStatus === 'error' && !formData.subject
+                        ? 'border-red-400/50'
+                        : 'border-white/20'
+                    }`}
                     placeholder="Project inquiry, consultation, etc."
                   />
+                  {submitStatus === 'error' && !formData.subject && (
+                    <p id="subject-error" className="text-red-400 text-xs mt-1" role="alert">
+                      Subject is required
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -176,7 +209,7 @@ export default function Contact() {
                     htmlFor="message"
                     className="block text-white/80 font-medium mb-2 text-sm md:text-base"
                   >
-                    Message *
+                    Message <span className="text-cyan-400">*</span>
                   </label>
                   <textarea
                     id="message"
@@ -184,10 +217,21 @@ export default function Contact() {
                     value={formData.message}
                     onChange={handleInputChange}
                     required
+                    aria-required="true"
+                    aria-describedby="message-error"
                     rows={5}
-                    className="w-full px-3 sm:px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base min-h-[120px]"
+                    className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base min-h-[120px] ${
+                      submitStatus === 'error' && !formData.message
+                        ? 'border-red-400/50'
+                        : 'border-white/20'
+                    }`}
                     placeholder="Tell me about your project, requirements, or how I can help you..."
                   />
+                  {submitStatus === 'error' && !formData.message && (
+                    <p id="message-error" className="text-red-400 text-xs mt-1" role="alert">
+                      Message is required
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
