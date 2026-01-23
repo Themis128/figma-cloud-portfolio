@@ -3,9 +3,6 @@ import { lazy, Suspense } from 'react'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster as Sonner } from 'sonner'
-
-import Index from './pages/Index'
-
 import ErrorBoundary from '@/components/ErrorBoundary'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { PerformanceMonitor } from '@/components/PerformanceMonitor'
@@ -16,6 +13,7 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import VoiceCommandButton from '@/components/VoiceCommandButton'
+import Index from './pages/Index'
 
 // Import Index directly (no lazy loading for main page)
 
@@ -40,9 +38,7 @@ if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
 }
 
 // Loading component for Suspense fallback with better UX
-const PageLoader = () => (
-  <PageSkeleton />
-)
+const PageLoader = () => <PageSkeleton />
 
 const queryClient = new QueryClient()
 

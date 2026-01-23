@@ -38,8 +38,12 @@ export default function VoiceCommandButton({
   useEffect(() => {
     if (transcript) {
       setShowTranscript(true)
-      const timer = setTimeout(() => { setShowTranscript(false); }, 3000)
-      return () => { clearTimeout(timer); }
+      const timer = setTimeout(() => {
+        setShowTranscript(false)
+      }, 3000)
+      return () => {
+        clearTimeout(timer)
+      }
     }
   }, [transcript])
 
@@ -76,10 +80,11 @@ export default function VoiceCommandButton({
           <PopoverTrigger asChild>
             <Button
               size="icon"
-              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${isListening
+              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
+                isListening
                   ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                   : 'bg-cyan-500 hover:bg-cyan-600'
-                }`}
+              }`}
               onClick={isListening ? stopListening : startListening}
               aria-label={isListening ? 'Stop voice commands' : 'Start voice commands'}
             >
@@ -160,7 +165,13 @@ export default function VoiceCommandButton({
                   <Volume2 className="w-4 h-4 mr-2" />
                   Test Voice
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => { setIsOpen(false); }}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setIsOpen(false)
+                  }}
+                >
                   Close
                 </Button>
               </div>

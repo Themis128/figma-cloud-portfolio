@@ -50,7 +50,7 @@ export const handleContactForm: RequestHandler = async (req, res) => {
       /vbscript:/gi,
       /data:text\/html/gi,
       /data:javascript/gi,
-      
+
       // SQL injection patterns
       /';\s*drop\s+table/gi,
       /';\s*delete\s+from/gi,
@@ -61,7 +61,7 @@ export const handleContactForm: RequestHandler = async (req, res) => {
       /alter\s+table/gi,
       /exec\s*\(/gi,
       /execute\s*\(/gi,
-      
+
       // Command injection patterns
       /\|\|/gi,
       /&&/gi,
@@ -71,13 +71,13 @@ export const handleContactForm: RequestHandler = async (req, res) => {
       /format\s+c:/gi,
       /del\s+/gi,
       /rmdir\s+/gi,
-      
+
       // Path traversal patterns
       /\.\.\/\.\.\//gi,
       /\.\.\\.\.\\/gi,
       /%2e%2e%2f/gi,
       /%2e%2e%5c/gi,
-      
+
       // NoSQL injection patterns
       /\$where/gi,
       /\$ne/gi,
@@ -120,7 +120,7 @@ export const handleContactForm: RequestHandler = async (req, res) => {
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(sanitizedEmail)) {
+    if (!emailRegex.test(safeEmail)) {
       const response: ContactFormResponse = {
         success: false,
         message: 'Invalid email format',
@@ -196,10 +196,10 @@ export const handleContactForm: RequestHandler = async (req, res) => {
     // In a real application, you would send an email here
     // For now, we'll just log the contact form submission
     console.log('Contact form submission:', {
-      name: sanitizedName,
-      email: sanitizedEmail,
-      subject: sanitizedSubject,
-      message: sanitizedMessage,
+      name: safeName,
+      email: safeEmail,
+      subject: safeSubject,
+      message: safeMessage,
       recaptchaScore: recaptchaData.score,
       timestamp: new Date().toISOString(),
     })

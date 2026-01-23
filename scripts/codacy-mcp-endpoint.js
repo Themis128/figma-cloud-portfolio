@@ -27,4 +27,4 @@ console.log('   https://your-codacy-instance.com/api')
 console.log('   (Replace with your actual Codacy server URL)\n')
 
 console.log('✨ The MCP server endpoint connects your VS Code extension')
-console.log('   to Codacy\'s AI analysis services for enhanced code quality.')
+console.log("   to Codacy's AI analysis services for enhanced code quality.")

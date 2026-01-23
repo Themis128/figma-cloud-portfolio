@@ -1,10 +1,9 @@
 import { ArrowLeft, Bot, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
+import { AnimatedSection } from '@/components/AnimatedSection'
 import TemplateCreator from '@/components/agents/TemplateCreator'
 import TemplateSelector from '@/components/agents/TemplateSelector'
-import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import Navigation from '@/components/Navigation'
 import type { AgentTemplate } from '@/data/agentTemplates'
@@ -110,7 +109,9 @@ export default function Agents() {
               <TemplateSelector
                 onSelectTemplate={handleSelectTemplate}
                 onCloneTemplate={handleCloneTemplate}
-                onCreateTemplate={() => { setViewMode('create'); }}
+                onCreateTemplate={() => {
+                  setViewMode('create')
+                }}
               />
             </AnimatedSection>
           )}

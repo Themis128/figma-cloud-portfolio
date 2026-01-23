@@ -91,7 +91,13 @@ export default function Settings() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <AnimatedSection>
           <div className="mb-8">
-            <Button variant="ghost" onClick={() => { navigate(-1); }} className="mb-4">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                navigate(-1)
+              }}
+              className="mb-4"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
@@ -252,14 +258,15 @@ export default function Settings() {
 
                 {updateMessage && (
                   <div
-                    className={`p-3 rounded-md text-sm ${updateStatus === 'available'
+                    className={`p-3 rounded-md text-sm ${
+                      updateStatus === 'available'
                         ? 'bg-green-50 text-green-800 border border-green-200'
                         : updateStatus === 'up-to-date'
                           ? 'bg-blue-50 text-blue-800 border border-blue-200'
                           : updateStatus === 'error'
                             ? 'bg-red-50 text-red-800 border border-red-200'
                             : 'bg-gray-50 text-gray-800 border border-gray-200'
-                      }`}
+                    }`}
                   >
                     {updateMessage}
                   </div>

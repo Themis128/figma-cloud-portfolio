@@ -18,14 +18,14 @@ console.log('🚀 Setting up Codacy Coverage Reporter\n')
 const codacyConfig = {
   // Account API Token
   CODACY_API_TOKEN: 'mJb73g9iJzu51wQ6JRC',
-  
+
   // Repository API Token
   CODACY_PROJECT_TOKEN: 'a88486da551443bf83db6d40385e4085',
-  
+
   // Organization settings
   CODACY_ORGANIZATION_PROVIDER: 'gh',
   CODACY_USERNAME: 'Themis128',
-  CODACY_PROJECT_NAME: 'figma-cloud-portfolio'
+  CODACY_PROJECT_NAME: 'figma-cloud-portfolio',
 }
 
 // Set environment variables
@@ -42,11 +42,11 @@ const requiredEnvVars = [
   'CODACY_PROJECT_TOKEN',
   'CODACY_ORGANIZATION_PROVIDER',
   'CODACY_USERNAME',
-  'CODACY_PROJECT_NAME'
+  'CODACY_PROJECT_NAME',
 ]
 
 let allEnvVarsSet = true
-requiredEnvVars.forEach(envVar => {
+requiredEnvVars.forEach((envVar) => {
   if (process.env[envVar]) {
     console.log(`  ✅ ${envVar} is set`)
   } else {
@@ -98,18 +98,18 @@ try {
   // Run the Codacy coverage reporter script
   const command = 'bash <(curl -Ls https://coverage.codacy.com/get.sh)'
   console.log(`\nExecuting: ${command}`)
-  
+
   // Note: In a real environment, you would execute this command
   // For safety in this demonstration, we'll show what would be executed
   console.log('\n📝 Command to run manually:')
   console.log('bash <(curl -Ls https://coverage.codacy.com/get.sh)')
-  
+
   console.log('\n📋 Expected behavior:')
   console.log('- Downloads the Codacy coverage reporter script')
   console.log('- Analyzes your code coverage')
   console.log('- Uploads coverage data to Codacy')
   console.log('- Provides coverage report and metrics')
-  
+
   console.log('\n✨ Setup complete! You can now run the coverage reporter.')
   console.log('\n🎯 Next steps:')
   console.log('1. Run the coverage reporter command manually:')
@@ -129,7 +129,6 @@ try {
   console.log('     "codacy.mcp.codacy.endpoint": "https://api.codacy.com"')
   console.log('')
   console.log('5. Restart VS Code and use Codacy MCP features for AI-powered analysis')
-  
 } catch (error) {
   console.log(`\n❌ Error running Codacy coverage reporter: ${error.message}`)
   console.log('\n💡 Manual steps:')

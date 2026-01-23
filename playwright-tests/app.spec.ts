@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test'
 
 test.describe('Baltzakis Themistoklis Portfolio', () => {
   test('should load the main page with comprehensive performance metrics', async ({ page }) => {

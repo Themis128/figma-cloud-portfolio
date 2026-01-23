@@ -50,6 +50,7 @@ export default function Navigation() {
 
           {/* Mobile menu button */}
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-md text-white hover:text-cyan-400 hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
@@ -81,7 +82,7 @@ export default function Navigation() {
               {item.name}
             </Link>
           ))}
-          
+
           {/* CTA Button */}
           <div className="pt-2">
             <HoverButton>

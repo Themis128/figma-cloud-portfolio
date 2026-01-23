@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/287</span>
+                <span class='fraction'>0/295</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/287</span>
+                <span class='fraction'>0/295</span>
             </div>
         
             
@@ -350,7 +350,23 @@
 <a name='L285'></a><a href='#L285'>285</a>
 <a name='L286'></a><a href='#L286'>286</a>
 <a name='L287'></a><a href='#L287'>287</a>
-<a name='L288'></a><a href='#L288'>288</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -726,7 +742,9 @@
 <span class="cstat-no" title="statement not covered" >            type="text"</span>
 <span class="cstat-no" title="statement not covered" >            placeholder="Search templates..."</span>
 <span class="cstat-no" title="statement not covered" >            value={searchQuery}</span>
-<span class="cstat-no" title="statement not covered" >            onChange={(e) =&gt; setSearchQuery(e.target.value)}</span>
+<span class="cstat-no" title="statement not covered" >            onChange={(e) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >              setSearchQuery(e.target.value)</span>
+<span class="cstat-no" title="statement not covered" >            }}</span>
 <span class="cstat-no" title="statement not covered" >            className="w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-cyan-400/50 transition-colors"</span>
 <span class="cstat-no" title="statement not covered" >          /&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
@@ -739,7 +757,9 @@
 <span class="cstat-no" title="statement not covered" >              &lt;button</span>
 <span class="cstat-no" title="statement not covered" >                key={category.id}</span>
 <span class="cstat-no" title="statement not covered" >                type="button"</span>
-<span class="cstat-no" title="statement not covered" >                onClick={() =&gt; setSelectedCategory(category.id)}</span>
+<span class="cstat-no" title="statement not covered" >                onClick={() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                  setSelectedCategory(category.id)</span>
+<span class="cstat-no" title="statement not covered" >                }}</span>
 <span class="cstat-no" title="statement not covered" >                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${</span>
 <span class="cstat-no" title="statement not covered" >                  selectedCategory === category.id</span>
 <span class="cstat-no" title="statement not covered" >                    ? 'border-cyan-400 bg-cyan-400/10 text-cyan-400'</span>
@@ -794,7 +814,9 @@
 <span class="cstat-no" title="statement not covered" >              {onCloneTemplate &amp;&amp; (</span>
 <span class="cstat-no" title="statement not covered" >                &lt;button</span>
 <span class="cstat-no" title="statement not covered" >                  type="button"</span>
-<span class="cstat-no" title="statement not covered" >                  onClick={() =&gt; onCloneTemplate(cloneTemplate(template))}</span>
+<span class="cstat-no" title="statement not covered" >                  onClick={() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    onCloneTemplate(cloneTemplate(template))</span>
+<span class="cstat-no" title="statement not covered" >                  }}</span>
 <span class="cstat-no" title="statement not covered" >                  className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"</span>
 <span class="cstat-no" title="statement not covered" >                  title="Clone template"</span>
 <span class="cstat-no" title="statement not covered" >                  aria-label={`Clone ${template.name} template`}</span>
@@ -824,7 +846,9 @@
 <span class="cstat-no" title="statement not covered" >                      ? 'border-cyan-400 bg-white/10'</span>
 <span class="cstat-no" title="statement not covered" >                      : 'border-white/10 hover:border-cyan-400/50'</span>
 <span class="cstat-no" title="statement not covered" >                  }`}</span>
-<span class="cstat-no" title="statement not covered" >                  onClick={() =&gt; onSelectTemplate(template)}</span>
+<span class="cstat-no" title="statement not covered" >                  onClick={() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    onSelectTemplate(template)</span>
+<span class="cstat-no" title="statement not covered" >                  }}</span>
 <span class="cstat-no" title="statement not covered" >                  onKeyDown={(e) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >                    if (e.key === 'Enter' || e.key === ' ') {</span>
 <span class="cstat-no" title="statement not covered" >                      e.preventDefault()</span>
@@ -931,7 +955,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-23T13:32:15.562Z
+                at 2026-01-23T14:00:06.542Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
