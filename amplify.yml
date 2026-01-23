@@ -15,7 +15,7 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**
+      - node_modules/**/*
 
 # Custom headers to fix MIME type issues
 customHeaders:
@@ -33,11 +33,3 @@ customHeaders:
         value: 'application/javascript'
       - key: 'Service-Worker-Allowed'
         value: '/'
-
-backend:
-  phases:
-    build:
-      commands:
-        - echo "Building backend..."
-        - pnpm run build:server
-        - amplifyPush --simple
