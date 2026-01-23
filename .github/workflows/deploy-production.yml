@@ -75,12 +75,18 @@ jobs:
       - name: Verify Amplify App Configuration
         run: |
           set -euo pipefail
-          npm install -g @aws-amplify/cli
-          echo "Verifying Amplify app configuration..."
+          echo "🔍 Verifying Amplify app configuration..."
           echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
           echo "Region: ${{ secrets.AWS_REGION }}"
-          amplify status --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --verbose || (echo "❌ Amplify status check failed" && exit 1)
-          echo "✅ Amplify app configuration verified"
+          echo "Branch: production"
+
+          # Check if app exists
+          aws amplify get-app --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --region ${{ secrets.AWS_REGION }} || (echo "❌ Amplify app not found" && exit 1)
+
+          # Check if production branch exists
+          aws amplify get-branch --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} || (echo "❌ Production branch not found" && exit 1)
+
+          echo "✅ Amplify app and branch verified"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -89,13 +95,71 @@ jobs:
       - name: Deploy to Amplify (Production)
         run: |
           set -euo pipefail
-          npm install -g @aws-amplify/cli
           echo "🚀 Starting Amplify deployment..."
           echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
-          echo "Branch: main"
+          echo "Branch: production"
           echo "Environment: production"
-          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --yes --verbose || (echo "❌ Amplify deployment failed" && exit 1)
-          echo "✅ Deployment completed successfully"
+
+          # Create deployment and get upload URLs
+          DEPLOYMENT_INFO=$(aws amplify create-deployment --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }})
+          JOB_ID=$(echo $DEPLOYMENT_INFO | jq -r '.jobId')
+          ZIP_UPLOAD_URL=$(echo $DEPLOYMENT_INFO | jq -r '.zipUploadUrl')
+
+          echo "Job ID: $JOB_ID"
+          echo "Upload URL: $ZIP_UPLOAD_URL"
+
+          # Create zip file of build artifacts
+          cd dist/spa
+          zip -r ../deployment.zip . || (echo "❌ Failed to create deployment zip" && exit 1)
+
+          # Upload the zip file
+          curl -X PUT -T ../deployment.zip "$ZIP_UPLOAD_URL" || (echo "❌ Failed to upload deployment" && exit 1)
+
+          # Start the deployment
+          aws amplify start-deployment --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --job-id $JOB_ID --region ${{ secrets.AWS_REGION }} || (echo "❌ Failed to start deployment" && exit 1)
+
+          echo "✅ Deployment initiated successfully"
+
+      - name: Check deployment status
+        run: |
+          set -euo pipefail
+          echo "🔍 Checking deployment status..."
+
+          # Wait for deployment to complete (timeout after 15 minutes)
+          TIMEOUT=900
+          INTERVAL=30
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            STATUS=$(aws amplify get-job --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --job-id $JOB_ID --region ${{ secrets.AWS_REGION }} --query 'job.summary.status' --output text)
+
+            echo "Current status: $STATUS (elapsed: ${ELAPSED}s)"
+
+            case $STATUS in
+              "SUCCEED")
+                echo "✅ Deployment completed successfully!"
+                exit 0
+                ;;
+              "FAILED"|"FAULT")
+                echo "❌ Deployment failed"
+                aws amplify get-job --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --job-id $JOB_ID --region ${{ secrets.AWS_REGION }} --query 'job.steps[].stepName,job.steps[].status,job.steps[].logUrl' --output table || true
+                exit 1
+                ;;
+              "PENDING"|"PROVISIONING"|"RUNNING")
+                echo "⏳ Deployment still in progress..."
+                ;;
+              *)
+                echo "⚠️  Unknown status: $STATUS"
+                ;;
+            esac
+
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+
+          echo "⏰ Deployment timed out after ${TIMEOUT}s"
+          aws amplify get-job --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --job-id $JOB_ID --region ${{ secrets.AWS_REGION }} --query 'job.steps[].stepName,job.steps[].status,job.steps[].logUrl' --output table || true
+          exit 1
         env:
           NODE_ENV: production
           VITE_APP_ENV: production
@@ -142,12 +206,24 @@ jobs:
       - name: Rollback deployment
         run: |
           set -euo pipefail
-          npm install -g @aws-amplify/cli
           echo "🔄 Starting Amplify rollback..."
           echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
-          echo "Branch: main"
-          amplify publish --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name main --rollback --yes --verbose || (echo "❌ Amplify rollback failed" && exit 1)
-          echo "✅ Rollback completed"
+          echo "Branch: production"
+
+          # Get the last successful job ID for rollback
+          LAST_SUCCESSFUL_JOB=$(aws amplify list-jobs --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} --query 'jobSummaries[?status==`SUCCEED`]|sort_by(@,&endTime)|[-1].jobId' --output text)
+
+          if [ -z "$LAST_SUCCESSFUL_JOB" ] || [ "$LAST_SUCCESSFUL_JOB" = "None" ]; then
+            echo "❌ No successful deployment found to rollback to"
+            exit 1
+          fi
+
+          echo "Rolling back to job: $LAST_SUCCESSFUL_JOB"
+
+          # Start rollback deployment
+          aws amplify start-job --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --job-id $LAST_SUCCESSFUL_JOB --job-type RETRY --region ${{ secrets.AWS_REGION }} || (echo "❌ Rollback failed" && exit 1)
+
+          echo "✅ Rollback initiated"
         env:
           NODE_ENV: production
           VITE_APP_ENV: production
