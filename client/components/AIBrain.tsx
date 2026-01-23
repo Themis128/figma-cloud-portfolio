@@ -32,7 +32,7 @@ export default function AIBrain() {
           strokeWidth="2"
           filter="url(#glow)"
           className="animate-pulse"
-          style={{ animationDuration: '3s' }}
+          style={{ animationDuration: "3s" }}
         />
 
         {/* Inner hexagon */}
@@ -94,7 +94,7 @@ export default function AIBrain() {
             fill="#00d4ff"
             filter="url(#glow)"
             className="animate-pulse"
-            style={{ animationDuration: '2s' }}
+            style={{ animationDuration: "2s" }}
           />
           <rect x="-6" y="-6" width="12" height="12" fill="#1a2849" />
 
@@ -134,5 +134,5 @@ export default function AIBrain() {
         />
       </svg>
     </div>
-  )
+  );
 }

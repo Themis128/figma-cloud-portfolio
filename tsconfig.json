@@ -33,6 +33,7 @@
     "shared/**/*",
     "tests/**/*",
     "playwright-tests/**/*",
+    "isolated-tests/**/*.{js,ts,tsx}",
     "vite.config.ts",
     "vite.config.server.ts",
     "playwright.config.ts",

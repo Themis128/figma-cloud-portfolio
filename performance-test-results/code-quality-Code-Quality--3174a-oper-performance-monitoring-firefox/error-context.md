@@ -1,0 +1,62 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - button "Open AI Assistant" [ref=e4] [cursor=pointer]:
+    - img
+  - button "Accessibility Settings" [ref=e6] [cursor=pointer]:
+    - img
+  - generic [ref=e7]:
+    - generic:
+      - img "Circuit board background pattern"
+    - navigation [ref=e8]:
+      - generic [ref=e10]:
+        - link "Home" [ref=e11] [cursor=pointer]:
+          - /url: /
+          - text: TB
+        - generic [ref=e12]:
+          - link "About" [ref=e13] [cursor=pointer]:
+            - /url: /about
+          - link "Resume" [ref=e14] [cursor=pointer]:
+            - /url: /resume
+          - link "Contact" [ref=e15] [cursor=pointer]:
+            - /url: /contact
+          - link "Performance" [ref=e16] [cursor=pointer]:
+            - /url: /performance
+          - link "Agents" [ref=e17] [cursor=pointer]:
+            - /url: /agents
+    - main [ref=e18]:
+      - generic [ref=e20]:
+        - region "Themistoklis Baltzakis" [ref=e21]:
+          - generic [ref=e22]:
+            - heading "Themistoklis Baltzakis" [level=1] [ref=e24]:
+              - generic [ref=e25]: Themistoklis
+              - generic [ref=e26]: Baltzakis
+            - paragraph [ref=e28]: Cloud Architect & Cybersecurity Specialist
+            - paragraph [ref=e31]: Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments.
+          - generic [ref=e32]:
+            - link "Learn More" [ref=e34] [cursor=pointer]:
+              - /url: /about
+              - generic [ref=e35]: Learn More
+            - link "Build Resume" [ref=e38] [cursor=pointer]:
+              - /url: /resume
+              - generic [ref=e39]: Build Resume
+            - link "Get In Touch" [ref=e42] [cursor=pointer]:
+              - /url: /contact
+              - generic [ref=e43]: Get In Touch
+          - generic [ref=e44]:
+            - link "LinkedIn" [ref=e46] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/baltzakis-themis
+              - img [ref=e47]
+            - link "Email" [ref=e52] [cursor=pointer]:
+              - /url: mailto:baltzakis.themis@gmail.com
+              - img [ref=e53]
+            - link "Portfolio" [ref=e57] [cursor=pointer]:
+              - /url: https://www.baltzakisthemis.com
+              - img [ref=e58]
+        - region "Interactive AI visualization" [ref=e62]:
+          - img "AI Brain neural network visualization" [ref=e65]
+```

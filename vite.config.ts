@@ -1,71 +1,106 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import react from '@vitejs/plugin-react-swc'
-import { visualizer } from 'rollup-plugin-visualizer'
-import { defineConfig, type PluginOption } from 'vite'
-import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
-import { VitePWA } from 'vite-plugin-pwa'
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import react from "@vitejs/plugin-react-swc";
+import { visualizer } from "rollup-plugin-visualizer";
+import { defineConfig, type PluginOption } from "vite";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import { VitePWA } from "vite-plugin-pwa";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  root: 'client',
-  publicDir: '../public',
+  root: "client",
+  publicDir: "../public",
   server: {
-    host: 'localhost',
+    host: "localhost",
     port: 8081,
     strictPort: true,
     hmr: {
       port: 24680, // Use a different port for HMR
     },
     fs: {
-      allow: ['.', '../client', '../shared'],
-      deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '../server/**'],
+      allow: [".", "../client", "../shared"],
+      deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "../server/**"],
     },
     // SPA routing support - serve index.html for all routes
     middlewareMode: false,
     // Proxy API requests to Express server (run with: npx tsx server/node-build.ts)
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      "/api": {
+        target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,
       },
     },
     // Security headers for development
     headers: {
-      'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff',
-      'X-XSS-Protection': '1; mode=block',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-      'Content-Security-Policy':
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
-      'X-DNS-Prefetch-Control': 'off',
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Content-Security-Policy":
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+      "X-DNS-Prefetch-Control": "off",
     },
   },
   build: {
-    outDir: '../dist/spa',
+    outDir: "../dist/spa",
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
-          three: ['three', '@react-three/fiber', '@react-three/drei'],
-          utils: ['clsx', 'tailwind-merge', 'date-fns'],
-          forms: ['react-hook-form', '@hookform/resolvers'],
+          // Core framework chunk
+          framework: ["react", "react-dom"],
+          // Router chunk
+          router: ["react-router-dom"],
+          // UI components chunk
+          ui: [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-toast",
+            "@radix-ui/react-accordion",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-toggle-group",
+            "lucide-react",
+            "sonner",
+          ],
+          // 3D graphics chunk
+          three: ["three", "@react-three/fiber", "@react-three/drei"],
+          // Utilities chunk
+          utils: ["clsx", "tailwind-merge", "date-fns", "zod"],
+          // Forms chunk
+          forms: ["react-hook-form", "@hookform/resolvers"],
+          // State management chunk
+          state: ["@tanstack/react-query"],
+          // Performance monitoring chunk
+          performance: ["web-vitals"],
         },
       },
     },
     // Performance budgets
-    chunkSizeWarningLimit: 600, // Warn if chunks exceed 600kb
+    chunkSizeWarningLimit: 500, // Reduced from 600kb for better performance
     reportCompressedSize: true,
     // Additional optimizations
-    minify: 'esbuild',
+    minify: "esbuild",
     sourcemap: false, // Disable sourcemaps in production for better performance
     cssCodeSplit: true, // Split CSS for better caching
-    target: 'esnext', // Use modern JS for better performance
+    target: "esnext", // Use modern JS for better performance
+
+    // Additional performance optimizations
+    assetsInlineLimit: 4096, // Inline assets smaller than 4kb
+    cssTarget: ["chrome61", "firefox60", "safari11", "edge16"],
+
+    // Tree shaking optimization
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console logs in production
+        drop_debugger: true,
+        pure_funcs: ["console.log", "console.info", "console.debug"],
+      },
+    },
   },
   plugins: [
     react(),
@@ -78,45 +113,45 @@ export default defineConfig(({ mode }) => ({
       include: /\.(png|jpe?g|webp|avif)$/i,
       exclude: /node_modules/,
     }),
-    mode === 'analyze'
+    mode === "analyze"
       ? visualizer({
-          filename: 'dist/stats.html',
+          filename: "dist/stats.html",
           open: true,
           gzipSize: true,
           brotliSize: true,
         })
       : undefined,
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'logo.jpg', 'logo.jpeg', 'robots.txt'],
+      registerType: "autoUpdate",
+      includeAssets: ["favicon.ico", "logo.jpg", "logo.jpeg", "robots.txt"],
       manifest: {
-        name: 'Themistoklis Baltzakis Portfolio',
-        short_name: 'TB Portfolio',
-        description: 'Cloud Architect & Cybersecurity Specialist Portfolio',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
-        display: 'standalone',
+        name: "Themistoklis Baltzakis Portfolio",
+        short_name: "TB Portfolio",
+        description: "Cloud Architect & Cybersecurity Specialist Portfolio",
+        theme_color: "#0f172a",
+        background_color: "#0f172a",
+        display: "standalone",
         icons: [
           {
-            src: '/logo-192.png',
-            sizes: '192x192',
-            type: 'image/png',
+            src: "/logo-192.png",
+            sizes: "192x192",
+            type: "image/png",
           },
           {
-            src: '/logo-512.png',
-            sizes: '512x512',
-            type: 'image/png',
+            src: "/logo-512.png",
+            sizes: "512x512",
+            type: "image/png",
           },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\./i,
-            handler: 'NetworkFirst',
+            handler: "NetworkFirst",
             options: {
-              cacheName: 'api-cache',
+              cacheName: "api-cache",
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
@@ -125,9 +160,9 @@ export default defineConfig(({ mode }) => ({
           },
           {
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/i,
-            handler: 'StaleWhileRevalidate',
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: 'google-fonts',
+              cacheName: "google-fonts",
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
@@ -136,9 +171,9 @@ export default defineConfig(({ mode }) => ({
           },
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'images',
+              cacheName: "images",
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
@@ -147,9 +182,9 @@ export default defineConfig(({ mode }) => ({
           },
           {
             urlPattern: /^https:\/\/.*\.(js|css)$/i,
-            handler: 'StaleWhileRevalidate',
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: 'static-resources',
+              cacheName: "static-resources",
               expiration: {
                 maxEntries: 20,
                 maxAgeSeconds: 60 * 60 * 24 * 7,
@@ -162,8 +197,8 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean) as PluginOption[],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './client'),
-      '@shared': path.resolve(__dirname, './shared'),
+      "@": path.resolve(__dirname, "./client"),
+      "@shared": path.resolve(__dirname, "./shared"),
     },
   },
-}))
+}));

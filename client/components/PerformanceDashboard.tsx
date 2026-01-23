@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { Activity, Minus, TrendingDown, TrendingUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -13,6 +14,33 @@ interface PerformanceDashboardProps {
 export function PerformanceDashboard({ className, compact = false }: PerformanceDashboardProps) {
   const { isSupported, performanceScore, formattedMetrics } = usePerformanceMonitoring()
   const [isExpanded, setIsExpanded] = useState(false)
+  const [previousMetrics, setPreviousMetrics] = useState<Record<string, number>>({})
+
+  // Track metric changes for trend indicators
+  useEffect(() => {
+    const currentMetrics: Record<string, number> = {}
+    Object.entries(formattedMetrics).forEach(([key, value]) => {
+      const numericValue = parseFloat(value.replace(/[^\d.]/g, ''))
+      if (!Number.isNaN(numericValue)) {
+        currentMetrics[key] = numericValue
+      }
+    })
+    setPreviousMetrics(currentMetrics)
+  }, [formattedMetrics])
+
+  const getTrendIcon = (key: string, currentValue: string) => {
+    const current = parseFloat(currentValue.replace(/[^\d.]/g, ''))
+    const previous = previousMetrics[key]
+
+    if (!previous || Number.isNaN(current)) return <Minus className="w-3 h-3 text-gray-400" />
+
+    if (current > previous) {
+      return <TrendingUp className="w-3 h-3 text-red-400" />
+    } else if (current < previous) {
+      return <TrendingDown className="w-3 h-3 text-green-400" />
+    }
+    return <Minus className="w-3 h-3 text-gray-400" />
+  }
 
   if (!isSupported) {
     return (
@@ -50,6 +78,30 @@ export function PerformanceDashboard({ className, compact = false }: Performance
     }
   }
 
+  const getMetricStatus = (key: string, value: string) => {
+    const numericValue = parseFloat(value.replace(/[^\d.]/g, ''))
+
+    if (key.includes('LCP')) {
+      if (numericValue <= 2500) return { status: 'good', color: 'text-green-400' }
+      if (numericValue <= 4000) return { status: 'needs-improvement', color: 'text-yellow-400' }
+      return { status: 'poor', color: 'text-red-400' }
+    }
+
+    if (key.includes('CLS')) {
+      if (numericValue <= 0.1) return { status: 'good', color: 'text-green-400' }
+      if (numericValue <= 0.25) return { status: 'needs-improvement', color: 'text-yellow-400' }
+      return { status: 'poor', color: 'text-red-400' }
+    }
+
+    if (key.includes('FCP') || key.includes('TTFB')) {
+      if (numericValue <= 1800) return { status: 'good', color: 'text-green-400' }
+      if (numericValue <= 3000) return { status: 'needs-improvement', color: 'text-yellow-400' }
+      return { status: 'poor', color: 'text-red-400' }
+    }
+
+    return { status: 'unknown', color: 'text-gray-400' }
+  }
+
   if (compact) {
     return (
       <Card
@@ -85,62 +137,101 @@ export function PerformanceDashboard({ className, compact = false }: Performance
     <Card className={`p-6 ${className}`}>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Performance Dashboard</h3>
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Activity className="w-5 h-5" />
+            Core Web Vitals Dashboard
+          </h3>
           <Badge className={`${getScoreColor(performanceScore)} text-white`}>
             {getScoreText(performanceScore)}
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.entries(formattedMetrics).map(([key, value]) => {
             const isMeasured = value !== 'Not measured'
             const numericValue = isMeasured ? parseFloat(value.replace(/[^\d.]/g, '')) : 0
+            const { color } = getMetricStatus(key, value)
 
             // Define thresholds for progress bars
             let maxValue = 100
             let progressValue = 0
+            let targetValue = 0
 
             if (key.includes('LCP')) {
               maxValue = 4000 // 4s
+              targetValue = 2500 // 2.5s
               progressValue = Math.min((numericValue / maxValue) * 100, 100)
             } else if (key.includes('CLS')) {
-              maxValue = 0.25 // 0.25
+              maxValue = 0.25
+              targetValue = 0.1
               progressValue = Math.min((numericValue / maxValue) * 100, 100)
             } else if (key.includes('FCP') || key.includes('TTFB')) {
-              maxValue = 2000 // 2s
+              maxValue = 3000 // 3s
+              targetValue = 1800 // 1.8s
               progressValue = Math.min((numericValue / maxValue) * 100, 100)
             }
 
             return (
-              <div key={key} className="space-y-2">
+              <div key={key} className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">{key}</span>
-                  <span className="text-sm font-mono text-muted-foreground">{value}</span>
+                  <div className="flex items-center gap-2">
+                    {getTrendIcon(key, value)}
+                    <span className={`text-sm font-mono ${color}`}>{value}</span>
+                  </div>
                 </div>
-                {isMeasured && <Progress value={progressValue} className="h-2" />}
+
+                {isMeasured && (
+                  <>
+                    <Progress value={progressValue} className="h-2" />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Current: {value}</span>
+                      <span>
+                        Target: {key.includes('CLS') ? `< ${targetValue}` : `< ${targetValue}ms`}
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {!isMeasured && (
+                  <div className="text-xs text-muted-foreground">Waiting for measurement...</div>
+                )}
               </div>
             )
           })}
         </div>
 
-        <div className="text-xs text-muted-foreground space-y-1">
-          <p>
-            <strong>Core Web Vitals:</strong>
-          </p>
-          <ul className="list-disc list-inside space-y-1 ml-4">
-            <li>
-              <strong>LCP</strong> (Largest Contentful Paint): Should be &lt; 2.5s
-            </li>
-            <li>
-              <strong>CLS</strong> (Cumulative Layout Shift): Should be &lt; 0.1
-            </li>
-            <li>
-              <strong>FCP</strong> (First Contentful Paint): Should be &lt; 1.8s
-            </li>
-            <li>
-              <strong>TTFB</strong> (Time to First Byte): Should be &lt; 800ms
-            </li>
-          </ul>
+        <div className="border-t pt-4">
+          <div className="text-xs text-muted-foreground space-y-2">
+            <p className="font-medium text-foreground">📊 Core Web Vitals Explained:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="font-medium text-cyan-400">Largest Contentful Paint (LCP)</p>
+                <p>Measures loading performance. Target: &lt; 2.5s</p>
+              </div>
+              <div>
+                <p className="font-medium text-cyan-400">Cumulative Layout Shift (CLS)</p>
+                <p>Measures visual stability. Target: &lt; 0.1</p>
+              </div>
+              <div>
+                <p className="font-medium text-cyan-400">First Contentful Paint (FCP)</p>
+                <p>Measures perceived load speed. Target: &lt; 1.8s</p>
+              </div>
+              <div>
+                <p className="font-medium text-cyan-400">Time to First Byte (TTFB)</p>
+                <p>Measures server response time. Target: &lt; 800ms</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t pt-4">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Activity className="w-3 h-3" />
+            <span>
+              Real-time monitoring active • Last updated: {new Date().toLocaleTimeString()}
+            </span>
+          </div>
         </div>
       </div>
     </Card>

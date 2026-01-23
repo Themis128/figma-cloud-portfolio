@@ -9,9 +9,9 @@ This is a full-stack React SPA with Express backend, designed for AWS Amplify de
 **Multi-Server Development Setup:**
 
 - Frontend (Vite): `http://localhost:8081` - serves React SPA with hot reload
-- Backend (Express): `http://localhost:3000` - serves API endpoints
+- Backend (Express): `http://localhost:3000` - serves API endpoints with Socket.IO
 - Vite proxies `/api/*` requests to Express server automatically
-- **Critical**: Always run both servers for full functionality (push notifications, contact forms, resume generation)
+- **Critical**: Always run both servers for full functionality (push notifications, contact forms, resume generation, real-time features)
 
 **Path Aliases:**
 
@@ -39,7 +39,7 @@ pnpm dev
 npx tsx server/node-build.ts
 ```
 
-**Never run only one server** - features like contact forms, push notifications, and resume downloads require both servers running.
+**Never run only one server** - features like contact forms, push notifications, resume downloads, and real-time collaboration require both servers running.
 
 ### Adding New Features
 
@@ -58,7 +58,7 @@ npx tsx server/node-build.ts
 **UI Components:**
 
 - Use Radix UI primitives from `client/components/ui/`
-- Apply `cn()` utility for conditional Tailwind classes
+- Apply `cn()` utility for conditional Tailwind classes: `className={cn('base-classes', { 'conditional-class': condition }, props.className)}`
 - Follow navy/cyan color scheme defined in `tailwind.config.ts`
 
 ## Code Patterns & Conventions
@@ -107,10 +107,11 @@ try {
 
 ### Styling Patterns
 
-- **Colors**: Use navy/cyan palette from `tailwind.config.ts`
+- **Colors**: Use navy/cyan palette from `tailwind.config.ts` (navy-900: #0f1729, cyan: #00d4ff)
 - **Layout**: Container queries with responsive padding
 - **Animations**: CSS custom properties for consistent timing
-- **Dark Mode**: CSS variables automatically switch themes
+- **Dark Mode**: CSS variables automatically switch themes (default dark theme)
+- **Mobile-first**: Use responsive utilities like `text-responsive-xl`, `btn-mobile`, `card-mobile`
 
 ### Testing Setup
 
@@ -125,16 +126,17 @@ pnpm test:e2e:ui          # Interactive mode
 
 **Test Configuration:**
 
-- Vitest: Unit tests with jsdom environment
+- Vitest: Unit tests with jsdom environment, coverage thresholds at 20%
 - Playwright: Multi-browser E2E with custom timeouts and retry logic
 - Visual regression: 20% threshold for screenshot comparisons
+- Test globals enabled, setup in `./tests/vitest-setup.ts`
 
 ## Deployment & Infrastructure
 
 ### AWS Amplify Configuration
 
 - **Region**: us-east-1 (configured in `amplify/team-provider-info.json`)
-- **Build**: Custom multi-stage process in `amplify.yml`
+- **Build**: Custom multi-stage process in `amplify.yml` with Puppeteer Chrome installation
 - **Backend**: Lambda functions replace Express routes for serverless deployment
 
 ### Environment Variables
@@ -149,9 +151,10 @@ VITE_LAMBDA_*_URL=lambda_function_urls  # For Amplify deployment
 ### Performance Optimizations
 
 - **Images**: Automatic optimization via Vite plugin (WebP/AVIF generation)
-- **PWA**: Service worker with Workbox caching strategies
+- **PWA**: Service worker with Workbox caching strategies (API, fonts, images, static resources)
 - **Bundle**: Manual chunk splitting for vendor/router/ui libraries
 - **Fonts**: Google Fonts preloaded with display=swap
+- **Build**: Tree shaking, minification, sourcemap disabled in production
 
 ## Common Pitfalls
 
@@ -160,6 +163,7 @@ VITE_LAMBDA_*_URL=lambda_function_urls  # For Amplify deployment
 3. **Type Safety**: Define interfaces in `@shared/api.ts` before implementing features
 4. **Build Order**: Always run `pnpm run build:resume` before `pnpm run build:client`
 5. **Environment Setup**: Copy `.env.example` to `.env` and configure all required variables
+6. **Testing**: Exclude app.spec.ts and logo.spec.ts from Vitest runs (handled by Playwright)
 
 ## File Organization Reference
 
@@ -172,7 +176,7 @@ client/
 └── global.css           # Theme variables, global styles
 
 server/
-├── index.ts             # Express app setup, middleware
+├── index.ts             # Express app setup, middleware, Socket.IO
 ├── routes/              # API handlers
 └── node-build.ts        # Production server
 
@@ -182,15 +186,49 @@ shared/
 amplify/
 ├── functions/           # AWS Lambda handlers
 └── backend/             # Amplify infrastructure
+
+playwright-tests/
+├── global.d.ts          # Test global declarations
+└── **/*.spec.ts         # E2E test files
 ```
 
 ## Quality Assurance
 
-- **Linting**: Biome (fast, comprehensive)
-- **Formatting**: Biome format (consistent code style)
+- **Linting**: Biome (fast, comprehensive) with custom rules (noExplicitAny: warn)
+- **Formatting**: Biome format (consistent code style, single quotes, semicolons as needed)
 - **Type Checking**: TypeScript strict mode
 - **Testing**: 100% coverage target with Vitest + Playwright
-- **Performance**: Lighthouse CI integration planned
+- **Performance**: Lighthouse CI integration planned, Web Vitals monitoring
+
+## AI Agent Templates System
+
+**Route**: `/agents`
+
+- Browse 5 pre-built templates (Basic Chatbot, Code Reviewer, Data Analyzer, Content Writer, Task Automator)
+- Clone and customize existing templates
+- Create templates from scratch with workflow definitions
+- Categories: Basic, Advanced, Specialized
+- Features: Search, filtering, difficulty levels, visual template browser
+
+## Real-time Features
+
+- **Socket.IO**: Integrated for presence, typing indicators, agent collaboration
+- **Agent Rooms**: Real-time collaboration in `agent:${roomId}` rooms
+- **Status Updates**: Live agent status broadcasting
+- **Presence**: Connected users tracking and broadcasting
+
+## PDF Generation System
+
+- **Puppeteer**: Headless browser for high-quality PDF rendering
+- **Markdown Parsing**: Marked library for content processing
+- **Dynamic Templates**: Resume generation from `public/resume-content.md`
+- **API Endpoint**: `GET/POST /api/resume/download`
+
+## Push Notifications
+
+- **Web Push API**: VAPID key-based notifications
+- **Server-side**: VAPID keys handled by Express server
+- **Endpoints**: GET/PUT/POST/DELETE `/api/push-notifications`
 
 Remember: This codebase emphasizes type safety, performance, and developer experience. Always check existing patterns before implementing new features.</content>
 <parameter name="filePath">d:\Nuxt Projects\new-portfolio\.github\copilot-instructions.md

@@ -1,26 +1,26 @@
-import { useEffect } from 'react'
-import ReactGA from 'react-ga4'
-import { useLocation } from 'react-router-dom'
+import { useEffect } from "react";
+import ReactGA from "react-ga4";
+import { useLocation } from "react-router-dom";
 
 const GoogleAnalytics = () => {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
     const measurementId =
-      import.meta.env.VITE_GOOGLE_ANALYTICS_ID || import.meta.env.GOOGLE_ANALYTICS_ID
+      import.meta.env.VITE_GOOGLE_ANALYTICS_ID || import.meta.env.GOOGLE_ANALYTICS_ID;
 
     if (measurementId && !ReactGA.isInitialized) {
-      ReactGA.initialize(measurementId)
+      ReactGA.initialize(measurementId);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (ReactGA.isInitialized) {
-      ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
+      ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
     }
-  }, [location])
+  }, [location]);
 
-  return null
-}
+  return null;
+};
 
-export default GoogleAnalytics
+export default GoogleAnalytics;

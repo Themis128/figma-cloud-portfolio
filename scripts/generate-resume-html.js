@@ -1,24 +1,24 @@
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { marked } from 'marked'
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { marked } from "marked";
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configure marked for better HTML output
 marked.setOptions({
   breaks: true,
   gfm: true,
-})
+});
 
 function parseResumeMarkdown(markdownContent) {
-  const lines = markdownContent.split('\n')
+  const lines = markdownContent.split("\n");
   const resume = {
-    name: '',
-    title: '',
+    name: "",
+    title: "",
     contact: {},
-    summary: '',
+    summary: "",
     competencies: {},
     experience: [],
     education: [],
@@ -27,161 +27,161 @@ function parseResumeMarkdown(markdownContent) {
     memberships: [],
     languages: [],
     skills: {},
-  }
+  };
 
-  let currentSection = ''
-  let currentItem = null
-  const _inList = false
+  let currentSection = "";
+  let currentItem = null;
+  const _inList = false;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim()
+    const line = lines[i].trim();
 
     // Parse header
-    if (line.startsWith('# ')) {
-      resume.name = line.replace('# ', '')
-    } else if (line.startsWith('## ')) {
-      const section = line.replace('## ', '').toLowerCase()
-      if (section.includes('professional summary')) {
-        currentSection = 'summary'
-      } else if (section.includes('core competencies') || section.includes('technical skills')) {
-        currentSection = 'competencies'
-      } else if (section.includes('professional experience')) {
-        currentSection = 'experience'
-      } else if (section.includes('education')) {
-        currentSection = 'education'
-      } else if (section.includes('certifications')) {
-        currentSection = 'certifications'
-      } else if (section.includes('projects')) {
-        currentSection = 'projects'
-      } else if (section.includes('memberships')) {
-        currentSection = 'memberships'
-      } else if (section.includes('languages')) {
-        currentSection = 'languages'
-      } else if (section === 'cloud architect & cybersecurity specialist') {
-        resume.title = line.replace('## ', '')
+    if (line.startsWith("# ")) {
+      resume.name = line.replace("# ", "");
+    } else if (line.startsWith("## ")) {
+      const section = line.replace("## ", "").toLowerCase();
+      if (section.includes("professional summary")) {
+        currentSection = "summary";
+      } else if (section.includes("core competencies") || section.includes("technical skills")) {
+        currentSection = "competencies";
+      } else if (section.includes("professional experience")) {
+        currentSection = "experience";
+      } else if (section.includes("education")) {
+        currentSection = "education";
+      } else if (section.includes("certifications")) {
+        currentSection = "certifications";
+      } else if (section.includes("projects")) {
+        currentSection = "projects";
+      } else if (section.includes("memberships")) {
+        currentSection = "memberships";
+      } else if (section.includes("languages")) {
+        currentSection = "languages";
+      } else if (section === "cloud architect & cybersecurity specialist") {
+        resume.title = line.replace("## ", "");
       }
-    } else if (line.includes('📧') || line.includes('📱') || line.includes('🌐')) {
+    } else if (line.includes("📧") || line.includes("📱") || line.includes("🌐")) {
       // Contact info line
-      const emailMatch = line.match(/📧 ([^|]+)/)
-      const linkedinMatch = line.match(/📱 LinkedIn: \[([^\]]+)\]/)
-      const websiteMatch = line.match(/🌐 \[([^\]]+)\]/)
+      const emailMatch = line.match(/📧 ([^|]+)/);
+      const linkedinMatch = line.match(/📱 LinkedIn: \[([^\]]+)\]/);
+      const websiteMatch = line.match(/🌐 \[([^\]]+)\]/);
 
-      if (emailMatch) resume.contact.email = emailMatch[1].trim()
-      if (linkedinMatch) resume.contact.linkedin = `LinkedIn: ${linkedinMatch[1]}`
-      if (websiteMatch) resume.contact.website = websiteMatch[1].trim()
+      if (emailMatch) resume.contact.email = emailMatch[1].trim();
+      if (linkedinMatch) resume.contact.linkedin = `LinkedIn: ${linkedinMatch[1]}`;
+      if (websiteMatch) resume.contact.website = websiteMatch[1].trim();
     } else if (
-      currentSection === 'summary' &&
+      currentSection === "summary" &&
       line &&
-      !line.startsWith('-') &&
-      !line.startsWith('---')
+      !line.startsWith("-") &&
+      !line.startsWith("---")
     ) {
-      resume.summary += `${line} `
-    } else if (currentSection === 'competencies') {
-      if (line.startsWith('### ')) {
-        const category = line.replace('### ', '')
-        resume.competencies[category] = []
-        currentItem = category
-      } else if (line.startsWith('- **')) {
-        const skillLine = line.replace('- **', '').replace('**', '')
-        const [skill, _description] = skillLine.split(': ')
+      resume.summary += `${line} `;
+    } else if (currentSection === "competencies") {
+      if (line.startsWith("### ")) {
+        const category = line.replace("### ", "");
+        resume.competencies[category] = [];
+        currentItem = category;
+      } else if (line.startsWith("- **")) {
+        const skillLine = line.replace("- **", "").replace("**", "");
+        const [skill, _description] = skillLine.split(": ");
         if (currentItem && resume.competencies[currentItem]) {
-          resume.competencies[currentItem].push(skill.trim())
+          resume.competencies[currentItem].push(skill.trim());
         }
       }
-    } else if (currentSection === 'skills') {
-      if (line.startsWith('### ')) {
-        const category = line.replace('### ', '').replace(/\*/g, '')
-        resume.competencies[category] = []
-        currentItem = category
-      } else if (line.startsWith('- ')) {
-        const skillLine = line.replace('- ', '')
-        if (skillLine.includes('(')) {
-          const [skill, _level] = skillLine.split(' (')
+    } else if (currentSection === "skills") {
+      if (line.startsWith("### ")) {
+        const category = line.replace("### ", "").replace(/\*/g, "");
+        resume.competencies[category] = [];
+        currentItem = category;
+      } else if (line.startsWith("- ")) {
+        const skillLine = line.replace("- ", "");
+        if (skillLine.includes("(")) {
+          const [skill, _level] = skillLine.split(" (");
           if (currentItem && resume.competencies[currentItem]) {
-            resume.competencies[currentItem].push(skill.trim())
+            resume.competencies[currentItem].push(skill.trim());
           }
         }
       }
-    } else if (currentSection === 'experience') {
-      if (line.startsWith('### ')) {
+    } else if (currentSection === "experience") {
+      if (line.startsWith("### ")) {
         currentItem = {
-          title: line.replace('### ', ''),
-          company: '',
-          date: '',
+          title: line.replace("### ", ""),
+          company: "",
+          date: "",
           achievements: [],
-        }
-        resume.experience.push(currentItem)
+        };
+        resume.experience.push(currentItem);
       } else if (
         currentItem &&
-        !line.startsWith('### ') &&
-        !line.startsWith('- ') &&
-        !line.startsWith('**') &&
-        line.includes('|')
+        !line.startsWith("### ") &&
+        !line.startsWith("- ") &&
+        !line.startsWith("**") &&
+        line.includes("|")
       ) {
         // Company and location line
-        const [company, location] = line.split(' | ')
-        currentItem.company = `${company.trim()} | ${location.trim()}`
+        const [company, location] = line.split(" | ");
+        currentItem.company = `${company.trim()} | ${location.trim()}`;
       } else if (currentItem && line.match(/^[A-Z][a-z]+ \d{4} - (Present|[A-Z][a-z]+ \d{4})$/)) {
         // Date line
-        currentItem.date = line
-      } else if (currentItem && line.startsWith('- ')) {
-        currentItem.achievements.push(line.replace('- ', ''))
+        currentItem.date = line;
+      } else if (currentItem && line.startsWith("- ")) {
+        currentItem.achievements.push(line.replace("- ", ""));
       }
-    } else if (currentSection === 'education') {
-      if (line.startsWith('**')) {
-        const degree = line.replace(/\*\*/g, '')
-        const institution = lines[i + 1] ? lines[i + 1].replace(/\*\*/g, '') : ''
-        const date = lines[i + 2] ? lines[i + 2].replace(/\*\*/g, '') : ''
-        resume.education.push({ degree, institution, date })
-        i += 2 // Skip next lines
+    } else if (currentSection === "education") {
+      if (line.startsWith("**")) {
+        const degree = line.replace(/\*\*/g, "");
+        const institution = lines[i + 1] ? lines[i + 1].replace(/\*\*/g, "") : "";
+        const date = lines[i + 2] ? lines[i + 2].replace(/\*\*/g, "") : "";
+        resume.education.push({ degree, institution, date });
+        i += 2; // Skip next lines
       }
-    } else if (currentSection === 'certifications') {
-      if (line.startsWith('- **')) {
-        const certLine = line.replace('- **', '').replace('**', '')
-        const [cert, year] = certLine.split(' (')
-        const issuer = lines[i + 1] ? lines[i + 1].replace('- ', '') : ''
+    } else if (currentSection === "certifications") {
+      if (line.startsWith("- **")) {
+        const certLine = line.replace("- **", "").replace("**", "");
+        const [cert, year] = certLine.split(" (");
+        const issuer = lines[i + 1] ? lines[i + 1].replace("- ", "") : "";
         resume.certifications.push({
           name: cert.trim(),
-          issuer: issuer.replace(/^\*\*/, '').replace(/\*\*$/, ''),
-          year: year ? year.replace(')', '') : '',
-        })
-        i += 1 // Skip next line
+          issuer: issuer.replace(/^\*\*/, "").replace(/\*\*$/, ""),
+          year: year ? year.replace(")", "") : "",
+        });
+        i += 1; // Skip next line
       }
     }
   }
 
-  return resume
+  return resume;
 }
 
 function generateHTML(resume) {
   const skillLevels = {
-    'Microsoft Azure': 95,
-    'Azure AD & Identity': 98,
-    'Microsoft 365': 92,
+    "Microsoft Azure": 95,
+    "Azure AD & Identity": 98,
+    "Microsoft 365": 92,
     AWS: 85,
-    'Azure AD Premium, Microsoft Defender Suite': 95,
-    'Azure Sentinel & SIEM': 90,
-    'Zero Trust Architecture': 93,
-    'Compliance (GDPR, ISO 27001)': 88,
-    'Active Directory': 90,
-    'Windows Server': 85,
-    'PowerShell & Automation': 88,
-    'VMware & Virtualization': 82,
-  }
+    "Azure AD Premium, Microsoft Defender Suite": 95,
+    "Azure Sentinel & SIEM": 90,
+    "Zero Trust Architecture": 93,
+    "Compliance (GDPR, ISO 27001)": 88,
+    "Active Directory": 90,
+    "Windows Server": 85,
+    "PowerShell & Automation": 88,
+    "VMware & Virtualization": 82,
+  };
 
   // Modern color palette with accessibility
   const colors = {
-    primary: '#1e293b', // Slate-800
-    secondary: '#0f172a', // Slate-900
-    accent: '#06b6d4', // Cyan-500
-    accentLight: '#67e8f9', // Cyan-300
-    text: '#334155', // Slate-600
-    textLight: '#64748b', // Slate-500
-    success: '#10b981', // Emerald-500
-    warning: '#f59e0b', // Amber-500
-    background: '#f8fafc', // Slate-50
-    card: '#ffffff',
-  }
+    primary: "#1e293b", // Slate-800
+    secondary: "#0f172a", // Slate-900
+    accent: "#06b6d4", // Cyan-500
+    accentLight: "#67e8f9", // Cyan-300
+    text: "#334155", // Slate-600
+    textLight: "#64748b", // Slate-500
+    success: "#10b981", // Emerald-500
+    warning: "#f59e0b", // Amber-500
+    background: "#f8fafc", // Slate-50
+    card: "#ffffff",
+  };
 
   return `<!doctype html>
 <html lang="en">
@@ -619,9 +619,9 @@ function generateHTML(resume) {
           <h1>${resume.name}</h1>
           <h2>${resume.title}</h2>
           <div class="contact-info">
-            ${resume.contact.email ? `<div class="contact-item">📧 ${resume.contact.email}</div>` : ''}
-            ${resume.contact.linkedin ? `<div class="contact-item">💼 ${resume.contact.linkedin.replace('LinkedIn: ', '')}</div>` : ''}
-            ${resume.contact.website ? `<div class="contact-item">🌐 ${resume.contact.website}</div>` : ''}
+            ${resume.contact.email ? `<div class="contact-item">📧 ${resume.contact.email}</div>` : ""}
+            ${resume.contact.linkedin ? `<div class="contact-item">💼 ${resume.contact.linkedin.replace("LinkedIn: ", "")}</div>` : ""}
+            ${resume.contact.website ? `<div class="contact-item">🌐 ${resume.contact.website}</div>` : ""}
           </div>
         </div>
       </header>
@@ -638,7 +638,7 @@ function generateHTML(resume) {
               <h4>${category}</h4>
               ${skills
                 .map((skill) => {
-                  const level = skillLevels[skill] || 85
+                  const level = skillLevels[skill] || 85;
                   return `
                 <div class="skill-item">
                   <div class="skill-header">
@@ -649,13 +649,13 @@ function generateHTML(resume) {
                     <div class="skill-fill" style="width: ${level}%"></div>
                   </div>
                 </div>
-                `
+                `;
                 })
-                .join('')}
+                .join("")}
             </div>
             `,
               )
-              .join('')}
+              .join("")}
 
             ${
               resume.certifications.length > 0
@@ -668,14 +668,14 @@ function generateHTML(resume) {
             <div class="certification-item">
               <strong>${cert.name}</strong>
               <span class="issuer">${cert.issuer}</span>
-              ${cert.year ? `<span class="year">${cert.year}</span>` : ''}
+              ${cert.year ? `<span class="year">${cert.year}</span>` : ""}
             </div>
             `,
               )
-              .join('')}
+              .join("")}
           </div>
             `
-                : ''
+                : ""
             }
 
           ${
@@ -693,10 +693,10 @@ function generateHTML(resume) {
             </div>
             `,
               )
-              .join('')}
+              .join("")}
           </div>
             `
-              : ''
+              : ""
           }
         </div>
 
@@ -708,7 +708,7 @@ function generateHTML(resume) {
             <p>${resume.summary.trim()}</p>
           </div>
             `
-              : ''
+              : ""
           }
 
           ${
@@ -733,15 +733,15 @@ function generateHTML(resume) {
                 <div class="achievement-item">${achievement}</div>
                 `,
                   )
-                  .join('')}
+                  .join("")}
               </div>
             </div>
             `,
               )
-              .join('')}
+              .join("")}
           </div>
             `
-              : ''
+              : ""
           }
 
           <!-- Key Metrics Section -->
@@ -770,75 +770,75 @@ function generateHTML(resume) {
       </div>
     </div>
   </body>
-</html>`
+</html>`;
 }
 
 async function generateResume() {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    console.log('🚀 Starting resume generation process...')
-    console.log('📄 Reading resume content from markdown...')
+    console.log("🚀 Starting resume generation process...");
+    console.log("📄 Reading resume content from markdown...");
 
-    const markdownPath = path.join(__dirname, '..', 'public', 'resume-content.md')
-    const htmlPath = path.join(__dirname, '..', 'public', 'modern-resume.html')
+    const markdownPath = path.join(__dirname, "..", "public", "resume-content.md");
+    const htmlPath = path.join(__dirname, "..", "public", "modern-resume.html");
 
     // Check if markdown file exists
     if (!fs.existsSync(markdownPath)) {
-      throw new Error(`Resume content file not found: ${markdownPath}`)
+      throw new Error(`Resume content file not found: ${markdownPath}`);
     }
 
-    const markdownContent = fs.readFileSync(markdownPath, 'utf8')
-    console.log(`📊 Read ${markdownContent.length} characters from markdown file`)
+    const markdownContent = fs.readFileSync(markdownPath, "utf8");
+    console.log(`📊 Read ${markdownContent.length} characters from markdown file`);
 
-    console.log('🔍 Parsing markdown content...')
-    const resume = parseResumeMarkdown(markdownContent)
+    console.log("🔍 Parsing markdown content...");
+    const resume = parseResumeMarkdown(markdownContent);
 
     // Validate parsed data
     if (!resume.name) {
-      console.warn('⚠️  Warning: No name found in resume content')
+      console.warn("⚠️  Warning: No name found in resume content");
     }
     if (!resume.title) {
-      console.warn('⚠️  Warning: No title found in resume content')
+      console.warn("⚠️  Warning: No title found in resume content");
     }
     if (Object.keys(resume.competencies).length === 0) {
-      console.warn('⚠️  Warning: No competencies found in resume content')
+      console.warn("⚠️  Warning: No competencies found in resume content");
     }
 
-    console.log('🎨 Generating modern HTML template...')
-    const htmlContent = generateHTML(resume)
+    console.log("🎨 Generating modern HTML template...");
+    const htmlContent = generateHTML(resume);
 
-    console.log('💾 Writing HTML file...')
-    fs.writeFileSync(htmlPath, htmlContent, 'utf8')
+    console.log("💾 Writing HTML file...");
+    fs.writeFileSync(htmlPath, htmlContent, "utf8");
 
-    const endTime = Date.now()
-    const duration = ((endTime - startTime) / 1000).toFixed(2)
+    const endTime = Date.now();
+    const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-    console.log('✅ Resume HTML generated successfully!')
-    console.log(`📁 Output: ${htmlPath}`)
-    console.log(`📈 File size: ${(htmlContent.length / 1024).toFixed(2)} KB`)
-    console.log(`⏱️  Generated in ${duration}s`)
-    console.log('')
-    console.log('🎯 Next steps:')
-    console.log('   • Run PDF generation: node scripts/generate-resume.js')
-    console.log('   • View HTML: open public/modern-resume.html')
+    console.log("✅ Resume HTML generated successfully!");
+    console.log(`📁 Output: ${htmlPath}`);
+    console.log(`📈 File size: ${(htmlContent.length / 1024).toFixed(2)} KB`);
+    console.log(`⏱️  Generated in ${duration}s`);
+    console.log("");
+    console.log("🎯 Next steps:");
+    console.log("   • Run PDF generation: node scripts/generate-resume.js");
+    console.log("   • View HTML: open public/modern-resume.html");
   } catch (error) {
-    const endTime = Date.now()
-    const duration = ((endTime - startTime) / 1000).toFixed(2)
+    const endTime = Date.now();
+    const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-    console.error('❌ Error generating resume HTML:')
-    console.error(`   ${error.message}`)
-    console.error(`⏱️  Failed after ${duration}s`)
+    console.error("❌ Error generating resume HTML:");
+    console.error(`   ${error.message}`);
+    console.error(`⏱️  Failed after ${duration}s`);
 
-    if (error.code === 'ENOENT') {
-      console.error('')
-      console.error('💡 Suggestions:')
-      console.error('   • Check if resume-content.md exists in public/ directory')
-      console.error('   • Ensure you are running from the project root directory')
+    if (error.code === "ENOENT") {
+      console.error("");
+      console.error("💡 Suggestions:");
+      console.error("   • Check if resume-content.md exists in public/ directory");
+      console.error("   • Ensure you are running from the project root directory");
     }
 
-    process.exit(1)
+    process.exit(1);
   }
 }
 
-generateResume()
+generateResume();

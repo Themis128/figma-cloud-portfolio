@@ -1,89 +1,89 @@
-import { Building, Calendar, MapPin } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Building, Calendar, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
-import CircuitBackground from '@/components/CircuitBackground'
-import Navigation from '@/components/Navigation'
+import CircuitBackground from "@/components/CircuitBackground";
+import Navigation from "@/components/Navigation";
 
 export default function Product() {
   const experiences = [
     {
-      company: 'Estarta Solutions',
-      position: 'Systems and Network Engineer',
-      period: 'December 2024 - March 2025',
-      location: 'Greece',
+      company: "Estarta Solutions",
+      position: "Systems and Network Engineer",
+      period: "December 2024 - March 2025",
+      location: "Greece",
       responsibilities: [
-        'Design, deploy, and manage Cisco virtualization platforms including Cisco UCS (Unified Computing System), HyperFlex, and Cisco ACI (Application Centric Infrastructure)',
-        'Implement and configure virtual machine environments using VMware vSphere, ESXi, and integration with Cisco hardware',
-        'Configure and optimize Cisco UCS B-Series and C-Series servers, fabric interconnects, and chassis management',
-        'Manage Cisco HyperFlex hyperconverged infrastructure solutions for storage, compute, and networking',
-        'Implement network virtualization solutions using Cisco ACI and Nexus platforms',
-        'Perform capacity planning, resource allocation, and performance tuning for virtualized environments',
-        'Troubleshoot complex virtualization issues across compute, network, and storage layers',
-        'Conduct system upgrades, firmware updates, and patch management on Cisco infrastructure',
-        'Create and maintain technical documentation including architecture diagrams, configuration standards, and runbooks',
-        'Collaborate with international teams and deliver solutions for clients across multiple regions',
-        'Monitor infrastructure performance and implement optimization strategies',
+        "Design, deploy, and manage Cisco virtualization platforms including Cisco UCS (Unified Computing System), HyperFlex, and Cisco ACI (Application Centric Infrastructure)",
+        "Implement and configure virtual machine environments using VMware vSphere, ESXi, and integration with Cisco hardware",
+        "Configure and optimize Cisco UCS B-Series and C-Series servers, fabric interconnects, and chassis management",
+        "Manage Cisco HyperFlex hyperconverged infrastructure solutions for storage, compute, and networking",
+        "Implement network virtualization solutions using Cisco ACI and Nexus platforms",
+        "Perform capacity planning, resource allocation, and performance tuning for virtualized environments",
+        "Troubleshoot complex virtualization issues across compute, network, and storage layers",
+        "Conduct system upgrades, firmware updates, and patch management on Cisco infrastructure",
+        "Create and maintain technical documentation including architecture diagrams, configuration standards, and runbooks",
+        "Collaborate with international teams and deliver solutions for clients across multiple regions",
+        "Monitor infrastructure performance and implement optimization strategies",
       ],
     },
     {
-      company: 'Cosmos Business Systems Group',
-      position: 'Information Technology Support Engineer',
-      period: 'March 2023 - May 2024',
-      location: 'Greece',
+      company: "Cosmos Business Systems Group",
+      position: "Information Technology Support Engineer",
+      period: "March 2023 - May 2024",
+      location: "Greece",
       responsibilities: [
-        'Azure Active Directory (Azure AD) Support: Managed and troubleshooted Azure Active Directory services, maintained secure identity and access management',
-        'User provisioning and de-provisioning, group management, implementing access control through role-based access control (RBAC) and conditional access policies',
-        'Microsoft 365 (M365) Support: Provided comprehensive support for Microsoft 365 services, resolved end-user issues related to M365 applications',
-        'Intune Support: Specialized in mobile device management (MDM) and mobile application management (MAM) using Microsoft Intune',
+        "Azure Active Directory (Azure AD) Support: Managed and troubleshooted Azure Active Directory services, maintained secure identity and access management",
+        "User provisioning and de-provisioning, group management, implementing access control through role-based access control (RBAC) and conditional access policies",
+        "Microsoft 365 (M365) Support: Provided comprehensive support for Microsoft 365 services, resolved end-user issues related to M365 applications",
+        "Intune Support: Specialized in mobile device management (MDM) and mobile application management (MAM) using Microsoft Intune",
       ],
     },
     {
-      company: 'CPI SA (Outsourced @ Nielsen Greece)',
-      position: 'Information Technology Consultant',
-      period: 'February 2023 - March 2023',
-      location: 'Athens, Attiki, Greece',
+      company: "CPI SA (Outsourced @ Nielsen Greece)",
+      position: "Information Technology Consultant",
+      period: "February 2023 - March 2023",
+      location: "Athens, Attiki, Greece",
       responsibilities: [
-        'Provided strategic guidance to organizations, helping them align technology initiatives with business goals',
-        'Assessed IT needs and developed technology roadmaps, recommended solutions for efficiency, security, and cost-effectiveness',
-        'Managed Active Directory environments, ensured secure authentication and authorization mechanisms',
-        'Utilized ServiceNow for IT service management, configured workflows and managed IT asset inventories',
-        'Implemented robust Privileged Access Management (PAM) using CyberArk with strict access controls and monitoring',
+        "Provided strategic guidance to organizations, helping them align technology initiatives with business goals",
+        "Assessed IT needs and developed technology roadmaps, recommended solutions for efficiency, security, and cost-effectiveness",
+        "Managed Active Directory environments, ensured secure authentication and authorization mechanisms",
+        "Utilized ServiceNow for IT service management, configured workflows and managed IT asset inventories",
+        "Implemented robust Privileged Access Management (PAM) using CyberArk with strict access controls and monitoring",
       ],
     },
     {
-      company: 'Printec Group',
-      position: 'Technical Engineer',
-      period: 'January 2022 - September 2022',
-      location: 'Athens International Airport',
+      company: "Printec Group",
+      position: "Technical Engineer",
+      period: "January 2022 - September 2022",
+      location: "Athens International Airport",
       responsibilities: [
-        'Contributed to critical infrastructure rebuild at Athens International Airport',
-        'Supported safe travel and economic recovery through telecommunications services',
-        'Managed technical operations during COVID-19 recovery efforts',
+        "Contributed to critical infrastructure rebuild at Athens International Airport",
+        "Supported safe travel and economic recovery through telecommunications services",
+        "Managed technical operations during COVID-19 recovery efforts",
       ],
     },
     {
-      company: 'Germanos',
-      position: 'Tech expert',
-      period: 'February 2007 - October 2021',
-      location: 'Vari, Markopoulo, Paiania, Attiki, Greece',
+      company: "Germanos",
+      position: "Tech expert",
+      period: "February 2007 - October 2021",
+      location: "Vari, Markopoulo, Paiania, Attiki, Greece",
       responsibilities: [
-        'Developed software fine-tuning and hardware repairs of cellphones and tablets',
-        'Offered services in repairing desktops and laptops of various brands',
-        'Maintained strong client relationships and achieved sales goals',
-        'Provided prompt and accurate technical feedback to customers',
+        "Developed software fine-tuning and hardware repairs of cellphones and tablets",
+        "Offered services in repairing desktops and laptops of various brands",
+        "Maintained strong client relationships and achieved sales goals",
+        "Provided prompt and accurate technical feedback to customers",
       ],
     },
     {
-      company: 'INFORM',
-      position: 'IT department (Ε. Ο. Φ.)',
-      period: 'October 2003 - January 2006',
-      location: 'Koropi, Attiki, Greece',
+      company: "INFORM",
+      position: "IT department (Ε. Ο. Φ.)",
+      period: "October 2003 - January 2006",
+      location: "Koropi, Attiki, Greece",
       responsibilities: [
-        'Managed IT department operations and infrastructure',
-        'Provided technical support and system maintenance',
+        "Managed IT department operations and infrastructure",
+        "Provided technical support and system maintenance",
       ],
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden">
@@ -224,5 +224,5 @@ export default function Product() {
         </div>
       </div>
     </div>
-  )
+  );
 }

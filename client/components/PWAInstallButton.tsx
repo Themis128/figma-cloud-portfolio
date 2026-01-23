@@ -1,52 +1,53 @@
-import { Download, Smartphone, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Download, Smartphone, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { Button } from '@/components/ui/button'
-import { usePWA } from '@/hooks/usePWA'
+import { Button } from "@/components/ui/button";
+import { usePWA } from "@/hooks/usePWA";
 
 export function PWAInstallButton() {
-  const { isInstallable, isInstalled, installPWA } = usePWA()
-  const [showPrompt, setShowPrompt] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
+  const { isInstallable, isInstalled, installPWA } = usePWA();
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   // Check if user has dismissed the prompt before
   useEffect(() => {
-    const dismissedPrompt = localStorage.getItem('pwa-prompt-dismissed')
+    const dismissedPrompt = localStorage.getItem("pwa-prompt-dismissed");
     if (dismissedPrompt) {
-      const dismissedTime = parseInt(dismissedPrompt, 10)
-      const oneDay = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+      const dismissedTime = parseInt(dismissedPrompt, 10);
+      const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
       if (Date.now() - dismissedTime < oneDay) {
-        setDismissed(true)
+        setDismissed(true);
       } else {
-        localStorage.removeItem('pwa-prompt-dismissed')
+        localStorage.removeItem("pwa-prompt-dismissed");
       }
     }
-  }, [])
+  }, []);
 
   // Show prompt after user has been on the site for a bit
   useEffect(() => {
     if (isInstallable && !isInstalled && !dismissed) {
       const timer = setTimeout(() => {
-        setShowPrompt(true)
-      }, 30000) // Show after 30 seconds
+        setShowPrompt(true);
+      }, 30000); // Show after 30 seconds
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
-  }, [isInstallable, isInstalled, dismissed])
+    return undefined;
+  }, [isInstallable, isInstalled, dismissed]);
 
   const handleDismiss = () => {
-    setShowPrompt(false)
-    setDismissed(true)
-    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString())
-  }
+    setShowPrompt(false);
+    setDismissed(true);
+    localStorage.setItem("pwa-prompt-dismissed", Date.now().toString());
+  };
 
   const handleInstall = async () => {
-    await installPWA()
-    setShowPrompt(false)
-  }
+    await installPWA();
+    setShowPrompt(false);
+  };
 
   if (isInstalled || !isInstallable) {
-    return null
+    return null;
   }
 
   // Show compact button if prompt not shown
@@ -61,7 +62,7 @@ export function PWAInstallButton() {
         <Download className="h-4 w-4" />
         Install App
       </Button>
-    )
+    );
   }
 
   // Show full prompt
@@ -108,5 +109,5 @@ export function PWAInstallButton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

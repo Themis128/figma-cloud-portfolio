@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Fast Playwright configuration optimized for CI/CD and local development
@@ -25,34 +25,34 @@ const CONFIG = {
   BROWSER: {
     VIEWPORT: { width: 1280, height: 720 },
     LAUNCH_ARGS: [
-      '--disable-web-security',
-      '--disable-features=VizDisplayCompositor',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-      '--disable-features=TranslateUI',
-      '--disable-ipc-flooding-protection',
-      '--disable-component-extensions-with-background-pages',
-      '--disable-extensions',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-software-rasterizer',
-      '--disable-background-networking',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-      '--disable-component-extensions-with-background-pages',
-      '--disable-default-apps',
-      '--disable-features=TranslateUI',
-      '--disable-ipc-flooding-protection',
-      '--metrics-recording-only',
-      '--no-first-run',
-      '--enable-features=NetworkService,NetworkServiceInProcess',
-      '--disable-features=VizDisplayCompositor',
-      '--disable-web-security',
-      '--disable-features=VizDisplayCompositor',
+      "--disable-web-security",
+      "--disable-features=VizDisplayCompositor",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-renderer-backgrounding",
+      "--disable-features=TranslateUI",
+      "--disable-ipc-flooding-protection",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-extensions",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-software-rasterizer",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-renderer-backgrounding",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-default-apps",
+      "--disable-features=TranslateUI",
+      "--disable-ipc-flooding-protection",
+      "--metrics-recording-only",
+      "--no-first-run",
+      "--enable-features=NetworkService,NetworkServiceInProcess",
+      "--disable-features=VizDisplayCompositor",
+      "--disable-web-security",
+      "--disable-features=VizDisplayCompositor",
     ],
   },
 
@@ -61,41 +61,41 @@ const CONFIG = {
     RETRIES: 0, // No retries for speed
     FORBID_ONLY: !!process.env.CI, // Fail on test.only in CI
     FULLY_PARALLEL: true, // Run tests in parallel
-    TRACE: 'off', // Disable for speed
-    SCREENSHOT: 'off', // Disable for speed
-    VIDEO: 'off', // Disable for speed
+    TRACE: "off", // Disable for speed
+    SCREENSHOT: "off", // Disable for speed
+    VIDEO: "off", // Disable for speed
   },
 
   // Server configuration
   SERVER: {
-    COMMAND: 'pnpm dev',
-    URL: 'http://localhost:8081',
+    COMMAND: "pnpm dev",
+    URL: "http://localhost:8081",
     REUSE_EXISTING: !process.env.CI,
     TIMEOUT: 30000,
   },
 
   // Reporter configuration
-  REPORTER: process.env.CI ? 'github' : 'list',
-} as const
+  REPORTER: process.env.CI ? "github" : "list",
+} as const;
 
 // Calculate optimal worker count based on CPU cores
 const getOptimalWorkers = (): number => {
-  const cpuCount = require('os').cpus().length
-  const isCI = !!process.env.CI
-  const isGitHubActions = !!process.env.GITHUB_ACTIONS
+  const cpuCount = require("node:os").cpus().length;
+  const isCI = !!process.env.CI;
+  const isGitHubActions = !!process.env.GITHUB_ACTIONS;
 
   // GitHub Actions typically has 2 cores, use 2 workers
-  if (isGitHubActions) return 2
+  if (isGitHubActions) return 2;
 
   // CI environments: use CPU count - 1 to leave room for other processes
-  if (isCI) return Math.max(1, cpuCount - 1)
+  if (isCI) return Math.max(1, cpuCount - 1);
 
   // Local development: use CPU count for maximum parallelism
-  return cpuCount
-}
+  return cpuCount;
+};
 
 export default defineConfig({
-  testDir: './playwright-tests',
+  testDir: "./playwright-tests",
 
   /* Run tests in files in parallel for speed */
   fullyParallel: CONFIG.EXECUTION.FULLY_PARALLEL,
@@ -109,6 +109,11 @@ export default defineConfig({
   /* Use optimal number of workers for better performance */
   workers: getOptimalWorkers(),
 
+  /* Expect timeout */
+  expect: {
+    timeout: CONFIG.TIMEOUTS.EXPECT,
+  },
+
   /* Optimized timeouts for faster execution */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -117,7 +122,6 @@ export default defineConfig({
     /* Aggressive timeouts for faster failure detection */
     actionTimeout: CONFIG.TIMEOUTS.ACTION,
     navigationTimeout: CONFIG.TIMEOUTS.NAVIGATION,
-    expectTimeout: CONFIG.TIMEOUTS.EXPECT,
 
     /* Enhanced browser context for better isolation and performance */
     viewport: CONFIG.BROWSER.VIEWPORT,
@@ -130,7 +134,7 @@ export default defineConfig({
 
     /* Additional performance optimizations */
     launchOptions: {
-      args: CONFIG.BROWSER.LAUNCH_ARGS,
+      args: [...CONFIG.BROWSER.LAUNCH_ARGS],
       // Reduce memory usage in CI
       ...(process.env.CI
         ? {
@@ -150,12 +154,12 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: "chromium",
       use: {
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
         // Additional performance settings for Chrome
         launchOptions: {
-          args: CONFIG.BROWSER.LAUNCH_ARGS,
+          args: [...CONFIG.BROWSER.LAUNCH_ARGS],
         },
       },
     },
@@ -170,20 +174,20 @@ export default defineConfig({
   },
 
   /* Global setup and teardown for better test isolation */
-  globalSetup: require.resolve('./playwright-tests/global-setup.ts'),
-  globalTeardown: require.resolve('./playwright-tests/global-teardown.ts'),
+  globalSetup: require.resolve("./playwright-tests/global-setup.ts"),
+  globalTeardown: require.resolve("./playwright-tests/global-teardown.ts"),
 
   /* Test metadata for better organization */
   metadata: {
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.NODE_ENV || "development",
     ci: !!process.env.CI,
     timestamp: new Date().toISOString(),
   },
 
   /* Output directories */
-  outputDir: 'test-results/fast/',
+  outputDir: "test-results/fast/",
 
   /* Test filtering for faster execution */
   grep: process.env.TEST_PATTERN ? new RegExp(process.env.TEST_PATTERN) : undefined,
   grepInvert: process.env.TEST_GREP_INVERT ? new RegExp(process.env.TEST_GREP_INVERT) : undefined,
-})
+});

@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react'
+import * as Sentry from "@sentry/react";
 
 // Initialize Sentry for the client
 Sentry.init({
@@ -17,51 +17,51 @@ Sentry.init({
   replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // Capture 10% of sessions
   replaysOnErrorSampleRate: 1.0, // Capture 100% of sessions with errors
   // Release tracking
-  release: import.meta.env.VITE_APP_VERSION || '1.0.0',
+  release: import.meta.env.VITE_APP_VERSION || "1.0.0",
   // Error filtering
   beforeSend(event, hint) {
     // Filter out common non-actionable errors
-    const error = hint.originalException
-    if (error && typeof error === 'object' && 'message' in error) {
-      const message = String(error.message).toLowerCase()
+    const error = hint.originalException;
+    if (error && typeof error === "object" && "message" in error) {
+      const message = String(error.message).toLowerCase();
 
       // Filter out network errors that are expected (like offline, CORS, etc.)
       if (
-        message.includes('network error') ||
-        message.includes('failed to fetch') ||
-        message.includes('load chunk') ||
-        message.includes('loading chunk') ||
-        message.includes('script error')
+        message.includes("network error") ||
+        message.includes("failed to fetch") ||
+        message.includes("load chunk") ||
+        message.includes("loading chunk") ||
+        message.includes("script error")
       ) {
-        return null
+        return null;
       }
     }
 
-    return event
+    return event;
   },
-})
+});
 
 // Performance monitoring helper
 export const measurePerformance = (name: string, fn: () => void | Promise<void>) => {
   return Sentry.startSpan(
     {
       name,
-      op: 'function',
+      op: "function",
     },
     () => {
       try {
-        const result = fn()
+        const result = fn();
         if (result instanceof Promise) {
-          return result
+          return result;
         }
-        return result
+        return result;
       } catch (error) {
-        Sentry.captureException(error)
-        throw error
+        Sentry.captureException(error);
+        throw error;
       }
     },
-  )
-}
+  );
+};
 
 // User analytics helpers
 export const setUser = (user: { id: string; email?: string; username?: string }) => {
@@ -69,48 +69,48 @@ export const setUser = (user: { id: string; email?: string; username?: string })
     id: user.id,
     email: user.email,
     username: user.username,
-  })
-}
+  });
+};
 
 export const setTag = (key: string, value: string) => {
-  Sentry.setTag(key, value)
-}
+  Sentry.setTag(key, value);
+};
 
 export const setContext = (key: string, context: Record<string, unknown>) => {
-  Sentry.setContext(key, context)
-}
+  Sentry.setContext(key, context);
+};
 
 // Custom error reporting
 export const reportError = (error: Error, context?: Record<string, unknown>) => {
   if (context) {
     Sentry.withScope((scope) => {
       Object.entries(context).forEach(([key, value]) => {
-        scope.setTag(key, String(value))
-      })
-      Sentry.captureException(error)
-    })
+        scope.setTag(key, String(value));
+      });
+      Sentry.captureException(error);
+    });
   } else {
-    Sentry.captureException(error)
+    Sentry.captureException(error);
   }
-}
+};
 
 // Page view tracking
 export const trackPageView = (page: string) => {
   Sentry.addBreadcrumb({
-    category: 'navigation',
+    category: "navigation",
     message: `Page view: ${page}`,
-    level: 'info',
-  })
-}
+    level: "info",
+  });
+};
 
 // User interaction tracking
 export const trackInteraction = (action: string, details?: Record<string, unknown>) => {
   Sentry.addBreadcrumb({
-    category: 'user',
+    category: "user",
     message: `User action: ${action}`,
     data: details,
-    level: 'info',
-  })
-}
+    level: "info",
+  });
+};
 
-export { Sentry }
+export { Sentry };

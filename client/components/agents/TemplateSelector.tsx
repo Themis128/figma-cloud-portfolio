@@ -1,34 +1,34 @@
-import { Clock, Search, Star, Target, Wrench, Zap } from 'lucide-react'
-import { useState } from 'react'
+import { Clock, Search, Star, Target, Wrench, Zap } from "lucide-react";
+import { useState } from "react";
 
-import { Badge } from '@/components/ui/badge'
-import { HoverCard } from '@/components/ui/hover-card'
+import { Badge } from "@/components/ui/badge";
+import { HoverCard } from "@/components/ui/hover-card";
 import {
   type AgentTemplate,
   agentTemplates,
   cloneTemplate,
   getTemplatesByCategory,
   searchTemplates,
-} from '@/data/agentTemplates'
+} from "@/data/agentTemplates";
 
 interface TemplateSelectorProps {
-  onSelectTemplate: (template: AgentTemplate) => void
-  onCloneTemplate?: (template: AgentTemplate) => void
-  onCreateTemplate?: () => void
-  selectedTemplateId?: string
+  onSelectTemplate: (template: AgentTemplate) => void;
+  onCloneTemplate?: (template: AgentTemplate) => void;
+  onCreateTemplate?: () => void;
+  selectedTemplateId?: string;
 }
 
 const difficultyColors = {
-  beginner: 'bg-green-500/10 text-green-400 border-green-500/20',
-  intermediate: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-  advanced: 'bg-red-500/10 text-red-400 border-red-500/20',
-}
+  beginner: "bg-green-500/10 text-green-400 border-green-500/20",
+  intermediate: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+  advanced: "bg-red-500/10 text-red-400 border-red-500/20",
+};
 
 const categoryIcons = {
   basic: Star,
   advanced: Zap,
   specialized: Target,
-}
+};
 
 export default function TemplateSelector({
   onSelectTemplate,
@@ -36,37 +36,39 @@ export default function TemplateSelector({
   onCreateTemplate,
   selectedTemplateId,
 }: TemplateSelectorProps) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<AgentTemplate['category'] | 'all'>('all')
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<AgentTemplate["category"] | "all">(
+    "all",
+  );
 
   const filteredTemplates = searchQuery
     ? searchTemplates(searchQuery)
-    : selectedCategory === 'all'
+    : selectedCategory === "all"
       ? agentTemplates
-      : getTemplatesByCategory(selectedCategory)
+      : getTemplatesByCategory(selectedCategory);
 
   const categories = [
     {
-      id: 'all' as const,
-      label: 'All Templates',
+      id: "all" as const,
+      label: "All Templates",
       count: agentTemplates.length,
     },
     {
-      id: 'basic' as const,
-      label: 'Basic',
-      count: getTemplatesByCategory('basic').length,
+      id: "basic" as const,
+      label: "Basic",
+      count: getTemplatesByCategory("basic").length,
     },
     {
-      id: 'advanced' as const,
-      label: 'Advanced',
-      count: getTemplatesByCategory('advanced').length,
+      id: "advanced" as const,
+      label: "Advanced",
+      count: getTemplatesByCategory("advanced").length,
     },
     {
-      id: 'specialized' as const,
-      label: 'Specialized',
-      count: getTemplatesByCategory('specialized').length,
+      id: "specialized" as const,
+      label: "Specialized",
+      count: getTemplatesByCategory("specialized").length,
     },
-  ]
+  ];
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
@@ -88,7 +90,7 @@ export default function TemplateSelector({
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value)
+              setSearchQuery(e.target.value);
             }}
             className="w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-cyan-400/50 transition-colors"
           />
@@ -97,27 +99,27 @@ export default function TemplateSelector({
         {/* Category Filters */}
         <div className="flex flex-wrap gap-2 justify-center">
           {categories.map((category) => {
-            const IconComponent = category.id !== 'all' ? categoryIcons[category.id] || Star : Star
+            const IconComponent = category.id !== "all" ? categoryIcons[category.id] || Star : Star;
             return (
               <button
                 key={category.id}
                 type="button"
                 onClick={() => {
-                  setSelectedCategory(category.id)
+                  setSelectedCategory(category.id);
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
                   selectedCategory === category.id
-                    ? 'border-cyan-400 bg-cyan-400/10 text-cyan-400'
-                    : 'border-white/10 bg-white/5 text-white/70 hover:border-cyan-400/50 hover:text-cyan-400'
+                    ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
+                    : "border-white/10 bg-white/5 text-white/70 hover:border-cyan-400/50 hover:text-cyan-400"
                 }`}
               >
-                {category.id !== 'all' && <IconComponent className="w-4 h-4" />}
+                {category.id !== "all" && <IconComponent className="w-4 h-4" />}
                 <span className="text-sm font-medium">{category.label}</span>
                 <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
                   {category.count}
                 </span>
               </button>
-            )
+            );
           })}
         </div>
 
@@ -152,7 +154,7 @@ export default function TemplateSelector({
       {/* Templates Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTemplates.map((template) => {
-          const IconComponent = categoryIcons[template.category] || Star
+          const IconComponent = categoryIcons[template.category] || Star;
           return (
             <div key={template.id} className="relative">
               {/* Clone Button - Positioned outside the main button */}
@@ -160,7 +162,7 @@ export default function TemplateSelector({
                 <button
                   type="button"
                   onClick={() => {
-                    onCloneTemplate(cloneTemplate(template))
+                    onCloneTemplate(cloneTemplate(template));
                   }}
                   className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"
                   title="Clone template"
@@ -188,16 +190,16 @@ export default function TemplateSelector({
                   type="button"
                   className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${
                     selectedTemplateId === template.id
-                      ? 'border-cyan-400 bg-white/10'
-                      : 'border-white/10 hover:border-cyan-400/50'
+                      ? "border-cyan-400 bg-white/10"
+                      : "border-white/10 hover:border-cyan-400/50"
                   }`}
                   onClick={() => {
-                    onSelectTemplate(template)
+                    onSelectTemplate(template);
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      onSelectTemplate(template)
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onSelectTemplate(template);
                     }
                   }}
                 >
@@ -273,7 +275,7 @@ export default function TemplateSelector({
                 </button>
               </HoverCard>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -291,5 +293,5 @@ export default function TemplateSelector({
         Showing {filteredTemplates.length} of {agentTemplates.length} templates
       </div>
     </div>
-  )
+  );
 }

@@ -1,22 +1,22 @@
-import { Menu, X } from 'lucide-react'
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import { HoverButton } from '@/components/HoverAnimations'
+import { HoverButton } from "@/components/HoverAnimations";
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const location = useLocation()
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const navigationItems = [
-    { name: 'About', href: '/about' },
-    { name: 'Resume', href: '/resume' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Performance', href: '/performance' },
-    { name: 'Agents', href: '/agents' },
-  ]
+    { name: "About", href: "/about" },
+    { name: "Resume", href: "/resume" },
+    { name: "Contact", href: "/contact" },
+    { name: "Performance", href: "/performance" },
+    { name: "Agents", href: "/agents" },
+  ];
 
-  const isActive = (path: string) => location.pathname === path
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="relative z-50">
@@ -39,8 +39,8 @@ export default function Navigation() {
                 to={item.href}
                 className={`text-sm font-medium transition-colors duration-300 hover:text-cyan-400 ${
                   isActive(item.href)
-                    ? 'text-cyan-400 border-b-2 border-cyan-400 pb-1'
-                    : 'text-white/80'
+                    ? "text-cyan-400 border-b-2 border-cyan-400 pb-1"
+                    : "text-white/80"
                 }`}
               >
                 {item.name}
@@ -64,7 +64,7 @@ export default function Navigation() {
       {/* Mobile Navigation */}
       <div
         className={`md:hidden absolute top-full left-0 right-0 bg-white/10 backdrop-blur-md border-t border-white/20 transition-all duration-300 ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
         <div className="container mx-auto px-4 py-4 space-y-3">
@@ -75,8 +75,8 @@ export default function Navigation() {
               onClick={() => setIsOpen(false)}
               className={`block w-full text-left px-4 py-3 rounded-lg transition-colors ${
                 isActive(item.href)
-                  ? 'bg-cyan-400/20 text-cyan-400 border border-cyan-400/30'
-                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  ? "bg-cyan-400/20 text-cyan-400 border border-cyan-400/30"
+                  : "text-white/80 hover:bg-white/10 hover:text-white"
               }`}
             >
               {item.name}
@@ -98,5 +98,5 @@ export default function Navigation() {
         </div>
       </div>
     </nav>
-  )
+  );
 }

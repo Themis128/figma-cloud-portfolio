@@ -1,15 +1,15 @@
-import { useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import CircuitBackground from '@/components/CircuitBackground'
-import Navigation from '@/components/Navigation'
+import CircuitBackground from "@/components/CircuitBackground";
+import Navigation from "@/components/Navigation";
 
 const NotFound = () => {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
-    console.error('404 Error: User attempted to access non-existent route:', location.pathname)
-  }, [location.pathname])
+    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden">
@@ -34,7 +34,7 @@ const NotFound = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NotFound
+export default NotFound;

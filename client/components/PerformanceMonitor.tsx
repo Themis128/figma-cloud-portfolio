@@ -1,111 +1,198 @@
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
-interface WebVitalsMetric {
-  name: string
-  value: number
-  delta: number
-  id: string
+// Type for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      targetId: string,
+      config?: {
+        event_category?: string;
+        event_label?: string;
+        value?: number;
+        custom_map?: Record<string, string>;
+        [key: string]: unknown;
+      },
+    ) => void;
+  }
 }
 
+interface WebVitalsMetric {
+  name: string;
+  value: number;
+  delta: number;
+  id: string;
+}
+
+// Analytics service integration function - REMOVED
+// Custom analytics endpoint removed - using Google Analytics 4 only
+
 export function PerformanceMonitor() {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
-    // Only track in production
-
-    if (typeof window === 'undefined' || window.location.hostname === 'localhost') {
-      return
+    // Only run on client-side
+    if (typeof window === "undefined") {
+      return;
     }
 
     // Track Core Web Vitals
     const trackWebVitals = () => {
-      /* eslint-disable no-console */
       onCLS((metric: WebVitalsMetric) => {
-        console.log('CLS:', metric.value)
-      })
+        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "web_vitals", {
+            event_category: "Performance",
+            event_label: "CLS",
+            value: Math.round(metric.value),
+            custom_parameter_metric_id: metric.id,
+          });
+        } else {
+          console.log("CLS:", metric.value);
+        }
+      });
 
       onINP((metric: WebVitalsMetric) => {
-        console.log('INP:', metric.value)
-      })
+        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "web_vitals", {
+            event_category: "Performance",
+            event_label: "INP",
+            value: Math.round(metric.value),
+            custom_parameter_metric_id: metric.id,
+          });
+        } else {
+          console.log("INP:", metric.value);
+        }
+      });
 
       onFCP((metric: WebVitalsMetric) => {
-        console.log('FCP:', metric.value)
-      })
+        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "web_vitals", {
+            event_category: "Performance",
+            event_label: "FCP",
+            value: Math.round(metric.value),
+            custom_parameter_metric_id: metric.id,
+          });
+        } else {
+          console.log("FCP:", metric.value);
+        }
+      });
 
       onLCP((metric: WebVitalsMetric) => {
-        console.log('LCP:', metric.value)
-      })
+        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "web_vitals", {
+            event_category: "Performance",
+            event_label: "LCP",
+            value: Math.round(metric.value),
+            custom_parameter_metric_id: metric.id,
+          });
+        } else {
+          console.log("LCP:", metric.value);
+        }
+      });
 
       onTTFB((metric: WebVitalsMetric) => {
-        console.log('TTFB:', metric.value)
-      })
-      /* eslint-enable no-console */
-    }
+        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "web_vitals", {
+            event_category: "Performance",
+            event_label: "TTFB",
+            value: Math.round(metric.value),
+            custom_parameter_metric_id: metric.id,
+          });
+        } else {
+          console.log("TTFB:", metric.value);
+        }
+      });
+    };
 
-    trackWebVitals()
+    trackWebVitals();
 
     // Track navigation performance
     const trackNavigation = () => {
-      if ('performance' in window && 'getEntriesByType' in window.performance) {
-        const navigation = window.performance.getEntriesByType(
-          'navigation',
-        )[0] as PerformanceEntry & {
-          domContentLoadedEventEnd: number
-          domContentLoadedEventStart: number
-          loadEventEnd: number
-          loadEventStart: number
-          fetchStart: number
-        }
+      // Use a timeout to wait for page load to complete
+      const checkNavigationTiming = () => {
+        if ("performance" in window && "getEntriesByType" in window.performance) {
+          const navigation = window.performance.getEntriesByType(
+            "navigation",
+          )[0] as PerformanceEntry & {
+            domContentLoadedEventEnd: number;
+            domContentLoadedEventStart: number;
+            loadEventEnd: number;
+            loadEventStart: number;
+            fetchStart: number;
+          };
 
-        if (navigation) {
-          /* eslint-disable no-console */
-          console.log('Navigation timing:', {
-            domContentLoaded:
-              navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
-            loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-            totalTime: navigation.loadEventEnd - navigation.fetchStart,
-          })
-          /* eslint-enable no-console */
-        }
-      }
-    }
+          if (navigation) {
+            const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
+            const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
+            const totalTime = navigation.loadEventEnd - navigation.fetchStart;
 
-    trackNavigation()
+            if (process.env.NODE_ENV === "production") {
+              // Send to analytics service
+              // analytics.track('navigation_timing', {
+              //   domContentLoaded,
+              //   loadComplete,
+              //   totalTime,
+              // })
+            } else {
+              console.log("Navigation timing:", {
+                domContentLoaded: domContentLoaded > 0 ? domContentLoaded : 0,
+                loadComplete: loadComplete > 0 ? loadComplete : 0,
+                totalTime: totalTime > 0 ? totalTime : 0,
+              });
+            }
+          }
+        }
+      };
+
+      // Check immediately and also after a short delay to catch load completion
+      checkNavigationTiming();
+      setTimeout(checkNavigationTiming, 100);
+    };
+
+    trackNavigation();
 
     // Track route changes
-    /* eslint-disable no-console */
-    console.log('Route changed to:', location.pathname)
-    /* eslint-enable no-console */
-  }, [location.pathname])
+    if (process.env.NODE_ENV === "production") {
+      // Send to analytics service
+      // analytics.track('route_change', { path: location.pathname })
+    } else {
+      console.log("Route changed to:", location.pathname);
+    }
+  }, [location.pathname]);
 
   // Track memory usage (if available)
   useEffect(() => {
     const trackMemory = () => {
       const perfWithMemory = performance as typeof performance & {
         memory?: {
-          usedJSHeapSize: number
-          totalJSHeapSize: number
-          jsHeapSizeLimit: number
-        }
-      }
+          usedJSHeapSize: number;
+          totalJSHeapSize: number;
+          jsHeapSizeLimit: number;
+        };
+      };
 
       if (perfWithMemory.memory) {
-        const memory = perfWithMemory.memory
+        const memory = perfWithMemory.memory;
         /* eslint-disable no-console */
-        console.log('Memory usage:', {
+        console.log("Memory usage:", {
           used: Math.round(memory.usedJSHeapSize / 1048576), // MB
           total: Math.round(memory.totalJSHeapSize / 1048576), // MB
           limit: Math.round(memory.jsHeapSizeLimit / 1048576), // MB
-        })
+        });
         /* eslint-enable no-console */
       }
-    }
+    };
 
-    const interval = setInterval(trackMemory, 30000) // Every 30 seconds
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(trackMemory, 30000); // Every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
 
-  return null // This component doesn't render anything
+  return null; // This component doesn't render anything
 }

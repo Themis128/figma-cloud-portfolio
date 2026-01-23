@@ -1,17 +1,17 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './',
+  testDir: "./",
   workers: 1,
-  reporter: 'line',
+  reporter: "line",
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: "http://localhost:8080",
     actionTimeout: 10000,
   },
   projects: [
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      name: "Mobile Safari",
+      use: { ...devices["iPhone 12"] },
     },
   ],
-})
+});

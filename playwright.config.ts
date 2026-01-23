@@ -1,10 +1,10 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './playwright-tests',
+  testDir: "./playwright-tests",
   /* Run tests in files in parallel */
   fullyParallel: true, // Enable parallel for better performance
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -17,12 +17,12 @@ export default defineConfig({
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:8081',
+    baseURL: "http://localhost:8081",
 
     /* Enhanced tracing and debugging */
-    trace: 'retain-on-failure', // Keep traces for failed tests
-    screenshot: 'only-on-failure', // Capture screenshots on failures
-    video: 'retain-on-failure', // Record videos for failed tests
+    trace: "retain-on-failure", // Keep traces for failed tests
+    screenshot: "only-on-failure", // Capture screenshots on failures
+    video: "retain-on-failure", // Record videos for failed tests
 
     /* Optimized timeouts for better reliability */
     actionTimeout: 10000,
@@ -34,34 +34,34 @@ export default defineConfig({
 
     /* Performance monitoring */
     extraHTTPHeaders: {
-      'X-Test-Session': 'playwright-e2e',
+      "X-Test-Session": "playwright-e2e",
     },
   },
 
   /* Enhanced reporting for issue tracking and resolution */
   reporter: [
-    ['line'], // Console output with Inter font styling
+    ["line"], // Console output with Inter font styling
     [
-      'html',
+      "html",
       {
-        open: 'never',
+        open: "never",
         // Custom HTML report styling to match app fonts
         attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
       },
     ], // HTML report for detailed analysis
-    ['json', { outputFile: 'test-results/results.json' }], // JSON for CI/CD integration
-    ['junit', { outputFile: 'test-results/junit.xml' }], // JUnit for external tools
+    ["json", { outputFile: "test-results/results.json" }], // JSON for CI/CD integration
+    ["junit", { outputFile: "test-results/junit.xml" }], // JUnit for external tools
   ],
 
   /* Global setup and teardown for test environment preparation */
-  // globalSetup: './playwright-tests/global-setup.ts',
-  globalTeardown: './playwright-tests/global-teardown.ts',
+  globalSetup: './playwright-tests/global-setup.ts',
+  globalTeardown: "./playwright-tests/global-teardown.ts",
 
   /* Test execution metadata */
   metadata: {
-    environment: process.env.NODE_ENV || 'development',
-    testType: 'e2e',
-    framework: 'playwright',
+    environment: process.env.NODE_ENV || "development",
+    testType: "e2e",
+    framework: "playwright",
     timestamp: new Date().toISOString(),
   },
 
@@ -80,12 +80,12 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: "chromium",
       use: {
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
         // Chromium specific settings for better React hydration
         launchOptions: {
-          args: ['--disable-web-security', '--disable-features=VizDisplayCompositor'],
+          args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
         },
         // Longer timeouts for React hydration
         actionTimeout: 10000,
@@ -94,12 +94,12 @@ export default defineConfig({
     },
 
     {
-      name: 'firefox',
+      name: "firefox",
       use: {
-        ...devices['Desktop Firefox'],
+        ...devices["Desktop Firefox"],
         // Firefox specific settings to handle potential issues
         launchOptions: {
-          args: ['--disable-web-security', '--allow-running-insecure-content'],
+          args: ["--disable-web-security", "--allow-running-insecure-content"],
         },
         // Longer timeouts for Firefox React hydration
         actionTimeout: 15000,
@@ -108,12 +108,12 @@ export default defineConfig({
     },
 
     {
-      name: 'webkit',
+      name: "webkit",
       use: {
-        ...devices['Desktop Safari'],
+        ...devices["Desktop Safari"],
         // WebKit specific settings
         launchOptions: {
-          args: ['--disable-web-security'],
+          args: ["--disable-web-security"],
         },
         // Longer timeouts for WebKit React hydration
         actionTimeout: 15000,
@@ -123,21 +123,21 @@ export default defineConfig({
 
     /* Test against mobile viewports. */
     {
-      name: 'Mobile Chrome',
+      name: "Mobile Chrome",
       use: {
-        ...devices['Pixel 5'],
+        ...devices["Pixel 5"],
         // Mobile Chrome settings
         launchOptions: {
-          args: ['--disable-web-security'],
+          args: ["--disable-web-security"],
         },
         actionTimeout: 15000,
         navigationTimeout: 45000,
       },
     },
     {
-      name: 'Mobile Safari',
+      name: "Mobile Safari",
       use: {
-        ...devices['iPhone 12'],
+        ...devices["iPhone 12"],
         // Mobile Safari settings
         actionTimeout: 15000,
         navigationTimeout: 45000,
@@ -160,4 +160,4 @@ export default defineConfig({
   //     },
   //   },
   // ],
-})
+});

@@ -1,81 +1,80 @@
-import type { Request, Response } from 'express'
+import type { Request, Response } from "express";
 
-// @ts-expect-error
-import webpush from 'web-push'
+import webpush from "web-push";
 
 // VAPID keys for Web Push API
 const vapidKeys = {
   publicKey:
-    'BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk',
-  privateKey: 'CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI',
-}
+    "BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk",
+  privateKey: "CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI",
+};
 
 // Set VAPID details
 webpush.setVapidDetails(
-  'mailto:noreply@cloudles.gr', // Replace with your email
+  "mailto:noreply@cloudles.gr", // Replace with your email
   vapidKeys.publicKey,
   vapidKeys.privateKey,
-)
+);
 
 interface PushMessage {
-  title: string
-  body: string
-  icon?: string
-  badge?: string
-  image?: string
-  url?: string
-  data?: Record<string, unknown>
+  title: string;
+  body: string;
+  icon?: string;
+  badge?: string;
+  image?: string;
+  url?: string;
+  data?: Record<string, unknown>;
 }
 
 interface PushSubscriptionData {
-  endpoint: string
+  endpoint: string;
   keys: {
-    p256dh: string
-    auth: string
-  }
+    p256dh: string;
+    auth: string;
+  };
 }
 
 // In-memory storage for subscriptions (in production, use a database)
-let subscriptions: PushSubscriptionData[] = []
+let subscriptions: PushSubscriptionData[] = [];
 
 export async function handlePushNotificationsGet(req: Request, res: Response) {
-  const action = req.query.action as string
+  const action = req.query.action as string;
 
-  if (action === 'vapid-public-key') {
+  if (action === "vapid-public-key") {
     res.json({
       publicKey: vapidKeys.publicKey,
-    })
-    return
+    });
+    return;
   }
 
-  if (action === 'subscriptions') {
+  if (action === "subscriptions") {
     res.json({
       subscriptions: subscriptions.length,
       list: subscriptions.map((sub) => ({ endpoint: sub.endpoint })),
-    })
-    return
+    });
+    return;
   }
 
   // Test endpoint - send to all stored subscriptions
   try {
     if (subscriptions.length === 0) {
       res.status(400).json({
-        error: 'No subscriptions found. Subscribe first using the client.',
-      })
-      return
+        error: "No subscriptions found. Subscribe first using the client.",
+      });
+      return;
     }
 
     const testMessage: PushMessage = {
-      title: 'Test Notification',
-      body: 'This is a test push notification using Web Push API!',
-      icon: '/logo.jpg',
-      badge: '/logo.jpg',
-      url: '/',
+      title: "Test Notification",
+      body: "This is a test push notification using Web Push API!",
+      icon: "/logo.jpg",
+      badge: "/logo.jpg",
+      url: "/",
       data: {
         test: true,
         timestamp: new Date().toISOString(),
       },
-    }
+    };
 
     const payload = JSON.stringify({
       title: testMessage.title,
@@ -84,82 +83,82 @@ export async function handlePushNotificationsGet(req: Request, res: Response) {
       badge: testMessage.badge,
       url: testMessage.url,
       data: testMessage.data,
-    })
+    });
 
     interface NotificationResult {
-      endpoint: string
-      success: boolean
-      statusCode?: number
-      error?: string
+      endpoint: string;
+      success: boolean;
+      statusCode?: number;
+      error?: string;
     }
 
-    const results: NotificationResult[] = []
+    const results: NotificationResult[] = [];
     for (const subscription of subscriptions) {
       try {
-        const result = await webpush.sendNotification(subscription, payload)
+        const result = await webpush.sendNotification(subscription, payload);
         results.push({
           endpoint: subscription.endpoint,
           success: true,
           statusCode: result.statusCode,
-        })
+        });
       } catch (error) {
         results.push({
           endpoint: subscription.endpoint,
           success: false,
           error: (error as Error).message,
-        })
+        });
       }
     }
 
     res.json({
       success: true,
-      message: 'Test notifications sent',
+      message: "Test notifications sent",
       results,
       totalSubscriptions: subscriptions.length,
-    })
+    });
   } catch (error) {
-    console.error('Error sending test notification:', error)
+    console.error("Error sending test notification:", error);
     res.status(500).json({
-      error: 'Failed to send test notification',
+      error: "Failed to send test notification",
       details: (error as Error).message,
-    })
+    });
   }
 }
 
 export async function handlePushNotificationsPost(req: Request, res: Response) {
   try {
-    const { subscriptions: subs, message } = req.body
+    const { subscriptions: subs, message } = req.body;
 
-    let subscriptionsToUse: PushSubscriptionData[] = []
+    let subscriptionsToUse: PushSubscriptionData[] = [];
 
     // If no subscriptions provided, use all stored subscriptions
     if (!subs || !Array.isArray(subs) || subs.length === 0) {
       if (subscriptions.length === 0) {
         res.status(400).json({
-          error: 'No subscriptions found. Subscribe first using the client.',
-        })
-        return
+          error: "No subscriptions found. Subscribe first using the client.",
+        });
+        return;
       }
-      subscriptionsToUse = subscriptions
+      subscriptionsToUse = subscriptions;
     } else {
-      subscriptionsToUse = subs
+      subscriptionsToUse = subs;
     }
 
     if (!message) {
       res.status(400).json({
-        error: 'Missing required field: message',
-      })
-      return
+        error: "Missing required field: message",
+      });
+      return;
     }
 
-    const pushMessage: PushMessage = message
+    const pushMessage: PushMessage = message;
     interface NotificationResult {
-      endpoint: string
-      success: boolean
-      statusCode?: number
-      error?: string
+      endpoint: string;
+      success: boolean;
+      statusCode?: number;
+      error?: string;
     }
-    const results: NotificationResult[] = []
+    const results: NotificationResult[] = [];
 
     // Send push notification to each subscription
     for (const subscription of subscriptionsToUse) {
@@ -167,26 +166,26 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
         const payload = JSON.stringify({
           title: pushMessage.title,
           body: pushMessage.body,
-          icon: pushMessage.icon || '/logo.jpg',
-          badge: pushMessage.badge || '/logo.jpg',
+          icon: pushMessage.icon || "/logo.jpg",
+          badge: pushMessage.badge || "/logo.jpg",
           image: pushMessage.image,
-          url: pushMessage.url || '/',
+          url: pushMessage.url || "/",
           data: pushMessage.data || {},
-        })
+        });
 
-        const result = await webpush.sendNotification(subscription, payload)
+        const result = await webpush.sendNotification(subscription, payload);
         results.push({
           endpoint: subscription.endpoint,
           success: true,
           statusCode: result.statusCode,
-        })
+        });
       } catch (error) {
-        console.error('Error sending to subscription:', subscription.endpoint, error)
+        console.error("Error sending to subscription:", subscription.endpoint, error);
         results.push({
           endpoint: subscription.endpoint,
           success: false,
           error: (error as Error).message,
-        })
+        });
       }
     }
 
@@ -195,75 +194,75 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
       results,
       totalSent: results.filter((r) => r.success).length,
       totalFailed: results.filter((r) => !r.success).length,
-    })
+    });
   } catch (error) {
-    console.error('Error sending push notification:', error)
+    console.error("Error sending push notification:", error);
     res.status(500).json({
-      error: 'Failed to send push notification',
+      error: "Failed to send push notification",
       details: (error as Error).message,
-    })
+    });
   }
 }
 
 export function handlePushNotificationsPut(req: Request, res: Response) {
   try {
-    const subscription: PushSubscriptionData = req.body
+    const subscription: PushSubscriptionData = req.body;
 
     if (!subscription.endpoint || !subscription.keys) {
       res.status(400).json({
-        error: 'Invalid subscription data',
-      })
-      return
+        error: "Invalid subscription data",
+      });
+      return;
     }
 
     // Remove existing subscription with same endpoint
-    subscriptions = subscriptions.filter((sub) => sub.endpoint !== subscription.endpoint)
+    subscriptions = subscriptions.filter((sub) => sub.endpoint !== subscription.endpoint);
 
     // Add new subscription
-    subscriptions.push(subscription)
+    subscriptions.push(subscription);
 
-    console.log('Subscription stored:', subscription.endpoint)
+    console.log("Subscription stored:", subscription.endpoint);
 
     res.json({
       success: true,
-      message: 'Subscription stored',
+      message: "Subscription stored",
       totalSubscriptions: subscriptions.length,
-    })
+    });
   } catch (error) {
-    console.error('Error storing subscription:', error)
+    console.error("Error storing subscription:", error);
     res.status(500).json({
-      error: 'Failed to store subscription',
+      error: "Failed to store subscription",
       details: (error as Error).message,
-    })
+    });
   }
 }
 
 export function handlePushNotificationsDelete(req: Request, res: Response) {
   try {
-    const endpoint = req.query.endpoint as string
+    const endpoint = req.query.endpoint as string;
 
     if (!endpoint) {
       res.status(400).json({
-        error: 'Missing endpoint parameter',
-      })
-      return
+        error: "Missing endpoint parameter",
+      });
+      return;
     }
 
-    const initialCount = subscriptions.length
-    subscriptions = subscriptions.filter((sub) => sub.endpoint !== endpoint)
+    const initialCount = subscriptions.length;
+    subscriptions = subscriptions.filter((sub) => sub.endpoint !== endpoint);
 
-    const removed = initialCount - subscriptions.length
+    const removed = initialCount - subscriptions.length;
 
     res.json({
       success: true,
       message: `Removed ${removed} subscription(s)`,
       totalSubscriptions: subscriptions.length,
-    })
+    });
   } catch (error) {
-    console.error('Error removing subscription:', error)
+    console.error("Error removing subscription:", error);
     res.status(500).json({
-      error: 'Failed to remove subscription',
+      error: "Failed to remove subscription",
       details: (error as Error).message,
-    })
+    });
   }
 }

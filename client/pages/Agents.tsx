@@ -1,50 +1,51 @@
-import { ArrowLeft, Bot, Sparkles } from 'lucide-react'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { AnimatedSection } from '@/components/AnimatedSection'
-import TemplateCreator from '@/components/agents/TemplateCreator'
-import TemplateSelector from '@/components/agents/TemplateSelector'
-import CircuitBackground from '@/components/CircuitBackground'
-import Navigation from '@/components/Navigation'
-import type { AgentTemplate } from '@/data/agentTemplates'
+import { ArrowLeft, Bot, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { AnimatedSection } from "@/components/AnimatedSection";
+import { AgentBuilder } from "@/components/agents/AgentBuilder";
+import TemplateCreator from "@/components/agents/TemplateCreator";
+import TemplateSelector from "@/components/agents/TemplateSelector";
+import { WorkflowBuilder } from "@/components/agents/WorkflowBuilder";
+import CircuitBackground from "@/components/CircuitBackground";
+import Navigation from "@/components/Navigation";
+import type { AgentTemplate } from "@/data/agentTemplates";
 
-type ViewMode = 'select' | 'create' | 'configure'
+type ViewMode = "select" | "create" | "configure" | "build";
 
 export default function Agents() {
-  const [viewMode, setViewMode] = useState<ViewMode>('select')
-  const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null)
-  const [userTemplates, setUserTemplates] = useState<AgentTemplate[]>([])
+  const [viewMode, setViewMode] = useState<ViewMode>("select");
+  const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null);
+  const [userTemplates, setUserTemplates] = useState<AgentTemplate[]>([]);
 
   const handleSelectTemplate = (template: AgentTemplate) => {
-    setSelectedTemplate(template)
-    setViewMode('configure')
-  }
+    setSelectedTemplate(template);
+    setViewMode("configure");
+  };
 
   const handleCloneTemplate = (template: AgentTemplate) => {
-    setUserTemplates((prev) => [...prev, template])
-    setSelectedTemplate(template)
-    setViewMode('configure')
-  }
+    setUserTemplates((prev) => [...prev, template]);
+    setSelectedTemplate(template);
+    setViewMode("configure");
+  };
 
   const handleCreateTemplate = (template: AgentTemplate) => {
-    setUserTemplates((prev) => [...prev, template])
-    setSelectedTemplate(template)
-    setViewMode('configure')
-  }
+    setUserTemplates((prev) => [...prev, template]);
+    setSelectedTemplate(template);
+    setViewMode("configure");
+  };
 
   const handleCancelCreate = () => {
-    setViewMode('select')
-  }
+    setViewMode("select");
+  };
 
   const handleBackToSelect = () => {
-    setViewMode('select')
-    setSelectedTemplate(null)
-  }
+    setViewMode("select");
+    setSelectedTemplate(null);
+  };
 
   const handleStartBuilding = () => {
-    // TODO: Navigate to agent builder with selected template
-    console.log('Starting to build agent with template:', selectedTemplate)
-  }
+    setViewMode("build");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
@@ -82,7 +83,7 @@ export default function Agents() {
                 <ArrowLeft className="w-4 h-4" />
                 Back to Home
               </Link>
-              {viewMode !== 'select' && (
+              {viewMode !== "select" && (
                 <>
                   <span className="text-foreground/40">•</span>
                   <button
@@ -92,7 +93,7 @@ export default function Agents() {
                   >
                     Template Selection
                   </button>
-                  {viewMode === 'configure' && selectedTemplate && (
+                  {viewMode === "configure" && selectedTemplate && (
                     <>
                       <span className="text-foreground/40">•</span>
                       <span className="text-foreground/80">{selectedTemplate.name}</span>
@@ -104,19 +105,19 @@ export default function Agents() {
           </div>
 
           {/* Content based on view mode */}
-          {viewMode === 'select' && (
+          {viewMode === "select" && (
             <AnimatedSection delay={0.2}>
               <TemplateSelector
                 onSelectTemplate={handleSelectTemplate}
                 onCloneTemplate={handleCloneTemplate}
                 onCreateTemplate={() => {
-                  setViewMode('create')
+                  setViewMode("create");
                 }}
               />
             </AnimatedSection>
           )}
 
-          {viewMode === 'create' && (
+          {viewMode === "create" && (
             <AnimatedSection delay={0.2}>
               <TemplateCreator
                 onCreateTemplate={handleCreateTemplate}
@@ -125,7 +126,7 @@ export default function Agents() {
             </AnimatedSection>
           )}
 
-          {viewMode === 'configure' && selectedTemplate && (
+          {viewMode === "configure" && selectedTemplate && (
             <AnimatedSection delay={0.2}>
               <div className="max-w-4xl mx-auto space-y-8">
                 {/* Selected Template Summary */}
@@ -223,30 +224,39 @@ export default function Agents() {
                 {/* Template Workflow Preview */}
                 <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-8">
                   <h3 className="text-2xl font-bold text-white mb-6">Workflow Preview</h3>
-                  <div className="bg-black/20 rounded-lg p-6 border border-white/10">
-                    <div className="text-center text-white/60 py-12">
-                      <Bot className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p>Interactive workflow builder coming soon...</p>
-                      <p className="text-sm mt-2">
-                        This template includes {selectedTemplate.workflow.nodes.length} nodes and{' '}
-                        {selectedTemplate.workflow.connections.length} connections
-                      </p>
-                    </div>
-                  </div>
+                  <WorkflowBuilder
+                    nodes={selectedTemplate.workflow.nodes}
+                    connections={selectedTemplate.workflow.connections}
+                    readonly={true}
+                  />
                 </div>
               </div>
             </AnimatedSection>
           )}
 
+          {viewMode === "build" && selectedTemplate && (
+            <AnimatedSection delay={0.2}>
+              <AgentBuilder
+                template={selectedTemplate}
+                onCancel={() => setViewMode("configure")}
+                onSave={(agent) => {
+                  console.log("Agent saved:", agent);
+                  // TODO: Save agent to backend
+                  setViewMode("select");
+                }}
+              />
+            </AnimatedSection>
+          )}
+
           {/* User Templates Count */}
-          {userTemplates.length > 0 && viewMode === 'select' && (
+          {userTemplates.length > 0 && viewMode === "select" && (
             <div className="text-center text-white/60 mt-8">
               You have created {userTemplates.length} custom template
-              {userTemplates.length !== 1 ? 's' : ''}
+              {userTemplates.length !== 1 ? "s" : ""}
             </div>
           )}
         </div>
       </main>
     </div>
-  )
+  );
 }
