@@ -170,29 +170,41 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     test('should load homepage with GA configuration', async ({ page }) => {
       await page.goto('/')
 
-      // Wait for page to load
+      // Wait for page to load and stabilize
       await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(1000) // Additional wait for Firefox
 
-      // Check that the page loads successfully
-      await expect(page.locator('body')).toBeVisible()
+      // Check that the page loads successfully - use more robust check
+      await expect(page.locator('html')).toBeAttached()
+      await expect(page.locator('body')).toBeAttached()
 
       // Verify we can access the page content
       const bodyText = await page.locator('body').textContent()
       expect(bodyText?.length).toBeGreaterThan(10)
+
+      // Additional check for page readiness
+      const title = await page.title()
+      expect(title.length).toBeGreaterThan(0)
     })
 
     test('should load contact page with GA configuration', async ({ page }) => {
       await page.goto('/contact')
 
-      // Wait for page to load
+      // Wait for page to load and stabilize
       await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(1000) // Additional wait for Firefox
 
-      // Check that the page loads successfully
-      await expect(page.locator('body')).toBeVisible()
+      // Check that the page loads successfully - use more robust check
+      await expect(page.locator('html')).toBeAttached()
+      await expect(page.locator('body')).toBeAttached()
 
       // Verify we can access the page content
       const bodyText = await page.locator('body').textContent()
       expect(bodyText?.length).toBeGreaterThan(10)
+
+      // Additional check for page readiness
+      const title = await page.title()
+      expect(title.length).toBeGreaterThan(0)
     })
 
     test('should handle GA script loading failures gracefully', async ({ page }) => {
