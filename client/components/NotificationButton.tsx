@@ -1,5 +1,6 @@
 import { Bell, BellOff, Settings, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 

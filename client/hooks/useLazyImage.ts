@@ -23,8 +23,8 @@ export function useLazyImage(options: UseLazyImageOptions = {}) {
         }
       },
       {
-        rootMargin: options.rootMargin || '50px',
-        threshold: options.threshold || 0.1,
+        rootMargin: options.rootMargin ?? '50px',
+        threshold: options.threshold ?? 0.1,
       },
     )
 

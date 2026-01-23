@@ -14,11 +14,11 @@ export function PerformanceMonitor() {
 
   useEffect(() => {
     // Only track in production
-    /* eslint-disable no-undef */
+     
     if (typeof window === 'undefined' || window.location.hostname === 'localhost') {
       return
     }
-    /* eslint-enable no-undef */
+     
 
     // Track Core Web Vitals
     const trackWebVitals = () => {
@@ -49,7 +49,7 @@ export function PerformanceMonitor() {
 
     // Track navigation performance
     const trackNavigation = () => {
-      /* eslint-disable no-undef */
+       
       if ('performance' in window && 'getEntriesByType' in window.performance) {
         const navigation = window.performance.getEntriesByType(
           'navigation',
@@ -60,7 +60,7 @@ export function PerformanceMonitor() {
           loadEventStart: number
           fetchStart: number
         }
-        /* eslint-enable no-undef */
+         
         if (navigation) {
           /* eslint-disable no-console */
           console.log('Navigation timing:', {
@@ -85,7 +85,7 @@ export function PerformanceMonitor() {
   // Track memory usage (if available)
   useEffect(() => {
     const trackMemory = () => {
-      /* eslint-disable no-undef */
+       
       const perfWithMemory = performance as typeof performance & {
         memory?: {
           usedJSHeapSize: number
@@ -93,7 +93,7 @@ export function PerformanceMonitor() {
           jsHeapSizeLimit: number
         }
       }
-      /* eslint-enable no-undef */
+       
 
       if (perfWithMemory.memory) {
         const memory = perfWithMemory.memory

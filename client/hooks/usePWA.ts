@@ -76,7 +76,7 @@ export function usePWA() {
 
     try {
       await deferredPrompt.prompt()
-      const { outcome: _outcome } = await deferredPrompt.userChoice
+      await deferredPrompt.userChoice
 
       setDeferredPrompt(null)
       setIsInstallable(false)

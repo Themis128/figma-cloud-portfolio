@@ -1,5 +1,6 @@
-import { reportError, trackInteraction } from '@/lib/sentry'
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { reportError, trackInteraction } from '@/lib/sentry'
 
 // Web Speech API type declarations
 declare global {
@@ -48,7 +49,7 @@ interface SpeechRecognitionAlternative {
   confidence: number
 }
 
-declare var SpeechRecognition: {
+declare const SpeechRecognition: {
   prototype: SpeechRecognition
   new (): SpeechRecognition
 }

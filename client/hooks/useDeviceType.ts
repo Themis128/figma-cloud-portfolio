@@ -34,7 +34,7 @@ export function useDeviceType() {
     // Listen for changes only if window is defined
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', checkDevice)
-      const motionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+      const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
       if (motionQuery) {
         motionQuery.addEventListener('change', checkMotionPreference)
         return () => {

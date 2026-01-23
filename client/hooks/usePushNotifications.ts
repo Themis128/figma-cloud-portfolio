@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import { pushNotificationsApi } from '@/lib/api'
 
 export interface PushSubscriptionData {

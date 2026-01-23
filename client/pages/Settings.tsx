@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import { AnimatedSection } from '@/components/AnimatedSection'
 import Navigation from '@/components/Navigation'
 import { RealtimeTest } from '@/components/RealtimeTest'

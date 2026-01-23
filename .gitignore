@@ -83,3 +83,7 @@ Thumbs.db
 *.tmp
 *.temp
 .cache/
+
+
+#Ignore insiders AI rules
+.github\instructions\codacy.instructions.md

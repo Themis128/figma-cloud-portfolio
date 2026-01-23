@@ -6,13 +6,13 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './playwright-tests',
   /* Run tests in files in parallel */
-  fullyParallel: false, // Disable parallel to avoid conflicts
+  fullyParallel: true, // Enable parallel for better performance
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? 3 : 1, // More retries for better reliability
+  retries: process.env.CI ? 2 : 1, // Reduce retries for faster execution
   /* Opt out of parallel tests on CI. */
-  workers: 1, // Single worker to avoid conflicts
+  workers: process.env.CI ? 2 : 4, // Use multiple workers for better performance
 
   /* Circuit breaker configuration */
   use: {
@@ -27,7 +27,6 @@ export default defineConfig({
     /* Optimized timeouts for better reliability */
     actionTimeout: 10000,
     navigationTimeout: 30000,
-    expectTimeout: 10000,
 
     /* Enhanced browser context for better isolation */
     viewport: { width: 1280, height: 720 },
@@ -68,6 +67,7 @@ export default defineConfig({
 
   /* Expect configuration for better assertions */
   expect: {
+    timeout: 10000,
     toHaveScreenshot: {
       threshold: 0.2, // Allow 20% difference for visual comparisons
       maxDiffPixels: 100, // Maximum pixel difference

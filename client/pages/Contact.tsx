@@ -2,6 +2,7 @@ import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useState } from 'react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link } from 'react-router-dom'
+
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverButton, HoverCard } from '@/components/HoverAnimations'

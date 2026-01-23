@@ -28,8 +28,15 @@
     "server/**/*",
     "shared/**/*",
     "tests/**/*",
+    "playwright-tests/**/*",
     "vite.config.ts",
-    "vite.config.server.ts"
+    "vite.config.server.ts",
+    "playwright.config.ts",
+    "playwright.config.fast.ts",
+    "playwright.isolated.config.ts",
+    "tailwind.config.ts",
+    "vitest.config.ts",
+    "test-basic.spec.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

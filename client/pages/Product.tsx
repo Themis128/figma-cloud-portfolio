@@ -1,5 +1,6 @@
 import { Building, Calendar, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
+
 import CircuitBackground from '@/components/CircuitBackground'
 import Navigation from '@/components/Navigation'
 

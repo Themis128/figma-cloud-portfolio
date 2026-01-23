@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
+
 import { useOptimizedAnimation } from '@/hooks/useDeviceType'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 

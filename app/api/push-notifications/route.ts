@@ -59,11 +59,11 @@ export async function POST(request: NextRequest) {
         const payload = JSON.stringify({
           title: pushMessage.title,
           body: pushMessage.body,
-          icon: pushMessage.icon || '/logo.jpg',
-          badge: pushMessage.badge || '/logo.jpg',
+          icon: pushMessage.icon ?? '/logo.jpg',
+          badge: pushMessage.badge ?? '/logo.jpg',
           image: pushMessage.image,
-          url: pushMessage.url || '/',
-          data: pushMessage.data || {},
+          url: pushMessage.url ?? '/',
+          data: pushMessage.data ?? {},
         })
 
         const result = await webpush.sendNotification(subscription, payload)

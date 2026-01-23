@@ -25,10 +25,15 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
         expect(responseData).toHaveProperty('success')
         expect(typeof responseData.success).toBe('boolean')
         expect(responseData).toHaveProperty('message')
-      } catch (_error) {
-        // Skip test if API server is not available
-        console.log('API server not available, skipping contact form API test')
-        test.skip()
+      } catch (error) {
+        // If API server is not available, skip the test
+        if (error.message.includes('ECONNREFUSED') || error.message.includes('ENOTFOUND')) {
+          console.log('API server not available, skipping contact form API test')
+          test.skip()
+        } else {
+          // Re-throw other errors
+          throw error
+        }
       }
     })
 

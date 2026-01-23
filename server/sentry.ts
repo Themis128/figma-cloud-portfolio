@@ -44,10 +44,7 @@ export const sentryRequestHandler = Sentry.expressIntegration()
 export const sentryErrorHandler = Sentry.expressErrorHandler()
 
 // Performance monitoring helper
-export const measurePerformance = (
-  name: string,
-  fn: () => void | Promise<void>,
-) => {
+export const measurePerformance = (name: string, fn: () => void | Promise<void>) => {
   return Sentry.startSpan(
     {
       name,
@@ -69,11 +66,7 @@ export const measurePerformance = (
 }
 
 // User tracking
-export const setUser = (user: {
-  id: string
-  email?: string
-  username?: string
-}) => {
+export const setUser = (user: { id: string; email?: string; username?: string }) => {
   Sentry.setUser({
     id: user.id,
     email: user.email,
@@ -90,10 +83,7 @@ export const setContext = (key: string, context: Record<string, unknown>) => {
 }
 
 // Custom error reporting
-export const reportError = (
-  error: Error,
-  context?: Record<string, unknown>,
-) => {
+export const reportError = (error: Error, context?: Record<string, unknown>) => {
   if (context) {
     Sentry.withScope((scope) => {
       Object.entries(context).forEach(([key, value]) => {
@@ -147,4 +137,3 @@ export const trackDatabaseOperation = (
 }
 
 export { Sentry }
-

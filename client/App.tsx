@@ -3,6 +3,9 @@ import { lazy, Suspense } from 'react'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster as Sonner } from 'sonner'
+
+import Index from './pages/Index'
+
 import ErrorBoundary from '@/components/ErrorBoundary'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { PerformanceMonitor } from '@/components/PerformanceMonitor'
@@ -15,7 +18,6 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import VoiceCommandButton from '@/components/VoiceCommandButton'
 
 // Import Index directly (no lazy loading for main page)
-import Index from './pages/Index'
 
 // Lazy load other pages for code splitting
 const About = lazy(() => import('./pages/About'))

@@ -1,3 +1,4 @@
+import cors from 'cors'
 import 'dotenv/config'
 import express, {
   type ErrorRequestHandler,
@@ -159,7 +160,7 @@ export function initializeSocketIO(server: HttpServer) {
     cors: {
       origin:
         process.env.NODE_ENV === 'production'
-          ? process.env.FRONTEND_URL || false
+          ? (process.env.FRONTEND_URL ?? false)
           : ['http://localhost:8081', 'http://localhost:3000'],
       methods: ['GET', 'POST'],
       credentials: true,

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { socketManager } from '@/lib/socket'
 
 interface User {
@@ -27,7 +28,7 @@ export function useSocket(options: UseSocketOptions = {}) {
     }
 
     try {
-      const _socket = socketManager.connect(userId, userName)
+      socketManager.connect(userId, userName)
       hasConnectedRef.current = true
       setConnectionError(null)
     } catch (error) {
@@ -55,7 +56,9 @@ export function useSocket(options: UseSocketOptions = {}) {
     checkConnection()
     const interval = setInterval(checkConnection, 1000)
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+    }
   }, [])
 
   // Handle presence updates

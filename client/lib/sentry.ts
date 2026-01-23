@@ -42,10 +42,7 @@ Sentry.init({
 })
 
 // Performance monitoring helper
-export const measurePerformance = (
-  name: string,
-  fn: () => void | Promise<void>,
-) => {
+export const measurePerformance = (name: string, fn: () => void | Promise<void>) => {
   return Sentry.startSpan(
     {
       name,
@@ -67,11 +64,7 @@ export const measurePerformance = (
 }
 
 // User analytics helpers
-export const setUser = (user: {
-  id: string
-  email?: string
-  username?: string
-}) => {
+export const setUser = (user: { id: string; email?: string; username?: string }) => {
   Sentry.setUser({
     id: user.id,
     email: user.email,
@@ -88,10 +81,7 @@ export const setContext = (key: string, context: Record<string, unknown>) => {
 }
 
 // Custom error reporting
-export const reportError = (
-  error: Error,
-  context?: Record<string, unknown>,
-) => {
+export const reportError = (error: Error, context?: Record<string, unknown>) => {
   if (context) {
     Sentry.withScope((scope) => {
       Object.entries(context).forEach(([key, value]) => {
@@ -114,10 +104,7 @@ export const trackPageView = (page: string) => {
 }
 
 // User interaction tracking
-export const trackInteraction = (
-  action: string,
-  details?: Record<string, unknown>,
-) => {
+export const trackInteraction = (action: string, details?: Record<string, unknown>) => {
   Sentry.addBreadcrumb({
     category: 'user',
     message: `User action: ${action}`,
@@ -127,4 +114,3 @@ export const trackInteraction = (
 }
 
 export { Sentry }
-

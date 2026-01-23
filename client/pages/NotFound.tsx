@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+
 import CircuitBackground from '@/components/CircuitBackground'
 import Navigation from '@/components/Navigation'
 
