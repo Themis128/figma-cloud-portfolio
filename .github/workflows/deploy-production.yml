@@ -121,7 +121,7 @@ jobs:
 
           while [ $ELAPSED -lt $TIMEOUT ]; do
             # Get the latest job for the production branch
-            LATEST_JOB=$(aws amplify list-jobs --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} --query 'jobSummaries[0].jobId' --output text)
+            LATEST_JOB=$(aws amplify list-jobs --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} --query 'jobSummaries[0].jobId' --output text | tr -d '\n' | xargs)
 
             if [ "$LATEST_JOB" != "None" ] && [ -n "$LATEST_JOB" ]; then
               echo "Found deployment job: $LATEST_JOB"
