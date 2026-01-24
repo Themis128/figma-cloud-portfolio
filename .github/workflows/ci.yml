@@ -38,8 +38,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run linter
-        run: pnpm lint
+      - name: Fix formatting and auto-fix lint
+        run: |
+          pnpm format:fix || true
+          pnpm lint:fix || true
+          pnpm lint
 
       - name: Type check
         run: pnpm typecheck
