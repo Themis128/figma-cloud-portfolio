@@ -209,8 +209,8 @@ const AccessibilityEnhancer: React.FC = () => {
           </div>
           <Slider
             id='font-size'
-            min={80}
-            max={150}
+            min={MIN_FONT_SIZE}
+            max={MAX_FONT_SIZE}
             step={10}
             value={[settings.fontSize]}
             onValueChange={(value) => updateSetting("fontSize", value[0])}

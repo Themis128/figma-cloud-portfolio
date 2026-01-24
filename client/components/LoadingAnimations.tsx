@@ -1,5 +1,13 @@
 import { motion } from "framer-motion";
 
+// Animation constants
+const LOADING_SCALE_MIN = 1;
+const LOADING_SCALE_MAX = 1.2;
+const LOADING_OPACITY_MIN = 0.7;
+const LOADING_OPACITY_MAX = 1;
+const LOADING_ANIMATION_DURATION = 1.5;
+const LOADING_DELAY_INCREMENT = 0.2;
+
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   color?: string;
@@ -87,13 +95,13 @@ export function LoadingDots({
           data-testid='loading-dot'
           className={`${sizeClasses[size]} ${color} rounded-full`}
           animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.7, 1, 0.7],
+            scale: [LOADING_SCALE_MIN, LOADING_SCALE_MAX, LOADING_SCALE_MIN],
+            opacity: [LOADING_OPACITY_MIN, LOADING_OPACITY_MAX, LOADING_OPACITY_MIN],
           }}
           transition={{
-            duration: 1.5,
+            duration: LOADING_ANIMATION_DURATION,
             repeat: Infinity,
-            delay: index * 0.2,
+            delay: index * LOADING_DELAY_INCREMENT,
             ease: "easeInOut",
           }}
         />

@@ -6,6 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
+// Animation and display constants
+const PROJECT_ANIMATION_DURATION = 0.3;
+const PROJECT_ANIMATION_DELAY_INCREMENT = 0.1;
+const MAX_TECHNOLOGIES_DISPLAYED = 4;
+
 interface Project {
   id: string;
   title: string;
@@ -261,7 +266,10 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
                 animate='visible'
                 exit='exit'
                 variants={motionVariants}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{
+                  duration: PROJECT_ANIMATION_DURATION,
+                  delay: index * PROJECT_ANIMATION_DELAY_INCREMENT,
+                }}
                 className='h-full'
               >
                 <Card className='h-full hover:shadow-lg transition-shadow duration-300'>
@@ -295,14 +303,14 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
                     </CardDescription>
 
                     <div className='flex flex-wrap gap-2'>
-                      {project.technologies.slice(0, 4).map((tech) => (
+                      {project.technologies.slice(0, MAX_TECHNOLOGIES_DISPLAYED).map((tech) => (
                         <Badge key={tech} variant='secondary' className='text-xs'>
                           {tech}
                         </Badge>
                       ))}
-                      {project.technologies.length > 4 && (
+                      {project.technologies.length > MAX_TECHNOLOGIES_DISPLAYED && (
                         <Badge variant='secondary' className='text-xs'>
-                          +{project.technologies.length - 4}
+                          +{project.technologies.length - MAX_TECHNOLOGIES_DISPLAYED}
                         </Badge>
                       )}
                     </div>

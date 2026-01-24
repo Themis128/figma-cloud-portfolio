@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usePWA } from "@/hooks/usePWA";
 
+// Constants for PWA timing
+const HOURS_PER_DAY = 24;
+const MINUTES_PER_HOUR = 60;
+const SECONDS_PER_MINUTE = 60;
+const MS_PER_SECOND = 1000;
+const ONE_DAY_MS = HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;
+const PWA_PROMPT_DELAY_MS = 30000; // Show PWA prompt after 30 seconds
+
 export function PWAInstallButton() {
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const [showPrompt, setShowPrompt] = useState(false);
@@ -14,8 +22,7 @@ export function PWAInstallButton() {
     const dismissedPrompt = localStorage.getItem("pwa-prompt-dismissed");
     if (dismissedPrompt) {
       const dismissedTime = parseInt(dismissedPrompt, 10);
-      const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-      if (Date.now() - dismissedTime < oneDay) {
+      if (Date.now() - dismissedTime < ONE_DAY_MS) {
         setDismissed(true);
       } else {
         localStorage.removeItem("pwa-prompt-dismissed");
@@ -28,7 +35,7 @@ export function PWAInstallButton() {
     if (isInstallable && !isInstalled && !dismissed) {
       const timer = setTimeout(() => {
         setShowPrompt(true);
-      }, 30000); // Show after 30 seconds
+      }, PWA_PROMPT_DELAY_MS);
 
       return () => {
         clearTimeout(timer);

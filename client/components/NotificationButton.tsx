@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 // Constants for notification timing
-const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+const HOURS_PER_DAY = 24;
+const MINUTES_PER_HOUR = 60;
+const SECONDS_PER_MINUTE = 60;
+const MS_PER_SECOND = 1000;
+const DAYS_PER_WEEK = 7;
+
+const ONE_WEEK_MS =
+  DAYS_PER_WEEK * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;
 const PROMPT_DELAY_MS = 45000; // Show prompt after 45 seconds
 
 export function NotificationButton() {

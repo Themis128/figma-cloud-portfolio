@@ -37,8 +37,8 @@ export function ThemeProvider({
       if (stored && ["light", "dark", "system"].includes(stored)) {
         setTheme(stored as Theme);
       }
-    } catch (error) {
-      console.warn("Failed to load theme from localStorage:", error);
+    } catch (_error) {
+      // Failed to load theme from localStorage - silently handle
     }
   }, [storageKey]);
 
@@ -89,14 +89,14 @@ export function ThemeProvider({
 
   // Save theme to localStorage
   const handleSetTheme = (newTheme: Theme) => {
-    console.log("ThemeProvider: Setting theme to", newTheme);
+    // Setting theme
     if (typeof window === "undefined") return;
 
     try {
       window.localStorage.setItem(storageKey, newTheme);
-      console.log("ThemeProvider: Saved to localStorage");
-    } catch (error) {
-      console.warn("Failed to save theme to localStorage:", error);
+      // Saved to localStorage successfully
+    } catch (_error) {
+      // Failed to save theme to localStorage - silently handle
     }
     setTheme(newTheme);
   };

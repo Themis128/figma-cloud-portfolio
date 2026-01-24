@@ -11,6 +11,11 @@ interface CacheEntry {
   ttl: number;
 }
 
+// Performance monitoring constants
+const MEMORY_USAGE_WARNING_THRESHOLD = 0.8;
+const PERFORMANCE_CHECK_INTERVAL_MS = 30000; // 30 seconds
+const LONG_TASK_DURATION_MS = 50; // 50ms
+
 class PerformanceCache {
   private cache = new Map<string, CacheEntry>();
   private maxSize = 100;
@@ -104,10 +109,13 @@ const setupPerformanceMonitoring = () => {
         memory: { usedJSHeapSize: number; jsHeapSizeLimit: number };
       };
       const memory = perfWithMemory.memory;
-      if (memory && memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.8) {
-        console.warn("High memory usage detected:", memory.usedJSHeapSize);
+      if (
+        memory &&
+        memory.usedJSHeapSize > memory.jsHeapSizeLimit * MEMORY_USAGE_WARNING_THRESHOLD
+      ) {
+        // High memory usage detected - could implement warning UI here
       }
-    }, 30000); // Check every 30 seconds
+    }, PERFORMANCE_CHECK_INTERVAL_MS); // Check every 30 seconds
   }
 
   // Monitor long tasks (if supported)
@@ -116,9 +124,8 @@ const setupPerformanceMonitoring = () => {
       const longTaskObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         for (const entry of entries) {
-          if (entry.duration > 50) {
-            // Only log tasks longer than 50ms
-            console.warn(`Long task detected: ${entry.name} took ${entry.duration}ms`);
+          if (entry.duration > LONG_TASK_DURATION_MS) {
+            // Long task detected - could implement performance tracking here
           }
         }
       });
@@ -129,7 +136,7 @@ const setupPerformanceMonitoring = () => {
       }
     } catch (_error) {
       // Silently fail if longtask monitoring is not supported
-      console.debug("Long task monitoring not supported in this browser");
+      // Long task monitoring not supported in this browser
     }
   }
 };

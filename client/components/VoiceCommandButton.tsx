@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { commonVoiceCommands, useVoiceCommands, type VoiceCommand } from "@/hooks/useVoiceCommands";
 
+// Voice command constants
+const TRANSCRIPT_HIDE_DELAY_MS = 3000; // 3 seconds
+const CONFIDENCE_PERCENTAGE_MULTIPLIER = 100;
+const MAX_COMMANDS_DISPLAYED = 8;
+
 interface VoiceCommandButtonProps {
   customCommands?: VoiceCommand[];
   position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
@@ -40,7 +45,7 @@ export default function VoiceCommandButton({
       setShowTranscript(true);
       const timer = setTimeout(() => {
         setShowTranscript(false);
-      }, 3000);
+      }, TRANSCRIPT_HIDE_DELAY_MS);
       return () => {
         clearTimeout(timer);
       };
@@ -112,7 +117,9 @@ export default function VoiceCommandButton({
                   {isListening ? "Listening..." : "Ready"}
                 </Badge>
                 {confidence > 0 && (
-                  <Badge variant='outline'>{Math.round(confidence * 100)}% confidence</Badge>
+                  <Badge variant='outline'>
+                    {Math.round(confidence * CONFIDENCE_PERCENTAGE_MULTIPLIER)}% confidence
+                  </Badge>
                 )}
               </div>
 
@@ -135,7 +142,7 @@ export default function VoiceCommandButton({
               <div className='space-y-2'>
                 <h4 className='font-medium text-sm'>Available Commands:</h4>
                 <div className='max-h-40 overflow-y-auto space-y-1'>
-                  {availableCommands.slice(0, 8).map((command) => (
+                  {availableCommands.slice(0, MAX_COMMANDS_DISPLAYED).map((command) => (
                     <div key={command.keywords[0]} className='flex items-center gap-2 text-xs'>
                       <Volume2 className='w-3 h-3 text-muted-foreground' />
                       <span className='text-muted-foreground'>"{command.keywords[0]}"</span>
@@ -143,9 +150,9 @@ export default function VoiceCommandButton({
                       <span className='text-foreground'>{command.description}</span>
                     </div>
                   ))}
-                  {availableCommands.length > 8 && (
+                  {availableCommands.length > MAX_COMMANDS_DISPLAYED && (
                     <p className='text-xs text-muted-foreground'>
-                      ... and {availableCommands.length - 8} more
+                      ... and {availableCommands.length - MAX_COMMANDS_DISPLAYED} more
                     </p>
                   )}
                 </div>

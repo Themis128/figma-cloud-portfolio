@@ -9,6 +9,13 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Cache expiration constants
+const SECONDS_PER_MINUTE = 60;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
+const DAYS_PER_YEAR = 365;
+const ONE_YEAR_IN_SECONDS = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR;
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   publicDir: "../public",
@@ -149,7 +156,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
+                maxAgeSeconds: ONE_YEAR_IN_SECONDS, // 365 days
               },
             },
           },

@@ -13,6 +13,9 @@ interface AgentBuilderProps {
   onCancel: () => void;
 }
 
+// Agent execution constants
+const AGENT_EXECUTION_SIMULATION_DELAY_MS = 2000; // 2 seconds
+
 export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
   const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` });
   const [isRunning, setIsRunning] = useState(false);
@@ -31,10 +34,10 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
   const handleRunAgent = async () => {
     setIsRunning(true);
     // Simulate agent execution
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, AGENT_EXECUTION_SIMULATION_DELAY_MS));
     setIsRunning(false);
     // TODO: Implement actual agent execution logic
-    console.log("Running agent:", agent.name);
+    // Running agent
   };
 
   return (
@@ -197,7 +200,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 className='w-full justify-start'
                 onClick={() => {
                   // TODO: Implement export functionality
-                  console.log("Exporting agent configuration...");
+                  // Exporting agent configuration
                 }}
               >
                 Export Configuration
@@ -208,7 +211,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 className='w-full justify-start'
                 onClick={() => {
                   // TODO: Implement duplicate functionality
-                  console.log("Duplicating agent...");
+                  // Duplicating agent
                 }}
               >
                 Duplicate Agent
@@ -219,7 +222,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 className='w-full justify-start text-red-400 hover:text-red-300'
                 onClick={() => {
                   // TODO: Implement delete functionality
-                  console.log("Deleting agent...");
+                  // Deleting agent
                 }}
               >
                 Delete Agent

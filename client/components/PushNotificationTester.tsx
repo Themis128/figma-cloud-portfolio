@@ -54,8 +54,8 @@ export function PushNotificationTester() {
               state: registration.active?.state,
             });
           }
-        } catch (error) {
-          console.error("Error checking service worker:", error);
+        } catch (_error) {
+          // Service worker check failed - silently handle
         }
       }
     };
@@ -73,7 +73,7 @@ export function PushNotificationTester() {
         message: `Found ${data.subscriptions} active subscription${data.subscriptions !== 1 ? "s" : ""}`,
       });
     } catch (error) {
-      console.error("Error checking subscriptions:", error);
+      // Subscription check failed - error handled in UI
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
       // Check if it's a JSON parsing error (HTML response instead of JSON)
@@ -169,8 +169,8 @@ export function PushNotificationTester() {
       try {
         const permission = await Notification.requestPermission();
         setNotificationPermission(permission);
-      } catch (error) {
-        console.error("Error requesting notification permission:", error);
+      } catch (_error) {
+        // Notification permission request failed - silently handle
       }
     }
   };
