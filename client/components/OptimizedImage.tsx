@@ -61,6 +61,7 @@ export function OptimizedImage({
           aria-hidden="true"
         >
           {placeholder && (
+            // biome-ignore lint/performance/noImgElement: Placeholder image for loading state
             <img
               src={placeholder}
               alt=""
@@ -83,7 +84,7 @@ export function OptimizedImage({
         {/* WebP source */}
         <source srcSet={shouldLoad ? imageSources.webp : ""} type="image/webp" sizes={sizes} />
         {/* Fallback */}
-        <img
+        <img {/* biome-ignore lint/performance/noImgElement: Fallback img in picture element for responsive images */}
           ref={imgRef}
           src={shouldLoad ? fallbackSrc || imageSources.original : ""}
           alt={alt}

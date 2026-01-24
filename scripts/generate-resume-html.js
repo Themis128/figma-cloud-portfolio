@@ -777,9 +777,6 @@ async function generateResume() {
   const startTime = Date.now();
 
   try {
-    console.log("🚀 Starting resume generation process...");
-    console.log("📄 Reading resume content from markdown...");
-
     const markdownPath = path.join(__dirname, "..", "public", "resume-content.md");
     const htmlPath = path.join(__dirname, "..", "public", "modern-resume.html");
 
@@ -789,52 +786,28 @@ async function generateResume() {
     }
 
     const markdownContent = fs.readFileSync(markdownPath, "utf8");
-    console.log(`📊 Read ${markdownContent.length} characters from markdown file`);
 
-    console.log("🔍 Parsing markdown content...");
     const resume = parseResumeMarkdown(markdownContent);
 
     // Validate parsed data
     if (!resume.name) {
-      console.warn("⚠️  Warning: No name found in resume content");
     }
     if (!resume.title) {
-      console.warn("⚠️  Warning: No title found in resume content");
     }
     if (Object.keys(resume.competencies).length === 0) {
-      console.warn("⚠️  Warning: No competencies found in resume content");
     }
 
-    console.log("🎨 Generating modern HTML template...");
     const htmlContent = generateHTML(resume);
 
-    console.log("💾 Writing HTML file...");
     fs.writeFileSync(htmlPath, htmlContent, "utf8");
 
     const endTime = Date.now();
-    const duration = ((endTime - startTime) / 1000).toFixed(2);
-
-    console.log("✅ Resume HTML generated successfully!");
-    console.log(`📁 Output: ${htmlPath}`);
-    console.log(`📈 File size: ${(htmlContent.length / 1024).toFixed(2)} KB`);
-    console.log(`⏱️  Generated in ${duration}s`);
-    console.log("");
-    console.log("🎯 Next steps:");
-    console.log("   • Run PDF generation: node scripts/generate-resume.js");
-    console.log("   • View HTML: open public/modern-resume.html");
+    const _duration = ((endTime - startTime) / 1000).toFixed(2);
   } catch (error) {
     const endTime = Date.now();
-    const duration = ((endTime - startTime) / 1000).toFixed(2);
-
-    console.error("❌ Error generating resume HTML:");
-    console.error(`   ${error.message}`);
-    console.error(`⏱️  Failed after ${duration}s`);
+    const _duration = ((endTime - startTime) / 1000).toFixed(2);
 
     if (error.code === "ENOENT") {
-      console.error("");
-      console.error("💡 Suggestions:");
-      console.error("   • Check if resume-content.md exists in public/ directory");
-      console.error("   • Ensure you are running from the project root directory");
     }
 
     process.exit(1);

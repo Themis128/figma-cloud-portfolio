@@ -11,7 +11,7 @@ test.describe("Resource Preloading & Performance", () => {
       // Check for DNS prefetch links
       const dnsPrefetchLinks = page.locator('link[rel="dns-prefetch"]');
 
-      if (await dnsPrefetchLinks.count() > 0) {
+      if ((await dnsPrefetchLinks.count()) > 0) {
         for (const link of await dnsPrefetchLinks.all()) {
           const href = await link.getAttribute("href");
           expect(href).toBeTruthy();
@@ -27,13 +27,13 @@ test.describe("Resource Preloading & Performance", () => {
       // Check for prefetch links
       const prefetchLinks = page.locator('link[rel="prefetch"]');
 
-      if (await prefetchLinks.count() > 0) {
+      if ((await prefetchLinks.count()) > 0) {
         for (const link of await prefetchLinks.all()) {
           const href = await link.getAttribute("href");
           expect(href).toBeTruthy();
 
           // Check if resource actually loads
-          const response = await page.request.get(href!);
+          const response = await page.request.get(href as string);
           expect(response.status()).toBeLessThan(400);
         }
       }
@@ -43,7 +43,7 @@ test.describe("Resource Preloading & Performance", () => {
       // Check for preconnect links
       const preconnectLinks = page.locator('link[rel="preconnect"]');
 
-      if (await preconnectLinks.count() > 0) {
+      if ((await preconnectLinks.count()) > 0) {
         for (const link of await preconnectLinks.all()) {
           const href = await link.getAttribute("href");
           expect(href).toBeTruthy();
@@ -58,7 +58,7 @@ test.describe("Resource Preloading & Performance", () => {
       // Check for preload links
       const preloadLinks = page.locator('link[rel="preload"]');
 
-      if (await preloadLinks.count() > 0) {
+      if ((await preloadLinks.count()) > 0) {
         for (const link of await preloadLinks.all()) {
           const href = await link.getAttribute("href");
           const as = await link.getAttribute("as");
@@ -67,10 +67,19 @@ test.describe("Resource Preloading & Performance", () => {
           expect(as).toBeTruthy();
 
           // Verify 'as' attribute is valid
-          expect(["script", "style", "font", "image", "audio", "video", "document", "fetch"]).toContain(as);
+          expect([
+            "script",
+            "style",
+            "font",
+            "image",
+            "audio",
+            "video",
+            "document",
+            "fetch",
+          ]).toContain(as);
 
           // Check if resource actually loads
-          const response = await page.request.get(href!);
+          const response = await page.request.get(href as string);
           expect(response.status()).toBeLessThan(400);
         }
       }
@@ -80,14 +89,14 @@ test.describe("Resource Preloading & Performance", () => {
       // Check for modulepreload links
       const modulePreloadLinks = page.locator('link[rel="modulepreload"]');
 
-      if (await modulePreloadLinks.count() > 0) {
+      if ((await modulePreloadLinks.count()) > 0) {
         for (const link of await modulePreloadLinks.all()) {
           const href = await link.getAttribute("href");
           expect(href).toBeTruthy();
           expect(href).toMatch(/\.js$/);
 
           // Check if module loads
-          const response = await page.request.get(href!);
+          const response = await page.request.get(href as string);
           expect(response.status()).toBeLessThan(400);
         }
       }
@@ -113,7 +122,11 @@ test.describe("Resource Preloading & Performance", () => {
           setTimeout(() => {
             const entries = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
             for (const entry of entries) {
-              if (entry.name.includes("font") || entry.name.includes("css") || entry.name.includes("js")) {
+              if (
+                entry.name.includes("font") ||
+                entry.name.includes("css") ||
+                entry.name.includes("js")
+              ) {
                 resources.push({
                   name: entry.name,
                   duration: entry.duration,
@@ -141,7 +154,7 @@ test.describe("Resource Preloading & Performance", () => {
     test("should lazy load images", async ({ page }) => {
       const images = page.locator("img");
 
-      if (await images.count() > 0) {
+      if ((await images.count()) > 0) {
         let lazyLoadedCount = 0;
         let totalImages = 0;
 
@@ -170,10 +183,8 @@ test.describe("Resource Preloading & Performance", () => {
 
         if (src && !src.startsWith("data:")) {
           // Check if using modern formats via srcset or direct src
-          const usesModernFormat = srcset ||
-            src.includes(".webp") ||
-            src.includes(".avif") ||
-            src.includes(".svg");
+          const usesModernFormat =
+            srcset || src.includes(".webp") || src.includes(".avif") || src.includes(".svg");
 
           // Allow traditional formats but prefer modern ones
           expect(usesModernFormat || src.match(/\.(jpg|jpeg|png|gif)$/)).toBe(true);
@@ -241,7 +252,7 @@ test.describe("Resource Preloading & Performance", () => {
       // Check for font preloading
       const fontLinks = page.locator('link[rel="preload"][as="font"]');
 
-      if (await fontLinks.count() > 0) {
+      if ((await fontLinks.count()) > 0) {
         for (const link of await fontLinks.all()) {
           const href = await link.getAttribute("href");
           const type = await link.getAttribute("type");
@@ -250,7 +261,7 @@ test.describe("Resource Preloading & Performance", () => {
           expect(type).toMatch(/font\/(woff2?|ttf|otf)/);
 
           // Font should load
-          const response = await page.request.get(href!);
+          const response = await page.request.get(href as string);
           expect(response.status()).toBeLessThan(400);
         }
       }
@@ -275,7 +286,9 @@ test.describe("Resource Preloading & Performance", () => {
               if (rule instanceof CSSFontFaceRule) {
                 faces.push({
                   family: rule.style.fontFamily,
-                  display: (rule.style as CSSStyleDeclaration & { fontDisplay?: string }).fontDisplay || "auto",
+                  display:
+                    (rule.style as CSSStyleDeclaration & { fontDisplay?: string }).fontDisplay ||
+                    "auto",
                 });
               }
             }
@@ -304,15 +317,19 @@ test.describe("Resource Preloading & Performance", () => {
       }> = await page.evaluate(() => {
         return new Promise((resolve) => {
           setTimeout(() => {
-            const fontEntries = performance.getEntriesByType("resource").filter(
-              entry => entry.name.includes("font") || entry.name.match(/\.(woff2?|ttf|otf)$/)
-            ) as PerformanceResourceTiming[];
+            const fontEntries = performance
+              .getEntriesByType("resource")
+              .filter(
+                (entry) => entry.name.includes("font") || entry.name.match(/\.(woff2?|ttf|otf)$/),
+              ) as PerformanceResourceTiming[];
 
-            resolve(fontEntries.map(entry => ({
-              name: entry.name,
-              duration: entry.duration,
-              size: entry.transferSize || 0,
-            })));
+            resolve(
+              fontEntries.map((entry) => ({
+                name: entry.name,
+                duration: entry.duration,
+                size: entry.transferSize || 0,
+              })),
+            );
           }, 1000);
         });
       });
@@ -373,9 +390,11 @@ test.describe("Resource Preloading & Performance", () => {
         const contentType = response.headers()["content-type"] || "";
         const contentEncoding = response.headers()["content-encoding"];
 
-        if (contentType.includes("javascript") ||
+        if (
+          contentType.includes("javascript") ||
           contentType.includes("css") ||
-          contentType.includes("html")) {
+          contentType.includes("html")
+        ) {
           responses.push({
             url: response.url(),
             contentType,
@@ -390,7 +409,8 @@ test.describe("Resource Preloading & Performance", () => {
 
       // Check compression for static assets
       for (const response of responses) {
-        if (response.size && parseInt(response.size, 10) > 1024) { // Larger than 1KB
+        if (response.size && parseInt(response.size, 10) > 1024) {
+          // Larger than 1KB
           // Should be compressed
           expect(response.contentEncoding).toMatch(/gzip|br|deflate/);
         }
@@ -408,7 +428,7 @@ test.describe("Resource Preloading & Performance", () => {
 
       page.on("response", (response) => {
         const cacheControl = response.headers()["cache-control"];
-        const etag = response.headers()["etag"];
+        const etag = response.headers().etag;
         const lastModified = response.headers()["last-modified"];
 
         if (response.url().match(/\.(js|css|png|jpg|webp|woff2?)$/)) {
@@ -440,7 +460,9 @@ test.describe("Resource Preloading & Performance", () => {
       }> = await page.evaluate(() => {
         return new Promise((resolve) => {
           setTimeout(() => {
-            const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
+            const resources = performance.getEntriesByType(
+              "resource",
+            ) as PerformanceResourceTiming[];
             const priorities: Array<{
               url: string;
               type: string;
@@ -463,12 +485,13 @@ test.describe("Resource Preloading & Performance", () => {
       });
 
       // Critical resources should load first
-      const cssResources = resourcePriority.filter(r => r.type === "link");
-      const jsResources = resourcePriority.filter(r => r.type === "script");
+      const cssResources = resourcePriority.filter((r) => r.type === "link");
+      const jsResources = resourcePriority.filter((r) => r.type === "script");
 
       // CSS should load before non-critical JS
       if (cssResources.length > 0 && jsResources.length > 0) {
-        const avgCssTime = cssResources.reduce((sum, r) => sum + r.duration, 0) / cssResources.length;
+        const avgCssTime =
+          cssResources.reduce((sum, r) => sum + r.duration, 0) / cssResources.length;
         const avgJsTime = jsResources.reduce((sum, r) => sum + r.duration, 0) / jsResources.length;
 
         // CSS should load before or at the same time as JS

@@ -1,95 +1,97 @@
-import { Activity, ActivityBoundary, ActivityModal } from '@/components/Activity'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { Activity, ActivityBoundary, ActivityModal } from "@/components/Activity";
 
-describe('Activity Component', () => {
-  it('renders children when not pre-rendered', () => {
+describe("Activity Component", () => {
+  it("renders children when not pre-rendered", () => {
     render(
       <Activity trigger="manual">
         <div>Test Content</div>
       </Activity>,
-    )
+    );
 
     // Manual trigger should render children immediately
-    expect(screen.getByText('Test Content')).toBeInTheDocument()
-  })
+    expect(screen.getByText("Test Content")).toBeInTheDocument();
+  });
 
-  it('shows placeholder when pre-rendering', () => {
+  it("shows placeholder when pre-rendering", () => {
     render(
       <Activity trigger="hover" delay={10}>
         <div>Test Content</div>
       </Activity>,
-    )
+    );
 
     // Initially should show placeholder, not the actual content
-    expect(screen.queryByText('Test Content')).not.toBeInTheDocument()
-    expect(document.querySelector('.activity-placeholder')).toBeInTheDocument()
-  })
+    expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
+    expect(document.querySelector(".activity-placeholder")).toBeInTheDocument();
+  });
 
-  it('pre-renders on hover after delay', async () => {
+  it("pre-renders on hover after delay", async () => {
     render(
       <Activity trigger="hover" delay={10}>
         <div>Test Content</div>
       </Activity>,
-    )
+    );
 
-    const container = document.querySelector('.activity-container') as HTMLElement
+    const container = document.querySelector(".activity-container") as HTMLElement;
 
     // Initially should show placeholder
-    expect(screen.queryByText('Test Content')).not.toBeInTheDocument()
+    expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
 
     // Simulate hover
-    fireEvent.mouseEnter(container)
+    fireEvent.mouseEnter(container);
 
     // Wait for pre-rendering delay
     await waitFor(
       () => {
-        expect(screen.getByText('Test Content')).toBeInTheDocument()
+        expect(screen.getByText("Test Content")).toBeInTheDocument();
       },
       { timeout: 50 },
-    )
-  })
+    );
+  });
 
-  it('pre-renders when entering viewport', async () => {
+  it("pre-renders when entering viewport", async () => {
     // Mock intersection observer
-    let observerCallback: any = null;
-    const mockIntersectionObserver = vi.fn().mockImplementation((callback) => {
-      observerCallback = callback
-      return {
-        observe: vi.fn(),
-        unobserve: vi.fn(),
-        disconnect: vi.fn(),
-      }
-    })
-    window.IntersectionObserver = mockIntersectionObserver
+    let observerCallback: ((entries: IntersectionObserverEntry[]) => void) | undefined;
+    const mockIntersectionObserver = vi
+      .fn()
+      .mockImplementation((callback: (entries: IntersectionObserverEntry[]) => void) => {
+        observerCallback = callback;
+        return {
+          observe: vi.fn(),
+          unobserve: vi.fn(),
+          disconnect: vi.fn(),
+        };
+      });
+    window.IntersectionObserver = mockIntersectionObserver;
 
     render(
       <Activity trigger="viewport" delay={10}>
         <div>Test Content</div>
       </Activity>,
-    )
+    );
 
     // Initially should show placeholder
-    expect(screen.queryByText('Test Content')).not.toBeInTheDocument()
+    expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
 
     // Trigger intersection observer callback
     if (observerCallback) {
-      observerCallback([{ isIntersecting: true } as IntersectionObserverEntry])
+      observerCallback([{ isIntersecting: true } as IntersectionObserverEntry]);
     }
 
     // Wait for pre-rendering delay
     await waitFor(
       () => {
-        expect(screen.getByText('Test Content')).toBeInTheDocument()
+        expect(screen.getByText("Test Content")).toBeInTheDocument();
       },
       { timeout: 50 },
-    )
-  })
-})
+    );
+  });
+});
 
-describe('ActivityModal Component', () => {
-  it('opens modal on trigger click', () => {
-    const mockOnOpenChange = vi.fn()
+describe("ActivityModal Component", () => {
+  it("opens modal on trigger click", () => {
+    const mockOnOpenChange = vi.fn();
 
     render(
       <ActivityModal
@@ -99,16 +101,16 @@ describe('ActivityModal Component', () => {
       >
         <div>Modal Content</div>
       </ActivityModal>,
-    )
+    );
 
-    const trigger = screen.getByRole('button')
-    fireEvent.click(trigger)
+    const trigger = screen.getByRole("button");
+    fireEvent.click(trigger);
 
-    expect(mockOnOpenChange).toHaveBeenCalledWith(true)
-  })
+    expect(mockOnOpenChange).toHaveBeenCalledWith(true);
+  });
 
-  it('closes modal on backdrop click', () => {
-    const mockOnOpenChange = vi.fn()
+  it("closes modal on backdrop click", () => {
+    const mockOnOpenChange = vi.fn();
 
     render(
       <ActivityModal
@@ -118,18 +120,18 @@ describe('ActivityModal Component', () => {
       >
         <div>Modal Content</div>
       </ActivityModal>,
-    )
+    );
 
     // Find the backdrop (it should be the second div in the modal overlay)
-    const backdrop = document.querySelector('.fixed.inset-0.bg-black\\/50')
+    const backdrop = document.querySelector(".fixed.inset-0.bg-black\\/50");
     if (backdrop) {
-      fireEvent.click(backdrop)
-      expect(mockOnOpenChange).toHaveBeenCalledWith(false)
+      fireEvent.click(backdrop);
+      expect(mockOnOpenChange).toHaveBeenCalledWith(false);
     }
-  })
+  });
 
-  it('closes modal on escape key', () => {
-    const mockOnOpenChange = vi.fn()
+  it("closes modal on escape key", () => {
+    const mockOnOpenChange = vi.fn();
 
     render(
       <ActivityModal
@@ -139,49 +141,49 @@ describe('ActivityModal Component', () => {
       >
         <div>Modal Content</div>
       </ActivityModal>,
-    )
+    );
 
     // Fire escape key on the backdrop element
-    const backdrop = document.querySelector('.fixed.inset-0.bg-black\\/50')
+    const backdrop = document.querySelector(".fixed.inset-0.bg-black\\/50");
     if (backdrop) {
-      fireEvent.keyDown(backdrop, { key: 'Escape' })
-      expect(mockOnOpenChange).toHaveBeenCalledWith(false)
+      fireEvent.keyDown(backdrop, { key: "Escape" });
+      expect(mockOnOpenChange).toHaveBeenCalledWith(false);
     }
-  })
-})
+  });
+});
 
-describe('ActivityBoundary Component', () => {
-  it('renders children with activity wrappers', () => {
+describe("ActivityBoundary Component", () => {
+  it("renders children with activity wrappers", () => {
     render(
       <ActivityBoundary mode="moderate">
         <div>Child 1</div>
         <div>Child 2</div>
       </ActivityBoundary>,
-    )
+    );
 
     // Initially should show placeholders, not the actual content
-    expect(screen.queryByText('Child 1')).not.toBeInTheDocument()
-    expect(screen.queryByText('Child 2')).not.toBeInTheDocument()
-    expect(document.querySelectorAll('.activity-placeholder')).toHaveLength(2)
-  })
+    expect(screen.queryByText("Child 1")).not.toBeInTheDocument();
+    expect(screen.queryByText("Child 2")).not.toBeInTheDocument();
+    expect(document.querySelectorAll(".activity-placeholder")).toHaveLength(2);
+  });
 
-  it('applies different delays based on mode', () => {
+  it("applies different delays based on mode", () => {
     const { rerender } = render(
       <ActivityBoundary mode="conservative">
         <div>Child</div>
       </ActivityBoundary>,
-    )
+    );
 
     // Conservative mode should have longer delay
-    expect(document.querySelectorAll('.activity-placeholder')).toHaveLength(1)
+    expect(document.querySelectorAll(".activity-placeholder")).toHaveLength(1);
 
     rerender(
       <ActivityBoundary mode="aggressive">
         <div>Child</div>
       </ActivityBoundary>,
-    )
+    );
 
     // Aggressive mode should have shorter delay
-    expect(document.querySelectorAll('.activity-placeholder')).toHaveLength(1)
-  })
-})
+    expect(document.querySelectorAll(".activity-placeholder")).toHaveLength(1);
+  });
+});

@@ -10,13 +10,13 @@ test.describe("3D Interactive Demos", () => {
     test("should load Three.js library", async ({ page }) => {
       // Check if Three.js is loaded
       const threeLoaded = await page.evaluate(() => {
-        return typeof (window as any).THREE !== "undefined";
+        return typeof (window as Window & { THREE?: unknown }).THREE !== "undefined";
       });
 
       if (threeLoaded) {
         // Verify Three.js version and basic functionality
         const threeInfo = await page.evaluate(() => {
-          const THREE = (window as any).THREE;
+          const THREE = (window as Window & { THREE?: unknown }).THREE;
           return {
             version: THREE.REVISION,
             hasWebGLRenderer: typeof THREE.WebGLRenderer !== "undefined",
@@ -38,7 +38,7 @@ test.describe("3D Interactive Demos", () => {
       // Look for canvas elements that might be 3D
       const canvases = page.locator("canvas");
 
-      if (await canvases.count() > 0) {
+      if ((await canvases.count()) > 0) {
         for (const canvas of await canvases.all()) {
           // Check canvas dimensions
           const boundingBox = await canvas.boundingBox();
@@ -64,7 +64,7 @@ test.describe("3D Interactive Demos", () => {
           const canvas = document.createElement("canvas");
           const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
           return gl !== null;
-        } catch (e) {
+        } catch (_e) {
           return false;
         }
       });
@@ -89,9 +89,15 @@ test.describe("3D Interactive Demos", () => {
         // Try mouse drag
         const boundingBox = await canvas.boundingBox();
         if (boundingBox) {
-          await page.mouse.move(boundingBox.x + boundingBox.width / 2, boundingBox.y + boundingBox.height / 2);
+          await page.mouse.move(
+            boundingBox.x + boundingBox.width / 2,
+            boundingBox.y + boundingBox.height / 2,
+          );
           await page.mouse.down();
-          await page.mouse.move(boundingBox.x + boundingBox.width / 2 + 50, boundingBox.y + boundingBox.height / 2);
+          await page.mouse.move(
+            boundingBox.x + boundingBox.width / 2 + 50,
+            boundingBox.y + boundingBox.height / 2,
+          );
           await page.mouse.up();
 
           // Canvas should still be visible after interaction
@@ -111,7 +117,10 @@ test.describe("3D Interactive Demos", () => {
         const boundingBox = await canvas.boundingBox();
         if (boundingBox) {
           // Simulate touch
-          await page.touchscreen.tap(boundingBox.x + boundingBox.width / 2, boundingBox.y + boundingBox.height / 2);
+          await page.touchscreen.tap(
+            boundingBox.x + boundingBox.width / 2,
+            boundingBox.y + boundingBox.height / 2,
+          );
 
           // Canvas should still be visible
           await expect(canvas).toBeVisible();
@@ -144,49 +153,55 @@ test.describe("3D Interactive Demos", () => {
       await page.waitForLoadState("networkidle");
 
       // Check for performance optimizations
-      const performanceMetrics = await page.evaluate((): Promise<{ fps: number, memoryUsage: number | null, memoryLimit: number | null }> => {
-        const observers: PerformanceObserver[] = [];
+      const performanceMetrics = await page.evaluate(
+        (): Promise<{ fps: number; memoryUsage: number | null; memoryLimit: number | null }> => {
+          const observers: PerformanceObserver[] = [];
 
-        return new Promise((resolve) => {
-          // Monitor frame rate
-          let frameCount = 0;
-          let lastTime = performance.now();
+          return new Promise((resolve) => {
+            // Monitor frame rate
+            let frameCount = 0;
+            let lastTime = performance.now();
 
-          const checkFrameRate = (currentTime: number) => {
-            frameCount++;
-            if (currentTime - lastTime >= 1000) {
-              const fps = frameCount;
-              frameCount = 0;
-              lastTime = currentTime;
+            const checkFrameRate = (currentTime: number) => {
+              frameCount++;
+              if (currentTime - lastTime >= 1000) {
+                const fps = frameCount;
+                frameCount = 0;
+                lastTime = currentTime;
 
-              // Check memory usage
-              if ("memory" in performance) {
-                const memory = (performance as any).memory;
-                resolve({
-                  fps,
-                  memoryUsage: memory.usedJSHeapSize,
-                  memoryLimit: memory.jsHeapSizeLimit,
-                });
+                // Check memory usage
+                if ("memory" in performance) {
+                  const memory = (performance as Performance & { memory?: unknown }).memory;
+                  resolve({
+                    fps,
+                    memoryUsage: memory.usedJSHeapSize,
+                    memoryLimit: memory.jsHeapSizeLimit,
+                  });
+                } else {
+                  resolve({ fps, memoryUsage: null, memoryLimit: null });
+                }
+
+                // Stop monitoring
+                observers.forEach(
+                  (observer: unknown) => void (observer as { disconnect: () => void }).disconnect(),
+                );
               } else {
-                resolve({ fps, memoryUsage: null, memoryLimit: null });
+                requestAnimationFrame(checkFrameRate);
               }
+            };
 
-              // Stop monitoring
-              observers.forEach((observer: any) => observer.disconnect());
-            } else {
-              requestAnimationFrame(checkFrameRate);
-            }
-          };
+            requestAnimationFrame(checkFrameRate);
 
-          requestAnimationFrame(checkFrameRate);
-
-          // Timeout after 2 seconds
-          setTimeout(() => {
-            resolve({ fps: 0, memoryUsage: null, memoryLimit: null });
-            observers.forEach((observer: any) => observer.disconnect());
-          }, 2000);
-        });
-      });
+            // Timeout after 2 seconds
+            setTimeout(() => {
+              resolve({ fps: 0, memoryUsage: null, memoryLimit: null });
+              observers.forEach(
+                (observer: unknown) => void (observer as { disconnect: () => void }).disconnect(),
+              );
+            }, 2000);
+          });
+        },
+      );
 
       // Should maintain reasonable frame rate
       if (performanceMetrics.fps > 0) {
@@ -213,7 +228,9 @@ test.describe("3D Interactive Demos", () => {
 
       // 3D content should load progressively
       if (finalCanvasCount > initialCanvasCount) {
-        console.log(`3D content lazy loaded: ${finalCanvasCount - initialCanvasCount} canvas elements`);
+        console.log(
+          `3D content lazy loaded: ${finalCanvasCount - initialCanvasCount} canvas elements`,
+        );
       }
     });
 
@@ -223,7 +240,14 @@ test.describe("3D Interactive Demos", () => {
         const canvas = document.createElement("canvas");
         const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
-        if (!gl) return { webgl: false, maxTextureSize: 0, maxViewportDims: [0, 0], renderer: null, vendor: null };
+        if (!gl)
+          return {
+            webgl: false,
+            maxTextureSize: 0,
+            maxViewportDims: [0, 0],
+            renderer: null,
+            vendor: null,
+          };
 
         const webglContext = gl as WebGLRenderingContext;
 
@@ -270,7 +294,7 @@ test.describe("3D Interactive Demos", () => {
         // Canvas should be focusable
         await canvas.focus();
 
-        const isFocused = await canvas.evaluate(el => el === document.activeElement);
+        const isFocused = await canvas.evaluate((el) => el === document.activeElement);
         expect(isFocused).toBe(true);
 
         // Should support keyboard navigation
@@ -285,7 +309,7 @@ test.describe("3D Interactive Demos", () => {
       const noscript = page.locator("noscript");
       const fallbackMessages = page.locator("text=/WebGL|3D|canvas/i");
 
-      const hasFallback = (await noscript.count() > 0) || (await fallbackMessages.count() > 0);
+      const hasFallback = (await noscript.count()) > 0 || (await fallbackMessages.count()) > 0;
       expect(hasFallback).toBe(true);
     });
   });
@@ -307,11 +331,12 @@ test.describe("3D Interactive Demos", () => {
       await page.waitForTimeout(2000);
 
       // Should not have WebGL or Three.js related errors
-      const webglErrors = consoleErrors.filter(error =>
-        error.includes("WebGL") ||
-        error.includes("THREE") ||
-        error.includes("webgl") ||
-        error.includes("shader")
+      const webglErrors = consoleErrors.filter(
+        (error) =>
+          error.includes("WebGL") ||
+          error.includes("THREE") ||
+          error.includes("webgl") ||
+          error.includes("shader"),
       );
 
       expect(webglErrors.length).toBe(0);
@@ -321,20 +346,20 @@ test.describe("3D Interactive Demos", () => {
       // Test graceful degradation
       const degradation = await page.evaluate(() => {
         const canvas = document.createElement("canvas");
-        let context: any = null;
+        let context: unknown = null;
 
         try {
           context = canvas.getContext("webgl");
           if (!context) {
             context = canvas.getContext("experimental-webgl");
           }
-        } catch (e) {
+        } catch (_e) {
           // WebGL not supported
         }
 
         return {
           webglSupported: context !== null,
-          fallbackAvailable: document.querySelectorAll('[data-fallback], .fallback').length > 0,
+          fallbackAvailable: document.querySelectorAll("[data-fallback], .fallback").length > 0,
         };
       });
 

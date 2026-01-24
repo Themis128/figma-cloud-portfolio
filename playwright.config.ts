@@ -54,7 +54,7 @@ export default defineConfig({
   ],
 
   /* Global setup and teardown for test environment preparation */
-  globalSetup: './playwright-tests/global-setup.ts',
+  globalSetup: "./playwright-tests/global-setup.ts",
   globalTeardown: "./playwright-tests/global-teardown.ts",
 
   /* Test execution metadata */
@@ -83,11 +83,11 @@ export default defineConfig({
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
-        // Chromium specific settings for better React hydration
+        // Chromium specific settings for better React 19 hydration
         launchOptions: {
           args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
         },
-        // Longer timeouts for React hydration
+        // Longer timeouts for React 19 hydration
         actionTimeout: 10000,
         navigationTimeout: 30000,
       },

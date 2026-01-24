@@ -1,12 +1,17 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  readonly VITE_AI_PROVIDER?: string;
-  readonly VITE_OPENAI_API_KEY?: string;
-  readonly VITE_TOGETHER_API_KEY?: string;
-  readonly VITE_AI_MODEL?: string;
-}
+// Extend JSX for @react-three/fiber
+import "@react-three/fiber";
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    group: unknown;
+    mesh: unknown;
+    meshStandardMaterial: unknown;
+    meshBasicMaterial: unknown;
+    ambientLight: unknown;
+    directionalLight: unknown;
+    pointLight: unknown;
+    planeGeometry: unknown;
+  }
 }

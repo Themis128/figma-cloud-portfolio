@@ -366,7 +366,6 @@ test.describe("Advanced PWA Features", () => {
       }
     } else {
       // Skip test if service worker is not available
-      console.log("�  Skipping offline test - service worker not available");
     }
   });
 

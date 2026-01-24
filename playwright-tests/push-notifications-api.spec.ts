@@ -270,7 +270,7 @@ test.describe("Push Notifications API", () => {
 
       // Now delete it
       const response = await request.delete(
-        `/api/push-notifications?endpoint=${encodeURIComponent(subscription.endpoint)}`
+        `/api/push-notifications?endpoint=${encodeURIComponent(subscription.endpoint)}`,
       );
 
       expect(response.ok()).toBe(true);
@@ -291,7 +291,7 @@ test.describe("Push Notifications API", () => {
 
     test("should handle non-existent endpoint gracefully", async ({ request }) => {
       const response = await request.delete(
-        "/api/push-notifications?endpoint=non-existent-endpoint"
+        "/api/push-notifications?endpoint=non-existent-endpoint",
       );
 
       expect(response.ok()).toBe(true);
@@ -432,7 +432,7 @@ test.describe("Push Notifications API", () => {
               subscriptions,
               message: testMessage,
             },
-          })
+          }),
         );
 
       const responses = await Promise.all(promises);
@@ -550,7 +550,9 @@ test.describe("Push Notifications API", () => {
       await page.waitForTimeout(1000);
 
       // Check that subscription exists in API
-      const subscriptionsResponse = await request.get("/api/push-notifications?action=subscriptions");
+      const subscriptionsResponse = await request.get(
+        "/api/push-notifications?action=subscriptions",
+      );
       const subscriptionsData = await subscriptionsResponse.json();
 
       expect(subscriptionsData.subscriptions).toBeGreaterThanOrEqual(0);

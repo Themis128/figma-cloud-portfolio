@@ -1,5 +1,5 @@
-import path from "node:path";
 import * as express from "express";
+import path from "node:path";
 import { createServer, initializeSocketIO } from "./index";
 
 const app = createServer();
@@ -25,7 +25,9 @@ app.get("/{*splat}", (req, res) => {
 
 const server = app.listen(port, () => {
   console.log(`🚀 Baltzakis Themistoklis server running on port ${port}`);
-  console.log(`📱 Frontend: http://localhost:${port}`);
+  if (process.env.NODE_ENV === "production") {
+    console.log(`📱 Frontend: http://localhost:${port}`);
+  }
   console.log(`🔧 API: http://localhost:${port}/api`);
 });
 

@@ -112,9 +112,9 @@ test.describe("Push Notifications", () => {
 
       // Mock Notification
       Object.defineProperty(window, "Notification", {
-        value: class MockNotification {
-          static permission = "granted";
-          static requestPermission = () => Promise.resolve("granted");
+        value: {
+          permission: "granted",
+          requestPermission: () => Promise.resolve("granted"),
         } as unknown as typeof Notification,
         writable: true,
       });
@@ -166,9 +166,9 @@ test.describe("Push Notifications", () => {
       });
 
       // @ts-expect-error - Test mock with only static members
-      window.Notification = class {
-        static permission = "granted";
-        static requestPermission = () => Promise.resolve("granted");
+      window.Notification = {
+        permission: "granted",
+        requestPermission: () => Promise.resolve("granted"),
       };
     });
 

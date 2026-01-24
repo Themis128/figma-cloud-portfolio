@@ -179,7 +179,7 @@ export default defineConfig({
 
   /* Test metadata for better organization */
   metadata: {
-    environment: process.env.NODE_ENV || "development",
+    environment: process.env.NODE_ENV ?? "development",
     ci: !!process.env.CI,
     timestamp: new Date().toISOString(),
   },

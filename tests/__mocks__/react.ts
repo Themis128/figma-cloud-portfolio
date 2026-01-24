@@ -2,13 +2,21 @@
 
 // Re-export everything from React with named exports
 export {
-  Children, cloneElement, Component, createContext,
+  Children,
+  Component,
+  cloneElement,
+  createContext,
   createElement,
-  createFactory, forwardRef, Fragment, isValidElement,
+  Fragment,
+  forwardRef,
+  isValidElement,
   lazy,
   memo,
-  PureComponent, startTransition, StrictMode,
-  Suspense, useCallback,
+  PureComponent,
+  StrictMode,
+  Suspense,
+  startTransition,
+  useCallback,
   useContext,
   useDebugValue,
   useDeferredValue,
@@ -22,6 +30,5 @@ export {
   useState,
   useSyncExternalStore,
   useTransition,
-  version
-} from 'react';
-
+  version,
+} from "react";

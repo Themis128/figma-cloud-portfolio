@@ -14,10 +14,10 @@ export default defineConfig(({ mode }) => ({
   publicDir: "../public",
   server: {
     host: "localhost",
-    port: 8081,
+    port: 8082,
     strictPort: true,
     hmr: {
-      port: 24680, // Use a different port for HMR
+      port: 24681, // Use a different port for HMR
     },
     fs: {
       allow: [".", "../client", "../shared"],

@@ -1,23 +1,23 @@
-import { Activity, ArrowLeft, BarChart3, Cpu, HardDrive, Network, Zap } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Activity, ArrowLeft, BarChart3, Cpu, HardDrive, Network, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import Navigation from '@/components/Navigation'
-import { PerformanceDashboard } from '@/components/PerformanceDashboard'
-import { PerformanceTester } from '@/components/PerformanceTester'
-import { PushNotificationTester } from '@/components/PushNotificationTester'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import Navigation from "@/components/Navigation";
+import { PerformanceDashboard } from "@/components/PerformanceDashboard";
+import { PerformanceTester } from "@/components/PerformanceTester";
+import { PushNotificationTester } from "@/components/PushNotificationTester";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface PerformanceMetrics {
-  memoryUsage: number
-  memoryLimit: number
-  cpuUsage: number
-  networkRequests: number
-  bundleSize: number
-  lighthouseScore: number
+  memoryUsage: number;
+  memoryLimit: number;
+  cpuUsage: number;
+  networkRequests: number;
+  bundleSize: number;
+  lighthouseScore: number;
 }
 
 export default function Performance() {
@@ -28,9 +28,9 @@ export default function Performance() {
     networkRequests: 0,
     bundleSize: 0,
     lighthouseScore: 0,
-  })
+  });
 
-  const [isMonitoring, setIsMonitoring] = useState(false)
+  const [isMonitoring, setIsMonitoring] = useState(false);
 
   useEffect(() => {
     // Simulate real-time metrics updates
@@ -41,12 +41,12 @@ export default function Performance() {
           memoryUsage: Math.random() * 100 + 20, // 20-120 MB
           cpuUsage: Math.random() * 30 + 5, // 5-35%
           networkRequests: Math.floor(Math.random() * 50) + 10, // 10-60 requests
-        }))
+        }));
       }
-    }, 2000)
+    }, 2000);
 
-    return () => clearInterval(interval)
-  }, [isMonitoring])
+    return () => clearInterval(interval);
+  }, [isMonitoring]);
 
   // Get bundle size (simulated)
   useEffect(() => {
@@ -55,26 +55,26 @@ export default function Performance() {
       ...prev,
       bundleSize: 2.4, // MB
       lighthouseScore: 92, // Score out of 100
-    }))
-  }, [])
+    }));
+  }, []);
 
   const getMemoryUsage = () => {
-    if (typeof performance !== 'undefined' && 'memory' in performance) {
+    if (typeof performance !== "undefined" && "memory" in performance) {
       const perfMemory = (
         performance as typeof performance & {
-          memory: { usedJSHeapSize: number; jsHeapSizeLimit: number }
+          memory: { usedJSHeapSize: number; jsHeapSizeLimit: number };
         }
-      ).memory
+      ).memory;
       return {
         used: Math.round(perfMemory.usedJSHeapSize / 1048576), // MB
         limit: Math.round(perfMemory.jsHeapSizeLimit / 1048576), // MB
-      }
+      };
     }
-    return { used: metrics.memoryUsage, limit: 200 }
-  }
+    return { used: metrics.memoryUsage, limit: 200 };
+  };
 
-  const memory = getMemoryUsage()
-  const memoryPercentage = (memory.used / memory.limit) * 100
+  const memory = getMemoryUsage();
+  const memoryPercentage = (memory.used / memory.limit) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -176,11 +176,11 @@ export default function Performance() {
               <div className="flex flex-wrap gap-4">
                 <Button
                   onClick={() => setIsMonitoring(!isMonitoring)}
-                  variant={isMonitoring ? 'destructive' : 'default'}
+                  variant={isMonitoring ? "destructive" : "default"}
                   className="flex items-center gap-2"
                 >
                   <Activity className="w-4 h-4" />
-                  {isMonitoring ? 'Stop Monitoring' : 'Start Real-time Monitoring'}
+                  {isMonitoring ? "Stop Monitoring" : "Start Real-time Monitoring"}
                 </Button>
                 <Button variant="outline" className="flex items-center gap-2">
                   <Zap className="w-4 h-4" />
@@ -349,5 +349,5 @@ export default function Performance() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

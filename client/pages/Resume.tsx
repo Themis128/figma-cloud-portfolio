@@ -1,4 +1,4 @@
-import type { ResumeData } from '@shared/api'
+import type { ResumeData } from "@shared/api";
 import {
   ArrowLeft,
   Award,
@@ -17,231 +17,231 @@ import {
   Sparkles,
   Trash2,
   User,
-} from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { toast } from 'sonner'
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
-import CircuitBackground from '@/components/CircuitBackground'
-import Navigation from '@/components/Navigation'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import { generateResumePDF } from '@/lib/api'
+import CircuitBackground from "@/components/CircuitBackground";
+import Navigation from "@/components/Navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { generateResumePDF } from "@/lib/api";
 
 const defaultResume: ResumeData = {
-  name: 'Themistoklis Baltzakis',
-  title: 'Cloud Architect & Cybersecurity Specialist',
+  name: "Themistoklis Baltzakis",
+  title: "Cloud Architect & Cybersecurity Specialist",
   contact: {
-    email: 'baltzakis.themis@gmail.com',
-    linkedin: 'baltzakis-themis',
-    website: 'www.baltzakisthemis.com',
+    email: "baltzakis.themis@gmail.com",
+    linkedin: "baltzakis-themis",
+    website: "www.baltzakisthemis.com",
   },
   summary:
-    'Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments. Proven track record in designing secure, scalable cloud solutions and leading digital transformation initiatives. Expert in identity management, compliance frameworks, and enterprise security architecture.',
+    "Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments. Proven track record in designing secure, scalable cloud solutions and leading digital transformation initiatives. Expert in identity management, compliance frameworks, and enterprise security architecture.",
   competencies: {
-    'Cloud Platforms & Infrastructure': [
-      'Microsoft Azure (Expert)',
-      'Amazon Web Services (Advanced)',
-      'Google Cloud Platform (Advanced)',
+    "Cloud Platforms & Infrastructure": [
+      "Microsoft Azure (Expert)",
+      "Amazon Web Services (Advanced)",
+      "Google Cloud Platform (Advanced)",
     ],
-    'Identity & Access Management': [
-      'Azure Active Directory',
-      'Microsoft 365 Security',
-      'Federation & SSO',
+    "Identity & Access Management": [
+      "Azure Active Directory",
+      "Microsoft 365 Security",
+      "Federation & SSO",
     ],
-    'Cybersecurity & Compliance': ['Security Frameworks', 'Threat Detection', 'Risk Management'],
+    "Cybersecurity & Compliance": ["Security Frameworks", "Threat Detection", "Risk Management"],
   },
   experience: [
     {
-      title: 'Senior Cloud Architect',
-      company: 'TechCorp Solutions | Athens, Greece',
-      date: 'January 2022 - Present',
+      title: "Senior Cloud Architect",
+      company: "TechCorp Solutions | Athens, Greece",
+      date: "January 2022 - Present",
       achievements: [
-        'Architected and implemented zero-trust security model for Fortune 500 client using Azure AD Premium and Microsoft Defender suite',
-        'Led migration of 50,000+ users from on-premises AD to Azure AD, reducing authentication issues by 85%',
-        'Designed multi-cloud disaster recovery solution spanning Azure, AWS, and GCP with 99.9% uptime SLA',
+        "Architected and implemented zero-trust security model for Fortune 500 client using Azure AD Premium and Microsoft Defender suite",
+        "Led migration of 50,000+ users from on-premises AD to Azure AD, reducing authentication issues by 85%",
+        "Designed multi-cloud disaster recovery solution spanning Azure, AWS, and GCP with 99.9% uptime SLA",
       ],
     },
   ],
   education: [
     {
-      degree: 'Bachelor of Science in Computer Science',
-      institution: 'National Technical University of Athens, Greece',
-      date: '2007 - 2011',
+      degree: "Bachelor of Science in Computer Science",
+      institution: "National Technical University of Athens, Greece",
+      date: "2007 - 2011",
     },
   ],
   certifications: [
     {
-      name: 'Microsoft Certified: Azure Solutions Architect Expert',
-      issuer: 'Microsoft',
-      year: '2023',
+      name: "Microsoft Certified: Azure Solutions Architect Expert",
+      issuer: "Microsoft",
+      year: "2023",
     },
   ],
-}
+};
 
 export default function Resume() {
-  const [resume, setResume] = useState<ResumeData>(defaultResume)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
-  const [activeTab, setActiveTab] = useState('personal')
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [resume, setResume] = useState<ResumeData>(defaultResume);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [activeTab, setActiveTab] = useState("personal");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Auto-save to localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('resume-draft')
+    const saved = localStorage.getItem("resume-draft");
     if (saved) {
       try {
-        setResume(JSON.parse(saved))
+        setResume(JSON.parse(saved));
       } catch (error) {
-        console.warn('Failed to load saved resume:', error)
+        console.warn("Failed to load saved resume:", error);
       }
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if (!hasUnsavedChanges) return
+    if (!hasUnsavedChanges) return;
 
     const timer = setTimeout(() => {
-      localStorage.setItem('resume-draft', JSON.stringify(resume))
-      setHasUnsavedChanges(false)
-      toast.success('Draft saved automatically')
-    }, 2000)
+      localStorage.setItem("resume-draft", JSON.stringify(resume));
+      setHasUnsavedChanges(false);
+      toast.success("Draft saved automatically");
+    }, 2000);
 
-    return () => clearTimeout(timer)
-  }, [resume, hasUnsavedChanges])
+    return () => clearTimeout(timer);
+  }, [resume, hasUnsavedChanges]);
 
   const handleDownload = async () => {
-    setIsGenerating(true)
+    setIsGenerating(true);
     try {
-      const blob = await generateResumePDF(resume)
+      const blob = await generateResumePDF(resume);
 
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${resume.name.replace(/\s+/g, '_')}_Resume.pdf`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${resume.name.replace(/\s+/g, "_")}_Resume.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      toast.success('Resume downloaded successfully!')
+      toast.success("Resume downloaded successfully!");
     } catch (error) {
-      console.error('Error downloading resume:', error)
-      toast.error('Failed to generate resume. Please try again.')
+      console.error("Error downloading resume:", error);
+      toast.error("Failed to generate resume. Please try again.");
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   const updateResume = (field: keyof ResumeData, value: ResumeData[keyof ResumeData]) => {
-    setResume((prev) => ({ ...prev, [field]: value }))
-    setHasUnsavedChanges(true)
-  }
+    setResume((prev) => ({ ...prev, [field]: value }));
+    setHasUnsavedChanges(true);
+  };
 
-  const updateContact = (field: keyof ResumeData['contact'], value: string) => {
+  const updateContact = (field: keyof ResumeData["contact"], value: string) => {
     setResume((prev) => ({
       ...prev,
       contact: { ...prev.contact, [field]: value },
-    }))
-    setHasUnsavedChanges(true)
-  }
+    }));
+    setHasUnsavedChanges(true);
+  };
 
   const addExperience = () => {
     const newExperience = {
-      title: '',
-      company: '',
-      date: '',
+      title: "",
+      company: "",
+      date: "",
       achievements: [],
-    }
-    updateResume('experience', [...resume.experience, newExperience])
-  }
+    };
+    updateResume("experience", [...resume.experience, newExperience]);
+  };
 
   const removeExperience = (index: number) => {
-    const newExperience = resume.experience.filter((_, i) => i !== index)
-    updateResume('experience', newExperience)
-  }
+    const newExperience = resume.experience.filter((_, i) => i !== index);
+    updateResume("experience", newExperience);
+  };
 
-  const updateExperience = (index: number, field: string, value: any) => {
-    const newExperience = [...resume.experience]
-    ;(newExperience[index] as any)[field] = value
-    updateResume('experience', newExperience)
-  }
+  const updateExperience = (index: number, field: string, value: unknown) => {
+    const newExperience = [...resume.experience];
+    (newExperience[index] as Record<string, unknown>)[field] = value;
+    updateResume("experience", newExperience);
+  };
 
   const addEducation = () => {
     const newEducation = {
-      degree: '',
-      institution: '',
-      date: '',
-    }
-    updateResume('education', [...resume.education, newEducation])
-  }
+      degree: "",
+      institution: "",
+      date: "",
+    };
+    updateResume("education", [...resume.education, newEducation]);
+  };
 
   const removeEducation = (index: number) => {
-    const newEducation = resume.education.filter((_, i) => i !== index)
-    updateResume('education', newEducation)
-  }
+    const newEducation = resume.education.filter((_, i) => i !== index);
+    updateResume("education", newEducation);
+  };
 
   const updateEducation = (index: number, field: string, value: string) => {
-    const newEducation = [...resume.education]
-    ;(newEducation[index] as any)[field] = value
-    updateResume('education', newEducation)
-  }
+    const newEducation = [...resume.education];
+    (newEducation[index] as Record<string, unknown>)[field] = value;
+    updateResume("education", newEducation);
+  };
 
   const addCertification = () => {
     const newCertification = {
-      name: '',
-      issuer: '',
-      year: '',
-    }
-    updateResume('certifications', [...resume.certifications, newCertification])
-  }
+      name: "",
+      issuer: "",
+      year: "",
+    };
+    updateResume("certifications", [...resume.certifications, newCertification]);
+  };
 
   const removeCertification = (index: number) => {
-    const newCertifications = resume.certifications.filter((_, i) => i !== index)
-    updateResume('certifications', newCertifications)
-  }
+    const newCertifications = resume.certifications.filter((_, i) => i !== index);
+    updateResume("certifications", newCertifications);
+  };
 
   const updateCertification = (index: number, field: string, value: string) => {
-    const newCertifications = [...resume.certifications]
-    ;(newCertifications[index] as any)[field] = value
-    updateResume('certifications', newCertifications)
-  }
+    const newCertifications = [...resume.certifications];
+    (newCertifications[index] as Record<string, unknown>)[field] = value;
+    updateResume("certifications", newCertifications);
+  };
 
   const addCompetencyCategory = () => {
-    const categoryName = prompt('Enter category name:')
+    const categoryName = prompt("Enter category name:");
     if (categoryName && !resume.competencies[categoryName]) {
-      updateResume('competencies', {
+      updateResume("competencies", {
         ...resume.competencies,
         [categoryName]: [],
-      })
+      });
     }
-  }
+  };
 
   const removeCompetencyCategory = (category: string) => {
-    const newCompetencies = { ...resume.competencies }
-    delete newCompetencies[category]
-    updateResume('competencies', newCompetencies)
-  }
+    const newCompetencies = { ...resume.competencies };
+    delete newCompetencies[category];
+    updateResume("competencies", newCompetencies);
+  };
 
   const addCompetencySkill = (category: string) => {
-    const skill = prompt('Enter skill:')
+    const skill = prompt("Enter skill:");
     if (skill) {
-      const newCompetencies = { ...resume.competencies }
-      newCompetencies[category] = [...(newCompetencies[category] || []), skill]
-      updateResume('competencies', newCompetencies)
+      const newCompetencies = { ...resume.competencies };
+      newCompetencies[category] = [...(newCompetencies[category] || []), skill];
+      updateResume("competencies", newCompetencies);
     }
-  }
+  };
 
   const removeCompetencySkill = (category: string, skillIndex: number) => {
-    const newCompetencies = { ...resume.competencies }
-    newCompetencies[category] = newCompetencies[category].filter((_, i) => i !== skillIndex)
-    updateResume('competencies', newCompetencies)
-  }
+    const newCompetencies = { ...resume.competencies };
+    newCompetencies[category] = newCompetencies[category].filter((_, i) => i !== skillIndex);
+    updateResume("competencies", newCompetencies);
+  };
 
   const ResumePreview = () => (
     <Card className="h-full">
@@ -301,8 +301,8 @@ export default function Resume() {
                 <div key={category}>
                   <h4 className="font-medium text-sm mb-2 text-cyan-400">{category}</h4>
                   <div className="flex flex-wrap gap-2">
-                    {skills.map((skill, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
+                    {skills.map((skill, _index) => (
+                      <Badge key={skill} variant="secondary" className="text-xs">
                         {skill}
                       </Badge>
                     ))}
@@ -321,8 +321,8 @@ export default function Resume() {
               Experience
             </h3>
             <div className="space-y-4">
-              {resume.experience.map((exp, index) => (
-                <div key={index} className="border-l-2 border-cyan-400 pl-4">
+              {resume.experience.map((exp, _index) => (
+                <div key={exp.title + exp.company} className="border-l-2 border-cyan-400 pl-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-semibold">{exp.title}</h4>
@@ -332,8 +332,8 @@ export default function Resume() {
                   </div>
                   {exp.achievements.length > 0 && (
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      {exp.achievements.map((achievement, i) => (
-                        <li key={i} className="flex items-start gap-2">
+                      {exp.achievements.map((achievement, _i) => (
+                        <li key={achievement} className="flex items-start gap-2">
                           <ChevronRight className="w-3 h-3 mt-0.5 text-cyan-400 flex-shrink-0" />
                           {achievement}
                         </li>
@@ -354,8 +354,8 @@ export default function Resume() {
               Education
             </h3>
             <div className="space-y-3">
-              {resume.education.map((edu, index) => (
-                <div key={index}>
+              {resume.education.map((edu, _index) => (
+                <div key={edu.degree + edu.institution}>
                   <h4 className="font-semibold">{edu.degree}</h4>
                   <p className="text-cyan-400">{edu.institution}</p>
                   <p className="text-sm text-muted-foreground">{edu.date}</p>
@@ -373,8 +373,8 @@ export default function Resume() {
               Certifications
             </h3>
             <div className="space-y-2">
-              {resume.certifications.map((cert, index) => (
-                <div key={index} className="flex justify-between items-center">
+              {resume.certifications.map((cert, _index) => (
+                <div key={cert.name + cert.issuer} className="flex justify-between items-center">
                   <div>
                     <h4 className="font-semibold">{cert.name}</h4>
                     <p className="text-cyan-400 text-sm">{cert.issuer}</p>
@@ -387,7 +387,7 @@ export default function Resume() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
@@ -430,14 +430,14 @@ export default function Resume() {
                 ) : (
                   <Eye className="w-4 h-4 mr-2" />
                 )}
-                {showPreview ? 'Hide' : 'Show'} Preview
+                {showPreview ? "Hide" : "Show"} Preview
               </Button>
               <Button
                 variant="outline"
                 onClick={() => {
-                  localStorage.setItem('resume-draft', JSON.stringify(resume))
-                  toast.success('Resume saved locally')
-                  setHasUnsavedChanges(false)
+                  localStorage.setItem("resume-draft", JSON.stringify(resume));
+                  toast.success("Resume saved locally");
+                  setHasUnsavedChanges(false);
                 }}
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               >
@@ -450,7 +450,7 @@ export default function Resume() {
                 className="bg-cyan-400 hover:bg-cyan-500 text-white"
               >
                 <Download className="w-4 h-4 mr-2" />
-                {isGenerating ? 'Generating...' : 'Download PDF'}
+                {isGenerating ? "Generating..." : "Download PDF"}
               </Button>
             </div>
           </div>
@@ -464,10 +464,10 @@ export default function Resume() {
           )}
 
           <div
-            className={`grid gap-8 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}
+            className={`grid gap-8 ${showPreview ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"}`}
           >
             {/* Form Section */}
-            <div className={showPreview ? '' : 'max-w-4xl mx-auto'}>
+            <div className={showPreview ? "" : "max-w-4xl mx-auto"}>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -492,7 +492,7 @@ export default function Resume() {
                           <Input
                             id="name"
                             value={resume.name}
-                            onChange={(e) => updateResume('name', e.target.value)}
+                            onChange={(e) => updateResume("name", e.target.value)}
                             placeholder="Enter your full name"
                           />
                         </div>
@@ -501,7 +501,7 @@ export default function Resume() {
                           <Input
                             id="title"
                             value={resume.title}
-                            onChange={(e) => updateResume('title', e.target.value)}
+                            onChange={(e) => updateResume("title", e.target.value)}
                             placeholder="e.g., Software Engineer"
                           />
                         </div>
@@ -516,8 +516,8 @@ export default function Resume() {
                           <Input
                             id="email"
                             type="email"
-                            value={resume.contact.email || ''}
-                            onChange={(e) => updateContact('email', e.target.value)}
+                            value={resume.contact.email || ""}
+                            onChange={(e) => updateContact("email", e.target.value)}
                             placeholder="your.email@example.com"
                           />
                         </div>
@@ -528,8 +528,8 @@ export default function Resume() {
                           </Label>
                           <Input
                             id="linkedin"
-                            value={resume.contact.linkedin || ''}
-                            onChange={(e) => updateContact('linkedin', e.target.value)}
+                            value={resume.contact.linkedin || ""}
+                            onChange={(e) => updateContact("linkedin", e.target.value)}
                             placeholder="username"
                           />
                         </div>
@@ -540,8 +540,8 @@ export default function Resume() {
                           </Label>
                           <Input
                             id="website"
-                            value={resume.contact.website || ''}
-                            onChange={(e) => updateContact('website', e.target.value)}
+                            value={resume.contact.website || ""}
+                            onChange={(e) => updateContact("website", e.target.value)}
                             placeholder="https://yourwebsite.com"
                           />
                         </div>
@@ -553,7 +553,7 @@ export default function Resume() {
                           id="summary"
                           rows={4}
                           value={resume.summary}
-                          onChange={(e) => updateResume('summary', e.target.value)}
+                          onChange={(e) => updateResume("summary", e.target.value)}
                           placeholder="Write a compelling professional summary highlighting your key strengths and experience..."
                         />
                         <p className="text-xs text-muted-foreground">
@@ -576,7 +576,8 @@ export default function Resume() {
                       </div>
 
                       {resume.experience.map((exp, index) => (
-                        <Card key={index}>
+                        // biome-ignore lint/suspicious/noArrayIndexKey
+                        <Card key={`exp-${index}`}>
                           <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">
                               <CardTitle className="text-base">Experience {index + 1}</CardTitle>
@@ -595,7 +596,7 @@ export default function Resume() {
                                 <Label>Job Title *</Label>
                                 <Input
                                   value={exp.title}
-                                  onChange={(e) => updateExperience(index, 'title', e.target.value)}
+                                  onChange={(e) => updateExperience(index, "title", e.target.value)}
                                   placeholder="e.g., Senior Developer"
                                 />
                               </div>
@@ -604,7 +605,7 @@ export default function Resume() {
                                 <Input
                                   value={exp.company}
                                   onChange={(e) =>
-                                    updateExperience(index, 'company', e.target.value)
+                                    updateExperience(index, "company", e.target.value)
                                   }
                                   placeholder="e.g., Tech Corp | Location"
                                 />
@@ -614,7 +615,7 @@ export default function Resume() {
                               <Label>Date Range *</Label>
                               <Input
                                 value={exp.date}
-                                onChange={(e) => updateExperience(index, 'date', e.target.value)}
+                                onChange={(e) => updateExperience(index, "date", e.target.value)}
                                 placeholder="e.g., January 2022 - Present"
                               />
                             </div>
@@ -622,12 +623,12 @@ export default function Resume() {
                               <Label>Key Achievements</Label>
                               <Textarea
                                 rows={3}
-                                value={exp.achievements.join('\n')}
+                                value={exp.achievements.join("\n")}
                                 onChange={(e) => {
                                   const achievements = e.target.value
-                                    .split('\n')
-                                    .filter((a) => a.trim())
-                                  updateExperience(index, 'achievements', achievements)
+                                    .split("\n")
+                                    .filter((a) => a.trim());
+                                  updateExperience(index, "achievements", achievements);
                                 }}
                                 placeholder="List your key achievements (one per line)..."
                               />
@@ -662,7 +663,8 @@ export default function Resume() {
                       </div>
 
                       {resume.education.map((edu, index) => (
-                        <Card key={index}>
+                        // biome-ignore lint/suspicious/noArrayIndexKey
+                        <Card key={`edu-${index}`}>
                           <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">
                               <CardTitle className="text-base">Education {index + 1}</CardTitle>
@@ -680,7 +682,7 @@ export default function Resume() {
                               <Label>Degree *</Label>
                               <Input
                                 value={edu.degree}
-                                onChange={(e) => updateEducation(index, 'degree', e.target.value)}
+                                onChange={(e) => updateEducation(index, "degree", e.target.value)}
                                 placeholder="e.g., Bachelor of Science in Computer Science"
                               />
                             </div>
@@ -689,7 +691,7 @@ export default function Resume() {
                               <Input
                                 value={edu.institution}
                                 onChange={(e) =>
-                                  updateEducation(index, 'institution', e.target.value)
+                                  updateEducation(index, "institution", e.target.value)
                                 }
                                 placeholder="e.g., University Name | Location"
                               />
@@ -698,7 +700,7 @@ export default function Resume() {
                               <Label>Date *</Label>
                               <Input
                                 value={edu.date}
-                                onChange={(e) => updateEducation(index, 'date', e.target.value)}
+                                onChange={(e) => updateEducation(index, "date", e.target.value)}
                                 placeholder="e.g., 2007 - 2011"
                               />
                             </div>
@@ -732,7 +734,8 @@ export default function Resume() {
                       </div>
 
                       {resume.certifications.map((cert, index) => (
-                        <Card key={index}>
+                        // biome-ignore lint/suspicious/noArrayIndexKey
+                        <Card key={`cert-${index}`}>
                           <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">
                               <CardTitle className="text-base">Certification {index + 1}</CardTitle>
@@ -750,7 +753,7 @@ export default function Resume() {
                               <Label>Certification Name *</Label>
                               <Input
                                 value={cert.name}
-                                onChange={(e) => updateCertification(index, 'name', e.target.value)}
+                                onChange={(e) => updateCertification(index, "name", e.target.value)}
                                 placeholder="e.g., AWS Certified Solutions Architect"
                               />
                             </div>
@@ -759,7 +762,7 @@ export default function Resume() {
                               <Input
                                 value={cert.issuer}
                                 onChange={(e) =>
-                                  updateCertification(index, 'issuer', e.target.value)
+                                  updateCertification(index, "issuer", e.target.value)
                                 }
                                 placeholder="e.g., Amazon Web Services"
                               />
@@ -768,7 +771,7 @@ export default function Resume() {
                               <Label>Year *</Label>
                               <Input
                                 value={cert.year}
-                                onChange={(e) => updateCertification(index, 'year', e.target.value)}
+                                onChange={(e) => updateCertification(index, "year", e.target.value)}
                                 placeholder="e.g., 2023"
                               />
                             </div>
@@ -843,7 +846,7 @@ export default function Resume() {
                                 <div className="flex flex-wrap gap-2">
                                   {skills.map((skill, skillIndex) => (
                                     <Badge
-                                      key={skillIndex}
+                                      key={skill}
                                       variant="secondary"
                                       className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
                                       onClick={() => removeCompetencySkill(category, skillIndex)}
@@ -878,5 +881,5 @@ export default function Resume() {
         </div>
       </div>
     </div>
-  )
+  );
 }

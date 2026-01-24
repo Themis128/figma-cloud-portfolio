@@ -77,10 +77,11 @@ export function LoadingDots({
   };
 
   return (
-    <div className={`flex items-center ${containerClasses[size]} ${className}`}>
+    <div data-testid="loading-dots-container" className={`flex items-center ${containerClasses[size]} ${className}`}>
       {[0, 1, 2].map((index) => (
         <motion.div
           key={index}
+          data-testid="loading-dot"
           className={`${sizeClasses[size]} ${color} rounded-full`}
           animate={{
             scale: [1, 1.2, 1],

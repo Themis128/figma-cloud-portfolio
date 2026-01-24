@@ -13,7 +13,7 @@ test.describe("Analytics Integration", () => {
   test("should initialize Google Analytics 4", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -62,7 +62,7 @@ test.describe("Analytics Integration", () => {
   });
 
   test("should send custom analytics data to endpoint", async ({ page }) => {
-    const analyticsRequests: any[] = [];
+    const analyticsRequests: Array<{ url: string, method: string, postData: string | null }> = [];
 
     // Intercept analytics requests
     page.on("request", (request) => {
@@ -433,7 +433,7 @@ test.describe("Analytics Integration", () => {
     // Check script loading performance
     const scriptTiming = await page.evaluate(() => {
       const scripts = document.querySelectorAll("script");
-      const timingData: any[] = [];
+      const timingData: Array<{ src: string, duration: number, transferSize: number }> = [];
 
       scripts.forEach((script) => {
         if (script.src) {

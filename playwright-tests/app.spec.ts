@@ -352,7 +352,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
         const ariaLabelledBy = await input.getAttribute("aria-labelledby");
 
         // Each input should have either an id with corresponding label, or aria-label, or aria-labelledby
-        const hasLabel = (id ?? ariaLabel) || ariaLabelledBy;
+        const hasLabel = id || ariaLabel || ariaLabelledBy;
         expect(hasLabel).toBeTruthy();
       }
     }

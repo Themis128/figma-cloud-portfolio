@@ -120,6 +120,7 @@ export function LinkPreview({
     >
       {showImage && preview.image && (
         <div className="relative h-32 bg-gray-100 overflow-hidden">
+          {/* biome-ignore lint/performance/noImgElement: External preview images need <img> for proper loading and error handling */}
           <img
             src={preview.image}
             alt={preview.title}
@@ -131,7 +132,7 @@ export function LinkPreview({
               e.currentTarget.nextElementSibling?.classList.remove("hidden");
             }}
           />
-          <div className="hidden absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
             <ImageIcon className="w-8 h-8 text-gray-400" />
           </div>
         </div>
@@ -142,6 +143,7 @@ export function LinkPreview({
           {/* Title and favicon */}
           <div className="flex items-start gap-2">
             {preview.favicon && (
+              // biome-ignore lint/performance/noImgElement: External favicon images need <img> for proper loading
               <img
                 src={preview.favicon}
                 alt=""

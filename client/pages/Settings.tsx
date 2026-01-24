@@ -73,10 +73,9 @@ export default function Settings() {
           setUpdateMessage(`Version ${latestVersion} is available!`);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       setUpdateStatus("error");
       setUpdateMessage("Failed to check for updates. Please try again.");
-      console.error("Update check failed:", error);
     }
   };
 

@@ -83,7 +83,10 @@ const AccessibilityEnhancer: React.FC = () => {
     }
   }, [settings]);
 
-  const updateSetting = (key: keyof AccessibilitySettings, value: any) => {
+  const updateSetting = <K extends keyof AccessibilitySettings>(
+    key: K,
+    value: AccessibilitySettings[K],
+  ) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
     toast({
       title: "Accessibility Updated",
