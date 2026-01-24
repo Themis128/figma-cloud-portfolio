@@ -1,31 +1,39 @@
 import { defineBackend, defineFunction } from '@aws-amplify/backend'
 
-const backend = defineBackend({})
+const backend = defineBackend({
+  api: defineApi({
+    ping: pingFunction,
+    demo: demoFunction,
+    contact: contactFunction,
+    resume: resumeFunction,
+    'push-notifications': pushNotificationsFunction,
+  }),
+})
 
 // API Functions for handling backend requests
 const pingFunction = defineFunction({
   name: 'ping',
-  entry: './amplify/functions/ping.ts',
+  entry: './functions/ping.ts',
 })
 
 const demoFunction = defineFunction({
   name: 'demo',
-  entry: './amplify/functions/demo.ts',
+  entry: './functions/demo.ts',
 })
 
 const contactFunction = defineFunction({
   name: 'contact',
-  entry: './amplify/functions/contact.ts',
+  entry: './functions/contact.ts',
 })
 
 const resumeFunction = defineFunction({
   name: 'resume',
-  entry: './amplify/functions/resume.ts',
+  entry: './functions/resume.ts',
 })
 
 const pushNotificationsFunction = defineFunction({
   name: 'push-notifications',
-  entry: './amplify/functions/push-notifications.ts',
+  entry: './functions/push-notifications.ts',
 })
 
 backend.addOutput({

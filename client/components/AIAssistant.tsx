@@ -19,6 +19,13 @@ interface AIAssistantProps {
   className?: string;
 }
 
+// Constants for time-based greetings
+const MORNING_HOUR_THRESHOLD = 12;
+const EVENING_HOUR_THRESHOLD = 18;
+
+// Constants for UI timing
+const FORM_SUBMIT_DELAY_MS = 100;
+
 const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -41,8 +48,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
     try {
       const response = await aiService.generateResponse(userMessage);
       return response.content;
-    } catch (error) {
-      console.error("AI Response Error:", error);
+    } catch (_error) {
       // Fallback response if AI service fails
       return "I'm sorry, I'm having trouble connecting to my AI services right now. Please try again in a moment, or feel free to explore the portfolio directly!";
     }
@@ -88,8 +94,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
 
   const getGreetingMessage = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning! How can I help you today?";
-    if (hour < 18) return "Good afternoon! How can I help you today?";
+    if (hour < MORNING_HOUR_THRESHOLD) return "Good morning! How can I help you today?";
+    if (hour < EVENING_HOUR_THRESHOLD) return "Good afternoon! How can I help you today?";
     return "Good evening! How can I help you today?";
   };
 
@@ -106,7 +112,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
     setTimeout(() => {
       const form = document.getElementById("ai-chat-form") as HTMLFormElement;
       form?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
-    }, 100);
+    }, FORM_SUBMIT_DELAY_MS);
   };
 
   if (!isOpen) {

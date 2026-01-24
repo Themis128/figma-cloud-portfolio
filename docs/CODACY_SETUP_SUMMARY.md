@@ -1,13 +1,15 @@
 # Codacy Coverage Reporter Setup Summary
 
 ## Overview
+
 Successfully configured Codacy coverage reporting for the figma-cloud-portfolio project with the provided API tokens.
 
 ## Configuration Applied
 
 ### Environment Variables Set
-- **CODACY_API_TOKEN**: `mJb73g9iJzu51wQ6JRC` (Account API Token)
-- **CODACY_PROJECT_TOKEN**: `a88486da551443bf83db6d40385e4085` (Repository API Token)
+
+- **CODACY_API_TOKEN**: `<REDACTED>` (Account API Token)
+- **CODACY_PROJECT_TOKEN**: `<REDACTED>` (Repository API Token)
 - **CODACY_ORGANIZATION_PROVIDER**: `gh` (GitHub)
 - **CODACY_USERNAME**: `Themis128`
 - **CODACY_PROJECT_NAME**: `figma-cloud-portfolio`
@@ -21,11 +23,13 @@ Successfully configured Codacy coverage reporting for the figma-cloud-portfolio 
 ## Setup Process
 
 ### Step 1: Environment Configuration
+
 - Set all required Codacy environment variables
 - Verified environment variables are properly configured
 - Added configuration to `.env` file for persistence
 
 ### Step 2: Coverage Reporter Execution
+
 - Downloaded Codacy coverage reporter script from `https://coverage.codacy.com/get.sh`
 - Executed the reporter with proper environment variables
 - Reporter successfully started and is analyzing code coverage
@@ -35,17 +39,20 @@ Successfully configured Codacy coverage reporting for the figma-cloud-portfolio 
 ✅ **Environment Variables**: All required variables configured  
 ✅ **Configuration Files**: `.env` file updated with Codacy settings  
 ✅ **Scripts Created**: Setup and execution scripts created  
-✅ **Reporter Running**: Codacy coverage reporter is actively running  
+✅ **Reporter Running**: Codacy coverage reporter is actively running
 
 ## Usage
 
 ### Manual Execution
+
 To run the Codacy coverage reporter manually:
+
 ```bash
 bash scripts/run-codacy-coverage.sh
 ```
 
 ### CI/CD Integration
+
 The coverage reporter can be integrated into your CI/CD pipeline by adding the following to your GitHub Actions workflow:
 
 ```yaml

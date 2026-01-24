@@ -46,5 +46,25 @@
       "*.config.{js,ts}"
     ],
     "ignoreUnknown": true
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/.next/**",
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/playwright-report/**",
+        "**/performance-test-results/**",
+        "**/test-results/**",
+        "amplify-build-config.json"
+      ],
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ]
 }
