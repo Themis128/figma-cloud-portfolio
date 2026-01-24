@@ -226,9 +226,9 @@ describe("SitemapGenerator", () => {
   describe("escapeXml", () => {
     it("should escape XML special characters", () => {
       const generator = new SitemapGenerator();
-      const method = (generator as unknown as { escapeXml: (str: string) => string }).escapeXml.bind(
-        generator,
-      );
+      const method = (
+        generator as unknown as { escapeXml: (str: string) => string }
+      ).escapeXml.bind(generator);
 
       expect(method('<test & "quotes">')).toBe("&lt;test &amp; &quot;quotes&quot;&gt;");
       expect(method("normal text")).toBe("normal text");
