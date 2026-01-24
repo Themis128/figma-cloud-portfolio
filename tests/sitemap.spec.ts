@@ -8,7 +8,11 @@ const mockWindow = {
     origin: "https://test.com",
   },
   document: {
-    createElement: vi.fn(),
+    createElement: vi.fn(() => ({
+      href: "",
+      download: "",
+      click: vi.fn(),
+    })),
     body: {
       appendChild: vi.fn(),
       removeChild: vi.fn(),
@@ -23,12 +27,12 @@ Object.defineProperty(window, "document", { value: mockWindow.document });
 global.URL = {
   createObjectURL: vi.fn(() => "blob:test"),
   revokeObjectURL: vi.fn(),
-} as any;
+} as typeof URL;
 
 global.Blob = vi.fn().mockImplementation((content, options) => ({
   content,
   options,
-})) as any;
+})) as typeof Blob;
 
 describe("SitemapGenerator", () => {
   let generator: SitemapGenerator;
@@ -41,21 +45,21 @@ describe("SitemapGenerator", () => {
   describe("constructor", () => {
     it("should use provided baseURL", () => {
       const customGenerator = new SitemapGenerator("https://custom.com");
-      expect(customGenerator["baseURL"]).toBe("https://custom.com");
+      expect(customGenerator.baseUrl).toBe("https://custom.com");
     });
 
     it("should use window.location.origin when no baseURL provided", () => {
       const defaultGenerator = new SitemapGenerator();
-      expect(defaultGenerator["baseURL"]).toBe("https://test.com");
+      expect(defaultGenerator.baseUrl).toBe("https://test.com");
     });
 
     it("should fallback to default URL when window is undefined", () => {
       // Temporarily remove window
       const originalWindow = global.window;
-      delete (global as any).window;
+      delete (global as { window?: typeof window }).window;
 
       const fallbackGenerator = new SitemapGenerator();
-      expect(fallbackGenerator["baseURL"]).toBe("https://www.baltzakisthemis.com");
+      expect(fallbackGenerator.baseUrl).toBe("https://www.baltzakisthemis.com");
 
       // Restore window
       global.window = originalWindow;
@@ -79,15 +83,13 @@ describe("SitemapGenerator", () => {
     it("should generate entries for project pages", () => {
       const entries = generator.generateSitemapEntries();
 
-      const projectEntries = entries.filter((entry) =>
-        entry.url.includes("/projects/")
-      );
+      const projectEntries = entries.filter((entry) => entry.url.includes("/projects/"));
       expect(projectEntries.length).toBeGreaterThan(0);
 
       projectEntries.forEach((entry) => {
         expect(entry.changeFrequency).toBe("monthly");
         expect(entry.priority).toBe(0.7);
-        expect(entry.url).toMatch(/^https:\/\/test\.com\/projects\/[a-z-]+$/);
+        expect(entry.url).toMatch(/^https:\/\/test\.com\/projects\/[a-z0-9-]+$/);
       });
     });
 
@@ -131,7 +133,7 @@ describe("SitemapGenerator", () => {
 
       entries.forEach((entry) => {
         expect(xml).toContain(`<loc>${entry.url}</loc>`);
-        expect(xml).toContain(`<priority>${entry.priority}</priority>`);
+        expect(xml).toContain(`<priority>${entry.priority.toFixed(1)}</priority>`);
         expect(xml).toContain(`<changefreq>${entry.changeFrequency}</changefreq>`);
       });
     });
@@ -194,17 +196,15 @@ describe("SitemapGenerator", () => {
   describe("generateRobotsMetaTags", () => {
     it("should return appropriate robots content for different page types", () => {
       expect(generator.generateRobotsMetaTags("home")).toBe(
-        "index, follow, max-image-preview:large"
+        "index, follow, max-image-preview:large",
       );
       expect(generator.generateRobotsMetaTags("about")).toBe(
-        "index, follow, max-snippet:-1, max-image-preview:large"
+        "index, follow, max-snippet:-1, max-image-preview:large",
       );
       expect(generator.generateRobotsMetaTags("projects")).toBe(
-        "index, follow, max-snippet:-1, max-image-preview:large"
+        "index, follow, max-snippet:-1, max-image-preview:large",
       );
-      expect(generator.generateRobotsMetaTags("resume")).toBe(
-        "index, follow, max-snippet:-1"
-      );
+      expect(generator.generateRobotsMetaTags("resume")).toBe("index, follow, max-snippet:-1");
     });
   });
 
@@ -217,14 +217,18 @@ describe("SitemapGenerator", () => {
 
     it("should handle trailing slashes", () => {
       expect(generator.generateCanonicalURL("/about/")).toBe("https://test.com/about");
-      expect(generator.generateCanonicalURL("/projects/test/")).toBe("https://test.com/projects/test");
+      expect(generator.generateCanonicalURL("/projects/test/")).toBe(
+        "https://test.com/projects/test",
+      );
     });
   });
 
   describe("escapeXml", () => {
     it("should escape XML special characters", () => {
       const generator = new SitemapGenerator();
-      const method = (generator as any).escapeXml.bind(generator);
+      const method = (generator as { escapeXml: (str: string) => string }).escapeXml.bind(
+        generator,
+      );
 
       expect(method('<test & "quotes">')).toBe("&lt;test &amp; &quot;quotes&quot;&gt;");
       expect(method("normal text")).toBe("normal text");
@@ -257,15 +261,15 @@ describe("SitemapGenerator", () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         "Submit to Google:",
-        expect.stringContaining("google.com/webmasters")
+        expect.stringContaining("google.com/webmasters"),
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         "Submit to Bing:",
-        expect.stringContaining("bing.com/webmaster")
+        expect.stringContaining("bing.com/webmaster"),
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         "Submit to Yandex:",
-        expect.stringContaining("webmaster.yandex.com")
+        expect.stringContaining("webmaster.yandex.com"),
       );
 
       consoleSpy.mockRestore();

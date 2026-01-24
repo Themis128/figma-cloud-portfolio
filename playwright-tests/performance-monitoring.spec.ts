@@ -195,10 +195,15 @@ test.describe("Performance Monitoring", () => {
     // Check memory usage if available
     const memoryInfo = await page.evaluate(() => {
       if ("memory" in performance && performance.memory) {
+        const mem = performance.memory as {
+          usedJSHeapSize: number;
+          totalJSHeapSize?: number;
+          jsHeapSizeLimit: number;
+        };
         return {
-          usedJSHeapSize: performance.memory.usedJSHeapSize,
-          totalJSHeapSize: performance.memory.totalJSHeapSize,
-          jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
+          usedJSHeapSize: mem.usedJSHeapSize,
+          totalJSHeapSize: mem.totalJSHeapSize || 0,
+          jsHeapSizeLimit: mem.jsHeapSizeLimit,
         };
       }
       return null;

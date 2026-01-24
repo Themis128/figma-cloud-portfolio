@@ -77,7 +77,10 @@ export function LoadingDots({
   };
 
   return (
-    <div data-testid="loading-dots-container" className={`flex items-center ${containerClasses[size]} ${className}`}>
+    <div
+      data-testid="loading-dots-container"
+      className={`flex items-center ${containerClasses[size]} ${className}`}
+    >
       {[0, 1, 2].map((index) => (
         <motion.div
           key={index}

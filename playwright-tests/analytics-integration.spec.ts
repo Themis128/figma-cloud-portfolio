@@ -39,7 +39,7 @@ test.describe("Analytics Integration", () => {
   test("should track page views on route changes", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -62,7 +62,7 @@ test.describe("Analytics Integration", () => {
   });
 
   test("should send custom analytics data to endpoint", async ({ page }) => {
-    const analyticsRequests: Array<{ url: string, method: string, postData: string | null }> = [];
+    const analyticsRequests: Array<{ url: string; method: string; postData: string | null }> = [];
 
     // Intercept analytics requests
     page.on("request", (request) => {
@@ -88,7 +88,9 @@ test.describe("Analytics Integration", () => {
     expect(analyticsRequest.method).toBe("POST");
     expect(analyticsRequest.url).toContain("/api/analytics");
 
-    const analyticsData = JSON.parse(analyticsRequest.postData);
+    expect(analyticsRequest.postData).toBeTruthy();
+    expect(typeof analyticsRequest.postData).toBe("string");
+    const analyticsData = JSON.parse(analyticsRequest.postData as string);
     expect(analyticsData).toHaveProperty("event");
     expect(analyticsData).toHaveProperty("data");
     expect(analyticsData).toHaveProperty("timestamp");
@@ -99,7 +101,7 @@ test.describe("Analytics Integration", () => {
   test("should track Core Web Vitals in GA4", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -185,7 +187,7 @@ test.describe("Analytics Integration", () => {
   test("should track custom events", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -244,7 +246,7 @@ test.describe("Analytics Integration", () => {
   test("should respect user privacy preferences", async ({ page }) => {
     // Mock privacy settings
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -304,7 +306,7 @@ test.describe("Analytics Integration", () => {
   test("should track Web Vitals with Google Analytics 4", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -334,7 +336,7 @@ test.describe("Analytics Integration", () => {
   test("should track user interactions", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -360,7 +362,7 @@ test.describe("Analytics Integration", () => {
   test("should track navigation timing", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -389,7 +391,7 @@ test.describe("Analytics Integration", () => {
   test("should track memory usage", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -400,10 +402,15 @@ test.describe("Analytics Integration", () => {
     // Check memory usage if available
     const memoryInfo = await page.evaluate(() => {
       if ("memory" in performance && performance.memory) {
+        const mem = performance.memory as {
+          usedJSHeapSize: number;
+          totalJSHeapSize?: number;
+          jsHeapSizeLimit: number;
+        };
         return {
-          usedJSHeapSize: performance.memory.usedJSHeapSize,
-          totalJSHeapSize: performance.memory.totalJSHeapSize,
-          jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
+          usedJSHeapSize: mem.usedJSHeapSize,
+          totalJSHeapSize: mem.totalJSHeapSize || 0,
+          jsHeapSizeLimit: mem.jsHeapSizeLimit,
         };
       }
       return null;
@@ -419,7 +426,7 @@ test.describe("Analytics Integration", () => {
   test("should track bundle loading performance", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -433,7 +440,7 @@ test.describe("Analytics Integration", () => {
     // Check script loading performance
     const scriptTiming = await page.evaluate(() => {
       const scripts = document.querySelectorAll("script");
-      const timingData: Array<{ src: string, duration: number, transferSize: number }> = [];
+      const timingData: Array<{ src: string; duration: number; transferSize: number }> = [];
 
       scripts.forEach((script) => {
         if (script.src) {
@@ -442,7 +449,7 @@ test.describe("Analytics Integration", () => {
             timingData.push({
               src: script.src,
               duration: entries[0].duration,
-              transferSize: entries[0].transferSize,
+              transferSize: entries[0].transferSize || 0,
             });
           }
         }
@@ -463,7 +470,7 @@ test.describe("Analytics Integration", () => {
   test("should track resource loading performance", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -492,7 +499,7 @@ test.describe("Analytics Integration", () => {
   test("should track error events", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };
@@ -526,7 +533,7 @@ test.describe("Analytics Integration", () => {
   test("should track conversion events", async ({ page }) => {
     // Mock Google Analytics
     await page.addInitScript(() => {
-      window.gtag = (command: string, eventName: string, params: any) => {
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || [];
         window.gaEvents.push({ command, eventName, params });
       };

@@ -7,11 +7,7 @@ import { describe, expect, it } from "vitest";
 import Navigation from "../client/components/Navigation";
 
 const renderWithRouter = (component: React.ReactElement, initialEntries = ["/"]) => {
-  return render(
-    <MemoryRouter initialEntries={initialEntries}>
-      {component}
-    </MemoryRouter>
-  );
+  return render(<MemoryRouter initialEntries={initialEntries}>{component}</MemoryRouter>);
 };
 
 describe("Navigation", () => {
@@ -27,18 +23,28 @@ describe("Navigation", () => {
     const navigationItems = ["About", "Resume", "Contact", "Performance", "Agents"];
 
     navigationItems.forEach((item) => {
-      expect(screen.getByRole("link", { name: item })).toBeInTheDocument();
+      const links = screen.getAllByRole("link", { name: item });
+      expect(links.length).toBeGreaterThan(0);
     });
   });
 
   it("should highlight active link", () => {
     renderWithRouter(<Navigation />, ["/about"]);
 
-    const aboutLink = screen.getByRole("link", { name: "About" });
-    expect(aboutLink).toHaveClass("text-cyan-400", "border-b-2", "border-cyan-400");
+    // Get all About links and find the desktop one (which should be active)
+    const aboutLinks = screen.getAllByRole("link", { name: "About" });
+    const desktopAboutLink = aboutLinks.find(
+      (link) => link.className.includes("text-cyan-400") && link.className.includes("border-b-2"),
+    );
+    expect(desktopAboutLink).toBeInTheDocument();
 
-    const resumeLink = screen.getByRole("link", { name: "Resume" });
-    expect(resumeLink).not.toHaveClass("text-cyan-400");
+    // Check that Resume link is not active (desktop version should not have cyan color)
+    const resumeLinks = screen.getAllByRole("link", { name: "Resume" });
+    const desktopResumeLink = resumeLinks.find(
+      (link) => !link.className.includes("block"), // desktop version
+    );
+    expect(desktopResumeLink).not.toHaveClass("text-cyan-400");
+    expect(desktopResumeLink).toHaveClass("text-white/80");
   });
 
   it("should show mobile menu button on small screens", () => {
@@ -60,8 +66,8 @@ describe("Navigation", () => {
     await user.click(menuButton);
     expect(menuButton).toHaveAttribute("aria-expanded", "true");
 
-    // Check if mobile menu is visible
-    const mobileMenu = screen.getByText("About").closest("div");
+    // Check if mobile menu is visible by looking for the menu container with max-h-96
+    const mobileMenu = document.querySelector(".md\\:hidden.absolute");
     expect(mobileMenu).toHaveClass("max-h-96", "opacity-100");
 
     // Close menu
@@ -79,9 +85,15 @@ describe("Navigation", () => {
     await user.click(menuButton);
     expect(menuButton).toHaveAttribute("aria-expanded", "true");
 
-    // Click on a navigation link
-    const aboutLink = screen.getByRole("link", { name: "About" });
-    await user.click(aboutLink);
+    // Click on the mobile navigation link (the one with block styling)
+    const aboutLinks = screen.getAllByRole("link", { name: "About" });
+    const mobileAboutLink = aboutLinks.find(
+      (link) => link.className.includes("block") && link.className.includes("w-full"),
+    );
+
+    if (mobileAboutLink) {
+      await user.click(mobileAboutLink);
+    }
 
     // Menu should be closed
     expect(menuButton).toHaveAttribute("aria-expanded", "false");

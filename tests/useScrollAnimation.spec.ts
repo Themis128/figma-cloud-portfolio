@@ -1,10 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 
 import { useScrollAnimation } from "../client/hooks/useScrollAnimation";
 
 describe("useScrollAnimation", () => {
-  let mockIntersectionObserver: any;
+  let mockIntersectionObserver: ReturnType<typeof vi.fn>;
   let observeMock: MockedFunction<(element: Element) => void>;
   let unobserveMock: MockedFunction<(element: Element) => void>;
 
@@ -12,13 +12,17 @@ describe("useScrollAnimation", () => {
     observeMock = vi.fn();
     unobserveMock = vi.fn();
 
-    mockIntersectionObserver = vi.fn().mockImplementation((_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) => {
-      return {
-        observe: observeMock,
-        unobserve: unobserveMock,
-        disconnect: vi.fn(),
-      };
-    });
+    mockIntersectionObserver = vi
+      .fn()
+      .mockImplementation(
+        (_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) => {
+          return {
+            observe: observeMock,
+            unobserve: unobserveMock,
+            disconnect: vi.fn(),
+          };
+        },
+      );
 
     global.IntersectionObserver = mockIntersectionObserver;
   });
@@ -37,19 +41,13 @@ describe("useScrollAnimation", () => {
   it("should create IntersectionObserver with default threshold", () => {
     renderHook(() => useScrollAnimation());
 
-    expect(mockIntersectionObserver).toHaveBeenCalledWith(
-      expect.any(Function),
-      { threshold: 0.2 }
-    );
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(expect.any(Function), { threshold: 0.2 });
   });
 
   it("should create IntersectionObserver with custom threshold", () => {
     renderHook(() => useScrollAnimation(0.5));
 
-    expect(mockIntersectionObserver).toHaveBeenCalledWith(
-      expect.any(Function),
-      { threshold: 0.5 }
-    );
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(expect.any(Function), { threshold: 0.5 });
   });
 
   it("should set isVisible to true when element intersects", () => {
@@ -116,7 +114,7 @@ describe("useScrollAnimation", () => {
 
   it("should handle multiple threshold changes", () => {
     const { rerender } = renderHook(({ threshold }) => useScrollAnimation(threshold), {
-      initialProps: { threshold: 0.2 }
+      initialProps: { threshold: 0.2 },
     });
 
     expect(mockIntersectionObserver).toHaveBeenCalledTimes(1);

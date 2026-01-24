@@ -211,9 +211,9 @@ export function ActivityBoundary({
             className="activity-child"
           >
             {React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<unknown>, {
+              ? React.cloneElement(child, {
                   "data-activity-id": elementId,
-                })
+                } as React.HTMLAttributes<HTMLElement>)
               : child}
           </Activity>
         );

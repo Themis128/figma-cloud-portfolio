@@ -1,14 +1,16 @@
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { PageLoader } from "@/components/LoadingAnimations";
-import ResourcePreloader from "@/components/ResourcePreloader";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import type React from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "sonner";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { PageLoader } from "@/components/LoadingAnimations";
+import ResourcePreloader from "@/components/ResourcePreloader";
+import { PersonStructuredData, WebsiteStructuredData } from "@/components/StructuredData";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
 
 // Initialize View Transition styles
@@ -106,10 +108,20 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const AccessibilityEnhancer = lazy(() => import("@/components/AccessibilityEnhancer"));
 const AIAssistant = lazy(() => import("@/components/AIAssistant"));
 const GoogleAnalytics = lazy(() => import("@/components/GoogleAnalytics"));
-const PerformanceMonitor = lazy(() => import("@/components/PerformanceMonitor"));
+const PerformanceMonitor = lazy(() =>
+  import("@/components/PerformanceMonitor").then((module) => ({
+    default: module.PerformanceMonitor,
+  })),
+);
 const PerformanceOptimizer = lazy(() => import("@/components/PerformanceOptimizer"));
-const PWAInstallButton = lazy(() => import("@/components/PWAInstallButton"));
-const PWAUpdateNotification = lazy(() => import("@/components/PWAUpdateNotification"));
+const PWAInstallButton = lazy(() =>
+  import("@/components/PWAInstallButton").then((module) => ({ default: module.PWAInstallButton })),
+);
+const PWAUpdateNotification = lazy(() =>
+  import("@/components/PWAUpdateNotification").then((module) => ({
+    default: module.PWAUpdateNotification,
+  })),
+);
 const VoiceCommandButton = lazy(() => import("@/components/VoiceCommandButton"));
 
 // Component to lazy load non-essential components after initial render

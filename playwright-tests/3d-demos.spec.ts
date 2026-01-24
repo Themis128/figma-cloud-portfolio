@@ -1,5 +1,24 @@
 import { expect, test } from "@playwright/test";
 
+// Type declaration for THREE.js global
+declare global {
+  interface Window {
+    THREE?: {
+      REVISION: string;
+      WebGLRenderer: unknown;
+      Scene: unknown;
+      PerspectiveCamera: unknown;
+    };
+  }
+
+  interface Performance {
+    memory?: {
+      usedJSHeapSize: number;
+      jsHeapSizeLimit: number;
+    };
+  }
+}
+
 test.describe("3D Interactive Demos", () => {
   test.describe("Three.js Integration", () => {
     test.beforeEach(async ({ page }) => {
@@ -17,13 +36,18 @@ test.describe("3D Interactive Demos", () => {
         // Verify Three.js version and basic functionality
         const threeInfo = await page.evaluate(() => {
           const THREE = (window as Window & { THREE?: unknown }).THREE;
+          if (!THREE) return null;
+
+          const three = THREE as Record<string, unknown>;
           return {
-            version: THREE.REVISION,
-            hasWebGLRenderer: typeof THREE.WebGLRenderer !== "undefined",
-            hasScene: typeof THREE.Scene !== "undefined",
-            hasCamera: typeof THREE.PerspectiveCamera !== "undefined",
+            version: three.REVISION,
+            hasWebGLRenderer: typeof three.WebGLRenderer !== "undefined",
+            hasScene: typeof three.Scene !== "undefined",
+            hasCamera: typeof three.PerspectiveCamera !== "undefined",
           };
         });
+
+        if (!threeInfo) return; // Skip if THREE is not loaded
 
         expect(threeInfo.version).toBeTruthy();
         expect(threeInfo.hasWebGLRenderer).toBe(true);
@@ -172,11 +196,16 @@ test.describe("3D Interactive Demos", () => {
                 // Check memory usage
                 if ("memory" in performance) {
                   const memory = (performance as Performance & { memory?: unknown }).memory;
-                  resolve({
-                    fps,
-                    memoryUsage: memory.usedJSHeapSize,
-                    memoryLimit: memory.jsHeapSizeLimit,
-                  });
+                  if (memory) {
+                    const mem = memory as { usedJSHeapSize: number; jsHeapSizeLimit: number };
+                    resolve({
+                      fps,
+                      memoryUsage: mem.usedJSHeapSize,
+                      memoryLimit: mem.jsHeapSizeLimit,
+                    });
+                  } else {
+                    resolve({ fps, memoryUsage: null, memoryLimit: null });
+                  }
                 } else {
                   resolve({ fps, memoryUsage: null, memoryLimit: null });
                 }

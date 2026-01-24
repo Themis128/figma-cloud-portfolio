@@ -1,7 +1,7 @@
 /** @jsxImportSource react */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { Button } from "../client/components/ui/button";
 
@@ -23,7 +23,7 @@ describe("Button", () => {
       "px-4",
       "py-2",
       "bg-primary",
-      "text-primary-foreground"
+      "text-primary-foreground",
     );
   });
 
@@ -82,7 +82,7 @@ describe("Button", () => {
     render(
       <Button asChild>
         <a href="/test">Link Button</a>
-      </Button>
+      </Button>,
     );
 
     const link = screen.getByRole("link");
@@ -92,7 +92,7 @@ describe("Button", () => {
   });
 
   it("should forward ref correctly", () => {
-    const ref = { current: null };
+    const ref = { current: null as HTMLButtonElement | null };
     render(<Button ref={ref}>Button with ref</Button>);
 
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
@@ -116,7 +116,7 @@ describe("Button", () => {
       <Button>
         <svg data-testid="icon" />
         With Icon
-      </Button>
+      </Button>,
     );
 
     const button = screen.getByRole("button");

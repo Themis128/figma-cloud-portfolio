@@ -126,11 +126,21 @@ export class SitemapGenerator {
     this.baseURL = baseURL || this.getBaseURL();
   }
 
-  private getBaseURL(): string {
+  /**
+   * Get the base URL (public getter for testing)
+   */
+  getBaseURL(): string {
     if (typeof window !== "undefined") {
       return window.location.origin;
     }
     return "https://www.baltzakisthemis.com";
+  }
+
+  /**
+   * Get the current base URL
+   */
+  get baseUrl(): string {
+    return this.baseURL;
   }
 
   /**
@@ -175,7 +185,7 @@ export class SitemapGenerator {
     <loc>${entry.url}</loc>
     <lastmod>${entry.lastModified}</lastmod>
     <changefreq>${entry.changeFrequency}</changefreq>
-    <priority>${entry.priority}</priority>
+    <priority>${entry.priority.toFixed(1)}</priority>
   </url>`,
       )
       .join("");

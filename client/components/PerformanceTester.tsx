@@ -69,10 +69,12 @@ export function PerformanceTester() {
 
   const generateTestDetails = (testName: string): string => {
     const details = {
-      "Bundle Size Analysis": "Bundle size: 2.1MB (compressed). Main chunk: 447KB. Improved chunking implemented.",
+      "Bundle Size Analysis":
+        "Bundle size: 2.1MB (compressed). Main chunk: 447KB. Improved chunking implemented.",
       "Image Optimization Check": "All images optimized. WebP format used. Total savings: 45%.",
       "Font Loading Test": "Fonts loaded efficiently. FOIT avoided with font-display: swap.",
-      "JavaScript Execution Time": "Main thread blocked for 80ms. Code splitting optimizations applied.",
+      "JavaScript Execution Time":
+        "Main thread blocked for 80ms. Code splitting optimizations applied.",
       "Memory Usage Analysis": "Peak memory usage: 78MB. No memory leaks detected.",
       "Network Request Optimization": "32 requests optimized. Compression enabled.",
     };

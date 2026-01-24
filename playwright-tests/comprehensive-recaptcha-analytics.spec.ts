@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* biome-disable lint/suspicious/noExplicitAny */
 import { expect, test } from "@playwright/test";
 
 test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", () => {
@@ -381,9 +383,10 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       ];
 
       for (const testCase of errorCases) {
-        const response = await (request as any)[
-          testCase.method as "get" | "post" | "put" | "delete" | "patch"
-        ](`/api${testCase.endpoint}`);
+        const method = testCase.method as "get" | "post" | "put" | "delete" | "patch";
+        const response = await request[method](`/api${testCase.endpoint}`);
+
+        if (!response) throw new Error("No response received");
         expect(response.status()).toBe(testCase.expectedStatus);
       }
     });

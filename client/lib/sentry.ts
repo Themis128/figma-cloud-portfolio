@@ -1,111 +1,95 @@
-import * as Sentry from "@sentry/react";
+let SentryLib: typeof import("@sentry/react") | null = null;
+let initialized = false;
 
-// Initialize Sentry for the client
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  environment: import.meta.env.MODE,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration({
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-  ],
-  // Performance Monitoring
-  tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // Capture 10% of transactions in production
-  // Session Replay
-  replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // Capture 10% of sessions
-  replaysOnErrorSampleRate: 1.0, // Capture 100% of sessions with errors
-  // Release tracking
-  release: import.meta.env.VITE_APP_VERSION || "1.0.0",
-  // Error filtering
-  beforeSend(event, hint) {
-    // Filter out common non-actionable errors
-    const error = hint.originalException;
-    if (error && typeof error === "object" && "message" in error) {
-      const message = String(error.message).toLowerCase();
+export async function initSentry() {
+  if (initialized) return;
+  if (!import.meta.env.VITE_SENTRY_DSN) return;
+  const Sentry = await import("@sentry/react");
 
-      // Filter out network errors that are expected (like offline, CORS, etc.)
-      if (
-        message.includes("network error") ||
-        message.includes("failed to fetch") ||
-        message.includes("load chunk") ||
-        message.includes("loading chunk") ||
-        message.includes("script error")
-      ) {
-        return null;
-      }
-    }
-
-    return event;
-  },
-});
-
-// Performance monitoring helper
-export const measurePerformance = (name: string, fn: () => void | Promise<void>) => {
-  return Sentry.startSpan(
-    {
-      name,
-      op: "function",
-    },
-    () => {
-      try {
-        const result = fn();
-        if (result instanceof Promise) {
-          return result;
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment: import.meta.env.MODE,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: true,
+        blockAllMedia: true,
+      }),
+    ],
+    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
+    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
+    replaysOnErrorSampleRate: 1.0,
+    release: import.meta.env.VITE_APP_VERSION || "1.0.0",
+    beforeSend(event, hint) {
+      const error = hint && (hint as unknown as { originalException?: unknown }).originalException;
+      if (error && typeof error === "object" && "message" in error) {
+        const message = String(error.message).toLowerCase();
+        if (
+          message.includes("network error") ||
+          message.includes("failed to fetch") ||
+          message.includes("load chunk") ||
+          message.includes("loading chunk") ||
+          message.includes("script error")
+        ) {
+          return null;
         }
-        return result;
-      } catch (error) {
-        Sentry.captureException(error);
-        throw error;
       }
+      return event;
     },
-  );
+  });
+
+  SentryLib = Sentry;
+  initialized = true;
+}
+
+// Helper wrappers: no-op until `initSentry()` is called.
+export const measurePerformance = (name: string, fn: () => void | Promise<void>) => {
+  if (!SentryLib) return fn();
+  return SentryLib.startSpan({ name, op: "function" }, () => fn());
 };
 
-// User analytics helpers
 export const setUser = (user: { id: string; email?: string; username?: string }) => {
-  Sentry.setUser({
-    id: user.id,
-    email: user.email,
-    username: user.username,
-  });
+  if (!SentryLib) return;
+  SentryLib.setUser({ id: user.id, email: user.email, username: user.username });
 };
 
 export const setTag = (key: string, value: string) => {
-  Sentry.setTag(key, value);
+  if (!SentryLib) return;
+  SentryLib.setTag(key, value);
 };
 
 export const setContext = (key: string, context: Record<string, unknown>) => {
-  Sentry.setContext(key, context);
+  if (!SentryLib) return;
+  SentryLib.setContext(key, context);
 };
 
-// Custom error reporting
 export const reportError = (error: Error, context?: Record<string, unknown>) => {
+  if (!SentryLib) {
+    // Fallback to console in dev to aid debugging
+    if (import.meta.env.DEV) console.error(error, context);
+    return;
+  }
+  const sentry = SentryLib;
   if (context) {
-    Sentry.withScope((scope) => {
+    sentry.withScope((scope) => {
       Object.entries(context).forEach(([key, value]) => {
         scope.setTag(key, String(value));
       });
-      Sentry.captureException(error);
+      sentry.captureException(error);
     });
   } else {
-    Sentry.captureException(error);
+    sentry.captureException(error);
   }
 };
 
-// Page view tracking
 export const trackPageView = (page: string) => {
-  Sentry.addBreadcrumb({
-    category: "navigation",
-    message: `Page view: ${page}`,
-    level: "info",
-  });
+  if (!SentryLib) return;
+  SentryLib.addBreadcrumb({ category: "navigation", message: `Page view: ${page}`, level: "info" });
 };
 
-// User interaction tracking
 export const trackInteraction = (action: string, details?: Record<string, unknown>) => {
-  Sentry.addBreadcrumb({
+  if (!SentryLib) return;
+  SentryLib.addBreadcrumb({
     category: "user",
     message: `User action: ${action}`,
     data: details,
@@ -113,4 +97,4 @@ export const trackInteraction = (action: string, details?: Record<string, unknow
   });
 };
 
-export { Sentry };
+export { initSentry as init, SentryLib as Sentry };

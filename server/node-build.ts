@@ -1,5 +1,5 @@
-import * as express from "express";
 import path from "node:path";
+import * as express from "express";
 import { createServer, initializeSocketIO } from "./index";
 
 const app = createServer();

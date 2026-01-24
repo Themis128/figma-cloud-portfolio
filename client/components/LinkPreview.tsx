@@ -1,11 +1,11 @@
+import type { LinkPreviewData } from "@shared/api";
+import { AlertCircle, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generatePreviewCached } from "@/lib/linkPreviewService";
 import { cn } from "@/lib/utils";
-import type { LinkPreviewData } from "@shared/api";
-import { AlertCircle, ExternalLink, Image as ImageIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface LinkPreviewProps {
   url: string;

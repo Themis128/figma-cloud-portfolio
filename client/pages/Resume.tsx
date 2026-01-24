@@ -576,7 +576,7 @@ export default function Resume() {
                       </div>
 
                       {resume.experience.map((exp, index) => (
-                        // biome-ignore lint/suspicious/noArrayIndexKey
+                        // biome-ignore lint/suspicious/noArrayIndexKey: Using index as key for static resume data
                         <Card key={`exp-${index}`}>
                           <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">
@@ -663,7 +663,7 @@ export default function Resume() {
                       </div>
 
                       {resume.education.map((edu, index) => (
-                        // biome-ignore lint/suspicious/noArrayIndexKey
+                        // biome-ignore lint/suspicious/noArrayIndexKey: Using index as key for static resume data
                         <Card key={`edu-${index}`}>
                           <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">
@@ -734,7 +734,7 @@ export default function Resume() {
                       </div>
 
                       {resume.certifications.map((cert, index) => (
-                        // biome-ignore lint/suspicious/noArrayIndexKey
+                        // biome-ignore lint/suspicious/noArrayIndexKey: Using index as key for static resume data
                         <Card key={`cert-${index}`}>
                           <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">

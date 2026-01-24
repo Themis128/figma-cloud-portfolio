@@ -1,10 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 
 import { useLazyImage } from "../client/hooks/useLazyImage";
 
 describe("useLazyImage", () => {
-  let mockIntersectionObserver: any;
+  let mockIntersectionObserver: ReturnType<typeof vi.fn>;
   let observeMock: MockedFunction<(element: Element) => void>;
   let disconnectMock: MockedFunction<() => void>;
 
@@ -12,14 +12,14 @@ describe("useLazyImage", () => {
     observeMock = vi.fn();
     disconnectMock = vi.fn();
 
-    mockIntersectionObserver = vi.fn().mockImplementation((_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) => {
-      return {
-        observe: observeMock,
-        disconnect: disconnectMock,
-        unobserve: vi.fn(),
-      };
-    });
+    // Mock IntersectionObserver globally
+    const mockObserver = {
+      observe: observeMock,
+      disconnect: disconnectMock,
+      unobserve: vi.fn(),
+    };
 
+    mockIntersectionObserver = vi.fn().mockImplementation(() => mockObserver);
     global.IntersectionObserver = mockIntersectionObserver;
   });
 
@@ -50,13 +50,10 @@ describe("useLazyImage", () => {
 
     renderHook(() => TestComponent());
 
-    expect(mockIntersectionObserver).toHaveBeenCalledWith(
-      expect.any(Function),
-      {
-        rootMargin: "50px",
-        threshold: 0.1,
-      }
-    );
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(expect.any(Function), {
+      rootMargin: "50px",
+      threshold: 0.1,
+    });
   });
 
   it("should create IntersectionObserver with custom options", () => {
@@ -74,13 +71,10 @@ describe("useLazyImage", () => {
 
     renderHook(() => TestComponent());
 
-    expect(mockIntersectionObserver).toHaveBeenCalledWith(
-      expect.any(Function),
-      {
-        rootMargin: "100px",
-        threshold: 0.5,
-      }
-    );
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(expect.any(Function), {
+      rootMargin: "100px",
+      threshold: 0.5,
+    });
   });
 
   it("should set isIntersecting to true when element intersects", () => {
@@ -103,7 +97,7 @@ describe("useLazyImage", () => {
 
     // Simulate intersection
     act(() => {
-      callback([{ isIntersecting: true }]);
+      callback([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver);
     });
 
     expect(result.current.isIntersecting).toBe(true);
@@ -128,7 +122,10 @@ describe("useLazyImage", () => {
     const callback = mockIntersectionObserver.mock.calls[0][0];
 
     act(() => {
-      callback([{ isIntersecting: false }]);
+      callback(
+        [{ isIntersecting: false } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      );
     });
 
     expect(result.current.isIntersecting).toBe(false);

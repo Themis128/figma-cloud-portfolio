@@ -133,7 +133,7 @@ describe("LoadingAnimations", () => {
         "items-center",
         "justify-center",
         "bg-navy-900/80",
-        "backdrop-blur-sm"
+        "backdrop-blur-sm",
       );
     });
 

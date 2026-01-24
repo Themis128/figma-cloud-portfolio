@@ -1,7 +1,7 @@
 /** @jsxImportSource react */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { Input } from "../client/components/ui/input";
 
@@ -21,7 +21,7 @@ describe("Input", () => {
       "px-3",
       "py-2",
       "text-base",
-      "ring-offset-background"
+      "ring-offset-background",
     );
   });
 
