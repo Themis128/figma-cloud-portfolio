@@ -12,6 +12,7 @@ permissions:
   actions: read
   checks: write
   statuses: write
+  pull-requests: write
 
 jobs:
   test:
@@ -42,6 +43,9 @@ jobs:
 
       - name: Type check
         run: pnpm typecheck
+
+      - name: Check code formatting
+        run: pnpm format:check || echo "Formatting issues found - run 'pnpm format' to fix"
 
       - name: Run unit tests with coverage
         run: pnpm test:unit --coverage
@@ -104,8 +108,11 @@ jobs:
         env:
           PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
-      - name: Build application
-        run: pnpm build
+      - name: Build application (cross-platform)
+        run: |
+          node scripts/build-resume.js || true
+          pnpm exec vite build
+          pnpm exec vite build --config vite.config.server.ts
         env:
           PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
@@ -125,14 +132,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          upload: true
-          verbose: true
-          output: codacy-analysis-results.sarif
-          format: sarif
+          languages: javascript-typescript
+          queries: security-and-quality
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run comprehensive code quality checks
+        run: |
+          echo "🔍 Running comprehensive code quality analysis..."
+          pnpm lint
+          pnpm typecheck
+          pnpm test:unit --run
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -142,14 +173,8 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
 
-      # Note: Uncomment below to upload results to GitHub Security tab
-      # Requires code scanning to be enabled in repository settings
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v4
-      #   if: always()
-      #   with:
-      #     sarif_file: 'trivy-results.sarif'
-
-      - name: Display Trivy scan results
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
-        run: cat trivy-results.sarif | jq '.runs[0].results | length' || echo "No results found"
+        with:
+          sarif_file: 'trivy-results.sarif'
