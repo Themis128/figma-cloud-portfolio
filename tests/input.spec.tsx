@@ -26,18 +26,18 @@ describe("Input", () => {
   });
 
   it("should render with different input types", () => {
-    const { rerender } = render(<Input type="email" />);
+    const { rerender } = render(<Input type='email' />);
     expect(screen.getByRole("textbox")).toHaveAttribute("type", "email");
 
-    rerender(<Input type="password" />);
+    rerender(<Input type='password' />);
     expect(screen.getByDisplayValue("")).toHaveAttribute("type", "password");
 
-    rerender(<Input type="number" />);
+    rerender(<Input type='number' />);
     expect(screen.getByRole("spinbutton")).toHaveAttribute("type", "number");
   });
 
   it("should handle placeholder text", () => {
-    render(<Input placeholder="Enter your name" />);
+    render(<Input placeholder='Enter your name' />);
     const input = screen.getByPlaceholderText("Enter your name");
     expect(input).toBeInTheDocument();
   });
@@ -52,7 +52,7 @@ describe("Input", () => {
   });
 
   it("should apply custom className", () => {
-    render(<Input className="custom-input" />);
+    render(<Input className='custom-input' />);
     const input = screen.getByRole("textbox");
     expect(input).toHaveClass("custom-input");
   });
@@ -65,7 +65,7 @@ describe("Input", () => {
   });
 
   it("should handle readOnly state", () => {
-    render(<Input readOnly value="Read only text" />);
+    render(<Input readOnly value='Read only text' />);
     const input = screen.getByDisplayValue("Read only text");
     expect(input).toHaveAttribute("readOnly");
   });
@@ -104,7 +104,7 @@ describe("Input", () => {
   });
 
   it("should handle pattern validation", () => {
-    render(<Input pattern="[A-Za-z]+" title="Only letters allowed" />);
+    render(<Input pattern='[A-Za-z]+' title='Only letters allowed' />);
     const input = screen.getByRole("textbox");
     expect(input).toHaveAttribute("pattern", "[A-Za-z]+");
     expect(input).toHaveAttribute("title", "Only letters allowed");

@@ -19,20 +19,20 @@ export default function Navigation() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="relative z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+    <nav className='relative z-50'>
+      <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex items-center justify-between h-16 md:h-20'>
           {/* Logo */}
           <Link
-            to="/"
-            className="text-white font-bold text-xl md:text-2xl tracking-wider hover:text-cyan-400 transition-colors"
-            aria-label="Home"
+            to='/'
+            className='text-white font-bold text-xl md:text-2xl tracking-wider hover:text-cyan-400 transition-colors'
+            aria-label='Home'
           >
             TB
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+          <div className='hidden md:flex items-center space-x-6 lg:space-x-8'>
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
@@ -50,13 +50,13 @@ export default function Navigation() {
 
           {/* Mobile menu button */}
           <button
-            type="button"
+            type='button'
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-md text-white hover:text-cyan-400 hover:bg-white/10 transition-colors"
-            aria-label="Toggle menu"
+            className='md:hidden p-2 rounded-md text-white hover:text-cyan-400 hover:bg-white/10 transition-colors'
+            aria-label='Toggle menu'
             aria-expanded={isOpen}
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
           </button>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function Navigation() {
           isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
-        <div className="container mx-auto px-4 py-4 space-y-3">
+        <div className='container mx-auto px-4 py-4 space-y-3'>
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -84,12 +84,12 @@ export default function Navigation() {
           ))}
 
           {/* CTA Button */}
-          <div className="pt-2">
+          <div className='pt-2'>
             <HoverButton>
               <Link
-                to="/contact"
+                to='/contact'
                 onClick={() => setIsOpen(false)}
-                className="w-full px-6 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-lg transition-all duration-300 text-center font-medium"
+                className='w-full px-6 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-lg transition-all duration-300 text-center font-medium'
               >
                 Get In Touch
               </Link>

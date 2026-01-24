@@ -1,6 +1,12 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
+
+// Performance monitoring constants
+const NAVIGATION_CHECK_DELAY_MS = 100;
+const _KILOBYTE_MULTIPLIER = 1024;
+const SECONDS_PER_INTERVAL = 30;
+const MILLISECONDS_PER_SECOND = 1000;
+const MEMORY_TRACKING_INTERVAL_MS = SECONDS_PER_INTERVAL * MILLISECONDS_PER_SECOND; // 30 seconds
 
 // Type for Google Analytics gtag function
 declare global {
@@ -30,8 +36,6 @@ interface WebVitalsMetric {
 // Custom analytics endpoint removed - using Google Analytics 4 only
 
 export function PerformanceMonitor() {
-  const location = useLocation();
-
   useEffect(() => {
     // Only run on client-side
     if (typeof window === "undefined") {
@@ -50,7 +54,7 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("CLS:", metric.value);
+          // Debug logging removed - analytics handles production tracking
         }
       });
 
@@ -64,7 +68,7 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("INP:", metric.value);
+          // Debug logging removed - analytics handles production tracking
         }
       });
 
@@ -78,7 +82,7 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("FCP:", metric.value);
+          // Debug logging removed - analytics handles production tracking
         }
       });
 
@@ -92,7 +96,7 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("LCP:", metric.value);
+          // Debug logging removed - analytics handles production tracking
         }
       });
 
@@ -106,7 +110,7 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("TTFB:", metric.value);
+          // Debug logging removed - analytics handles production tracking
         }
       });
     };
@@ -129,10 +133,10 @@ export function PerformanceMonitor() {
           };
 
           if (navigation) {
-            const domContentLoaded =
+            const _domContentLoaded =
               navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
-            const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
-            const totalTime = navigation.loadEventEnd - navigation.fetchStart;
+            const _loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
+            const _totalTime = navigation.loadEventEnd - navigation.fetchStart;
 
             if (process.env.NODE_ENV === "production") {
               // Send to analytics service
@@ -142,11 +146,7 @@ export function PerformanceMonitor() {
               //   totalTime,
               // })
             } else {
-              console.log("Navigation timing:", {
-                domContentLoaded: domContentLoaded > 0 ? domContentLoaded : 0,
-                loadComplete: loadComplete > 0 ? loadComplete : 0,
-                totalTime: totalTime > 0 ? totalTime : 0,
-              });
+              // Debug logging removed - analytics handles production tracking
             }
           }
         }
@@ -154,7 +154,7 @@ export function PerformanceMonitor() {
 
       // Check immediately and also after a short delay to catch load completion
       checkNavigationTiming();
-      setTimeout(checkNavigationTiming, 100);
+      setTimeout(checkNavigationTiming, NAVIGATION_CHECK_DELAY_MS);
     };
 
     trackNavigation();
@@ -164,9 +164,9 @@ export function PerformanceMonitor() {
       // Send to analytics service
       // analytics.track('route_change', { path: location.pathname })
     } else {
-      console.log("Route changed to:", location.pathname);
+      // Debug logging removed - analytics handles production tracking
     }
-  }, [location.pathname]);
+  }, []);
 
   // Track memory usage (if available)
   useEffect(() => {
@@ -180,18 +180,13 @@ export function PerformanceMonitor() {
       };
 
       if (perfWithMemory.memory) {
-        const memory = perfWithMemory.memory;
-        /* eslint-disable no-console */
-        console.log("Memory usage:", {
-          used: Math.round(memory.usedJSHeapSize / 1048576), // MB
-          total: Math.round(memory.totalJSHeapSize / 1048576), // MB
-          limit: Math.round(memory.jsHeapSizeLimit / 1048576), // MB
-        });
-        /* eslint-enable no-console */
+        const _memory = perfWithMemory.memory;
+        // Memory usage tracking - debug logging removed for production
+        // Previously logged: used/total/limit in MB
       }
     };
 
-    const interval = setInterval(trackMemory, 30000); // Every 30 seconds
+    const interval = setInterval(trackMemory, MEMORY_TRACKING_INTERVAL_MS); // Every 30 seconds
     return () => {
       clearInterval(interval);
     };

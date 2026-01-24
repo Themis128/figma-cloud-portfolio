@@ -58,14 +58,14 @@ export function OptimizedImage({
             "absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse",
             hasLoaded && "opacity-0 transition-opacity duration-300",
           )}
-          aria-hidden="true"
+          aria-hidden='true'
         >
           {placeholder && (
             <img
               src={placeholder}
-              alt=""
-              className="w-full h-full object-cover"
-              aria-hidden="true"
+              alt=''
+              className='w-full h-full object-cover'
+              aria-hidden='true'
             />
           )}
         </div>
@@ -79,9 +79,9 @@ export function OptimizedImage({
         )}
       >
         {/* AVIF source */}
-        <source srcSet={shouldLoad ? imageSources.avif : ""} type="image/avif" sizes={sizes} />
+        <source srcSet={shouldLoad ? imageSources.avif : ""} type='image/avif' sizes={sizes} />
         {/* WebP source */}
-        <source srcSet={shouldLoad ? imageSources.webp : ""} type="image/webp" sizes={sizes} />
+        <source srcSet={shouldLoad ? imageSources.webp : ""} type='image/webp' sizes={sizes} />
         {/* Fallback */}
         <img
           ref={imgRef}
@@ -91,8 +91,8 @@ export function OptimizedImage({
           height={height}
           sizes={sizes}
           loading={priority ? "eager" : loading}
-          decoding="async"
-          className="w-full h-full object-cover"
+          decoding='async'
+          className='w-full h-full object-cover'
           onLoad={() => {
             handleLoad();
             onLoad?.();

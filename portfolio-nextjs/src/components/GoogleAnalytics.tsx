@@ -22,7 +22,7 @@ function GoogleAnalyticsInner() {
     if (!GA_TRACKING_ID) return;
 
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
-    
+
     // Track page view
     window.gtag?.("config", GA_TRACKING_ID, {
       page_path: url,
@@ -40,12 +40,12 @@ export function GoogleAnalytics() {
   return (
     <>
       <Script
-        strategy="afterInteractive"
+        strategy='afterInteractive'
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
       />
       <Script
-        id="google-analytics"
-        strategy="afterInteractive"
+        id='google-analytics'
+        strategy='afterInteractive'
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
@@ -67,12 +67,7 @@ export function GoogleAnalytics() {
 }
 
 // Event tracking helper
-export function trackEvent(
-  action: string,
-  category: string,
-  label?: string,
-  value?: number
-) {
+export function trackEvent(action: string, category: string, label?: string, value?: number) {
   if (!GA_TRACKING_ID || typeof window === "undefined") return;
 
   window.gtag?.("event", action, {

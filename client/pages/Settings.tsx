@@ -85,27 +85,27 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className='min-h-screen bg-gradient-to-br from-background via-background to-muted/20'>
       <Navigation />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className='container mx-auto px-4 py-8 max-w-4xl'>
         <AnimatedSection>
-          <div className="mb-8">
+          <div className='mb-8'>
             <Button
-              variant="ghost"
+              variant='ghost'
               onClick={() => {
                 navigate(-1);
               }}
-              className="mb-4"
+              className='mb-4'
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className='mr-2 h-4 w-4' />
               Back
             </Button>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Settings</h1>
-            <p className="text-muted-foreground">Customize your experience and preferences</p>
+            <h1 className='text-3xl font-bold tracking-tight mb-2'>Settings</h1>
+            <p className='text-muted-foreground'>Customize your experience and preferences</p>
           </div>
         </AnimatedSection>
 
-        <div className="space-y-6">
+        <div className='space-y-6'>
           {/* Theme Settings */}
           <AnimatedSection delay={0.1}>
             <Card>
@@ -113,55 +113,55 @@ export default function Settings() {
                 <CardTitle>Appearance</CardTitle>
                 <CardDescription>Customize how the application looks and feels</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <Label className="text-base font-medium">Theme</Label>
+              <CardContent className='space-y-6'>
+                <div className='space-y-3'>
+                  <Label className='text-base font-medium'>Theme</Label>
                   <RadioGroup
                     value={theme}
                     onValueChange={(value) => setTheme(value as "light" | "dark" | "system")}
-                    className="grid grid-cols-3 gap-4"
+                    className='grid grid-cols-3 gap-4'
                   >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="light" id="light" />
-                      <Label htmlFor="light" className="cursor-pointer">
+                    <div className='flex items-center space-x-2'>
+                      <RadioGroupItem value='light' id='light' />
+                      <Label htmlFor='light' className='cursor-pointer'>
                         Light
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="dark" id="dark" />
-                      <Label htmlFor="dark" className="cursor-pointer">
+                    <div className='flex items-center space-x-2'>
+                      <RadioGroupItem value='dark' id='dark' />
+                      <Label htmlFor='dark' className='cursor-pointer'>
                         Dark
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="system" id="system" />
-                      <Label htmlFor="system" className="cursor-pointer">
+                    <div className='flex items-center space-x-2'>
+                      <RadioGroupItem value='system' id='system' />
+                      <Label htmlFor='system' className='cursor-pointer'>
                         System
                       </Label>
                     </div>
                   </RadioGroup>
-                  <p className="text-sm text-muted-foreground">
+                  <p className='text-sm text-muted-foreground'>
                     Choose your preferred theme or let the system decide
                   </p>
                 </div>
 
                 <Separator />
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-base">Animations</Label>
-                      <p className="text-sm text-muted-foreground">
+                <div className='space-y-4'>
+                  <div className='flex items-center justify-between'>
+                    <div className='space-y-0.5'>
+                      <Label className='text-base'>Animations</Label>
+                      <p className='text-sm text-muted-foreground'>
                         Enable smooth transitions and animations
                       </p>
                     </div>
                     <Switch checked={animations} onCheckedChange={setAnimations} />
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-base">Reduced Motion</Label>
-                      <p className="text-sm text-muted-foreground">
+                  <div className='flex items-center justify-between'>
+                    <div className='space-y-0.5'>
+                      <Label className='text-base'>Reduced Motion</Label>
+                      <p className='text-sm text-muted-foreground'>
                         Minimize animations and transitions
                       </p>
                     </div>
@@ -180,10 +180,10 @@ export default function Settings() {
                 <CardDescription>Manage your notification preferences</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Push Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
+                <div className='flex items-center justify-between'>
+                  <div className='space-y-0.5'>
+                    <Label className='text-base'>Push Notifications</Label>
+                    <p className='text-sm text-muted-foreground'>
                       Receive notifications about updates and new features
                     </p>
                   </div>
@@ -200,11 +200,11 @@ export default function Settings() {
                 <CardTitle>Privacy</CardTitle>
                 <CardDescription>Control your privacy and data settings</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Analytics</Label>
-                    <p className="text-sm text-muted-foreground">
+              <CardContent className='space-y-4'>
+                <div className='flex items-center justify-between'>
+                  <div className='space-y-0.5'>
+                    <Label className='text-base'>Analytics</Label>
+                    <p className='text-sm text-muted-foreground'>
                       Help improve the app by sharing anonymous usage data
                     </p>
                   </div>
@@ -213,13 +213,13 @@ export default function Settings() {
 
                 <Separator />
 
-                <div className="space-y-3">
-                  <Label className="text-base">Data Management</Label>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                <div className='space-y-3'>
+                  <Label className='text-base'>Data Management</Label>
+                  <div className='flex gap-2'>
+                    <Button variant='outline' size='sm'>
                       Export Data
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant='outline' size='sm'>
                       Clear Cache
                     </Button>
                   </div>
@@ -235,23 +235,23 @@ export default function Settings() {
                 <CardTitle>About</CardTitle>
                 <CardDescription>Application information and version details</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
+              <CardContent className='space-y-4'>
+                <div className='grid grid-cols-2 gap-4 text-sm'>
                   <div>
-                    <Label className="font-medium">Version</Label>
-                    <p className="text-muted-foreground">1.0.0</p>
+                    <Label className='font-medium'>Version</Label>
+                    <p className='text-muted-foreground'>1.0.0</p>
                   </div>
                   <div>
-                    <Label className="font-medium">Build</Label>
-                    <p className="text-muted-foreground">2024.01.19</p>
+                    <Label className='font-medium'>Build</Label>
+                    <p className='text-muted-foreground'>2024.01.19</p>
                   </div>
                   <div>
-                    <Label className="font-medium">Framework</Label>
-                    <p className="text-muted-foreground">React + Vite</p>
+                    <Label className='font-medium'>Framework</Label>
+                    <p className='text-muted-foreground'>React + Vite</p>
                   </div>
                   <div>
-                    <Label className="font-medium">PWA</Label>
-                    <p className="text-muted-foreground">Enabled</p>
+                    <Label className='font-medium'>PWA</Label>
+                    <p className='text-muted-foreground'>Enabled</p>
                   </div>
                 </div>
 
@@ -273,16 +273,16 @@ export default function Settings() {
 
                 <Separator />
 
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     onClick={checkForUpdates}
                     disabled={updateStatus === "checking"}
                   >
                     {updateStatus === "checking" ? "Checking..." : "Check for Updates"}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={viewChangelog}>
+                  <Button variant='outline' size='sm' onClick={viewChangelog}>
                     View Changelog
                   </Button>
                 </div>

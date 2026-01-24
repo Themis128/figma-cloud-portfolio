@@ -23,27 +23,28 @@ export function Providers({ children }: ProvidersProps) {
             refetchOnWindowFocus: false,
           },
         },
-      })
+      }),
   );
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
+          attribute='class'
+          defaultTheme='system'
           enableSystem
           disableTransitionOnChange={false}
-          storageKey="portfolio-theme"
+          storageKey='portfolio-theme'
         >
           <TooltipProvider delayDuration={0}>
             {children}
             <Toaster />
             <Sonner
-              position="bottom-right"
+              position='bottom-right'
               toastOptions={{
                 classNames: {
-                  toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+                  toast:
+                    "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
                   description: "group-[.toast]:text-muted-foreground",
                   actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
                   cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",

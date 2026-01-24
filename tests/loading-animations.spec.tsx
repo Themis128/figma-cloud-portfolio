@@ -16,26 +16,26 @@ describe("LoadingAnimations", () => {
     });
 
     it("should render different sizes", () => {
-      const { rerender } = render(<LoadingSpinner size="sm" />);
+      const { rerender } = render(<LoadingSpinner size='sm' />);
       let spinner = screen.getByLabelText("Loading spinner");
       let container = spinner.parentElement;
       expect(container).toHaveClass("w-4", "h-4");
 
-      rerender(<LoadingSpinner size="lg" />);
+      rerender(<LoadingSpinner size='lg' />);
       spinner = screen.getByLabelText("Loading spinner");
       container = spinner.parentElement;
       expect(container).toHaveClass("w-8", "h-8");
     });
 
     it("should apply custom color", () => {
-      render(<LoadingSpinner color="text-red-500" />);
+      render(<LoadingSpinner color='text-red-500' />);
       const spinner = screen.getByLabelText("Loading spinner");
       const container = spinner.parentElement;
       expect(container).toHaveClass("text-red-500");
     });
 
     it("should apply custom className", () => {
-      render(<LoadingSpinner className="custom-spinner" />);
+      render(<LoadingSpinner className='custom-spinner' />);
       const spinner = screen.getByLabelText("Loading spinner");
       const container = spinner.parentElement;
       expect(container).toHaveClass("custom-spinner");
@@ -62,13 +62,13 @@ describe("LoadingAnimations", () => {
     });
 
     it("should render different sizes", () => {
-      const { rerender } = render(<LoadingDots size="sm" />);
+      const { rerender } = render(<LoadingDots size='sm' />);
       let dots = screen.getAllByTestId("loading-dot");
       dots.forEach((dot) => {
         expect(dot).toHaveClass("w-1", "h-1");
       });
 
-      rerender(<LoadingDots size="lg" />);
+      rerender(<LoadingDots size='lg' />);
       dots = screen.getAllByTestId("loading-dot");
       dots.forEach((dot) => {
         expect(dot).toHaveClass("w-3", "h-3");
@@ -76,7 +76,7 @@ describe("LoadingAnimations", () => {
     });
 
     it("should apply custom color", () => {
-      render(<LoadingDots color="bg-blue-500" />);
+      render(<LoadingDots color='bg-blue-500' />);
       const dots = screen.getAllByTestId("loading-dot");
       dots.forEach((dot) => {
         expect(dot).toHaveClass("bg-blue-500");
@@ -84,21 +84,21 @@ describe("LoadingAnimations", () => {
     });
 
     it("should apply custom className", () => {
-      render(<LoadingDots className="custom-dots" />);
+      render(<LoadingDots className='custom-dots' />);
       const container = screen.getByTestId("loading-dots-container");
       expect(container).toHaveClass("custom-dots");
     });
 
     it("should have proper spacing for different sizes", () => {
-      const { rerender } = render(<LoadingDots size="sm" />);
+      const { rerender } = render(<LoadingDots size='sm' />);
       let container = screen.getByTestId("loading-dots-container");
       expect(container).toHaveClass("space-x-1");
 
-      rerender(<LoadingDots size="md" />);
+      rerender(<LoadingDots size='md' />);
       container = screen.getByTestId("loading-dots-container");
       expect(container).toHaveClass("space-x-2");
 
-      rerender(<LoadingDots size="lg" />);
+      rerender(<LoadingDots size='lg' />);
       container = screen.getByTestId("loading-dots-container");
       expect(container).toHaveClass("space-x-3");
     });
@@ -112,12 +112,12 @@ describe("LoadingAnimations", () => {
     });
 
     it("should render with custom message", () => {
-      render(<PageLoader message="Please wait..." />);
+      render(<PageLoader message='Please wait...' />);
       expect(screen.getByText("Please wait...")).toBeInTheDocument();
     });
 
     it("should apply custom className", () => {
-      render(<PageLoader className="custom-loader" />);
+      render(<PageLoader className='custom-loader' />);
       const loader = screen.getByText("Loading...").closest(".fixed");
       expect(loader).toHaveClass("custom-loader");
     });

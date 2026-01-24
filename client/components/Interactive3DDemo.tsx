@@ -6,6 +6,90 @@ import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { cn } from "@/lib/utils";
 
+// 3D Animation and geometry constants
+const ROTATION_SPEED_X = 0.005;
+const ROTATION_SPEED_Y = 0.01;
+const HOVER_SCALE_MULTIPLIER = 1.2;
+const SCALE_LERP_FACTOR = 0.1;
+const FLOAT_SPEED = 1.5;
+const FLOAT_ROTATION_INTENSITY = 0.5;
+const FLOAT_INTENSITY = 0.5;
+const SPHERE_RADIUS = 1;
+const SPHERE_WIDTH_SEGMENTS = 32;
+const SPHERE_HEIGHT_SEGMENTS = 32;
+const MATERIAL_ROUGHNESS = 0.3;
+const MATERIAL_METALNESS = 0.1;
+const MATERIAL_EMISSIVE_INTENSITY = 0.1;
+const TECH_ORB_RADIUS = 2;
+const TECH_ORB_SPEED = 0.5;
+const TECH_ORB_FLOAT_AMPLITUDE = 0.2;
+const TECH_ORB_FLOAT_FREQUENCY = 2;
+const TECH_ORB_SIZE = 0.1;
+const TECH_ORB_EMISSIVE_INTENSITY = 0.3;
+const AMBIENT_LIGHT_INTENSITY = 0.4;
+const DIRECTIONAL_LIGHT_INTENSITY = 1;
+const POINT_LIGHT_INTENSITY = 0.5;
+const CAMERA_MIN_DISTANCE = 3;
+const CAMERA_MAX_DISTANCE = 15;
+const CAMERA_FOV = 60;
+const CAMERA_INITIAL_Z = 8;
+const BACKGROUND_PLANE_SIZE = 50;
+const BACKGROUND_OPACITY = 0.3;
+const HTML_DISTANCE_FACTOR_TITLE = 8;
+const HTML_DISTANCE_FACTOR_TECH = 6;
+const TITLE_POSITION_Y = 1.5;
+const TECH_ORB_LABEL_POSITION_Y = 0.2;
+const TITLE_OPACITY_VISIBLE = 1;
+const TITLE_OPACITY_HIDDEN = 0.7;
+const DIRECTIONAL_LIGHT_X = 10;
+const DIRECTIONAL_LIGHT_Y = 10;
+const DIRECTIONAL_LIGHT_Z = 5;
+const POINT_LIGHT_X = -10;
+const POINT_LIGHT_Y = -10;
+const POINT_LIGHT_Z = -5;
+// Sample project position coordinates (demo data)
+const SAMPLE_PROJECT_1_X = -3;
+const SAMPLE_PROJECT_1_Y = 2;
+const SAMPLE_PROJECT_1_Z = 0;
+const SAMPLE_PROJECT_2_X = 3;
+const SAMPLE_PROJECT_2_Y = 1;
+const SAMPLE_PROJECT_2_Z = -1;
+const SAMPLE_PROJECT_3_X = 0;
+const SAMPLE_PROJECT_3_Y = -2;
+const SAMPLE_PROJECT_3_Z = 2;
+const SAMPLE_PROJECT_4_X = -2;
+const SAMPLE_PROJECT_4_Y = -1;
+const SAMPLE_PROJECT_4_Z = -2;
+const SAMPLE_PROJECT_5_X = 2;
+const SAMPLE_PROJECT_5_Y = -1;
+const SAMPLE_PROJECT_5_Z = 1;
+// Sample project positions (demo data)
+const SAMPLE_PROJECT_1_POSITION: [number, number, number] = [
+  SAMPLE_PROJECT_1_X,
+  SAMPLE_PROJECT_1_Y,
+  SAMPLE_PROJECT_1_Z,
+];
+const SAMPLE_PROJECT_2_POSITION: [number, number, number] = [
+  SAMPLE_PROJECT_2_X,
+  SAMPLE_PROJECT_2_Y,
+  SAMPLE_PROJECT_2_Z,
+];
+const SAMPLE_PROJECT_3_POSITION: [number, number, number] = [
+  SAMPLE_PROJECT_3_X,
+  SAMPLE_PROJECT_3_Y,
+  SAMPLE_PROJECT_3_Z,
+];
+const SAMPLE_PROJECT_4_POSITION: [number, number, number] = [
+  SAMPLE_PROJECT_4_X,
+  SAMPLE_PROJECT_4_Y,
+  SAMPLE_PROJECT_4_Z,
+];
+const SAMPLE_PROJECT_5_POSITION: [number, number, number] = [
+  SAMPLE_PROJECT_5_X,
+  SAMPLE_PROJECT_5_Y,
+  SAMPLE_PROJECT_5_Z,
+];
+
 interface Project3D {
   id: string;
   title: string;
@@ -42,21 +126,29 @@ function ProjectSphere({
   useFrame((_state) => {
     if (meshRef.current) {
       // Gentle rotation
-      meshRef.current.rotation.x += 0.005;
-      meshRef.current.rotation.y += 0.01;
+      meshRef.current.rotation.x += ROTATION_SPEED_X;
+      meshRef.current.rotation.y += ROTATION_SPEED_Y;
 
       // Scale animation on hover
-      const targetScale = isHovered || hovered ? project.scale * 1.2 : project.scale;
-      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+      const targetScale =
+        isHovered || hovered ? project.scale * HOVER_SCALE_MULTIPLIER : project.scale;
+      meshRef.current.scale.lerp(
+        new THREE.Vector3(targetScale, targetScale, targetScale),
+        SCALE_LERP_FACTOR,
+      );
     }
   });
 
   return (
     <group position={project.position}>
-      <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+      <Float
+        speed={FLOAT_SPEED}
+        rotationIntensity={FLOAT_ROTATION_INTENSITY}
+        floatIntensity={FLOAT_INTENSITY}
+      >
         <Sphere
           ref={meshRef}
-          args={[1, 32, 32]}
+          args={[SPHERE_RADIUS, SPHERE_WIDTH_SEGMENTS, SPHERE_HEIGHT_SEGMENTS]}
           onClick={() => onClick(project.id)}
           onPointerOver={() => {
             setHovered(true);
@@ -69,27 +161,27 @@ function ProjectSphere({
         >
           <meshStandardMaterial
             color={project.color}
-            roughness={0.3}
-            metalness={0.1}
+            roughness={MATERIAL_ROUGHNESS}
+            metalness={MATERIAL_METALNESS}
             emissive={isHovered || hovered ? project.color : "#000000"}
-            emissiveIntensity={0.1}
+            emissiveIntensity={MATERIAL_EMISSIVE_INTENSITY}
           />
         </Sphere>
 
         {/* Project title */}
         <Html
-          position={[0, 1.5, 0]}
+          position={[0, TITLE_POSITION_Y, 0]}
           center
-          distanceFactor={8}
+          distanceFactor={HTML_DISTANCE_FACTOR_TITLE}
           occlude
           style={{
             pointerEvents: "none",
-            opacity: isHovered || hovered ? 1 : 0.7,
+            opacity: isHovered || hovered ? TITLE_OPACITY_VISIBLE : TITLE_OPACITY_HIDDEN,
             transition: "opacity 0.3s ease",
           }}
         >
-          <div className="text-center">
-            <h3 className="text-white font-bold text-sm bg-black/50 px-2 py-1 rounded">
+          <div className='text-center'>
+            <h3 className='text-white font-bold text-sm bg-black/50 px-2 py-1 rounded'>
               {project.title}
             </h3>
           </div>
@@ -130,25 +222,31 @@ function TechOrb({
   useFrame((state) => {
     if (orbRef.current && isVisible) {
       // Orbit around the project
-      const radius = 2;
-      const x = Math.cos(angle + state.clock.elapsedTime * 0.5) * radius;
-      const z = Math.sin(angle + state.clock.elapsedTime * 0.5) * radius;
+      const radius = TECH_ORB_RADIUS;
+      const x = Math.cos(angle + state.clock.elapsedTime * TECH_ORB_SPEED) * radius;
+      const z = Math.sin(angle + state.clock.elapsedTime * TECH_ORB_SPEED) * radius;
       orbRef.current.position.set(x, 0, z);
 
       // Gentle floating
-      orbRef.current.position.y = Math.sin(state.clock.elapsedTime * 2 + index) * 0.2;
+      orbRef.current.position.y =
+        Math.sin(state.clock.elapsedTime * TECH_ORB_FLOAT_FREQUENCY + index) *
+        TECH_ORB_FLOAT_AMPLITUDE;
     }
   });
 
   if (!isVisible) return null;
 
   return (
-    <Box ref={orbRef} args={[0.1, 0.1, 0.1]}>
-      <meshStandardMaterial color="#00ff88" emissive="#00ff88" emissiveIntensity={0.3} />
+    <Box ref={orbRef} args={[TECH_ORB_SIZE, TECH_ORB_SIZE, TECH_ORB_SIZE]}>
+      <meshStandardMaterial
+        color='#00ff88'
+        emissive='#00ff88'
+        emissiveIntensity={TECH_ORB_EMISSIVE_INTENSITY}
+      />
       <Html
-        position={[0, 0.2, 0]}
+        position={[0, TECH_ORB_LABEL_POSITION_Y, 0]}
         center
-        distanceFactor={6}
+        distanceFactor={HTML_DISTANCE_FACTOR_TECH}
         style={{
           pointerEvents: "none",
           fontSize: "10px",
@@ -174,23 +272,29 @@ function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, "class
 
   // Set initial camera position
   React.useEffect(() => {
-    camera.position.set(0, 0, 8);
+    camera.position.set(0, 0, CAMERA_INITIAL_Z);
   }, [camera]);
 
   return (
     <>
       {/* Lighting */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <pointLight position={[-10, -10, -5]} intensity={0.5} />
+      <ambientLight intensity={AMBIENT_LIGHT_INTENSITY} />
+      <directionalLight
+        position={[DIRECTIONAL_LIGHT_X, DIRECTIONAL_LIGHT_Y, DIRECTIONAL_LIGHT_Z]}
+        intensity={DIRECTIONAL_LIGHT_INTENSITY}
+      />
+      <pointLight
+        position={[POINT_LIGHT_X, POINT_LIGHT_Y, POINT_LIGHT_Z]}
+        intensity={POINT_LIGHT_INTENSITY}
+      />
 
       {/* Camera controls */}
       <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        minDistance={3}
-        maxDistance={15}
+        minDistance={CAMERA_MIN_DISTANCE}
+        maxDistance={CAMERA_MAX_DISTANCE}
         maxPolarAngle={Math.PI / 2}
       />
 
@@ -207,8 +311,8 @@ function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, "class
 
       {/* Background elements */}
       <mesh position={[0, 0, -10]}>
-        <planeGeometry args={[50, 50]} />
-        <meshBasicMaterial color="#000011" transparent opacity={0.3} />
+        <planeGeometry args={[BACKGROUND_PLANE_SIZE, BACKGROUND_PLANE_SIZE]} />
+        <meshBasicMaterial color='#000011' transparent opacity={BACKGROUND_OPACITY} />
       </mesh>
     </>
   );
@@ -226,7 +330,7 @@ export function Interactive3DDemo({ projects, className, onProjectClick }: Inter
       )}
     >
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
+        camera={{ position: [0, 0, CAMERA_INITIAL_Z], fov: CAMERA_FOV }}
         gl={{
           antialias: true,
           alpha: true,
@@ -238,7 +342,7 @@ export function Interactive3DDemo({ projects, className, onProjectClick }: Inter
       </Canvas>
 
       {/* Instructions overlay */}
-      <div className="absolute bottom-4 left-4 text-white/70 text-sm">
+      <div className='absolute bottom-4 left-4 text-white/70 text-sm'>
         <p>🖱️ Click and drag to rotate • 🔍 Scroll to zoom • 🎯 Click spheres to interact</p>
       </div>
     </div>
@@ -257,7 +361,7 @@ export function useSampleProjects(): Project3D[] {
         description: "Modern React portfolio with 3D elements",
         technologies: ["React", "Three.js", "TypeScript"],
         color: "#3b82f6",
-        position: [-3, 2, 0],
+        position: SAMPLE_PROJECT_1_POSITION,
         scale: 1,
       },
       {
@@ -266,7 +370,7 @@ export function useSampleProjects(): Project3D[] {
         description: "Full-stack e-commerce solution",
         technologies: ["Next.js", "Stripe", "PostgreSQL"],
         color: "#10b981",
-        position: [3, 1, -1],
+        position: SAMPLE_PROJECT_2_POSITION,
         scale: 0.8,
       },
       {
@@ -275,7 +379,7 @@ export function useSampleProjects(): Project3D[] {
         description: "Real-time data visualization dashboard",
         technologies: ["React", "D3.js", "WebSocket"],
         color: "#f59e0b",
-        position: [0, -2, 2],
+        position: SAMPLE_PROJECT_3_POSITION,
         scale: 1.2,
       },
       {
@@ -284,7 +388,7 @@ export function useSampleProjects(): Project3D[] {
         description: "Cross-platform mobile application",
         technologies: ["React Native", "Firebase", "Expo"],
         color: "#ef4444",
-        position: [-2, -1, -2],
+        position: SAMPLE_PROJECT_4_POSITION,
         scale: 0.9,
       },
       {
@@ -293,7 +397,7 @@ export function useSampleProjects(): Project3D[] {
         description: "Scalable REST API with authentication",
         technologies: ["Node.js", "Express", "JWT"],
         color: "#8b5cf6",
-        position: [2, -1, 1],
+        position: SAMPLE_PROJECT_5_POSITION,
         scale: 0.7,
       },
     ],

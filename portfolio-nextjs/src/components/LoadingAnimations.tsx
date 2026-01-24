@@ -28,25 +28,25 @@ export function LoadingSpinner({
       }}
     >
       <svg
-        className="w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        aria-label="Loading spinner"
+        className='w-full h-full'
+        xmlns='http://www.w3.org/2000/svg'
+        fill='none'
+        viewBox='0 0 24 24'
+        aria-label='Loading spinner'
       >
         <title>Loading</title>
         <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
+          className='opacity-25'
+          cx='12'
+          cy='12'
+          r='10'
+          stroke='currentColor'
+          strokeWidth='4'
         />
         <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          className='opacity-75'
+          fill='currentColor'
+          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
         />
       </svg>
     </motion.div>
@@ -112,14 +112,14 @@ export function PageLoader({ message = "Loading...", className = "" }: PageLoade
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="text-center space-y-4"
+        className='text-center space-y-4'
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.3 }}
       >
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size='lg' />
         <motion.p
-          className="text-white/80 text-lg"
+          className='text-white/80 text-lg'
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.3 }}

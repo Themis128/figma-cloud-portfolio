@@ -161,23 +161,23 @@ const App = () => {
                 <VoiceCommandButton />
                 <AIAssistant />
                 <AccessibilityEnhancer />
-                <BrowserRouter basename="/">
+                <BrowserRouter basename='/'>
                   <GoogleAnalytics />
                   <PerformanceMonitor />
                   <Suspense fallback={<PageLoader />}>
                     <RouteTransitionWrapper>
                       <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/product" element={<Product />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/performance" element={<Performance />} />
-                        <Route path="/resume" element={<Resume />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/agents" element={<Agents />} />
-                        <Route path="/projects" element={<Projects />} />
+                        <Route path='/' element={<Index />} />
+                        <Route path='/about' element={<About />} />
+                        <Route path='/product' element={<Product />} />
+                        <Route path='/contact' element={<Contact />} />
+                        <Route path='/performance' element={<Performance />} />
+                        <Route path='/resume' element={<Resume />} />
+                        <Route path='/settings' element={<Settings />} />
+                        <Route path='/agents' element={<Agents />} />
+                        <Route path='/projects' element={<Projects />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
+                        <Route path='*' element={<NotFound />} />
                       </Routes>
                     </RouteTransitionWrapper>
                   </Suspense>

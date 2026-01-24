@@ -123,6 +123,11 @@ const PWAUpdateNotification = lazy(() =>
   })),
 );
 const VoiceCommandButton = lazy(() => import("@/components/VoiceCommandButton"));
+const NotificationButton = lazy(() =>
+  import("@/components/NotificationButton").then((module) => ({
+    default: module.NotificationButton,
+  })),
+);
 
 // Component to lazy load non-essential components after initial render
 const LazyLoadedComponents: React.FC = () => {
@@ -130,9 +135,10 @@ const LazyLoadedComponents: React.FC = () => {
 
   useEffect(() => {
     // Load components after initial render and a short delay
+    const LAZY_LOAD_DELAY = 100;
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 100); // Small delay to prioritize initial page render
+    }, LAZY_LOAD_DELAY); // Small delay to prioritize initial page render
 
     return () => clearTimeout(timer);
   }, []);
@@ -150,6 +156,7 @@ const LazyLoadedComponents: React.FC = () => {
       <VoiceCommandButton />
       <AIAssistant />
       <AccessibilityEnhancer />
+      <NotificationButton />
     </Suspense>
   );
 };
@@ -173,22 +180,22 @@ const App = () => {
                 <WebsiteStructuredData />
 
                 <LazyLoadedComponents />
-                <BrowserRouter basename="/">
+                <BrowserRouter basename='/'>
                   <GoogleAnalytics />
                   <PerformanceMonitor />
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/product" element={<Product />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/performance" element={<Performance />} />
-                      <Route path="/resume" element={<Resume />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/agents" element={<Agents />} />
-                      <Route path="/projects" element={<Projects />} />
+                      <Route path='/' element={<Index />} />
+                      <Route path='/about' element={<About />} />
+                      <Route path='/product' element={<Product />} />
+                      <Route path='/contact' element={<Contact />} />
+                      <Route path='/performance' element={<Performance />} />
+                      <Route path='/resume' element={<Resume />} />
+                      <Route path='/settings' element={<Settings />} />
+                      <Route path='/agents' element={<Agents />} />
+                      <Route path='/projects' element={<Projects />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
+                      <Route path='*' element={<NotFound />} />
                     </Routes>
                   </Suspense>
                 </BrowserRouter>

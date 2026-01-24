@@ -54,7 +54,7 @@ describe("Interactive3DDemo", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Interactive3DDemo projects={mockProjects} className="custom-class" />,
+      <Interactive3DDemo projects={mockProjects} className='custom-class' />,
     );
 
     const demoDiv = container.firstChild as HTMLElement;

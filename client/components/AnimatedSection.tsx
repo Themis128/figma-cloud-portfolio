@@ -4,6 +4,9 @@ import type { ReactNode } from "react";
 import { useOptimizedAnimation } from "@/hooks/useDeviceType";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
+// Constants for animation thresholds
+const SCROLL_ANIMATION_THRESHOLD = 0.2;
+
 interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
@@ -19,7 +22,7 @@ export function AnimatedSection({
   direction = "up",
   duration,
 }: AnimatedSectionProps) {
-  const { ref, isVisible } = useScrollAnimation(0.2);
+  const { ref, isVisible } = useScrollAnimation(SCROLL_ANIMATION_THRESHOLD);
   const { duration: optimizedDuration, stiffness, damping, disabled } = useOptimizedAnimation();
 
   const finalDuration = duration ?? optimizedDuration;

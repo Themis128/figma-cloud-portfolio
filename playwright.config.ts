@@ -17,7 +17,7 @@ export default defineConfig({
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:8081",
+    baseURL: "http://localhost:8082",
 
     /* Enhanced tracing and debugging */
     trace: "retain-on-failure", // Keep traces for failed tests
@@ -51,6 +51,7 @@ export default defineConfig({
     ], // HTML report for detailed analysis
     ["json", { outputFile: "test-results/results.json" }], // JSON for CI/CD integration
     ["junit", { outputFile: "test-results/junit.xml" }], // JUnit for external tools
+    ["./scripts/playwright-mcp-integration.ts"], // MCP integration for real-time progress
   ],
 
   /* Global setup and teardown for test environment preparation */
@@ -147,17 +148,21 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   // webServer: [
-  //   // Production server that serves both frontend and API
+  //   // Backend API server
   //   {
-  //     command: 'npx tsx server/node-build.ts',
-  //     url: 'http://localhost:3000',
-  //     reuseExistingServer: true, // Reuse existing server if available
-  //     timeout: 30 * 1000, // Reduced timeout for faster failure detection
-  //     cwd: process.cwd(), // Ensure correct working directory
-  //     env: {
-  //       NODE_ENV: 'production',
-  //       PORT: '3000',
-  //     },
+  //     command: 'npx tsx server/dev-server.ts',
+  //     url: 'http://localhost:3000/api/ping',
+  //     reuseExistingServer: !process.env.CI,
+  //     timeout: 120 * 1000,
+  //     cwd: process.cwd(),
+  //   },
+  //   // Frontend dev server
+  //   {
+  //     command: 'npx vite --host localhost --port 8082',
+  //     url: 'http://localhost:8082',
+  //     reuseExistingServer: !process.env.CI,
+  //     timeout: 120 * 1000,
+  //     cwd: process.cwd(),
   //   },
   // ],
 });

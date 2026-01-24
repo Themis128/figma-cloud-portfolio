@@ -98,39 +98,39 @@ export function WorkflowBuilder({
   };
 
   return (
-    <div className="relative w-full h-96 bg-black/20 rounded-lg border border-white/10 overflow-hidden">
+    <div className='relative w-full h-96 bg-black/20 rounded-lg border border-white/10 overflow-hidden'>
       <svg
         ref={svgRef}
-        className="w-full h-full cursor-move"
+        className='w-full h-full cursor-move'
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        role="img"
-        aria-label="Workflow visualization"
+        role='img'
+        aria-label='Workflow visualization'
       >
         {/* Connections */}
         {connections.map((connection) => (
           <path
             key={connection.id}
             d={getConnectionPath(connection.source, connection.target)}
-            stroke="#60a5fa"
-            strokeWidth="2"
-            fill="none"
-            markerEnd="url(#arrowhead)"
+            stroke='#60a5fa'
+            strokeWidth='2'
+            fill='none'
+            markerEnd='url(#arrowhead)'
           />
         ))}
 
         {/* Arrow marker */}
         <defs>
           <marker
-            id="arrowhead"
-            markerWidth="10"
-            markerHeight="7"
-            refX="9"
-            refY="3.5"
-            orient="auto"
+            id='arrowhead'
+            markerWidth='10'
+            markerHeight='7'
+            refX='9'
+            refY='3.5'
+            orient='auto'
           >
-            <polygon points="0 0, 10 3.5, 0 7" fill="#60a5fa" />
+            <polygon points='0 0, 10 3.5, 0 7' fill='#60a5fa' />
           </marker>
         </defs>
 
@@ -142,16 +142,16 @@ export function WorkflowBuilder({
             <rect
               x={node.position.x}
               y={node.position.y}
-              width="240"
-              height="80"
-              rx="8"
+              width='240'
+              height='80'
+              rx='8'
               fill={getNodeColor(node.type)}
               stroke={selectedNode === node.id ? "#fbbf24" : "#374151"}
               strokeWidth={selectedNode === node.id ? "3" : "1"}
               className={`${!readonly ? "cursor-move hover:stroke-cyan-400" : "cursor-default"}`}
               onClick={() => handleNodeClick(node.id)}
               onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-              role="button"
+              role='button'
               tabIndex={0}
               aria-label={`${node.label} - ${node.type} node`}
             />
@@ -160,11 +160,11 @@ export function WorkflowBuilder({
             <text
               x={node.position.x + 120}
               y={node.position.y + 25}
-              textAnchor="middle"
-              fill="white"
-              fontSize="12"
-              fontWeight="bold"
-              className="pointer-events-none"
+              textAnchor='middle'
+              fill='white'
+              fontSize='12'
+              fontWeight='bold'
+              className='pointer-events-none'
             >
               {node.label}
             </text>
@@ -173,11 +173,11 @@ export function WorkflowBuilder({
             <text
               x={node.position.x + 120}
               y={node.position.y + 50}
-              textAnchor="middle"
-              fill="white"
-              fontSize="10"
-              opacity="0.8"
-              className="pointer-events-none"
+              textAnchor='middle'
+              fill='white'
+              fontSize='10'
+              opacity='0.8'
+              className='pointer-events-none'
             >
               {node.type.replace("-", " ").toUpperCase()}
             </text>
@@ -187,23 +187,23 @@ export function WorkflowBuilder({
 
       {/* Node info panel */}
       {selectedNode && (
-        <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 max-w-xs">
-          <h4 className="text-white font-semibold mb-2">Node Details</h4>
+        <div className='absolute top-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 max-w-xs'>
+          <h4 className='text-white font-semibold mb-2'>Node Details</h4>
           {(() => {
             const node = nodes.find((n) => n.id === selectedNode);
             if (!node) return null;
             return (
-              <div className="space-y-2 text-sm">
+              <div className='space-y-2 text-sm'>
                 <p>
-                  <span className="text-white/60">Type:</span> {node.type}
+                  <span className='text-white/60'>Type:</span> {node.type}
                 </p>
                 <p>
-                  <span className="text-white/60">Label:</span> {node.label}
+                  <span className='text-white/60'>Label:</span> {node.label}
                 </p>
                 {Object.keys(node.config).length > 0 && (
                   <div>
-                    <p className="text-white/60 mb-1">Config:</p>
-                    <pre className="text-xs bg-black/20 p-2 rounded text-white/80 overflow-x-auto">
+                    <p className='text-white/60 mb-1'>Config:</p>
+                    <pre className='text-xs bg-black/20 p-2 rounded text-white/80 overflow-x-auto'>
                       {JSON.stringify(node.config, null, 2)}
                     </pre>
                   </div>
@@ -215,7 +215,7 @@ export function WorkflowBuilder({
       )}
 
       {/* Instructions */}
-      <div className="absolute bottom-4 left-4 text-white/60 text-sm">
+      <div className='absolute bottom-4 left-4 text-white/60 text-sm'>
         {readonly
           ? "View-only mode - workflow visualization"
           : "Click nodes to select • Drag to reposition"}

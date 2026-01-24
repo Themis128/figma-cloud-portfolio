@@ -1,7 +1,7 @@
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
 import { chromium, type FullConfig } from "@playwright/test";
-import { startBackendServer, startFrontendServer, stopServers } from "./test-environment";
+import { exec, execSync } from "node:child_process";
+import { promisify } from "node:util";
+import { startBackendServer, startFrontendServer } from "./test-environment";
 
 const execAsync = promisify(exec);
 
@@ -13,14 +13,10 @@ async function globalSetup(_config: FullConfig) {
   console.log("🚀 Starting Playwright global setup...");
 
   try {
-    // Start the backend server
+    // Start development servers
+    console.log("📡 Starting development servers...");
     await startBackendServer();
-
-    // Start the frontend server
     await startFrontendServer();
-
-    // Verify development servers are running
-    console.log("📡 Checking development servers...");
 
     // Health check function with retries
     async function checkServer(url: string, name: string, maxRetries = 5): Promise<boolean> {
@@ -53,14 +49,14 @@ async function globalSetup(_config: FullConfig) {
     }
 
     // Check frontend server with retries
-    const frontendUrl = "http://localhost:8081";
+    const frontendUrl = "http://localhost:8082";
     const frontendReady = await checkServer(frontendUrl, "Frontend server");
     if (!frontendReady) {
       throw new Error("Frontend server failed health check");
     }
 
     // Check backend API with retries
-    const apiUrl = "http://localhost:8081/api/ping";
+    const apiUrl = "http://localhost:3000/api/ping";
     const backendReady = await checkServer(apiUrl, "Backend API server");
     if (!backendReady) {
       console.log("⚠️  Backend API server not accessible - some tests may fail");
@@ -86,6 +82,39 @@ async function globalSetup(_config: FullConfig) {
       await browser.close();
     }
 
+    // Open the visual progress dashboard automatically
+    console.log("📊 Opening Visual Progress Dashboard...");
+    try {
+      const dashboardUrl =
+        "file:///D:/Nuxt Projects/new-portfolio/playwright-tests/visual-progress.html";
+
+      // Cross-platform browser opening
+      let command: string = "";
+      if (process.platform === "win32") {
+        command = `start "" "${dashboardUrl}"`;
+      } else if (process.platform === "darwin") {
+        command = `open "${dashboardUrl}"`;
+      } else {
+        command = `xdg-open "${dashboardUrl}"`;
+      }
+
+      try {
+        execSync(command, { stdio: "ignore" });
+        console.log("✅ Visual Progress Dashboard opened successfully");
+      } catch (openError: unknown) {
+        const errorMessage = openError instanceof Error ? openError.message : String(openError);
+        console.log("⚠️  Could not open dashboard automatically:", errorMessage);
+        console.log("📋 Dashboard URL:", dashboardUrl);
+      }
+    } catch (dashboardError) {
+      const errorMessage =
+        dashboardError instanceof Error ? dashboardError.message : String(dashboardError);
+      console.log("⚠️  Dashboard opening failed:", errorMessage);
+      console.log(
+        "📋 Manual dashboard URL: file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progress.html",
+      );
+    }
+
     // Clean up any existing test artifacts
     console.log("🧹 Cleaning up previous test artifacts...");
     try {
@@ -98,8 +127,6 @@ async function globalSetup(_config: FullConfig) {
     console.log("🎯 Global setup completed successfully");
   } catch (error) {
     console.error("❌ Global setup failed:", error);
-    // Cleanup on failure
-    await stopServers();
     throw error;
   }
 }

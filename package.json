@@ -3,22 +3,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "scripts\\unset-pnpm-env.bat pnpm run build:resume && scripts\\unset-pnpm-env.bat pnpm run build:client && scripts\\unset-pnpm-env.bat pnpm run build:server",
-    "build:ci": "node scripts/build-resume.js || true && pnpm exec vite build && pnpm exec vite build --config vite.config.server.ts",
-    "build:analyze": "scripts\\unset-pnpm-env.bat vite build --mode analyze",
-    "build:client": "scripts\\unset-pnpm-env.bat vite build",
+    "start:test-dashboard": "tsx scripts/start-test-dashboard-simple.ts",
+    "build": "run-s build:resume build:client build:server",
+    "build:ci": "run-s build:resume build:client build:server",
+    "build:analyze": "vite build --mode analyze",
+    "build:client": "vite build",
     "build:resume": "node scripts/build-resume.js",
-    "build:server": "scripts\\unset-pnpm-env.bat vite build --config vite.config.server.ts",
-    "dev": "scripts\\unset-pnpm-env.bat vite",
+    "build:server": "vite build --config vite.config.server.ts",
+    "dev": "vite",
     "dev:ci": "vite",
-    "dev:all": "scripts\\unset-pnpm-env.bat npx concurrently \"pnpm dev\" \"pnpm exec tsx server/node-build.ts\"",
+    "dev:all": "concurrently \"pnpm dev\" \"pnpm exec tsx server/node-build.ts\"",
     "format": "biome format .",
     "format:check": "biome check .",
     "format:fix": "biome format --write .",
-    "generate-resume": "node scripts/generate-resume-html.js && node scripts/generate-resume.js",
+    "generate-resume": "run-s generate-resume-html build:resume",
     "generate-resume-html": "node scripts/generate-resume-html.js",
     "lint": "biome check .",
-    "lint:all": "biome check .",
     "lint:fix": "biome check --write .",
     "optimize-images": "node scripts/optimize-images.js",
     "quality": "node scripts/quality-check.js",
@@ -29,12 +29,19 @@
     "setup:fonts": "powershell -ExecutionPolicy Bypass -File scripts/setup-terminal-fonts.ps1",
     "start": "node dist/server/node-build.mjs",
     "test": "vitest run",
-    "test:coverage": "pnpm coverage",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:fast": "playwright test --config=playwright.config.fast.ts",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:dashboard": "node scripts/run-playwright-with-dashboard.js",
+    "test:e2e:watch": "node scripts/run-playwright-with-dashboard.js watch",
+    "test:e2e:dashboard:ui": "run-s test:e2e:dashboard --playwright test --ui",
     "test:unit": "vitest run",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "clean": "rm -rf dist coverage test-results playwright-report .codacy-cli-v2",
+    "clean:deps": "rm -rf node_modules pnpm-lock.yaml",
+    "pnpm:optimize": "node scripts/pnpm-optimize.js",
+    "postinstall": "node scripts/postinstall.js || true"
   },
   "dependencies": {
     "@agentdeskai/browser-tools-mcp": "^1.2.1",
@@ -130,6 +137,7 @@
     "lucide-react": "^0.539.0",
     "marked": "^17.0.1",
     "next-themes": "^0.4.6",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.5.6",
     "prettier": "^3.8.1",
     "puppeteer": "^24.36.0",
@@ -158,14 +166,26 @@
   "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748",
   "pnpm": {
     "overrides": {
-      "glob": "^10.5.0"
+      "glob": "^10.5.0",
+      "minimatch": "^9.0.5",
+      "semver": "^7.6.3"
     },
     "ignoredBuiltDependencies": [
       "@swc/core",
       "esbuild",
       "puppeteer",
-      "sharp"
-    ]
+      "sharp",
+      "better-sqlite3",
+      "canvas"
+    ],
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@types/react",
+        "@types/react-dom",
+        "typescript",
+        "webpack"
+      ]
+    }
   },
   "pkg": {
     "assets": [

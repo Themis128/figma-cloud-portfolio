@@ -4,13 +4,20 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedVariables": "warn"
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "error"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "noConsole": "warn",
+        "noDebugger": "warn"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"
+      },
+      "style": {
+        "useConst": "error",
+        "noMagicNumbers": "warn"
       }
     }
   },
@@ -19,6 +26,11 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "single"
+    }
   },
   "files": {
     "includes": [
@@ -29,6 +41,7 @@
       "tests/**/*.{js,ts,tsx}",
       "isolated-tests/**/*.{js,ts,tsx}",
       "playwright-tests/**/*.{js,ts,tsx}",
+      "portfolio-nextjs/**/*.{js,jsx,ts,tsx}",
       "*.{js,ts,tsx}",
       "*.config.{js,ts}"
     ],

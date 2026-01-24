@@ -49,6 +49,19 @@ jobs:
           pnpm exec vite build --config vite.config.server.ts
         env:
           PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
+          # Environment variables from .env file
+          VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
+          VITE_RECAPTCHA_SECRET_KEY: ${{ secrets.VITE_RECAPTCHA_SECRET_KEY }}
+          VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID }}
+          VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID }}
+          VITE_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_PUBLIC_RECAPTCHA_SITE_KEY }}
+          VITE_AI_PROVIDER: ${{ secrets.VITE_AI_PROVIDER }}
+          VITE_AI_MODEL: ${{ secrets.VITE_AI_MODEL }}
+          VITE_OLLAMA_BASE_URL: ${{ secrets.VITE_OLLAMA_BASE_URL }}
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

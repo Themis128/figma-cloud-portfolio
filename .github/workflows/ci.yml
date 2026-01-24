@@ -48,46 +48,65 @@ jobs:
         run: pnpm typecheck
 
       - name: Check code formatting
-        run: pnpm format:check || echo "Formatting issues found - run 'pnpm format' to fix"
+        run: pnpm format:check
 
       - name: Run unit tests with coverage
         run: pnpm test:unit --coverage
 
       - name: Upload coverage to Codacy
+        if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
         run: |
-          if [ -n "$CODACY_PROJECT_TOKEN" ]; then
-            bash <(curl -Ls https://coverage.codacy.com/get.sh)
-          else
-            echo "Codacy project token not configured, skipping coverage upload"
-          fi
+          echo "Codacy token present — uploading coverage"
+          bash <(curl -Ls https://coverage.codacy.com/get.sh)
         env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          CODACY_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
-    # E2E tests are skipped in CI for now as they require a running dev server
-    # They can be run locally with: pnpm dev:all && pnpm test:e2e
-    # TODO: Enable E2E tests in CI once proper server setup is configured
-    # - name: Install Playwright browsers
-    #   run: pnpm exec playwright install --with-deps chromium
-    #
-    # - name: Run E2E tests
-    #   run: pnpm test:e2e --project=chromium
-    #   env:
-    #     CI: true
+      - name: Skip Codacy upload when token missing
+        if: ${{ secrets.CODACY_PROJECT_TOKEN == '' }}
+        run: |
+          echo "Codacy project token not configured, skipping coverage upload"
 
-    # Test results upload disabled while E2E tests are skipped
-    # - name: Upload test results
-    #   uses: actions/upload-artifact@v4
-    #   if: always()
-    #   with:
-    #     name: test-results-${{ matrix.node-version }}
-    #     path: |
-    #       test-results/
-    #       playwright-report/
-    #     retention-days: 30
+  e2e:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm test:e2e --project=chromium
+        env:
+          CI: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 30
 
   build:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test, e2e]
 
     steps:
       - name: Checkout code

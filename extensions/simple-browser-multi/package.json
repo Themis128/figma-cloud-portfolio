@@ -1,0 +1,52 @@
+{
+  "name": "simple-browser-multi",
+  "displayName": "Simple Browser Multi",
+  "description": "Modified Simple Browser allowing multiple independent webview browser windows.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "publisher": "local",
+  "main": "extension.js",
+  "scripts": {},
+  "activationEvents": [
+    "onCommand:simpleBrowserMulti.api.open",
+    "onCommand:simpleBrowser.api.open",
+    "onCommand:simpleBrowser.show",
+    "onCommand:simpleBrowserMulti.show",
+    "onOpenExternalUri:http",
+    "onOpenExternalUri:https",
+    "onWebviewPanel:simpleBrowserMulti.view"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "simpleBrowserMulti.show",
+        "title": "Simple Browser Multi: Show"
+      },
+      {
+        "command": "simpleBrowserMulti.api.open",
+        "title": "Simple Browser Multi: Open (API)"
+      },
+      {
+        "command": "simpleBrowser.api.open",
+        "title": "Simple Browser: Open (API)"
+      },
+      {
+        "command": "simpleBrowser.show",
+        "title": "Simple Browser: Show"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Simple Browser Multi",
+      "properties": {
+        "simpleBrowserMulti.focusLockIndicator.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show focus lock indicator when webview has focus"
+        }
+      }
+    }
+  }
+}

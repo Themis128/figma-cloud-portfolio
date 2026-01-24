@@ -3,7 +3,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { FullConfig } from "@playwright/test";
-import { stopServers } from "./test-environment";
 
 const execAsync = promisify(exec);
 
@@ -15,8 +14,7 @@ async function globalTeardown(_config: FullConfig) {
   console.log("🧹 Starting Playwright global teardown...");
 
   try {
-    // Stop all servers using the shared environment
-    await stopServers();
+    // Playwright webServer handles server shutdown, so we focus on cleanup tasks
 
     // Generate test summary report
     console.log("📊 Generating test summary...");

@@ -63,8 +63,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://baltzakis.dev",
     title: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
-    description:
-      "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
+    description: "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
     siteName: "Themistoklis Baltzakis Portfolio",
     images: [
       {
@@ -78,8 +77,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
-    description:
-      "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
+    description: "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
     creator: "@baltzakis_themis",
     images: ["/og-image.jpg"],
   },
@@ -119,10 +117,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
       </head>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased min-h-screen bg-background text-foreground`}

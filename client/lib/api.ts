@@ -35,12 +35,30 @@ async function apiRequest(endpoint: string, options: RequestInit = {}): Promise<
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      // Try to get error message from response
+      let errorMessage = `API request failed: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.text();
+        if (errorData) {
+          errorMessage += ` - ${errorData}`;
+        }
+      } catch {
+        // Ignore if we can't read the response body
+      }
+      throw new Error(errorMessage);
     }
 
     return response;
   } catch (error) {
     console.error(`API request to ${endpoint} failed:`, error);
+
+    // Provide more helpful error messages
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      throw new Error(
+        "Network error: Unable to connect to API server. Please ensure the backend server is running.",
+      );
+    }
+
     throw error;
   }
 }

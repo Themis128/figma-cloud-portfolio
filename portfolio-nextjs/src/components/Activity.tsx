@@ -85,10 +85,10 @@ export function Activity({
       {isPreRendered ? (
         children
       ) : (
-        <div className="activity-placeholder" aria-hidden="true">
+        <div className='activity-placeholder' aria-hidden='true'>
           {/* Placeholder content while pre-rendering */}
-          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-3/4 mb-2" />
-          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-3 w-1/2" />
+          <div className='animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-3/4 mb-2' />
+          <div className='animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-3 w-1/2' />
         </div>
       )}
     </div>
@@ -142,7 +142,7 @@ export function ActivityModal({
   return (
     <>
       <button
-        type="button"
+        type='button'
         onClick={handleTriggerClick}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -150,8 +150,8 @@ export function ActivityModal({
             handleTriggerClick();
           }
         }}
-        className="focus:outline-none cursor-pointer inline-block"
-        aria-label="Open activity modal"
+        className='focus:outline-none cursor-pointer inline-block'
+        aria-label='Open activity modal'
       >
         {trigger}
       </button>
@@ -165,13 +165,13 @@ export function ActivityModal({
           }}
         >
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className='fixed inset-0 bg-black/50 backdrop-blur-sm'
             onClick={handleBackdropClick}
             onKeyDown={handleKeyDown}
             tabIndex={-1}
-            aria-hidden="true"
+            aria-hidden='true'
           />
-          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">{children}</div>
+          <div className='fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>{children}</div>
         </div>
       )}
     </>
@@ -206,9 +206,9 @@ export function ActivityBoundary({
         return (
           <Activity
             key={elementId}
-            trigger="viewport"
+            trigger='viewport'
             delay={delays[mode]}
-            className="activity-child"
+            className='activity-child'
           >
             {React.isValidElement(child)
               ? React.cloneElement(child as React.ReactElement<unknown>, {

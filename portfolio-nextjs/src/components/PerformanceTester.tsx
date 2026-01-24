@@ -111,39 +111,39 @@ export function PerformanceTester() {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
+    <div className='space-y-6'>
+      <Card className='p-6'>
+        <div className='flex items-center justify-between mb-6'>
           <div>
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <BarChart3 className="w-5 h-5" />
+            <h3 className='text-lg font-semibold flex items-center gap-2'>
+              <BarChart3 className='w-5 h-5' />
               Performance Test Suite
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className='text-sm text-muted-foreground'>
               Run comprehensive performance tests to identify optimization opportunities
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className='flex gap-2'>
             <Button
               onClick={runPerformanceTests}
               disabled={isRunning}
-              className="flex items-center gap-2"
+              className='flex items-center gap-2'
             >
               {isRunning ? (
                 <>
-                  <Square className="w-4 h-4" />
+                  <Square className='w-4 h-4' />
                   Running Tests...
                 </>
               ) : (
                 <>
-                  <Play className="w-4 h-4" />
+                  <Play className='w-4 h-4' />
                   Run Tests
                 </>
               )}
             </Button>
             {results.length > 0 && (
-              <Button variant="outline" onClick={exportResults} className="flex items-center gap-2">
-                <Download className="w-4 h-4" />
+              <Button variant='outline' onClick={exportResults} className='flex items-center gap-2'>
+                <Download className='w-4 h-4' />
                 Export
               </Button>
             )}
@@ -151,34 +151,34 @@ export function PerformanceTester() {
         </div>
 
         {isRunning && (
-          <div className="space-y-2 mb-6">
-            <div className="flex justify-between text-sm">
+          <div className='space-y-2 mb-6'>
+            <div className='flex justify-between text-sm'>
               <span>Running performance tests...</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className='h-2' />
           </div>
         )}
 
         {results.length > 0 && (
-          <div className="space-y-4">
-            <h4 className="font-medium">Test Results</h4>
-            <div className="space-y-3">
+          <div className='space-y-4'>
+            <h4 className='font-medium'>Test Results</h4>
+            <div className='space-y-3'>
               {results.map((result, _index) => (
                 <div
                   key={result.name}
-                  className="flex items-start gap-3 p-3 rounded-lg border bg-muted/50"
+                  className='flex items-start gap-3 p-3 rounded-lg border bg-muted/50'
                 >
-                  <span className="text-lg">{getStatusIcon(result.status)}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">{result.name}</span>
+                  <span className='text-lg'>{getStatusIcon(result.status)}</span>
+                  <div className='flex-1'>
+                    <div className='flex items-center justify-between'>
+                      <span className='font-medium'>{result.name}</span>
                       <span className={`text-sm ${getStatusColor(result.status)}`}>
                         {result.status.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">{result.details}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className='text-sm text-muted-foreground mt-1'>{result.details}</p>
+                    <p className='text-xs text-muted-foreground mt-1'>
                       Duration: {result.duration}ms
                     </p>
                   </div>
@@ -186,25 +186,25 @@ export function PerformanceTester() {
               ))}
             </div>
 
-            <div className="pt-4 border-t">
-              <div className="grid grid-cols-3 gap-4 text-center">
+            <div className='pt-4 border-t'>
+              <div className='grid grid-cols-3 gap-4 text-center'>
                 <div>
-                  <div className="text-2xl font-bold text-green-400">
+                  <div className='text-2xl font-bold text-green-400'>
                     {results.filter((r) => r.status === "success").length}
                   </div>
-                  <div className="text-xs text-muted-foreground">Passed</div>
+                  <div className='text-xs text-muted-foreground'>Passed</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-yellow-400">
+                  <div className='text-2xl font-bold text-yellow-400'>
                     {results.filter((r) => r.status === "warning").length}
                   </div>
-                  <div className="text-xs text-muted-foreground">Warnings</div>
+                  <div className='text-xs text-muted-foreground'>Warnings</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-red-400">
+                  <div className='text-2xl font-bold text-red-400'>
                     {results.filter((r) => r.status === "error").length}
                   </div>
-                  <div className="text-xs text-muted-foreground">Failed</div>
+                  <div className='text-xs text-muted-foreground'>Failed</div>
                 </div>
               </div>
             </div>

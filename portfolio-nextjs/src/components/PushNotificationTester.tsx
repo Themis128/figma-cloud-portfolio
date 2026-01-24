@@ -179,45 +179,45 @@ export function PushNotificationTester() {
   const PermissionIcon = permissionStatus.icon;
 
   return (
-    <Card className="p-6 space-y-6">
-      <div className="flex items-center gap-3">
-        <Bell className="w-6 h-6 text-cyan-400" />
+    <Card className='p-6 space-y-6'>
+      <div className='flex items-center gap-3'>
+        <Bell className='w-6 h-6 text-cyan-400' />
         <div>
-          <h3 className="text-lg font-semibold">Web Push API Tester</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className='text-lg font-semibold'>Web Push API Tester</h3>
+          <p className='text-sm text-muted-foreground'>
             Test push notifications using native Web Push API with VAPID keys.
           </p>
         </div>
       </div>
 
       {/* Permission Status */}
-      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-        <div className="flex items-center gap-2">
+      <div className='flex items-center justify-between p-3 bg-muted/50 rounded-lg'>
+        <div className='flex items-center gap-2'>
           <PermissionIcon className={`w-4 h-4 ${permissionStatus.color}`} />
-          <span className="text-sm font-medium">Notification Permission:</span>
+          <span className='text-sm font-medium'>Notification Permission:</span>
           <span className={`text-sm ${permissionStatus.color}`}>{permissionStatus.text}</span>
         </div>
         {notificationPermission !== "granted" && (
-          <Button onClick={requestNotificationPermission} size="sm" variant="outline">
+          <Button onClick={requestNotificationPermission} size='sm' variant='outline'>
             Request Permission
           </Button>
         )}
       </div>
 
       {/* Service Worker Status */}
-      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-        <div className="flex items-center gap-2">
+      <div className='flex items-center justify-between p-3 bg-muted/50 rounded-lg'>
+        <div className='flex items-center gap-2'>
           {serviceWorkerStatus.registered ? (
             serviceWorkerStatus.active ? (
-              <CheckCircle className="w-4 h-4 text-green-500" />
+              <CheckCircle className='w-4 h-4 text-green-500' />
             ) : (
-              <AlertCircle className="w-4 h-4 text-yellow-500" />
+              <AlertCircle className='w-4 h-4 text-yellow-500' />
             )
           ) : (
-            <XCircle className="w-4 h-4 text-red-500" />
+            <XCircle className='w-4 h-4 text-red-500' />
           )}
-          <span className="text-sm font-medium">Service Worker:</span>
-          <span className="text-sm">
+          <span className='text-sm font-medium'>Service Worker:</span>
+          <span className='text-sm'>
             {serviceWorkerStatus.registered
               ? serviceWorkerStatus.active
                 ? `Active (${serviceWorkerStatus.state})`
@@ -228,77 +228,77 @@ export function PushNotificationTester() {
       </div>
 
       {/* Subscription Status */}
-      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-        <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-blue-500" />
-          <span className="text-sm font-medium">Active Subscriptions:</span>
-          <span className="text-sm">
+      <div className='flex items-center justify-between p-3 bg-muted/50 rounded-lg'>
+        <div className='flex items-center gap-2'>
+          <Users className='w-4 h-4 text-blue-500' />
+          <span className='text-sm font-medium'>Active Subscriptions:</span>
+          <span className='text-sm'>
             {subscriptionCount !== null ? subscriptionCount : "Unknown"}
           </span>
         </div>
-        <Button onClick={checkSubscriptions} disabled={isLoading} size="sm" variant="outline">
+        <Button onClick={checkSubscriptions} disabled={isLoading} size='sm' variant='outline'>
           Check Subscriptions
         </Button>
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <Button
           onClick={sendTestNotification}
           disabled={isLoading || subscriptionCount === 0}
-          className="flex items-center gap-2"
+          className='flex items-center gap-2'
         >
-          <Send className="w-4 h-4" />
+          <Send className='w-4 h-4' />
           {isLoading ? "Sending..." : "Send Test Notification"}
         </Button>
 
         <Button
           onClick={sendCustomNotification}
           disabled={isLoading || subscriptionCount === 0}
-          variant="outline"
-          className="flex items-center gap-2"
+          variant='outline'
+          className='flex items-center gap-2'
         >
-          <Settings className="w-4 h-4" />
+          <Settings className='w-4 h-4' />
           {isLoading ? "Sending..." : "Send Custom Notification"}
         </Button>
       </div>
 
       {/* Custom Notification Form */}
-      <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-        <h4 className="font-medium flex items-center gap-2">
-          <Settings className="w-4 h-4" />
+      <div className='space-y-4 p-4 border rounded-lg bg-muted/30'>
+        <h4 className='font-medium flex items-center gap-2'>
+          <Settings className='w-4 h-4' />
           Custom Notification Settings
         </h4>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div className='space-y-2'>
+            <Label htmlFor='title'>Title</Label>
             <Input
-              id="title"
+              id='title'
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
-              placeholder="Notification title"
+              placeholder='Notification title'
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="url">URL (optional)</Label>
+          <div className='space-y-2'>
+            <Label htmlFor='url'>URL (optional)</Label>
             <Input
-              id="url"
+              id='url'
               value={customUrl}
               onChange={(e) => setCustomUrl(e.target.value)}
-              placeholder="/about"
+              placeholder='/about'
             />
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="body">Message Body</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='body'>Message Body</Label>
           <Textarea
-            id="body"
+            id='body'
             value={customBody}
             onChange={(e) => setCustomBody(e.target.value)}
-            placeholder="Notification message"
+            placeholder='Notification message'
             rows={3}
           />
         </div>
@@ -313,25 +313,25 @@ export function PushNotificationTester() {
               : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
           }`}
         >
-          <div className="flex items-start gap-3">
+          <div className='flex items-start gap-3'>
             {result.success ? (
-              <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+              <CheckCircle className='w-5 h-5 text-green-500 mt-0.5' />
             ) : (
-              <XCircle className="w-5 h-5 text-red-500 mt-0.5" />
+              <XCircle className='w-5 h-5 text-red-500 mt-0.5' />
             )}
-            <div className="flex-1">
-              <p className="font-medium">{result.message}</p>
+            <div className='flex-1'>
+              <p className='font-medium'>{result.message}</p>
               {result.totalSent !== undefined && result.totalFailed !== undefined && (
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className='text-sm text-muted-foreground mt-1'>
                   Sent: {result.totalSent} | Failed: {result.totalFailed}
                 </p>
               )}
               {result.results && result.results.length > 0 && (
-                <details className="mt-2">
-                  <summary className="text-sm cursor-pointer hover:text-foreground">
+                <details className='mt-2'>
+                  <summary className='text-sm cursor-pointer hover:text-foreground'>
                     View detailed results ({result.results.length} endpoints)
                   </summary>
-                  <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                  <div className='mt-2 space-y-1 max-h-32 overflow-y-auto'>
                     {result.results.map((endpointResult, _index) => (
                       <div
                         key={endpointResult.endpoint}
@@ -342,18 +342,18 @@ export function PushNotificationTester() {
                         }`}
                       >
                         {endpointResult.success ? (
-                          <CheckCircle className="w-3 h-3 text-green-600" />
+                          <CheckCircle className='w-3 h-3 text-green-600' />
                         ) : (
-                          <XCircle className="w-3 h-3 text-red-600" />
+                          <XCircle className='w-3 h-3 text-red-600' />
                         )}
-                        <span className="truncate flex-1">
+                        <span className='truncate flex-1'>
                           {endpointResult.endpoint.split("/").pop()}
                         </span>
                         {endpointResult.statusCode && (
-                          <span className="text-muted-foreground">{endpointResult.statusCode}</span>
+                          <span className='text-muted-foreground'>{endpointResult.statusCode}</span>
                         )}
                         {endpointResult.error && (
-                          <span className="text-red-600 truncate max-w-32">
+                          <span className='text-red-600 truncate max-w-32'>
                             {endpointResult.error}
                           </span>
                         )}
@@ -368,38 +368,38 @@ export function PushNotificationTester() {
       )}
 
       {/* Requirements */}
-      <div className="text-xs text-muted-foreground bg-muted/30 p-4 rounded-lg">
-        <p className="font-medium mb-2">📋 Requirements for notifications to appear:</p>
-        <ul className="space-y-1 ml-4">
-          <li className="flex items-center gap-2">
+      <div className='text-xs text-muted-foreground bg-muted/30 p-4 rounded-lg'>
+        <p className='font-medium mb-2'>📋 Requirements for notifications to appear:</p>
+        <ul className='space-y-1 ml-4'>
+          <li className='flex items-center gap-2'>
             {notificationPermission === "granted" ? (
-              <CheckCircle className="w-3 h-3 text-green-500" />
+              <CheckCircle className='w-3 h-3 text-green-500' />
             ) : (
-              <XCircle className="w-3 h-3 text-red-500" />
+              <XCircle className='w-3 h-3 text-red-500' />
             )}
             Notification permission must be granted
           </li>
-          <li className="flex items-center gap-2">
-            <AlertCircle className="w-3 h-3 text-yellow-500" />
+          <li className='flex items-center gap-2'>
+            <AlertCircle className='w-3 h-3 text-yellow-500' />
             App must be running in background or another tab
           </li>
-          <li className="flex items-center gap-2">
+          <li className='flex items-center gap-2'>
             {subscriptionCount && subscriptionCount > 0 ? (
-              <CheckCircle className="w-3 h-3 text-green-500" />
+              <CheckCircle className='w-3 h-3 text-green-500' />
             ) : (
-              <XCircle className="w-3 h-3 text-red-500" />
+              <XCircle className='w-3 h-3 text-red-500' />
             )}
             Must be subscribed using the Notification Button
           </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle className="w-3 h-3 text-green-500" />
+          <li className='flex items-center gap-2'>
+            <CheckCircle className='w-3 h-3 text-green-500' />
             Web Push API must be configured with VAPID keys
           </li>
-          <li className="flex items-center gap-2">
+          <li className='flex items-center gap-2'>
             {serviceWorkerStatus.registered && serviceWorkerStatus.active ? (
-              <CheckCircle className="w-3 h-3 text-green-500" />
+              <CheckCircle className='w-3 h-3 text-green-500' />
             ) : (
-              <XCircle className="w-3 h-3 text-red-500" />
+              <XCircle className='w-3 h-3 text-red-500' />
             )}
             Service Worker must be registered and active
           </li>

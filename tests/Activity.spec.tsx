@@ -5,7 +5,7 @@ import { Activity, ActivityBoundary, ActivityModal } from "@/components/Activity
 describe("Activity Component", () => {
   it("renders children when not pre-rendered", () => {
     render(
-      <Activity trigger="manual">
+      <Activity trigger='manual'>
         <div>Test Content</div>
       </Activity>,
     );
@@ -16,7 +16,7 @@ describe("Activity Component", () => {
 
   it("shows placeholder when pre-rendering", () => {
     render(
-      <Activity trigger="hover" delay={10}>
+      <Activity trigger='hover' delay={10}>
         <div>Test Content</div>
       </Activity>,
     );
@@ -28,7 +28,7 @@ describe("Activity Component", () => {
 
   it("pre-renders on hover after delay", async () => {
     render(
-      <Activity trigger="hover" delay={10}>
+      <Activity trigger='hover' delay={10}>
         <div>Test Content</div>
       </Activity>,
     );
@@ -66,7 +66,7 @@ describe("Activity Component", () => {
     window.IntersectionObserver = mockIntersectionObserver;
 
     render(
-      <Activity trigger="viewport" delay={10}>
+      <Activity trigger='viewport' delay={10}>
         <div>Test Content</div>
       </Activity>,
     );
@@ -155,7 +155,7 @@ describe("ActivityModal Component", () => {
 describe("ActivityBoundary Component", () => {
   it("renders children with activity wrappers", () => {
     render(
-      <ActivityBoundary mode="moderate">
+      <ActivityBoundary mode='moderate'>
         <div>Child 1</div>
         <div>Child 2</div>
       </ActivityBoundary>,
@@ -169,7 +169,7 @@ describe("ActivityBoundary Component", () => {
 
   it("applies different delays based on mode", () => {
     const { rerender } = render(
-      <ActivityBoundary mode="conservative">
+      <ActivityBoundary mode='conservative'>
         <div>Child</div>
       </ActivityBoundary>,
     );
@@ -178,7 +178,7 @@ describe("ActivityBoundary Component", () => {
     expect(document.querySelectorAll(".activity-placeholder")).toHaveLength(1);
 
     rerender(
-      <ActivityBoundary mode="aggressive">
+      <ActivityBoundary mode='aggressive'>
         <div>Child</div>
       </ActivityBoundary>,
     );

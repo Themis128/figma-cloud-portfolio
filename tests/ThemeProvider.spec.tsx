@@ -34,7 +34,7 @@ describe("ThemeProvider", () => {
   it("renders children", () => {
     render(
       <ThemeProvider>
-        <div data-testid="child">Hello</div>
+        <div data-testid='child'>Hello</div>
       </ThemeProvider>,
     );
     expect(screen.getByTestId("child")).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe("ThemeProvider", () => {
 
   it("uses default theme", () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <ThemeProvider defaultTheme="light">{children}</ThemeProvider>
+      <ThemeProvider defaultTheme='light'>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
     expect(result.current.theme).toBe("light");
@@ -59,7 +59,7 @@ describe("ThemeProvider", () => {
 
   it("updates theme with setTheme", () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <ThemeProvider defaultTheme="light">{children}</ThemeProvider>
+      <ThemeProvider defaultTheme='light'>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
 
@@ -73,7 +73,7 @@ describe("ThemeProvider", () => {
 
   it("applies theme class to document", () => {
     render(
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme='dark'>
         <div>Test</div>
       </ThemeProvider>,
     );
@@ -83,7 +83,7 @@ describe("ThemeProvider", () => {
   it("uses custom storageKey", () => {
     localStorageMock.getItem.mockReturnValue("dark");
     render(
-      <ThemeProvider storageKey="custom-theme">
+      <ThemeProvider storageKey='custom-theme'>
         <div>Test</div>
       </ThemeProvider>,
     );
@@ -99,7 +99,7 @@ describe("ThemeProvider", () => {
     }));
 
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <ThemeProvider defaultTheme="system">{children}</ThemeProvider>
+      <ThemeProvider defaultTheme='system'>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
 
@@ -125,7 +125,7 @@ describe("useTheme", () => {
 
   it("returns theme context values", () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <ThemeProvider defaultTheme="light">{children}</ThemeProvider>
+      <ThemeProvider defaultTheme='light'>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
 
@@ -136,7 +136,7 @@ describe("useTheme", () => {
 
   it("cycles through themes", () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <ThemeProvider defaultTheme="light">{children}</ThemeProvider>
+      <ThemeProvider defaultTheme='light'>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
 

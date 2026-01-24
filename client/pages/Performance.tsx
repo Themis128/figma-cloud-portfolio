@@ -77,137 +77,137 @@ export default function Performance() {
   const memoryPercentage = (memory.used / memory.limit) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className='min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900'>
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Link to="/">
-            <Button variant="ghost" className="mb-4 text-white hover:text-cyan-400">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+      <div className='container mx-auto px-4 py-8'>
+        <div className='mb-8'>
+          <Link to='/'>
+            <Button variant='ghost' className='mb-4 text-white hover:text-cyan-400'>
+              <ArrowLeft className='w-4 h-4 mr-2' />
               Back to Home
             </Button>
           </Link>
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-            <Activity className="w-8 h-8 text-cyan-400" />
+          <h1 className='text-4xl font-bold text-white mb-2 flex items-center gap-3'>
+            <Activity className='w-8 h-8 text-cyan-400' />
             Performance Dashboard
           </h1>
-          <p className="text-slate-300">
+          <p className='text-slate-300'>
             Comprehensive performance monitoring and optimization tools
           </p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="metrics">Core Web Vitals</TabsTrigger>
-            <TabsTrigger value="testing">Testing Tools</TabsTrigger>
-            <TabsTrigger value="optimization">Optimization</TabsTrigger>
+        <Tabs defaultValue='overview' className='space-y-6'>
+          <TabsList className='grid w-full grid-cols-4'>
+            <TabsTrigger value='overview'>Overview</TabsTrigger>
+            <TabsTrigger value='metrics'>Core Web Vitals</TabsTrigger>
+            <TabsTrigger value='testing'>Testing Tools</TabsTrigger>
+            <TabsTrigger value='optimization'>Optimization</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value='overview' className='space-y-6'>
             {/* Real-time Performance Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <HardDrive className="w-5 h-5 text-cyan-400" />
-                  <h3 className="text-lg font-semibold">Memory Usage</h3>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+              <Card className='p-6'>
+                <div className='flex items-center gap-3 mb-4'>
+                  <HardDrive className='w-5 h-5 text-cyan-400' />
+                  <h3 className='text-lg font-semibold'>Memory Usage</h3>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                <div className='space-y-2'>
+                  <div className='flex justify-between text-sm'>
                     <span>{memory.used} MB</span>
                     <span>{memory.limit} MB</span>
                   </div>
-                  <Progress value={memoryPercentage} className="h-2" />
-                  <p className="text-xs text-muted-foreground">
+                  <Progress value={memoryPercentage} className='h-2' />
+                  <p className='text-xs text-muted-foreground'>
                     {memoryPercentage.toFixed(1)}% of available memory
                   </p>
                 </div>
               </Card>
 
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Cpu className="w-5 h-5 text-cyan-400" />
-                  <h3 className="text-lg font-semibold">CPU Usage</h3>
+              <Card className='p-6'>
+                <div className='flex items-center gap-3 mb-4'>
+                  <Cpu className='w-5 h-5 text-cyan-400' />
+                  <h3 className='text-lg font-semibold'>CPU Usage</h3>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                <div className='space-y-2'>
+                  <div className='flex justify-between text-sm'>
                     <span>{metrics.cpuUsage.toFixed(1)}%</span>
                     <span>Active</span>
                   </div>
-                  <Progress value={metrics.cpuUsage} className="h-2" />
-                  <p className="text-xs text-muted-foreground">Real-time CPU utilization</p>
+                  <Progress value={metrics.cpuUsage} className='h-2' />
+                  <p className='text-xs text-muted-foreground'>Real-time CPU utilization</p>
                 </div>
               </Card>
 
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Network className="w-5 h-5 text-cyan-400" />
-                  <h3 className="text-lg font-semibold">Network</h3>
+              <Card className='p-6'>
+                <div className='flex items-center gap-3 mb-4'>
+                  <Network className='w-5 h-5 text-cyan-400' />
+                  <h3 className='text-lg font-semibold'>Network</h3>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-2xl font-bold">{metrics.networkRequests}</div>
-                  <p className="text-xs text-muted-foreground">Active network requests</p>
-                  <div className="flex gap-2 mt-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-xs">Connected</span>
+                <div className='space-y-2'>
+                  <div className='text-2xl font-bold'>{metrics.networkRequests}</div>
+                  <p className='text-xs text-muted-foreground'>Active network requests</p>
+                  <div className='flex gap-2 mt-2'>
+                    <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                    <span className='text-xs'>Connected</span>
                   </div>
                 </div>
               </Card>
 
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <BarChart3 className="w-5 h-5 text-cyan-400" />
-                  <h3 className="text-lg font-semibold">Bundle Size</h3>
+              <Card className='p-6'>
+                <div className='flex items-center gap-3 mb-4'>
+                  <BarChart3 className='w-5 h-5 text-cyan-400' />
+                  <h3 className='text-lg font-semibold'>Bundle Size</h3>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-2xl font-bold">{metrics.bundleSize} MB</div>
-                  <p className="text-xs text-muted-foreground">Compressed bundle size</p>
-                  <div className="flex gap-2 mt-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-xs">Optimized</span>
+                <div className='space-y-2'>
+                  <div className='text-2xl font-bold'>{metrics.bundleSize} MB</div>
+                  <p className='text-xs text-muted-foreground'>Compressed bundle size</p>
+                  <div className='flex gap-2 mt-2'>
+                    <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
+                    <span className='text-xs'>Optimized</span>
                   </div>
                 </div>
               </Card>
             </div>
 
             {/* Performance Actions */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Performance Controls</h3>
-              <div className="flex flex-wrap gap-4">
+            <Card className='p-6'>
+              <h3 className='text-lg font-semibold mb-4'>Performance Controls</h3>
+              <div className='flex flex-wrap gap-4'>
                 <Button
                   onClick={() => setIsMonitoring(!isMonitoring)}
                   variant={isMonitoring ? "destructive" : "default"}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                 >
-                  <Activity className="w-4 h-4" />
+                  <Activity className='w-4 h-4' />
                   {isMonitoring ? "Stop Monitoring" : "Start Real-time Monitoring"}
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
+                <Button variant='outline' className='flex items-center gap-2'>
+                  <Zap className='w-4 h-4' />
                   Run Performance Test
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4" />
+                <Button variant='outline' className='flex items-center gap-2'>
+                  <BarChart3 className='w-4 h-4' />
                   Generate Report
                 </Button>
               </div>
             </Card>
 
             {/* Performance Tips */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Performance Optimization Tips</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium text-cyan-400">🚀 Core Web Vitals</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+            <Card className='p-6'>
+              <h3 className='text-lg font-semibold mb-4'>Performance Optimization Tips</h3>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <h4 className='font-medium text-cyan-400'>🚀 Core Web Vitals</h4>
+                  <ul className='text-sm text-muted-foreground space-y-1'>
                     <li>• LCP &lt; 2.5s for good user experience</li>
                     <li>• CLS &lt; 0.1 to prevent layout shifts</li>
                     <li>• FID &lt; 100ms for responsive interactions</li>
                   </ul>
                 </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium text-cyan-400">⚡ Optimization Strategies</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                <div className='space-y-2'>
+                  <h4 className='font-medium text-cyan-400'>⚡ Optimization Strategies</h4>
+                  <ul className='text-sm text-muted-foreground space-y-1'>
                     <li>• Use lazy loading for images and components</li>
                     <li>• Implement proper caching strategies</li>
                     <li>• Minimize bundle sizes with code splitting</li>
@@ -218,43 +218,43 @@ export default function Performance() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="metrics">
+          <TabsContent value='metrics'>
             <PerformanceDashboard />
           </TabsContent>
 
-          <TabsContent value="testing">
-            <div className="space-y-6">
+          <TabsContent value='testing'>
+            <div className='space-y-6'>
               <PerformanceTester />
 
               <PushNotificationTester />
 
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Performance Testing Tools</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-medium">Automated Tests</h4>
-                    <div className="space-y-2">
-                      <Button variant="outline" size="sm" className="w-full justify-start">
+              <Card className='p-6'>
+                <h3 className='text-lg font-semibold mb-4'>Performance Testing Tools</h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  <div className='space-y-4'>
+                    <h4 className='font-medium'>Automated Tests</h4>
+                    <div className='space-y-2'>
+                      <Button variant='outline' size='sm' className='w-full justify-start'>
                         🧪 Run Lighthouse Audit
                       </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Button variant='outline' size='sm' className='w-full justify-start'>
                         📊 Performance Benchmark
                       </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Button variant='outline' size='sm' className='w-full justify-start'>
                         🔄 Memory Leak Test
                       </Button>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <h4 className="font-medium">Manual Tests</h4>
-                    <div className="space-y-2">
-                      <Button variant="outline" size="sm" className="w-full justify-start">
+                  <div className='space-y-4'>
+                    <h4 className='font-medium'>Manual Tests</h4>
+                    <div className='space-y-2'>
+                      <Button variant='outline' size='sm' className='w-full justify-start'>
                         🎯 Stress Test
                       </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Button variant='outline' size='sm' className='w-full justify-start'>
                         📱 Mobile Performance Test
                       </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Button variant='outline' size='sm' className='w-full justify-start'>
                         🌐 Cross-browser Test
                       </Button>
                     </div>
@@ -264,83 +264,83 @@ export default function Performance() {
             </div>
           </TabsContent>
 
-          <TabsContent value="optimization">
-            <div className="space-y-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Bundle Analysis</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
+          <TabsContent value='optimization'>
+            <div className='space-y-6'>
+              <Card className='p-6'>
+                <h3 className='text-lg font-semibold mb-4'>Bundle Analysis</h3>
+                <div className='space-y-4'>
+                  <div className='flex justify-between items-center'>
                     <span>Total Bundle Size</span>
-                    <span className="font-mono">{metrics.bundleSize} MB</span>
+                    <span className='font-mono'>{metrics.bundleSize} MB</span>
                   </div>
-                  <Progress value={(metrics.bundleSize / 5) * 100} className="h-2" />
-                  <p className="text-xs text-muted-foreground">
+                  <Progress value={(metrics.bundleSize / 5) * 100} className='h-2' />
+                  <p className='text-xs text-muted-foreground'>
                     Target: &lt; 2.5 MB for optimal performance
                   </p>
                 </div>
               </Card>
 
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Optimization Status</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Image Optimization</span>
-                    <span className="text-green-500 text-sm">✅ Complete</span>
+              <Card className='p-6'>
+                <h3 className='text-lg font-semibold mb-4'>Optimization Status</h3>
+                <div className='space-y-3'>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>Image Optimization</span>
+                    <span className='text-green-500 text-sm'>✅ Complete</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Code Splitting</span>
-                    <span className="text-green-500 text-sm">✅ Complete</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>Code Splitting</span>
+                    <span className='text-green-500 text-sm'>✅ Complete</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Bundle Analysis</span>
-                    <span className="text-green-500 text-sm">✅ Complete</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>Bundle Analysis</span>
+                    <span className='text-green-500 text-sm'>✅ Complete</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Caching Strategy</span>
-                    <span className="text-green-500 text-sm">✅ Complete</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>Caching Strategy</span>
+                    <span className='text-green-500 text-sm'>✅ Complete</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Core Web Vitals</span>
-                    <span className="text-green-500 text-sm">✅ Monitoring</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>Core Web Vitals</span>
+                    <span className='text-green-500 text-sm'>✅ Monitoring</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">PWA Optimization</span>
-                    <span className="text-green-500 text-sm">✅ Complete</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>PWA Optimization</span>
+                    <span className='text-green-500 text-sm'>✅ Complete</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Font Optimization</span>
-                    <span className="text-green-500 text-sm">✅ Complete</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm'>Font Optimization</span>
+                    <span className='text-green-500 text-sm'>✅ Complete</span>
                   </div>
                 </div>
               </Card>
 
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Lighthouse Score</h3>
-                <div className="flex items-center gap-4">
-                  <div className="text-4xl font-bold text-cyan-400">{metrics.lighthouseScore}</div>
-                  <div className="flex-1">
-                    <Progress value={metrics.lighthouseScore} className="h-3" />
-                    <p className="text-xs text-muted-foreground mt-1">
+              <Card className='p-6'>
+                <h3 className='text-lg font-semibold mb-4'>Lighthouse Score</h3>
+                <div className='flex items-center gap-4'>
+                  <div className='text-4xl font-bold text-cyan-400'>{metrics.lighthouseScore}</div>
+                  <div className='flex-1'>
+                    <Progress value={metrics.lighthouseScore} className='h-3' />
+                    <p className='text-xs text-muted-foreground mt-1'>
                       Performance score out of 100
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-green-400">95</div>
-                    <div className="text-xs text-muted-foreground">Accessibility</div>
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mt-4'>
+                  <div className='text-center'>
+                    <div className='text-lg font-semibold text-green-400'>95</div>
+                    <div className='text-xs text-muted-foreground'>Accessibility</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-blue-400">92</div>
-                    <div className="text-xs text-muted-foreground">Best Practices</div>
+                  <div className='text-center'>
+                    <div className='text-lg font-semibold text-blue-400'>92</div>
+                    <div className='text-xs text-muted-foreground'>Best Practices</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-purple-400">98</div>
-                    <div className="text-xs text-muted-foreground">SEO</div>
+                  <div className='text-center'>
+                    <div className='text-lg font-semibold text-purple-400'>98</div>
+                    <div className='text-xs text-muted-foreground'>SEO</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-orange-400">90</div>
-                    <div className="text-xs text-muted-foreground">PWA</div>
+                  <div className='text-center'>
+                    <div className='text-lg font-semibold text-orange-400'>90</div>
+                    <div className='text-xs text-muted-foreground'>PWA</div>
                   </div>
                 </div>
               </Card>

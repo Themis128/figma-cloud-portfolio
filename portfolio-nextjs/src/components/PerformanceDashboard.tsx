@@ -32,20 +32,20 @@ export function PerformanceDashboard({ className, compact = false }: Performance
     const current = parseFloat(currentValue.replace(/[^\d.]/g, ""));
     const previous = previousMetrics[key];
 
-    if (!previous || Number.isNaN(current)) return <Minus className="w-3 h-3 text-gray-400" />;
+    if (!previous || Number.isNaN(current)) return <Minus className='w-3 h-3 text-gray-400' />;
 
     if (current > previous) {
-      return <TrendingUp className="w-3 h-3 text-red-400" />;
+      return <TrendingUp className='w-3 h-3 text-red-400' />;
     } else if (current < previous) {
-      return <TrendingDown className="w-3 h-3 text-green-400" />;
+      return <TrendingDown className='w-3 h-3 text-green-400' />;
     }
-    return <Minus className="w-3 h-3 text-gray-400" />;
+    return <Minus className='w-3 h-3 text-gray-400' />;
   };
 
   if (!isSupported) {
     return (
       <Card className={`p-4 ${className}`}>
-        <div className="text-sm text-muted-foreground">
+        <div className='text-sm text-muted-foreground'>
           Performance monitoring not supported in this browser
         </div>
       </Card>
@@ -110,21 +110,21 @@ export function PerformanceDashboard({ className, compact = false }: Performance
           setIsExpanded(!isExpanded);
         }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
             <div className={`w-2 h-2 rounded-full ${getScoreColor(performanceScore)}`} />
-            <span className="text-sm font-medium">Performance</span>
+            <span className='text-sm font-medium'>Performance</span>
           </div>
-          <Badge variant="outline" className="text-xs">
+          <Badge variant='outline' className='text-xs'>
             {getScoreText(performanceScore)}
           </Badge>
         </div>
         {isExpanded && (
-          <div className="mt-3 space-y-2">
+          <div className='mt-3 space-y-2'>
             {Object.entries(formattedMetrics).map(([key, value]) => (
-              <div key={key} className="flex justify-between text-xs">
-                <span className="text-muted-foreground">{key}:</span>
-                <span className="font-mono">{value}</span>
+              <div key={key} className='flex justify-between text-xs'>
+                <span className='text-muted-foreground'>{key}:</span>
+                <span className='font-mono'>{value}</span>
               </div>
             ))}
           </div>
@@ -135,10 +135,10 @@ export function PerformanceDashboard({ className, compact = false }: Performance
 
   return (
     <Card className={`p-6 ${className}`}>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Activity className="w-5 h-5" />
+      <div className='space-y-6'>
+        <div className='flex items-center justify-between'>
+          <h3 className='text-lg font-semibold flex items-center gap-2'>
+            <Activity className='w-5 h-5' />
             Core Web Vitals Dashboard
           </h3>
           <Badge className={`${getScoreColor(performanceScore)} text-white`}>
@@ -146,7 +146,7 @@ export function PerformanceDashboard({ className, compact = false }: Performance
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {Object.entries(formattedMetrics).map(([key, value]) => {
             const isMeasured = value !== "Not measured";
             const numericValue = isMeasured ? parseFloat(value.replace(/[^\d.]/g, "")) : 0;
@@ -172,10 +172,10 @@ export function PerformanceDashboard({ className, compact = false }: Performance
             }
 
             return (
-              <div key={key} className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">{key}</span>
-                  <div className="flex items-center gap-2">
+              <div key={key} className='space-y-3'>
+                <div className='flex justify-between items-center'>
+                  <span className='text-sm font-medium'>{key}</span>
+                  <div className='flex items-center gap-2'>
                     {getTrendIcon(key, value)}
                     <span className={`text-sm font-mono ${color}`}>{value}</span>
                   </div>
@@ -183,8 +183,8 @@ export function PerformanceDashboard({ className, compact = false }: Performance
 
                 {isMeasured && (
                   <>
-                    <Progress value={progressValue} className="h-2" />
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                    <Progress value={progressValue} className='h-2' />
+                    <div className='flex justify-between text-xs text-muted-foreground'>
                       <span>Current: {value}</span>
                       <span>
                         Target: {key.includes("CLS") ? `< ${targetValue}` : `< ${targetValue}ms`}
@@ -194,40 +194,40 @@ export function PerformanceDashboard({ className, compact = false }: Performance
                 )}
 
                 {!isMeasured && (
-                  <div className="text-xs text-muted-foreground">Waiting for measurement...</div>
+                  <div className='text-xs text-muted-foreground'>Waiting for measurement...</div>
                 )}
               </div>
             );
           })}
         </div>
 
-        <div className="border-t pt-4">
-          <div className="text-xs text-muted-foreground space-y-2">
-            <p className="font-medium text-foreground">📊 Core Web Vitals Explained:</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className='border-t pt-4'>
+          <div className='text-xs text-muted-foreground space-y-2'>
+            <p className='font-medium text-foreground'>📊 Core Web Vitals Explained:</p>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <p className="font-medium text-cyan-400">Largest Contentful Paint (LCP)</p>
+                <p className='font-medium text-cyan-400'>Largest Contentful Paint (LCP)</p>
                 <p>Measures loading performance. Target: &lt; 2.5s</p>
               </div>
               <div>
-                <p className="font-medium text-cyan-400">Cumulative Layout Shift (CLS)</p>
+                <p className='font-medium text-cyan-400'>Cumulative Layout Shift (CLS)</p>
                 <p>Measures visual stability. Target: &lt; 0.1</p>
               </div>
               <div>
-                <p className="font-medium text-cyan-400">First Contentful Paint (FCP)</p>
+                <p className='font-medium text-cyan-400'>First Contentful Paint (FCP)</p>
                 <p>Measures perceived load speed. Target: &lt; 1.8s</p>
               </div>
               <div>
-                <p className="font-medium text-cyan-400">Time to First Byte (TTFB)</p>
+                <p className='font-medium text-cyan-400'>Time to First Byte (TTFB)</p>
                 <p>Measures server response time. Target: &lt; 800ms</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t pt-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Activity className="w-3 h-3" />
+        <div className='border-t pt-4'>
+          <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+            <Activity className='w-3 h-3' />
             <span>
               Real-time monitoring active • Last updated: {new Date().toLocaleTimeString()}
             </span>

@@ -88,8 +88,8 @@ function ProjectSphere({
             transition: "opacity 0.3s ease",
           }}
         >
-          <div className="text-center">
-            <h3 className="text-white font-bold text-sm bg-black/50 px-2 py-1 rounded">
+          <div className='text-center'>
+            <h3 className='text-white font-bold text-sm bg-black/50 px-2 py-1 rounded'>
               {project.title}
             </h3>
           </div>
@@ -144,7 +144,7 @@ function TechOrb({
 
   return (
     <Box ref={orbRef} args={[0.1, 0.1, 0.1]}>
-      <meshStandardMaterial color="#00ff88" emissive="#00ff88" emissiveIntensity={0.3} />
+      <meshStandardMaterial color='#00ff88' emissive='#00ff88' emissiveIntensity={0.3} />
       <Html
         position={[0, 0.2, 0]}
         center
@@ -208,7 +208,7 @@ function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, "class
       {/* Background elements */}
       <mesh position={[0, 0, -10]}>
         <planeGeometry args={[50, 50]} />
-        <meshBasicMaterial color="#000011" transparent opacity={0.3} />
+        <meshBasicMaterial color='#000011' transparent opacity={0.3} />
       </mesh>
     </>
   );
@@ -238,7 +238,7 @@ export function Interactive3DDemo({ projects, className, onProjectClick }: Inter
       </Canvas>
 
       {/* Instructions overlay */}
-      <div className="absolute bottom-4 left-4 text-white/70 text-sm">
+      <div className='absolute bottom-4 left-4 text-white/70 text-sm'>
         <p>🖱️ Click and drag to rotate • 🔍 Scroll to zoom • 🎯 Click spheres to interact</p>
       </div>
     </div>

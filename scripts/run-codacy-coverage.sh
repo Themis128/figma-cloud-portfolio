@@ -6,19 +6,15 @@
 echo "🚀 Running Codacy Coverage Reporter"
 echo "====================================="
 
-# Set Codacy environment variables
-export CODACY_API_TOKEN="mJb73g9iJzu51wQ6JRC"
-export CODACY_PROJECT_TOKEN="a88486da551443bf83db6d40385e4085"
-export CODACY_ORGANIZATION_PROVIDER="gh"
-export CODACY_USERNAME="Themis128"
-export CODACY_PROJECT_NAME="figma-cloud-portfolio"
-
-echo "📋 Environment variables set:"
-echo "  CODACY_API_TOKEN: ${CODACY_API_TOKEN}"
-echo "  CODACY_PROJECT_TOKEN: ${CODACY_PROJECT_TOKEN}"
-echo "  CODACY_ORGANIZATION_PROVIDER: ${CODACY_ORGANIZATION_PROVIDER}"
-echo "  CODACY_USERNAME: ${CODACY_USERNAME}"
-echo "  CODACY_PROJECT_NAME: ${CODACY_PROJECT_NAME}"
+# Codacy environment variables must be provided by CI or local env
+echo "📋 Using Codacy environment variables (do not hard-code tokens in scripts)"
+for v in CODACY_API_TOKEN CODACY_PROJECT_TOKEN CODACY_ORGANIZATION_PROVIDER CODACY_USERNAME CODACY_PROJECT_NAME; do
+    if [ -z "${!v}" ]; then
+        echo "  ⚠️  $v: NOT SET"
+    else
+        echo "  ✅ $v: set"
+    fi
+done
 echo ""
 
 # Verify environment variables are set

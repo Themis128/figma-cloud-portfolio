@@ -45,24 +45,24 @@ export function RealtimeTest() {
   };
 
   return (
-    <div className="space-y-4 p-4">
+    <div className='space-y-4 p-4'>
       <Card>
         <CardHeader>
           <CardTitle>WebSocket Connection Test</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-2">
+        <CardContent className='space-y-4'>
+          <div className='flex items-center gap-2'>
             <Badge variant={isConnected ? "default" : "destructive"}>
               {isConnected ? "Connected" : "Disconnected"}
             </Badge>
-            {connectionError && <span className="text-sm text-red-500">{connectionError}</span>}
+            {connectionError && <span className='text-sm text-red-500'>{connectionError}</span>}
           </div>
 
           <div>
-            <h3 className="text-sm font-medium mb-2">Online Users ({presence.length})</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className='text-sm font-medium mb-2'>Online Users ({presence.length})</h3>
+            <div className='flex flex-wrap gap-2'>
               {presence.map((user) => (
-                <Badge key={user.id} variant="outline">
+                <Badge key={user.id} variant='outline'>
                   {user.name || user.id}
                 </Badge>
               ))}
@@ -75,37 +75,37 @@ export function RealtimeTest() {
         <CardHeader>
           <CardTitle>Typing Indicators</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className='space-y-4'>
           <div>
-            <label htmlFor="room-id" className="text-sm font-medium">
+            <label htmlFor='room-id' className='text-sm font-medium'>
               Room ID
             </label>
             <Input
-              id="room-id"
+              id='room-id'
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
-              placeholder="Enter room ID"
+              placeholder='Enter room ID'
             />
           </div>
 
           <div>
-            <label htmlFor="test-typing" className="text-sm font-medium">
+            <label htmlFor='test-typing' className='text-sm font-medium'>
               Test Typing
             </label>
             <Input
-              id="test-typing"
+              id='test-typing'
               value={message}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              placeholder="Type something..."
+              placeholder='Type something...'
             />
           </div>
 
           <div>
-            <h3 className="text-sm font-medium mb-2">Currently Typing ({typingUsers.length})</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className='text-sm font-medium mb-2'>Currently Typing ({typingUsers.length})</h3>
+            <div className='flex flex-wrap gap-2'>
               {typingUsers.map((user) => (
-                <Badge key={user.userId} variant="secondary">
+                <Badge key={user.userId} variant='secondary'>
                   {user.userName || user.userId} is typing...
                 </Badge>
               ))}
@@ -118,14 +118,14 @@ export function RealtimeTest() {
         <CardHeader>
           <CardTitle>Agent Status Updates</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className='space-y-4'>
           <Button onClick={testAgentStatus}>Test Agent Status Update</Button>
 
           <div>
-            <h3 className="text-sm font-medium mb-2">Agent Statuses</h3>
-            <div className="space-y-2">
+            <h3 className='text-sm font-medium mb-2'>Agent Statuses</h3>
+            <div className='space-y-2'>
               {agentStatuses.map((status) => (
-                <div key={status.agentId} className="flex items-center gap-2">
+                <div key={status.agentId} className='flex items-center gap-2'>
                   <Badge
                     variant={
                       status.status === "running"
@@ -139,7 +139,7 @@ export function RealtimeTest() {
                   >
                     {status.agentId}: {status.status}
                   </Badge>
-                  <span className="text-xs text-gray-500">
+                  <span className='text-xs text-gray-500'>
                     {status.timestamp ? new Date(status.timestamp).toLocaleTimeString() : "N/A"}
                   </span>
                 </div>

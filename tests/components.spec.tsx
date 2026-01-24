@@ -20,7 +20,7 @@ describe("Skeleton Components", () => {
     });
 
     it("should apply custom className", () => {
-      render(<Skeleton className="custom-class" />);
+      render(<Skeleton className='custom-class' />);
       const skeleton = screen.getByTestId("skeleton");
       expect(skeleton).toHaveClass("custom-class");
     });
@@ -44,7 +44,7 @@ describe("Skeleton Components", () => {
     });
 
     it("should apply custom className", () => {
-      render(<SkeletonText className="custom-text" />);
+      render(<SkeletonText className='custom-text' />);
       const skeleton = screen.getByTestId("skeleton");
       expect(skeleton).toHaveClass("custom-text");
     });
@@ -62,7 +62,7 @@ describe("Skeleton Components", () => {
     });
 
     it("should apply custom className", () => {
-      render(<SkeletonCard className="custom-card" />);
+      render(<SkeletonCard className='custom-card' />);
       const card = screen.getByTestId("skeleton-card");
       expect(card).toHaveClass("custom-card");
     });
@@ -70,25 +70,25 @@ describe("Skeleton Components", () => {
 
   describe("SkeletonAvatar", () => {
     it("should render small avatar", () => {
-      render(<SkeletonAvatar size="sm" />);
+      render(<SkeletonAvatar size='sm' />);
       const avatar = screen.getByTestId("skeleton");
       expect(avatar).toHaveClass("rounded-full", "h-8", "w-8");
     });
 
     it("should render medium avatar", () => {
-      render(<SkeletonAvatar size="md" />);
+      render(<SkeletonAvatar size='md' />);
       const avatar = screen.getByTestId("skeleton");
       expect(avatar).toHaveClass("rounded-full", "h-12", "w-12");
     });
 
     it("should render large avatar", () => {
-      render(<SkeletonAvatar size="lg" />);
+      render(<SkeletonAvatar size='lg' />);
       const avatar = screen.getByTestId("skeleton");
       expect(avatar).toHaveClass("rounded-full", "h-16", "w-16");
     });
 
     it("should apply custom className", () => {
-      render(<SkeletonAvatar className="custom-avatar" />);
+      render(<SkeletonAvatar className='custom-avatar' />);
       const avatar = screen.getByTestId("skeleton");
       expect(avatar).toHaveClass("custom-avatar");
     });
@@ -102,7 +102,7 @@ describe("Skeleton Components", () => {
     });
 
     it("should apply custom className", () => {
-      render(<SkeletonButton className="custom-button" />);
+      render(<SkeletonButton className='custom-button' />);
       const button = screen.getByTestId("skeleton");
       expect(button).toHaveClass("custom-button");
     });

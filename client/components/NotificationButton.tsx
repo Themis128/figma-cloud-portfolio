@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
+// Constants for notification timing
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+const PROMPT_DELAY_MS = 45000; // Show prompt after 45 seconds
+
 export function NotificationButton() {
   const [permission, setPermission] = useState<NotificationPermission>("default");
   const [showPrompt, setShowPrompt] = useState(false);
@@ -20,8 +24,7 @@ export function NotificationButton() {
       const dismissedPrompt = localStorage.getItem("notification-prompt-dismissed");
       if (dismissedPrompt) {
         const dismissedTime = parseInt(dismissedPrompt, 10);
-        const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-        if (Date.now() - dismissedTime < oneWeek) {
+        if (Date.now() - dismissedTime < ONE_WEEK_MS) {
           setDismissed(true);
         } else {
           localStorage.removeItem("notification-prompt-dismissed");
@@ -35,7 +38,7 @@ export function NotificationButton() {
     if (permission === "default" && !dismissed && !isSubscribed && isSupported) {
       const timer = setTimeout(() => {
         setShowPrompt(true);
-      }, 45000); // Show after 45 seconds
+      }, PROMPT_DELAY_MS); // Show after 45 seconds
 
       return () => clearTimeout(timer);
     }
@@ -68,7 +71,12 @@ export function NotificationButton() {
             "You'll now receive updates from Baltzakis Themistoklis.",
           );
         } catch (error) {
-          console.error("Failed to subscribe to push notifications:", error);
+          reportError(
+            error instanceof Error ? error : new Error("Failed to subscribe to push notifications"),
+            {
+              context: "notification-subscription",
+            },
+          );
           showNotification(
             "Notifications enabled",
             "However, push notifications may not work properly.",
@@ -78,7 +86,12 @@ export function NotificationButton() {
         setShowPrompt(false);
       }
     } catch (error) {
-      console.error("Error requesting notification permission:", error);
+      reportError(
+        error instanceof Error ? error : new Error("Error requesting notification permission"),
+        {
+          context: "notification-permission-request",
+        },
+      );
     }
   };
 
@@ -116,8 +129,8 @@ export function NotificationButton() {
     return (
       <Button
         onClick={permission === "default" ? requestPermission : undefined}
-        variant="outline"
-        size="sm"
+        variant='outline'
+        size='sm'
         className={`gap-2 ${
           permission === "denied"
             ? "border-red-400/50 text-red-400 cursor-not-allowed"
@@ -126,54 +139,60 @@ export function NotificationButton() {
               : "border-cyan-400/50 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300"
         }`}
         disabled={permission === "denied"}
+        data-testid='notification-button'
       >
-        <ButtonIcon className="h-4 w-4" />
-        <span className="hidden lg:inline">{getButtonText()}</span>
+        <ButtonIcon className='h-4 w-4' />
+        <span className='hidden lg:inline'>{getButtonText()}</span>
       </Button>
     );
   }
 
   // Show full prompt
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50">
-      <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-4 shadow-2xl">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-              <Bell className="w-5 h-5 text-cyan-400" />
+    <div
+      className='fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50'
+      data-testid='notification-prompt'
+    >
+      <div className='bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-4 shadow-2xl'>
+        <div className='flex items-start gap-3'>
+          <div className='flex-shrink-0'>
+            <div className='w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center'>
+              <Bell className='w-5 h-5 text-cyan-400' />
             </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-white font-semibold text-sm mb-1">Stay Updated</h3>
-            <p className="text-slate-300 text-xs mb-3">
+          <div className='flex-1 min-w-0'>
+            <h3 className='text-white font-semibold text-sm mb-1'>Stay Updated</h3>
+            <p className='text-slate-300 text-xs mb-3'>
               Get notified about new features, updates, and important announcements from Baltzakis
               Themistoklis.
             </p>
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <Button
                 onClick={requestPermission}
-                size="sm"
-                className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-8"
+                size='sm'
+                className='bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-8'
+                data-testid='notification-button'
               >
                 Enable
               </Button>
               <Button
                 onClick={handleDismiss}
-                variant="ghost"
-                size="sm"
-                className="text-slate-400 hover:text-slate-300 text-xs px-3 py-1 h-8"
+                variant='ghost'
+                size='sm'
+                className='text-slate-400 hover:text-slate-300 text-xs px-3 py-1 h-8'
+                data-testid='dismiss-prompt'
               >
                 Not now
               </Button>
             </div>
           </div>
           <button
-            type="button"
+            type='button'
             onClick={handleDismiss}
-            className="flex-shrink-0 text-slate-400 hover:text-slate-300 p-1"
-            aria-label="Dismiss"
+            className='flex-shrink-0 text-slate-400 hover:text-slate-300 p-1'
+            aria-label='Dismiss'
           >
-            <X className="w-4 h-4" />
+            <X className='w-4 h-4' />
           </button>
         </div>
       </div>

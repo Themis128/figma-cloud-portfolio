@@ -5,8 +5,10 @@
   "description": "Modern portfolio built with Next.js 16, React 19, and TypeScript",
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:legacy": "next dev",
     "build": "next build",
     "build:turbopack": "next build --turbopack",
+    "build:analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -14,7 +16,12 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "analyze": "ANALYZE=true next build",
+    "test:e2e:ui": "playwright test --ui",
+    "test:watch": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean": "rm -rf .next out dist",
+    "clean:all": "rm -rf .next out dist node_modules .pnpm-store",
     "postinstall": "prisma generate || true"
   },
   "dependencies": {

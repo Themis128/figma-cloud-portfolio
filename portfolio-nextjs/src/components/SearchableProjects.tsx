@@ -190,33 +190,33 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
       {/* Search and Filter Controls */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <Search className="h-5 w-5 text-blue-600" />
+          <CardTitle className='flex items-center gap-3'>
+            <Search className='h-5 w-5 text-blue-600' />
             Find Projects
           </CardTitle>
           <CardDescription>
             Search through {sampleProjects.length} projects by title, description, or technologies
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className='space-y-4'>
           {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <div className='relative'>
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
             <Input
-              placeholder="Search projects..."
+              placeholder='Search projects...'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className='pl-10'
             />
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-2">
+          <div className='flex flex-wrap gap-2'>
             {categories.map((category) => (
               <Badge
                 key={category.key}
                 variant={selectedCategory === category.key ? "default" : "outline"}
-                className="cursor-pointer hover:bg-gray-100"
+                className='cursor-pointer hover:bg-gray-100'
                 onClick={() => setSelectedCategory(category.key)}
               >
                 {category.label} ({category.count})
@@ -225,108 +225,108 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
           </div>
 
           {/* Sort Options */}
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Filter className="h-4 w-4" />
+          <div className='flex items-center gap-2 text-sm text-gray-600'>
+            <Filter className='h-4 w-4' />
             <span>Sort by:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "year" | "title")}
-              className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className='border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
             >
-              <option value="year">Year</option>
-              <option value="title">Title</option>
+              <option value='year'>Year</option>
+              <option value='title'>Title</option>
             </select>
           </div>
         </CardContent>
       </Card>
 
       {/* Results */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">
+      <div className='space-y-4'>
+        <div className='flex items-center justify-between'>
+          <h2 className='text-xl font-semibold'>
             {filteredProjects.length} Project{filteredProjects.length !== 1 ? "s" : ""} Found
           </h2>
           {deferredSearchQuery && (
-            <p className="text-sm text-gray-600">Showing results for "{deferredSearchQuery}"</p>
+            <p className='text-sm text-gray-600'>Showing results for "{deferredSearchQuery}"</p>
           )}
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="wait">
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          <AnimatePresence mode='wait'>
             {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
+                initial='hidden'
+                animate='visible'
+                exit='exit'
                 variants={motionVariants}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="h-full"
+                className='h-full'
               >
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <div className="relative overflow-hidden">
+                <Card className='h-full hover:shadow-lg transition-shadow duration-300'>
+                  <div className='relative overflow-hidden'>
                     {project.featured && (
-                      <Badge className="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                      <Badge className='absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white'>
                         Featured
                       </Badge>
                     )}
-                    <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                      <Code className="h-16 w-16 text-gray-400" />
+                    <div className='aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center'>
+                      <Code className='h-16 w-16 text-gray-400' />
                     </div>
                   </div>
 
                   <CardHeader>
-                    <div className="flex items-center justify-between">
+                    <div className='flex items-center justify-between'>
                       <Badge className={categoryColors[project.category]}>
                         {React.createElement(categoryIcons[project.category], {
                           className: "h-3 w-3 mr-1",
                         })}
                         {project.category}
                       </Badge>
-                      <span className="text-sm text-gray-500">{project.year}</span>
+                      <span className='text-sm text-gray-500'>{project.year}</span>
                     </div>
-                    <CardTitle className="line-clamp-2">{project.title}</CardTitle>
+                    <CardTitle className='line-clamp-2'>{project.title}</CardTitle>
                   </CardHeader>
 
-                  <CardContent className="space-y-4">
-                    <CardDescription className="line-clamp-3">
+                  <CardContent className='space-y-4'>
+                    <CardDescription className='line-clamp-3'>
                       {project.description}
                     </CardDescription>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className='flex flex-wrap gap-2'>
                       {project.technologies.slice(0, 4).map((tech) => (
-                        <Badge key={tech} variant="secondary" className="text-xs">
+                        <Badge key={tech} variant='secondary' className='text-xs'>
                           {tech}
                         </Badge>
                       ))}
                       {project.technologies.length > 4 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant='secondary' className='text-xs'>
                           +{project.technologies.length - 4}
                         </Badge>
                       )}
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className='flex gap-2'>
                       {project.demoUrl && (
                         <a
                           href={project.demoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors text-sm'
                         >
-                          <ExternalLink className="h-3 w-3" />
+                          <ExternalLink className='h-3 w-3' />
                           Live Demo
                         </a>
                       )}
                       {project.githubUrl && (
                         <a
                           href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm'
                         >
-                          <Github className="h-3 w-3" />
+                          <Github className='h-3 w-3' />
                           Code
                         </a>
                       )}
@@ -334,12 +334,12 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
 
                     {/* Link Previews */}
                     {(project.demoUrl || project.githubUrl) && (
-                      <div className="space-y-2 pt-2 border-t">
+                      <div className='space-y-2 pt-2 border-t'>
                         {project.demoUrl && (
-                          <LinkPreview url={project.demoUrl} compact className="text-xs" />
+                          <LinkPreview url={project.demoUrl} compact className='text-xs' />
                         )}
                         {project.githubUrl && (
-                          <LinkPreview url={project.githubUrl} compact className="text-xs" />
+                          <LinkPreview url={project.githubUrl} compact className='text-xs' />
                         )}
                       </div>
                     )}
@@ -354,13 +354,13 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-12"
+            className='text-center py-12'
           >
-            <div className="text-gray-400 mb-4">
-              <Search className="h-16 w-16 mx-auto" />
+            <div className='text-gray-400 mb-4'>
+              <Search className='h-16 w-16 mx-auto' />
             </div>
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">No projects found</h3>
-            <p className="text-gray-500">
+            <h3 className='text-lg font-semibold text-gray-600 mb-2'>No projects found</h3>
+            <p className='text-gray-500'>
               Try adjusting your search terms or filters to find what you're looking for.
             </p>
           </motion.div>

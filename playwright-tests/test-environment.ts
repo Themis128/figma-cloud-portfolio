@@ -54,10 +54,11 @@ export async function startBackendServer(): Promise<void> {
  */
 export async function startFrontendServer(): Promise<void> {
   console.log("🌐 Starting frontend server...");
-  frontendProcess = spawn("pnpm", ["dev"], {
+  frontendProcess = spawn("scripts\\unset-pnpm-env.bat", ["pnpm", "dev"], {
     stdio: ["pipe", "pipe", "pipe"],
     cwd: process.cwd(),
     detached: false,
+    shell: true,
   });
 
   // Wait for frontend to start
@@ -72,7 +73,7 @@ export async function startFrontendServer(): Promise<void> {
       if (
         output.includes("ready in") ||
         output.includes("Local:") ||
-        output.includes("http://localhost:8081")
+        output.includes("http://localhost:8082")
       ) {
         clearTimeout(timeout);
         resolve(true);

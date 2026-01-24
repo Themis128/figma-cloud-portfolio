@@ -127,48 +127,48 @@ const AccessibilityEnhancer: React.FC = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-24 right-6 z-50">
+      <div className='fixed bottom-24 right-6 z-50'>
         <Button
           onClick={() => setIsOpen(true)}
-          variant="outline"
-          className="rounded-full w-14 h-14 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-          aria-label="Accessibility Settings"
+          variant='outline'
+          className='rounded-full w-14 h-14 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700'
+          aria-label='Accessibility Settings'
         >
-          <Settings className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+          <Settings className='h-6 w-6 text-gray-600 dark:text-gray-300' />
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
+    <div className='fixed bottom-6 right-6 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50'>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-            <Contrast className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+      <div className='flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700'>
+        <div className='flex items-center space-x-3'>
+          <div className='w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center'>
+            <Contrast className='h-4 w-4 text-blue-600 dark:text-blue-300' />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white">Accessibility</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Customize your experience</p>
+            <h3 className='font-semibold text-gray-900 dark:text-white'>Accessibility</h3>
+            <p className='text-xs text-gray-500 dark:text-gray-400'>Customize your experience</p>
           </div>
         </div>
-        <div className="flex space-x-2">
+        <div className='flex space-x-2'>
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={resetSettings}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            aria-label="Reset Settings"
+            className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+            aria-label='Reset Settings'
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className='h-4 w-4' />
           </Button>
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => setIsOpen(false)}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            aria-label="Close"
+            className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+            aria-label='Close'
           >
             ×
           </Button>
@@ -176,69 +176,69 @@ const AccessibilityEnhancer: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6 max-h-96 overflow-y-auto">
+      <div className='p-4 space-y-6 max-h-96 overflow-y-auto'>
         {/* Font Size */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="font-size" className="flex items-center space-x-2">
-              <Text className="h-4 w-4" />
+        <div className='space-y-3'>
+          <div className='flex items-center justify-between'>
+            <Label htmlFor='font-size' className='flex items-center space-x-2'>
+              <Text className='h-4 w-4' />
               <span>Font Size</span>
             </Label>
-            <div className="flex space-x-2 text-sm">
+            <div className='flex space-x-2 text-sm'>
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={decreaseFontSize}
                 disabled={settings.fontSize <= 80}
-                className="px-2"
+                className='px-2'
               >
                 A-
               </Button>
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={increaseFontSize}
                 disabled={settings.fontSize >= 150}
-                className="px-2"
+                className='px-2'
               >
                 A+
               </Button>
             </div>
           </div>
           <Slider
-            id="font-size"
+            id='font-size'
             min={80}
             max={150}
             step={10}
             value={[settings.fontSize]}
             onValueChange={(value) => updateSetting("fontSize", value[0])}
-            className="w-full"
+            className='w-full'
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
+          <p className='text-xs text-gray-500 dark:text-gray-400 text-right'>
             {settings.fontSize}%
           </p>
         </div>
 
         {/* Contrast */}
-        <div className="space-y-3">
-          <Label className="flex items-center space-x-2">
-            <Contrast className="h-4 w-4" />
+        <div className='space-y-3'>
+          <Label className='flex items-center space-x-2'>
+            <Contrast className='h-4 w-4' />
             <span>Contrast</span>
           </Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className='grid grid-cols-2 gap-2'>
             <Button
               variant={settings.contrast === "normal" ? "default" : "outline"}
-              size="sm"
+              size='sm'
               onClick={() => updateSetting("contrast", "normal")}
-              className="justify-start"
+              className='justify-start'
             >
               Normal
             </Button>
             <Button
               variant={settings.contrast === "high" ? "default" : "outline"}
-              size="sm"
+              size='sm'
               onClick={() => updateSetting("contrast", "high")}
-              className="justify-start"
+              className='justify-start'
             >
               High Contrast
             </Button>
@@ -246,98 +246,98 @@ const AccessibilityEnhancer: React.FC = () => {
         </div>
 
         {/* Animations */}
-        <div className="space-y-3">
-          <Label className="flex items-center space-x-2">
-            <Monitor className="h-4 w-4" />
+        <div className='space-y-3'>
+          <Label className='flex items-center space-x-2'>
+            <Monitor className='h-4 w-4' />
             <span>Animations</span>
           </Label>
           <Toggle
             pressed={settings.animations}
             onPressedChange={(pressed) => updateSetting("animations", pressed)}
-            className="w-full justify-between"
+            className='w-full justify-between'
           >
-            <span className="text-sm">Enable smooth transitions</span>
+            <span className='text-sm'>Enable smooth transitions</span>
             {settings.animations ? (
-              <Volume2 className="h-4 w-4" />
+              <Volume2 className='h-4 w-4' />
             ) : (
-              <VolumeX className="h-4 w-4" />
+              <VolumeX className='h-4 w-4' />
             )}
           </Toggle>
         </div>
 
         {/* Focus Indicators */}
-        <div className="space-y-3">
-          <Label className="flex items-center space-x-2">
-            <Eye className="h-4 w-4" />
+        <div className='space-y-3'>
+          <Label className='flex items-center space-x-2'>
+            <Eye className='h-4 w-4' />
             <span>Focus Indicators</span>
           </Label>
           <Toggle
             pressed={settings.focusIndicator}
             onPressedChange={(pressed) => updateSetting("focusIndicator", pressed)}
-            className="w-full justify-between"
+            className='w-full justify-between'
           >
-            <span className="text-sm">Show focus outlines</span>
-            {settings.focusIndicator ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+            <span className='text-sm'>Show focus outlines</span>
+            {settings.focusIndicator ? <Eye className='h-4 w-4' /> : <EyeOff className='h-4 w-4' />}
           </Toggle>
         </div>
 
         {/* Screen Reader */}
-        <div className="space-y-3">
-          <Label className="flex items-center space-x-2">
-            <HelpCircle className="h-4 w-4" />
+        <div className='space-y-3'>
+          <Label className='flex items-center space-x-2'>
+            <HelpCircle className='h-4 w-4' />
             <span>Screen Reader</span>
           </Label>
           <Toggle
             pressed={settings.screenReader}
             onPressedChange={(pressed) => updateSetting("screenReader", pressed)}
-            className="w-full justify-between"
+            className='w-full justify-between'
           >
-            <span className="text-sm">Enhanced screen reader support</span>
+            <span className='text-sm'>Enhanced screen reader support</span>
             {settings.screenReader ? (
-              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">ON</span>
+              <span className='text-xs bg-green-100 text-green-800 px-2 py-1 rounded'>ON</span>
             ) : (
-              <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">OFF</span>
+              <span className='text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded'>OFF</span>
             )}
           </Toggle>
         </div>
 
         {/* Keyboard Navigation */}
-        <div className="space-y-3">
-          <Label className="flex items-center space-x-2">
-            <Text className="h-4 w-4" />
+        <div className='space-y-3'>
+          <Label className='flex items-center space-x-2'>
+            <Text className='h-4 w-4' />
             <span>Keyboard Navigation</span>
           </Label>
           <Toggle
             pressed={settings.keyboardNavigation}
             onPressedChange={(pressed) => updateSetting("keyboardNavigation", pressed)}
-            className="w-full justify-between"
+            className='w-full justify-between'
           >
-            <span className="text-sm">Tab navigation enhancements</span>
+            <span className='text-sm'>Tab navigation enhancements</span>
             {settings.keyboardNavigation ? (
-              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">ON</span>
+              <span className='text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded'>ON</span>
             ) : (
-              <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">OFF</span>
+              <span className='text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded'>OFF</span>
             )}
           </Toggle>
         </div>
 
         {/* Quick Actions */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-400">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+        <div className='pt-4 border-t border-gray-200 dark:border-gray-700'>
+          <div className='grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-400'>
+            <div className='flex items-center space-x-2'>
+              <span className='w-2 h-2 bg-blue-500 rounded-full'></span>
               <span>High contrast mode</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <div className='flex items-center space-x-2'>
+              <span className='w-2 h-2 bg-green-500 rounded-full'></span>
               <span>Screen reader friendly</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+            <div className='flex items-center space-x-2'>
+              <span className='w-2 h-2 bg-purple-500 rounded-full'></span>
               <span>Keyboard navigation</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+            <div className='flex items-center space-x-2'>
+              <span className='w-2 h-2 bg-orange-500 rounded-full'></span>
               <span>Reduced motion</span>
             </div>
           </div>

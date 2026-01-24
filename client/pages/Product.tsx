@@ -86,69 +86,69 @@ export default function Product() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden">
+    <div className='min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden'>
       <CircuitBackground />
       <Navigation />
 
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-6 md:px-12 lg:px-20 py-20">
+      <div className='relative z-10 min-h-screen'>
+        <div className='container mx-auto px-6 md:px-12 lg:px-20 py-20'>
           {/* Header */}
-          <div className="max-w-4xl mx-auto text-center space-y-6 mb-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wider">
+          <div className='max-w-4xl mx-auto text-center space-y-6 mb-16'>
+            <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wider'>
               Professional Experience
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full" />
-            <p className="text-white/70 text-lg leading-relaxed">
+            <div className='w-24 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full' />
+            <p className='text-white/70 text-lg leading-relaxed'>
               15+ years of IT expertise across cloud architecture, cybersecurity, and enterprise
               solutions.
             </p>
           </div>
 
           {/* Experience Timeline */}
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className='max-w-4xl mx-auto space-y-8'>
             {experiences.map((exp, _index) => (
               <div
                 key={`${exp.company}-${exp.period}`}
-                className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group"
+                className='bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group'
               >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-6">
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-white group-hover:text-cyan-100 transition-colors">
+                <div className='flex flex-col md:flex-row md:items-start md:justify-between mb-6'>
+                  <div className='space-y-2'>
+                    <h3 className='text-2xl font-bold text-white group-hover:text-cyan-100 transition-colors'>
                       {exp.position}
                     </h3>
-                    <div className="flex items-center gap-2 text-cyan-400 font-medium">
-                      <div className="inline-flex items-center justify-center w-8 h-8 bg-cyan-400/10 rounded-lg">
-                        <Building className="w-4 h-4" />
+                    <div className='flex items-center gap-2 text-cyan-400 font-medium'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 bg-cyan-400/10 rounded-lg'>
+                        <Building className='w-4 h-4' />
                       </div>
                       {exp.company}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 mt-4 md:mt-0 md:text-right">
-                    <div className="flex items-center gap-2 text-white/70">
-                      <div className="inline-flex items-center justify-center w-8 h-8 bg-white/5 rounded-lg">
-                        <Calendar className="w-4 h-4" />
+                  <div className='flex flex-col gap-2 mt-4 md:mt-0 md:text-right'>
+                    <div className='flex items-center gap-2 text-white/70'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 bg-white/5 rounded-lg'>
+                        <Calendar className='w-4 h-4' />
                       </div>
                       {exp.period}
                     </div>
-                    <div className="flex items-center gap-2 text-white/60">
-                      <div className="inline-flex items-center justify-center w-8 h-8 bg-white/5 rounded-lg">
-                        <MapPin className="w-4 h-4" />
+                    <div className='flex items-center gap-2 text-white/60'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 bg-white/5 rounded-lg'>
+                        <MapPin className='w-4 h-4' />
                       </div>
                       {exp.location}
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <h4 className="text-lg font-semibold text-white/90">Key Responsibilities:</h4>
-                  <ul className="space-y-3">
+                <div className='space-y-3'>
+                  <h4 className='text-lg font-semibold text-white/90'>Key Responsibilities:</h4>
+                  <ul className='space-y-3'>
                     {exp.responsibilities.map((resp, respIndex) => (
                       <li
                         key={`${exp.company}-${respIndex}`}
-                        className="flex items-start gap-3 text-white/80 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                        className='flex items-start gap-3 text-white/80 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'
                       >
-                        <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
-                        <span className="leading-relaxed">{resp}</span>
+                        <div className='w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0' />
+                        <span className='leading-relaxed'>{resp}</span>
                       </li>
                     ))}
                   </ul>
@@ -158,54 +158,54 @@ export default function Product() {
           </div>
 
           {/* Education Section */}
-          <div className="max-w-4xl mx-auto mt-16">
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-cyan-400/30 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="inline-flex items-center justify-center w-10 h-10 bg-cyan-400/10 rounded-lg">
-                  <Calendar className="w-5 h-5 text-cyan-400" />
+          <div className='max-w-4xl mx-auto mt-16'>
+            <div className='bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-cyan-400/30 transition-all duration-300'>
+              <div className='flex items-center gap-3 mb-8'>
+                <div className='inline-flex items-center justify-center w-10 h-10 bg-cyan-400/10 rounded-lg'>
+                  <Calendar className='w-5 h-5 text-cyan-400' />
                 </div>
-                <h2 className="text-3xl font-bold text-white">Education</h2>
+                <h2 className='text-3xl font-bold text-white'>Education</h2>
               </div>
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div className="p-6 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                  <h3 className="text-xl font-bold text-cyan-400 mb-4">Master's Degree</h3>
-                  <div className="text-white/80">
-                    <div className="font-medium text-lg mb-2">Data Analytics and Technologies</div>
-                    <div className="text-white/60 mb-1">University of Greater Manchester</div>
-                    <div className="text-white/60">March 2024 - March 2025</div>
+              <div className='grid md:grid-cols-2 gap-8 mb-8'>
+                <div className='p-6 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
+                  <h3 className='text-xl font-bold text-cyan-400 mb-4'>Master's Degree</h3>
+                  <div className='text-white/80'>
+                    <div className='font-medium text-lg mb-2'>Data Analytics and Technologies</div>
+                    <div className='text-white/60 mb-1'>University of Greater Manchester</div>
+                    <div className='text-white/60'>March 2024 - March 2025</div>
                   </div>
                 </div>
-                <div className="p-6 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                  <h3 className="text-xl font-bold text-cyan-400 mb-4">Bachelor's Degree</h3>
-                  <div className="text-white/80">
-                    <div className="font-medium text-lg mb-2">Computer Science</div>
-                    <div className="text-white/60 mb-1">Hellenic Open University</div>
-                    <div className="text-white/60">2014 - 2022</div>
+                <div className='p-6 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
+                  <h3 className='text-xl font-bold text-cyan-400 mb-4'>Bachelor's Degree</h3>
+                  <div className='text-white/80'>
+                    <div className='font-medium text-lg mb-2'>Computer Science</div>
+                    <div className='text-white/60 mb-1'>Hellenic Open University</div>
+                    <div className='text-white/60'>2014 - 2022</div>
                   </div>
                 </div>
               </div>
-              <div className="pt-8 border-t border-white/10">
-                <h3 className="text-xl font-bold text-cyan-400 mb-6">Additional Certifications</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0" />
-                    <span className="text-white/80 font-medium">Cisco CCNA (2021-2022)</span>
+              <div className='pt-8 border-t border-white/10'>
+                <h3 className='text-xl font-bold text-cyan-400 mb-6'>Additional Certifications</h3>
+                <div className='grid md:grid-cols-2 gap-4'>
+                  <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <span className='text-white/80 font-medium'>Cisco CCNA (2021-2022)</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0" />
-                    <span className="text-white/80 font-medium">
+                  <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <span className='text-white/80 font-medium'>
                       Cisco DevNet Associate (2023-2024)
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0" />
-                    <span className="text-white/80 font-medium">
+                  <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <span className='text-white/80 font-medium'>
                       AWS Certified Solutions Architect
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0" />
-                    <span className="text-white/80 font-medium">Android App Development</span>
+                  <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <span className='text-white/80 font-medium'>Android App Development</span>
                   </div>
                 </div>
               </div>
@@ -213,10 +213,10 @@ export default function Product() {
           </div>
 
           {/* Call to Action */}
-          <div className="text-center mt-16">
+          <div className='text-center mt-16'>
             <Link
-              to="/contact"
-              className="inline-block px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium"
+              to='/contact'
+              className='inline-block px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium'
             >
               Let's Work Together
             </Link>

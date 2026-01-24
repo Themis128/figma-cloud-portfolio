@@ -43,7 +43,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
 export function PersonStructuredData() {
   return (
     <StructuredData
-      type="Person"
+      type='Person'
       data={{
         name: "Themistoklis Baltzakis",
         alternateName: "Themis Baltzakis",
@@ -80,7 +80,7 @@ export function PersonStructuredData() {
 export function WebsiteStructuredData() {
   return (
     <StructuredData
-      type="WebSite"
+      type='WebSite'
       data={{
         name: "Themistoklis Baltzakis - Portfolio",
         description:
@@ -121,7 +121,7 @@ interface ProjectStructuredDataProps {
 export function ProjectStructuredData({ project }: ProjectStructuredDataProps) {
   return (
     <StructuredData
-      type="Project"
+      type='Project'
       data={{
         name: project.title,
         description: project.description,
@@ -159,7 +159,7 @@ interface ArticleStructuredDataProps {
 export function ArticleStructuredData({ article }: ArticleStructuredDataProps) {
   return (
     <StructuredData
-      type="Article"
+      type='Article'
       data={{
         headline: article.headline,
         description: article.description,
@@ -201,7 +201,7 @@ export function WebPageStructuredData({
 }: WebPageStructuredDataProps) {
   return (
     <StructuredData
-      type="WebPage"
+      type='WebPage'
       data={{
         name: title,
         description: description,

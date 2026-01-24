@@ -13,6 +13,9 @@ test.describe("Push Notifications", () => {
   test("should display notification button", async ({ page }) => {
     await page.goto("/");
 
+    // Wait for lazy-loaded components to appear (they load after 100ms)
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Check that notification button is visible
     await expect(page.locator('[data-testid="notification-button"]')).toBeVisible();
 
@@ -31,6 +34,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Click notification button
     await page.click('[data-testid="notification-button"]');
@@ -51,6 +57,9 @@ test.describe("Push Notifications", () => {
 
     await page.goto("/");
 
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Check button shows appropriate state for denied permission
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
     expect(buttonText).toContain("Notifications Blocked");
@@ -66,6 +75,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Check button shows appropriate state for granted permission
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
@@ -122,6 +134,9 @@ test.describe("Push Notifications", () => {
 
     await page.goto("/");
 
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Click notification button to subscribe
     await page.click('[data-testid="notification-button"]');
 
@@ -134,9 +149,9 @@ test.describe("Push Notifications", () => {
   });
 
   test("should unsubscribe from push notifications", async ({ page }) => {
-    // Mock service worker with existing subscription
+    // Mock service worker and push manager with existing subscription
     await page.addInitScript(() => {
-      // Mock service worker with existing subscription
+      // Mock service worker registration
       Object.defineProperty(window.navigator, "serviceWorker", {
         value: {
           register: () =>
@@ -174,6 +189,9 @@ test.describe("Push Notifications", () => {
 
     await page.goto("/");
 
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Click notification button to unsubscribe
     await page.click('[data-testid="notification-button"]');
 
@@ -206,6 +224,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Click notification button to send test notification
     await page.click('[data-testid="notification-button"]');
@@ -240,6 +261,9 @@ test.describe("Push Notifications", () => {
 
     await page.goto("/");
 
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Click notification button
     await page.click('[data-testid="notification-button"]');
 
@@ -272,6 +296,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Check that VAPID key is fetched
     await page.waitForTimeout(1000);
@@ -309,6 +336,9 @@ test.describe("Push Notifications", () => {
 
     await page.goto("/");
 
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Check that service worker is registered
     const swState = await page.evaluate(() => {
       return window.navigator.serviceWorker.controller ? "registered" : "not registered";
@@ -332,6 +362,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Simulate subscription
     await page.evaluate(() => {
@@ -361,6 +394,9 @@ test.describe("Push Notifications", () => {
   test("should display notification tester", async ({ page }) => {
     await page.goto("/performance");
 
+    // Wait for lazy-loaded components to appear
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
+
     // Check that notification tester is visible
     await expect(page.locator('[data-testid="push-notification-tester"]')).toBeVisible();
 
@@ -372,6 +408,9 @@ test.describe("Push Notifications", () => {
 
   test("should handle notification timing (45-second delay)", async ({ page }) => {
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Check initial state (should not show notification immediately)
     const initialPrompt = await page.locator('[data-testid="notification-prompt"]').isVisible();
@@ -393,6 +432,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Check that prompt can be dismissed
     const dismissButton = await page.locator('[data-testid="dismiss-prompt"]').isVisible();
@@ -419,6 +461,9 @@ test.describe("Push Notifications", () => {
     });
 
     await page.goto("/");
+
+    // Wait for lazy-loaded components
+    await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });
 
     // Test rich notification creation
     const notification = await page.evaluate(() => {

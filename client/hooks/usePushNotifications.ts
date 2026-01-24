@@ -27,6 +27,7 @@ export function usePushNotifications() {
       } else {
         console.error("Error fetching VAPID public key:", error);
       }
+      // Don't set an error state, just leave vapidPublicKey as null
     }
   }, []);
 

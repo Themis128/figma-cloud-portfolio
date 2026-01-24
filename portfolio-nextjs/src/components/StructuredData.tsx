@@ -54,10 +54,7 @@ export function DefaultStructuredData() {
       name: "Themistoklis Baltzakis",
       jobTitle: "Cloud Architect & Full-Stack Developer",
       url: "https://baltzakis.dev",
-      sameAs: [
-        "https://github.com/Themis128",
-        "https://linkedin.com/in/baltzakis-themis",
-      ],
+      sameAs: ["https://github.com/Themis128", "https://linkedin.com/in/baltzakis-themis"],
     },
     potentialAction: {
       "@type": "SearchAction",
@@ -76,10 +73,7 @@ export function DefaultStructuredData() {
       "Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments",
     url: "https://baltzakis.dev",
     email: "baltzakis.themis@gmail.com",
-    sameAs: [
-      "https://github.com/Themis128",
-      "https://linkedin.com/in/baltzakis-themis",
-    ],
+    sameAs: ["https://github.com/Themis128", "https://linkedin.com/in/baltzakis-themis"],
     knowsAbout: [
       "Cloud Architecture",
       "Azure AD",
