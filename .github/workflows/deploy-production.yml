@@ -43,7 +43,10 @@ jobs:
           PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
       - name: Build application
-        run: pnpm build
+        run: |
+          node scripts/build-resume.js || true
+          pnpm exec vite build
+          pnpm exec vite build --config vite.config.server.ts
         env:
           PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 

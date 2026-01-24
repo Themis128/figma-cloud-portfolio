@@ -27,7 +27,7 @@ Object.defineProperty(window, "document", { value: mockWindow.document });
 global.URL = {
   createObjectURL: vi.fn(() => "blob:test"),
   revokeObjectURL: vi.fn(),
-} as typeof URL;
+} as unknown as typeof URL;
 
 global.Blob = vi.fn().mockImplementation((content, options) => ({
   content,
@@ -226,7 +226,7 @@ describe("SitemapGenerator", () => {
   describe("escapeXml", () => {
     it("should escape XML special characters", () => {
       const generator = new SitemapGenerator();
-      const method = (generator as { escapeXml: (str: string) => string }).escapeXml.bind(
+      const method = (generator as unknown as { escapeXml: (str: string) => string }).escapeXml.bind(
         generator,
       );
 
