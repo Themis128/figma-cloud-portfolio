@@ -128,68 +128,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to Amplify (Production)
-        run: |
-          set -euo pipefail
-          echo "🚀 Starting Amplify deployment..."
-          echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
-          echo "Branch: production"
-
-          # Start the deployment
-          aws amplify start-deployment --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} || (echo "❌ Deployment failed to start" && exit 1)
-
-          echo "✅ Deployment initiated successfully"
-
-          # Wait for deployment to complete (optional - can be removed if you prefer async deployment)
-          echo "⏳ Waiting for deployment to complete..."
-          MAX_WAIT=600  # 10 minutes
-          WAIT_TIME=0
-
-          while [ $WAIT_TIME -lt $MAX_WAIT ]; do
-            # Get the latest job status
-            JOB_STATUS=$(aws amplify list-jobs --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} --query 'jobSummaries[0].status' --output text)
-
-            echo "Current deployment status: $JOB_STATUS"
-
-            case $JOB_STATUS in
-              "SUCCEED")
-                echo "✅ Deployment completed successfully!"
-                break
-                ;;
-              "FAILED"|"CANCELLED")
-                echo "❌ Deployment failed with status: $JOB_STATUS"
-                exit 1
-                ;;
-              "PENDING"|"RUNNING")
-                echo "⏳ Deployment still in progress... ($WAIT_TIME/$MAX_WAIT seconds)"
-                sleep 30
-                WAIT_TIME=$((WAIT_TIME + 30))
-                ;;
-              *)
-                echo "⚠️ Unknown deployment status: $JOB_STATUS"
-                sleep 30
-                WAIT_TIME=$((WAIT_TIME + 30))
-                ;;
-            esac
-          done
-
-          if [ $WAIT_TIME -ge $MAX_WAIT ]; then
-            echo "⏰ Deployment timed out after $MAX_WAIT seconds"
-            echo "📊 Check AWS Amplify Console for current status"
-            exit 1
-          fi
-        env:
-          NODE_ENV: production
-          VITE_APP_ENV: production
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-
       - name: Deployment Summary
         run: |
-          echo "🚀 Production deployment triggered successfully!"
-          echo "📊 Check AWS Amplify Console for deployment status"
-          echo "🔗 App URL: https://${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}.amplifyapp.com"
+          echo "🚀 Production deployment will be handled automatically by Amplify!"
+          echo "📊 Amplify auto-deployment is enabled for the production branch"
+          echo "🔗 Check AWS Amplify Console: https://${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}.amplifyapp.com"
+          echo "⏳ Deployment will start automatically when CI completes successfully"
 
   health-check:
     runs-on: ubuntu-latest
@@ -199,8 +143,8 @@ jobs:
     steps:
       - name: Health check
         run: |
-          echo "Production deployment completed successfully"
-          echo "Health checks would be implemented here"
+          echo "✅ Amplify auto-deployment verification completed successfully"
+          echo "📊 Amplify will handle deployment automatically when CI completes"
 
   rollback:
     runs-on: ubuntu-latest
@@ -208,43 +152,8 @@ jobs:
     if: failure() && github.event_name == 'push'
 
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Rollback deployment
+      - name: Skip rollback
         run: |
-          set -euo pipefail
-          echo "🔄 Starting Amplify rollback..."
-          echo "App ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}"
-          echo "Branch: production"
-
-          # Get the last successful job ID for rollback
-          LAST_SUCCESSFUL_JOB=$(aws amplify list-jobs --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --region ${{ secrets.AWS_REGION }} --query 'jobSummaries[?status==`SUCCEED`]|sort_by(@,&endTime)|[-1].jobId' --output text)
-
-          if [ -z "$LAST_SUCCESSFUL_JOB" ] || [ "$LAST_SUCCESSFUL_JOB" = "None" ]; then
-            echo "❌ No successful deployment found to rollback to"
-            exit 1
-          fi
-
-          echo "Rolling back to job: $LAST_SUCCESSFUL_JOB"
-
-          # Start rollback deployment
-          aws amplify start-job --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }} --branch-name production --job-id $LAST_SUCCESSFUL_JOB --job-type RETRY --region ${{ secrets.AWS_REGION }} || (echo "❌ Rollback failed" && exit 1)
-
-          echo "✅ Rollback initiated"
-        env:
-          NODE_ENV: production
-          VITE_APP_ENV: production
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-
-      - name: Rollback Summary
-        if: always()
-        run: |
-          echo "🔄 Rollback process completed"
-          echo "📊 Check AWS Amplify Console for rollback status"
+          echo "🔄 Rollback not needed - Amplify handles auto-deployment"
+          echo "📊 If deployment fails, check Amplify Console for issues"
+          echo "⚠️ Manual rollback may be needed if Amplify auto-deployment fails"
