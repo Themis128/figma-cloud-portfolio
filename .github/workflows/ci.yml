@@ -55,10 +55,13 @@ jobs:
 
       - name: Upload coverage to Codacy
         run: |
-          bash <(curl -Ls https://coverage.codacy.com/get.sh)
+          if [ -n "$CODACY_PROJECT_TOKEN" ]; then
+            bash <(curl -Ls https://coverage.codacy.com/get.sh)
+          else
+            echo "Codacy project token not configured, skipping coverage upload"
+          fi
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        continue-on-error: true
 
     # E2E tests are skipped in CI for now as they require a running dev server
     # They can be run locally with: pnpm dev:all && pnpm test:e2e
