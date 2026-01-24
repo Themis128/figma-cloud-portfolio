@@ -1,24 +1,14 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { lazy, Suspense } from "react";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "sonner";
-import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
-import AIAssistant from "@/components/AIAssistant";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { PageLoader } from "@/components/LoadingAnimations";
-import { PerformanceMonitor } from "@/components/PerformanceMonitor";
-import PerformanceOptimizer from "@/components/PerformanceOptimizer";
-import { PWAInstallButton } from "@/components/PWAInstallButton";
-import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
 import ResourcePreloader from "@/components/ResourcePreloader";
-import { PersonStructuredData, WebsiteStructuredData } from "@/components/StructuredData";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useViewTransition } from "@/components/ViewTransitionWrapper";
-import VoiceCommandButton from "@/components/VoiceCommandButton";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { lazy, Suspense, useEffect, useState } from "react";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster as Sonner } from "sonner";
 import Index from "./pages/Index";
 
 // Initialize View Transition styles
@@ -112,28 +102,44 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Agents = lazy(() => import("./pages/Agents"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Preload critical pages on idle
-if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-  requestIdleCallback(() => {
-    // Preload critical pages after initial render
-    import("./pages/About");
-    import("./pages/Contact");
-    import("./pages/Resume");
-  });
-}
+// Lazy load non-essential components for better initial performance
+const AccessibilityEnhancer = lazy(() => import("@/components/AccessibilityEnhancer"));
+const AIAssistant = lazy(() => import("@/components/AIAssistant"));
+const GoogleAnalytics = lazy(() => import("@/components/GoogleAnalytics"));
+const PerformanceMonitor = lazy(() => import("@/components/PerformanceMonitor"));
+const PerformanceOptimizer = lazy(() => import("@/components/PerformanceOptimizer"));
+const PWAInstallButton = lazy(() => import("@/components/PWAInstallButton"));
+const PWAUpdateNotification = lazy(() => import("@/components/PWAUpdateNotification"));
+const VoiceCommandButton = lazy(() => import("@/components/VoiceCommandButton"));
 
-// Route transition wrapper component
-const RouteTransitionWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { triggerTransition } = useViewTransition();
+// Component to lazy load non-essential components after initial render
+const LazyLoadedComponents: React.FC = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  React.useEffect(() => {
-    // Trigger view transition on route change
-    triggerTransition(() => {
-      // The actual route change happens through React Router
-    });
-  }, [triggerTransition]);
+  useEffect(() => {
+    // Load components after initial render and a short delay
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100); // Small delay to prioritize initial page render
 
-  return <>{children}</>;
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={null}>
+      <Toaster />
+      <Sonner />
+      <PWAInstallButton />
+      <PWAUpdateNotification />
+      <VoiceCommandButton />
+      <AIAssistant />
+      <AccessibilityEnhancer />
+    </Suspense>
+  );
 };
 
 const queryClient = new QueryClient();
@@ -154,32 +160,24 @@ const App = () => {
                 <PersonStructuredData />
                 <WebsiteStructuredData />
 
-                <Toaster />
-                <Sonner />
-                <PWAInstallButton />
-                <PWAUpdateNotification />
-                <VoiceCommandButton />
-                <AIAssistant />
-                <AccessibilityEnhancer />
+                <LazyLoadedComponents />
                 <BrowserRouter basename="/">
                   <GoogleAnalytics />
                   <PerformanceMonitor />
                   <Suspense fallback={<PageLoader />}>
-                    <RouteTransitionWrapper>
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/product" element={<Product />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/performance" element={<Performance />} />
-                        <Route path="/resume" element={<Resume />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/agents" element={<Agents />} />
-                        <Route path="/projects" element={<Projects />} />
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </RouteTransitionWrapper>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/product" element={<Product />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/performance" element={<Performance />} />
+                      <Route path="/resume" element={<Resume />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/agents" element={<Agents />} />
+                      <Route path="/projects" element={<Projects />} />
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
                   </Suspense>
                 </BrowserRouter>
               </TooltipProvider>
