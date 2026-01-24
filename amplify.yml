@@ -10,7 +10,8 @@ frontend:
     build:
       commands:
         - echo "Building application..."
-        - pnpm build
+        - node scripts/build-resume.js || true
+        - pnpm exec vite build
   artifacts:
     baseDirectory: dist/spa
     files:
