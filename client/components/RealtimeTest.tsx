@@ -9,6 +9,9 @@ import { useAgentRealtime } from "@/hooks/useAgentRealtime";
 import { useSocket } from "@/hooks/useSocket";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 
+// Constants for agent status testing
+const MAX_PROGRESS_PERCENTAGE = 100;
+
 export function RealtimeTest() {
   const [userId] = useState(() => `user-${Date.now()}`);
   const [userName] = useState("Test User");
@@ -41,7 +44,7 @@ export function RealtimeTest() {
   };
 
   const testAgentStatus = () => {
-    updateAgentStatus("test-agent", "running", { progress: Math.random() * 100 });
+    updateAgentStatus("test-agent", "running", { progress: Math.random() * MAX_PROGRESS_PERCENTAGE });
   };
 
   return (

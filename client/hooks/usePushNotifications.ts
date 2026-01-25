@@ -169,7 +169,8 @@ export function usePushNotifications() {
 
 // Utility function to convert VAPID key
 function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const BASE64_PADDING_SIZE = 4;
+  const padding = "=".repeat((BASE64_PADDING_SIZE - (base64String.length % BASE64_PADDING_SIZE)) % BASE64_PADDING_SIZE);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
 
   const rawData = window.atob(base64);

@@ -54,11 +54,10 @@ export async function startBackendServer(): Promise<void> {
  */
 export async function startFrontendServer(): Promise<void> {
   console.log("🌐 Starting frontend server...");
-  frontendProcess = spawn("scripts\\unset-pnpm-env.bat", ["pnpm", "dev"], {
+  frontendProcess = spawn("pnpm", ["dev"], {
     stdio: ["pipe", "pipe", "pipe"],
     cwd: process.cwd(),
     detached: false,
-    shell: true,
   });
 
   // Wait for frontend to start

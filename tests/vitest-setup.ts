@@ -1,6 +1,9 @@
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
+// Constants for mock implementations
+const MOCK_TIME_REMAINING_MS = 50;
+
 // Don't mock React - let it work normally
 // Only mock specific modules that need to be controlled
 
@@ -60,7 +63,7 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 
 // React 19 specific mocks
 global.requestIdleCallback = vi.fn().mockImplementation((callback) => {
-  return setTimeout(() => callback({ didTimeout: false, timeRemaining: () => 50 }), 0);
+  return setTimeout(() => callback({ didTimeout: false, timeRemaining: () => MOCK_TIME_REMAINING_MS }), 0);
 });
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {

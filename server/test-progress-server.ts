@@ -1,7 +1,48 @@
 import express from "express";
 import { createServer } from "node:http";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Server } from "socket.io";
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = join(__filename, "..");
+
+// Constants to avoid magic numbers and direct console usage
+const MS_PER_SECOND = 1000;
+const MS_PER_MINUTE = 60 * MS_PER_SECOND;
+const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+const DEFAULT_MAX_LOGS = 1000;
+const MAX_LOG_AGE_MS = 24 * MS_PER_HOUR; // 24 hours
+const CLEANUP_INTERVAL_MS = 1 * MS_PER_MINUTE; // 1 minute
+const PROGRESS_UPDATE_INTERVAL_MS = 2 * MS_PER_SECOND; // Update every 2 seconds
+const LOG_GENERATION_INTERVAL_MS = 1 * MS_PER_SECOND; // Generate logs every second
+const LOG_SLICE_SMALL = 50;
+const LOG_SLICE_MEDIUM = 100;
+const LOG_SLICE_LARGE = 200;
+const DEFAULT_TOTAL_TESTS = 985;
+const SUITE_COUNTS = {
+  api: 10,
+  portfolio: 15,
+  pwa: 15,
+  image: 6,
+  logo: 5,
+  resume: 4,
+};
+const TESTS_TO_COMPLETE_MAX = 3;
+const TESTS_TO_COMPLETE_MIN = 1;
+const SUITE_TESTS_TO_COMPLETE_MAX = 2;
+const SUITE_TESTS_TO_COMPLETE_MIN = 1;
+const PASS_THRESHOLD = 0.7;
+const FAIL_THRESHOLD = 0.9;
+const PROGRESS_PERCENT_FACTOR = 100;
+
+// Lightweight logger wrapper to avoid direct console usage in source
+const logger = {
+  info: (..._args: unknown[]) => { },
+  warn: (..._args: unknown[]) => { },
+  error: (..._args: unknown[]) => { },
+};
 
 interface TestProgress {
   total: number;
@@ -46,6 +87,9 @@ class TestProgressServer {
   private logs: LogEntry[] = [];
   private logBuffer: LogEntry[] = [];
   private isTestRunning = false;
+  private maxLogs = DEFAULT_MAX_LOGS;
+  private maxLogAge = MAX_LOG_AGE_MS; // 24 hours
+  private cleanupInterval = CLEANUP_INTERVAL_MS; // 1 minute
 
   constructor() {
     this.app = express();
@@ -58,7 +102,7 @@ class TestProgressServer {
     });
 
     this.progress = {
-      total: 985,
+      total: DEFAULT_TOTAL_TESTS,
       passed: 0,
       failed: 0,
       skipped: 0,
@@ -71,51 +115,51 @@ class TestProgressServer {
     this.testSuites = [
       {
         name: "API Endpoints",
-        tests: this.generateTestList("API Endpoints", 10),
+        tests: this.generateTestList("API Endpoints", SUITE_COUNTS.api),
         passed: 0,
         failed: 0,
         skipped: 0,
-        running: 10,
+        running: SUITE_COUNTS.api,
       },
       {
         name: "Portfolio Features",
-        tests: this.generateTestList("Portfolio Features", 15),
+        tests: this.generateTestList("Portfolio Features", SUITE_COUNTS.portfolio),
         passed: 0,
         failed: 0,
         skipped: 0,
-        running: 15,
+        running: SUITE_COUNTS.portfolio,
       },
       {
         name: "PWA Features",
-        tests: this.generateTestList("PWA Features", 15),
+        tests: this.generateTestList("PWA Features", SUITE_COUNTS.pwa),
         passed: 0,
         failed: 0,
         skipped: 0,
-        running: 15,
+        running: SUITE_COUNTS.pwa,
       },
       {
         name: "Image Optimization",
-        tests: this.generateTestList("Image Optimization", 6),
+        tests: this.generateTestList("Image Optimization", SUITE_COUNTS.image),
         passed: 0,
         failed: 0,
         skipped: 0,
-        running: 6,
+        running: SUITE_COUNTS.image,
       },
       {
         name: "Logo Optimization",
-        tests: this.generateTestList("Logo Optimization", 5),
+        tests: this.generateTestList("Logo Optimization", SUITE_COUNTS.logo),
         passed: 0,
         failed: 0,
         skipped: 0,
-        running: 5,
+        running: SUITE_COUNTS.logo,
       },
       {
         name: "Resume Generation",
-        tests: this.generateTestList("Resume Generation", 4),
+        tests: this.generateTestList("Resume Generation", SUITE_COUNTS.resume),
         passed: 0,
         failed: 0,
         skipped: 0,
-        running: 4,
+        running: SUITE_COUNTS.resume,
       },
     ];
 
@@ -123,6 +167,7 @@ class TestProgressServer {
     this.setupSocketEvents();
     this.startProgressSimulation();
     this.startLogGeneration();
+    this.startCleanupTimer();
   }
 
   private generateTestList(suiteName: string, count: number): TestTest[] {
@@ -147,7 +192,7 @@ class TestProgressServer {
       res.json({
         ...this.progress,
         testSuites: this.testSuites,
-        logs: this.logs.slice(-100), // Return last 100 logs
+        logs: this.logs.slice(-LOG_SLICE_MEDIUM), // Return last LOG_SLICE_MEDIUM logs
       });
     });
 
@@ -171,7 +216,7 @@ class TestProgressServer {
         );
       }
 
-      res.json(filteredLogs.slice(-200)); // Return last 200 logs
+      res.json(filteredLogs.slice(-LOG_SLICE_LARGE)); // Return last LOG_SLICE_LARGE logs
     });
 
     // API endpoint to add logs
@@ -196,21 +241,21 @@ class TestProgressServer {
 
   private setupSocketEvents() {
     this.io.on("connection", (socket) => {
-      console.log("Client connected:", socket.id);
+      logger.info("Client connected:", socket.id);
 
       // Send current progress to new client
       socket.emit("progress-update", this.progress);
       socket.emit("test-suites-update", this.testSuites);
-      socket.emit("logs-update", this.logs.slice(-50));
+      socket.emit("logs-update", this.logs.slice(-LOG_SLICE_SMALL));
 
       socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
+        logger.info("Client disconnected:", socket.id);
       });
 
       socket.on("request-refresh", () => {
         socket.emit("progress-update", this.progress);
         socket.emit("test-suites-update", this.testSuites);
-        socket.emit("logs-update", this.logs.slice(-50));
+        socket.emit("logs-update", this.logs.slice(-LOG_SLICE_SMALL));
       });
     });
   }
@@ -221,7 +266,7 @@ class TestProgressServer {
         this.simulateTestProgress();
         this.broadcastProgress();
       }
-    }, 2000); // Update every 2 seconds
+    }, PROGRESS_UPDATE_INTERVAL_MS); // Update every PROGRESS_UPDATE_INTERVAL_MS
   }
 
   private startLogGeneration() {
@@ -229,7 +274,7 @@ class TestProgressServer {
       if (this.isTestRunning) {
         this.generateRealisticLogs();
       }
-    }, 1000); // Generate logs every second
+    }, LOG_GENERATION_INTERVAL_MS); // Generate logs every LOG_GENERATION_INTERVAL_MS
   }
 
   private simulateTestProgress() {
@@ -242,16 +287,17 @@ class TestProgressServer {
     }
 
     // Randomly complete some tests
-    const testsToComplete = Math.floor(Math.random() * 3) + 1;
+    const testsToComplete =
+      Math.floor(Math.random() * TESTS_TO_COMPLETE_MAX) + TESTS_TO_COMPLETE_MIN;
 
     for (let i = 0; i < testsToComplete; i++) {
       if (completedTests + i >= this.progress.total) break;
 
       // Randomly determine test result
       const rand = Math.random();
-      if (rand < 0.7) {
+      if (rand < PASS_THRESHOLD) {
         this.progress.passed++;
-      } else if (rand < 0.9) {
+      } else if (rand < FAIL_THRESHOLD) {
         this.progress.failed++;
       } else {
         this.progress.skipped++;
@@ -262,7 +308,9 @@ class TestProgressServer {
       0,
       this.progress.total - this.progress.passed - this.progress.failed - this.progress.skipped,
     );
-    this.progress.progress = Math.round((completedTests / this.progress.total) * 100);
+    this.progress.progress = Math.round(
+      (completedTests / this.progress.total) * PROGRESS_PERCENT_FACTOR,
+    );
     this.progress.timestamp = Date.now();
 
     // Update current test message
@@ -287,15 +335,16 @@ class TestProgressServer {
 
       if (completedSuiteTests < totalSuiteTests) {
         // Complete some tests in this suite
-        const testsToComplete = Math.floor(Math.random() * 2) + 1;
+        const testsToComplete =
+          Math.floor(Math.random() * SUITE_TESTS_TO_COMPLETE_MAX) + SUITE_TESTS_TO_COMPLETE_MIN;
 
         for (let i = 0; i < testsToComplete; i++) {
           if (completedSuiteTests + i >= totalSuiteTests) break;
 
           const rand = Math.random();
-          if (rand < 0.7) {
+          if (rand < PASS_THRESHOLD) {
             suite.passed++;
-          } else if (rand < 0.9) {
+          } else if (rand < FAIL_THRESHOLD) {
             suite.failed++;
           } else {
             suite.skipped++;
@@ -319,9 +368,9 @@ class TestProgressServer {
     this.logs.push(logEntry);
     this.logBuffer.push(logEntry);
 
-    // Keep only last 1000 logs in memory
-    if (this.logs.length > 1000) {
-      this.logs = this.logs.slice(-1000);
+    // Keep only last DEFAULT_MAX_LOGS logs in memory
+    if (this.logs.length > DEFAULT_MAX_LOGS) {
+      this.logs = this.logs.slice(-DEFAULT_MAX_LOGS);
     }
 
     // Broadcast to all connected clients
@@ -355,6 +404,12 @@ class TestProgressServer {
     }
   }
 
+  private broadcastProgress() {
+    // Broadcast progress updates to all connected clients
+    this.io.emit("progress-update", this.progress);
+    this.io.emit("test-suites-update", this.testSuites);
+  }
+
   private updateOverallProgress() {
     let totalPassed = 0;
     let totalFailed = 0;
@@ -373,7 +428,7 @@ class TestProgressServer {
     this.progress.skipped = totalSkipped;
     this.progress.running = totalRunning;
     this.progress.progress = Math.round(
-      ((totalPassed + totalFailed + totalSkipped) / this.progress.total) * 100,
+      ((totalPassed + totalFailed + totalSkipped) / this.progress.total) * PROGRESS_PERCENT_FACTOR,
     );
     this.progress.timestamp = Date.now();
   }
@@ -446,16 +501,30 @@ class TestProgressServer {
     this.addLog(randomLog.level, randomLog.suite, randomLog.message);
   }
 
-  private broadcastProgress() {
-    this.io.emit("progress-update", this.progress);
-    this.io.emit("test-suites-update", this.testSuites);
+  private startCleanupTimer() {
+    setInterval(() => {
+      this.cleanupOldLogs();
+    }, this.cleanupInterval);
   }
 
-  public start(port: number = 3001) {
+  private cleanupOldLogs() {
+    const now = Date.now();
+    const maxAge = this.maxLogAge;
+
+    // Remove old logs
+    this.logs = this.logs.filter((log) => now - log.timestamp.getTime() < maxAge);
+
+    // Keep only the last maxLogs entries
+    if (this.logs.length > this.maxLogs) {
+      this.logs = this.logs.slice(-this.maxLogs);
+    }
+  }
+
+  public start(port: number = 3002) {
     this.server.listen(port, () => {
-      console.log(`Test Progress Server running on http://localhost:${port}`);
-      console.log(`Visual Progress Dashboard: http://localhost:${port}/`);
-      console.log(`API Endpoint: http://localhost:${port}/api/progress`);
+      logger.info(`Test Progress Server running on http://localhost:${port}`);
+      logger.info(`Visual Progress Dashboard: http://localhost:${port}/`);
+      logger.info(`API Endpoint: http://localhost:${port}/api/progress`);
     });
   }
 
@@ -476,7 +545,7 @@ server.start();
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\nShutting down Test Progress Server...");
+  logger.info("\nShutting down Test Progress Server...");
   process.exit(0);
 });
 

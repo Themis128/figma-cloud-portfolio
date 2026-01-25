@@ -33,6 +33,11 @@ export interface AgentConnection {
   targetHandle?: string;
 }
 
+// Random ID generation constants
+const RANDOM_ID_RADIX = 36;
+const RANDOM_ID_SKIP_PREFIX = 2;
+const RANDOM_ID_LENGTH = 9;
+
 export const agentTemplates: AgentTemplate[] = [
   {
     id: "basic-chatbot",
@@ -467,16 +472,16 @@ export const cloneTemplate = (template: AgentTemplate, newName?: string): AgentT
     workflow: {
       nodes: template.workflow.nodes.map((node) => ({
         ...node,
-        id: `${node.id}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${node.id}-clone-${Date.now()}-${Math.random().toString(RANDOM_ID_RADIX).substr(RANDOM_ID_SKIP_PREFIX, RANDOM_ID_LENGTH)}`,
       })),
       connections: template.workflow.connections.map((connection) => ({
         ...connection,
-        id: `${connection.id}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${connection.id}-clone-${Date.now()}-${Math.random().toString(RANDOM_ID_RADIX).substr(RANDOM_ID_SKIP_PREFIX, RANDOM_ID_LENGTH)}`,
         source: template.workflow.nodes.find((node) => node.id === connection.source)
-          ? `${connection.source}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          ? `${connection.source}-clone-${Date.now()}-${Math.random().toString(RANDOM_ID_RADIX).substr(RANDOM_ID_SKIP_PREFIX, RANDOM_ID_LENGTH)}`
           : connection.source,
         target: template.workflow.nodes.find((node) => node.id === connection.target)
-          ? `${connection.target}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          ? `${connection.target}-clone-${Date.now()}-${Math.random().toString(RANDOM_ID_RADIX).substr(RANDOM_ID_SKIP_PREFIX, RANDOM_ID_LENGTH)}`
           : connection.target,
       })),
     },

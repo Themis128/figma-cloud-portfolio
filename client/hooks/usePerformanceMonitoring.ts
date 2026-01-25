@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { type Metric, onCLS, onFCP, onLCP, onTTFB } from "web-vitals";
+import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
 interface PerformanceMetrics {
   cls?: number;
   fcp?: number;
+  inp?: number;
   lcp?: number;
   ttfb?: number;
 }
@@ -12,6 +13,13 @@ interface UsePerformanceMonitoringOptions {
   enabled?: boolean;
   onMetricsUpdate?: (metrics: PerformanceMetrics) => void;
 }
+
+// Performance thresholds (Core Web Vitals)
+const LCP_GOOD_THRESHOLD_MS = 2500; // 2.5 seconds
+const CLS_GOOD_THRESHOLD = 0.1; // 0.1 cumulative layout shift
+const PERFECT_SCORE_COUNT = 2; // All metrics good
+const MINIMUM_GOOD_COUNT = 1; // At least one metric good
+const CLS_DECIMAL_PLACES = 4; // Decimal places for CLS display
 
 export function usePerformanceMonitoring(options: UsePerformanceMonitoringOptions = {}) {
   const { enabled = true, onMetricsUpdate } = options;
@@ -30,6 +38,21 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
       setMetrics((prev) => {
         const updated = { ...prev, ...newMetrics };
         onMetricsUpdate?.(updated);
+
+        // Populate window.webVitalsMetrics for testing
+        if (typeof window !== "undefined") {
+          window.webVitalsMetrics = window.webVitalsMetrics || [];
+          const metricName = Object.keys(newMetrics)[0];
+          const metricValue = Object.values(newMetrics)[0];
+          window.webVitalsMetrics.push({
+            name: metricName.toUpperCase(),
+            value: metricValue,
+            id: `test-${metricName}-id`,
+            delta: metricValue,
+            entries: [],
+          });
+        }
+
         return updated;
       });
     };
@@ -41,6 +64,10 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
     onFCP((metric: Metric) => {
       updateMetrics({ fcp: metric.value });
+    });
+
+    onINP((metric: Metric) => {
+      updateMetrics({ inp: metric.value });
     });
 
     onLCP((metric: Metric) => {
@@ -59,13 +86,13 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
     if (!cls || !lcp) return "needs-improvement";
 
     // Core Web Vitals thresholds (excluding FID for now)
-    const lcpGood = lcp <= 2500; // 2.5s
-    const clsGood = cls <= 0.1; // 0.1
+    const lcpGood = lcp <= LCP_GOOD_THRESHOLD_MS; // 2.5s
+    const clsGood = cls <= CLS_GOOD_THRESHOLD; // 0.1
 
     const goodCount = [lcpGood, clsGood].filter(Boolean).length;
 
-    if (goodCount === 2) return "good";
-    if (goodCount >= 1) return "needs-improvement";
+    if (goodCount === PERFECT_SCORE_COUNT) return "good";
+    if (goodCount >= MINIMUM_GOOD_COUNT) return "needs-improvement";
     return "poor";
   };
 
@@ -75,8 +102,11 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
       "Largest Contentful Paint (LCP)": metrics.lcp
         ? `${metrics.lcp.toFixed(0)}ms`
         : "Not measured",
-      "Cumulative Layout Shift (CLS)": metrics.cls ? metrics.cls.toFixed(4) : "Not measured",
+      "Cumulative Layout Shift (CLS)": metrics.cls
+        ? metrics.cls.toFixed(CLS_DECIMAL_PLACES)
+        : "Not measured",
       "First Contentful Paint (FCP)": metrics.fcp ? `${metrics.fcp.toFixed(0)}ms` : "Not measured",
+      "Interaction to Next Paint (INP)": metrics.inp ? `${metrics.inp.toFixed(0)}ms` : "Not measured",
       "Time to First Byte (TTFB)": metrics.ttfb ? `${metrics.ttfb.toFixed(0)}ms` : "Not measured",
     };
   };

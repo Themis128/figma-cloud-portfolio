@@ -1,4 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
+import os from "os";
+
+// Constants for configuration
+const DEFAULT_CPU_COUNT = 2;
+const WORKER_CPU_FRACTION = 0.75;
+const VISUAL_SNAPSHOT_THRESHOLD = 0.2;
+const VISUAL_SNAPSHOT_MAX_DIFF = 100;
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -10,9 +17,11 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? 2 : 1, // Reduce retries for faster execution
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 2 : 4, // Use multiple workers for better performance
+  retries: process.env.CI ? 2 : 1,
+  /* Dynamic worker count: use most of available cores locally, limit on CI */
+  workers: process.env.CI
+    ? 2
+    : Math.max(1, Math.floor((os.cpus()?.length || DEFAULT_CPU_COUNT) * WORKER_CPU_FRACTION)),
 
   /* Circuit breaker configuration */
   use: {
@@ -45,18 +54,22 @@ export default defineConfig({
       "html",
       {
         open: "never",
+        outputFolder: "playwright-html-report",
         // Custom HTML report styling to match app fonts
         attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
       },
     ], // HTML report for detailed analysis
     ["json", { outputFile: "test-results/results.json" }], // JSON for CI/CD integration
     ["junit", { outputFile: "test-results/junit.xml" }], // JUnit for external tools
-    ["./scripts/playwright-mcp-integration.ts"], // MCP integration for real-time progress
+    // ["./scripts/playwright-mcp-integration.ts"], // MCP integration for real-time progress - temporarily disabled
   ],
 
   /* Global setup and teardown for test environment preparation */
-  globalSetup: "./playwright-tests/global-setup.ts",
+  // globalSetup: "./playwright-tests/global-setup.ts",
   globalTeardown: "./playwright-tests/global-teardown.ts",
+
+  /* Where to store test artifacts (videos, traces, screenshots) */
+  outputDir: "playwright-report/artifacts",
 
   /* Test execution metadata */
   metadata: {
@@ -70,8 +83,8 @@ export default defineConfig({
   expect: {
     timeout: 10000,
     toHaveScreenshot: {
-      threshold: 0.2, // Allow 20% difference for visual comparisons
-      maxDiffPixels: 100, // Maximum pixel difference
+      threshold: VISUAL_SNAPSHOT_THRESHOLD, // Allow threshold for visual comparisons
+      maxDiffPixels: VISUAL_SNAPSHOT_MAX_DIFF, // Maximum pixel difference
     },
     toMatchSnapshot: {
       threshold: 0.2,
@@ -146,22 +159,22 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* Run your local dev servers before starting the tests. Playwright will
+     start the backend and frontend when running tests locally and will reuse
+     existing servers when present to speed up iteration. */
   // webServer: [
-  //   // Backend API server
   //   {
   //     command: 'npx tsx server/dev-server.ts',
   //     url: 'http://localhost:3000/api/ping',
   //     reuseExistingServer: !process.env.CI,
-  //     timeout: 120 * 1000,
+  //     timeout: WEB_SERVER_TIMEOUT_MS,
   //     cwd: process.cwd(),
   //   },
-  //   // Frontend dev server
   //   {
   //     command: 'npx vite --host localhost --port 8082',
   //     url: 'http://localhost:8082',
   //     reuseExistingServer: !process.env.CI,
-  //     timeout: 120 * 1000,
+  //     timeout: WEB_SERVER_TIMEOUT_MS,
   //     cwd: process.cwd(),
   //   },
   // ],

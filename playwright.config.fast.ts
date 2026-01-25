@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { cpus } from "node:os";
 
 /**
  * Fast Playwright configuration optimized for CI/CD and local development
@@ -69,7 +70,7 @@ const CONFIG = {
   // Server configuration
   SERVER: {
     COMMAND: "pnpm dev",
-    URL: "http://localhost:8081",
+    URL: "http://localhost:8082",
     REUSE_EXISTING: !process.env.CI,
     TIMEOUT: 30000,
   },
@@ -80,7 +81,7 @@ const CONFIG = {
 
 // Calculate optimal worker count based on CPU cores
 const getOptimalWorkers = (): number => {
-  const cpuCount = require("node:os").cpus().length;
+  const cpuCount = cpus().length;
   const isCI = !!process.env.CI;
   const isGitHubActions = !!process.env.GITHUB_ACTIONS;
 
@@ -138,13 +139,13 @@ export default defineConfig({
       // Reduce memory usage in CI
       ...(process.env.CI
         ? {
-            headless: true,
-            devtools: false,
-          }
+          headless: true,
+          devtools: false,
+        }
         : {
-            headless: false,
-            devtools: false,
-          }),
+          headless: false,
+          devtools: false,
+        }),
     },
   },
 
@@ -166,16 +167,16 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: CONFIG.SERVER.COMMAND,
-    url: CONFIG.SERVER.URL,
-    reuseExistingServer: CONFIG.SERVER.REUSE_EXISTING,
-    timeout: CONFIG.SERVER.TIMEOUT,
-  },
+  // webServer: {
+  //   command: CONFIG.SERVER.COMMAND,
+  //   url: CONFIG.SERVER.URL,
+  //   reuseExistingServer: CONFIG.SERVER.REUSE_EXISTING,
+  //   timeout: CONFIG.SERVER.TIMEOUT,
+  // },
 
   /* Global setup and teardown for better test isolation */
-  globalSetup: require.resolve("./playwright-tests/global-setup.ts"),
-  globalTeardown: require.resolve("./playwright-tests/global-teardown.ts"),
+  // globalSetup: fileURLToPath(new URL("./playwright-tests/global-setup.ts", import.meta.url)),
+  // globalTeardown: fileURLToPath(new URL("./playwright-tests/global-teardown.ts", import.meta.url)),
 
   /* Test metadata for better organization */
   metadata: {

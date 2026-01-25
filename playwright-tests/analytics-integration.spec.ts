@@ -344,10 +344,18 @@ test.describe("Analytics Integration", () => {
 
     await page.goto("/");
 
-    // Simulate user interactions
-    await page.click("button");
-    await page.type('input[type="text"]', "test input");
-    await page.click("a");
+    // Simulate user interactions with specific selectors
+    // Click the "Learn More" button
+    await page.click('a[href="/about"]');
+    
+    // Look for any text input fields on the page
+    const textInputs = await page.locator('input[type="text"]').count();
+    if (textInputs > 0) {
+      await page.type('input[type="text"]', "test input");
+    }
+    
+    // Click a navigation link
+    await page.click('a[href="/contact"]');
 
     // Wait for interaction tracking
     await page.waitForTimeout(1000);

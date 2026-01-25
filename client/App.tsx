@@ -1,9 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type React from "react";
-import { lazy, Suspense, useEffect, useState } from "react";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { PageLoader } from "@/components/LoadingAnimations";
 import ResourcePreloader from "@/components/ResourcePreloader";
@@ -11,80 +5,106 @@ import { PersonStructuredData, WebsiteStructuredData } from "@/components/Struct
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ViewTransitionWrapper from "@/components/ViewTransitionWrapper";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type React from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster as Sonner } from "sonner";
 import Index from "./pages/Index";
+
+const logger = {
+  info: (..._args: unknown[]) => {},
+  warn: (..._args: unknown[]) => {},
+  error: (..._args: unknown[]) => {},
+};
 
 // Initialize View Transition styles
 const initViewTransitionStyles = () => {
-  if (typeof document !== "undefined") {
-    const style = document.createElement("style");
-    style.textContent = `
-      /* View Transition animations */
-      ::view-transition-old(root) {
-        animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
-      }
+  if (typeof document !== "undefined" && typeof window !== "undefined") {
+    try {
+      // Check if View Transition API is supported
+      const isViewTransitionSupported = "viewTransition" in document;
 
-      ::view-transition-new(root) {
-        animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
-      }
+      const style = document.createElement("style");
+      style.textContent = `
+        /* View Transition animations - only if supported */
+        ${
+          isViewTransitionSupported
+            ? `
+          ::view-transition-old(root) {
+            animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+          }
 
-      ::view-transition-old(root) {
-        animation-name: fade-out;
-      }
+          ::view-transition-new(root) {
+            animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+          }
 
-      ::view-transition-new(root) {
-        animation-name: fade-in;
-      }
+          ::view-transition-old(root) {
+            animation-name: fade-out;
+          }
 
-      @keyframes fade-in {
-        from {
-          opacity: 0;
+          ::view-transition-new(root) {
+            animation-name: fade-in;
+          }
+        `
+            : ""
         }
-        to {
-          opacity: 1;
-        }
-      }
 
-      @keyframes fade-out {
-        from {
-          opacity: 1;
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
-        to {
-          opacity: 0;
-        }
-      }
 
-      /* Smooth page transitions */
-      .page-enter {
-        animation: slide-up 300ms ease-out;
-      }
+        @keyframes fade-out {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
 
-      .page-exit {
-        animation: slide-down 300ms ease-in;
-      }
+        /* Smooth page transitions */
+        .page-enter {
+          animation: slide-up 300ms ease-out;
+        }
 
-      @keyframes slide-up {
-        from {
-          transform: translateY(20px);
-          opacity: 0;
+        .page-exit {
+          animation: slide-down 300ms ease-in;
         }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
 
-      @keyframes slide-down {
-        from {
-          transform: translateY(-20px);
-          opacity: 0;
+        @keyframes slide-up {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
-        to {
-          transform: translateY(0);
-          opacity: 1;
+
+        @keyframes slide-down {
+          from {
+            transform: translateY(-20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
-      }
-    `;
-    document.head.appendChild(style);
+      `;
+      document.head.appendChild(style);
+    } catch (error) {
+      logger.warn("Failed to initialize View Transition styles:", error);
+    }
   }
 };
 
@@ -184,19 +204,21 @@ const App = () => {
                   <GoogleAnalytics />
                   <PerformanceMonitor />
                   <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                      <Route path='/' element={<Index />} />
-                      <Route path='/about' element={<About />} />
-                      <Route path='/product' element={<Product />} />
-                      <Route path='/contact' element={<Contact />} />
-                      <Route path='/performance' element={<Performance />} />
-                      <Route path='/resume' element={<Resume />} />
-                      <Route path='/settings' element={<Settings />} />
-                      <Route path='/agents' element={<Agents />} />
-                      <Route path='/projects' element={<Projects />} />
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path='*' element={<NotFound />} />
-                    </Routes>
+                    <ViewTransitionWrapper>
+                      <Routes>
+                        <Route path='/' element={<Index />} />
+                        <Route path='/about' element={<About />} />
+                        <Route path='/product' element={<Product />} />
+                        <Route path='/contact' element={<Contact />} />
+                        <Route path='/performance' element={<Performance />} />
+                        <Route path='/resume' element={<Resume />} />
+                        <Route path='/settings' element={<Settings />} />
+                        <Route path='/agents' element={<Agents />} />
+                        <Route path='/projects' element={<Projects />} />
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path='*' element={<NotFound />} />
+                      </Routes>
+                    </ViewTransitionWrapper>
                   </Suspense>
                 </BrowserRouter>
               </TooltipProvider>

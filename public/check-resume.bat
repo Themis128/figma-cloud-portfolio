@@ -17,7 +17,7 @@ if exist "resume.pdf" (
     echo.
     echo Test it by:
     echo 1. Running: npm run dev
-    echo 2. Opening: http://localhost:8081
+    echo 2. Opening: http://localhost:8082
     echo 3. Clicking: "Download Resume" button
 ) else (
     echo ❌ ERROR: resume.pdf file NOT found!

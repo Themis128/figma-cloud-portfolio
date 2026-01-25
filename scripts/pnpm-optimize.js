@@ -4,11 +4,11 @@
  * pnpm Performance Analyzer and Optimizer
  */
 
-import { execSync } from 'child_process'
-import fs from 'fs'
-import os from 'os'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { execSync } from 'node:child_process'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -26,7 +26,7 @@ let pnpmVersion = null
 try {
   pnpmVersion = execSync('pnpm --version', { encoding: 'utf8' }).trim()
   if (!outputJson) console.log(`📦 pnpm version: ${pnpmVersion}`)
-} catch (error) {
+} catch {
   if (!outputJson)
     console.log(
       '⚠️  pnpm not found. Skipping pnpm-specific checks. Install pnpm if you want full analysis.',
@@ -120,7 +120,7 @@ if (applyChanges) {
     if (toAppend) {
       fs.appendFileSync(
         target,
-        (existing && !existing.endsWith('\n') ? '\n' : '') + toAppend + '\n',
+        `${existing && !existing.endsWith('\n') ? '\n' : ''}${toAppend}\n`,
         'utf8',
       )
       if (!outputJson)

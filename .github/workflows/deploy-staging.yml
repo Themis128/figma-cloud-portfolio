@@ -39,9 +39,9 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to Amplify (Staging)
-        uses: aws-actions/amplify-cli-wrapper@1.2.0
-        with:
-          args: publish --app-id ${{ secrets.AMPLIFY_STAGING_APP_ID }} --branch-name staging
+        run: |
+          npm install -g @aws-amplify/cli
+          amplify publish --app-id ${{ secrets.AMPLIFY_STAGING_APP_ID }} --branch-name staging
         env:
           NODE_ENV: staging
           VITE_APP_ENV: staging

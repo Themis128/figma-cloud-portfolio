@@ -13,6 +13,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 
+// Constants for update checking simulation
+const UPDATE_CHECK_SIMULATION_DELAY_MS = 2000;
+
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
@@ -31,7 +34,7 @@ export default function Settings() {
     try {
       // Simulate API call to check for updates
       // In a real app, this would call your backend API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, UPDATE_CHECK_SIMULATION_DELAY_MS));
 
       // Check if service worker has updates available
       if ("serviceWorker" in navigator && "controller" in navigator.serviceWorker) {

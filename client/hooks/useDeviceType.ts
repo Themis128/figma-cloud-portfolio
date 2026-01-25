@@ -2,6 +2,20 @@ import { useEffect, useState } from "react";
 
 declare const window: Window & typeof globalThis;
 
+// Device breakpoints
+const MOBILE_BREAKPOINT = 768;
+const TABLET_BREAKPOINT = 1024;
+
+// Animation constants
+const ANIMATION_DURATION_MOBILE = 0.3;
+const ANIMATION_DURATION_DESKTOP = 0.5;
+const ANIMATION_STIFFNESS_MOBILE = 120;
+const ANIMATION_STIFFNESS_DESKTOP = 100;
+const ANIMATION_DAMPING_MOBILE = 20;
+const ANIMATION_DAMPING_DESKTOP = 15;
+const ANIMATION_THRESHOLD_MOBILE = 0.3;
+const ANIMATION_THRESHOLD_DESKTOP = 0.2;
+
 export function useDeviceType() {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -14,9 +28,9 @@ export function useDeviceType() {
       if (typeof window !== "undefined") {
         const width = (window as Window).innerWidth;
         setScreenWidth(width);
-        setIsMobile(width < 768);
-        setIsTablet(width >= 768 && width < 1024);
-        setIsDesktop(width >= 1024);
+        setIsMobile(width < MOBILE_BREAKPOINT);
+        setIsTablet(width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT);
+        setIsDesktop(width >= TABLET_BREAKPOINT);
       }
     };
 
@@ -61,10 +75,10 @@ export function useOptimizedAnimation() {
   const shouldReduceMotion = isMobile || prefersReducedMotion;
 
   return {
-    duration: shouldReduceMotion ? 0.3 : 0.5,
-    stiffness: shouldReduceMotion ? 120 : 100,
-    damping: shouldReduceMotion ? 20 : 15,
-    threshold: shouldReduceMotion ? 0.3 : 0.2,
+    duration: shouldReduceMotion ? ANIMATION_DURATION_MOBILE : ANIMATION_DURATION_DESKTOP,
+    stiffness: shouldReduceMotion ? ANIMATION_STIFFNESS_MOBILE : ANIMATION_STIFFNESS_DESKTOP,
+    damping: shouldReduceMotion ? ANIMATION_DAMPING_MOBILE : ANIMATION_DAMPING_DESKTOP,
+    threshold: shouldReduceMotion ? ANIMATION_THRESHOLD_MOBILE : ANIMATION_THRESHOLD_DESKTOP,
     disabled: prefersReducedMotion,
   };
 }

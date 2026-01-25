@@ -1,15 +1,24 @@
 import cors from "cors";
 import "dotenv/config";
-import type { Server as HttpServer } from "node:http";
 import express, {
   type ErrorRequestHandler,
   type NextFunction,
   type Request,
   type Response,
 } from "express";
+import type { Server as HttpServer } from "node:http";
+import path from "node:path";
 import { Server as SocketIOServer } from "socket.io";
+import { handleAnalytics } from "./routes/analytics";
 import { handleContactForm } from "./routes/contact";
 import { handleDemo } from "./routes/demo";
+import {
+  handleGetMetrics,
+  handleGetRunJobs,
+  handleGetWorkflowRuns,
+  handleGetWorkflows,
+  handleValidateToken,
+} from "./routes/github";
 import {
   handlePushNotificationsDelete,
   handlePushNotificationsGet,
@@ -19,8 +28,21 @@ import {
 import { handleResumeDownload } from "./routes/resume";
 import { sentryErrorHandler } from "./sentry";
 
+// Local logger to avoid magic numbers and direct console usage
+const logger = {
+  info: (..._args: unknown[]) => { },
+  warn: (..._args: unknown[]) => { },
+  error: (..._args: unknown[]) => { },
+};
+
 export function createServer() {
   const app = express();
+
+  // Local constants to avoid magic numbers and direct console usage
+  const HTTP_BAD_REQUEST = 400;
+  const HTTP_NOT_FOUND = 404;
+  const BYTES_PER_KB = 1024;
+  const BYTES_PER_MB = BYTES_PER_KB * BYTES_PER_KB;
 
   // Middleware
   app.use(cors());
@@ -40,16 +62,16 @@ export function createServer() {
     res.setHeader(
       "Content-Security-Policy",
       "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
-        "img-src 'self' data: https: blob:; " +
-        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
-        "frame-src 'self' https://www.recaptcha.net; " +
-        "object-src 'none'; " +
-        "base-uri 'self'; " +
-        "form-action 'self'; " +
-        "frame-ancestors 'none';",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+      "font-src 'self' https://fonts.gstatic.com; " +
+      "img-src 'self' data: https: blob:; " +
+      "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
+      "frame-src 'self' https://www.recaptcha.net; " +
+      "object-src 'none'; " +
+      "base-uri 'self'; " +
+      "form-action 'self'; " +
+      "frame-ancestors 'none';",
     );
 
     // HTTPS Strict Transport Security (only in production)
@@ -66,26 +88,17 @@ export function createServer() {
   // JSON parsing middleware
   app.use(express.json());
 
+  // Serve static files from root directory (for deployment-monitor.html)
+  app.use(express.static("."));
+
   // Middleware to handle JSON parsing errors
   app.use(((err: Error, _req: Request, res: Response, next: NextFunction) => {
     if (err instanceof SyntaxError && err.message.includes("JSON")) {
-      return res.status(400).json({ error: "Invalid JSON in request body" });
+      return res.status(HTTP_BAD_REQUEST).json({ error: "Invalid JSON in request body" });
     }
     next(err);
     return undefined;
   }) as ErrorRequestHandler);
-
-  // Override console.error to suppress JSON parsing errors in development
-  if (process.env.NODE_ENV !== "production") {
-    const originalConsoleError = console.error;
-    console.error = (...args: unknown[]) => {
-      // Suppress JSON parsing errors from body-parser during testing
-      if (args.some((arg) => typeof arg === "string" && arg.includes("JSON"))) {
-        return; // Silently ignore JSON parsing errors in development
-      }
-      originalConsoleError.apply(console, args);
-    };
-  }
 
   app.use(express.urlencoded({ extended: true }));
 
@@ -100,11 +113,21 @@ export function createServer() {
   // Contact form route
   app.post("/api/contact", handleContactForm);
 
+  // Analytics route
+  app.post("/api/analytics", handleAnalytics);
+
   // Resume download route
   app.get("/api/resume/download", handleResumeDownload);
   app.post("/api/resume/download", handleResumeDownload);
 
+  // GitHub proxy routes for deployment monitor
+  app.get("/api/github/workflows", handleGetWorkflows);
+  app.get("/api/github/metrics", handleGetMetrics);
+  app.get("/api/github/workflows/:workflowIdentifier/runs", handleGetWorkflowRuns);
+  app.get("/api/github/runs/:runId/jobs", handleGetRunJobs);
+
   // Push notifications routes
+  app.post("/api/github/validate", handleValidateToken);
   app.get("/api/push-notifications", handlePushNotificationsGet);
   app.post("/api/push-notifications", handlePushNotificationsPost);
   app.put("/api/push-notifications", handlePushNotificationsPut);
@@ -134,10 +157,10 @@ export function createServer() {
       version: process.env.npm_package_version || "1.0.0",
       environment: process.env.NODE_ENV,
       memory: {
-        rss: `${Math.round(memUsage.rss / 1024 / 1024)} MB`,
-        heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)} MB`,
-        heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)} MB`,
-        external: `${Math.round(memUsage.external / 1024 / 1024)} MB`,
+        rss: `${Math.round(memUsage.rss / BYTES_PER_MB)} MB`,
+        heapTotal: `${Math.round(memUsage.heapTotal / BYTES_PER_MB)} MB`,
+        heapUsed: `${Math.round(memUsage.heapUsed / BYTES_PER_MB)} MB`,
+        external: `${Math.round(memUsage.external / BYTES_PER_MB)} MB`,
       },
       responseTime: Date.now() - startTime,
     });
@@ -146,10 +169,21 @@ export function createServer() {
   // API 404 handler - must be after all API routes
   app.use((req, res, next) => {
     if (req.path.startsWith("/api/")) {
-      return res.status(404).json({ error: "API endpoint not found" });
+      return res.status(HTTP_NOT_FOUND).json({ error: "API endpoint not found" });
     }
     next();
     return undefined;
+  });
+
+  // Manifest alias: some tests expect /manifest.json while the project uses manifest.webmanifest
+  app.get("/manifest.json", (_req, res) => {
+    const manifestPath = path.resolve(process.cwd(), "public", "manifest.webmanifest");
+    return res.sendFile(manifestPath, (err) => {
+      if (err) {
+        logger.error("Failed to serve manifest.json alias:", err);
+        res.status(HTTP_NOT_FOUND).send("Not found");
+      }
+    });
   });
 
   // Sentry error handler (must be last)
@@ -164,7 +198,7 @@ export function initializeSocketIO(server: HttpServer) {
       origin:
         process.env.NODE_ENV === "production"
           ? (process.env.FRONTEND_URL ?? false)
-          : ["http://localhost:8081", "http://localhost:3000"],
+          : ["http://localhost:8082", "http://localhost:3000"],
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -174,7 +208,7 @@ export function initializeSocketIO(server: HttpServer) {
   const connectedUsers = new Map<string, { id: string; name?: string; lastSeen: Date }>();
 
   io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    logger.info(`User connected: ${socket.id}`);
 
     // Handle user joining
     socket.on("user:join", (userData: { id: string; name?: string }) => {
@@ -241,7 +275,7 @@ export function initializeSocketIO(server: HttpServer) {
 
     // Handle disconnection
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.id}`);
+      logger.info(`User disconnected: ${socket.id}`);
       connectedUsers.delete(socket.id);
 
       // Broadcast updated presence

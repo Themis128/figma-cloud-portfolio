@@ -1,6 +1,6 @@
+import react from "@vitejs/plugin-react-swc";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import react from "@vitejs/plugin-react-swc";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, type PluginOption } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
@@ -8,31 +8,51 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Constants for time calculations
+const SECONDS_PER_MINUTE = 60;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
+const DAYS_PER_YEAR = 365;
+const DAYS_PER_MONTH = 30;
+const DAYS_PER_WEEK = 7;
+
+// Constants for cache expiration times (in seconds)
+const CACHE_EXPIRATION_ONE_YEAR =
+  SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR;
+const CACHE_EXPIRATION_ONE_MONTH =
+  SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_MONTH;
+const CACHE_EXPIRATION_ONE_WEEK =
+  SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_WEEK;
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   root: "client",
   publicDir: "../public",
   server: {
-    host: "localhost",
+    host: true,
     port: 8082,
     strictPort: true,
     hmr: {
-      port: 24681, // Use a different port for HMR
+      port: 24682, // Use a different port for HMR
     },
+    // Proxy API requests to Express server during development/testing
+    proxy:
+      mode !== "production"
+        ? {
+            "/api": {
+              target: "http://localhost:3000",
+              changeOrigin: true,
+              secure: false,
+            },
+          }
+        : undefined,
     fs: {
       allow: [".", "../client", "../shared"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "../server/**"],
     },
     // SPA routing support - serve index.html for all routes
     middlewareMode: false,
-    // Proxy API requests to Express server (run with: npx tsx server/node-build.ts)
-    proxy: {
-      "/api": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    // (proxy is configured above based on mode)
     // Security headers for development
     headers: {
       "X-Frame-Options": "DENY",
@@ -40,7 +60,7 @@ export default defineConfig(({ mode }) => ({
       "X-XSS-Protection": "1; mode=block",
       "Referrer-Policy": "strict-origin-when-cross-origin",
       "Content-Security-Policy":
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:* wss://192.168.*:* ws://192.168.*:* wss://169.254.*:* ws://169.254.*:* wss://172.*:* ws://172.*:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
       "X-DNS-Prefetch-Control": "off",
     },
   },
@@ -103,7 +123,11 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    react(),
+    react({
+      // Disable React DevTools injection to prevent React 19 compatibility issues
+      devTarget: "esnext",
+      jsxRuntime: "automatic",
+    }),
     ViteImageOptimizer({
       png: { quality: 80 },
       jpeg: { quality: 80 },
@@ -154,7 +178,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
+                maxAgeSeconds: CACHE_EXPIRATION_ONE_YEAR,
               },
             },
           },
@@ -165,7 +189,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "google-fonts",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
+                maxAgeSeconds: CACHE_EXPIRATION_ONE_YEAR,
               },
             },
           },
@@ -176,7 +200,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "images",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
+                maxAgeSeconds: CACHE_EXPIRATION_ONE_MONTH,
               },
             },
           },
@@ -187,7 +211,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "static-resources",
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
+                maxAgeSeconds: CACHE_EXPIRATION_ONE_WEEK,
               },
             },
           },

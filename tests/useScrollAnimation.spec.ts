@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } 
 
 import { useScrollAnimation } from "../client/hooks/useScrollAnimation";
 
+const CUSTOM_INTERSECTION_THRESHOLD = 0.5;
 describe("useScrollAnimation", () => {
   let mockIntersectionObserver: ReturnType<typeof vi.fn>;
   let observeMock: MockedFunction<(element: Element) => void>;
@@ -45,9 +46,11 @@ describe("useScrollAnimation", () => {
   });
 
   it("should create IntersectionObserver with custom threshold", () => {
-    renderHook(() => useScrollAnimation(0.5));
+    renderHook(() => useScrollAnimation(CUSTOM_INTERSECTION_THRESHOLD));
 
-    expect(mockIntersectionObserver).toHaveBeenCalledWith(expect.any(Function), { threshold: 0.5 });
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(expect.any(Function), {
+      threshold: CUSTOM_INTERSECTION_THRESHOLD,
+    });
   });
 
   it("should set isVisible to true when element intersects", () => {
@@ -119,7 +122,7 @@ describe("useScrollAnimation", () => {
 
     expect(mockIntersectionObserver).toHaveBeenCalledTimes(1);
 
-    rerender({ threshold: 0.5 });
+    rerender({ threshold: CUSTOM_INTERSECTION_THRESHOLD });
 
     expect(mockIntersectionObserver).toHaveBeenCalledTimes(2);
   });

@@ -49,8 +49,8 @@ class SimpleTestDashboardLauncher {
         throw new Error(`Server file not found: ${serverPath}`);
       }
 
-      // Start the server
-      const _serverProcess = spawn("npx", ["tsx", serverPath], {
+      // Start the server (use absolute path so tsx resolves correctly)
+      const serverProcess = spawn("pnpm", ["exec", "tsx", serverPath], {
         stdio: "inherit",
         detached: false,
       });
@@ -89,7 +89,7 @@ class SimpleTestDashboardLauncher {
       }
 
       // Start Playwright tests
-      const testProcess = spawn("npx", ["playwright", "test", "--config", configPath], {
+      const testProcess = spawn("pnpm", ["exec", "playwright", "test", "--config", configPath], {
         stdio: "inherit",
         detached: false,
       });

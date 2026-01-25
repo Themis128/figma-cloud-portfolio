@@ -12,6 +12,10 @@ import { submitContactForm } from "@/lib/api";
 export default function Contact() {
   const { executeRecaptcha } = useGoogleReCaptcha();
 
+  // Form feedback timing constants
+  const SUCCESS_MESSAGE_DURATION_MS = 3000;
+  const ERROR_FEEDBACK_DURATION_MS = 2000;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -64,18 +68,18 @@ export default function Contact() {
         setTimeout(() => {
           setIsSubmitting(false);
           setSubmitStatus("idle");
-        }, 3000);
+        }, SUCCESS_MESSAGE_DURATION_MS);
       } else {
         setSubmitStatus("error");
         console.error("Form submission failed:", response.message);
         // Keep button disabled for a short time to show error feedback
-        setTimeout(() => setIsSubmitting(false), 2000);
+        setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS);
       }
     } catch (error) {
       setSubmitStatus("error");
       console.error("Form submission error:", error);
       // Keep button disabled for a short time to show error feedback
-      setTimeout(() => setIsSubmitting(false), 2000);
+      setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS);
     }
   };
   return (

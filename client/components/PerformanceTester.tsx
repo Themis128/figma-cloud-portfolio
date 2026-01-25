@@ -12,6 +12,9 @@ interface TestResult {
   details?: string;
 }
 
+// Constants for progress calculation
+const PROGRESS_PERCENTAGE_MULTIPLIER = 100;
+
 export function PerformanceTester() {
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -49,7 +52,7 @@ export function PerformanceTester() {
 
       newResults.push(result);
       setResults([...newResults]);
-      setProgress(((i + 1) / tests.length) * 100);
+      setProgress(((i + 1) / tests.length) * PROGRESS_PERCENTAGE_MULTIPLIER);
     }
 
     setIsRunning(false);

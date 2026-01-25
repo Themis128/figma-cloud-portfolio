@@ -1,6 +1,13 @@
 let SentryLib: typeof import("@sentry/react") | null = null;
 let initialized = false;
 
+// Sentry sampling rates
+const SENTRY_TRACES_SAMPLE_RATE_PROD = 0.1;
+const SENTRY_TRACES_SAMPLE_RATE_DEV = 1.0;
+const SENTRY_REPLAYS_SESSION_SAMPLE_RATE_PROD = 0.1;
+const SENTRY_REPLAYS_SESSION_SAMPLE_RATE_DEV = 1.0;
+const SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE = 1.0;
+
 export async function initSentry() {
   if (initialized) return;
   if (!import.meta.env.VITE_SENTRY_DSN) return;
@@ -16,9 +23,13 @@ export async function initSentry() {
         blockAllMedia: true,
       }),
     ],
-    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
-    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
-    replaysOnErrorSampleRate: 1.0,
+    tracesSampleRate: import.meta.env.PROD
+      ? SENTRY_TRACES_SAMPLE_RATE_PROD
+      : SENTRY_TRACES_SAMPLE_RATE_DEV,
+    replaysSessionSampleRate: import.meta.env.PROD
+      ? SENTRY_REPLAYS_SESSION_SAMPLE_RATE_PROD
+      : SENTRY_REPLAYS_SESSION_SAMPLE_RATE_DEV,
+    replaysOnErrorSampleRate: SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE,
     release: import.meta.env.VITE_APP_VERSION || "1.0.0",
     beforeSend(event, hint) {
       const error = hint && (hint as unknown as { originalException?: unknown }).originalException;
@@ -97,4 +108,5 @@ export const trackInteraction = (action: string, details?: Record<string, unknow
   });
 };
 
-export { initSentry as init, SentryLib as Sentry };
+export { SentryLib as Sentry, initSentry as init };
+

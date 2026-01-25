@@ -32,8 +32,29 @@ interface WebVitalsMetric {
   id: string;
 }
 
-// Analytics service integration function - REMOVED
-// Custom analytics endpoint removed - using Google Analytics 4 only
+// Analytics service integration function
+const sendAnalytics = async (event: string, data: Record<string, unknown>) => {
+  try {
+    await fetch("/api/analytics", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event,
+        data,
+        timestamp: new Date().toISOString(),
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+      }),
+    });
+  } catch (error) {
+    // Silently fail in production
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Failed to send analytics:", error);
+    }
+  }
+};
 
 export function PerformanceMonitor() {
   useEffect(() => {
@@ -45,7 +66,14 @@ export function PerformanceMonitor() {
     // Track Core Web Vitals
     const trackWebVitals = () => {
       onCLS((metric: WebVitalsMetric) => {
-        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        // Send to custom analytics endpoint
+        sendAnalytics("web_vitals_cls", {
+          value: metric.value,
+          delta: metric.delta,
+          id: metric.id,
+        });
+
+        // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
           window.gtag("event", "web_vitals", {
             event_category: "Performance",
@@ -53,13 +81,18 @@ export function PerformanceMonitor() {
             value: Math.round(metric.value),
             custom_parameter_metric_id: metric.id,
           });
-        } else {
-          // Debug logging removed - analytics handles production tracking
         }
       });
 
       onINP((metric: WebVitalsMetric) => {
-        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        // Send to custom analytics endpoint
+        sendAnalytics("web_vitals_inp", {
+          value: metric.value,
+          delta: metric.delta,
+          id: metric.id,
+        });
+
+        // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
           window.gtag("event", "web_vitals", {
             event_category: "Performance",
@@ -67,13 +100,18 @@ export function PerformanceMonitor() {
             value: Math.round(metric.value),
             custom_parameter_metric_id: metric.id,
           });
-        } else {
-          // Debug logging removed - analytics handles production tracking
         }
       });
 
       onFCP((metric: WebVitalsMetric) => {
         // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        sendAnalytics("web_vitals_fcp", {
+          value: metric.value,
+          delta: metric.delta,
+          id: metric.id,
+        });
+
+        // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
           window.gtag("event", "web_vitals", {
             event_category: "Performance",
@@ -81,13 +119,18 @@ export function PerformanceMonitor() {
             value: Math.round(metric.value),
             custom_parameter_metric_id: metric.id,
           });
-        } else {
-          // Debug logging removed - analytics handles production tracking
         }
       });
 
       onLCP((metric: WebVitalsMetric) => {
-        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        // Send to custom analytics endpoint
+        sendAnalytics("web_vitals_lcp", {
+          value: metric.value,
+          delta: metric.delta,
+          id: metric.id,
+        });
+
+        // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
           window.gtag("event", "web_vitals", {
             event_category: "Performance",
@@ -101,7 +144,14 @@ export function PerformanceMonitor() {
       });
 
       onTTFB((metric: WebVitalsMetric) => {
-        // Send to Google Analytics 4 only (removed custom analytics endpoint)
+        // Send to custom analytics endpoint
+        sendAnalytics("web_vitals_ttfb", {
+          value: metric.value,
+          delta: metric.delta,
+          id: metric.id,
+        });
+
+        // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
           window.gtag("event", "web_vitals", {
             event_category: "Performance",

@@ -3,15 +3,25 @@
 // Extend JSX for @react-three/fiber
 import "@react-three/fiber";
 
-declare module "@react-three/fiber" {
-  interface ThreeElements {
-    group: unknown;
-    mesh: unknown;
-    meshStandardMaterial: unknown;
-    meshBasicMaterial: unknown;
-    ambientLight: unknown;
-    directionalLight: unknown;
-    pointLight: unknown;
-    planeGeometry: unknown;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      // @ts-expect-error - React Three Fiber JSX elements
+      group: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      mesh: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      meshStandardMaterial: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      meshBasicMaterial: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      ambientLight: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      directionalLight: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      pointLight: any;
+      // @ts-expect-error - React Three Fiber JSX elements
+      planeGeometry: any;
+    }
   }
 }

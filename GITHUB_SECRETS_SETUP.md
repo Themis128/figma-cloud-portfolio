@@ -23,13 +23,13 @@ If the automated scripts don't work, follow these steps:
 
 ### 1. Go to GitHub Repository Settings
 
-Navigate to: https://github.com/Themis128/figma-cloud-portfolio/settings/secrets/actions
+Navigate to: <https://github.com/Themis128/figma-cloud-portfolio/settings/secrets/actions>
 
 ### 2. Add Repository Secrets
 
 #### AWS Configuration (Required for Deployment)
 
-```
+```bash
 AWS_ACCESS_KEY_ID          → Your AWS Access Key ID
 AWS_SECRET_ACCESS_KEY      → Your AWS Secret Access Key
 AWS_REGION                 → us-east-1 (or your preferred region)
@@ -39,7 +39,7 @@ AMPLIFY_STAGING_APP_ID     → Your Amplify staging app ID
 
 #### Application Secrets (From your .env file)
 
-```
+```bash
 VITE_RECAPTCHA_SITE_KEY           → 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
 VITE_RECAPTCHA_SECRET_KEY         → 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 VITE_GOOGLE_ANALYTICS_ID          → G-FT79QM66D3
@@ -64,11 +64,11 @@ GITHUB_PORTFOLIO_TOKEN            → Your GitHub personal access token
 
 ### Other Secrets
 
-- **reCAPTCHA**: https://www.google.com/recaptcha/admin
-- **Google Analytics**: https://analytics.google.com
-- **Codacy**: https://app.codacy.com → Your Project → Settings → Integrations
-- **Sentry**: https://sentry.io → Your Project → Settings → Client Keys
-- **GitHub Token**: https://github.com/settings/tokens → Generate new token (repo scope)
+- **reCAPTCHA**: <https://www.google.com/recaptcha/admin>
+- **Google Analytics**: <https://analytics.google.com>
+- **Codacy**: <https://app.codacy.com> → Your Project → Settings → Integrations
+- **Sentry**: <https://sentry.io> → Your Project → Settings → Client Keys
+- **GitHub Token**: <https://github.com/settings/tokens> → Generate new token (repo scope)
 
 ## ✅ Verification
 
@@ -144,5 +144,4 @@ If you encounter issues:
 1. Check the GitHub Actions logs for detailed error messages
 2. Verify all secrets are set correctly
 3. Ensure AWS permissions are properly configured
-4. Check AWS Amplify Console for additional error details</content>
-   <parameter name="filePath">d:\Nuxt Projects\new-portfolio\GITHUB_SECRETS_SETUP.md
+4. Check AWS Amplify Console for additional error details

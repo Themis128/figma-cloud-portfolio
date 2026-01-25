@@ -5,6 +5,7 @@
 ### **Major Performance & Code Quality Improvements**
 
 #### **✅ Codacy Performance Issues Resolved**
+
 - **TypeScript Errors Fixed**: Removed incorrect `override` modifier from ErrorBoundary
 - **Biome Linting Issues Fixed**: Updated Node.js imports to use `node:` protocol
 - **Bundle Size Optimization**: Enhanced Vite configuration with better code splitting
@@ -12,12 +13,14 @@
 - **PWA Configuration**: Optimized Playwright configuration for faster test execution
 
 #### **✅ Analytics Integration Enabled**
+
 - **Google Analytics 4**: Core Web Vitals tracking (CLS, INP, FCP, LCP, TTFB)
 - **Custom Analytics Endpoint**: `/api/analytics` for detailed performance data
 - **Real-time Monitoring**: Production-only data collection with `sendBeacon` API
 - **Comprehensive Metrics**: Navigation timing, route changes, memory usage tracking
 
 #### **✅ Push Notification System Enhanced**
+
 - **Complete Integration**: Client-server-service worker architecture
 - **VAPID Authentication**: Secure Web Push API implementation
 - **Multi-subscription Support**: Handle multiple devices/users
@@ -198,6 +201,7 @@ The Performance page provides comprehensive monitoring and testing tools for the
 ### **Key Features**
 
 #### **Core Web Vitals Tracking**
+
 - **CLS (Cumulative Layout Shift)**: Measures visual stability
 - **INP (Interaction to Next Paint)**: Measures responsiveness
 - **FCP (First Contentful Paint)**: Measures loading performance
@@ -205,6 +209,7 @@ The Performance page provides comprehensive monitoring and testing tools for the
 - **TTFB (Time to First Byte)**: Measures server response time
 
 #### **Analytics Integration**
+
 - **Google Analytics 4**: Automatic Core Web Vitals tracking
 - **Custom Analytics Endpoint**: Detailed performance data collection
 - **Real-time Monitoring**: Live performance data streaming
@@ -213,6 +218,7 @@ The Performance page provides comprehensive monitoring and testing tools for the
 #### **Performance Monitoring Components**
 
 ##### **PerformanceMonitor Component**
+
 - **Location**: `client/components/PerformanceMonitor.tsx`
 - **Features**:
   - Automatic Core Web Vitals tracking using `web-vitals` library
@@ -223,10 +229,11 @@ The Performance page provides comprehensive monitoring and testing tools for the
   - Route change monitoring
 
 ##### **Analytics Integration**
+
 ```typescript
 // Google Analytics 4 integration
 if (typeof window !== 'undefined' && (window as any).gtag) {
-  (window as any).gtag('event', 'web_vitals', {
+  ;(window as any).gtag('event', 'web_vitals', {
     event_category: 'Performance',
     event_label: 'LCP',
     value: Math.round(metric.value),
@@ -235,17 +242,18 @@ if (typeof window !== 'undefined' && (window as any).gtag) {
 }
 
 // Custom analytics endpoint
-sendToAnalytics('web_vitals', { 
-  metric: 'LCP', 
+sendToAnalytics('web_vitals', {
+  metric: 'LCP',
   value: metric.value,
   id: metric.id,
-  delta: metric.delta 
+  delta: metric.delta,
 })
 ```
 
 ### **Analytics Endpoints**
 
 #### **Custom Analytics API**
+
 - **Endpoint**: `POST /api/analytics`
 - **Purpose**: Collect detailed performance metrics
 - **Data Collected**:
@@ -257,31 +265,35 @@ sendToAnalytics('web_vitals', {
   - Timestamp and URL data
 
 #### **Analytics Data Structure**
+
 ```typescript
 interface AnalyticsEvent {
-  event: string                    // Event type (e.g., 'web_vitals')
-  data: Record<string, unknown>    // Event data
-  timestamp: number               // Unix timestamp
-  url: string                     // Current page URL
-  userAgent: string               // Browser user agent
+  event: string // Event type (e.g., 'web_vitals')
+  data: Record<string, unknown> // Event data
+  timestamp: number // Unix timestamp
+  url: string // Current page URL
+  userAgent: string // Browser user agent
 }
 ```
 
 ### **Performance Monitoring Features**
 
 #### **Real-time Updates**
+
 - **Live Data Streaming**: Real-time performance metric updates
 - **Performance Metrics**: Loading times, bundle sizes, resource usage
 - **Core Web Vitals Monitoring**: Real-time tracking of LCP, CLS, FCP, TTFB
 - **Memory Usage Tracking**: JavaScript heap size monitoring
 
 #### **Analytics Integration Points**
+
 - **Page Views**: Automatic tracking on route changes
 - **User Interactions**: Click events and form submissions
 - **Performance Events**: Core Web Vitals and navigation timing
 - **Error Tracking**: JavaScript errors and performance issues
 
 #### **Production Monitoring**
+
 - **Environment Detection**: Only track in production environments
 - **Data Delivery**: Reliable `sendBeacon` API with `fetch` fallback
 - **Error Handling**: Graceful degradation when analytics fail
@@ -290,6 +302,7 @@ interface AnalyticsEvent {
 ### **Testing Performance Monitoring**
 
 #### **Playwright Tests**
+
 Comprehensive tests in `playwright-tests/performance-monitoring.spec.ts`:
 
 - Performance metric tracking validation
@@ -299,6 +312,7 @@ Comprehensive tests in `playwright-tests/performance-monitoring.spec.ts`:
 - Route change tracking validation
 
 #### **Test Commands**
+
 ```bash
 # Run performance monitoring tests
 pnpm test:e2e --grep "Performance Monitoring"
@@ -310,12 +324,14 @@ pnpm test:e2e --grep "Analytics"
 ### **Performance Optimization**
 
 #### **Bundle Analysis**
+
 - **Code Splitting**: Optimized bundle structure with dedicated chunks
 - **Tree Shaking**: Removed unused code and console logs in production
 - **Asset Optimization**: Image compression and format optimization
 - **Caching Strategy**: Intelligent cache management
 
 #### **Performance Metrics**
+
 - **Main Bundle**: 435.66 kB (gzipped: 141.42 kB)
 - **Router Chunk**: 169.25 kB (gzipped: 55.85 kB)
 - **UI Components**: 121.80 kB (gzipped: 40.13 kB)
@@ -324,12 +340,14 @@ pnpm test:e2e --grep "Analytics"
 ### **Monitoring Dashboard**
 
 #### **Performance Dashboard Components**
+
 - **Real-time Updates**: Live performance data visualization
 - **Status Indicators**: Color-coded performance status displays
 - **Interactive Controls**: Performance testing and monitoring controls
 - **Responsive Layout**: Adaptive dashboard for different screen sizes
 
 #### **Performance Tips**
+
 - **Code Splitting**: Bundle size minimization strategies
 - **Caching Strategies**: Proper cache implementation
 - **Lazy Loading**: Image and component lazy loading
@@ -341,12 +359,14 @@ pnpm test:e2e --grep "Analytics"
 ### **Future Enhancements**
 
 #### **Advanced Analytics**
+
 - **Custom Events**: Track specific user interactions
 - **Conversion Tracking**: Goal and conversion monitoring
 - **User Segmentation**: Create user segments for analysis
 - **Automated Reports**: Scheduled performance reports
 
 #### **Performance Optimization**
+
 - **Bundle Size Monitoring**: Real-time bundle size tracking
 - **Resource Loading**: Detailed resource loading analysis
 - **Network Performance**: Network request optimization
@@ -393,6 +413,7 @@ Notification Displayed to User
 #### **1. Client-Side Components**
 
 ##### **NotificationButton Component**
+
 - **Location**: `client/components/NotificationButton.tsx`
 - **Features**:
   - User interface for enabling/disabling notifications
@@ -401,6 +422,7 @@ Notification Displayed to User
   - Visual feedback for subscription status
 
 ##### **usePushNotifications Hook**
+
 - **Location**: `client/hooks/usePushNotifications.ts`
 - **Features**:
   - React hook managing subscription lifecycle
@@ -410,6 +432,7 @@ Notification Displayed to User
   - Server communication for subscription storage
 
 ##### **API Client Integration**
+
 - **Location**: `client/lib/api.ts`
 - **Features**:
   - Push notification API endpoints
@@ -420,6 +443,7 @@ Notification Displayed to User
 #### **2. Server-Side API**
 
 ##### **Push Notifications API Route**
+
 - **Location**: `app/api/push-notifications/route.ts`
 - **Features**:
   - VAPID key configuration and serving
@@ -429,6 +453,7 @@ Notification Displayed to User
   - Comprehensive error handling
 
 ##### **API Endpoints**
+
 ```typescript
 // GET endpoints
 GET /api/push-notifications?action=vapid-public-key  // Get VAPID public key
@@ -448,6 +473,7 @@ DELETE /api/push-notifications?endpoint=<url>        // Remove subscription
 #### **3. Service Worker**
 
 ##### **Push Notification Service Worker**
+
 - **Location**: `public/sw.js`
 - **Features**:
   - Workbox-based service worker
@@ -459,10 +485,12 @@ DELETE /api/push-notifications?endpoint=<url>        // Remove subscription
 ### **Integration Details**
 
 #### **VAPID Key Configuration**
+
 ```typescript
 // Server-side VAPID configuration
 const vapidKeys = {
-  publicKey: 'BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk',
+  publicKey:
+    'BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk',
   privateKey: 'CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI',
 }
 
@@ -474,6 +502,7 @@ webpush.setVapidDetails(
 ```
 
 #### **Client-Side Subscription**
+
 ```typescript
 // Create subscription with VAPID key
 const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey)
@@ -484,6 +513,7 @@ const subscription = await registration.pushManager.subscribe({
 ```
 
 #### **Notification Sending**
+
 ```typescript
 // Send to multiple subscriptions
 for (const subscription of subscriptions) {
@@ -507,6 +537,7 @@ for (const subscription of subscriptions) {
 ### **Features**
 
 #### **Rich Notification Support**
+
 - **Title & Body**: Core notification content
 - **Icon & Badge**: Visual branding elements
 - **Image**: Rich media support
@@ -514,12 +545,14 @@ for (const subscription of subscriptions) {
 - **Data**: Custom payload for app logic
 
 #### **Multi-Subscription Management**
+
 - **Individual Tracking**: Success/failure per subscription
 - **Comprehensive Logging**: Detailed error reporting
 - **Scalable Architecture**: Support for large numbers of subscriptions
 - **Database Integration**: Production-ready storage (currently in-memory for dev)
 
 #### **User Experience**
+
 - **Permission Handling**: Graceful permission request flow
 - **Subscription Management**: Easy enable/disable functionality
 - **Visual Feedback**: Clear status indicators
@@ -528,6 +561,7 @@ for (const subscription of subscriptions) {
 ### **Testing**
 
 #### **Push Notification Tests**
+
 Comprehensive tests in `playwright-tests/push-notifications.spec.ts`:
 
 - Subscription creation and management
@@ -537,6 +571,7 @@ Comprehensive tests in `playwright-tests/push-notifications.spec.ts`:
 - Error scenarios and edge cases
 
 #### **Test Commands**
+
 ```bash
 # Run push notification tests
 pnpm test:e2e --grep "Push Notifications"
@@ -548,6 +583,7 @@ pnpm test:e2e --grep "PWA"
 ### **Production Considerations**
 
 #### **Data Persistence**
+
 ```typescript
 // Current (Development)
 let subscriptions: PushSubscriptionData[] = []
@@ -557,12 +593,14 @@ let subscriptions: PushSubscriptionData[] = []
 ```
 
 #### **Security**
+
 - **VAPID Keys**: Environment variable configuration
 - **Endpoint Validation**: Subscription validation
 - **Rate Limiting**: Prevent notification abuse
 - **Authentication**: User authentication for subscriptions
 
 #### **Scalability**
+
 - **Database**: Move from in-memory to persistent storage
 - **Queue System**: Message queues for high-volume notifications
 - **Load Balancing**: Distribute notification sending across instances
@@ -570,6 +608,7 @@ let subscriptions: PushSubscriptionData[] = []
 ### **API Usage Examples**
 
 #### **Send Notification to Specific Users**
+
 ```bash
 curl -X POST /api/push-notifications \
   -H "Content-Type: application/json" \
@@ -584,11 +623,13 @@ curl -X POST /api/push-notifications \
 ```
 
 #### **Get VAPID Public Key**
+
 ```bash
 curl /api/push-notifications?action=vapid-public-key
 ```
 
 #### **Test Notifications**
+
 ```bash
 curl /api/push-notifications
 ```
@@ -614,6 +655,7 @@ The push notification system is **100% integrated** and production-ready:
 #### **✅ TypeScript Errors Fixed**
 
 ##### **ErrorBoundary Component**
+
 - **Issue**: Incorrect `override` modifier on `componentDidCatch` method
 - **Fix**: Removed `override` modifier to match React.Component interface
 - **Impact**: Eliminates TypeScript compilation errors and improves type safety
@@ -633,6 +675,7 @@ componentDidCatch(error: Error, errorInfo: ErrorInfo) {
 #### **✅ Biome Linting Issues Fixed**
 
 ##### **Node.js Import Protocol**
+
 - **Issue**: Missing `node:` protocol in Node.js imports
 - **Fix**: Updated imports to use modern Node.js protocol
 - **Impact**: Follows modern Node.js best practices
@@ -648,6 +691,7 @@ const os = require('node:os')
 #### **✅ Bundle Size Optimization**
 
 ##### **Enhanced Vite Configuration**
+
 - **Code Splitting**: Improved manual chunks for better caching strategy
 - **Tree Shaking**: Removed console logs in production
 - **Asset Optimization**: Inline assets smaller than 4kb
@@ -684,6 +728,7 @@ build: {
 #### **✅ Performance Monitoring Optimization**
 
 ##### **Environment-Aware Logging**
+
 - **Issue**: Console logs appearing in production
 - **Fix**: Conditional logging based on environment
 - **Impact**: Cleaner production logs and better performance
@@ -699,6 +744,7 @@ if (process.env.NODE_ENV === 'development') {
 ```
 
 ##### **Google Analytics 4 Integration**
+
 - **Feature**: Comprehensive Core Web Vitals tracking
 - **Implementation**: Automatic tracking with custom analytics endpoint
 - **Impact**: Production-ready performance monitoring
@@ -706,6 +752,7 @@ if (process.env.NODE_ENV === 'development') {
 #### **✅ PWA Configuration Improvements**
 
 ##### **Optimized Playwright Configuration**
+
 - **Feature**: Dynamic worker allocation based on CPU cores
 - **Performance**: Aggressive timeouts for quick failure detection
 - **Environment**: Environment-aware configuration
@@ -714,6 +761,7 @@ if (process.env.NODE_ENV === 'development') {
 ### **Code Quality Metrics**
 
 #### **Bundle Analysis (Post-Optimization)**
+
 - **Main bundle**: 435.66 kB (gzipped: 141.42 kB)
 - **Router chunk**: 169.25 kB (gzipped: 55.85 kB)
 - **UI components**: 121.80 kB (gzipped: 40.13 kB)
@@ -721,10 +769,12 @@ if (process.env.NODE_ENV === 'development') {
 - **Total optimized size**: Significantly reduced through better code splitting
 
 #### **Image Optimization**
-- **Total savings**: 0.36 kB / 20.25 kB ≈ 2%
-- **Optimized formats**: WebP and AVIF with quality improvements
+
+- **Space Savings**: Reduced image footprint by 0.36 kB out of 20.25 kB total (≈2% reduction)
+- **Format Optimization**: WebP and AVIF formats with quality enhancements
 
 #### **Code Quality Improvements**
+
 - **Fixed**: 17+ TypeScript errors
 - **Fixed**: Multiple Biome linting issues
 - **Improved**: Bundle structure and caching strategy
@@ -733,12 +783,14 @@ if (process.env.NODE_ENV === 'development') {
 ### **Testing Coverage**
 
 #### **Updated Test Files**
+
 - **Performance Monitoring Tests**: Added comprehensive performance tracking tests
 - **Push Notification Tests**: Enhanced push notification functionality tests
 - **Analytics Integration Tests**: Added Google Analytics 4 integration tests
 - **Code Quality Tests**: Added TypeScript and linting validation tests
 
 #### **Test Commands**
+
 ```bash
 # Run all tests
 pnpm test
@@ -755,11 +807,13 @@ pnpm test:e2e --grep "Analytics"
 ### **Linting and Type Checking**
 
 #### **Biome Configuration**
+
 - **Updated**: Node.js import protocol requirements
 - **Enhanced**: TypeScript error detection
 - **Optimized**: Performance-related linting rules
 
 #### **TypeScript Configuration**
+
 - **Fixed**: Component interface issues
 - **Enhanced**: Strict type checking
 - **Optimized**: Bundle analysis types
@@ -767,11 +821,13 @@ pnpm test:e2e --grep "Analytics"
 ### **Future Code Quality Enhancements**
 
 #### **Automated Quality Gates**
+
 - **Pre-commit Hooks**: Automated linting and type checking
 - **CI/CD Integration**: Quality checks in deployment pipeline
 - **Code Coverage**: Maintain high test coverage standards
 
 #### **Performance Monitoring**
+
 - **Bundle Size Tracking**: Monitor bundle size changes
 - **Performance Regression**: Detect performance regressions
 - **Code Quality Metrics**: Track code quality over time
@@ -2339,7 +2395,7 @@ const Contact = () => {
         ...data,
         recaptchaToken: token,
       })
-      
+
       if (response.success) {
         // Handle success
       }
@@ -2362,7 +2418,7 @@ app.post('/api/contact', async (req, res) => {
 
   try {
     const recaptchaResult = await verifyRecaptcha(recaptchaToken)
-    
+
     if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
       return res.status(400).json({
         success: false,
@@ -2562,7 +2618,7 @@ const Resume = () => {
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       setPdfUrl(url)
-      
+
       // Auto-download
       const link = document.createElement('a')
       link.href = url
@@ -2589,7 +2645,7 @@ app.get('/api/resume/download', async (req, res) => {
     // Read markdown content
     const markdownContent = await fs.readFile(
       path.join(__dirname, '../../public/resume-content.md'),
-      'utf-8'
+      'utf-8',
     )
 
     // Parse markdown to structured data
@@ -2622,28 +2678,36 @@ app.get('/api/resume/download', async (req, res) => {
 # Themistoklis Baltzakis
 
 ## Contact
+
 - Email: themisbaltzakis@gmail.com
 - Phone: +30 698 123 4567
 - Location: Athens, Greece
 
 ## Professional Summary
+
 Cloud Architect & Cybersecurity Specialist with 10+ years of experience...
 
 ## Skills
+
 - Cloud Architecture (AWS, Azure, GCP)
 - Cybersecurity & DevSecOps
 - Containerization & Orchestration
 - Programming Languages
 
 ## Experience
+
 ### Senior Cloud Architect
+
 **Company Name** | 2020 - Present
+
 - Led cloud migration projects
 - Designed secure cloud architectures
 - Implemented DevSecOps practices
 
 ## Education
+
 ### Master's Degree in Computer Science
+
 **University Name** | 2015 - 2017
 ```
 
@@ -2730,9 +2794,9 @@ function generateResumeHTML(data: ResumeData): string {
 async function generatePDF(html: string): Promise<Buffer> {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  
+
   await page.setContent(html, { waitUntil: 'networkidle0' })
-  
+
   const pdfBuffer = await page.pdf({
     format: 'A4',
     printBackground: true,
@@ -2743,7 +2807,7 @@ async function generatePDF(html: string): Promise<Buffer> {
       right: '15mm',
     },
   })
-  
+
   await browser.close()
   return pdfBuffer
 }
@@ -2783,18 +2847,19 @@ const pdfCache = new Map<string, { buffer: Buffer; timestamp: number }>()
 app.get('/api/resume/download', async (req, res) => {
   const cacheKey = 'resume_pdf'
   const cached = pdfCache.get(cacheKey)
-  
-  if (cached && Date.now() - cached.timestamp < 300000) { // 5 minutes
+
+  if (cached && Date.now() - cached.timestamp < 300000) {
+    // 5 minutes
     res.setHeader('Content-Type', 'application/pdf')
     res.setHeader('Content-Disposition', 'attachment; filename="resume.pdf"')
     res.send(cached.buffer)
     return
   }
-  
+
   // Generate new PDF and cache
   const pdfBuffer = await generateResumePDF()
   pdfCache.set(cacheKey, { buffer: pdfBuffer, timestamp: Date.now() })
-  
+
   res.setHeader('Content-Type', 'application/pdf')
   res.setHeader('Content-Disposition', 'attachment; filename="resume.pdf"')
   res.send(pdfBuffer)
@@ -2831,14 +2896,14 @@ describe('generatePDF', () => {
 ```typescript
 test('resume download functionality', async ({ page }) => {
   await page.goto('/resume')
-  
+
   // Click download button
   await page.click('[data-testid="download-resume"]')
-  
+
   // Wait for download
   const downloadPromise = page.waitForEvent('download')
   await downloadPromise
-  
+
   // Verify PDF content
   // ...
 })
@@ -2933,25 +2998,28 @@ The application provides comprehensive PDF generation functionality for resumes,
 import puppeteer from 'puppeteer'
 
 export class PDFService {
-  static async generatePDF(html: string, options: PDFGenerationOptions = {}): Promise<Buffer> {
+  static async generatePDF(
+    html: string,
+    options: PDFGenerationOptions = {},
+  ): Promise<Buffer> {
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
-    
+
     try {
       const page = await browser.newPage()
-      
+
       // Set viewport for consistent rendering
       await page.setViewport({
         width: 1200,
         height: 800,
         deviceScaleFactor: 1,
       })
-      
+
       // Set HTML content
       await page.setContent(html, { waitUntil: 'networkidle0' })
-      
+
       // Generate PDF
       const pdfBuffer = await page.pdf({
         format: options.format || 'A4',
@@ -2964,7 +3032,7 @@ export class PDFService {
         },
         ...options.pdfOptions,
       })
-      
+
       return pdfBuffer
     } finally {
       await browser.close()
@@ -3062,8 +3130,10 @@ const options: PDFGenerationOptions = {
     landscape: false,
     scale: 1,
     displayHeaderFooter: true,
-    headerTemplate: '<div style="text-align: center; font-size: 10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>',
-    footerTemplate: '<div style="text-align: center; font-size: 10px;">Generated on ${new Date().toISOString()}</div>',
+    headerTemplate:
+      '<div style="text-align: center; font-size: 10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>',
+    footerTemplate:
+      '<div style="text-align: center; font-size: 10px;">Generated on ${new Date().toISOString()}</div>',
   },
 }
 ```
@@ -3099,29 +3169,32 @@ class PDFCacheService {
 
 ```typescript
 // Background PDF generation
-export async function generatePDFAsync(html: string, options: PDFGenerationOptions): Promise<string> {
+export async function generatePDFAsync(
+  html: string,
+  options: PDFGenerationOptions,
+): Promise<string> {
   // Generate unique job ID
   const jobId = crypto.randomUUID()
-  
+
   // Queue job for background processing
   await jobQueue.add('pdf-generation', {
     jobId,
     html,
     options,
   })
-  
+
   return jobId
 }
 
 // Webhook for completion
 app.post('/api/pdf/webhook', async (req, res) => {
   const { jobId, pdfUrl, status } = req.body
-  
+
   if (status === 'completed') {
     // Notify user or store result
     await notifyUser(jobId, pdfUrl)
   }
-  
+
   res.status(200).json({ success: true })
 })
 ```
@@ -3135,14 +3208,17 @@ export class PDFGenerationError extends Error {
   constructor(
     message: string,
     public originalError?: Error,
-    public context?: any
+    public context?: any,
   ) {
     super(message)
     this.name = 'PDFGenerationError'
   }
 }
 
-export async function safePDFGeneration(html: string, options: PDFGenerationOptions): Promise<Buffer> {
+export async function safePDFGeneration(
+  html: string,
+  options: PDFGenerationOptions,
+): Promise<Buffer> {
   try {
     // Validate input
     if (!html || typeof html !== 'string') {
@@ -3162,11 +3238,11 @@ export async function safePDFGeneration(html: string, options: PDFGenerationOpti
     if (error.name === 'TimeoutError') {
       throw new PDFGenerationError('PDF generation timed out', error)
     }
-    
+
     if (error.name === 'BrowserError') {
       throw new PDFGenerationError('Browser error during PDF generation', error)
     }
-    
+
     throw new PDFGenerationError('Failed to generate PDF', error)
   }
 }
@@ -3182,7 +3258,30 @@ import DOMPurify from 'isomorphic-dompurify'
 
 export function sanitizeHTML(html: string): string {
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'strong', 'em', 'br', 'hr'],
+    ALLOWED_TAGS: [
+      'div',
+      'span',
+      'p',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'ul',
+      'ol',
+      'li',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'td',
+      'th',
+      'strong',
+      'em',
+      'br',
+      'hr',
+    ],
     ALLOWED_ATTR: ['class', 'id', 'style'],
     ALLOW_DATA_ATTR: false,
   })
@@ -3191,7 +3290,10 @@ export function sanitizeHTML(html: string): string {
 // CSS sanitization
 export function sanitizeCSS(css: string): string {
   // Remove potentially dangerous CSS properties
-  return css.replace(/(expression|javascript|url\s*\(\s*['"]?\s*javascript)/gi, '')
+  return css.replace(
+    /(expression|javascript|url\s*\(\s*['"]?\s*javascript)/gi,
+    '',
+  )
 }
 ```
 
@@ -3202,18 +3304,18 @@ export function sanitizeCSS(css: string): string {
 export function secureFileOperations() {
   const fs = require('fs')
   const path = require('path')
-  
+
   // Restrict file paths
   const allowedDirectories = [
     path.resolve(__dirname, '../../public'),
     path.resolve(__dirname, '../../templates'),
   ]
-  
+
   function isPathAllowed(filePath: string): boolean {
     const resolvedPath = path.resolve(filePath)
-    return allowedDirectories.some(dir => resolvedPath.startsWith(dir))
+    return allowedDirectories.some((dir) => resolvedPath.startsWith(dir))
   }
-  
+
   return { isPathAllowed }
 }
 ```
@@ -3227,7 +3329,7 @@ describe('PDF Generation Service', () => {
   test('should generate PDF from valid HTML', async () => {
     const html = '<html><body><h1>Test PDF</h1></body></html>'
     const buffer = await PDFService.generatePDF(html)
-    
+
     expect(buffer).toBeInstanceOf(Buffer)
     expect(buffer.length).toBeGreaterThan(0)
   })
@@ -3247,7 +3349,7 @@ describe('PDF Generation Service', () => {
         right: '10mm',
       },
     }
-    
+
     const buffer = await PDFService.generatePDF(html, options)
     expect(buffer).toBeInstanceOf(Buffer)
   })
@@ -3264,7 +3366,7 @@ describe('PDF API Endpoints', () => {
       .expect(200)
       .expect('Content-Type', 'application/pdf')
       .expect('Content-Disposition', /attachment; filename=".*\.pdf"/)
-    
+
     expect(response.body).toBeInstanceOf(Buffer)
     expect(response.body.length).toBeGreaterThan(0)
   })
@@ -3287,16 +3389,18 @@ export class PDFMetrics {
 
   static recordGeneration(time: number, success: boolean): void {
     this.metrics.totalGenerated++
-    
+
     if (success) {
       // Update average time
       const currentAvg = this.metrics.averageGenerationTime
-      this.metrics.averageGenerationTime = 
-        (currentAvg * (this.metrics.totalGenerated - 1) + time) / this.metrics.totalGenerated
+      this.metrics.averageGenerationTime =
+        (currentAvg * (this.metrics.totalGenerated - 1) + time) /
+        this.metrics.totalGenerated
     } else {
       // Update error rate
-      this.metrics.errorRate = 
-        (this.metrics.errorRate * (this.metrics.totalGenerated - 1) + 1) / this.metrics.totalGenerated
+      this.metrics.errorRate =
+        (this.metrics.errorRate * (this.metrics.totalGenerated - 1) + 1) /
+        this.metrics.totalGenerated
     }
   }
 
@@ -3354,6 +3458,7 @@ This file contains all the resume content in a structured markdown format that g
 # Themistoklis Baltzakis
 
 ## Contact
+
 - **Email**: themisbaltzakis@gmail.com
 - **Phone**: +30 698 123 4567
 - **Location**: Athens, Greece
@@ -3361,21 +3466,26 @@ This file contains all the resume content in a structured markdown format that g
 - **GitHub**: [github.com/Themis128](https://github.com/Themis128)
 
 ## Professional Summary
+
 Cloud Architect & Cybersecurity Specialist with 10+ years of experience in designing and implementing secure, scalable cloud solutions. Expertise in AWS, Azure, and GCP with a strong background in DevSecOps practices and containerization technologies.
 
 ## Technical Skills
+
 ### Cloud Platforms
+
 - AWS (EC2, S3, Lambda, RDS, CloudFormation)
 - Microsoft Azure (VMs, Blob Storage, Functions, SQL Database)
 - Google Cloud Platform (Compute Engine, Cloud Storage, Cloud Functions)
 
 ### Security & DevOps
+
 - Docker & Kubernetes
 - Terraform & Ansible
 - CI/CD Pipelines (GitHub Actions, Jenkins)
 - Security scanning & vulnerability assessment
 
 ### Programming Languages
+
 - Python, JavaScript/TypeScript
 - Go, Java, C#
 - SQL, NoSQL databases
@@ -3383,24 +3493,30 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ## Professional Experience
 
 ### Senior Cloud Architect
+
 **TechCorp Solutions** | Athens, Greece | Jan 2020 - Present
+
 - Led migration of 50+ applications to cloud infrastructure
 - Designed multi-region disaster recovery solutions
 - Implemented security-first architecture with zero-trust principles
 - Reduced infrastructure costs by 40% through optimization
 
 **Key Achievements:**
+
 - Successfully migrated legacy monolithic applications to microservices architecture
 - Implemented automated security scanning reducing vulnerabilities by 80%
 - Led team of 15 engineers in cloud transformation initiative
 
 ### Cloud Security Engineer
+
 **SecureNet Technologies** | Thessaloniki, Greece | Mar 2017 - Dec 2019
+
 - Developed security frameworks for cloud deployments
 - Implemented compliance monitoring for GDPR and ISO 27001
 - Created automated security testing pipelines
 
 **Key Achievements:**
+
 - Reduced security incidents by 60% through proactive monitoring
 - Achieved ISO 27001 certification for cloud infrastructure
 - Developed security training program for development teams
@@ -3408,16 +3524,21 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ## Education
 
 ### Master of Science in Computer Science
+
 **National Technical University of Athens** | Athens, Greece | 2015 - 2017
+
 - Specialization: Cloud Computing & Security
 - Thesis: "Security Challenges in Multi-Cloud Environments"
 
 ### Bachelor of Science in Information Technology
+
 **University of Macedonia** | Thessaloniki, Greece | 2011 - 2015
+
 - Graduated with Honors
 - Relevant Coursework: Network Security, Database Systems, Software Engineering
 
 ## Certifications
+
 - AWS Certified Solutions Architect - Professional
 - Microsoft Certified: Azure Solutions Architect Expert
 - Certified Information Systems Security Professional (CISSP)
@@ -3426,23 +3547,29 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ## Projects
 
 ### Cloud Migration Framework
+
 **Open Source Project** | 2021 - Present
+
 - Developed comprehensive framework for cloud migration
 - Includes assessment tools, migration scripts, and validation procedures
 - Used by 100+ organizations worldwide
 
 ### Security Monitoring Dashboard
+
 **Internal Project** | 2019 - 2020
+
 - Created real-time security monitoring dashboard
 - Integrates with multiple cloud providers
 - Provides actionable security insights
 
 ## Languages
+
 - **Greek**: Native
 - **English**: Professional Working Proficiency
 - **French**: Basic Communication Skills
 
 ## Interests
+
 - Cloud security research
 - Open source contributions
 - Technology blogging
@@ -3454,6 +3581,7 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ### Updating Personal Information
 
 1. **Edit the main header**:
+
    ```markdown
    # Your Name
    ```
@@ -3461,6 +3589,7 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 2. **Update contact information**:
    ```markdown
    ## Contact
+
    - **Email**: your.email@example.com
    - **Phone**: +1 (555) 123-4567
    - **Location**: Your City, Country
@@ -3469,13 +3598,17 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ### Adding Experience
 
 1. **Add new job entries**:
+
    ```markdown
    ### Job Title
+
    **Company Name** | Location | Start Date - End Date
+
    - Key responsibility or achievement
    - Another responsibility or achievement
-   
+
    **Key Achievements:**
+
    - Specific measurable achievement
    - Another specific achievement
    ```
@@ -3487,8 +3620,10 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ### Updating Skills
 
 1. **Modify skill categories**:
+
    ```markdown
    ### Category Name
+
    - Specific skill or technology
    - Another skill or technology
    ```
@@ -3500,9 +3635,12 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
 ### Adding Education
 
 1. **Add new degrees**:
+
    ```markdown
    ### Degree Name
+
    **Institution Name** | Location | Start Date - End Date
+
    - Relevant details or achievements
    ```
 
@@ -3523,10 +3661,11 @@ The application includes validation for the markdown content:
 ### Testing Content Changes
 
 1. **Preview Changes**:
+
    ```bash
    # Start development server
    pnpm dev
-   
+
    # Navigate to resume page
    # Check that content renders correctly
    ```
@@ -3543,6 +3682,7 @@ The application includes validation for the markdown content:
 ### Adding Custom Sections
 
 1. **Modify the parser** (`server/services/resumeParser.ts`):
+
    ```typescript
    // Add new section parsing
    function parseCustomSection(content: string): CustomSectionData {
@@ -3551,6 +3691,7 @@ The application includes validation for the markdown content:
    ```
 
 2. **Update the template** (`server/templates/resumeTemplate.ts`):
+
    ```typescript
    // Add template for custom section
    function generateCustomSection(data: CustomSectionData): string {
@@ -3569,6 +3710,7 @@ The application includes validation for the markdown content:
 ### Custom Styling
 
 1. **Modify CSS styles** (`server/templates/resumeStyles.ts`):
+
    ```typescript
    export const resumeStyles = `
      /* Custom styles */
@@ -3599,6 +3741,7 @@ The application includes validation for the markdown content:
 ### Version Control
 
 1. **Track changes**:
+
    ```bash
    # Commit markdown changes
    git add public/resume-content.md
@@ -3607,10 +3750,11 @@ The application includes validation for the markdown content:
    ```
 
 2. **Review changes**:
+
    ```bash
    # View differences
    git diff public/resume-content.md
-   
+
    # Check history
    git log -- public/resume-content.md
    ```
@@ -3618,10 +3762,11 @@ The application includes validation for the markdown content:
 ### Backup and Recovery
 
 1. **Create backups**:
+
    ```bash
    # Backup current content
    cp public/resume-content.md public/resume-content.md.backup
-   
+
    # Backup with timestamp
    cp public/resume-content.md public/resume-content.md.$(date +%Y%m%d)
    ```
@@ -3654,6 +3799,7 @@ The application includes validation for the markdown content:
 ### Debug Mode
 
 1. **Enable debug logging**:
+
    ```typescript
    // In server/routes/resume.ts
    console.log('Resume content:', content)
@@ -3751,47 +3897,47 @@ export function PerformanceMonitor() {
     const trackWebVitals = () => {
       onCLS((metric) => {
         // Send to analytics service
-        sendToAnalytics('web_vitals', { 
-          metric: 'CLS', 
+        sendToAnalytics('web_vitals', {
+          metric: 'CLS',
           value: metric.value,
           id: metric.id,
-          delta: metric.delta 
+          delta: metric.delta,
         })
       })
 
       onINP((metric) => {
-        sendToAnalytics('web_vitals', { 
-          metric: 'INP', 
+        sendToAnalytics('web_vitals', {
+          metric: 'INP',
           value: metric.value,
           id: metric.id,
-          delta: metric.delta 
+          delta: metric.delta,
         })
       })
 
       onFCP((metric) => {
-        sendToAnalytics('web_vitals', { 
-          metric: 'FCP', 
+        sendToAnalytics('web_vitals', {
+          metric: 'FCP',
           value: metric.value,
           id: metric.id,
-          delta: metric.delta 
+          delta: metric.delta,
         })
       })
 
       onLCP((metric) => {
-        sendToAnalytics('web_vitals', { 
-          metric: 'LCP', 
+        sendToAnalytics('web_vitals', {
+          metric: 'LCP',
           value: metric.value,
           id: metric.id,
-          delta: metric.delta 
+          delta: metric.delta,
         })
       })
 
       onTTFB((metric) => {
-        sendToAnalytics('web_vitals', { 
-          metric: 'TTFB', 
+        sendToAnalytics('web_vitals', {
+          metric: 'TTFB',
           value: metric.value,
           id: metric.id,
-          delta: metric.delta 
+          delta: metric.delta,
         })
       })
     }
@@ -3907,3 +4053,4 @@ export function ProgressBar({ progress, label, color = 'bg-cyan-400', size = 'md
           initial={{ width: 0 }}
           animate={{ width: `${progress * 100}%` }}
           transition={{ duration:
+```

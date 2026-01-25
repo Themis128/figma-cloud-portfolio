@@ -5,6 +5,9 @@ interface UseLazyImageOptions {
   threshold?: number;
 }
 
+// Constants for intersection observer
+const DEFAULT_INTERSECTION_THRESHOLD = 0.1;
+
 export function useLazyImage(options: UseLazyImageOptions = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -24,7 +27,7 @@ export function useLazyImage(options: UseLazyImageOptions = {}) {
       },
       {
         rootMargin: options.rootMargin ?? "50px",
-        threshold: options.threshold ?? 0.1,
+        threshold: options.threshold ?? DEFAULT_INTERSECTION_THRESHOLD,
       },
     );
 

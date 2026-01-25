@@ -33,6 +33,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { generateResumePDF } from "@/lib/api";
 
+// Auto-save configuration
+const AUTO_SAVE_DELAY_MS = 2000;
+
 const defaultResume: ResumeData = {
   name: "Themistoklis Baltzakis",
   title: "Cloud Architect & Cybersecurity Specialist",
@@ -110,7 +113,7 @@ export default function Resume() {
       localStorage.setItem("resume-draft", JSON.stringify(resume));
       setHasUnsavedChanges(false);
       toast.success("Draft saved automatically");
-    }, 2000);
+    }, AUTO_SAVE_DELAY_MS);
 
     return () => clearTimeout(timer);
   }, [resume, hasUnsavedChanges]);

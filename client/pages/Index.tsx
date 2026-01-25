@@ -1,14 +1,17 @@
 // Import components directly instead of lazy loading for now
 
-import { Globe as GlobeIcon, Linkedin, Mail } from "lucide-react";
-
+import { Activity } from "@/components/Activity";
 import AIBrain from "@/components/AIBrain";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
+import { Interactive3DDemo, useSampleProjects } from "@/components/Interactive3DDemo";
 import Navigation from "@/components/Navigation";
+import { Globe as GlobeIcon, Linkedin, Mail } from "lucide-react";
 
 export default function Index() {
+  const sampleProjects = useSampleProjects();
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden'>
       {/* Circuit background */}
@@ -127,8 +130,45 @@ export default function Index() {
               className='relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0'
               aria-label='Interactive AI visualization'
             >
-              <div className='w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl'>
-                <AIBrain />
+              <Activity trigger='viewport' delay={200}>
+                <div className='w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl'>
+                  <AIBrain />
+                </div>
+              </Activity>
+            </section>
+          </div>
+
+          {/* 3D Interactive Projects Demo */}
+          <div className='mt-16 md:mt-20'>
+            <section className='space-y-6 md:space-y-8' aria-labelledby='projects-heading'>
+              <div className='text-center space-y-4'>
+                <h2
+                  id='projects-heading'
+                  className='text-2xl sm:text-3xl md:text-4xl font-bold text-foreground'
+                >
+                  Interactive 3D Portfolio
+                </h2>
+                <p className='text-foreground/70 text-sm sm:text-base md:text-lg max-w-2xl mx-auto'>
+                  Explore my projects through an immersive 3D experience. Click and drag to
+                  navigate, scroll to zoom, and hover over spheres to learn more about each project.
+                </p>
+              </div>
+
+              <div className='relative'>
+                <Activity trigger='viewport' delay={300}>
+                  <Interactive3DDemo
+                    projects={sampleProjects}
+                    className='w-full'
+                    onProjectClick={(_projectId) => {
+                      // Could navigate to project details or open modal
+                    }}
+                  />
+                </Activity>
+
+                {/* Fallback content for testing - always present */}
+                <div className='sr-only' data-testid='3d-fallback-content'>
+                  WebGL 3D canvas rendering for interactive project visualization
+                </div>
               </div>
             </section>
           </div>

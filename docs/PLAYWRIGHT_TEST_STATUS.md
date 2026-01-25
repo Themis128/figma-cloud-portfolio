@@ -143,7 +143,7 @@ pnpm dev:all
 
 ### **Test Organization**
 
-```
+```bash
 playwright-tests/
 ├── app.spec.ts                 # Main application UI tests (400+ tests)
 ├── agents.spec.ts              # AI Agent templates system

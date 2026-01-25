@@ -13,11 +13,17 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+const SIDEBAR_COOKIE_DAYS = 7;
+const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * SIDEBAR_COOKIE_DAYS;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+// Sidebar constants
+const MILLISECONDS_PER_SECOND = 1000;
+const SIDEBAR_RANDOM_WIDTH_RANGE = 40;
+const SIDEBAR_RANDOM_WIDTH_MIN = 50;
 
 type SidebarContext = {
   state: "expanded" | "collapsed";
@@ -82,7 +88,7 @@ const SidebarProvider = React.forwardRef<
           // biome-ignore lint/suspicious/noExplicitAny: CookieStore types are incomplete
           (window.cookieStore as any).set(SIDEBAR_COOKIE_NAME, openState.toString(), {
             path: "/",
-            expires: new Date(Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000),
+            expires: new Date(Date.now() + SIDEBAR_COOKIE_MAX_AGE * MILLISECONDS_PER_SECOND),
           });
         } else {
           // Fallback to document.cookie for older browsers
@@ -604,7 +610,7 @@ const SidebarMenuAction = React.forwardRef<
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
+        "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
         className,
       )}
       {...props}
@@ -641,7 +647,7 @@ const SidebarMenuSkeleton = React.forwardRef<
 >(({ className, showIcon = false, ...props }, ref) => {
   // Random width between 50 to 90%.
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
+    return `${Math.floor(Math.random() * SIDEBAR_RANDOM_WIDTH_RANGE) + SIDEBAR_RANDOM_WIDTH_MIN}%`;
   }, []);
 
   return (
@@ -741,5 +747,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
+  useSidebar
 };
+

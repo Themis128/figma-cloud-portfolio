@@ -1,0 +1,72 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - button "Open AI Assistant" [ref=e4] [cursor=pointer]:
+    - img
+  - button "Accessibility Settings" [ref=e6] [cursor=pointer]:
+    - img
+  - generic [ref=e8]:
+    - generic:
+      - img "Circuit board background pattern"
+    - navigation [ref=e9]:
+      - generic [ref=e11]:
+        - link "Home" [ref=e12]:
+          - /url: /
+          - text: TB
+        - button "Toggle menu" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+      - generic [ref=e16]:
+        - link "About" [ref=e17]:
+          - /url: /about
+        - link "Resume" [ref=e18]:
+          - /url: /resume
+        - link "Contact" [ref=e19]:
+          - /url: /contact
+        - link "Performance" [ref=e20]:
+          - /url: /performance
+        - link "Agents" [ref=e21]:
+          - /url: /agents
+        - link "Get In Touch" [ref=e24]:
+          - /url: /contact
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - region "Themistoklis Baltzakis" [ref=e28]:
+            - generic [ref=e29]:
+              - heading "Themistoklis Baltzakis" [level=1] [ref=e31]:
+                - generic [ref=e32]: Themistoklis
+                - generic [ref=e33]: Baltzakis
+              - paragraph [ref=e35]: Cloud Architect & Cybersecurity Specialist
+              - paragraph [ref=e38]: Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments.
+            - generic [ref=e39]:
+              - link "Learn More" [ref=e41]:
+                - /url: /about
+                - generic [ref=e42]: Learn More
+              - link "Build Resume" [ref=e45]:
+                - /url: /resume
+                - generic [ref=e46]: Build Resume
+              - link "Get In Touch" [ref=e49]:
+                - /url: /contact
+                - generic [ref=e50]: Get In Touch
+            - generic [ref=e51]:
+              - link "LinkedIn" [ref=e53]:
+                - /url: https://www.linkedin.com/in/baltzakis-themis
+                - img [ref=e54]
+              - link "Email" [ref=e59]:
+                - /url: mailto:baltzakis.themis@gmail.com
+                - img [ref=e60]
+              - link "Portfolio" [ref=e64]:
+                - /url: https://www.baltzakisthemis.com
+                - img [ref=e65]
+          - region "Interactive AI visualization" [ref=e68]:
+            - img "AI Brain neural network visualization" [ref=e72]
+        - region "Interactive 3D Portfolio" [ref=e97]:
+          - generic [ref=e98]:
+            - heading "Interactive 3D Portfolio" [level=2] [ref=e99]
+            - paragraph [ref=e100]: Explore my projects through an immersive 3D experience. Click and drag to navigate, scroll to zoom, and hover over spheres to learn more about each project.
+          - generic [ref=e104]: WebGL 3D canvas rendering for interactive project visualization
+```
