@@ -19,7 +19,6 @@ const DAYS_PER_WEEK = 7;
 // Image optimization constants
 const IMAGE_QUALITY_LOW = 70;
 const IMAGE_QUALITY_MEDIUM = 75;
-const IMAGE_QUALITY_HIGH = 80;
 
 // Constants for cache expiration times (in seconds)
 const CACHE_EXPIRATION_ONE_YEAR =
