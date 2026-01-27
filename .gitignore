@@ -56,6 +56,7 @@ lambda-deploy/**/*.zip
 test-results/
 playwright-report/
 playwright-report-*/
+playwright-html-report/
 
 # Build outputs
 build/
