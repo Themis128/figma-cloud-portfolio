@@ -9,7 +9,7 @@ frontend:
     build:
       commands:
         - echo "Building application..."
-        - node scripts/build-resume.js || true
+        - echo "Skipping resume generation in CI/CD to save memory"
         - pnpm exec vite build
         - pnpm exec vite build --config vite.config.server.ts
   artifacts:
