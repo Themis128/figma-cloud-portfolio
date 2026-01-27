@@ -44,7 +44,9 @@ export function RealtimeTest() {
   };
 
   const testAgentStatus = () => {
-    updateAgentStatus("test-agent", "running", { progress: Math.random() * MAX_PROGRESS_PERCENTAGE });
+    updateAgentStatus("test-agent", "running", {
+      progress: Math.random() * MAX_PROGRESS_PERCENTAGE,
+    });
   };
 
   return (

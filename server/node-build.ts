@@ -1,5 +1,5 @@
-import path from "node:path";
 import * as express from "express";
+import path from "node:path";
 import { createServer, initializeSocketIO } from "./index";
 
 const app = createServer();
@@ -24,25 +24,20 @@ app.get("/{*splat}", (req, res) => {
 });
 
 const server = app.listen(port, () => {
-  console.log(`🚀 Baltzakis Themistoklis server running on port ${port}`);
+  console.log(`Server listening on port ${port}`);
   if (process.env.NODE_ENV === "production") {
-    console.log(`📱 Frontend: http://localhost:${port}`);
   }
-  console.log(`🔧 API: http://localhost:${port}/api`);
 });
 
 // Initialize Socket.IO
 // @ts-expect-error _io is intentionally unused but needed for initialization
 const _io = initializeSocketIO(server);
-console.log("🔌 WebSocket server initialized");
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
-  console.log("🛑 Received SIGTERM, shutting down gracefully");
   process.exit(0);
 });
 
 process.on("SIGINT", () => {
-  console.log("🛑 Received SIGINT, shutting down gracefully");
   process.exit(0);
 });

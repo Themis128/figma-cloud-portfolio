@@ -20,7 +20,6 @@ class SocketManager {
     });
 
     this.socket.on("connect", () => {
-      console.log("Connected to WebSocket server");
       this.reconnectAttempts = 0;
 
       // Join with user data
@@ -28,26 +27,19 @@ class SocketManager {
     });
 
     this.socket.on("disconnect", (reason) => {
-      console.log("Disconnected from WebSocket server:", reason);
-
       if (reason === "io server disconnect" || reason === "io client disconnect") {
         // Server disconnected us, try to reconnect
         this.handleReconnect(userId, userName);
       }
     });
 
-    this.socket.on("connect_error", (error) => {
-      console.error("WebSocket connection error:", error);
+    this.socket.on("connect_error", (_error) => {
       this.handleReconnect(userId, userName);
     });
 
-    this.socket.on("reconnect_attempt", (attempt) => {
-      console.log(`Reconnection attempt ${attempt}`);
-    });
+    this.socket.on("reconnect_attempt", (_attempt) => {});
 
-    this.socket.on("reconnect_failed", () => {
-      console.error("Failed to reconnect to WebSocket server");
-    });
+    this.socket.on("reconnect_failed", () => {});
 
     return this.socket;
   }
@@ -56,13 +48,9 @@ class SocketManager {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       setTimeout(() => {
-        console.log(
-          `Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
-        );
         this.connect(userId, userName);
       }, this.reconnectDelay * this.reconnectAttempts);
     } else {
-      console.error("Max reconnection attempts reached");
     }
   }
 

@@ -2,6 +2,13 @@ import { useRef, useState } from "react";
 
 import type { AgentConnection, AgentNode } from "@/data/agentTemplates";
 
+const NODE_WIDTH = 240;
+const NODE_HEIGHT = 80;
+const NODE_WIDTH_HALF = NODE_WIDTH / 2;
+const NODE_HEIGHT_HALF = NODE_HEIGHT / 2;
+const NODE_LABEL_Y_OFFSET = 25;
+const NODE_TYPE_Y_OFFSET = 50;
+
 interface WorkflowBuilderProps {
   nodes: AgentNode[];
   connections: AgentConnection[];
@@ -87,10 +94,10 @@ export function WorkflowBuilder({
 
     if (!sourceNode || !targetNode) return "";
 
-    const sourceX = sourceNode.position.x + 120; // node width / 2
-    const sourceY = sourceNode.position.y + 40; // node height / 2
-    const targetX = targetNode.position.x + 120;
-    const targetY = targetNode.position.y + 40;
+    const sourceX = sourceNode.position.x + NODE_WIDTH_HALF; // node width / 2
+    const sourceY = sourceNode.position.y + NODE_HEIGHT_HALF; // node height / 2
+    const targetX = targetNode.position.x + NODE_WIDTH_HALF;
+    const targetY = targetNode.position.y + NODE_HEIGHT_HALF;
 
     // Create a curved path
     const midX = (sourceX + targetX) / 2;
@@ -158,8 +165,8 @@ export function WorkflowBuilder({
 
             {/* Node label */}
             <text
-              x={node.position.x + 120}
-              y={node.position.y + 25}
+              x={node.position.x + NODE_WIDTH_HALF}
+              y={node.position.y + NODE_LABEL_Y_OFFSET}
               textAnchor='middle'
               fill='white'
               fontSize='12'
@@ -171,8 +178,8 @@ export function WorkflowBuilder({
 
             {/* Node type */}
             <text
-              x={node.position.x + 120}
-              y={node.position.y + 50}
+              x={node.position.x + NODE_WIDTH_HALF}
+              y={node.position.y + NODE_TYPE_Y_OFFSET}
               textAnchor='middle'
               fill='white'
               fontSize='10'

@@ -6,6 +6,17 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 
+// Performance metric thresholds (in milliseconds or unit values)
+const LCP_GOOD_THRESHOLD = 2500; // 2.5 seconds
+const LCP_NEEDS_IMPROVEMENT_THRESHOLD = 4000; // 4 seconds
+const CLS_GOOD_THRESHOLD = 0.1; // 0.1 cumulative layout shift
+const CLS_NEEDS_IMPROVEMENT_THRESHOLD = 0.25; // 0.25 cumulative layout shift
+const FCP_TTFB_GOOD_THRESHOLD = 1800; // 1.8 seconds
+const FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD = 3000; // 3 seconds
+
+// Progress bar constants
+const PROGRESS_BAR_MAX_PERCENTAGE = 100;
+
 interface PerformanceDashboardProps {
   className?: string;
   compact?: boolean;
@@ -82,20 +93,20 @@ export function PerformanceDashboard({ className, compact = false }: Performance
     const numericValue = parseFloat(value.replace(/[^\d.]/g, ""));
 
     if (key.includes("LCP")) {
-      if (numericValue <= 2500) return { status: "good", color: "text-green-400" };
-      if (numericValue <= 4000) return { status: "needs-improvement", color: "text-yellow-400" };
+      if (numericValue <= LCP_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
+      if (numericValue <= LCP_NEEDS_IMPROVEMENT_THRESHOLD) return { status: "needs-improvement", color: "text-yellow-400" };
       return { status: "poor", color: "text-red-400" };
     }
 
     if (key.includes("CLS")) {
-      if (numericValue <= 0.1) return { status: "good", color: "text-green-400" };
-      if (numericValue <= 0.25) return { status: "needs-improvement", color: "text-yellow-400" };
+      if (numericValue <= CLS_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
+      if (numericValue <= CLS_NEEDS_IMPROVEMENT_THRESHOLD) return { status: "needs-improvement", color: "text-yellow-400" };
       return { status: "poor", color: "text-red-400" };
     }
 
     if (key.includes("FCP") || key.includes("TTFB")) {
-      if (numericValue <= 1800) return { status: "good", color: "text-green-400" };
-      if (numericValue <= 3000) return { status: "needs-improvement", color: "text-yellow-400" };
+      if (numericValue <= FCP_TTFB_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
+      if (numericValue <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD) return { status: "needs-improvement", color: "text-yellow-400" };
       return { status: "poor", color: "text-red-400" };
     }
 
@@ -158,17 +169,17 @@ export function PerformanceDashboard({ className, compact = false }: Performance
             let targetValue = 0;
 
             if (key.includes("LCP")) {
-              maxValue = 4000; // 4s
-              targetValue = 2500; // 2.5s
-              progressValue = Math.min((numericValue / maxValue) * 100, 100);
+              maxValue = LCP_NEEDS_IMPROVEMENT_THRESHOLD; // 4s
+              targetValue = LCP_GOOD_THRESHOLD; // 2.5s
+              progressValue = Math.min((numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE, PROGRESS_BAR_MAX_PERCENTAGE);
             } else if (key.includes("CLS")) {
-              maxValue = 0.25;
-              targetValue = 0.1;
-              progressValue = Math.min((numericValue / maxValue) * 100, 100);
+              maxValue = CLS_NEEDS_IMPROVEMENT_THRESHOLD;
+              targetValue = CLS_GOOD_THRESHOLD;
+              progressValue = Math.min((numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE, PROGRESS_BAR_MAX_PERCENTAGE);
             } else if (key.includes("FCP") || key.includes("TTFB")) {
-              maxValue = 3000; // 3s
-              targetValue = 1800; // 1.8s
-              progressValue = Math.min((numericValue / maxValue) * 100, 100);
+              maxValue = FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD; // 3s
+              targetValue = FCP_TTFB_GOOD_THRESHOLD; // 1.8s
+              progressValue = Math.min((numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE, PROGRESS_BAR_MAX_PERCENTAGE);
             }
 
             return (

@@ -3,7 +3,6 @@ import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
 // Performance monitoring constants
 const NAVIGATION_CHECK_DELAY_MS = 100;
-const _KILOBYTE_MULTIPLIER = 1024;
 const SECONDS_PER_INTERVAL = 30;
 const MILLISECONDS_PER_SECOND = 1000;
 const MEMORY_TRACKING_INTERVAL_MS = SECONDS_PER_INTERVAL * MILLISECONDS_PER_SECOND; // 30 seconds
@@ -22,6 +21,7 @@ declare global {
         [key: string]: unknown;
       },
     ) => void;
+    webVitalsMetrics?: WebVitalsMetric[];
   }
 }
 
@@ -32,29 +32,27 @@ interface WebVitalsMetric {
   id: string;
 }
 
-// Analytics service integration function
-const sendAnalytics = async (event: string, data: Record<string, unknown>) => {
-  try {
-    await fetch("/api/analytics", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        event,
-        data,
-        timestamp: new Date().toISOString(),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-      }),
-    });
-  } catch (error) {
-    // Silently fail in production
-    if (process.env.NODE_ENV === "development") {
-      console.warn("Failed to send analytics:", error);
-    }
-  }
-};
+// Analytics service integration function - REMOVED
+// Custom analytics endpoint removed - using Google Analytics 4 only
+// const sendAnalytics = async (event: string, data: Record<string, unknown>) => {
+//   try {
+//     await fetch("/api/analytics", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         event,
+//         data,
+//         timestamp: new Date().toISOString(),
+//         url: window.location.href,
+//         userAgent: navigator.userAgent,
+//       }),
+//     });
+//   } catch (_error) {
+//     // Silently fail in production
+//   }
+// };
 
 export function PerformanceMonitor() {
   useEffect(() => {
@@ -63,15 +61,25 @@ export function PerformanceMonitor() {
       return;
     }
 
+    // Initialize metrics array
+    if (!window.webVitalsMetrics) {
+      window.webVitalsMetrics = [];
+    }
+
     // Track Core Web Vitals
     const trackWebVitals = () => {
       onCLS((metric: WebVitalsMetric) => {
-        // Send to custom analytics endpoint
-        sendAnalytics("web_vitals_cls", {
-          value: metric.value,
-          delta: metric.delta,
-          id: metric.id,
-        });
+        // Store metric
+        if (window.webVitalsMetrics) {
+          window.webVitalsMetrics.push(metric);
+        }
+
+        // Analytics calls removed - using Google Analytics 4 only
+        // sendAnalytics("web_vitals_cls", {
+        //   value: metric.value,
+        //   delta: metric.delta,
+        //   id: metric.id,
+        // });
 
         // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
@@ -85,12 +93,17 @@ export function PerformanceMonitor() {
       });
 
       onINP((metric: WebVitalsMetric) => {
-        // Send to custom analytics endpoint
-        sendAnalytics("web_vitals_inp", {
-          value: metric.value,
-          delta: metric.delta,
-          id: metric.id,
-        });
+        // Store metric
+        if (window.webVitalsMetrics) {
+          window.webVitalsMetrics.push(metric);
+        }
+
+        // Analytics calls removed - using Google Analytics 4 only
+        // sendAnalytics("web_vitals_inp", {
+        //   value: metric.value,
+        //   delta: metric.delta,
+        //   id: metric.id,
+        // });
 
         // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
@@ -104,12 +117,17 @@ export function PerformanceMonitor() {
       });
 
       onFCP((metric: WebVitalsMetric) => {
+        // Store metric
+        if (window.webVitalsMetrics) {
+          window.webVitalsMetrics.push(metric);
+        }
+
         // Send to Google Analytics 4 only (removed custom analytics endpoint)
-        sendAnalytics("web_vitals_fcp", {
-          value: metric.value,
-          delta: metric.delta,
-          id: metric.id,
-        });
+        // sendAnalytics("web_vitals_fcp", {
+        //   value: metric.value,
+        //   delta: metric.delta,
+        //   id: metric.id,
+        // });
 
         // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
@@ -123,12 +141,17 @@ export function PerformanceMonitor() {
       });
 
       onLCP((metric: WebVitalsMetric) => {
-        // Send to custom analytics endpoint
-        sendAnalytics("web_vitals_lcp", {
-          value: metric.value,
-          delta: metric.delta,
-          id: metric.id,
-        });
+        // Store metric
+        if (window.webVitalsMetrics) {
+          window.webVitalsMetrics.push(metric);
+        }
+
+        // Analytics calls removed - using Google Analytics 4 only
+        // sendAnalytics("web_vitals_lcp", {
+        //   value: metric.value,
+        //   delta: metric.delta,
+        //   id: metric.id,
+        // });
 
         // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
@@ -138,18 +161,21 @@ export function PerformanceMonitor() {
             value: Math.round(metric.value),
             custom_parameter_metric_id: metric.id,
           });
-        } else {
-          // Debug logging removed - analytics handles production tracking
         }
       });
 
       onTTFB((metric: WebVitalsMetric) => {
-        // Send to custom analytics endpoint
-        sendAnalytics("web_vitals_ttfb", {
-          value: metric.value,
-          delta: metric.delta,
-          id: metric.id,
-        });
+        // Store metric
+        if (window.webVitalsMetrics) {
+          window.webVitalsMetrics.push(metric);
+        }
+
+        // Analytics calls removed - using Google Analytics 4 only
+        // sendAnalytics("web_vitals_ttfb", {
+        //   value: metric.value,
+        //   delta: metric.delta,
+        //   id: metric.id,
+        // });
 
         // Send to Google Analytics 4
         if (typeof window !== "undefined" && window.gtag) {
@@ -183,10 +209,10 @@ export function PerformanceMonitor() {
           };
 
           if (navigation) {
-            const _domContentLoaded =
-              navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
-            const _loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
-            const _totalTime = navigation.loadEventEnd - navigation.fetchStart;
+            // Navigation timing variables calculated for potential future analytics use
+            // const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
+            // const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
+            // const totalTime = navigation.loadEventEnd - navigation.fetchStart;
 
             if (process.env.NODE_ENV === "production") {
               // Send to analytics service
@@ -230,7 +256,6 @@ export function PerformanceMonitor() {
       };
 
       if (perfWithMemory.memory) {
-        const _memory = perfWithMemory.memory;
         // Memory usage tracking - debug logging removed for production
         // Previously logged: used/total/limit in MB
       }

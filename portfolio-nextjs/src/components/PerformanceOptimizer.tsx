@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+// Performance monitoring constants
+const MEMORY_USAGE_WARNING_THRESHOLD = 0.8; // Warn when memory usage exceeds 80% of limit
+const MEMORY_CHECK_INTERVAL_MS = 30000; // Check memory usage every 30 seconds
+const LONG_TASK_DURATION_THRESHOLD_MS = 50; // Consider tasks longer than 50ms as long tasks
+
 interface PerformanceOptimizerProps {
   children: React.ReactNode;
 }
@@ -104,10 +109,9 @@ const setupPerformanceMonitoring = () => {
         memory: { usedJSHeapSize: number; jsHeapSizeLimit: number };
       };
       const memory = perfWithMemory.memory;
-      if (memory && memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.8) {
-        console.warn("High memory usage detected:", memory.usedJSHeapSize);
+      if (memory && memory.usedJSHeapSize > memory.jsHeapSizeLimit * MEMORY_USAGE_WARNING_THRESHOLD) {
       }
-    }, 30000); // Check every 30 seconds
+    }, MEMORY_CHECK_INTERVAL_MS); // Check every 30 seconds
   }
 
   // Monitor long tasks (if supported)
@@ -116,9 +120,7 @@ const setupPerformanceMonitoring = () => {
       const longTaskObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         for (const entry of entries) {
-          if (entry.duration > 50) {
-            // Only log tasks longer than 50ms
-            console.warn(`Long task detected: ${entry.name} took ${entry.duration}ms`);
+          if (entry.duration > LONG_TASK_DURATION_THRESHOLD_MS) {
           }
         }
       });
@@ -127,10 +129,7 @@ const setupPerformanceMonitoring = () => {
       if (PerformanceObserver.supportedEntryTypes?.includes("longtask")) {
         longTaskObserver.observe({ entryTypes: ["longtask"] });
       }
-    } catch (_error) {
-      // Silently fail if longtask monitoring is not supported
-      console.debug("Long task monitoring not supported in this browser");
-    }
+    } catch (_error) {}
   }
 };
 

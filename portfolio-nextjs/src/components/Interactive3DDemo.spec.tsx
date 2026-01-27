@@ -3,6 +3,9 @@ import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Interactive3DDemo, useSampleProjects } from "./Interactive3DDemo";
 
+// Constants for 3D space dimensions
+const POSITION_VECTOR_LENGTH = 3;
+
 // Mock Three.js and React Three Fiber
 vi.mock("@react-three/fiber", () => ({
   Canvas: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) =>
@@ -121,7 +124,7 @@ describe("useSampleProjects", () => {
       expect(Array.isArray(project.technologies)).toBe(true);
       expect(typeof project.color).toBe("string");
       expect(Array.isArray(project.position)).toBe(true);
-      expect(project.position.length).toBe(3);
+      expect(project.position.length).toBe(POSITION_VECTOR_LENGTH);
       expect(typeof project.scale).toBe("number");
     });
   });

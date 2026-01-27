@@ -30,9 +30,9 @@ import { sentryErrorHandler } from "./sentry";
 
 // Local logger to avoid magic numbers and direct console usage
 const logger = {
-  info: (..._args: unknown[]) => { },
-  warn: (..._args: unknown[]) => { },
-  error: (..._args: unknown[]) => { },
+  info: (..._args: unknown[]) => {},
+  warn: (..._args: unknown[]) => {},
+  error: (..._args: unknown[]) => {},
 };
 
 export function createServer() {
@@ -62,16 +62,16 @@ export function createServer() {
     res.setHeader(
       "Content-Security-Policy",
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "img-src 'self' data: https: blob:; " +
-      "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
-      "frame-src 'self' https://www.recaptcha.net; " +
-      "object-src 'none'; " +
-      "base-uri 'self'; " +
-      "form-action 'self'; " +
-      "frame-ancestors 'none';",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data: https: blob:; " +
+        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
+        "frame-src 'self' https://www.recaptcha.net; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self'; " +
+        "frame-ancestors 'none';",
     );
 
     // HTTPS Strict Transport Security (only in production)
@@ -104,7 +104,7 @@ export function createServer() {
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
+    const ping = process.env.PING_MESSAGE ?? "ping pong";
     res.json({ message: ping });
   });
 
@@ -198,7 +198,7 @@ export function initializeSocketIO(server: HttpServer) {
       origin:
         process.env.NODE_ENV === "production"
           ? (process.env.FRONTEND_URL ?? false)
-          : ["http://localhost:8082", "http://localhost:3000"],
+          : ["http://localhost:8081", "http://localhost:3000"],
       methods: ["GET", "POST"],
       credentials: true,
     },

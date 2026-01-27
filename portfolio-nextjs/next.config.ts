@@ -1,5 +1,33 @@
 import type { NextConfig } from "next";
 
+// Constants for image optimization - device sizes
+const DEVICE_SIZE_SM = 640;
+const DEVICE_SIZE_MD = 750;
+const DEVICE_SIZE_LG = 828;
+const DEVICE_SIZE_XL = 1080;
+const DEVICE_SIZE_2XL = 1200;
+const DEVICE_SIZE_3XL = 1920;
+const DEVICE_SIZE_4XL = 2048;
+const DEVICE_SIZE_5XL = 3840;
+
+// Constants for image optimization - image sizes
+const IMAGE_SIZE_XS = 16;
+const IMAGE_SIZE_SM = 32;
+const IMAGE_SIZE_MD = 48;
+const IMAGE_SIZE_LG = 64;
+const IMAGE_SIZE_XL = 96;
+const IMAGE_SIZE_2XL = 128;
+const IMAGE_SIZE_3XL = 256;
+const IMAGE_SIZE_4XL = 384;
+
+// Constants for caching and file sizes
+const SECONDS_PER_MINUTE = 60;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
+const DAYS_PER_YEAR = 365;
+const BYTES_PER_KILOBYTE = 1024;
+const MAX_INLINE_IMAGE_SIZE_KB = 8;
+
 const nextConfig: NextConfig = {
   // Enable Cache Components (PPR replacement in Next.js 16)
   cacheComponents: true,
@@ -51,9 +79,27 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
+    deviceSizes: [
+      DEVICE_SIZE_SM,
+      DEVICE_SIZE_MD,
+      DEVICE_SIZE_LG,
+      DEVICE_SIZE_XL,
+      DEVICE_SIZE_2XL,
+      DEVICE_SIZE_3XL,
+      DEVICE_SIZE_4XL,
+      DEVICE_SIZE_5XL,
+    ],
+    imageSizes: [
+      IMAGE_SIZE_XS,
+      IMAGE_SIZE_SM,
+      IMAGE_SIZE_MD,
+      IMAGE_SIZE_LG,
+      IMAGE_SIZE_XL,
+      IMAGE_SIZE_2XL,
+      IMAGE_SIZE_3XL,
+      IMAGE_SIZE_4XL,
+    ],
+    minimumCacheTTL: SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR, // 1 year
     localPatterns: [
       {
         pathname: "/images/**",
@@ -184,19 +230,17 @@ const nextConfig: NextConfig = {
   // SWC Minify settings
   swcMinify: true,
 
-  // Bundle analyzer for development
-  ...(process.env.ANALYZE === "true" && {
-    experimental: {
-      ...nextConfig.experimental,
-      bundleAnalyzer: {
-        enabled: true,
-        openAnalyzer: true,
-      },
-    },
-  }),
-
   // Custom webpack configuration for advanced optimizations
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (
+    config,
+    {
+      buildId: _buildId,
+      dev,
+      isServer: _isServer,
+      defaultLoaders: _defaultLoaders,
+      webpack: _webpack,
+    },
+  ) => {
     // Optimize bundle size
     if (!dev) {
       config.optimization.splitChunks = {
@@ -232,32 +276,39 @@ const nextConfig: NextConfig = {
       },
       parser: {
         dataUrlCondition: {
-          maxSize: 8 * 1024, // 8kb
+          maxSize: MAX_INLINE_IMAGE_SIZE_KB * BYTES_PER_KILOBYTE, // 8kb
         },
       },
     });
 
     return config;
   },
-
-  // Development settings
-  ...(dev && {
-    // Enable fast refresh
-    fastRefresh: true,
-    // Disable telemetry in development
-    telemetry: false,
-  }),
-
-  // Production settings
-  ...(process.env.NODE_ENV === "production" && {
-    // Enable source maps for debugging
-    productionBrowserSourceMaps: true,
-    // Optimize images in production
-    images: {
-      ...nextConfig.images,
-      unoptimized: false,
-    },
-  }),
 };
+
+// Conditionally add bundle analyzer
+if (process.env.ANALYZE === "true") {
+  nextConfig.experimental = {
+    ...nextConfig.experimental,
+    bundleAnalyzer: {
+      enabled: true,
+      openAnalyzer: true,
+    },
+  };
+}
+
+// Conditionally add development settings
+if (process.env.NODE_ENV !== "production") {
+  nextConfig.fastRefresh = true;
+  nextConfig.telemetry = false;
+}
+
+// Conditionally add production settings
+if (process.env.NODE_ENV === "production") {
+  nextConfig.productionBrowserSourceMaps = true;
+  nextConfig.images = {
+    ...nextConfig.images,
+    unoptimized: false,
+  };
+}
 
 export default nextConfig;

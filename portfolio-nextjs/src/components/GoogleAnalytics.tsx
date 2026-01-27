@@ -1,8 +1,8 @@
 "use client";
 
-import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, Suspense } from "react";
+import Script from "next/script";
+import { Suspense, useEffect } from "react";
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 

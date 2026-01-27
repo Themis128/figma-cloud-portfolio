@@ -1,8 +1,8 @@
-import type { FullConfig, Reporter, Suite, TestCase, TestResult } from "@playwright/test";
 import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import type { FullConfig, Reporter, Suite, TestCase, TestResult } from "@playwright/test";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

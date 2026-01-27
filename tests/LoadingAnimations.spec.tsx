@@ -40,9 +40,11 @@ describe("LoadingSpinner", () => {
 });
 
 describe("LoadingDots", () => {
+  const EXPECTED_DOTS_COUNT = 3;
+
   it("renders three dots", () => {
     const { container } = render(<LoadingDots />);
-    expect(container.querySelectorAll(".rounded-full")).toHaveLength(3);
+    expect(container.querySelectorAll(".rounded-full")).toHaveLength(EXPECTED_DOTS_COUNT);
   });
 
   it("renders with small size", () => {

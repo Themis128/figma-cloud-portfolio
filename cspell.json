@@ -16,7 +16,8 @@
     "vite",
     "Vite's",
     "Codacy",
-    "mmin"
+    "mmin",
+    "TTFB"
   ],
   "ignorePaths": [
     "node_modules/**",

@@ -162,8 +162,7 @@ Be helpful, professional, and engaging. Keep responses concise but informative. 
         usage,
         model: responseModel,
       };
-    } catch (error) {
-      console.error("AI Service Error:", error);
+    } catch (_error) {
       // Fallback to mock response if API fails
       return {
         content: this.getFallbackResponse(message),

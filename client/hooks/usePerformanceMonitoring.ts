@@ -29,29 +29,39 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
 
-    // Check if performance API is supported
-    setIsSupported("performance" in window && "PerformanceObserver" in window);
+    // Check if performance API is supported first
+    const supported = "performance" in window && "PerformanceObserver" in window;
+    setIsSupported(supported);
 
-    if (!isSupported) return;
+    if (!supported) return;
 
     const updateMetrics = (newMetrics: Partial<PerformanceMetrics>) => {
       setMetrics((prev) => {
         const updated = { ...prev, ...newMetrics };
-        onMetricsUpdate?.(updated);
 
-        // Populate window.webVitalsMetrics for testing
+        // Update global metrics for testing
         if (typeof window !== "undefined") {
           window.webVitalsMetrics = window.webVitalsMetrics || [];
-          const metricName = Object.keys(newMetrics)[0];
-          const metricValue = Object.values(newMetrics)[0];
           window.webVitalsMetrics.push({
-            name: metricName.toUpperCase(),
-            value: metricValue,
-            id: `test-${metricName}-id`,
-            delta: metricValue,
-            entries: [],
+            name: Object.keys(newMetrics)[0].toUpperCase(),
+            value: Object.values(newMetrics)[0] as number,
+            delta: 0,
+            id: "performance-monitoring",
           });
         }
+
+        onMetricsUpdate?.(updated);
+
+        // Analytics calls removed - using Google Analytics 4 only
+        // const eventName = Object.keys(newMetrics)[0];
+        // const eventValue = Object.values(newMetrics)[0] as number;
+        // sendAnalyticsEvent({
+        //   event: `web_vitals_${eventName}`,
+        //   data: { value: eventValue },
+        //   timestamp: new Date().toISOString(),
+        //   url: window.location.href,
+        //   userAgent: navigator.userAgent,
+        // }).catch((_error) => {});
 
         return updated;
       });
@@ -77,7 +87,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
     onTTFB((metric: Metric) => {
       updateMetrics({ ttfb: metric.value });
     });
-  }, [enabled, isSupported, onMetricsUpdate]);
+  }, [enabled, onMetricsUpdate]);
 
   // Get performance score based on Core Web Vitals
   const getPerformanceScore = (): "good" | "needs-improvement" | "poor" => {
@@ -106,7 +116,9 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
         ? metrics.cls.toFixed(CLS_DECIMAL_PLACES)
         : "Not measured",
       "First Contentful Paint (FCP)": metrics.fcp ? `${metrics.fcp.toFixed(0)}ms` : "Not measured",
-      "Interaction to Next Paint (INP)": metrics.inp ? `${metrics.inp.toFixed(0)}ms` : "Not measured",
+      "Interaction to Next Paint (INP)": metrics.inp
+        ? `${metrics.inp.toFixed(0)}ms`
+        : "Not measured",
       "Time to First Byte (TTFB)": metrics.ttfb ? `${metrics.ttfb.toFixed(0)}ms` : "Not measured",
     };
   };

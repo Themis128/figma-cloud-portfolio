@@ -10,6 +10,10 @@ import {
   SkeletonText,
 } from "../client/components/Skeleton";
 
+const SKELETON_LINE_COUNT = 3;
+const MIN_SKELETON_ELEMENTS = 1;
+const MIN_PAGE_SKELETON_ELEMENTS = 5;
+
 describe("Skeleton Components", () => {
   describe("Skeleton", () => {
     it("should render with default props", () => {
@@ -34,10 +38,10 @@ describe("Skeleton Components", () => {
     });
 
     it("should render multiple lines", () => {
-      render(<SkeletonText lines={3} />);
+      render(<SkeletonText lines={SKELETON_LINE_COUNT} />);
       const container = screen.getByTestId("skeleton-text");
       const skeletons = screen.getAllByTestId("skeleton");
-      expect(skeletons).toHaveLength(3);
+      expect(skeletons).toHaveLength(SKELETON_LINE_COUNT);
       expect(skeletons[0]).toHaveClass("h-4", "w-full");
       expect(skeletons[2]).toHaveClass("h-4", "w-3/4"); // Last line shorter
       expect(container).toBeInTheDocument(); // Use the container variable
@@ -58,7 +62,7 @@ describe("Skeleton Components", () => {
 
       // Should contain skeleton text elements
       const skeletons = screen.getAllByTestId("skeleton");
-      expect(skeletons.length).toBeGreaterThan(1);
+      expect(skeletons.length).toBeGreaterThan(MIN_SKELETON_ELEMENTS);
     });
 
     it("should apply custom className", () => {
@@ -116,7 +120,7 @@ describe("Skeleton Components", () => {
 
       // Should contain multiple skeleton elements
       const skeletons = screen.getAllByTestId("skeleton");
-      expect(skeletons.length).toBeGreaterThan(5);
+      expect(skeletons.length).toBeGreaterThan(MIN_PAGE_SKELETON_ELEMENTS);
     });
   });
 });

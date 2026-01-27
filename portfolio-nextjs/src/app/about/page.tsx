@@ -1,6 +1,6 @@
+import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from "lucide-react";
 
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";

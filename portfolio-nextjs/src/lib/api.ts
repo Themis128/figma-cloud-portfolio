@@ -24,25 +24,19 @@ const LAMBDA_URLS = {
  */
 async function apiRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const url = LAMBDA_URLS[endpoint as keyof typeof LAMBDA_URLS] || endpoint;
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
 
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-    }
-
-    return response;
-  } catch (error) {
-    console.error(`API request to ${endpoint} failed:`, error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
   }
+
+  return response;
 }
 
 /**

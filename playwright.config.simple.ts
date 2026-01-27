@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/* Constants for configuration */
+const CI_RETRIES = 2;
+const LOCAL_RETRIES = 1;
+const CI_WORKERS = 2;
+const LOCAL_WORKERS = 4;
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -10,9 +16,9 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? 2 : 1,
+  retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 2 : 4,
+  workers: process.env.CI ? CI_WORKERS : LOCAL_WORKERS,
 
   /* Circuit breaker configuration */
   use: {

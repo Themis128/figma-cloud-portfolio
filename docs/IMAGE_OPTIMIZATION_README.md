@@ -20,14 +20,44 @@ The image optimization system provides:
 
 ```typescript
 ViteImageOptimizer({
-  png: { quality: 80 },
-  jpeg: { quality: 80 },
-  jpg: { quality: 80 },
-  webp: { quality: 85, effort: 6 },
-  avif: { quality: 70, effort: 6 },
+  // Aggressive compression for maximum savings
+  png: {
+    quality: 70,
+    compressionLevel: 9,
+    palette: true,
+    colors: 128, // Limit color palette
+  },
+  jpeg: {
+    quality: 70,
+    progressive: true,
+    mozjpeg: true,
+    dcScanOpt: 2,
+    smooth: 10,
+  },
+  jpg: {
+    quality: 70,
+    progressive: true,
+    mozjpeg: true,
+    dcScanOpt: 2,
+    smooth: 10,
+  },
+  webp: {
+    quality: 75,
+    effort: 6,
+    smartSubsample: true,
+    nearLossless: false,
+  },
+  avif: {
+    quality: 60,
+    effort: 6,
+    chromaSubsampling: '4:2:0',
+  },
   include: /\.(png|jpe?g|webp|avif)$/i,
   exclude: /node_modules/,
-});
+  // Additional optimization options
+  cache: true,
+  cacheLocation: '.vite/image-cache',
+})
 ```
 
 **Features**:
@@ -90,19 +120,30 @@ The Navigation component has been updated to use the OptimizedImage component:
 
 ## 📊 Performance Benefits
 
-### Before Optimization
+### Optimization Results
 
-- Logo: 36.6 KB PNG
-- No lazy loading
-- No format optimization
-- Synchronous loading
+**Current Performance** (as of January 26, 2026):
 
-### After Optimization
+- **Total Savings**: 16.54 kB / 64.59 kB = **26% reduction**
+- **JPEG Optimization**: -30% (22.35 kB → 15.78 kB)
+- **WebP Optimization**: -10% (11.96 kB → 10.80 kB)
+- **AVIF Optimization**: -29% (7.94 kB → 5.69 kB)
 
-- **Build-time**: Automatic WebP/AVIF generation (when Sharp is installed)
-- **Runtime**: Lazy loading with intersection observer
-- **Format**: `<picture>` element with fallbacks
-- **Loading**: Skeleton placeholders and smooth transitions
+### Before vs After
+
+**Before Optimization** (1% savings):
+
+- Logo JPEG: 22.35 kB → 23.57 kB (actually increased)
+- Poor compression settings
+- No advanced optimization features
+
+**After Optimization** (26% savings):
+
+- Aggressive quality settings (70% instead of 80%)
+- Progressive JPEG with mozjpeg
+- Advanced PNG compression with palette optimization
+- Smart WebP/AVIF encoding
+- Build caching for faster rebuilds
 
 ## 🏃‍♂️ Usage Instructions
 
@@ -159,7 +200,7 @@ ViteImageOptimizer({
     quality: 70,
     effort: 6,
   },
-});
+})
 ```
 
 ### Component Props

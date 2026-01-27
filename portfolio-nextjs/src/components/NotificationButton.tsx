@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
+// Time constants
+const DAYS_IN_WEEK = 7;
+const HOURS_IN_DAY = 24;
+const MINUTES_IN_HOUR = 60;
+const SECONDS_IN_MINUTE = 60;
+const MS_IN_SECOND = 1000;
+const ONE_WEEK_MS =
+  DAYS_IN_WEEK * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MS_IN_SECOND; // 7 days in milliseconds
+const PROMPT_DELAY_MS = 45000; // Show after 45 seconds
+
 export function NotificationButton() {
   const [permission, setPermission] = useState<NotificationPermission>("default");
   const [showPrompt, setShowPrompt] = useState(false);
@@ -20,8 +30,7 @@ export function NotificationButton() {
       const dismissedPrompt = localStorage.getItem("notification-prompt-dismissed");
       if (dismissedPrompt) {
         const dismissedTime = parseInt(dismissedPrompt, 10);
-        const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-        if (Date.now() - dismissedTime < oneWeek) {
+        if (Date.now() - dismissedTime < ONE_WEEK_MS) {
           setDismissed(true);
         } else {
           localStorage.removeItem("notification-prompt-dismissed");
@@ -35,7 +44,7 @@ export function NotificationButton() {
     if (permission === "default" && !dismissed && !isSubscribed && isSupported) {
       const timer = setTimeout(() => {
         setShowPrompt(true);
-      }, 45000); // Show after 45 seconds
+      }, PROMPT_DELAY_MS); // Show after 45 seconds
 
       return () => clearTimeout(timer);
     }
@@ -67,8 +76,7 @@ export function NotificationButton() {
             "Notifications enabled!",
             "You'll now receive updates from Baltzakis Themistoklis.",
           );
-        } catch (error) {
-          console.error("Failed to subscribe to push notifications:", error);
+        } catch (_error) {
           showNotification(
             "Notifications enabled",
             "However, push notifications may not work properly.",
@@ -77,9 +85,7 @@ export function NotificationButton() {
       } else if (result === "denied") {
         setShowPrompt(false);
       }
-    } catch (error) {
-      console.error("Error requesting notification permission:", error);
-    }
+    } catch (_error) {}
   };
 
   const showNotification = (title: string, body: string) => {

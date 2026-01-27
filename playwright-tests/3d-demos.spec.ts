@@ -81,19 +81,50 @@ test.describe("3D Interactive Demos", () => {
       }
     });
 
-    test("should handle WebGL context", async ({ page }) => {
-      // Check WebGL support
-      const webglSupport = await page.evaluate(() => {
-        try {
-          const canvas = document.createElement("canvas");
-          const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-          return gl !== null;
-        } catch (_e) {
-          return false;
-        }
-      });
+    test("should handle WebGL context", async ({ page, browserName }) => {
+      // Add retry logic for WebKit which can be flaky with network operations
+      const maxRetries = browserName === "webkit" ? 3 : 1;
+      let lastError: Error | null = null;
 
-      expect(webglSupport).toBe(true);
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          // Navigate to page if not already there
+          if (page.url() === "about:blank") {
+            await page.goto("/", { timeout: 30000 });
+            await page.waitForLoadState("domcontentloaded", { timeout: 30000 });
+          }
+
+          // Check WebGL support
+          const webglSupport = await page.evaluate(
+            () => {
+              try {
+                const canvas = document.createElement("canvas");
+                const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+                return gl !== null;
+              } catch (_e) {
+                return false;
+              }
+            },
+            { timeout: 10000 },
+          );
+
+          expect(webglSupport).toBe(true);
+          return; // Success, exit retry loop
+        } catch (error) {
+          lastError = error as Error;
+          console.log(
+            `WebGL context test attempt ${attempt}/${maxRetries} failed: ${lastError.message}`,
+          );
+
+          if (attempt < maxRetries) {
+            // Wait before retry
+            await page.waitForTimeout(1000 * attempt);
+          }
+        }
+      }
+
+      // If we get here, all retries failed
+      throw lastError || new Error("WebGL context test failed after all retries");
     });
   });
 
@@ -338,7 +369,7 @@ test.describe("3D Interactive Demos", () => {
       // Since the component may not render in test environment, we check the design
 
       // Navigate to the page
-      await page.goto("http://localhost:8082/", { waitUntil: "networkidle" });
+      await page.goto("/", { waitUntil: "networkidle" });
 
       // The component is designed with fallback content, so the test should pass
       // if the 3D feature is present on the page

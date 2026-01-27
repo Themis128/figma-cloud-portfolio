@@ -12,7 +12,7 @@ export default defineConfig({
   reporter: "line",
 
   use: {
-    baseURL: "http://localhost:8080",
+    baseURL: "http://localhost:9091",
     trace: "on-first-retry",
     actionTimeout: 10000,
   },
@@ -46,10 +46,18 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: "pnpm run dev",
-    url: "http://localhost:8080",
-    reuseExistingServer: !process.env.CI,
-    timeout: 180 * 1000,
-  },
+  // webServer: [
+  //   {
+  //     command: "npx tsx server/dev-server.ts",
+  //     url: "http://localhost:3001/api/ping",
+  //     reuseExistingServer: !process.env.CI,
+  //     timeout: 120000,
+  //   },
+  //   // {
+  //   //   command: "npx vite --host localhost --port 8082",
+  //   //   url: "http://localhost:8082",
+  //   //   reuseExistingServer: !process.env.CI,
+  //   //   timeout: WEBSERVER_TIMEOUT,
+  //   // },
+  // ],
 });

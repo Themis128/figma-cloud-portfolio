@@ -63,7 +63,10 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 
 // React 19 specific mocks
 global.requestIdleCallback = vi.fn().mockImplementation((callback) => {
-  return setTimeout(() => callback({ didTimeout: false, timeRemaining: () => MOCK_TIME_REMAINING_MS }), 0);
+  return setTimeout(
+    () => callback({ didTimeout: false, timeRemaining: () => MOCK_TIME_REMAINING_MS }),
+    0,
+  );
 });
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {

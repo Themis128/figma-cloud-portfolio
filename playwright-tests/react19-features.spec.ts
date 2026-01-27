@@ -75,9 +75,9 @@ test.describe("React 19 Features", () => {
         if ("startViewTransition" in document) {
           try {
             // Try to start multiple transitions rapidly
-            document.startViewTransition(() => {});
-            document.startViewTransition(() => {});
-            document.startViewTransition(() => {});
+            document.startViewTransition(() => { });
+            document.startViewTransition(() => { });
+            document.startViewTransition(() => { });
             return true;
           } catch (_error) {
             return false;
@@ -283,14 +283,22 @@ test.describe("React 19 Features", () => {
       const buttons = page.locator("button");
 
       if ((await buttons.count()) > 0) {
-        // Click multiple buttons rapidly
+        // Click multiple buttons rapidly (only clickable ones)
         const clickPromises = [];
         for (let i = 0; i < Math.min(5, await buttons.count()); i++) {
-          clickPromises.push(buttons.nth(i).click());
+          const button = buttons.nth(i);
+          const isVisible = await button.isVisible();
+          const isEnabled = await button.isEnabled();
+
+          if (isVisible && isEnabled) {
+            clickPromises.push(button.click());
+          }
         }
 
         // All clicks should complete without errors
-        await Promise.all(clickPromises);
+        if (clickPromises.length > 0) {
+          await Promise.all(clickPromises);
+        }
 
         // Page should remain stable
         await expect(page.locator("body")).toBeVisible();

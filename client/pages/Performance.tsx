@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-
 interface PerformanceMetrics {
   memoryUsage: number;
   memoryLimit: number;
@@ -106,7 +105,10 @@ export default function Performance() {
   const memoryPercentage = (memory.used / memory.limit) * PERCENTAGE_MULTIPLIER;
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900' data-testid="performance-dashboard">
+    <div
+      className='min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900'
+      data-testid='performance-dashboard'
+    >
       <Navigation />
       <div className='container mx-auto px-4 py-8'>
         <div className='mb-8'>
@@ -127,9 +129,6 @@ export default function Performance() {
 
         {/* Overview Section */}
         <div className='space-y-6'>
-
-
-
           {/* Real-time Performance Metrics */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
             <Card className='p-6'>
@@ -219,8 +218,8 @@ export default function Performance() {
           </Card>
 
           {/* Performance Tips */}
-          <Card className='p-6' data-testid="performance-tips">
-            <h3 className='text-lg font-semibold mb-4'>Performance Optimization Tips</h3>
+          <Card className='p-6' data-testid='performance-tips'>
+            <h3 className='text-lg font-semibold mb-4'>Performance Tips</h3>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div className='space-y-2'>
                 <h4 className='font-medium text-cyan-400'>🚀 Core Web Vitals</h4>
@@ -289,7 +288,7 @@ export default function Performance() {
 
         {/* Optimization Section */}
         <div className='space-y-6'>
-          <Card className='p-6' data-testid="bundle-analysis">
+          <Card className='p-6' data-testid='bundle-analysis'>
             <h3 className='text-lg font-semibold mb-4'>Bundle Analysis</h3>
             <div className='space-y-4'>
               <div className='flex justify-between items-center'>
@@ -346,9 +345,7 @@ export default function Performance() {
               <div className='text-4xl font-bold text-cyan-400'>{metrics.lighthouseScore}</div>
               <div className='flex-1'>
                 <Progress value={metrics.lighthouseScore} className='h-3' />
-                <p className='text-xs text-muted-foreground mt-1'>
-                  Performance score out of 100
-                </p>
+                <p className='text-xs text-muted-foreground mt-1'>Performance score out of 100</p>
               </div>
             </div>
             <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mt-4'>
@@ -365,21 +362,16 @@ export default function Performance() {
                 <div className='text-xs text-muted-foreground'>Best Practices</div>
               </div>
               <div className='text-center'>
-                <div className='text-lg font-semibold text-purple-400'>
-                  {LIGHTHOUSE_SEO_SCORE}
-                </div>
+                <div className='text-lg font-semibold text-purple-400'>{LIGHTHOUSE_SEO_SCORE}</div>
                 <div className='text-xs text-muted-foreground'>SEO</div>
               </div>
               <div className='text-center'>
-                <div className='text-lg font-semibold text-orange-400'>
-                  {LIGHTHOUSE_PWA_SCORE}
-                </div>
+                <div className='text-lg font-semibold text-orange-400'>{LIGHTHOUSE_PWA_SCORE}</div>
                 <div className='text-xs text-muted-foreground'>PWA</div>
               </div>
             </div>
           </Card>
         </div>
-
       </div>
     </div>
   );

@@ -29,6 +29,10 @@ interface AccessibilitySettings {
   keyboardNavigation: boolean;
 }
 
+// Constants for font size limits
+const MIN_FONT_SIZE_PERCENT = 80;
+const MAX_FONT_SIZE_PERCENT = 150;
+
 const AccessibilityEnhancer: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState<AccessibilitySettings>({
@@ -114,13 +118,13 @@ const AccessibilityEnhancer: React.FC = () => {
   };
 
   const increaseFontSize = () => {
-    if (settings.fontSize < 150) {
+    if (settings.fontSize < MAX_FONT_SIZE_PERCENT) {
       updateSetting("fontSize", settings.fontSize + 10);
     }
   };
 
   const decreaseFontSize = () => {
-    if (settings.fontSize > 80) {
+    if (settings.fontSize > MIN_FONT_SIZE_PERCENT) {
       updateSetting("fontSize", settings.fontSize - 10);
     }
   };
@@ -189,7 +193,7 @@ const AccessibilityEnhancer: React.FC = () => {
                 variant='outline'
                 size='sm'
                 onClick={decreaseFontSize}
-                disabled={settings.fontSize <= 80}
+                disabled={settings.fontSize <= MIN_FONT_SIZE_PERCENT}
                 className='px-2'
               >
                 A-
@@ -198,7 +202,7 @@ const AccessibilityEnhancer: React.FC = () => {
                 variant='outline'
                 size='sm'
                 onClick={increaseFontSize}
-                disabled={settings.fontSize >= 150}
+                disabled={settings.fontSize >= MAX_FONT_SIZE_PERCENT}
                 className='px-2'
               >
                 A+

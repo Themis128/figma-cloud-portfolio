@@ -3,7 +3,7 @@
  * This replaces the direct /api/* routes with Lambda function URLs
  */
 
-import type { ContactFormRequest, ResumeData } from "@shared/api";
+import type { AnalyticsEvent, ContactFormRequest, ResumeData } from "@shared/api";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -15,6 +15,7 @@ const LAMBDA_URLS = {
   resume: import.meta.env.VITE_LAMBDA_RESUME_URL || `${API_BASE_URL}/resume`,
   "push-notifications":
     import.meta.env.VITE_LAMBDA_PUSH_NOTIFICATIONS_URL || `${API_BASE_URL}/push-notifications`,
+  analytics: import.meta.env.VITE_LAMBDA_ANALYTICS_URL || `${API_BASE_URL}/analytics`,
   ping: import.meta.env.VITE_LAMBDA_PING_URL || `${API_BASE_URL}/ping`,
   demo: import.meta.env.VITE_LAMBDA_DEMO_URL || `${API_BASE_URL}/demo`,
 };
@@ -50,8 +51,6 @@ async function apiRequest(endpoint: string, options: RequestInit = {}): Promise<
 
     return response;
   } catch (error) {
-    console.error(`API request to ${endpoint} failed:`, error);
-
     // Provide more helpful error messages
     if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new Error(
@@ -196,5 +195,16 @@ export async function ping(): Promise<{ message: string; timestamp: string }> {
  */
 export async function getDemo(): Promise<{ message: string }> {
   const response = await apiRequest("demo");
+  return response.json();
+}
+
+/**
+ * Analytics event tracking
+ */
+export async function sendAnalyticsEvent(event: AnalyticsEvent): Promise<{ success: boolean }> {
+  const response = await apiRequest("analytics", {
+    method: "POST",
+    body: JSON.stringify(event),
+  });
   return response.json();
 }

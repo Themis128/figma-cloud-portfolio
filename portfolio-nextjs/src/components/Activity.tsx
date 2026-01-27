@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import React, { useEffect, useState } from "react";
 
+// Constants for activity IDs and delays
+const ACTIVITY_ID_BASE36_RADIX = 36;
+const MODAL_PRE_RENDER_DELAY_MS = 200;
+
 interface ActivityProps {
   children: ReactNode;
   trigger?: "hover" | "viewport" | "manual";
@@ -68,7 +72,7 @@ export function Activity({
     };
   }, [trigger, delay, isPreRendered, elementRef]);
 
-  const activityId = React.useMemo(() => Math.random().toString(36), []);
+  const activityId = React.useMemo(() => Math.random().toString(ACTIVITY_ID_BASE36_RADIX), []);
 
   return (
     <div
@@ -118,7 +122,7 @@ export function ActivityModal({
   useEffect(() => {
     if (preRender && !isPreRendered) {
       // Pre-render after a short delay
-      const timeout = setTimeout(() => setIsPreRendered(true), 200);
+      const timeout = setTimeout(() => setIsPreRendered(true), MODAL_PRE_RENDER_DELAY_MS);
       return () => clearTimeout(timeout);
     }
     return undefined;

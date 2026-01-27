@@ -96,6 +96,8 @@ interface Project3D {
   color: string;
   position: [number, number, number];
   scale: number;
+  category: "web" | "mobile" | "ai" | "tools" | "game";
+  year: number;
 }
 
 interface Interactive3DDemoProps {
@@ -301,7 +303,7 @@ function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, "class
         <ProjectSphere
           key={project.id}
           project={project}
-          onClick={onProjectClick || (() => {})}
+          onClick={onProjectClick || (() => { })}
           isHovered={hoveredProject === project.id}
           onHover={setHoveredProject}
         />
@@ -419,6 +421,8 @@ export function useSampleProjects(): Project3D[] {
         color: "#3b82f6",
         position: SAMPLE_PROJECT_1_POSITION,
         scale: 1,
+        category: "web",
+        year: 2024,
       },
       {
         id: "ecommerce",
@@ -428,6 +432,8 @@ export function useSampleProjects(): Project3D[] {
         color: "#10b981",
         position: SAMPLE_PROJECT_2_POSITION,
         scale: 0.8,
+        category: "web",
+        year: 2024,
       },
       {
         id: "dashboard",
@@ -437,6 +443,8 @@ export function useSampleProjects(): Project3D[] {
         color: "#f59e0b",
         position: SAMPLE_PROJECT_3_POSITION,
         scale: 1.2,
+        category: "web",
+        year: 2023,
       },
       {
         id: "mobile-app",
@@ -446,6 +454,8 @@ export function useSampleProjects(): Project3D[] {
         color: "#ef4444",
         position: SAMPLE_PROJECT_4_POSITION,
         scale: 0.9,
+        category: "mobile",
+        year: 2023,
       },
       {
         id: "api",
@@ -455,6 +465,8 @@ export function useSampleProjects(): Project3D[] {
         color: "#8b5cf6",
         position: SAMPLE_PROJECT_5_POSITION,
         scale: 0.7,
+        category: "tools",
+        year: 2024,
       },
     ],
     [],

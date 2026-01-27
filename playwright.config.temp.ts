@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/* Constants for configuration */
+const CI_RETRIES = 2;
+const LOCAL_RETRIES = 1;
+const CI_WORKERS = 2;
+const LOCAL_WORKERS = 4;
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -10,14 +16,14 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? 2 : 1,
+  retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 2 : 4,
+  workers: process.env.CI ? CI_WORKERS : LOCAL_WORKERS,
 
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:8082",
+    baseURL: "http://localhost:9000",
 
     /* Enhanced tracing and debugging */
     trace: "retain-on-failure",
@@ -53,8 +59,8 @@ export default defineConfig({
   ],
 
   /* Global setup and teardown for test environment preparation */
-  globalSetup: "./playwright-tests/global-setup.ts",
-  globalTeardown: "./playwright-tests/global-teardown.ts",
+  // globalSetup: "./playwright-tests/global-setup.ts",
+  // globalTeardown: "./playwright-tests/global-teardown.ts",
 
   /* Test execution metadata */
   metadata: {

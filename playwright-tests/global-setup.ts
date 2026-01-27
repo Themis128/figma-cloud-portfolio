@@ -1,6 +1,6 @@
-import { chromium, type FullConfig } from "@playwright/test";
 import { exec, execSync } from "node:child_process";
 import { promisify } from "node:util";
+import { chromium, type FullConfig } from "@playwright/test";
 import { startBackendServer, startFrontendServer } from "./test-environment";
 
 const execAsync = promisify(exec);

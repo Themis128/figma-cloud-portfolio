@@ -2,6 +2,10 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
+// Performance monitoring constants
+const NAVIGATION_CHECK_DELAY_MS = 100; // Delay to check navigation timing after initial check
+const MEMORY_CHECK_INTERVAL_MS = 30000; // Check memory usage every 30 seconds
+
 // Type for Google Analytics gtag function
 declare global {
   interface Window {
@@ -30,7 +34,7 @@ interface WebVitalsMetric {
 // Custom analytics endpoint removed - using Google Analytics 4 only
 
 export function PerformanceMonitor() {
-  const location = useLocation();
+  const _location = useLocation();
 
   useEffect(() => {
     // Only run on client-side
@@ -50,7 +54,6 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("CLS:", metric.value);
         }
       });
 
@@ -64,7 +67,6 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("INP:", metric.value);
         }
       });
 
@@ -78,7 +80,6 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("FCP:", metric.value);
         }
       });
 
@@ -92,7 +93,6 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("LCP:", metric.value);
         }
       });
 
@@ -106,7 +106,6 @@ export function PerformanceMonitor() {
             custom_parameter_metric_id: metric.id,
           });
         } else {
-          console.log("TTFB:", metric.value);
         }
       });
     };
@@ -129,10 +128,10 @@ export function PerformanceMonitor() {
           };
 
           if (navigation) {
-            const domContentLoaded =
+            const _domContentLoaded =
               navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
-            const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
-            const totalTime = navigation.loadEventEnd - navigation.fetchStart;
+            const _loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
+            const _totalTime = navigation.loadEventEnd - navigation.fetchStart;
 
             if (process.env.NODE_ENV === "production") {
               // Send to analytics service
@@ -142,11 +141,6 @@ export function PerformanceMonitor() {
               //   totalTime,
               // })
             } else {
-              console.log("Navigation timing:", {
-                domContentLoaded: domContentLoaded > 0 ? domContentLoaded : 0,
-                loadComplete: loadComplete > 0 ? loadComplete : 0,
-                totalTime: totalTime > 0 ? totalTime : 0,
-              });
             }
           }
         }
@@ -154,7 +148,7 @@ export function PerformanceMonitor() {
 
       // Check immediately and also after a short delay to catch load completion
       checkNavigationTiming();
-      setTimeout(checkNavigationTiming, 100);
+      setTimeout(checkNavigationTiming, NAVIGATION_CHECK_DELAY_MS);
     };
 
     trackNavigation();
@@ -164,9 +158,8 @@ export function PerformanceMonitor() {
       // Send to analytics service
       // analytics.track('route_change', { path: location.pathname })
     } else {
-      console.log("Route changed to:", location.pathname);
     }
-  }, [location.pathname]);
+  }, []);
 
   // Track memory usage (if available)
   useEffect(() => {
@@ -180,18 +173,12 @@ export function PerformanceMonitor() {
       };
 
       if (perfWithMemory.memory) {
-        const memory = perfWithMemory.memory;
-        /* eslint-disable no-console */
-        console.log("Memory usage:", {
-          used: Math.round(memory.usedJSHeapSize / 1048576), // MB
-          total: Math.round(memory.totalJSHeapSize / 1048576), // MB
-          limit: Math.round(memory.jsHeapSizeLimit / 1048576), // MB
-        });
+        const _memory = perfWithMemory.memory;
         /* eslint-enable no-console */
       }
     };
 
-    const interval = setInterval(trackMemory, 30000); // Every 30 seconds
+    const interval = setInterval(trackMemory, MEMORY_CHECK_INTERVAL_MS); // Every 30 seconds
     return () => {
       clearInterval(interval);
     };

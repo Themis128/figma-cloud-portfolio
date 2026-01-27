@@ -23,7 +23,7 @@ const requiredEnvVars = [
   "CODACY_PROJECT_NAME",
 ];
 
-let missing = [];
+const missing = [];
 requiredEnvVars.forEach((envVar) => {
   if (process.env[envVar]) {
     console.log(`  ✅ ${envVar} is set`);

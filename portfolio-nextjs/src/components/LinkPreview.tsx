@@ -120,11 +120,11 @@ export function LinkPreview({
     >
       {showImage && preview.image && (
         <div className='relative h-32 bg-gray-100 overflow-hidden'>
-          <img
+          <Image
             src={preview.image}
             alt={preview.title}
-            className='w-full h-full object-cover'
-            loading='lazy'
+            fill
+            className='object-cover'
             onError={(e) => {
               // Hide broken images
               e.currentTarget.style.display = "none";
@@ -142,10 +142,12 @@ export function LinkPreview({
           {/* Title and favicon */}
           <div className='flex items-start gap-2'>
             {preview.favicon && (
-              <img
+              <Image
                 src={preview.favicon}
                 alt=''
-                className='w-4 h-4 flex-shrink-0 mt-0.5'
+                width={16}
+                height={16}
+                className='shrink-0 mt-0.5'
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}

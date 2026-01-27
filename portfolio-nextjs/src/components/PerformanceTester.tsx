@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
+// Test result generation constants
+const ERROR_PROBABILITY = 0.8; // 80% chance of success (20% error rate)
+const WARNING_PROBABILITY = 0.6; // 60% chance of success/warning (40% warning rate)
+const PROGRESS_PERCENTAGE_MULTIPLIER = 100; // Convert to percentage
+
 interface TestResult {
   name: string;
   duration: number;
@@ -43,13 +48,13 @@ export function PerformanceTester() {
       const result: TestResult = {
         name: test.name,
         duration: test.duration,
-        status: Math.random() > 0.8 ? "error" : Math.random() > 0.6 ? "warning" : "success",
+        status: Math.random() > ERROR_PROBABILITY ? "error" : Math.random() > WARNING_PROBABILITY ? "warning" : "success",
         details: generateTestDetails(test.name),
       };
 
       newResults.push(result);
       setResults([...newResults]);
-      setProgress(((i + 1) / tests.length) * 100);
+      setProgress(((i + 1) / tests.length) * PROGRESS_PERCENTAGE_MULTIPLIER);
     }
 
     setIsRunning(false);

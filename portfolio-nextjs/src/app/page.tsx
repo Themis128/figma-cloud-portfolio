@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { Globe as GlobeIcon, Linkedin, Mail } from "lucide-react";
+import type { Metadata } from "next";
 
 import AIBrain from "@/components/AIBrain";
 import { AnimatedSection } from "@/components/AnimatedSection";

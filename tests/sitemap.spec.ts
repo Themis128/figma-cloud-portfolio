@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SitemapGenerator } from "../client/lib/sitemap";
 
+// Test constants for sitemap priorities
+const HOME_PRIORITY = 1.0;
+const ABOUT_PRIORITY = 0.8;
+const PROJECT_PRIORITY = 0.7;
+
 // Mock window for tests
 const mockWindow = {
   location: {
@@ -72,12 +77,12 @@ describe("SitemapGenerator", () => {
 
       const homeEntry = entries.find((entry) => entry.url === "https://test.com/");
       expect(homeEntry).toBeDefined();
-      expect(homeEntry?.priority).toBe(1.0);
+      expect(homeEntry?.priority).toBe(HOME_PRIORITY);
       expect(homeEntry?.changeFrequency).toBe("weekly");
 
       const aboutEntry = entries.find((entry) => entry.url === "https://test.com/about");
       expect(aboutEntry).toBeDefined();
-      expect(aboutEntry?.priority).toBe(0.8);
+      expect(aboutEntry?.priority).toBe(ABOUT_PRIORITY);
     });
 
     it("should generate entries for project pages", () => {
@@ -88,7 +93,7 @@ describe("SitemapGenerator", () => {
 
       projectEntries.forEach((entry) => {
         expect(entry.changeFrequency).toBe("monthly");
-        expect(entry.priority).toBe(0.7);
+        expect(entry.priority).toBe(PROJECT_PRIORITY);
         expect(entry.url).toMatch(/^https:\/\/test\.com\/projects\/[a-z0-9-]+$/);
       });
     });
@@ -261,11 +266,11 @@ describe("SitemapGenerator", () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         "Submit to Google:",
-        expect.stringContaining("google.com/webmasters"),
+        expect.stringContaining("www.google.com/webmasters"),
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         "Submit to Bing:",
-        expect.stringContaining("bing.com/webmaster"),
+        expect.stringContaining("www.bing.com/webmaster"),
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         "Submit to Yandex:",

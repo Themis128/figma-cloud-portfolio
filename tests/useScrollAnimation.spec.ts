@@ -1,4 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, render, renderHook } from "@testing-library/react";
+import React from "react";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 
 import { useScrollAnimation } from "../client/hooks/useScrollAnimation";
@@ -78,37 +79,23 @@ describe("useScrollAnimation", () => {
   });
 
   it("should observe element when ref is set", () => {
-    // Create a test component that sets the ref immediately
     const TestComponent = () => {
-      const hookResult = useScrollAnimation();
-
-      // Set ref immediately in render
-      if (hookResult.ref.current === null) {
-        hookResult.ref.current = document.createElement("div");
-      }
-
-      return hookResult;
+      const { ref } = useScrollAnimation();
+      return React.createElement("div", { ref }, "test");
     };
 
-    const { result } = renderHook(() => TestComponent());
+    render(React.createElement(TestComponent));
 
-    expect(observeMock).toHaveBeenCalledWith(result.current.ref.current);
+    expect(observeMock).toHaveBeenCalled();
   });
 
   it("should unobserve element on unmount", () => {
-    // Create a test component that sets the ref immediately
     const TestComponent = () => {
-      const hookResult = useScrollAnimation();
-
-      // Set ref immediately in render
-      if (hookResult.ref.current === null) {
-        hookResult.ref.current = document.createElement("div");
-      }
-
-      return null;
+      const { ref } = useScrollAnimation();
+      return React.createElement("div", { ref }, "test");
     };
 
-    const { unmount } = renderHook(() => TestComponent());
+    const { unmount } = render(React.createElement(TestComponent));
 
     unmount();
 

@@ -54,9 +54,7 @@ export function PushNotificationTester() {
               state: registration.active?.state,
             });
           }
-        } catch (error) {
-          console.error("Error checking service worker:", error);
-        }
+        } catch (_error) {}
       }
     };
 
@@ -73,7 +71,6 @@ export function PushNotificationTester() {
         message: `Found ${data.subscriptions} active subscription${data.subscriptions !== 1 ? "s" : ""}`,
       });
     } catch (error) {
-      console.error("Error checking subscriptions:", error);
       setResult({
         success: false,
         message: `Error checking subscriptions: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -158,9 +155,7 @@ export function PushNotificationTester() {
       try {
         const permission = await Notification.requestPermission();
         setNotificationPermission(permission);
-      } catch (error) {
-        console.error("Error requesting notification permission:", error);
-      }
+      } catch (_error) {}
     }
   };
 

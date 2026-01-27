@@ -2,9 +2,29 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Projects Page", () => {
   test.beforeEach(async ({ page }) => {
+    // Capture console messages
+    const consoleMessages: Array<{ type: string; text: string }> = [];
+    page.on("console", (msg) => {
+      consoleMessages.push({ type: msg.type(), text: msg.text() });
+    });
+
+    // Capture page errors
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => {
+      pageErrors.push(error.message);
+    });
+
     // Navigate to projects page
     await page.goto("/projects");
     await page.waitForLoadState("networkidle");
+    // Wait for React to hydrate
+    await page.waitForTimeout(5000);
+
+    // Log console messages and errors
+    console.log("Console messages:", consoleMessages);
+    if (pageErrors.length > 0) {
+      console.log("Page errors:", pageErrors);
+    }
   });
 
   test("should load projects page with correct title and description", async ({ page }) => {

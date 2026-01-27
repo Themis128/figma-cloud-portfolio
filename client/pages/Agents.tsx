@@ -239,8 +239,7 @@ export default function Agents() {
               <AgentBuilder
                 template={selectedTemplate}
                 onCancel={() => setViewMode("configure")}
-                onSave={(agent) => {
-                  console.log("Agent saved:", agent);
+                onSave={(_agent) => {
                   // TODO: Save agent to backend
                   setViewMode("select");
                 }}

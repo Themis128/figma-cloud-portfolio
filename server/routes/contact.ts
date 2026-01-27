@@ -89,12 +89,6 @@ export const handleContactForm = async (req: Request, res: Response) => {
     const allInputs = [sanitizedName, sanitizedEmail, sanitizedSubject, sanitizedMessage].join(" ");
     for (const pattern of dangerousPatterns) {
       if (pattern.test(allInputs)) {
-        console.warn("Potentially malicious input detected:", {
-          name: sanitizedName,
-          email: sanitizedEmail,
-          subject: sanitizedSubject,
-          pattern: pattern.toString(),
-        });
         const response: ContactFormResponse = {
           success: false,
           message: "Invalid input detected. Please check your submission.",
@@ -113,10 +107,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
         .replace(/'/g, "&#39;");
     };
 
-    const safeName = sanitizeHtml(sanitizedName);
     const safeEmail = sanitizeHtml(sanitizedEmail);
-    const safeSubject = sanitizeHtml(sanitizedSubject);
-    const safeMessage = sanitizeHtml(sanitizedMessage);
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -138,7 +129,6 @@ export const handleContactForm = async (req: Request, res: Response) => {
     }
 
     if (!recaptchaSecret) {
-      console.error("RECAPTCHA_SECRET_KEY not configured");
       const response: ContactFormResponse = {
         success: false,
         message: "Server configuration error. Please try again later.",
@@ -160,7 +150,6 @@ export const handleContactForm = async (req: Request, res: Response) => {
     const recaptchaData = await recaptchaResponse.json();
 
     if (!recaptchaData.success) {
-      console.error("reCAPTCHA verification failed:", recaptchaData);
       const response: ContactFormResponse = {
         success: false,
         message: "reCAPTCHA verification failed. Please try again.",
@@ -171,7 +160,6 @@ export const handleContactForm = async (req: Request, res: Response) => {
     // Check reCAPTCHA score (for v3)
     // For test keys, score might be undefined, so we allow it in development
     if (recaptchaData.score !== undefined && recaptchaData.score < 0.5) {
-      console.error("reCAPTCHA score too low:", recaptchaData.score);
       const response: ContactFormResponse = {
         success: false,
         message: "Suspicious activity detected. Please try again.",
@@ -182,7 +170,6 @@ export const handleContactForm = async (req: Request, res: Response) => {
     // For test reCAPTCHA keys, score might be undefined - allow in development
     const isTestKey = recaptchaSecret === "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
     if (!isTestKey && process.env.NODE_ENV === "production" && recaptchaData.score === undefined) {
-      console.error("reCAPTCHA score missing in production");
       const response: ContactFormResponse = {
         success: false,
         message: "reCAPTCHA verification failed. Please try again.",
@@ -193,17 +180,6 @@ export const handleContactForm = async (req: Request, res: Response) => {
     // Simulate processing delay (like sending email)
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // In a real application, you would send an email here
-    // For now, we'll just log the contact form submission
-    console.log("Contact form submission:", {
-      name: safeName,
-      email: safeEmail,
-      subject: safeSubject,
-      message: safeMessage,
-      recaptchaScore: recaptchaData.score,
-      timestamp: new Date().toISOString(),
-    });
-
     const response: ContactFormResponse = {
       success: true,
       message: "Message sent successfully! I'll get back to you within 24 hours.",
@@ -211,8 +187,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
     return;
-  } catch (error) {
-    console.error("Contact form error:", error);
+  } catch (_error) {
     const response: ContactFormResponse = {
       success: false,
       message: "Failed to send message. Please try again or contact me directly via email.",

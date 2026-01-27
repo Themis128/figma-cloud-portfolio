@@ -19,15 +19,10 @@ export const messaging = getMessaging(app);
 
 // Function to get FCM token
 export const getFCMToken = async (vapidKey?: string) => {
-  try {
-    const token = await getToken(messaging, {
-      vapidKey: vapidKey || import.meta.env.VITE_FIREBASE_VAPID_KEY,
-    });
-    return token;
-  } catch (error) {
-    console.error("Error getting FCM token:", error);
-    throw error;
-  }
+  const token = await getToken(messaging, {
+    vapidKey: vapidKey || import.meta.env.VITE_FIREBASE_VAPID_KEY,
+  });
+  return token;
 };
 
 // Function to handle foreground messages

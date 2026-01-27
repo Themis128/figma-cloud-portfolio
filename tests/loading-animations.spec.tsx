@@ -4,6 +4,8 @@ import { describe, expect, it } from "vitest";
 
 import { LoadingDots, LoadingSpinner, PageLoader } from "../client/components/LoadingAnimations";
 
+const LOADING_DOTS_COUNT = 3;
+
 describe("LoadingAnimations", () => {
   describe("LoadingSpinner", () => {
     it("should render with default props", () => {
@@ -55,7 +57,7 @@ describe("LoadingAnimations", () => {
     it("should render three dots with default props", () => {
       render(<LoadingDots />);
       const dots = screen.getAllByTestId("loading-dot");
-      expect(dots).toHaveLength(3);
+      expect(dots).toHaveLength(LOADING_DOTS_COUNT);
       dots.forEach((dot) => {
         expect(dot).toHaveClass("w-2", "h-2", "bg-cyan-400", "rounded-full");
       });

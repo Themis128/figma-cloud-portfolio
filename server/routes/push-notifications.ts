@@ -117,7 +117,6 @@ export async function handlePushNotificationsGet(req: Request, res: Response) {
       totalSubscriptions: subscriptions.length,
     });
   } catch (error) {
-    console.error("Error sending test notification:", error);
     res.status(500).json({
       error: "Failed to send test notification",
       details: (error as Error).message,
@@ -129,10 +128,27 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
   try {
     const { subscriptions: subs, message } = req.body;
 
+    // Validate message
+    if (!message) {
+      res.status(400).json({
+        error: "Missing required fields",
+      });
+      return;
+    }
+
     let subscriptionsToUse: PushSubscriptionData[] = [];
 
-    // If no subscriptions provided, use all stored subscriptions
-    if (!subs || !Array.isArray(subs) || subs.length === 0) {
+    // If subscriptions provided, validate format
+    if (subs !== undefined) {
+      if (!Array.isArray(subs)) {
+        res.status(400).json({
+          error: "Invalid subscriptions format. Must be an array.",
+        });
+        return;
+      }
+      subscriptionsToUse = subs;
+    } else {
+      // No subscriptions provided, use all stored subscriptions
       if (subscriptions.length === 0) {
         res.status(400).json({
           error: "No subscriptions found. Subscribe first using the client.",
@@ -140,15 +156,6 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
         return;
       }
       subscriptionsToUse = subscriptions;
-    } else {
-      subscriptionsToUse = subs;
-    }
-
-    if (!message) {
-      res.status(400).json({
-        error: "Missing required field: message",
-      });
-      return;
     }
 
     const pushMessage: PushMessage = message;
@@ -180,7 +187,6 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
           statusCode: result.statusCode,
         });
       } catch (error) {
-        console.error("Error sending to subscription:", subscription.endpoint, error);
         results.push({
           endpoint: subscription.endpoint,
           success: false,
@@ -196,7 +202,6 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
       totalFailed: results.filter((r) => !r.success).length,
     });
   } catch (error) {
-    console.error("Error sending push notification:", error);
     res.status(500).json({
       error: "Failed to send push notification",
       details: (error as Error).message,
@@ -221,15 +226,12 @@ export function handlePushNotificationsPut(req: Request, res: Response) {
     // Add new subscription
     subscriptions.push(subscription);
 
-    console.log("Subscription stored:", subscription.endpoint);
-
     res.json({
       success: true,
       message: "Subscription stored",
       totalSubscriptions: subscriptions.length,
     });
   } catch (error) {
-    console.error("Error storing subscription:", error);
     res.status(500).json({
       error: "Failed to store subscription",
       details: (error as Error).message,
@@ -259,7 +261,6 @@ export function handlePushNotificationsDelete(req: Request, res: Response) {
       totalSubscriptions: subscriptions.length,
     });
   } catch (error) {
-    console.error("Error removing subscription:", error);
     res.status(500).json({
       error: "Failed to remove subscription",
       details: (error as Error).message,

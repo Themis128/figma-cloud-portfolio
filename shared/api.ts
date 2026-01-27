@@ -31,6 +31,25 @@ export interface ContactFormResponse {
 }
 
 /**
+ * Analytics event data
+ */
+export interface AnalyticsEvent {
+  event: string;
+  data?: Record<string, unknown>;
+  timestamp: string;
+  url: string;
+  userAgent: string;
+}
+
+/**
+ * Analytics response
+ */
+export interface AnalyticsResponse {
+  success: boolean;
+  message?: string;
+}
+
+/**
  * Resume data structure for PDF generation
  */
 export interface ResumeData {

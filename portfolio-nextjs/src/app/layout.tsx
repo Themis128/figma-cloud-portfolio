@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "@/components/providers";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-import { DefaultStructuredData } from "@/components/StructuredData";
 import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { Providers } from "@/components/providers";
+import { DefaultStructuredData } from "@/components/StructuredData";
 
 const inter = Inter({
   subsets: ["latin"],

@@ -11,6 +11,9 @@ import {
   searchTemplates,
 } from "@/data/agentTemplates";
 
+const MAX_DISPLAYED_TAGS = 3;
+const MAX_DISPLAYED_FEATURES = 2;
+
 interface TemplateSelectorProps {
   onSelectTemplate: (template: AgentTemplate) => void;
   onCloneTemplate?: (template: AgentTemplate) => void;
@@ -107,11 +110,10 @@ export default function TemplateSelector({
                 onClick={() => {
                   setSelectedCategory(category.id);
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
-                  selectedCategory === category.id
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${selectedCategory === category.id
                     ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
                     : "border-white/10 bg-white/5 text-white/70 hover:border-cyan-400/50 hover:text-cyan-400"
-                }`}
+                  }`}
               >
                 {category.id !== "all" && <IconComponent className='w-4 h-4' />}
                 <span className='text-sm font-medium'>{category.label}</span>
@@ -188,11 +190,10 @@ export default function TemplateSelector({
               <HoverCard>
                 <button
                   type='button'
-                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${
-                    selectedTemplateId === template.id
+                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${selectedTemplateId === template.id
                       ? "border-cyan-400 bg-white/10"
                       : "border-white/10 hover:border-cyan-400/50"
-                  }`}
+                    }`}
                   onClick={() => {
                     onSelectTemplate(template);
                   }}
@@ -227,7 +228,7 @@ export default function TemplateSelector({
 
                   {/* Tags */}
                   <div className='flex flex-wrap gap-1 mb-4'>
-                    {template.tags.slice(0, 3).map((tag) => (
+                    {template.tags.slice(0, MAX_DISPLAYED_TAGS).map((tag) => (
                       <Badge
                         key={tag}
                         variant='secondary'
@@ -236,12 +237,12 @@ export default function TemplateSelector({
                         {tag}
                       </Badge>
                     ))}
-                    {template.tags.length > 3 && (
+                    {template.tags.length > MAX_DISPLAYED_TAGS && (
                       <Badge
                         variant='secondary'
                         className='text-xs bg-white/10 text-white/80 border-white/20'
                       >
-                        +{template.tags.length - 3}
+                        +{template.tags.length - MAX_DISPLAYED_TAGS}
                       </Badge>
                     )}
                   </div>
@@ -250,7 +251,7 @@ export default function TemplateSelector({
                   <div className='space-y-2 mb-4'>
                     <h4 className='text-sm font-medium text-white/90'>Key Features:</h4>
                     <ul className='space-y-1'>
-                      {template.features.slice(0, 2).map((feature, featureIndex) => (
+                      {template.features.slice(0, MAX_DISPLAYED_FEATURES).map((feature, featureIndex) => (
                         <li
                           key={`${template.id}-feature-${featureIndex}`}
                           className='text-xs text-white/60 flex items-center gap-2'

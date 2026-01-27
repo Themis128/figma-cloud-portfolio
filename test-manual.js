@@ -27,4 +27,4 @@ async function testPage() {
   }
 }
 
-testPage().catch(console.error);
+testPage().catch(() => {});

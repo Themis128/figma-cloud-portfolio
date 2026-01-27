@@ -50,7 +50,7 @@ class SimpleTestDashboardLauncher {
       }
 
       // Start the server (use absolute path so tsx resolves correctly)
-      const serverProcess = spawn("pnpm", ["exec", "tsx", serverPath], {
+      const _serverProcess = spawn("pnpm", ["exec", "tsx", serverPath], {
         stdio: "inherit",
         detached: false,
       });

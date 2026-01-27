@@ -110,10 +110,11 @@ export default function TemplateSelector({
                 onClick={() => {
                   setSelectedCategory(category.id);
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${selectedCategory === category.id
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
+                  selectedCategory === category.id
                     ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
                     : "border-white/10 bg-white/5 text-white/70 hover:border-cyan-400/50 hover:text-cyan-400"
-                  }`}
+                }`}
               >
                 {category.id !== "all" && <IconComponent className='w-4 h-4' />}
                 <span className='text-sm font-medium'>{category.label}</span>
@@ -190,10 +191,11 @@ export default function TemplateSelector({
               <HoverCard>
                 <button
                   type='button'
-                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${selectedTemplateId === template.id
+                  className={`relative p-6 bg-white/5 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer w-full text-left ${
+                    selectedTemplateId === template.id
                       ? "border-cyan-400 bg-white/10"
                       : "border-white/10 hover:border-cyan-400/50"
-                    }`}
+                  }`}
                   onClick={() => {
                     onSelectTemplate(template);
                   }}

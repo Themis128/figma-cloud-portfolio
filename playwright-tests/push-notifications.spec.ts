@@ -21,7 +21,7 @@ test.describe("Push Notifications", () => {
 
     // Check button text
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
-    expect(buttonText).toContain("Enable Notifications");
+    expect(buttonText).toContain("Enable notifications");
   });
 
   test("should request notification permission", async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe("Push Notifications", () => {
 
     // Check button shows appropriate state for denied permission
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
-    expect(buttonText).toContain("Notifications Blocked");
+    expect(buttonText).toContain("Notifications blocked");
   });
 
   test("should handle notification permission granted", async ({ page }) => {
@@ -81,7 +81,7 @@ test.describe("Push Notifications", () => {
 
     // Check button shows appropriate state for granted permission
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
-    expect(buttonText).toContain("Notifications Enabled");
+    expect(buttonText).toContain("Notifications on");
   });
 
   test("should subscribe to push notifications", async ({ page }) => {
@@ -145,7 +145,7 @@ test.describe("Push Notifications", () => {
 
     // Check that subscription was successful
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
-    expect(buttonText).toContain("Notifications Enabled");
+    expect(buttonText).toContain("Notifications on");
   });
 
   test("should unsubscribe from push notifications", async ({ page }) => {
@@ -200,7 +200,7 @@ test.describe("Push Notifications", () => {
 
     // Check that unsubscription was successful
     const buttonText = await page.locator('[data-testid="notification-button"]').textContent();
-    expect(buttonText).toContain("Enable Notifications");
+    expect(buttonText).toContain("Enable notifications");
   });
 
   test("should send test notification", async ({ page }) => {

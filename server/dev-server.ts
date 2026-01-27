@@ -5,9 +5,9 @@ const app = createServer();
 const port = process.env.PORT ? Number(process.env.PORT) : DEFAULT_PORT;
 
 const logger = {
-  info: (..._args: unknown[]) => {},
-  warn: (..._args: unknown[]) => {},
-  error: (..._args: unknown[]) => {},
+  info: (...args: unknown[]) => console.log(...args),
+  warn: (...args: unknown[]) => console.warn(...args),
+  error: (...args: unknown[]) => console.error(...args),
 };
 
 logger.info("Starting server...");

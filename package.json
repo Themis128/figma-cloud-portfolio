@@ -64,6 +64,7 @@
     "react-dom": "^18.3.1",
     "react-ga4": "^2.1.0",
     "react-google-recaptcha-v3": "^1.11.0",
+    "react-helmet-async": "^2.0.5",
     "react-intersection-observer": "^10.0.2",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
@@ -209,5 +210,13 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Themis128/figma-cloud-portfolio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Themis128/figma-cloud-portfolio/issues"
+  },
+  "homepage": "https://github.com/Themis128/figma-cloud-portfolio#readme"
 }

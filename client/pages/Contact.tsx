@@ -48,12 +48,10 @@ export default function Contact() {
         try {
           // Execute reCAPTCHA
           recaptchaToken = await executeRecaptcha("contact_form_submit");
-        } catch (recaptchaError) {
-          console.warn("reCAPTCHA execution failed, using test token:", recaptchaError);
+        } catch (_recaptchaError) {
           // Continue with test token for development/testing
         }
       } else {
-        console.warn("reCAPTCHA not loaded, using test token");
       }
 
       const response = await submitContactForm({
@@ -64,6 +62,10 @@ export default function Contact() {
       if (response.success) {
         setSubmitStatus("success");
         setFormData({ name: "", email: "", subject: "", message: "" });
+        // Track contact form submission
+        if (typeof window !== "undefined" && window.trackContactFormSubmit) {
+          window.trackContactFormSubmit();
+        }
         // Keep success state for a moment before re-enabling
         setTimeout(() => {
           setIsSubmitting(false);
@@ -71,13 +73,11 @@ export default function Contact() {
         }, SUCCESS_MESSAGE_DURATION_MS);
       } else {
         setSubmitStatus("error");
-        console.error("Form submission failed:", response.message);
         // Keep button disabled for a short time to show error feedback
         setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS);
       }
-    } catch (error) {
+    } catch (_error) {
       setSubmitStatus("error");
-      console.error("Form submission error:", error);
       // Keep button disabled for a short time to show error feedback
       setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS);
     }

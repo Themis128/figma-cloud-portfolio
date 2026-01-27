@@ -61,6 +61,7 @@ export function OptimizedImage({
           aria-hidden='true'
         >
           {placeholder && (
+            // biome-ignore lint/performance/noImgElement: Custom optimized image component with lazy loading and responsive formats
             <img
               src={placeholder}
               alt=''

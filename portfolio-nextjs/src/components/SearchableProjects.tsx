@@ -1,10 +1,10 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
-import React, { useDeferredValue, useMemo, useState } from "react";
 import { LinkPreview } from "@/components/LinkPreview";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { AnimatePresence, motion } from "framer-motion";
+import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
+import React, { useDeferredValue, useMemo, useState } from "react";
 
 interface Project {
   id: string;
@@ -117,6 +117,10 @@ interface SearchableProjectsProps {
 }
 
 const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) => {
+  // Animation and display constants
+  const ANIMATION_STAGGER_DELAY = 0.1; // seconds
+  const MAX_TECHNOLOGIES_DISPLAYED = 4;
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"year" | "title">("year");
@@ -261,7 +265,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
                 animate='visible'
                 exit='exit'
                 variants={motionVariants}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.3, delay: index * ANIMATION_STAGGER_DELAY }}
                 className='h-full'
               >
                 <Card className='h-full hover:shadow-lg transition-shadow duration-300'>
@@ -295,14 +299,14 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className }) =>
                     </CardDescription>
 
                     <div className='flex flex-wrap gap-2'>
-                      {project.technologies.slice(0, 4).map((tech) => (
+                      {project.technologies.slice(0, MAX_TECHNOLOGIES_DISPLAYED).map((tech) => (
                         <Badge key={tech} variant='secondary' className='text-xs'>
                           {tech}
                         </Badge>
                       ))}
-                      {project.technologies.length > 4 && (
+                      {project.technologies.length > MAX_TECHNOLOGIES_DISPLAYED && (
                         <Badge variant='secondary' className='text-xs'>
-                          +{project.technologies.length - 4}
+                          +{project.technologies.length - MAX_TECHNOLOGIES_DISPLAYED}
                         </Badge>
                       )}
                     </div>

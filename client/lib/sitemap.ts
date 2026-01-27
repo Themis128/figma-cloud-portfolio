@@ -379,24 +379,20 @@ Allow: /resume.pdf`;
    * Submit sitemap to search engines (conceptual - would need API keys)
    */
   submitToSearchEngines(): void {
-    const sitemapUrl = `${this.baseURL}/sitemap.xml`;
-
-    // Google Search Console
+    // biome-ignore lint/suspicious/noConsole: This method logs submission URLs for testing purposes
     console.log(
       "Submit to Google:",
-      `https://www.google.com/webmasters/tools/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
+      `https://www.google.com/webmasters/sitemaps/ping?sitemap=${encodeURIComponent(`${this.baseURL}/sitemap.xml`)}`,
     );
-
-    // Bing Webmaster Tools
+    // biome-ignore lint/suspicious/noConsole: This method logs submission URLs for testing purposes
     console.log(
       "Submit to Bing:",
-      `https://www.bing.com/webmaster/ping.aspx?siteMap=${encodeURIComponent(sitemapUrl)}`,
+      `https://www.bing.com/webmaster/ping.aspx?siteMap=${encodeURIComponent(`${this.baseURL}/sitemap.xml`)}`,
     );
-
-    // Yandex Webmaster
+    // biome-ignore lint/suspicious/noConsole: This method logs submission URLs for testing purposes
     console.log(
       "Submit to Yandex:",
-      `https://webmaster.yandex.com/sites/add/?-addsitemap_url=${encodeURIComponent(sitemapUrl)}`,
+      `https://webmaster.yandex.com/site/map.xml?host=${encodeURIComponent(this.baseURL)}`,
     );
   }
 }

@@ -4,8 +4,8 @@
  * Postinstall script to optimize pnpm setup and performance
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 console.log("🔧 Running postinstall optimizations...");
 

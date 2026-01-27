@@ -106,7 +106,8 @@ test.describe("SEO & Metadata", () => {
         expect(content).toContain("<url>");
         expect(content).toContain("<loc>");
       } else {
-        console.log("Sitemap not found - may be generated dynamically");
+        // Sitemap not implemented yet - this is acceptable for now
+        console.log("Sitemap not implemented - skipping test");
       }
     });
 

@@ -1,11 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
-import os from "os";
+import os from "node:os";
 
 // Constants for configuration
 const DEFAULT_CPU_COUNT = 2;
 const WORKER_CPU_FRACTION = 0.75;
 const VISUAL_SNAPSHOT_THRESHOLD = 0.2;
 const VISUAL_SNAPSHOT_MAX_DIFF = 100;
+const CI_RETRIES = 2;
+const LOCAL_RETRIES = 1;
+const ACTION_TIMEOUT = 10000;
+const NAVIGATION_TIMEOUT = 30000;
+const EXPECT_TIMEOUT = 10000;
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -17,7 +22,7 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? 2 : 1,
+  retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
   /* Dynamic worker count: use most of available cores locally, limit on CI */
   workers: process.env.CI
     ? 2
@@ -26,7 +31,7 @@ export default defineConfig({
   /* Circuit breaker configuration */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:8082",
+    baseURL: "http://localhost:8081",
 
     /* Enhanced tracing and debugging */
     trace: "retain-on-failure", // Keep traces for failed tests
@@ -34,8 +39,8 @@ export default defineConfig({
     video: "retain-on-failure", // Record videos for failed tests
 
     /* Optimized timeouts for better reliability */
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
+    actionTimeout: ACTION_TIMEOUT,
+    navigationTimeout: NAVIGATION_TIMEOUT,
 
     /* Enhanced browser context for better isolation */
     viewport: { width: 1280, height: 720 },
@@ -81,7 +86,7 @@ export default defineConfig({
 
   /* Expect configuration for better assertions */
   expect: {
-    timeout: 10000,
+    timeout: EXPECT_TIMEOUT,
     toHaveScreenshot: {
       threshold: VISUAL_SNAPSHOT_THRESHOLD, // Allow threshold for visual comparisons
       maxDiffPixels: VISUAL_SNAPSHOT_MAX_DIFF, // Maximum pixel difference
@@ -102,8 +107,8 @@ export default defineConfig({
           args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
         },
         // Longer timeouts for React 19 hydration
-        actionTimeout: 10000,
-        navigationTimeout: 30000,
+        actionTimeout: ACTION_TIMEOUT,
+        navigationTimeout: NAVIGATION_TIMEOUT,
       },
     },
 
@@ -164,17 +169,17 @@ export default defineConfig({
      existing servers when present to speed up iteration. */
   // webServer: [
   //   {
-  //     command: 'npx tsx server/dev-server.ts',
-  //     url: 'http://localhost:3000/api/ping',
+  //     command: "npx tsx server/node-build.ts",
+  //     url: "http://localhost:3000/api/ping",
   //     reuseExistingServer: !process.env.CI,
-  //     timeout: WEB_SERVER_TIMEOUT_MS,
+  //     timeout: 120000,
   //     cwd: process.cwd(),
   //   },
   //   {
-  //     command: 'npx vite --host localhost --port 8082',
-  //     url: 'http://localhost:8082',
+  //     command: "pnpm dev",
+  //     url: "http://localhost:8081",
   //     reuseExistingServer: !process.env.CI,
-  //     timeout: WEB_SERVER_TIMEOUT_MS,
+  //     timeout: 120000,
   //     cwd: process.cwd(),
   //   },
   // ],

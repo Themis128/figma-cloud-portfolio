@@ -80,9 +80,7 @@ export function usePWA() {
 
       setDeferredPrompt(null);
       setIsInstallable(false);
-    } catch (error) {
-      console.error("Error during PWA installation:", error);
-    }
+    } catch (_error) {}
   };
 
   return {

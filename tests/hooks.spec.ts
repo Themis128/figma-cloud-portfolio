@@ -3,6 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useDeviceType, useOptimizedAnimation } from "../client/hooks/useDeviceType";
 import { usePWA } from "../client/hooks/usePWA";
 
+// Test constants for device breakpoints
+const MOBILE_BREAKPOINT = 375;
+const TABLET_BREAKPOINT = 800;
+const DESKTOP_BREAKPOINT = 1024;
+
 // Mock navigator
 const mockNavigator = {
   standalone: false,
@@ -136,7 +141,7 @@ describe("useDeviceType", () => {
   it("should detect mobile device", () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 375,
+      value: MOBILE_BREAKPOINT,
     });
 
     const { result } = renderHook(() => useDeviceType());
@@ -144,13 +149,13 @@ describe("useDeviceType", () => {
     expect(result.current.isMobile).toBe(true);
     expect(result.current.isTablet).toBe(false);
     expect(result.current.isDesktop).toBe(false);
-    expect(result.current.screenWidth).toBe(375);
+    expect(result.current.screenWidth).toBe(MOBILE_BREAKPOINT);
   });
 
   it("should detect tablet device", () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 800,
+      value: TABLET_BREAKPOINT,
     });
 
     const { result } = renderHook(() => useDeviceType());
@@ -158,7 +163,7 @@ describe("useDeviceType", () => {
     expect(result.current.isMobile).toBe(false);
     expect(result.current.isTablet).toBe(true);
     expect(result.current.isDesktop).toBe(false);
-    expect(result.current.screenWidth).toBe(800);
+    expect(result.current.screenWidth).toBe(TABLET_BREAKPOINT);
   });
 
   it("should handle prefers-reduced-motion", () => {
@@ -176,7 +181,7 @@ describe("useDeviceType", () => {
   it("should handle window resize", () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 1024,
+      value: DESKTOP_BREAKPOINT,
     });
 
     const { result } = renderHook(() => useDeviceType());
@@ -184,7 +189,7 @@ describe("useDeviceType", () => {
     // Change window width
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 375,
+      value: MOBILE_BREAKPOINT,
     });
 
     act(() => {
@@ -192,7 +197,7 @@ describe("useDeviceType", () => {
     });
 
     expect(result.current.isMobile).toBe(true);
-    expect(result.current.screenWidth).toBe(375);
+    expect(result.current.screenWidth).toBe(MOBILE_BREAKPOINT);
   });
 });
 
@@ -200,7 +205,7 @@ describe("useOptimizedAnimation", () => {
   it("should return optimized animation settings for desktop", () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 1024,
+      value: DESKTOP_BREAKPOINT,
     });
 
     mockMatchMedia.mockReturnValue({
@@ -223,7 +228,7 @@ describe("useOptimizedAnimation", () => {
   it("should return reduced animation settings for mobile", () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 375,
+      value: MOBILE_BREAKPOINT,
     });
 
     mockMatchMedia.mockReturnValue({
@@ -246,7 +251,7 @@ describe("useOptimizedAnimation", () => {
   it("should disable animations when prefers-reduced-motion", () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
-      value: 1024,
+      value: DESKTOP_BREAKPOINT,
     });
 
     mockMatchMedia.mockReturnValue({

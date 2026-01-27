@@ -16,7 +16,6 @@ export const ViewTransitionWrapper: React.FC<ViewTransitionWrapperProps> = ({
   useEffect(() => {
     // Check if View Transitions API is supported
     if (!document.startViewTransition) {
-      console.warn("View Transitions API not supported in this browser");
       return;
     }
 

@@ -17,6 +17,11 @@ export default function VoiceCommandButton({
   position = "bottom-right",
   size = "md",
 }: VoiceCommandButtonProps) {
+  // Voice command constants
+  const TRANSCRIPT_AUTO_HIDE_MS = 3000; // 3 seconds
+  const CONFIDENCE_PERCENTAGE_MULTIPLIER = 100;
+  const MAX_DISPLAYED_COMMANDS = 8;
+
   const [isOpen, setIsOpen] = useState(false);
   const allCommands = [...commonVoiceCommands, ...customCommands];
 
@@ -40,7 +45,7 @@ export default function VoiceCommandButton({
       setShowTranscript(true);
       const timer = setTimeout(() => {
         setShowTranscript(false);
-      }, 3000);
+      }, TRANSCRIPT_AUTO_HIDE_MS);
       return () => {
         clearTimeout(timer);
       };
@@ -81,11 +86,10 @@ export default function VoiceCommandButton({
           <PopoverTrigger asChild>
             <Button
               size='icon'
-              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
-                isListening
+              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${isListening
                   ? "bg-red-500 hover:bg-red-600 animate-pulse"
                   : "bg-cyan-500 hover:bg-cyan-600"
-              }`}
+                }`}
               onClick={isListening ? stopListening : startListening}
               aria-label={isListening ? "Stop voice commands" : "Start voice commands"}
             >
@@ -112,7 +116,7 @@ export default function VoiceCommandButton({
                   {isListening ? "Listening..." : "Ready"}
                 </Badge>
                 {confidence > 0 && (
-                  <Badge variant='outline'>{Math.round(confidence * 100)}% confidence</Badge>
+                  <Badge variant='outline'>{Math.round(confidence * CONFIDENCE_PERCENTAGE_MULTIPLIER)}% confidence</Badge>
                 )}
               </div>
 
@@ -135,7 +139,7 @@ export default function VoiceCommandButton({
               <div className='space-y-2'>
                 <h4 className='font-medium text-sm'>Available Commands:</h4>
                 <div className='max-h-40 overflow-y-auto space-y-1'>
-                  {availableCommands.slice(0, 8).map((command) => (
+                  {availableCommands.slice(0, MAX_DISPLAYED_COMMANDS).map((command) => (
                     <div key={command.keywords[0]} className='flex items-center gap-2 text-xs'>
                       <Volume2 className='w-3 h-3 text-muted-foreground' />
                       <span className='text-muted-foreground'>"{command.keywords[0]}"</span>
@@ -143,9 +147,9 @@ export default function VoiceCommandButton({
                       <span className='text-foreground'>{command.description}</span>
                     </div>
                   ))}
-                  {availableCommands.length > 8 && (
+                  {availableCommands.length > MAX_DISPLAYED_COMMANDS && (
                     <p className='text-xs text-muted-foreground'>
-                      ... and {availableCommands.length - 8} more
+                      ... and {availableCommands.length - MAX_DISPLAYED_COMMANDS} more
                     </p>
                   )}
                 </div>

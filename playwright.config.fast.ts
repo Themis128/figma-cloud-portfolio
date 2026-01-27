@@ -1,5 +1,5 @@
-import { defineConfig, devices } from "@playwright/test";
 import { cpus } from "node:os";
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Fast Playwright configuration optimized for CI/CD and local development
@@ -70,7 +70,7 @@ const CONFIG = {
   // Server configuration
   SERVER: {
     COMMAND: "pnpm dev",
-    URL: "http://localhost:8082",
+    URL: "http://localhost:8081",
     REUSE_EXISTING: !process.env.CI,
     TIMEOUT: 30000,
   },
@@ -139,13 +139,13 @@ export default defineConfig({
       // Reduce memory usage in CI
       ...(process.env.CI
         ? {
-          headless: true,
-          devtools: false,
-        }
+            headless: true,
+            devtools: false,
+          }
         : {
-          headless: false,
-          devtools: false,
-        }),
+            headless: false,
+            devtools: false,
+          }),
     },
   },
 

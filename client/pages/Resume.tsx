@@ -100,9 +100,7 @@ export default function Resume() {
     if (saved) {
       try {
         setResume(JSON.parse(saved));
-      } catch (error) {
-        console.warn("Failed to load saved resume:", error);
-      }
+      } catch (_error) {}
     }
   }, []);
 
@@ -133,8 +131,12 @@ export default function Resume() {
       document.body.removeChild(a);
 
       toast.success("Resume downloaded successfully!");
-    } catch (error) {
-      console.error("Error downloading resume:", error);
+
+      // Track resume download
+      if (typeof window !== "undefined" && window.trackResumeDownload) {
+        window.trackResumeDownload();
+      }
+    } catch (_error) {
       toast.error("Failed to generate resume. Please try again.");
     } finally {
       setIsGenerating(false);

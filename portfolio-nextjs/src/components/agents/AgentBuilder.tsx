@@ -1,11 +1,13 @@
-import { ArrowLeft, Play, Save, Settings } from "lucide-react";
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";
+import { ArrowLeft, Play, Save, Settings } from "lucide-react";
+import { useState } from "react";
 import { WorkflowBuilder } from "./WorkflowBuilder";
+
+const SIMULATION_TIMEOUT_MS = 2000;
 
 interface AgentBuilderProps {
   template: AgentTemplate;
@@ -31,10 +33,8 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
   const handleRunAgent = async () => {
     setIsRunning(true);
     // Simulate agent execution
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, SIMULATION_TIMEOUT_MS));
     setIsRunning(false);
-    // TODO: Implement actual agent execution logic
-    console.log("Running agent:", agent.name);
   };
 
   return (
@@ -195,10 +195,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 variant='outline'
                 size='sm'
                 className='w-full justify-start'
-                onClick={() => {
-                  // TODO: Implement export functionality
-                  console.log("Exporting agent configuration...");
-                }}
+                onClick={() => { }}
               >
                 Export Configuration
               </Button>
@@ -206,10 +203,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 variant='outline'
                 size='sm'
                 className='w-full justify-start'
-                onClick={() => {
-                  // TODO: Implement duplicate functionality
-                  console.log("Duplicating agent...");
-                }}
+                onClick={() => { }}
               >
                 Duplicate Agent
               </Button>
@@ -217,10 +211,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 variant='outline'
                 size='sm'
                 className='w-full justify-start text-red-400 hover:text-red-300'
-                onClick={() => {
-                  // TODO: Implement delete functionality
-                  console.log("Deleting agent...");
-                }}
+                onClick={() => { }}
               >
                 Delete Agent
               </Button>

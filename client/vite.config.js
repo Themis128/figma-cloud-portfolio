@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => ({
   publicDir: "../public",
   server: {
     host: "localhost",
-    port: 8080,
+    port: 8082,
     strictPort: true,
     hmr: {
       port: 24678, // Use a different port for HMR

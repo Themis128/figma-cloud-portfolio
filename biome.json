@@ -103,7 +103,17 @@
       }
     },
     {
-      "includes": ["vite.config.ts"],
+      "includes": ["server/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["portfolio-nextjs/src/components/Interactive3DDemo.tsx"],
       "linter": {
         "rules": {
           "style": {

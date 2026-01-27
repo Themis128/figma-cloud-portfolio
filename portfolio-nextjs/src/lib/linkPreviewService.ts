@@ -51,8 +51,6 @@ export async function generatePreview(url: string): Promise<LinkPreviewData> {
       error: null,
     };
   } catch (error) {
-    console.error("Link preview generation failed:", error);
-
     // Return a basic preview for failed requests
     const fallbackUrl = new URL(url);
     return {

@@ -41,6 +41,8 @@ describe("Interactive3DDemo", () => {
       color: "#3b82f6",
       position: [0, 0, 0] as [number, number, number],
       scale: 1,
+      category: "web" as const,
+      year: 2024,
     },
   ];
 
@@ -112,6 +114,8 @@ describe("useSampleProjects", () => {
     expect(firstProject).toHaveProperty("color");
     expect(firstProject).toHaveProperty("position");
     expect(firstProject).toHaveProperty("scale");
+    expect(firstProject).toHaveProperty("category");
+    expect(firstProject).toHaveProperty("year");
   });
 
   it("returns projects with correct structure", () => {
@@ -126,6 +130,8 @@ describe("useSampleProjects", () => {
       expect(Array.isArray(project.position)).toBe(true);
       expect(project.position.length).toBe(VECTOR_3D_LENGTH);
       expect(typeof project.scale).toBe("number");
+      expect(typeof project.category).toBe("string");
+      expect(typeof project.year).toBe("number");
     });
   });
 

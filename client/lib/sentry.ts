@@ -77,7 +77,6 @@ export const setContext = (key: string, context: Record<string, unknown>) => {
 export const reportError = (error: Error, context?: Record<string, unknown>) => {
   if (!SentryLib) {
     // Fallback to console in dev to aid debugging
-    if (import.meta.env.DEV) console.error(error, context);
     return;
   }
   const sentry = SentryLib;
@@ -108,5 +107,4 @@ export const trackInteraction = (action: string, details?: Record<string, unknow
   });
 };
 
-export { SentryLib as Sentry, initSentry as init };
-
+export { initSentry as init, SentryLib as Sentry };

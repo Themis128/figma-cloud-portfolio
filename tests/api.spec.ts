@@ -6,6 +6,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getDemo, ping, pushNotificationsApi, submitContactForm } from "../client/lib/api";
 
+// Constants for test expectations
+const EXPECTED_SUBSCRIPTION_COUNT = 5;
+
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
@@ -124,7 +127,7 @@ describe("API Client", () => {
       });
 
       const result = await pushNotificationsApi.getSubscriptionCount();
-      expect(result.subscriptions).toBe(5);
+      expect(result.subscriptions).toBe(EXPECTED_SUBSCRIPTION_COUNT);
     });
 
     it("sendTestNotification sends notification", async () => {

@@ -813,26 +813,17 @@ export async function handleResumeDownload(req: Request, res: Response) {
   let browser = null;
 
   try {
-    console.log("🚀 Generating dynamic resume PDF...");
-
     let resume: ResumeData;
 
     if (req.method === "POST" && req.body) {
       // Use data from request body
       resume = req.body as ResumeData;
-      console.log("📝 Using resume data from app...");
     } else {
-      // Fallback to reading from markdown file
-      console.log("📄 Reading resume content from markdown file...");
       const markdownPath = path.join(process.cwd(), "public", "resume-content.md");
       const markdownContent = await fs.readFile(markdownPath, "utf8");
       resume = parseResumeMarkdown(markdownContent);
     }
-
-    console.log("🎨 Generating HTML template...");
     const htmlContent = generateHTML(resume);
-
-    console.log("🌐 Launching browser for PDF generation...");
     browser = await puppeteer.launch({
       headless: true,
       args: [
@@ -856,8 +847,6 @@ export async function handleResumeDownload(req: Request, res: Response) {
       height: 1123, // A4 height in pixels at 96 DPI
       deviceScaleFactor: 1,
     });
-
-    console.log("📝 Setting page content...");
     await page.setContent(htmlContent, {
       waitUntil: "networkidle0",
       timeout: 30000,
@@ -865,8 +854,6 @@ export async function handleResumeDownload(req: Request, res: Response) {
 
     // Wait a bit for any animations or fonts to load
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    console.log("📋 Generating PDF...");
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -880,9 +867,6 @@ export async function handleResumeDownload(req: Request, res: Response) {
       displayHeaderFooter: false,
     });
 
-    console.log("✅ PDF generated successfully!");
-    console.log(`📄 PDF size: ${(pdfBuffer.length / 1024 / 1024).toFixed(2)} MB`);
-
     // Set response headers for PDF download
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
@@ -894,7 +878,6 @@ export async function handleResumeDownload(req: Request, res: Response) {
     // Send the PDF buffer
     res.send(pdfBuffer);
   } catch (error) {
-    console.error("❌ Error generating resume PDF:", error);
     res.status(500).json({
       error: "Failed to generate resume PDF",
       message: error instanceof Error ? error.message : "Unknown error",
@@ -903,9 +886,7 @@ export async function handleResumeDownload(req: Request, res: Response) {
     if (browser) {
       try {
         await browser.close();
-      } catch (closeError) {
-        console.warn("⚠️  Warning: Could not close browser cleanly:", closeError);
-      }
+      } catch (_closeError) {}
     }
   }
 }

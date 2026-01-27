@@ -147,7 +147,7 @@ export function PerformanceDashboard({ className, compact = false }: Performance
   }
 
   return (
-    <Card className={`p-6 ${className}`} data-testid="core-web-vitals">
+    <Card className={`p-6 ${className}`} data-testid='core-web-vitals'>
       <div className='space-y-6'>
         <div className='flex items-center justify-between'>
           <h3 className='text-lg font-semibold flex items-center gap-2'>

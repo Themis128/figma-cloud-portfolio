@@ -20,12 +20,10 @@ export function usePushNotifications() {
     try {
       const data = await pushNotificationsApi.getVapidPublicKey();
       setVapidPublicKey(data.publicKey);
-    } catch (error) {
+    } catch (_error) {
       // Silently fail in development if API server isn't running
       if (import.meta.env.DEV) {
-        console.debug("Push notifications API unavailable (run pnpm dev:all to enable)");
       } else {
-        console.error("Error fetching VAPID public key:", error);
       }
       // Don't set an error state, just leave vapidPublicKey as null
     }
@@ -40,9 +38,7 @@ export function usePushNotifications() {
 
       setSubscription(existingSubscription);
       setIsSubscribed(!!existingSubscription);
-    } catch (error) {
-      console.error("Error checking push subscription:", error);
-    }
+    } catch (_error) {}
   }, []);
 
   useEffect(() => {
@@ -55,91 +51,74 @@ export function usePushNotifications() {
   }, [checkSubscription, fetchVapidPublicKey]);
 
   const subscribe = async () => {
-    try {
-      if (!isSupported) {
-        throw new Error("Push notifications are not supported");
-      }
-
-      if (!vapidPublicKey) {
-        throw new Error("VAPID public key not available");
-      }
-
-      // Request notification permission first
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        throw new Error("Notification permission denied");
-      }
-
-      const registration = await navigator.serviceWorker.ready;
-
-      // Convert VAPID key to Uint8Array
-      const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
-
-      const newSubscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey,
-      });
-
-      setSubscription(newSubscription);
-      setIsSubscribed(true);
-
-      // Send subscription data to server
-      await sendSubscriptionToServer(newSubscription);
-
-      return { subscription: newSubscription };
-    } catch (error) {
-      console.error("Error subscribing to push notifications:", error);
-      throw error;
+    if (!isSupported) {
+      throw new Error("Push notifications are not supported");
     }
+
+    if (!vapidPublicKey) {
+      throw new Error("VAPID public key not available");
+    }
+
+    // Request notification permission first
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      throw new Error("Notification permission denied");
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+
+    // Convert VAPID key to Uint8Array
+    const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+
+    const newSubscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey,
+    });
+
+    setSubscription(newSubscription);
+    setIsSubscribed(true);
+
+    // Send subscription data to server
+    await sendSubscriptionToServer(newSubscription);
+
+    return { subscription: newSubscription };
   };
 
   const unsubscribe = async () => {
-    try {
-      if (!subscription) return;
+    if (!subscription) return;
 
-      const result = await subscription.unsubscribe();
-      setSubscription(null);
-      setIsSubscribed(false);
+    const result = await subscription.unsubscribe();
+    setSubscription(null);
+    setIsSubscribed(false);
 
-      // Remove subscription from server
-      await removeSubscriptionFromServer(subscription);
+    // Remove subscription from server
+    await removeSubscriptionFromServer(subscription);
 
-      return result;
-    } catch (error) {
-      console.error("Error unsubscribing from push notifications:", error);
-      throw error;
-    }
+    return result;
   };
 
   const sendSubscriptionToServer = async (subscription: PushSubscription) => {
-    try {
-      // Get subscription keys
-      const p256dhKey = subscription.getKey("p256dh");
-      const authKey = subscription.getKey("auth");
+    // Get subscription keys
+    const p256dhKey = subscription.getKey("p256dh");
+    const authKey = subscription.getKey("auth");
 
-      if (!p256dhKey || !authKey) {
-        throw new Error("Failed to get subscription keys");
-      }
-
-      const subscriptionData: PushSubscriptionData = {
-        endpoint: subscription.endpoint,
-        keys: {
-          p256dh: btoa(String.fromCharCode(...new Uint8Array(p256dhKey))),
-          auth: btoa(String.fromCharCode(...new Uint8Array(authKey))),
-        },
-      };
-
-      // Store locally for demo purposes
-      localStorage.setItem("push-subscription", JSON.stringify(subscriptionData));
-
-      // Send to server
-      await pushNotificationsApi.storeSubscription(subscriptionData);
-
-      console.log("Subscription sent to server:", subscriptionData);
-    } catch (error) {
-      console.error("Error sending subscription to server:", error);
-      throw error;
+    if (!p256dhKey || !authKey) {
+      throw new Error("Failed to get subscription keys");
     }
+
+    const subscriptionData: PushSubscriptionData = {
+      endpoint: subscription.endpoint,
+      keys: {
+        p256dh: btoa(String.fromCharCode(...new Uint8Array(p256dhKey))),
+        auth: btoa(String.fromCharCode(...new Uint8Array(authKey))),
+      },
+    };
+
+    // Store locally for demo purposes
+    localStorage.setItem("push-subscription", JSON.stringify(subscriptionData));
+
+    // Send to server
+    await pushNotificationsApi.storeSubscription(subscriptionData);
   };
 
   const removeSubscriptionFromServer = async (subscription: PushSubscription) => {
@@ -149,11 +128,7 @@ export function usePushNotifications() {
 
       // Remove from server
       await pushNotificationsApi.removeSubscription(subscription.endpoint);
-
-      console.log("Subscription removed from server");
-    } catch (error) {
-      console.error("Error removing subscription from server:", error);
-    }
+    } catch (_error) {}
   };
 
   return {
@@ -170,7 +145,9 @@ export function usePushNotifications() {
 // Utility function to convert VAPID key
 function urlBase64ToUint8Array(base64String: string) {
   const BASE64_PADDING_SIZE = 4;
-  const padding = "=".repeat((BASE64_PADDING_SIZE - (base64String.length % BASE64_PADDING_SIZE)) % BASE64_PADDING_SIZE);
+  const padding = "=".repeat(
+    (BASE64_PADDING_SIZE - (base64String.length % BASE64_PADDING_SIZE)) % BASE64_PADDING_SIZE,
+  );
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
 
   const rawData = window.atob(base64);

@@ -16,6 +16,11 @@ const DAYS_PER_YEAR = 365;
 const DAYS_PER_MONTH = 30;
 const DAYS_PER_WEEK = 7;
 
+// Image optimization constants
+const IMAGE_QUALITY_LOW = 70;
+const IMAGE_QUALITY_MEDIUM = 75;
+const IMAGE_QUALITY_HIGH = 80;
+
 // Constants for cache expiration times (in seconds)
 const CACHE_EXPIRATION_ONE_YEAR =
   SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR;
@@ -30,21 +35,21 @@ export default defineConfig(({ mode }) => ({
   publicDir: "../public",
   server: {
     host: true,
-    port: 8082,
+    port: 8081,
     strictPort: true,
     hmr: {
-      port: 24682, // Use a different port for HMR
+      port: 24681, // Use a different port for HMR
     },
     // Proxy API requests to Express server during development/testing
     proxy:
       mode !== "production"
         ? {
-            "/api": {
-              target: "http://localhost:3000",
-              changeOrigin: true,
-              secure: false,
-            },
-          }
+          "/api": {
+            target: "http://localhost:3000",
+            changeOrigin: true,
+            secure: false,
+          },
+        }
         : undefined,
     fs: {
       allow: [".", "../client", "../shared"],
@@ -60,7 +65,7 @@ export default defineConfig(({ mode }) => ({
       "X-XSS-Protection": "1; mode=block",
       "Referrer-Policy": "strict-origin-when-cross-origin",
       "Content-Security-Policy":
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:* wss://192.168.*:* ws://192.168.*:* wss://169.254.*:* ws://169.254.*:* wss://172.*:* ws://172.*:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
       "X-DNS-Prefetch-Control": "off",
     },
   },
@@ -123,27 +128,53 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    react({
-      // Disable React DevTools injection to prevent React 19 compatibility issues
-      devTarget: "esnext",
-      jsxRuntime: "automatic",
-    }),
+    react(),
     ViteImageOptimizer({
-      png: { quality: 80 },
-      jpeg: { quality: 80 },
-      jpg: { quality: 80 },
-      webp: { quality: 85, effort: 6 },
-      avif: { quality: 70, effort: 6 },
+      // Aggressive compression for maximum savings
+      png: {
+        quality: IMAGE_QUALITY_LOW,
+        compressionLevel: 9,
+        palette: true,
+        colors: 128, // Limit color palette
+      },
+      jpeg: {
+        quality: IMAGE_QUALITY_LOW,
+        progressive: true,
+        mozjpeg: true,
+        dcScanOpt: 2,
+        smooth: 10,
+      },
+      jpg: {
+        quality: IMAGE_QUALITY_LOW,
+        progressive: true,
+        mozjpeg: true,
+        dcScanOpt: 2,
+        smooth: 10,
+      },
+      webp: {
+        quality: IMAGE_QUALITY_MEDIUM,
+        effort: 6,
+        smartSubsample: true,
+        nearLossless: false,
+      },
+      avif: {
+        quality: IMAGE_QUALITY_LOW,
+        effort: 6,
+        chromaSubsampling: "4:2:0",
+      },
       include: /\.(png|jpe?g|webp|avif)$/i,
       exclude: /node_modules/,
+      // Additional optimization options
+      cache: true,
+      cacheLocation: ".vite/image-cache",
     }),
     mode === "analyze"
       ? visualizer({
-          filename: "dist/stats.html",
-          open: true,
-          gzipSize: true,
-          brotliSize: true,
-        })
+        filename: "dist/stats.html",
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+      })
       : undefined,
     VitePWA({
       registerType: "autoUpdate",

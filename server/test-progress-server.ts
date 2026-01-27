@@ -1,7 +1,7 @@
-import express from "express";
 import { createServer } from "node:http";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import express from "express";
 import { Server } from "socket.io";
 
 // ES module equivalent of __dirname
@@ -39,9 +39,9 @@ const PROGRESS_PERCENT_FACTOR = 100;
 
 // Lightweight logger wrapper to avoid direct console usage in source
 const logger = {
-  info: (..._args: unknown[]) => { },
-  warn: (..._args: unknown[]) => { },
-  error: (..._args: unknown[]) => { },
+  info: (..._args: unknown[]) => {},
+  warn: (..._args: unknown[]) => {},
+  error: (..._args: unknown[]) => {},
 };
 
 interface TestProgress {

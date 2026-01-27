@@ -1,8 +1,42 @@
 import { expect, test } from "@playwright/test";
 
+const HTTP_OK_STATUS = 200;
+
 test.describe("Logo Image Optimization", () => {
+  test("should load page and check for errors", async ({ page }) => {
+    // Listen for console messages
+    const consoleMessages: string[] = [];
+    page.on("console", (msg) => {
+      consoleMessages.push(`${msg.type()}: ${msg.text()}`);
+    });
+
+    // Listen for page errors
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => {
+      pageErrors.push(error.message);
+    });
+
+    await page.goto("http://localhost:8082/");
+
+    // Wait for the page to load
+    await page.waitForLoadState("networkidle");
+
+    // Check if the page has loaded
+    const title = await page.title();
+
+    // Check for JavaScript errors
+
+    // Check if the root div exists
+    const rootDiv = page.locator("#root");
+    const rootExists = (await rootDiv.count()) > 0;
+    expect(rootExists).toBe(true);
+
+    // Basic check - page should have loaded
+    expect(title).toBeTruthy();
+  });
+
   test("should load logo with proper optimization", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:8082/");
 
     // Wait for the page to load
     await page.waitForLoadState("networkidle");
@@ -34,12 +68,12 @@ test.describe("Logo Image Optimization", () => {
     if (imgSrc) {
       // Try to fetch the image to ensure it loads
       const response = await page.request.get(imgSrc);
-      expect(response.status()).toBe(200);
+      expect(response.status()).toBe(HTTP_OK_STATUS);
     }
   });
 
   test("should use modern image formats", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:8082/");
 
     // Wait for the page to load
     await page.waitForLoadState("networkidle");
@@ -68,7 +102,7 @@ test.describe("Logo Image Optimization", () => {
   });
 
   test("should have proper alt text", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:8082/");
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]');
     const alt = await logoImg.getAttribute("alt");
@@ -76,7 +110,7 @@ test.describe("Logo Image Optimization", () => {
   });
 
   test("should be properly sized", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:8082/");
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]');
 
@@ -89,7 +123,7 @@ test.describe("Logo Image Optimization", () => {
   });
 
   test("should have proper CSS classes", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:8082/");
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]');
     const className = await logoImg.getAttribute("class");

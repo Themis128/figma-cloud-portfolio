@@ -121,7 +121,6 @@ export function useVoiceCommands(commands: VoiceCommand[] = []) {
       } = {},
     ) => {
       if (!synthRef.current) {
-        console.warn("Speech synthesis not supported");
         return;
       }
 
