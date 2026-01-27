@@ -8,10 +8,9 @@ frontend:
         # Skip Chrome installation for Puppeteer in CI/CD to save memory
     build:
       commands:
-        - echo "Building application..."
-        - echo "Skipping resume generation in CI/CD to save memory"
-        - pnpm exec vite build
-        - pnpm exec vite build --config vite.config.server.ts
+        - echo "Minimal build for Amplify CI/CD"
+        - npm run build:client
+        - npm run build:server
   artifacts:
     baseDirectory: dist/spa
     files:
