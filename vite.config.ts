@@ -29,7 +29,11 @@ const CACHE_EXPIRATION_ONE_WEEK =
   SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_WEEK;
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  // Detect CI/CD environment
+  const isCI = process.env.CI || process.env.AMPLIFY_BUILD_CONFIG;
+  
+  return {
   root: "client",
   publicDir: "../public",
   server: {
@@ -72,7 +76,7 @@ export default defineConfig(({ mode }) => ({
     outDir: "../dist/spa",
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: isCI ? undefined : {
           // Core framework chunk
           framework: ["react", "react-dom"],
           // Router chunk
@@ -106,7 +110,7 @@ export default defineConfig(({ mode }) => ({
     },
     // Performance budgets
     chunkSizeWarningLimit: 500, // Reduced from 600kb for better performance
-    reportCompressedSize: true,
+    reportCompressedSize: isCI ? false : true, // Disable in CI to save memory
     // Additional optimizations
     minify: "esbuild",
     sourcemap: false, // Disable sourcemaps in production for better performance
@@ -118,7 +122,7 @@ export default defineConfig(({ mode }) => ({
     cssTarget: ["chrome61", "firefox60", "safari11", "edge16"],
 
     // Tree shaking optimization
-    terserOptions: {
+    terserOptions: isCI ? undefined : {
       compress: {
         drop_console: true, // Remove console logs in production
         drop_debugger: true,
@@ -128,7 +132,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    ViteImageOptimizer({
+    isCI ? undefined : ViteImageOptimizer({
       // Aggressive compression for maximum savings
       png: {
         quality: IMAGE_QUALITY_LOW,
@@ -255,4 +259,5 @@ export default defineConfig(({ mode }) => ({
       "@shared": path.resolve(__dirname, "./shared"),
     },
   },
-}));
+  };
+});
