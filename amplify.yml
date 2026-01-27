@@ -5,8 +5,7 @@ frontend:
       commands:
         - npm install -g pnpm
         - pnpm install --frozen-lockfile
-        # Install Chrome for Puppeteer (PDF generation)
-        - npx puppeteer browsers install chrome
+        # Skip Chrome installation for Puppeteer in CI/CD to save memory
     build:
       commands:
         - echo "Building application..."
@@ -20,7 +19,6 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-      - /root/.cache/puppeteer/**/*
 
 # Custom headers to fix MIME type issues
 customHeaders:

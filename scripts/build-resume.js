@@ -52,12 +52,18 @@ async function buildResume() {
         cwd: path.join(__dirname, ".."),
       });
 
-      // Generate PDF
-      console.log("📋 Generating PDF...");
-      execSync(`node "${path.join(__dirname, "generate-resume.js")}"`, {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-      });
+      // Skip PDF generation in CI/CD environments (like Amplify) to avoid memory issues
+      if (process.env.CI || process.env.AMPLIFY_BUILD_CONFIG) {
+        console.log("⏭️  Skipping PDF generation in CI/CD environment to avoid memory issues");
+        console.log("📋 PDF will be generated on-demand when requested");
+      } else {
+        // Generate PDF
+        console.log("📋 Generating PDF...");
+        execSync(`node "${path.join(__dirname, "generate-resume.js")}"`, {
+          stdio: "inherit",
+          cwd: path.join(__dirname, ".."),
+        });
+      }
 
       console.log("✅ Resume build completed successfully!");
     }
