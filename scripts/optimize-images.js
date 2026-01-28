@@ -14,6 +14,10 @@ const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, "..", "public");
 const imageExtensions = [".png", ".jpg", ".jpeg", ".svg"];
 
+const IMAGE_CONSTANTS = {
+  BYTES_PER_KILOBYTE: 1024,
+};
+
 console.log("🔍 Scanning for images to optimize...");
 
 // Find all image files
@@ -59,7 +63,7 @@ try {
   console.log("\n📊 Image sizes:");
   images.forEach((img) => {
     const stats = fs.statSync(img);
-    const sizeKB = (stats.size / 1024).toFixed(1);
+    const sizeKB = (stats.size / IMAGE_CONSTANTS.BYTES_PER_KILOBYTE).toFixed(1);
     console.log(`  - ${path.relative(publicDir, img)}: ${sizeKB} KB`);
   });
 
@@ -111,7 +115,7 @@ for (const imagePath of images) {
 
     const newSize = fs.statSync(imagePath).size;
     console.log(
-      `✅ Optimized: ${path.relative(publicDir, imagePath)} (${(newSize / 1024).toFixed(1)} KB)`,
+      `✅ Optimized: ${path.relative(publicDir, imagePath)} (${(newSize / IMAGE_CONSTANTS.BYTES_PER_KILOBYTE).toFixed(1)} KB)`,
     );
 
     // Generate WebP version

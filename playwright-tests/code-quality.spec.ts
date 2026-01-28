@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { setupTestEnvironment, teardownTestEnvironment } from "./test-utils";
+import { setupTestEnvironment, teardownTestEnvironment, waitForAppReady } from "./test-utils";
 
 test.describe("Code Quality", () => {
   test.beforeAll(async () => {
@@ -14,6 +14,7 @@ test.describe("Code Quality", () => {
     // This test would typically run TypeScript compilation
     // For now, we'll check that the application loads without errors
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for TypeScript compilation errors in console
     const errors: string[] = [];
@@ -31,6 +32,7 @@ test.describe("Code Quality", () => {
     // This test would typically run Biome linting
     // For now, we'll check that the application loads without syntax errors
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for syntax errors in console
     const errors: string[] = [];
@@ -49,6 +51,7 @@ test.describe("Code Quality", () => {
 
   test("should have optimized bundle size", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for all resources to load
     await page.waitForLoadState("networkidle");
@@ -84,6 +87,7 @@ test.describe("Code Quality", () => {
     });
 
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Try to trigger an error
     await page.evaluate(() => {
@@ -114,6 +118,7 @@ test.describe("Code Quality", () => {
     });
 
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for page to load
     await page.waitForTimeout(1000);
@@ -125,6 +130,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper image optimization", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check that images are optimized
     const images = await page.locator("img").all();
@@ -142,6 +148,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper PWA configuration", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check manifest
     const manifest = await page.evaluate(() => {
@@ -161,6 +168,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper accessibility features", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for proper heading structure
     const h1 = await page.locator("h1").count();
@@ -188,6 +196,7 @@ test.describe("Code Quality", () => {
     // This would typically check HTTP headers
     // For now, we'll check for basic security features
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for CSP meta tag
     const csp = await page.evaluate(() => {
@@ -203,6 +212,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper performance monitoring", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check that performance monitoring is active
     const performanceAPI = await page.evaluate(() => {
@@ -237,6 +247,7 @@ test.describe("Code Quality", () => {
     });
 
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Try to trigger an API error
     await page.evaluate(() => {
@@ -258,6 +269,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper loading states", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for loading indicators
     const loadingIndicators = await page.locator('[data-testid*="loading"]').count();
@@ -270,6 +282,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper form validation", async ({ page }) => {
     await page.goto("/contact");
+    await waitForAppReady(page);
 
     // Check for form validation
     const form = await page.locator("form").count();
@@ -282,13 +295,14 @@ test.describe("Code Quality", () => {
 
   test("should have proper routing", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for proper routing
     const currentUrl = page.url();
     expect(currentUrl).toContain("/");
 
     // Navigate to different pages
-    await page.click('a[href="/about"]');
+    await page.locator('a[href="/about"]').first().click();
     await page.waitForURL("/about");
 
     const aboutUrl = page.url();
@@ -303,6 +317,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper state management", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for state management (Redux, Zustand, etc.)
     const stateManagement = await page.evaluate(() => {
@@ -321,6 +336,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper code splitting", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for code splitting through dynamic imports
     const resourceTiming = await page.evaluate(() => {
@@ -341,6 +357,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper caching strategy", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for caching headers (would need network interception)
     // For now, check for cache-related meta tags
@@ -357,6 +374,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper internationalization", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for i18n support
     const htmlLang = await page.evaluate(() => {
@@ -376,6 +394,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper testing utilities", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for testing utilities
     const testingUtils = await page.evaluate(() => {

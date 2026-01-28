@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { gotoAndWaitForApp } from "./test-utils";
 
 test.describe("Image Optimization Features", () => {
   test("should lazy load images below the fold", async ({ page }) => {
-    await page.goto("/");
+    await gotoAndWaitForApp(page, "/");
 
     // Wait for the page to load
     await page.waitForLoadState("domcontentloaded");
@@ -26,7 +27,7 @@ test.describe("Image Optimization Features", () => {
   });
 
   test("should use modern image formats for optimized images", async ({ page }) => {
-    await page.goto("/");
+    await gotoAndWaitForApp(page, "/");
 
     await page.waitForLoadState("domcontentloaded");
 

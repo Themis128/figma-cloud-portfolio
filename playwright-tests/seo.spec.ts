@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test.describe("SEO & Metadata", () => {
   test.describe("Meta Tags & Open Graph", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
     });
 

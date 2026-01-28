@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test.describe("Baltzakis Themistoklis Portfolio", () => {
   // Shared variables for console messages and page errors
@@ -24,6 +25,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     const startTime = Date.now();
     await page.goto("/");
+    await waitForAppReady(page);
     const loadTime = Date.now() - startTime;
 
     // Performance assertion - page should load within reasonable time (adjusted for different browsers)
@@ -192,6 +194,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should display main navigation links", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // On desktop, check for main navigation links
     const viewportSize = page.viewportSize();
@@ -214,6 +217,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should display PWA install button", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for PWA install button in navigation
     // Note: Install button may not be visible if PWA is already installed
@@ -222,6 +226,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should have proper meta tags for PWA", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Skip PWA manifest/meta tags test in development
     // Vite PWA only injects these during production build
@@ -232,6 +237,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should have skip link for accessibility", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for skip to main content link
     const skipLink = page.getByRole("link", { name: "Skip to main content" });
@@ -244,6 +250,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should have proper heading structure", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for h1 heading
     const h1 = page.locator("h1");
@@ -269,7 +276,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     await expect(mobileMenu).toBeVisible();
 
     // Check that focus is managed (at least one focusable element exists in the mobile menu)
-    const mobileMenuContainer = page.locator('.md\\:hidden.absolute');
+    const mobileMenuContainer = page.locator(".md\\:hidden.absolute");
     const focusableElements = mobileMenuContainer.locator("a, button");
     expect(await focusableElements.count()).toBeGreaterThan(0);
 
@@ -302,6 +309,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should handle keyboard navigation", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for page to be fully loaded
     await page.waitForLoadState("networkidle");
@@ -325,6 +333,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should have proper ARIA labels", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check navigation landmark
     const nav = page.locator("nav[aria-label]");
@@ -340,6 +349,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should have comprehensive accessibility features", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Check for proper heading hierarchy
     const headings = page.locator("h1, h2, h3, h4, h5, h6");
@@ -384,6 +394,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should handle responsive design correctly", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
     await page.waitForSelector("h1", { timeout: 10000 });
 
     // Test mobile viewport
@@ -417,6 +428,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
   test("should handle navigation between pages", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Test navigation to About page
     const aboutLink = page.getByRole("link", { name: "About" });
@@ -452,6 +464,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test("should handle page errors gracefully", async ({ page }) => {
     // Test 404 page
     await page.goto("/non-existent-page");
+    await waitForAppReady(page);
     await page.waitForSelector("h1", { timeout: 10000 });
 
     // Should show some kind of 404 or not found message
@@ -475,6 +488,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     });
 
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for page to fully load
     await page.waitForLoadState("networkidle");
@@ -517,6 +531,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
           waitUntil: "domcontentloaded",
           timeout: 20000,
         });
+        await waitForAppReady(page);
         console.log("Page navigation completed");
       } catch (navError: unknown) {
         console.log(
@@ -836,8 +851,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Theme Switcher", () => {
     test("should display theme toggle button", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Theme toggle is only visible on desktop (md and up)
       // On mobile, it's hidden and only available in mobile menu
       const viewportSize = page.viewportSize();
@@ -861,8 +875,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should have proper theme toggle accessibility", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Find theme toggle button - may not exist
       const themeButton = page
         .locator("button")
@@ -882,8 +895,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should toggle between light and dark themes", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Theme toggle functionality may not be fully implemented yet
       // Just check that the page loads without errors
       await expect(page.locator("h1")).toBeVisible();
@@ -891,8 +903,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should persist theme preference in localStorage", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Clear any existing theme preference
       await page.evaluate(() => localStorage.removeItem("theme"));
 
@@ -914,8 +925,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle system theme preference", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Mock system preference to light
       await page.emulateMedia({ colorScheme: "light" });
 
@@ -929,8 +939,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should update meta theme-color for mobile browsers", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Check initial meta theme-color
       const initialMeta = page.locator('meta[name="theme-color"]');
       await expect(initialMeta).toBeAttached();
@@ -942,8 +951,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle theme dropdown menu interactions", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Look for dropdown theme toggle - may not exist
       const dropdownToggle = page.locator('button[data-testid="theme-toggle"]').first();
 
@@ -956,8 +964,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle keyboard navigation in theme dropdown", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Find dropdown toggle - may not exist
       const dropdownToggle = page.locator('button[data-testid="theme-toggle"]').first();
 
@@ -970,8 +977,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle theme changes with prefers-color-scheme media query", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Mock system preference change
       await page.emulateMedia({ colorScheme: "dark" });
 
@@ -985,8 +991,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle localStorage errors gracefully", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Mock localStorage error
       await page.evaluate(() => {
         Object.defineProperty(window, "localStorage", {
@@ -1010,8 +1015,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should maintain theme across page navigation", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Navigate to contact page
       await page.goto("/contact");
       await page.waitForSelector("h1", { timeout: 10000 });
@@ -1029,8 +1033,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle rapid theme toggling", async ({ page }) => {
       await page.goto("/");
-      await page.waitForSelector("h1", { timeout: 10000 });
-
+      await waitForAppReady(page);
       // Just verify the page loads
       await expect(page.locator("h1")).toBeVisible();
     });
@@ -1039,6 +1042,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("About Page", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/about");
+      await waitForAppReady(page);
       await page.waitForSelector("h1", { timeout: 10000 });
     });
 
@@ -1145,6 +1149,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Settings Page", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/settings");
+      await waitForAppReady(page);
     });
 
     test("should load settings page with all sections", async ({ page }) => {
@@ -1253,6 +1258,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Performance Page", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/performance");
+      await waitForAppReady(page);
     });
 
     test("should load performance page with dashboard", async ({ page }) => {
@@ -1312,7 +1318,9 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       await expect(performanceTipsSection.getByText("LCP")).toBeVisible();
       await expect(performanceTipsSection.getByText("CLS")).toBeVisible();
       // FCP may not be visible in all cases, check for other performance metrics
-      const hasPerformanceContent = await performanceTipsSection.locator("text=/LCP|CLS|FID|TTFB/").count();
+      const hasPerformanceContent = await performanceTipsSection
+        .locator("text=/LCP|CLS|FID|TTFB/")
+        .count();
       expect(hasPerformanceContent).toBeGreaterThan(0);
     });
 
@@ -1422,6 +1430,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Push Notification Features", () => {
     test("should display notification button", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
       await page.waitForSelector("h1", { timeout: 10000 });
 
       // Button may not be visible if notifications are not supported or already subscribed
@@ -1431,6 +1440,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle notification permissions", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
       await page.waitForSelector("h1", { timeout: 10000 });
 
       // Check notification permission status (only if Notification API is available)
@@ -1447,6 +1457,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should display push notification tester on performance page", async ({ page }) => {
       await page.goto("/performance");
+      await waitForAppReady(page);
       await page.waitForSelector("h1", { timeout: 10000 });
 
       // Check for push notification status (may show "blocked" or other status, may be hidden on mobile)
@@ -1476,6 +1487,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("PWA Features", () => {
     test("should handle PWA installation prompts", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Button visibility depends on browser support and installation state
       // Just verify page loads
@@ -1484,6 +1496,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should display PWA manifest information", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Check for manifest link (may have multiple for different formats)
       const manifests = page.locator('link[rel="manifest"]');
@@ -1492,6 +1505,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle service worker registration", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Check if service worker is registered
       const swRegistered = await page.evaluate(() => {
@@ -1506,6 +1520,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Resume Generation", () => {
     test("should handle resume generation UI", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Resume functionality may be in different locations
       // Just verify page loads without errors
@@ -1516,6 +1531,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       // This would require triggering actual resume generation
       // For now, just verify the page structure
       await page.goto("/");
+      await waitForAppReady(page);
 
       await expect(page.locator("nav")).toBeVisible();
       await expect(page.locator("main")).toBeVisible();
@@ -1525,6 +1541,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Navigation Component", () => {
     test("should handle mobile navigation menu", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
       await page.setViewportSize({ width: 375, height: 667 });
 
       // Look for mobile menu button using specific testid
@@ -1546,6 +1563,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle keyboard navigation", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Test tab navigation
       await page.keyboard.press("Tab");
@@ -1557,6 +1575,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle navigation between pages", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Try to navigate to about page
       const aboutLink = page
@@ -1574,6 +1593,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Skeleton Components", () => {
     test("should handle loading states", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Skeletons may or may not be visible depending on loading state
       // Just verify page loads
@@ -1582,6 +1602,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should display skeleton animations", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Animations may be present or not
       await expect(page.locator("body")).toBeVisible();
@@ -1591,6 +1612,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("OptimizedImage Component", () => {
     test("should handle lazy loading", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // May or may not have lazy images
       await expect(page.locator("body")).toBeVisible();
@@ -1600,6 +1622,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       try {
         // Try to navigate to home page, but handle socket address in use errors
         await page.goto("/", { timeout: 10000 });
+        await waitForAppReady(page);
       } catch (error: unknown) {
         // If socket address is in use, assume we're already on a page and continue
         if (
@@ -1620,6 +1643,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle image loading errors", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       try {
         // Check for error handling on images
@@ -1645,6 +1669,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Hover Animations", () => {
     test("should handle hover effects on cards", async ({ page }) => {
       await page.goto("/about");
+      await waitForAppReady(page);
 
       // Look for hoverable cards
       const cards = page.locator('[class*="hover"], .card, [class*="card"]');
@@ -1660,6 +1685,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle hover effects on buttons", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Look for any interactive elements (buttons, links) that might have hover effects
       const interactiveElements = page
@@ -1693,6 +1719,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Accessibility Compliance", () => {
     test("should have proper heading hierarchy", async ({ page }) => {
       await page.goto("/about");
+      await waitForAppReady(page);
 
       // Check heading structure
       const h1 = page.locator("h1");
@@ -1708,6 +1735,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should have proper focus management", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Test keyboard navigation
       await page.keyboard.press("Tab");
@@ -1720,6 +1748,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should have proper ARIA labels", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Wait for the main content to be visible (React SPA loading)
       await page.waitForSelector("main", { timeout: 10000 });
@@ -1739,6 +1768,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     test("should handle screen reader content", async ({ page }) => {
       await page.goto("/");
+      await waitForAppReady(page);
 
       // Check for screen reader only content (may be hidden but should exist)
       const srContent = page.locator(".sr-only, [aria-label], [aria-labelledby]");
@@ -1751,6 +1781,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
   test.describe("Performance Monitoring", () => {
     test("should track Core Web Vitals", async ({ page }) => {
       await page.goto("/performance");
+      await waitForAppReady(page);
 
       // Metrics may or may not be displayed depending on browser support
       // Just verify page loads

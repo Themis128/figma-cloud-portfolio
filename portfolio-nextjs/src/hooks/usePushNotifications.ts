@@ -10,6 +10,12 @@ export interface PushSubscriptionData {
   };
 }
 
+// Constants for base64 encoding
+const BASE64_CONSTANTS = {
+  GROUP_SIZE: 4,
+  PADDING_CHAR: "=",
+} as const;
+
 export function usePushNotifications() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
@@ -143,7 +149,10 @@ export function usePushNotifications() {
 
 // Utility function to convert VAPID key
 function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const padding = BASE64_CONSTANTS.PADDING_CHAR.repeat(
+    (BASE64_CONSTANTS.GROUP_SIZE - (base64String.length % BASE64_CONSTANTS.GROUP_SIZE)) %
+      BASE64_CONSTANTS.GROUP_SIZE,
+  );
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
 
   const rawData = window.atob(base64);

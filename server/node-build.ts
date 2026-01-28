@@ -1,9 +1,12 @@
-import * as express from "express";
 import path from "node:path";
+import * as express from "express";
 import { createServer, initializeSocketIO } from "./index";
 
+const DEFAULT_PORT = 3000;
+const HTTP_STATUS_NOT_FOUND = 404;
+
 const app = createServer();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || DEFAULT_PORT;
 
 // In production, serve the built SPA files
 const __dirname = import.meta.dirname;
@@ -16,7 +19,7 @@ app.use(express.static(distPath));
 app.get("/{*splat}", (req, res) => {
   // Don't serve index.html for API routes
   if (req.path.startsWith("/api/") || req.path.startsWith("/health")) {
-    return res.status(404).json({ error: "API endpoint not found" });
+    return res.status(HTTP_STATUS_NOT_FOUND).json({ error: "API endpoint not found" });
   }
 
   res.sendFile(path.join(distPath, "index.html"));

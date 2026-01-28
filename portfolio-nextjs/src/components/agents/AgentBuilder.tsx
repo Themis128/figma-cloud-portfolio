@@ -1,10 +1,10 @@
+import { ArrowLeft, Play, Save, Settings } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";
-import { ArrowLeft, Play, Save, Settings } from "lucide-react";
-import { useState } from "react";
 import { WorkflowBuilder } from "./WorkflowBuilder";
 
 const SIMULATION_TIMEOUT_MS = 2000;
@@ -195,7 +195,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 variant='outline'
                 size='sm'
                 className='w-full justify-start'
-                onClick={() => { }}
+                onClick={() => {}}
               >
                 Export Configuration
               </Button>
@@ -203,7 +203,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 variant='outline'
                 size='sm'
                 className='w-full justify-start'
-                onClick={() => { }}
+                onClick={() => {}}
               >
                 Duplicate Agent
               </Button>
@@ -211,7 +211,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 variant='outline'
                 size='sm'
                 className='w-full justify-start text-red-400 hover:text-red-300'
-                onClick={() => { }}
+                onClick={() => {}}
               >
                 Delete Agent
               </Button>

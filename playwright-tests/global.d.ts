@@ -61,4 +61,9 @@ declare global {
   }
 }
 
+// Global test utilities
+declare global {
+  function waitForAppReady(page: import('@playwright/test').Page): Promise<void>;
+}
+
 export {};

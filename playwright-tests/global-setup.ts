@@ -1,134 +1,251 @@
-import { exec, execSync } from "node:child_process";
-import { promisify } from "node:util";
 import { chromium, type FullConfig } from "@playwright/test";
-import { startBackendServer, startFrontendServer } from "./test-environment";
-
-const execAsync = promisify(exec);
+import { waitForAppReady } from "./test-utils";
 
 /**
- * Global setup for Playwright tests
- * Prepares the test environment and ensures all dependencies are ready
+ * Global Setup for Playwright Tests
+ *
+ * This file handles test environment initialization and preparation.
+ * It ensures consistent test conditions across all test runs.
  */
-async function globalSetup(_config: FullConfig) {
-  console.log("🚀 Starting Playwright global setup...");
+
+export default async function globalSetup(config: FullConfig) {
+  console.log("\n🎭 Starting Playwright Test Environment Setup...");
+  console.log("═".repeat(60));
+
+  const startTime = Date.now();
+  const environment = process.env.NODE_ENV || "development";
+  const baseURL = config.projects[0]?.use?.baseURL || "http://localhost:8082";
 
   try {
-    // Start development servers
-    console.log("📡 Starting development servers...");
-    await startBackendServer();
-    await startFrontendServer();
+    // 1. Setup global functions
+    await setupGlobalFunctions();
 
-    // Health check function with retries
-    async function checkServer(url: string, name: string, maxRetries = 5): Promise<boolean> {
-      for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-          console.log(`🔍 Checking ${name} (attempt ${attempt}/${maxRetries})...`);
-          const response = await fetch(url, {
-            signal: AbortSignal.timeout(5000), // 5 second timeout
-            headers: { "Cache-Control": "no-cache" },
-          });
+    // 2. Environment validation
+    await validateEnvironment(config);
 
-          if (response.ok) {
-            console.log(`✅ ${name} ready`);
-            return true;
-          } else {
-            console.log(`⚠️  ${name} returned status ${response.status}`);
-          }
-        } catch (error: unknown) {
-          console.log(
-            `❌ ${name} check failed (attempt ${attempt}):`,
-            error instanceof Error ? error.message : String(error),
-          );
-          if (attempt < maxRetries) {
-            console.log(`⏳ Waiting 2 seconds before retry...`);
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-          }
-        }
-      }
-      return false;
-    }
+    // 3. Service health checks
+    await checkServiceHealth(baseURL);
 
-    // Check frontend server with retries
-    const frontendUrl = "http://localhost:8082";
-    const frontendReady = await checkServer(frontendUrl, "Frontend server");
-    if (!frontendReady) {
-      throw new Error("Frontend server failed health check");
-    }
+    // 4. Browser compatibility check
+    await checkBrowserCompatibility();
 
-    // Check backend API with retries
-    const apiUrl = "http://localhost:3000/api/ping";
-    const backendReady = await checkServer(apiUrl, "Backend API server");
-    if (!backendReady) {
-      console.log("⚠️  Backend API server not accessible - some tests may fail");
-    }
+    // 5. Test data preparation (if needed)
+    await prepareTestData();
 
-    // Pre-warm the application by loading the main page
-    console.log("🔥 Pre-warming application...");
-    const browser = await chromium.launch();
-    const page = await browser.newPage();
+    // 6. Performance baseline setup
+    await setupPerformanceMonitoring();
 
-    try {
-      await page.goto(frontendUrl, { waitUntil: "networkidle" });
-      await page.waitForTimeout(2000); // Allow time for service worker registration
+    const setupTime = Date.now() - startTime;
+    console.log(`✅ Global setup completed in ${setupTime}ms`);
+    console.log(`   Environment: ${environment}`);
+    console.log(`   Base URL: ${baseURL}`);
+    console.log(`   Workers: ${config.workers}`);
+    console.log(`   Projects: ${config.projects?.length || 0} browsers`);
+    console.log("═".repeat(60));
 
-      // Verify critical elements are present
-      const title = await page.title();
-      if (!title) {
-        throw new Error("Application failed to load properly");
-      }
-
-      console.log("✅ Application pre-warmed successfully");
-    } finally {
-      await browser.close();
-    }
-
-    // Open the visual progress dashboard automatically
-    console.log("📊 Opening Visual Progress Dashboard...");
-    try {
-      const dashboardUrl =
-        "file:///D:/Nuxt Projects/new-portfolio/playwright-tests/visual-progress.html";
-
-      // Cross-platform browser opening
-      let command: string = "";
-      if (process.platform === "win32") {
-        command = `start "" "${dashboardUrl}"`;
-      } else if (process.platform === "darwin") {
-        command = `open "${dashboardUrl}"`;
-      } else {
-        command = `xdg-open "${dashboardUrl}"`;
-      }
-
-      try {
-        execSync(command, { stdio: "ignore" });
-        console.log("✅ Visual Progress Dashboard opened successfully");
-      } catch (openError: unknown) {
-        const errorMessage = openError instanceof Error ? openError.message : String(openError);
-        console.log("⚠️  Could not open dashboard automatically:", errorMessage);
-        console.log("📋 Dashboard URL:", dashboardUrl);
-      }
-    } catch (dashboardError) {
-      const errorMessage =
-        dashboardError instanceof Error ? dashboardError.message : String(dashboardError);
-      console.log("⚠️  Dashboard opening failed:", errorMessage);
-      console.log(
-        "📋 Manual dashboard URL: file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progress.html",
-      );
-    }
-
-    // Clean up any existing test artifacts
-    console.log("🧹 Cleaning up previous test artifacts...");
-    try {
-      await execAsync("rm -rf test-results/playwright-report");
-      await execAsync("mkdir -p test-results");
-    } catch (_error) {
-      // Ignore cleanup errors
-    }
-
-    console.log("🎯 Global setup completed successfully");
+    // Store setup metadata for teardown
+    process.env.PLAYWRIGHT_SETUP_TIME = setupTime.toString();
+    process.env.PLAYWRIGHT_SETUP_TIMESTAMP = new Date().toISOString();
   } catch (error) {
     console.error("❌ Global setup failed:", error);
-    throw error;
+    console.error("═".repeat(60));
+    process.exit(1);
   }
 }
 
-export default globalSetup;
+/**
+ * Setup global test functions
+ */
+async function setupGlobalFunctions(): Promise<void> {
+  console.log("🔧 Setting up global test functions...");
+  
+  // Make waitForAppReady available globally
+  (globalThis as any).waitForAppReady = waitForAppReady;
+  
+  console.log("   ✓ Global functions configured");
+}
+
+/**
+ * Validate environment configuration
+ */
+async function validateEnvironment(config: FullConfig): Promise<void> {
+  console.log("🔍 Validating environment...");
+
+  // Check Node.js version
+  const nodeVersion = process.version;
+  const majorVersion = parseInt(nodeVersion.slice(1).split(".")[0], 10);
+
+  if (majorVersion < 16) {
+    throw new Error(
+      `Node.js version ${nodeVersion} is not supported. Please use Node.js 16 or higher.`,
+    );
+  }
+
+  // Validate configuration
+  if (!config.projects || config.projects.length === 0) {
+    throw new Error("No browser projects configured");
+  }
+
+  // Check for required environment variables
+  const requiredEnvVars = ["NODE_ENV"];
+  const missing = requiredEnvVars.filter((envVar) => !process.env[envVar]);
+
+  if (missing.length > 0) {
+    console.warn(`⚠️  Missing optional environment variables: ${missing.join(", ")}`);
+  }
+
+  console.log(`   ✓ Node.js ${nodeVersion}`);
+  console.log(`   ✓ Environment: ${process.env.NODE_ENV || "development"}`);
+  console.log(`   ✓ Configuration valid`);
+}
+
+/**
+ * Check service health and availability
+ */
+async function checkServiceHealth(baseURL: string): Promise<void> {
+  console.log("🏥 Checking service health...");
+
+  const maxAttempts = 5;
+  const delayBetweenAttempts = 2000; // 2 seconds
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      // Check if the service is responding
+      const response = await fetch(baseURL, {
+        method: "HEAD",
+        signal: AbortSignal.timeout(10000), // 10 second timeout
+      });
+
+      if (response.ok || response.status === 404) {
+        // 404 is acceptable for frontend apps
+        console.log(`   ✓ Service responding at ${baseURL}`);
+
+        // Additional health checks if health endpoint exists
+        try {
+          const healthResponse = await fetch(`${baseURL.replace(/\/+$/, "")}/api/health`, {
+            signal: AbortSignal.timeout(5000),
+          });
+
+          if (healthResponse.ok) {
+            const healthData = await healthResponse.json();
+            console.log(`   ✓ Health endpoint: ${JSON.stringify(healthData)}`);
+          }
+        } catch {
+          // Health endpoint might not exist, that's okay
+          console.log("   ℹ️  No health endpoint found (optional)");
+        }
+
+        return; // Success
+      }
+
+      throw new Error(`Service returned status ${response.status}`);
+    } catch (error) {
+      console.log(
+        `   ⚠️  Attempt ${attempt}/${maxAttempts} failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+
+      if (attempt < maxAttempts) {
+        console.log(`   ⏳ Waiting ${delayBetweenAttempts / 1000}s before retry...`);
+        await new Promise((resolve) => setTimeout(resolve, delayBetweenAttempts));
+      } else {
+        throw new Error(`Service at ${baseURL} is not available after ${maxAttempts} attempts`);
+      }
+    }
+  }
+}
+
+/**
+ * Check browser compatibility and availability
+ */
+async function checkBrowserCompatibility(): Promise<void> {
+  console.log("🌐 Checking browser compatibility...");
+
+  try {
+    // Test browser launch
+    const browser = await chromium.launch({
+      headless: true,
+      timeout: 30000,
+    });
+
+    // Test basic page functionality
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    // Test basic navigation and JavaScript execution
+    await page.goto(
+      "data:text/html,<html><body><h1>Test</h1><script>window.testVar=true;</script></body></html>",
+    );
+    const testVar = await page.evaluate(() => (window as { testVar?: boolean }).testVar);
+
+    if (!testVar) {
+      throw new Error("JavaScript execution test failed");
+    }
+
+    await browser.close();
+    console.log("   ✓ Browser compatibility check passed");
+  } catch (error) {
+    throw new Error(
+      `Browser compatibility check failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+  }
+}
+
+/**
+ * Prepare test data and environment
+ */
+async function prepareTestData(): Promise<void> {
+  console.log("📊 Preparing test environment...");
+
+  try {
+    // Clear any existing test artifacts
+    const fs = await import("node:fs/promises");
+    const path = await import("node:path");
+
+    const artifactDirs = ["test-results", "playwright-report", "playwright-html-report"];
+
+    for (const dir of artifactDirs) {
+      try {
+        const dirPath = path.resolve(dir);
+        const stats = await fs.stat(dirPath);
+        if (stats.isDirectory()) {
+          console.log(`   🧹 Cleaning previous artifacts in ${dir}`);
+          // Don't delete the directory, just clean it to avoid permission issues
+        }
+      } catch {
+        // Directory doesn't exist, that's fine
+      }
+    }
+
+    console.log("   ✓ Test environment prepared");
+  } catch (error) {
+    console.warn(
+      `   ⚠️  Test data preparation warning: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+    // Don't fail setup for data preparation issues
+  }
+}
+
+/**
+ * Setup performance monitoring
+ */
+async function setupPerformanceMonitoring(): Promise<void> {
+  console.log("📈 Setting up performance monitoring...");
+
+  try {
+    // Store baseline performance metrics
+    const memoryUsage = process.memoryUsage();
+    const cpuUsage = process.cpuUsage();
+
+    // Store in environment for access during tests
+    process.env.PLAYWRIGHT_BASELINE_MEMORY = JSON.stringify(memoryUsage);
+    process.env.PLAYWRIGHT_BASELINE_CPU = JSON.stringify(cpuUsage);
+
+    console.log(`   ✓ Memory baseline: ${Math.round(memoryUsage.heapUsed / 1024 / 1024)}MB`);
+    console.log(`   ✓ CPU baseline recorded`);
+  } catch (error) {
+    console.warn(
+      `   ⚠️  Performance monitoring setup warning: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+    // Don't fail setup for monitoring issues
+  }
+}

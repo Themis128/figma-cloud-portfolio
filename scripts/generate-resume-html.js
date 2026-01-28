@@ -6,6 +6,21 @@ import { marked } from "marked";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Constants for parsing
+const PARSING_CONSTANTS = {
+  SKIP_EDUCATION_LINES: 2,
+  SKIP_CERTIFICATION_LINE: 1,
+};
+
+const SKILL_CONSTANTS = {
+  DEFAULT_LEVEL: 85,
+};
+
+const TIMING_CONSTANTS = {
+  DURATION_DECIMALS: 2,
+  MILLISECONDS_PER_SECOND: 1000,
+};
+
 // Configure marked for better HTML output
 marked.setOptions({
   breaks: true,
@@ -133,7 +148,7 @@ function parseResumeMarkdown(markdownContent) {
         const institution = lines[i + 1] ? lines[i + 1].replace(/\*\*/g, "") : "";
         const date = lines[i + 2] ? lines[i + 2].replace(/\*\*/g, "") : "";
         resume.education.push({ degree, institution, date });
-        i += 2; // Skip next lines
+        i += PARSING_CONSTANTS.SKIP_EDUCATION_LINES; // Skip next lines
       }
     } else if (currentSection === "certifications") {
       if (line.startsWith("- **")) {
@@ -145,7 +160,7 @@ function parseResumeMarkdown(markdownContent) {
           issuer: issuer.replace(/^\*\*/, "").replace(/\*\*$/, ""),
           year: year ? year.replace(")", "") : "",
         });
-        i += 1; // Skip next line
+        i += PARSING_CONSTANTS.SKIP_CERTIFICATION_LINE; // Skip next line
       }
     }
   }
@@ -638,7 +653,7 @@ function generateHTML(resume) {
               <h4>${category}</h4>
               ${skills
                 .map((skill) => {
-                  const level = skillLevels[skill] || 85;
+                  const level = skillLevels[skill] || SKILL_CONSTANTS.DEFAULT_LEVEL;
                   return `
                 <div class="skill-item">
                   <div class="skill-header">
@@ -802,10 +817,14 @@ async function generateResume() {
     fs.writeFileSync(htmlPath, htmlContent, "utf8");
 
     const endTime = Date.now();
-    const _duration = ((endTime - startTime) / 1000).toFixed(2);
+    const _duration = ((endTime - startTime) / TIMING_CONSTANTS.MILLISECONDS_PER_SECOND).toFixed(
+      TIMING_CONSTANTS.DURATION_DECIMALS,
+    );
   } catch (error) {
     const endTime = Date.now();
-    const _duration = ((endTime - startTime) / 1000).toFixed(2);
+    const _duration = ((endTime - startTime) / TIMING_CONSTANTS.MILLISECONDS_PER_SECOND).toFixed(
+      TIMING_CONSTANTS.DURATION_DECIMALS,
+    );
 
     if (error.code === "ENOENT") {
     }

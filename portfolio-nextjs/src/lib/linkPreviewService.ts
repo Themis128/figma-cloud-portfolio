@@ -1,7 +1,13 @@
 import type { LinkPreviewData, OpenGraphData, TwitterCardData } from "@shared/api";
 
+const LINK_PREVIEW_CONSTANTS = {
+  MILLISECONDS_PER_SECOND: 1000,
+  VALIDATION_TIMEOUT_MS: 5000,
+  MIN_IMAGE_SRC_LENGTH: 10,
+} as const;
+
 const TIMEOUT = 10000; // 10 seconds
-const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const CACHE_DURATION = LINK_PREVIEW_CONSTANTS.MILLISECONDS_PER_SECOND * 60 * 60; // 1 hour
 const cache = new Map<string, { data: LinkPreviewData; timestamp: number }>();
 
 /**
@@ -279,7 +285,7 @@ export async function validateUrl(url: string): Promise<boolean> {
   try {
     const response = await fetch(url, {
       method: "HEAD",
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(LINK_PREVIEW_CONSTANTS.VALIDATION_TIMEOUT_MS),
     });
     return response.ok;
   } catch {

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test.describe("Accessibility (WCAG 2.1 AA)", () => {
   test.describe("WCAG Compliance", () => {
@@ -10,6 +11,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           await page.goto("/", { timeout: 45000 });
+          await waitForAppReady(page);
           await page.waitForLoadState("networkidle", { timeout: 30000 });
           lastError = null;
           break; // Success, exit retry loop
@@ -41,16 +43,20 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
         const h1Count = await page.locator("h1").count();
         expect(h1Count).toBeGreaterThan(0);
 
-        // Check for proper hierarchy (no skipping levels)
+        // Check for proper hierarchy (no skipping levels upwards)
         const headingLevels = await page.evaluate(() => {
           const headings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"));
           return headings.map((h) => parseInt(h.tagName.charAt(1), 10));
         });
 
-        // Check that heading levels don't skip (e.g., h1 -> h3 without h2)
+        // Only check for skipping levels when increasing
         for (let i = 1; i < headingLevels.length; i++) {
-          const diff = headingLevels[i] - headingLevels[i - 1];
-          expect(diff).toBeLessThanOrEqual(1); // Allow same level or increase by 1
+          const prev = headingLevels[i - 1];
+          const curr = headingLevels[i];
+          if (curr > prev) {
+            // Heading level should not increase by more than 1 (e.g., h2 -> h4 is not allowed)
+            expect(curr - prev).toBeLessThanOrEqual(1);
+          }
         }
       }
     });
@@ -207,6 +213,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           await page.goto("/", { timeout: 45000 });
+          await waitForAppReady(page);
           await page.waitForLoadState("networkidle", { timeout: 30000 });
           lastError = null;
           break; // Success, exit retry loop
@@ -295,6 +302,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
       await page.setViewportSize({ width: 375, height: 667 });
 
       await page.goto("/");
+      await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
 
       // Test touch targets

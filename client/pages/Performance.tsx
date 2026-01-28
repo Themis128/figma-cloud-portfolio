@@ -10,15 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-interface PerformanceMetrics {
-  memoryUsage: number;
-  memoryLimit: number;
-  cpuUsage: number;
-  networkRequests: number;
-  bundleSize: number;
-  lighthouseScore: number;
-}
-
 // Performance simulation constants
 const MEMORY_SIMULATION_BASE_MB = 20;
 const MEMORY_SIMULATION_RANGE_MB = 100;
@@ -46,6 +37,32 @@ const LIGHTHOUSE_PWA_SCORE = 90;
 // Display constants
 const DECIMAL_PLACES_DISPLAY = 1;
 
+// Performance test constants
+const PERFORMANCE_TEST_DELAY_MS = 2000;
+const HIGH_MEMORY_THRESHOLD_PERCENT = 80;
+const HIGH_CPU_THRESHOLD_PERCENT = 50;
+const LIGHTHOUSE_OPTIMAL_SCORE = 90;
+
+interface PerformanceMetrics {
+  memoryUsage: number;
+  memoryLimit: number;
+  cpuUsage: number;
+  networkRequests: number;
+  bundleSize: number;
+  lighthouseScore: number;
+}
+
+interface PerformanceTestResults {
+  timestamp: string;
+  duration: number;
+  memoryUsage: number;
+  cpuUsage: number;
+  networkRequests: number;
+  lighthouseScore: number;
+  coreWebVitals: Record<string, string>;
+  recommendations: string[];
+}
+
 export default function Performance() {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     memoryUsage: 0,
@@ -57,12 +74,14 @@ export default function Performance() {
   });
 
   const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isRunningTest, setIsRunningTest] = useState(false);
+  const [testResults, setTestResults] = useState<PerformanceTestResults | null>(null);
 
   useEffect(() => {
     // Simulate real-time metrics updates
     const interval = setInterval(() => {
       if (isMonitoring) {
-        setMetrics((prev) => ({
+        setMetrics((prev: PerformanceMetrics) => ({
           ...prev,
           memoryUsage: Math.random() * MEMORY_SIMULATION_RANGE_MB + MEMORY_SIMULATION_BASE_MB, // 20-120 MB
           cpuUsage: Math.random() * CPU_SIMULATION_RANGE_PERCENT + CPU_SIMULATION_BASE_PERCENT, // 5-35%
@@ -79,7 +98,7 @@ export default function Performance() {
   // Get bundle size (simulated)
   useEffect(() => {
     // In a real app, this would come from build analysis
-    setMetrics((prev) => ({
+    setMetrics((prev: PerformanceMetrics) => ({
       ...prev,
       bundleSize: DEFAULT_BUNDLE_SIZE_MB, // MB
       lighthouseScore: DEFAULT_LIGHTHOUSE_SCORE, // Score out of 100
@@ -103,6 +122,103 @@ export default function Performance() {
 
   const memory = getMemoryUsage();
   const memoryPercentage = (memory.used / memory.limit) * PERCENTAGE_MULTIPLIER;
+
+  // Performance test handler
+  const handleRunPerformanceTest = async () => {
+    setIsRunningTest(true);
+    const startTime = Date.now();
+
+    try {
+      // Simulate performance testing by measuring current metrics
+      const testMetrics = {
+        memoryUsage: memory.used,
+        cpuUsage: metrics.cpuUsage,
+        networkRequests: metrics.networkRequests,
+        lighthouseScore: metrics.lighthouseScore,
+      };
+
+      // Wait for Core Web Vitals to be measured (simulate)
+      await new Promise((resolve) => setTimeout(resolve, PERFORMANCE_TEST_DELAY_MS));
+
+      // Get current web vitals
+      const coreWebVitals: Record<string, string> = {};
+      if (typeof window !== "undefined" && window.webVitalsMetrics) {
+        window.webVitalsMetrics.forEach((metric: { name: string; value: number }) => {
+          coreWebVitals[metric.name] = `${metric.value}${metric.name.includes("CLS") ? "" : "ms"}`;
+        });
+      }
+
+      // Generate recommendations based on metrics
+      const recommendations: string[] = [];
+      if (memoryPercentage > HIGH_MEMORY_THRESHOLD_PERCENT) {
+        recommendations.push(
+          "High memory usage detected. Consider optimizing memory-intensive operations.",
+        );
+      }
+      if (metrics.cpuUsage > HIGH_CPU_THRESHOLD_PERCENT) {
+        recommendations.push("High CPU usage detected. Consider optimizing JavaScript execution.");
+      }
+      if (metrics.bundleSize > BUNDLE_SIZE_OPTIMAL_MB) {
+        recommendations.push(
+          "Bundle size is above optimal. Consider code splitting and tree shaking.",
+        );
+      }
+      if (metrics.lighthouseScore < LIGHTHOUSE_OPTIMAL_SCORE) {
+        recommendations.push("Lighthouse score could be improved. Focus on Core Web Vitals.");
+      }
+
+      const results: PerformanceTestResults = {
+        timestamp: new Date().toISOString(),
+        duration: Date.now() - startTime,
+        ...testMetrics,
+        coreWebVitals,
+        recommendations,
+      };
+
+      setTestResults(results);
+    } catch {
+      // Handle error silently for now
+    } finally {
+      setIsRunningTest(false);
+    }
+  };
+
+  // Report generation handler
+  const handleGenerateReport = async () => {
+    if (!testResults) {
+      alert("Please run a performance test first.");
+      return;
+    }
+
+    try {
+      const reportData = {
+        title: "Performance Test Report",
+        generatedAt: new Date().toISOString(),
+        testResults,
+        systemInfo: {
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+        },
+      };
+
+      // Create and download the report
+      const reportJson = JSON.stringify(reportData, null, 2);
+      const blob = new Blob([reportJson], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `performance-report-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    } catch {
+      // Handle error silently for now
+    }
+  };
 
   return (
     <div
@@ -206,11 +322,21 @@ export default function Performance() {
                 <Activity className='w-4 h-4' />
                 {isMonitoring ? "Stop Monitoring" : "Start Real-time Monitoring"}
               </Button>
-              <Button variant='outline' className='flex items-center gap-2'>
+              <Button
+                variant='outline'
+                className='flex items-center gap-2'
+                onClick={handleRunPerformanceTest}
+                disabled={isRunningTest}
+              >
                 <Zap className='w-4 h-4' />
-                Run Performance Test
+                {isRunningTest ? "Running Test..." : "Run Performance Test"}
               </Button>
-              <Button variant='outline' className='flex items-center gap-2'>
+              <Button
+                variant='outline'
+                className='flex items-center gap-2'
+                onClick={handleGenerateReport}
+                disabled={!testResults}
+              >
                 <BarChart3 className='w-4 h-4' />
                 Generate Report
               </Button>

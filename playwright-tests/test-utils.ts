@@ -1,9 +1,10 @@
+import { type BrowserContext, expect, type Locator, type Page } from "@playwright/test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type BrowserContext, expect, type Locator, type Page } from "@playwright/test";
 
 /**
  * Enhanced test utilities for automatic issue resolution and test stability
+ * Updated with modern Playwright features and best practices
  */
 
 /**
@@ -21,14 +22,22 @@ export async function setupTestEnvironment(page?: Page, context?: BrowserContext
         originalWarn.apply(console, args);
       }
     };
+
+    // Mock web APIs for consistent testing
+    Object.defineProperty(navigator, "webdriver", {
+      get: () => false,
+    });
   });
 
   // Set default timeout
   page.setDefaultTimeout(30000);
 
   if (context) {
-    // Grant permissions for notifications, etc.
-    await context.grantPermissions(["notifications"]);
+    // Grant permissions for notifications, geolocation, etc.
+    await context.grantPermissions(["notifications", "geolocation"]);
+
+    // Set geolocation for consistent testing
+    await context.setGeolocation({ latitude: 37.7749, longitude: -122.4194 });
   }
 
   return { page, context };
@@ -70,24 +79,43 @@ export async function teardownTestEnvironment(page?: Page, context?: BrowserCont
 }
 
 /**
- * Wait for application to be fully loaded and stable
+ * Enhanced goto that waits for app to be ready
  */
-export async function waitForAppReady(page: Page, timeout = 30000) {
-  await page.waitForLoadState("domcontentloaded");
-  await page.waitForLoadState("networkidle");
+export async function gotoAndWaitForApp(
+  page: Page,
+  url: string,
+  options?: Parameters<Page["goto"]>[1],
+) {
+  await page.goto(url, options);
+  await waitForAppReady(page);
+}
 
-  // Wait for critical app elements
-  await page.waitForSelector("body", { timeout });
-  await page.waitForSelector('h1, main, [role="main"]', { timeout });
+/**
+ * Wait for the React app to be fully loaded and ready
+ */
+export async function waitForAppReady(page: Page) {
+  // Wait for React to be loaded
+  await page.waitForFunction(
+    () => {
+      const root = document.querySelector("#root");
+      return !!(
+        window.React &&
+        window.ReactDOM &&
+        root &&
+        root.children?.length > 0
+      );
+    },
+    { timeout: 10000 },
+  );
 
-  // Wait for service worker if present
-  try {
-    await page.waitForFunction(() => navigator.serviceWorker?.ready !== undefined, {
-      timeout: 5000,
-    });
-  } catch (_error) {
-    // Service worker not critical for all tests
-  }
+  // Wait for the main app content to be rendered
+  await page.waitForSelector('[data-testid="app-ready"], main, .app, #app', {
+    timeout: 15000,
+    state: "visible",
+  });
+
+  // Additional wait for any dynamic content
+  await page.waitForTimeout(500);
 }
 
 /**
@@ -98,7 +126,7 @@ export async function retryOperation<T>(
   maxRetries = 3,
   baseDelay = 1000,
 ): Promise<T> {
-  let lastError: Error | undefined;
+  let lastError: Error = new Error('Operation failed');
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -116,7 +144,7 @@ export async function retryOperation<T>(
     }
   }
 
-  throw lastError;
+  throw lastError!;
 }
 
 /**
@@ -411,7 +439,7 @@ export const customMatchers = {
       loadComplete: performance.timing.loadEventEnd - performance.timing.navigationStart,
     }));
 
-    const maxTime = Math.max(metrics.domContentLoaded, metrics.loadComplete);
+    const maxTime = Math.max(metrics.domContentLoaded || 0, metrics.loadComplete || 0);
 
     return {
       pass: maxTime <= budgetMs,

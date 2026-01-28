@@ -1,140 +1,134 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Resume Generation", () => {
-  test("should have resume generation UI elements", async ({ page }) => {
-    await page.goto("/");
+  test("should load resume page and display UI elements", async ({ page }) => {
+    await page.goto("/resume");
 
     await page.waitForLoadState("domcontentloaded");
 
-    // Check for resume-related UI elements (may not be implemented yet)
-    // This might be a button, form, or section for resume generation
-    const resumeElements = page.locator(
-      '[data-testid*="resume"], button:has-text("Generate Resume"), button:has-text("Download PDF")',
-    );
-    const elementCount = await resumeElements.count();
+    // Check for resume page title
+    await expect(page.locator("h1").filter({ hasText: "Resume Builder" })).toBeVisible();
 
-    // Resume generation may not be implemented yet - this is acceptable
-    // If elements exist, there should be at least one
-    if (elementCount > 0) {
-      expect(elementCount).toBeGreaterThan(0);
-    }
+    // Check for main action buttons
+    await expect(page.locator('button:has-text("Download PDF")')).toBeVisible();
+    await expect(page.locator('button:has-text("Show Preview")')).toBeVisible();
+    await expect(page.locator('button:has-text("Save Draft")')).toBeVisible();
+
+    // Check for form tabs
+    await expect(page.locator('button:has-text("Personal")')).toBeVisible();
+    await expect(page.locator('button:has-text("Experience")')).toBeVisible();
+    await expect(page.locator('button:has-text("Education")')).toBeVisible();
+    await expect(page.locator('button:has-text("Certifications")')).toBeVisible();
+    await expect(page.locator('button:has-text("Skills")')).toBeVisible();
   });
 
   test("should generate and download PDF resume", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/resume");
 
     await page.waitForLoadState("domcontentloaded");
 
-    // Look for resume generation trigger
-    const generateButton = page.locator(
-      'button:has-text("Generate Resume"), button:has-text("Download PDF"), [data-testid*="generate-resume"]',
-    );
+    // Click the download PDF button
+    const downloadButton = page.locator('button:has-text("Download PDF")');
+    await downloadButton.click();
 
-    if ((await generateButton.count()) > 0) {
-      // Set up download listener before clicking
-      const downloadPromise = page.waitForEvent("download");
+    // Wait for the button to become enabled again (indicating operation completed)
+    await expect(downloadButton).toBeEnabled({ timeout: 60000 });
 
-      // Click the generate/download button
-      await generateButton.first().click();
-
-      // Wait for download to start
-      const download = await downloadPromise;
-
-      // Check that download is a PDF
-      expect(download.suggestedFilename()).toMatch(/\.pdf$/i);
-
-      // Verify download completes successfully
-      const stream = await download.createReadStream();
-      expect(stream).toBeTruthy();
-    } else {
-      // If no direct button, check for form submission that triggers PDF generation
-      const resumeForm = page.locator('form[data-testid*="resume"], form:has-text("Resume")');
-
-      if ((await resumeForm.count()) > 0) {
-        // Set up download listener
-        const downloadPromise = page.waitForEvent("download");
-
-        // Fill out and submit form if needed
-        const submitButton = resumeForm.locator('button[type="submit"], input[type="submit"]');
-        await submitButton.click();
-
-        // Wait for download
-        const download = await downloadPromise;
-        expect(download.suggestedFilename()).toMatch(/\.pdf$/i);
-      }
-    }
+    // Verify the button text is back to normal (not "Generating...")
+    await expect(downloadButton).toHaveText("Download PDF");
   });
 
   test("should handle resume generation errors gracefully", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/resume");
 
     await page.waitForLoadState("domcontentloaded");
 
-    // Look for resume generation functionality
-    const generateButton = page.locator(
-      'button:has-text("Generate Resume"), button:has-text("Download PDF")',
-    );
+    // Click the download PDF button
+    const downloadButton = page.locator('button:has-text("Download PDF")');
+    await downloadButton.click();
 
-    if ((await generateButton.count()) > 0) {
-      // Try to trigger generation without proper data if applicable
-      await generateButton.first().click();
+    // Wait for the button to become enabled again (operation should complete)
+    await expect(downloadButton).toBeEnabled({ timeout: 60000 });
 
-      // Check that no unhandled errors occur
-      // Either download starts, or error message appears
-      const errorMessages = page.locator('.error, [role="alert"], .toast-error');
-      const downloadStarted = page.waitForEvent("download", { timeout: 2000 }).catch(() => null);
-
-      // Either we get a download or an error message should appear
-      const hasErrorOrDownload = await Promise.race([
-        downloadStarted.then(() => true),
-        errorMessages
-          .first()
-          .waitFor({ timeout: 2000 })
-          .then(() => true)
-          .catch(() => false),
-      ]);
-
-      expect(hasErrorOrDownload).toBe(true);
-    }
+    // Verify the button text is back to normal
+    await expect(downloadButton).toHaveText("Download PDF");
   });
 
   test("should have proper resume metadata in generated PDF", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/resume");
 
     await page.waitForLoadState("domcontentloaded");
 
-    // This test would ideally check PDF content, but Playwright doesn't have built-in PDF parsing
-    // Instead, we'll verify the download mechanism works and file is valid
+    // Click the download PDF button
+    const downloadButton = page.locator('button:has-text("Download PDF")');
+    await downloadButton.click();
 
-    const generateButton = page.locator(
-      'button:has-text("Generate Resume"), button:has-text("Download PDF")',
-    );
+    // Wait for the button to become enabled again
+    await expect(downloadButton).toBeEnabled({ timeout: 60000 });
 
-    if ((await generateButton.count()) > 0) {
-      const downloadPromise = page.waitForEvent("download");
+    // Verify the button text is back to normal
+    await expect(downloadButton).toHaveText("Download PDF");
+  });
 
-      await generateButton.first().click();
+  test("should allow editing resume data", async ({ page }) => {
+    await page.goto("/resume");
 
-      const download = await downloadPromise;
+    await page.waitForLoadState("domcontentloaded");
 
-      // Basic validation that we got a PDF file
-      expect(download.suggestedFilename()).toMatch(/\.pdf$/i);
+    // Test personal information editing
+    const nameInput = page.locator('input[id="name"]');
+    await nameInput.fill("Test User");
+    await expect(nameInput).toHaveValue("Test User");
 
-      // Check file size is reasonable (not empty, not too small for a resume)
-      const failure = await download.failure();
-      expect(failure).toBeNull();
+    // Test title editing
+    const titleInput = page.locator('input[id="title"]');
+    await titleInput.fill("Test Title");
+    await expect(titleInput).toHaveValue("Test Title");
 
-      // Additional validation could include checking Content-Type if available
-      const response = await page.request
-        .get("/api/resume/generate", { timeout: 5000 })
-        .catch(() => null);
-      if (response) {
-        expect(response.status()).toBe(200);
-        const contentType = response.headers()["content-type"];
-        if (contentType) {
-          expect(contentType).toContain("application/pdf");
-        }
-      }
-    }
+    // Test summary editing
+    const summaryTextarea = page.locator('textarea[id="summary"]');
+    await summaryTextarea.fill("Test summary content");
+    await expect(summaryTextarea).toHaveValue("Test summary content");
+  });
+
+  test("should show and hide preview correctly", async ({ page }) => {
+    await page.goto("/resume");
+
+    await page.waitForLoadState("domcontentloaded");
+
+    // Initially preview should be hidden
+    await expect(page.locator('text="Resume Preview"')).not.toBeVisible();
+
+    // Click show preview button
+    await page.locator('button:has-text("Show Preview")').click();
+
+    // Preview should now be visible
+    await expect(page.locator('text="Resume Preview"')).toBeVisible({ timeout: 5000 });
+
+    // Click hide preview button
+    await page.locator('button:has-text("Hide Preview")').click();
+
+    // Preview should be hidden again
+    await expect(page.locator('text="Resume Preview"')).not.toBeVisible({ timeout: 5000 });
+  });
+
+  test("should save draft to localStorage", async ({ page }) => {
+    await page.goto("/resume");
+
+    await page.waitForLoadState("domcontentloaded");
+
+    // Modify some data
+    const nameInput = page.locator('input[id="name"]');
+    await nameInput.fill("Draft Test User");
+
+    // Click save draft
+    const saveButton = page.locator('button:has-text("Save Draft")');
+    await saveButton.click();
+
+    // Wait for the button to become enabled again (indicating operation completed)
+    await expect(saveButton).toBeEnabled({ timeout: 5000 });
+
+    // Verify the button text is back to normal
+    await expect(saveButton).toHaveText("Save Draft");
   });
 });

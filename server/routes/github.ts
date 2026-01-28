@@ -21,8 +21,14 @@ const HTTP_STATUS_TOO_MANY = 429;
 const HTTP_STATUS_BAD_REQUEST = 400;
 const HTTP_STATUS_INTERNAL = 500;
 
+// Rate limiting constants
+const DEFAULT_RATE_LIMIT_WINDOW_MINUTES = 60;
+const MILLISECONDS_PER_SECOND = 1000;
+const MILLISECONDS_PER_MINUTE = 60 * MILLISECONDS_PER_SECOND;
+
 const RATE_LIMIT_WINDOW_MS = parseInt(
-  process.env.GITHUB_RATE_LIMIT_WINDOW_MS || String(60 * 1000),
+  process.env.GITHUB_RATE_LIMIT_WINDOW_MS ||
+    String(DEFAULT_RATE_LIMIT_WINDOW_MINUTES * MILLISECONDS_PER_MINUTE),
   10,
 );
 const RATE_LIMIT_MAX = parseInt(process.env.GITHUB_RATE_LIMIT_MAX || "120", 10); // requests per window per IP
@@ -44,7 +50,7 @@ function isRateLimited(ip?: string) {
 function getCached(key: string) {
   const entry = cache.get(key);
   if (!entry) return null;
-  if (Date.now() - entry.ts > CACHE_TTL_SECONDS * 1000) {
+  if (Date.now() - entry.ts > CACHE_TTL_SECONDS * MILLISECONDS_PER_SECOND) {
     cache.delete(key);
     logger.info("github-proxy", `cache-expired: ${key}`);
     metrics.cacheMisses += 1;

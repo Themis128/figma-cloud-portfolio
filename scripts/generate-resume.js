@@ -6,6 +6,12 @@ import puppeteer from "puppeteer";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Constants
+const BYTES_PER_KILOBYTE = 1024;
+const MILLISECONDS_PER_SECOND = 1000;
+const BYTES_PER_MEGABYTE = BYTES_PER_KILOBYTE * BYTES_PER_KILOBYTE;
+const BROWSER_LOAD_DELAY_MS = 1000;
+
 async function generatePDF() {
   const startTime = Date.now();
   let browser = null;
@@ -23,7 +29,7 @@ async function generatePDF() {
 
     console.log("📄 Reading HTML template...");
     const htmlContent = fs.readFileSync(htmlPath, "utf8");
-    console.log(`📊 HTML file size: ${(htmlContent.length / 1024).toFixed(2)} KB`);
+    console.log(`📊 HTML file size: ${(htmlContent.length / BYTES_PER_KILOBYTE).toFixed(2)} KB`);
 
     console.log("🌐 Launching browser...");
     browser = await puppeteer.launch({
@@ -58,30 +64,32 @@ async function generatePDF() {
     });
 
     // Wait a bit for any animations or fonts to load
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, BROWSER_LOAD_DELAY_MS));
 
     console.log("📋 Generating PDF...");
     await page.pdf({
       path: pdfPath,
-      format: "A4",
+      width: "210mm",
+      height: "297mm",
       printBackground: true,
       margin: {
-        top: "20px",
-        right: "20px",
-        bottom: "20px",
-        left: "20px",
+        top: "10px",
+        right: "10px",
+        bottom: "10px",
+        left: "10px",
       },
-      preferCSSPageSize: true,
+      preferCSSPageSize: false,
       displayHeaderFooter: false,
+      pageRanges: "1",
     });
 
     const endTime = Date.now();
-    const duration = ((endTime - startTime) / 1000).toFixed(2);
+    const duration = ((endTime - startTime) / MILLISECONDS_PER_SECOND).toFixed(2);
     const stats = fs.statSync(pdfPath);
 
     console.log("✅ PDF generated successfully!");
     console.log(`📁 Output: ${pdfPath}`);
-    console.log(`📄 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`📄 File size: ${(stats.size / BYTES_PER_MEGABYTE).toFixed(2)} MB`);
     console.log(`📊 Pages: 1 (A4 format)`);
     console.log(`⏱️  Generated in ${duration}s`);
     console.log("");
@@ -90,7 +98,7 @@ async function generatePDF() {
     console.log("   • HTML preview: /modern-resume.html");
   } catch (error) {
     const endTime = Date.now();
-    const duration = ((endTime - startTime) / 1000).toFixed(2);
+    const duration = ((endTime - startTime) / MILLISECONDS_PER_SECOND).toFixed(2);
 
     console.error("❌ Error generating PDF:");
     console.error(`   ${error.message}`);

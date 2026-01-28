@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
 import { Box, Float, Html, OrbitControls, Sphere } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { cn } from "@/lib/utils";
 
 // 3D Animation and geometry constants
 const ROTATION_SPEED_X = 0.005;
@@ -303,7 +303,7 @@ function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, "class
         <ProjectSphere
           key={project.id}
           project={project}
-          onClick={onProjectClick || (() => { })}
+          onClick={onProjectClick || (() => {})}
           isHovered={hoveredProject === project.id}
           onHover={setHoveredProject}
         />

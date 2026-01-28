@@ -101,10 +101,10 @@ test.describe("Analytics Integration", () => {
     await page.waitForSelector('nav[aria-label="Main navigation"]', { timeout: 10000 });
 
     // Navigate to different pages
-    await page.click('a[href="/about"]');
+    await page.locator('nav a[href="/about"]').first().click();
     await page.waitForURL("/about");
 
-    await page.click('a[href="/contact"]');
+    await page.locator('nav a[href="/contact"]').first().click();
     await page.waitForURL("/contact");
 
     // Check that page view events were tracked
@@ -441,7 +441,7 @@ test.describe("Analytics Integration", () => {
 
     // Simulate user interactions with specific selectors
     // Click the "Learn More" button
-    await page.click('a[href="/about"]');
+    await page.locator('nav a[href="/about"]').first().click();
 
     // Look for any text input fields on the page
     const textInputs = await page.locator('input[type="text"]').count();
@@ -450,7 +450,7 @@ test.describe("Analytics Integration", () => {
     }
 
     // Click a navigation link
-    await page.click('a[href="/contact"]');
+    await page.locator('nav a[href="/contact"]').first().click();
 
     // Wait for interaction tracking
     await page.waitForTimeout(1000);
@@ -490,10 +490,10 @@ test.describe("Analytics Integration", () => {
     await page.waitForSelector('nav[aria-label="Main navigation"]', { timeout: 10000 });
 
     // Navigate to different pages
-    await page.click('a[href="/about"]');
+    await page.locator('nav a[href="/about"]').first().click();
     await page.waitForURL("/about");
 
-    await page.click('a[href="/contact"]');
+    await page.locator('nav a[href="/contact"]').first().click();
     await page.waitForURL("/contact");
 
     // Check navigation timing in performance API

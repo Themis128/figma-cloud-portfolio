@@ -8,7 +8,7 @@ const VECTOR_3D_LENGTH = 3;
 
 // Mock Three.js and React Three Fiber
 vi.mock("@react-three/fiber", () => ({
-  Canvas: ({ children, ...props }: { children?: React.ReactNode;[key: string]: unknown }) =>
+  Canvas: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) =>
     React.createElement("div", { "data-testid": "canvas", ...props }, children),
   useFrame: vi.fn(),
   useThree: () => ({ camera: { position: { set: vi.fn() } } }),
@@ -16,19 +16,19 @@ vi.mock("@react-three/fiber", () => ({
 
 vi.mock("@react-three/drei", () => ({
   OrbitControls: () => React.createElement("div", { "data-testid": "orbit-controls" }),
-  Html: ({ children, ...props }: { children?: React.ReactNode;[key: string]: unknown }) =>
+  Html: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) =>
     React.createElement("div", { "data-testid": "html", ...props }, children),
-  Sphere: ({ children, ...props }: { children?: React.ReactNode;[key: string]: unknown }) =>
+  Sphere: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) =>
     React.createElement("div", { "data-testid": "sphere", ...props }, children),
-  Box: ({ children, ...props }: { children?: React.ReactNode;[key: string]: unknown }) =>
+  Box: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) =>
     React.createElement("div", { "data-testid": "box", ...props }, children),
-  Float: ({ children, ...props }: { children?: React.ReactNode;[key: string]: unknown }) =>
+  Float: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) =>
     React.createElement("div", { "data-testid": "float", ...props }, children),
 }));
 
 vi.mock("three", () => ({
-  Mesh: class { },
-  Vector3: class { },
+  Mesh: class {},
+  Vector3: class {},
 }));
 
 describe("Interactive3DDemo", () => {

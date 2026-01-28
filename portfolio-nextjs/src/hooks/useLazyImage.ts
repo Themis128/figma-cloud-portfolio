@@ -5,6 +5,11 @@ interface UseLazyImageOptions {
   threshold?: number;
 }
 
+const LAZY_IMAGE_CONSTANTS = {
+  DEFAULT_ROOT_MARGIN: "50px",
+  DEFAULT_THRESHOLD: 0.1,
+} as const;
+
 export function useLazyImage(options: UseLazyImageOptions = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -23,8 +28,8 @@ export function useLazyImage(options: UseLazyImageOptions = {}) {
         }
       },
       {
-        rootMargin: options.rootMargin ?? "50px",
-        threshold: options.threshold ?? 0.1,
+        rootMargin: options.rootMargin ?? LAZY_IMAGE_CONSTANTS.DEFAULT_ROOT_MARGIN,
+        threshold: options.threshold ?? LAZY_IMAGE_CONSTANTS.DEFAULT_THRESHOLD,
       },
     );
 

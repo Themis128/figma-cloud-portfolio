@@ -3,6 +3,10 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+const PROGRESS_CONSTANTS = {
+  PERCENTAGE_MAX: 100,
+} as const;
+
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
@@ -14,7 +18,7 @@ const Progress = React.forwardRef<
   >
     <ProgressPrimitive.Indicator
       className='h-full w-full flex-1 bg-primary transition-all'
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+      style={{ transform: `translateX(-${PROGRESS_CONSTANTS.PERCENTAGE_MAX - (value || 0)}%)` }}
     />
   </ProgressPrimitive.Root>
 ));

@@ -1,7 +1,9 @@
 // Custom service worker for push notifications
 // Uses Workbox from CDN (compatible with both dev and production)
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js')
+importScripts(
+  'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js',
+)
 
 // Check if Workbox loaded successfully
 if (workbox) {
@@ -16,18 +18,28 @@ if (workbox) {
   // Precache and route - will be populated during build
   workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || [])
 
-  // Runtime caching for API calls
+  // Handle SPA navigation routes
   workbox.routing.registerRoute(
-    /^https:\/\/api\./i,
+    new workbox.NavigationRoute(
+      workbox.createHandlerBoundToURL('/index.html'),
+      {
+        denylist: [/^\/api\//, /^\/_/, /^\/[^/?]+\.[^/]+$/],
+      },
+    ),
+  )
+
+  // Runtime caching for local API calls
+  workbox.routing.registerRoute(
+    /^\/api\//,
     new workbox.strategies.NetworkFirst({
-      cacheName: 'api-cache',
+      cacheName: 'local-api-cache',
       plugins: [
         new workbox.expiration.ExpirationPlugin({
           maxEntries: 10,
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+          maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
         }),
       ],
-    })
+    }),
   )
 
   // Runtime caching for Google Fonts
@@ -41,7 +53,7 @@ if (workbox) {
           maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
         }),
       ],
-    })
+    }),
   )
 
   // Runtime caching for images
@@ -55,7 +67,7 @@ if (workbox) {
           maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
         }),
       ],
-    })
+    }),
   )
 
   // Runtime caching for static resources
@@ -69,7 +81,7 @@ if (workbox) {
           maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
         }),
       ],
-    })
+    }),
   )
 } else {
   console.log('Workbox failed to load')
@@ -115,7 +127,9 @@ self.addEventListener('push', (event) => {
       },
     }
 
-    event.waitUntil(self.registration.showNotification(data.title || 'Notification', options))
+    event.waitUntil(
+      self.registration.showNotification(data.title || 'Notification', options),
+    )
   } catch (error) {
     console.error('Error processing push event:', error)
     event.waitUntil(
@@ -124,7 +138,7 @@ self.addEventListener('push', (event) => {
         icon: '/logo.jpg',
         badge: '/logo.jpg',
         tag: 'portfolio-notification',
-      })
+      }),
     )
   }
 })
@@ -150,19 +164,21 @@ self.addEventListener('notificationclick', (event) => {
     }
   } else {
     event.waitUntil(
-      clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-        const url = data.url || '/'
+      clients
+        .matchAll({ type: 'window', includeUncontrolled: true })
+        .then((clientList) => {
+          const url = data.url || '/'
 
-        for (const client of clientList) {
-          if (client.url === url && 'focus' in client) {
-            return client.focus()
+          for (const client of clientList) {
+            if (client.url === url && 'focus' in client) {
+              return client.focus()
+            }
           }
-        }
 
-        if (clients.openWindow) {
-          return clients.openWindow(url)
-        }
-      })
+          if (clients.openWindow) {
+            return clients.openWindow(url)
+          }
+        }),
     )
   }
 })

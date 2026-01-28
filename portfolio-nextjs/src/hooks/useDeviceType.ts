@@ -4,6 +4,28 @@ import { useEffect, useState } from "react";
 
 declare const window: Window & typeof globalThis;
 
+// Device breakpoints
+const BREAKPOINTS = {
+  MOBILE: 768,
+  TABLET: 1024,
+} as const;
+
+// Animation settings
+const ANIMATION_SETTINGS = {
+  REDUCED_MOTION: {
+    DURATION: 0.3,
+    STIFFNESS: 120,
+    DAMPING: 20,
+    THRESHOLD: 0.3,
+  },
+  NORMAL: {
+    DURATION: 0.5,
+    STIFFNESS: 100,
+    DAMPING: 15,
+    THRESHOLD: 0.2,
+  },
+} as const;
+
 export function useDeviceType() {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -16,9 +38,9 @@ export function useDeviceType() {
       if (typeof window !== "undefined") {
         const width = (window as Window).innerWidth;
         setScreenWidth(width);
-        setIsMobile(width < 768);
-        setIsTablet(width >= 768 && width < 1024);
-        setIsDesktop(width >= 1024);
+        setIsMobile(width < BREAKPOINTS.MOBILE);
+        setIsTablet(width >= BREAKPOINTS.MOBILE && width < BREAKPOINTS.TABLET);
+        setIsDesktop(width >= BREAKPOINTS.TABLET);
       }
     };
 
@@ -63,10 +85,18 @@ export function useOptimizedAnimation() {
   const shouldReduceMotion = isMobile || prefersReducedMotion;
 
   return {
-    duration: shouldReduceMotion ? 0.3 : 0.5,
-    stiffness: shouldReduceMotion ? 120 : 100,
-    damping: shouldReduceMotion ? 20 : 15,
-    threshold: shouldReduceMotion ? 0.3 : 0.2,
+    duration: shouldReduceMotion
+      ? ANIMATION_SETTINGS.REDUCED_MOTION.DURATION
+      : ANIMATION_SETTINGS.NORMAL.DURATION,
+    stiffness: shouldReduceMotion
+      ? ANIMATION_SETTINGS.REDUCED_MOTION.STIFFNESS
+      : ANIMATION_SETTINGS.NORMAL.STIFFNESS,
+    damping: shouldReduceMotion
+      ? ANIMATION_SETTINGS.REDUCED_MOTION.DAMPING
+      : ANIMATION_SETTINGS.NORMAL.DAMPING,
+    threshold: shouldReduceMotion
+      ? ANIMATION_SETTINGS.REDUCED_MOTION.THRESHOLD
+      : ANIMATION_SETTINGS.NORMAL.THRESHOLD,
     disabled: prefersReducedMotion,
   };
 }

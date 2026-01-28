@@ -1,12 +1,12 @@
 "use client";
 
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { type ReactNode, useState } from "react";
 import { Toaster as Sonner } from "sonner";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface ProvidersProps {
   children: ReactNode;

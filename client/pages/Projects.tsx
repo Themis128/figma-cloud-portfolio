@@ -15,12 +15,12 @@ const Projects: React.FC = () => {
   const stats = useMemo(() => {
     const totalProjects = sampleProjects.length;
     const webApps = sampleProjects.filter((p) => p.category === "web").length;
-    const aiProjects = sampleProjects.filter((p) => p.category === "ai").length;
+    const mobileApps = sampleProjects.filter((p) => p.category === "mobile").length;
 
     return {
       total: totalProjects,
       webApps,
-      aiProjects,
+      mobileApps,
     };
   }, [sampleProjects]);
 
@@ -96,9 +96,9 @@ const Projects: React.FC = () => {
             <Card>
               <CardHeader className='text-center'>
                 <CardTitle className='text-3xl font-bold text-purple-600'>
-                  {stats.aiProjects}
+                  {stats.mobileApps}
                 </CardTitle>
-                <CardDescription>AI Project</CardDescription>
+                <CardDescription>Mobile App</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -117,7 +117,7 @@ const Projects: React.FC = () => {
             </TabsList>
 
             <TabsContent value='grid' className='mt-8'>
-              <SearchableProjects />
+              <SearchableProjects projects={sampleProjects} />
             </TabsContent>
 
             <TabsContent value='3d' className='mt-8'>

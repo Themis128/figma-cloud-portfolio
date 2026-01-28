@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -23,25 +24,27 @@ function App() {
   usePerformanceMonitoring();
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
-      <BrowserRouter>
-        <GoogleAnalytics />
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route path='/' element={<Index />} />
-            <Route path='/about' element={<About />} />
-            <Route path='/agents' element={<Agents />} />
-            <Route path='/contact' element={<Contact />} />
-            <Route path='/performance' element={<Performance />} />
-            <Route path='/product' element={<Product />} />
-            <Route path='/projects' element={<Projects />} />
-            <Route path='/resume' element={<Resume />} />
-            <Route path='/settings' element={<Settings />} />
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider defaultTheme='dark' storageKey='portfolio-theme'>
+        <BrowserRouter>
+          <GoogleAnalytics />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path='/' element={<Index />} />
+              <Route path='/about' element={<About />} />
+              <Route path='/agents' element={<Agents />} />
+              <Route path='/contact' element={<Contact />} />
+              <Route path='/performance' element={<Performance />} />
+              <Route path='/product' element={<Product />} />
+              <Route path='/projects' element={<Projects />} />
+              <Route path='/resume' element={<Resume />} />
+              <Route path='/settings' element={<Settings />} />
+              <Route path='*' element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

@@ -94,19 +94,23 @@ export function PerformanceDashboard({ className, compact = false }: Performance
 
     if (key.includes("LCP")) {
       if (numericValue <= LCP_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
-      if (numericValue <= LCP_NEEDS_IMPROVEMENT_THRESHOLD) return { status: "needs-improvement", color: "text-yellow-400" };
+      if (numericValue <= LCP_NEEDS_IMPROVEMENT_THRESHOLD)
+        return { status: "needs-improvement", color: "text-yellow-400" };
       return { status: "poor", color: "text-red-400" };
     }
 
     if (key.includes("CLS")) {
       if (numericValue <= CLS_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
-      if (numericValue <= CLS_NEEDS_IMPROVEMENT_THRESHOLD) return { status: "needs-improvement", color: "text-yellow-400" };
+      if (numericValue <= CLS_NEEDS_IMPROVEMENT_THRESHOLD)
+        return { status: "needs-improvement", color: "text-yellow-400" };
       return { status: "poor", color: "text-red-400" };
     }
 
     if (key.includes("FCP") || key.includes("TTFB")) {
-      if (numericValue <= FCP_TTFB_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
-      if (numericValue <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD) return { status: "needs-improvement", color: "text-yellow-400" };
+      if (numericValue <= FCP_TTFB_GOOD_THRESHOLD)
+        return { status: "good", color: "text-green-400" };
+      if (numericValue <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)
+        return { status: "needs-improvement", color: "text-yellow-400" };
       return { status: "poor", color: "text-red-400" };
     }
 
@@ -171,15 +175,24 @@ export function PerformanceDashboard({ className, compact = false }: Performance
             if (key.includes("LCP")) {
               maxValue = LCP_NEEDS_IMPROVEMENT_THRESHOLD; // 4s
               targetValue = LCP_GOOD_THRESHOLD; // 2.5s
-              progressValue = Math.min((numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE, PROGRESS_BAR_MAX_PERCENTAGE);
+              progressValue = Math.min(
+                (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
+                PROGRESS_BAR_MAX_PERCENTAGE,
+              );
             } else if (key.includes("CLS")) {
               maxValue = CLS_NEEDS_IMPROVEMENT_THRESHOLD;
               targetValue = CLS_GOOD_THRESHOLD;
-              progressValue = Math.min((numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE, PROGRESS_BAR_MAX_PERCENTAGE);
+              progressValue = Math.min(
+                (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
+                PROGRESS_BAR_MAX_PERCENTAGE,
+              );
             } else if (key.includes("FCP") || key.includes("TTFB")) {
               maxValue = FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD; // 3s
               targetValue = FCP_TTFB_GOOD_THRESHOLD; // 1.8s
-              progressValue = Math.min((numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE, PROGRESS_BAR_MAX_PERCENTAGE);
+              progressValue = Math.min(
+                (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
+                PROGRESS_BAR_MAX_PERCENTAGE,
+              );
             }
 
             return (

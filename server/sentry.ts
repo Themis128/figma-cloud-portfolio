@@ -1,5 +1,10 @@
 import * as Sentry from "@sentry/node";
 
+// Constants for Sentry configuration
+const SENTRY_TRACES_SAMPLE_RATE_PRODUCTION = 0.1;
+const SENTRY_TRACES_SAMPLE_RATE_DEVELOPMENT = 1.0;
+const HTTP_STATUS_ERROR_THRESHOLD = 400;
+
 // Initialize Sentry for the server
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -12,7 +17,10 @@ Sentry.init({
     // Sentry.postgresIntegration(),
   ],
   // Performance Monitoring
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  tracesSampleRate:
+    process.env.NODE_ENV === "production"
+      ? SENTRY_TRACES_SAMPLE_RATE_PRODUCTION
+      : SENTRY_TRACES_SAMPLE_RATE_DEVELOPMENT,
   // Release tracking
   release: process.env.npm_package_version ?? "1.0.0",
   // Error filtering
@@ -106,7 +114,7 @@ export const trackApiRequest = (
   Sentry.addBreadcrumb({
     category: "api",
     message: `${method} ${path} - ${statusCode} (${duration}ms)`,
-    level: statusCode >= 400 ? "warning" : "info",
+    level: statusCode >= HTTP_STATUS_ERROR_THRESHOLD ? "warning" : "info",
     data: {
       method,
       path,

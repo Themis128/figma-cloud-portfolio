@@ -1,5 +1,16 @@
 import * as Sentry from "@sentry/react";
 
+// Constants for Sentry configuration
+const SENTRY_CONFIG = {
+  SAMPLING_RATES: {
+    PRODUCTION_TRACE: 0.1,
+    DEVELOPMENT_TRACE: 1.0,
+    PRODUCTION_REPLAY: 0.1,
+    ERROR_REPLAY: 1.0,
+  },
+  DEFAULT_VERSION: "1.0.0",
+} as const;
+
 // Initialize Sentry for the client
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -12,12 +23,16 @@ Sentry.init({
     }),
   ],
   // Performance Monitoring
-  tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // Capture 10% of transactions in production
+  tracesSampleRate: import.meta.env.PROD
+    ? SENTRY_CONFIG.SAMPLING_RATES.PRODUCTION_TRACE
+    : SENTRY_CONFIG.SAMPLING_RATES.DEVELOPMENT_TRACE, // Capture 10% of transactions in production
   // Session Replay
-  replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // Capture 10% of sessions
-  replaysOnErrorSampleRate: 1.0, // Capture 100% of sessions with errors
+  replaysSessionSampleRate: import.meta.env.PROD
+    ? SENTRY_CONFIG.SAMPLING_RATES.PRODUCTION_REPLAY
+    : SENTRY_CONFIG.SAMPLING_RATES.DEVELOPMENT_TRACE, // Capture 10% of sessions
+  replaysOnErrorSampleRate: SENTRY_CONFIG.SAMPLING_RATES.ERROR_REPLAY, // Capture 100% of sessions with errors
   // Release tracking
-  release: import.meta.env.VITE_APP_VERSION || "1.0.0",
+  release: import.meta.env.VITE_APP_VERSION || SENTRY_CONFIG.DEFAULT_VERSION,
   // Error filtering
   beforeSend(event, hint) {
     // Filter out common non-actionable errors

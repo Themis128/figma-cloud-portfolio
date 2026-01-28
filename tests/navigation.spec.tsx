@@ -5,14 +5,19 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
 import Navigation from "../client/components/Navigation";
+import { ThemeProvider } from "../client/components/ThemeProvider";
 
-const renderWithRouter = (component: React.ReactElement, initialEntries = ["/"]) => {
-  return render(<MemoryRouter initialEntries={initialEntries}>{component}</MemoryRouter>);
+const renderWithProviders = (component: React.ReactElement, initialEntries = ["/"]) => {
+  return render(
+    <ThemeProvider>
+      <MemoryRouter initialEntries={initialEntries}>{component}</MemoryRouter>
+    </ThemeProvider>,
+  );
 };
 
 describe("Navigation", () => {
   it("should render navigation with logo", () => {
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
     const logo = screen.getByRole("link", { name: /home/i });
     expect(logo).toBeInTheDocument();
     // Logo is an image, not text content
@@ -21,7 +26,7 @@ describe("Navigation", () => {
   });
 
   it("should render all navigation links", () => {
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
     const navigationItems = ["About", "Resume", "Contact", "Performance", "Agents"];
 
     navigationItems.forEach((item) => {
@@ -31,7 +36,7 @@ describe("Navigation", () => {
   });
 
   it("should render navigation links with correct hrefs", () => {
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
     const navigationItems = [
       { name: "About", href: "/about" },
       { name: "Resume", href: "/resume" },
@@ -50,14 +55,14 @@ describe("Navigation", () => {
   });
 
   it("should show mobile menu button on small screens", () => {
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
     const menuButton = screen.getByRole("button", { name: "Toggle mobile menu" });
     expect(menuButton).toBeInTheDocument();
   });
 
   it("should toggle mobile menu when button is clicked", async () => {
     const user = userEvent.setup();
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
 
     const menuButton = screen.getByRole("button", { name: "Toggle mobile menu" });
 
@@ -79,7 +84,7 @@ describe("Navigation", () => {
 
   it("should close mobile menu when navigation link is clicked", async () => {
     const user = userEvent.setup();
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
 
     const menuButton = screen.getByRole("button", { name: "Toggle mobile menu" });
 
@@ -103,7 +108,7 @@ describe("Navigation", () => {
 
   it("should render CTA button in mobile menu", async () => {
     const user = userEvent.setup();
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
 
     const menuButton = screen.getByRole("button", { name: "Toggle mobile menu" });
     await user.click(menuButton);
@@ -114,7 +119,7 @@ describe("Navigation", () => {
   });
 
   it("should have proper accessibility attributes", () => {
-    renderWithRouter(<Navigation />);
+    renderWithProviders(<Navigation />);
 
     const nav = screen.getByRole("navigation");
     expect(nav).toBeInTheDocument();

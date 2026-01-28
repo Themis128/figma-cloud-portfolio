@@ -48,7 +48,12 @@ export function PerformanceTester() {
       const result: TestResult = {
         name: test.name,
         duration: test.duration,
-        status: Math.random() > ERROR_PROBABILITY ? "error" : Math.random() > WARNING_PROBABILITY ? "warning" : "success",
+        status:
+          Math.random() > ERROR_PROBABILITY
+            ? "error"
+            : Math.random() > WARNING_PROBABILITY
+              ? "warning"
+              : "success",
         details: generateTestDetails(test.name),
       };
 

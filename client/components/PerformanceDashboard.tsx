@@ -1,5 +1,5 @@
 import { Activity, Minus, TrendingDown, TrendingUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -23,7 +23,7 @@ interface PerformanceDashboardProps {
 export function PerformanceDashboard({ className, compact = false }: PerformanceDashboardProps) {
   const { isSupported, performanceScore, formattedMetrics } = usePerformanceMonitoring();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [previousMetrics, setPreviousMetrics] = useState<Record<string, number>>({});
+  const previousMetricsRef = useRef<Record<string, number>>({});
 
   // Track metric changes for trend indicators
   useEffect(() => {
@@ -34,22 +34,88 @@ export function PerformanceDashboard({ className, compact = false }: Performance
         currentMetrics[key] = numericValue;
       }
     });
-    setPreviousMetrics(currentMetrics);
+    previousMetricsRef.current = currentMetrics;
   }, [formattedMetrics]);
 
-  const getTrendIcon = (key: string, currentValue: string) => {
-    const current = parseFloat(currentValue.replace(/[^\d.]/g, ""));
-    const previous = previousMetrics[key];
+  const getTrendIcon = useMemo(
+    () => (key: string, currentValue: string) => {
+      const current = parseFloat(currentValue.replace(/[^\d.]/g, ""));
+      const previous = previousMetricsRef.current[key];
 
-    if (!previous || Number.isNaN(current)) return <Minus className='w-3 h-3 text-gray-400' />;
+      if (!previous || Number.isNaN(current)) return <Minus className='w-3 h-3 text-gray-400' />;
 
-    if (current > previous) {
-      return <TrendingUp className='w-3 h-3 text-red-400' />;
-    } else if (current < previous) {
-      return <TrendingDown className='w-3 h-3 text-green-400' />;
-    }
-    return <Minus className='w-3 h-3 text-gray-400' />;
-  };
+      if (current > previous) {
+        return <TrendingUp className='w-3 h-3 text-red-400' />;
+      } else if (current < previous) {
+        return <TrendingDown className='w-3 h-3 text-green-400' />;
+      }
+      return <Minus className='w-3 h-3 text-gray-400' />;
+    },
+    [],
+  );
+
+  const getScoreColor = useMemo(
+    () => (score: string) => {
+      switch (score) {
+        case "good":
+          return "bg-green-500";
+        case "needs-improvement":
+          return "bg-yellow-500";
+        case "poor":
+          return "bg-red-500";
+        default:
+          return "bg-gray-500";
+      }
+    },
+    [],
+  );
+
+  const getScoreText = useMemo(
+    () => (score: string) => {
+      switch (score) {
+        case "good":
+          return "Good";
+        case "needs-improvement":
+          return "Needs Improvement";
+        case "poor":
+          return "Poor";
+        default:
+          return "Unknown";
+      }
+    },
+    [],
+  );
+
+  const getMetricStatus = useMemo(
+    () => (key: string, value: string) => {
+      const numericValue = parseFloat(value.replace(/[^\d.]/g, ""));
+
+      if (key.includes("LCP")) {
+        if (numericValue <= LCP_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
+        if (numericValue <= LCP_NEEDS_IMPROVEMENT_THRESHOLD)
+          return { status: "needs-improvement", color: "text-yellow-400" };
+        return { status: "poor", color: "text-red-400" };
+      }
+
+      if (key.includes("CLS")) {
+        if (numericValue <= CLS_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
+        if (numericValue <= CLS_NEEDS_IMPROVEMENT_THRESHOLD)
+          return { status: "needs-improvement", color: "text-yellow-400" };
+        return { status: "poor", color: "text-red-400" };
+      }
+
+      if (key.includes("FCP") || key.includes("TTFB")) {
+        if (numericValue <= FCP_TTFB_GOOD_THRESHOLD)
+          return { status: "good", color: "text-green-400" };
+        if (numericValue <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)
+          return { status: "needs-improvement", color: "text-yellow-400" };
+        return { status: "poor", color: "text-red-400" };
+      }
+
+      return { status: "unknown", color: "text-gray-400" };
+    },
+    [],
+  );
 
   if (!isSupported) {
     return (
@@ -60,60 +126,6 @@ export function PerformanceDashboard({ className, compact = false }: Performance
       </Card>
     );
   }
-
-  const getScoreColor = (score: string) => {
-    switch (score) {
-      case "good":
-        return "bg-green-500";
-      case "needs-improvement":
-        return "bg-yellow-500";
-      case "poor":
-        return "bg-red-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
-  const getScoreText = (score: string) => {
-    switch (score) {
-      case "good":
-        return "Good";
-      case "needs-improvement":
-        return "Needs Improvement";
-      case "poor":
-        return "Poor";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getMetricStatus = (key: string, value: string) => {
-    const numericValue = parseFloat(value.replace(/[^\d.]/g, ""));
-
-    if (key.includes("LCP")) {
-      if (numericValue <= LCP_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
-      if (numericValue <= LCP_NEEDS_IMPROVEMENT_THRESHOLD)
-        return { status: "needs-improvement", color: "text-yellow-400" };
-      return { status: "poor", color: "text-red-400" };
-    }
-
-    if (key.includes("CLS")) {
-      if (numericValue <= CLS_GOOD_THRESHOLD) return { status: "good", color: "text-green-400" };
-      if (numericValue <= CLS_NEEDS_IMPROVEMENT_THRESHOLD)
-        return { status: "needs-improvement", color: "text-yellow-400" };
-      return { status: "poor", color: "text-red-400" };
-    }
-
-    if (key.includes("FCP") || key.includes("TTFB")) {
-      if (numericValue <= FCP_TTFB_GOOD_THRESHOLD)
-        return { status: "good", color: "text-green-400" };
-      if (numericValue <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)
-        return { status: "needs-improvement", color: "text-yellow-400" };
-      return { status: "poor", color: "text-red-400" };
-    }
-
-    return { status: "unknown", color: "text-gray-400" };
-  };
 
   if (compact) {
     return (

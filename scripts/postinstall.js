@@ -1,33 +1,22 @@
-#!/usr/bin/env node
+import fs from "node:fs";
 
-/**
- * Postinstall script to optimize pnpm setup and performance
- */
+// Postinstall optimizations and setup
+async function postInstall() {
+  try {
+    console.log("Running postinstall optimizations...");
 
-const fs = require("node:fs");
-const path = require("node:path");
+    // Create necessary directories if they don't exist
+    const dirs = ["dist", "coverage", "test-results"];
+    for (const dir of dirs) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    }
 
-console.log("🔧 Running postinstall optimizations...");
-
-// Ensure pnpm cache directory exists
-const cacheDir = path.join(__dirname, "..", "node_modules", ".pnpm-cache");
-if (!fs.existsSync(cacheDir)) {
-  fs.mkdirSync(cacheDir, { recursive: true });
-  console.log("✅ Created pnpm cache directory");
+    console.log("✅ Postinstall completed successfully");
+  } catch (error) {
+    console.warn("⚠️ Postinstall warning:", error.message);
+  }
 }
 
-// Ensure pnpm state directory exists
-const stateDir = path.join(__dirname, "..", "node_modules", ".pnpm-state");
-if (!fs.existsSync(stateDir)) {
-  fs.mkdirSync(stateDir, { recursive: true });
-  console.log("✅ Created pnpm state directory");
-}
-
-// Create .pnpm-debug.log if it doesn't exist (for debugging)
-const debugLog = path.join(__dirname, "..", ".pnpm-debug.log");
-if (!fs.existsSync(debugLog)) {
-  fs.writeFileSync(debugLog, "# pnpm debug log\n", "utf8");
-  console.log("✅ Created pnpm debug log file");
-}
-
-console.log("🎉 Postinstall optimizations complete!");
+postInstall();

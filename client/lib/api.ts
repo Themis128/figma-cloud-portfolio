@@ -79,7 +79,7 @@ export async function submitContactForm(
  * Resume PDF generation
  */
 export async function generateResumePDF(resumeData: ResumeData): Promise<Blob> {
-  const response = await apiRequest("resume", {
+  const response = await apiRequest("resume/download", {
     method: "POST",
     body: JSON.stringify(resumeData),
   });

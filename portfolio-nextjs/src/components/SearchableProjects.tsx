@@ -1,10 +1,10 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
+import React, { useDeferredValue, useMemo, useState } from "react";
 import { LinkPreview } from "@/components/LinkPreview";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "framer-motion";
-import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
-import React, { useDeferredValue, useMemo, useState } from "react";
 
 interface Project {
   id: string;

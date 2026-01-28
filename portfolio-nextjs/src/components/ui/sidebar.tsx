@@ -13,11 +13,21 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+const DAYS_PER_WEEK = 7;
+const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * DAYS_PER_WEEK;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+// UI Constants
+const SIDEBAR_TAB_INDEX_DISABLED = -1;
+const SIDEBAR_TOOLTIP_DELAY = 0;
+
+// Calculation Constants
+const MILLISECONDS_PER_SECOND = 1000;
+const SKELETON_WIDTH_MIN = 50;
+const SKELETON_WIDTH_RANGE = 40;
 
 type SidebarContext = {
   state: "expanded" | "collapsed";
@@ -82,7 +92,7 @@ const SidebarProvider = React.forwardRef<
           // biome-ignore lint/suspicious/noExplicitAny: CookieStore types are incomplete
           (window.cookieStore as any).set(SIDEBAR_COOKIE_NAME, openState.toString(), {
             path: "/",
-            expires: new Date(Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000),
+            expires: new Date(Date.now() + SIDEBAR_COOKIE_MAX_AGE * MILLISECONDS_PER_SECOND),
           });
         } else {
           // Fallback to document.cookie for older browsers
@@ -130,7 +140,7 @@ const SidebarProvider = React.forwardRef<
 
     return (
       <SidebarContext.Provider value={contextValue}>
-        <TooltipProvider delayDuration={0}>
+        <TooltipProvider delayDuration={SIDEBAR_TOOLTIP_DELAY}>
           <div
             style={
               {
@@ -293,7 +303,7 @@ const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"bu
         ref={ref}
         data-sidebar='rail'
         aria-label='Toggle Sidebar'
-        tabIndex={-1}
+        tabIndex={SIDEBAR_TAB_INDEX_DISABLED}
         onClick={toggleSidebar}
         title='Toggle Sidebar'
         className={cn(
@@ -641,7 +651,7 @@ const SidebarMenuSkeleton = React.forwardRef<
 >(({ className, showIcon = false, ...props }, ref) => {
   // Random width between 50 to 90%.
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
+    return `${Math.floor(Math.random() * SKELETON_WIDTH_RANGE) + SKELETON_WIDTH_MIN}%`;
   }, []);
 
   return (

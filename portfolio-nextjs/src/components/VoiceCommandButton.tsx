@@ -86,10 +86,11 @@ export default function VoiceCommandButton({
           <PopoverTrigger asChild>
             <Button
               size='icon'
-              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${isListening
+              className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
+                isListening
                   ? "bg-red-500 hover:bg-red-600 animate-pulse"
                   : "bg-cyan-500 hover:bg-cyan-600"
-                }`}
+              }`}
               onClick={isListening ? stopListening : startListening}
               aria-label={isListening ? "Stop voice commands" : "Start voice commands"}
             >
@@ -116,7 +117,9 @@ export default function VoiceCommandButton({
                   {isListening ? "Listening..." : "Ready"}
                 </Badge>
                 {confidence > 0 && (
-                  <Badge variant='outline'>{Math.round(confidence * CONFIDENCE_PERCENTAGE_MULTIPLIER)}% confidence</Badge>
+                  <Badge variant='outline'>
+                    {Math.round(confidence * CONFIDENCE_PERCENTAGE_MULTIPLIER)}% confidence
+                  </Badge>
                 )}
               </div>
 

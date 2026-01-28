@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("Logo Image Optimization", () => {
   test("should load logo with proper optimization", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for the page to load
     await page.waitForLoadState("domcontentloaded");
@@ -40,6 +41,7 @@ test.describe("Logo Image Optimization", () => {
 
   test("should use modern image formats", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for the page to load
     await page.waitForLoadState("domcontentloaded");
@@ -69,6 +71,7 @@ test.describe("Logo Image Optimization", () => {
 
   test("should have proper alt text", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]');
     const alt = await logoImg.getAttribute("alt");
@@ -90,6 +93,7 @@ test.describe("Logo Image Optimization", () => {
 
   test("should have proper CSS classes", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]');
     const className = await logoImg.getAttribute("class");

@@ -8,6 +8,10 @@
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
+const QUALITY_CHECK_CONSTANTS = {
+  SUMMARY_LINE_LENGTH: 50,
+};
+
 console.log("🔍 Running Comprehensive Code Quality Checks...\n");
 
 // Colors for output
@@ -77,7 +81,7 @@ results.push({ name: "Build", ...buildResult });
 if (!buildResult.success) allPassed = false;
 
 // Summary
-console.log(`\n${"=".repeat(50)}`);
+console.log(`\n${"=".repeat(QUALITY_CHECK_CONSTANTS.SUMMARY_LINE_LENGTH)}`);
 log(colors.bold, "📊 CODE QUALITY SUMMARY");
 
 results.forEach((result) => {
@@ -86,7 +90,7 @@ results.forEach((result) => {
   log(color, `${result.name}: ${status}`);
 });
 
-console.log(`\n${"=".repeat(50)}`);
+console.log(`\n${"=".repeat(QUALITY_CHECK_CONSTANTS.SUMMARY_LINE_LENGTH)}`);
 
 if (allPassed) {
   log(colors.green, "🎉 All quality checks passed! Ready to commit.");

@@ -33,6 +33,50 @@ export interface AgentConnection {
   targetHandle?: string;
 }
 
+// Constants for workflow positioning and configuration
+const WORKFLOW_CONSTANTS = {
+  POSITIONS: {
+    INPUT_START: { x: 100, y: 100 },
+    PROCESSING_MIDDLE: { x: 300, y: 100 },
+    DECISION_BRANCH: { x: 500, y: 50 },
+    PROCESSING_ADVANCED: { x: 500, y: 100 },
+    TOOL_PARALLEL: { x: 500, y: 150 },
+    OUTPUT_END: { x: 700, y: 100 },
+    COMPLEX_OUTPUT: { x: 900, y: 100 },
+  },
+  LLM_CONFIG: {
+    BASIC: {
+      TEMPERATURE: 0.7,
+      MAX_TOKENS: 500,
+    },
+    ADVANCED: {
+      TEMPERATURE: 0.8,
+      MAX_TOKENS: 2000,
+    },
+    ANALYTICAL: {
+      TEMPERATURE: 0.3,
+      MAX_TOKENS: 1000,
+    },
+    SUPPORT_INITIAL: {
+      TEMPERATURE: 0.6,
+      MAX_TOKENS: 800,
+    },
+    SUPPORT_DETAILED: {
+      TEMPERATURE: 0.4,
+      MAX_TOKENS: 600,
+    },
+    REVIEW: {
+      TEMPERATURE: 0.2,
+      MAX_TOKENS: 1500,
+    },
+  },
+  CLONE_ID: {
+    RANDOM_LENGTH: 9,
+    SUBSTR_START: 2,
+    BASE_36: 36,
+  },
+} as const;
+
 export const agentTemplates: AgentTemplate[] = [
   {
     id: "basic-chatbot",
@@ -49,18 +93,18 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "input-1",
           type: "input",
-          position: { x: 100, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: { prompt: "Hello! How can I help you today?" },
           label: "User Input",
         },
         {
           id: "llm-1",
           type: "llm",
-          position: { x: 300, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
             model: "gpt-3.5-turbo",
-            temperature: 0.7,
-            maxTokens: 500,
+            temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.BASIC.TEMPERATURE,
+            maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.BASIC.MAX_TOKENS,
             systemPrompt: "You are a helpful assistant.",
           },
           label: "AI Response",
@@ -68,7 +112,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "output-1",
           type: "output",
-          position: { x: 500, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {},
           label: "Response",
         },
@@ -98,7 +142,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "input-1",
           type: "input",
-          position: { x: 100, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: {
             prompt: "What type of content would you like me to create?",
           },
@@ -107,11 +151,11 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "llm-1",
           type: "llm",
-          position: { x: 300, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
             model: "gpt-4",
-            temperature: 0.8,
-            maxTokens: 2000,
+            temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.ADVANCED.TEMPERATURE,
+            maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.ADVANCED.MAX_TOKENS,
             systemPrompt:
               "You are a professional content writer with expertise in SEO and engaging storytelling.",
           },
@@ -120,7 +164,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "decision-1",
           type: "decision",
-          position: { x: 500, y: 50 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.DECISION_BRANCH,
           config: {
             conditions: [
               { field: "tone", operator: "equals", value: "formal" },
@@ -132,7 +176,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "output-1",
           type: "output",
-          position: { x: 700, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {},
           label: "Final Content",
         },
@@ -168,7 +212,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "input-1",
           type: "input",
-          position: { x: 100, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: {
             prompt: "Upload your dataset or describe the data you want to analyze.",
           },
@@ -177,7 +221,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "data-processor-1",
           type: "data-processor",
-          position: { x: 300, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
             operations: ["clean", "normalize", "analyze"],
             outputFormat: "json",
@@ -187,11 +231,11 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "llm-1",
           type: "llm",
-          position: { x: 500, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_ADVANCED,
           config: {
             model: "gpt-4",
-            temperature: 0.3,
-            maxTokens: 1000,
+            temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.ANALYTICAL.TEMPERATURE,
+            maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.ANALYTICAL.MAX_TOKENS,
             systemPrompt:
               "You are a data analysis expert. Provide clear, actionable insights from the processed data.",
           },
@@ -200,7 +244,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "tool-1",
           type: "tool",
-          position: { x: 700, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {
             tool: "chart-generator",
             chartType: "auto",
@@ -210,7 +254,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "output-1",
           type: "output",
-          position: { x: 900, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.COMPLEX_OUTPUT,
           config: {},
           label: "Analysis Report",
         },
@@ -252,18 +296,18 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "input-1",
           type: "input",
-          position: { x: 100, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: { prompt: "How can I help you today?" },
           label: "Customer Query",
         },
         {
           id: "llm-1",
           type: "llm",
-          position: { x: 300, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
             model: "gpt-4",
-            temperature: 0.6,
-            maxTokens: 800,
+            temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_INITIAL.TEMPERATURE,
+            maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_INITIAL.MAX_TOKENS,
             systemPrompt:
               "You are a professional customer support agent. Be helpful, empathetic, and provide clear solutions.",
           },
@@ -272,7 +316,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "decision-1",
           type: "decision",
-          position: { x: 500, y: 50 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.DECISION_BRANCH,
           config: {
             conditions: [
               { field: "complexity", operator: "equals", value: "simple" },
@@ -284,7 +328,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "tool-1",
           type: "tool",
-          position: { x: 500, y: 150 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.TOOL_PARALLEL,
           config: {
             tool: "knowledge-base",
             searchQuery: "auto",
@@ -294,11 +338,11 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "llm-2",
           type: "llm",
-          position: { x: 700, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {
             model: "gpt-4",
-            temperature: 0.4,
-            maxTokens: 600,
+            temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_DETAILED.TEMPERATURE,
+            maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_DETAILED.MAX_TOKENS,
             systemPrompt: "Provide detailed troubleshooting steps and escalate if needed.",
           },
           label: "Detailed Solution",
@@ -306,7 +350,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "output-1",
           type: "output",
-          position: { x: 900, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.COMPLEX_OUTPUT,
           config: {},
           label: "Support Response",
         },
@@ -354,14 +398,14 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "input-1",
           type: "input",
-          position: { x: 100, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: { prompt: "Paste your code for review or upload a file." },
           label: "Code Input",
         },
         {
           id: "data-processor-1",
           type: "data-processor",
-          position: { x: 300, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
             operations: ["parse", "analyze-syntax", "extract-functions"],
             language: "auto-detect",
@@ -371,7 +415,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "tool-1",
           type: "tool",
-          position: { x: 500, y: 50 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.DECISION_BRANCH,
           config: {
             tool: "security-scanner",
             rules: ["owasp-top-10", "sast-rules"],
@@ -381,7 +425,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "tool-2",
           type: "tool",
-          position: { x: 500, y: 150 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.TOOL_PARALLEL,
           config: {
             tool: "quality-checker",
             standards: ["pep8", "eslint", "sonar"],
@@ -391,11 +435,11 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "llm-1",
           type: "llm",
-          position: { x: 700, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {
             model: "gpt-4",
-            temperature: 0.2,
-            maxTokens: 1500,
+            temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.REVIEW.TEMPERATURE,
+            maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.REVIEW.MAX_TOKENS,
             systemPrompt:
               "You are an expert code reviewer. Provide constructive feedback, identify issues, and suggest improvements.",
           },
@@ -404,7 +448,7 @@ export const agentTemplates: AgentTemplate[] = [
         {
           id: "output-1",
           type: "output",
-          position: { x: 900, y: 100 },
+          position: WORKFLOW_CONSTANTS.POSITIONS.COMPLEX_OUTPUT,
           config: {},
           label: "Review Report",
         },
@@ -467,16 +511,16 @@ export const cloneTemplate = (template: AgentTemplate, newName?: string): AgentT
     workflow: {
       nodes: template.workflow.nodes.map((node) => ({
         ...node,
-        id: `${node.id}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${node.id}-clone-${Date.now()}-${Math.random().toString(WORKFLOW_CONSTANTS.CLONE_ID.BASE_36).substr(WORKFLOW_CONSTANTS.CLONE_ID.SUBSTR_START, WORKFLOW_CONSTANTS.CLONE_ID.RANDOM_LENGTH)}`,
       })),
       connections: template.workflow.connections.map((connection) => ({
         ...connection,
-        id: `${connection.id}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${connection.id}-clone-${Date.now()}-${Math.random().toString(WORKFLOW_CONSTANTS.CLONE_ID.BASE_36).substr(WORKFLOW_CONSTANTS.CLONE_ID.SUBSTR_START, WORKFLOW_CONSTANTS.CLONE_ID.RANDOM_LENGTH)}`,
         source: template.workflow.nodes.find((node) => node.id === connection.source)
-          ? `${connection.source}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          ? `${connection.source}-clone-${Date.now()}-${Math.random().toString(WORKFLOW_CONSTANTS.CLONE_ID.BASE_36).substr(WORKFLOW_CONSTANTS.CLONE_ID.SUBSTR_START, WORKFLOW_CONSTANTS.CLONE_ID.RANDOM_LENGTH)}`
           : connection.source,
         target: template.workflow.nodes.find((node) => node.id === connection.target)
-          ? `${connection.target}-clone-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          ? `${connection.target}-clone-${Date.now()}-${Math.random().toString(WORKFLOW_CONSTANTS.CLONE_ID.BASE_36).substr(WORKFLOW_CONSTANTS.CLONE_ID.SUBSTR_START, WORKFLOW_CONSTANTS.CLONE_ID.RANDOM_LENGTH)}`
           : connection.target,
       })),
     },

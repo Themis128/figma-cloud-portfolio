@@ -14,6 +14,10 @@ interface UseSocketOptions {
   autoConnect?: boolean;
 }
 
+const SOCKET_CONSTANTS = {
+  CONNECTION_CHECK_INTERVAL_MS: 1000,
+} as const;
+
 export function useSocket(options: UseSocketOptions = {}) {
   const { userId, userName, autoConnect = true } = options;
   const [isConnected, setIsConnected] = useState(false);
@@ -54,7 +58,7 @@ export function useSocket(options: UseSocketOptions = {}) {
     };
 
     checkConnection();
-    const interval = setInterval(checkConnection, 1000);
+    const interval = setInterval(checkConnection, SOCKET_CONSTANTS.CONNECTION_CHECK_INTERVAL_MS);
 
     return () => {
       clearInterval(interval);

@@ -41,7 +41,8 @@
       "tests/**/*.{js,ts,tsx}",
       "isolated-tests/**/*.{js,ts,tsx}",
       "playwright-tests/**/*.{js,ts,tsx}",
-      "portfolio-nextjs/**/*.{js,jsx,ts,tsx}",
+      "portfolio-nextjs/src/**/*.{js,jsx,ts,tsx}",
+      "portfolio-nextjs/*.config.{js,ts}",
       "*.{js,ts,tsx}",
       "*.config.{js,ts}"
     ],

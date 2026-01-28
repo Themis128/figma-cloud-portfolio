@@ -109,7 +109,10 @@ const setupPerformanceMonitoring = () => {
         memory: { usedJSHeapSize: number; jsHeapSizeLimit: number };
       };
       const memory = perfWithMemory.memory;
-      if (memory && memory.usedJSHeapSize > memory.jsHeapSizeLimit * MEMORY_USAGE_WARNING_THRESHOLD) {
+      if (
+        memory &&
+        memory.usedJSHeapSize > memory.jsHeapSizeLimit * MEMORY_USAGE_WARNING_THRESHOLD
+      ) {
       }
     }, MEMORY_CHECK_INTERVAL_MS); // Check every 30 seconds
   }

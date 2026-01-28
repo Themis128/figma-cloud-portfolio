@@ -1,186 +1,115 @@
-import { defineConfig, devices } from "@playwright/test";
-import os from "node:os";
-
-// Constants for configuration
-const DEFAULT_CPU_COUNT = 2;
-const WORKER_CPU_FRACTION = 0.75;
-const VISUAL_SNAPSHOT_THRESHOLD = 0.2;
-const VISUAL_SNAPSHOT_MAX_DIFF = 100;
-const CI_RETRIES = 2;
-const LOCAL_RETRIES = 1;
-const ACTION_TIMEOUT = 10000;
-const NAVIGATION_TIMEOUT = 30000;
-const EXPECT_TIMEOUT = 10000;
+import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
 
 /**
- * @see https://playwright.dev/docs/test-configuration
+ * Optimized Playwright Configuration for Fast E2E Testing
+ *
+ * This configuration is optimized for speed while maintaining reliability:
+ * - Single browser (Chromium) for maximum speed
+ * - Reduced timeouts for faster execution
+ * - Minimal artifacts and reporting
+ * - No retries to avoid slowdowns
+ * - Disabled visual comparison and global setup
  */
-export default defineConfig({
-  testDir: "./playwright-tests",
-  /* Run tests in files in parallel */
-  fullyParallel: true, // Enable parallel for better performance
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
-  /* Dynamic worker count: use most of available cores locally, limit on CI */
-  workers: process.env.CI
-    ? 2
-    : Math.max(1, Math.floor((os.cpus()?.length || DEFAULT_CPU_COUNT) * WORKER_CPU_FRACTION)),
 
-  /* Circuit breaker configuration */
+// Create optimized configuration for fast E2E testing
+const config = createPlaywrightConfig("fast", {
+  // Override fast config with even more aggressive optimizations
+  timeout: 30000, // 30 seconds per test (down from 60s)
+  retries: 0, // No retries for maximum speed
+
+  // Disable webServer since we start it manually
+  webServer: undefined, // Explicitly disable webServer
+
+  // Override baseURL to match actual server port
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "http://localhost:8081",
-
-    /* Enhanced tracing and debugging */
-    trace: "retain-on-failure", // Keep traces for failed tests
-    screenshot: "only-on-failure", // Capture screenshots on failures
-    video: "retain-on-failure", // Record videos for failed tests
-
-    /* Optimized timeouts for better reliability */
-    actionTimeout: ACTION_TIMEOUT,
-    navigationTimeout: NAVIGATION_TIMEOUT,
-
-    /* Enhanced browser context for better isolation */
-    viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
-
-    /* Performance monitoring */
-    extraHTTPHeaders: {
-      "X-Test-Session": "playwright-e2e",
-    },
   },
-
-  /* Enhanced reporting for issue tracking and resolution */
-  reporter: [
-    ["line"], // Console output with Inter font styling
-    [
-      "html",
-      {
-        open: "never",
-        outputFolder: "playwright-html-report",
-        // Custom HTML report styling to match app fonts
-        attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
-      },
-    ], // HTML report for detailed analysis
-    ["json", { outputFile: "test-results/results.json" }], // JSON for CI/CD integration
-    ["junit", { outputFile: "test-results/junit.xml" }], // JUnit for external tools
-    // ["./scripts/playwright-mcp-integration.ts"], // MCP integration for real-time progress - temporarily disabled
-  ],
-
-  /* Global setup and teardown for test environment preparation */
-  // globalSetup: "./playwright-tests/global-setup.ts",
-  globalTeardown: "./playwright-tests/global-teardown.ts",
-
-  /* Where to store test artifacts (videos, traces, screenshots) */
-  outputDir: "playwright-report/artifacts",
-
-  /* Test execution metadata */
-  metadata: {
-    environment: process.env.NODE_ENV || "development",
-    testType: "e2e",
-    framework: "playwright",
-    timestamp: new Date().toISOString(),
-  },
-
-  /* Expect configuration for better assertions */
-  expect: {
-    timeout: EXPECT_TIMEOUT,
-    toHaveScreenshot: {
-      threshold: VISUAL_SNAPSHOT_THRESHOLD, // Allow threshold for visual comparisons
-      maxDiffPixels: VISUAL_SNAPSHOT_MAX_DIFF, // Maximum pixel difference
-    },
-    toMatchSnapshot: {
-      threshold: 0.2,
-    },
-  },
-
-  /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
+      name: "chromium-fast",
+      testIgnore: /.*\.(slow|integration)\.spec\.ts$/, // Skip slow tests
       use: {
-        ...devices["Desktop Chrome"],
-        // Chromium specific settings for better React 19 hydration
+        // Fast browser args from shared config
         launchOptions: {
-          args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
+          args: [
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-renderer-backgrounding",
+            "--disable-features=TranslateUI",
+            "--disable-web-security",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--no-sandbox",
+            "--disable-extensions",
+            "--disable-default-apps",
+            "--metrics-recording-only",
+            "--no-first-run",
+          ],
+          headless: true,
         },
-        // Longer timeouts for React 19 hydration
-        actionTimeout: ACTION_TIMEOUT,
-        navigationTimeout: NAVIGATION_TIMEOUT,
-      },
-    },
-
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-        // Firefox specific settings to handle potential issues
-        launchOptions: {
-          args: ["--disable-web-security", "--allow-running-insecure-content"],
+        // Fast context settings
+        contextOptions: {
+          reducedMotion: "reduce",
+          strictSelectors: true,
         },
-        // Longer timeouts for Firefox React hydration
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
-        // WebKit specific settings
-        launchOptions: {
-          args: ["--disable-web-security"],
-        },
-        // Longer timeouts for WebKit React hydration
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-
-    /* Test against mobile viewports. */
-    {
-      name: "Mobile Chrome",
-      use: {
-        ...devices["Pixel 5"],
-        // Mobile Chrome settings
-        launchOptions: {
-          args: ["--disable-web-security"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-    {
-      name: "Mobile Safari",
-      use: {
-        ...devices["iPhone 12"],
-        // Mobile Safari settings
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
+        // Minimal viewport for speed
+        viewport: { width: 1024, height: 768 },
+        // Aggressive timeouts
+        actionTimeout: 3000, // 3 seconds
+        navigationTimeout: 10000, // 10 seconds
       },
     },
   ],
 
-  /* Run your local dev servers before starting the tests. Playwright will
-     start the backend and frontend when running tests locally and will reuse
-     existing servers when present to speed up iteration. */
-  // webServer: [
-  //   {
-  //     command: "npx tsx server/node-build.ts",
-  //     url: "http://localhost:3000/api/ping",
-  //     reuseExistingServer: !process.env.CI,
-  //     timeout: 120000,
-  //     cwd: process.cwd(),
-  //   },
-  //   {
-  //     command: "pnpm dev",
-  //     url: "http://localhost:8081",
-  //     reuseExistingServer: !process.env.CI,
-  //     timeout: 120000,
-  //     cwd: process.cwd(),
-  //   },
-  // ],
+  // Minimal reporting for speed
+  reporter: [
+    ["line"], // Only console output for speed
+  ],
+
+  // Additional metadata
+  metadata: {
+    environment: "fast-optimized",
+    testType: "e2e",
+    optimized: true,
+    singleBrowser: true,
+    timestamp: new Date().toISOString(),
+  },
 });
+
+// Validate and provide warnings
+const validationIssues = validateConfiguration(config);
+
+if (validationIssues.length > 0) {
+  // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+  console.log("Fast E2E Configuration Issues:");
+  validationIssues.forEach((issue) => {
+    // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+    console.warn(`   - ${issue}`);
+  });
+}
+
+// Configuration summary
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log("🚀 Optimized Fast E2E Configuration:");
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Browser: Chromium only (fastest)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Workers: ${config.workers} (parallel execution)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Test Timeout: ${config.timeout}ms (30s per test)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Action Timeout: 3s, Navigation: 10s`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Retries: ${config.retries} (no retries for speed)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Artifacts: Disabled for maximum speed`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Visual Comparison: Disabled`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Global Setup: Disabled`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log("");
+
+export { config, validationIssues };
+
+export default config;

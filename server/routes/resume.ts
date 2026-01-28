@@ -4,6 +4,13 @@ import type { Request, Response } from "express";
 import { marked } from "marked";
 import puppeteer from "puppeteer";
 
+// Constants for magic numbers
+const RESUME_CONSTANTS = {
+  DEFAULT_SKILL_LEVEL: 85,
+  FONT_LOAD_DELAY_MS: 1000,
+  HTTP_STATUS_INTERNAL_SERVER_ERROR: 500,
+} as const;
+
 // Configure marked for better HTML output
 marked.setOptions({
   breaks: true,
@@ -674,7 +681,7 @@ function generateHTML(resume: ResumeData): string {
               <h4>${category}</h4>
               ${skills
                 .map((skill) => {
-                  const level = skillLevels[skill] || 85;
+                  const level = skillLevels[skill] || RESUME_CONSTANTS.DEFAULT_SKILL_LEVEL;
                   return `
                 <div class="skill-item">
                   <div class="skill-header">
@@ -853,7 +860,7 @@ export async function handleResumeDownload(req: Request, res: Response) {
     });
 
     // Wait a bit for any animations or fonts to load
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, RESUME_CONSTANTS.FONT_LOAD_DELAY_MS));
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -878,7 +885,7 @@ export async function handleResumeDownload(req: Request, res: Response) {
     // Send the PDF buffer
     res.send(pdfBuffer);
   } catch (error) {
-    res.status(500).json({
+    res.status(RESUME_CONSTANTS.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({
       error: "Failed to generate resume PDF",
       message: error instanceof Error ? error.message : "Unknown error",
     });

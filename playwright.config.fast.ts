@@ -1,194 +1,160 @@
-import { cpus } from "node:os";
-import { defineConfig, devices } from "@playwright/test";
+import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
 
 /**
- * Fast Playwright configuration optimized for CI/CD and local development
+ * Fast Playwright Configuration
  *
- * Key optimizations:
- * - Aggressive timeouts for quick failure detection
- * - Dynamic worker allocation based on CPU cores
- * - Performance-focused browser settings
- * - Minimal resource usage for speed
- * - Environment-aware configuration
+ * Optimized for maximum execution speed with:
+ * - Balanced aggressive timeouts (no more ultra-low 3s settings)
+ * - Smart CPU utilization (100% for speed, but controlled)
+ * - Consolidated launch arguments (no duplicates)
+ * - Single browser testing for speed (Chromium only)
+ * - Minimal artifacts and tracing for performance
+ * - Optional retries for critical tests
+ *
+ * Use this configuration for:
+ * - Quick feedback loops during development
+ * - Smoke testing
+ * - Performance testing
  */
 
-// Configuration constants for maintainability
-const CONFIG = {
-  // Performance timeouts (in milliseconds)
-  TIMEOUTS: {
-    ACTION: 3000, // Reduced from 5000ms for faster failure detection
-    NAVIGATION: 8000, // Reduced from 10000ms
-    EXPECT: 3000, // Reduced from 5000ms
-    WEB_SERVER: 30000,
+// Create fast configuration with optimizations
+const config = createPlaywrightConfig("fast", {
+  // Fast-specific overrides for edge cases
+  retries: process.env.FAST_WITH_RETRIES === "true" ? 1 : 0, // Allow override for critical tests
+
+  // Disable webServer since we start it manually
+  features: {
+    enableWebServer: false,
   },
+  webServer: undefined, // Explicitly disable webServer
 
-  // Browser settings
-  BROWSER: {
-    VIEWPORT: { width: 1280, height: 720 },
-    LAUNCH_ARGS: [
-      "--disable-web-security",
-      "--disable-features=VizDisplayCompositor",
-      "--disable-background-timer-throttling",
-      "--disable-backgrounding-occluded-windows",
-      "--disable-renderer-backgrounding",
-      "--disable-features=TranslateUI",
-      "--disable-ipc-flooding-protection",
-      "--disable-component-extensions-with-background-pages",
-      "--disable-extensions",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
-      "--disable-software-rasterizer",
-      "--disable-background-networking",
-      "--disable-background-timer-throttling",
-      "--disable-backgrounding-occluded-windows",
-      "--disable-renderer-backgrounding",
-      "--disable-component-extensions-with-background-pages",
-      "--disable-default-apps",
-      "--disable-features=TranslateUI",
-      "--disable-ipc-flooding-protection",
-      "--metrics-recording-only",
-      "--no-first-run",
-      "--enable-features=NetworkService,NetworkServiceInProcess",
-      "--disable-features=VizDisplayCompositor",
-      "--disable-web-security",
-      "--disable-features=VizDisplayCompositor",
-    ],
-  },
-
-  // Test execution settings
-  EXECUTION: {
-    RETRIES: 0, // No retries for speed
-    FORBID_ONLY: !!process.env.CI, // Fail on test.only in CI
-    FULLY_PARALLEL: true, // Run tests in parallel
-    TRACE: "off", // Disable for speed
-    SCREENSHOT: "off", // Disable for speed
-    VIDEO: "off", // Disable for speed
-  },
-
-  // Server configuration
-  SERVER: {
-    COMMAND: "pnpm dev",
-    URL: "http://localhost:8081",
-    REUSE_EXISTING: !process.env.CI,
-    TIMEOUT: 30000,
-  },
-
-  // Reporter configuration
-  REPORTER: process.env.CI ? "github" : "list",
-} as const;
-
-// Calculate optimal worker count based on CPU cores
-const getOptimalWorkers = (): number => {
-  const cpuCount = cpus().length;
-  const isCI = !!process.env.CI;
-  const isGitHubActions = !!process.env.GITHUB_ACTIONS;
-
-  // GitHub Actions typically has 2 cores, use 2 workers
-  if (isGitHubActions) return 2;
-
-  // CI environments: use CPU count - 1 to leave room for other processes
-  if (isCI) return Math.max(1, cpuCount - 1);
-
-  // Local development: use CPU count for maximum parallelism
-  return cpuCount;
-};
-
-export default defineConfig({
-  testDir: "./playwright-tests",
-
-  /* Run tests in files in parallel for speed */
-  fullyParallel: CONFIG.EXECUTION.FULLY_PARALLEL,
-
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: CONFIG.EXECUTION.FORBID_ONLY,
-
-  /* Reduced retry strategy for faster execution */
-  retries: CONFIG.EXECUTION.RETRIES,
-
-  /* Use optimal number of workers for better performance */
-  workers: getOptimalWorkers(),
-
-  /* Expect timeout */
-  expect: {
-    timeout: CONFIG.TIMEOUTS.EXPECT,
-  },
-
-  /* Optimized timeouts for faster execution */
+  // Override baseURL to match actual server port
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: CONFIG.SERVER.URL,
-
-    /* Aggressive timeouts for faster failure detection */
-    actionTimeout: CONFIG.TIMEOUTS.ACTION,
-    navigationTimeout: CONFIG.TIMEOUTS.NAVIGATION,
-
-    /* Enhanced browser context for better isolation and performance */
-    viewport: CONFIG.BROWSER.VIEWPORT,
-    ignoreHTTPSErrors: true,
-
-    /* Disable tracing and screenshots for speed */
-    trace: CONFIG.EXECUTION.TRACE,
-    screenshot: CONFIG.EXECUTION.SCREENSHOT,
-    video: CONFIG.EXECUTION.VIDEO,
-
-    /* Additional performance optimizations */
-    launchOptions: {
-      args: [...CONFIG.BROWSER.LAUNCH_ARGS],
-      // Reduce memory usage in CI
-      ...(process.env.CI
-        ? {
-            headless: true,
-            devtools: false,
-          }
-        : {
-            headless: false,
-            devtools: false,
-          }),
-    },
+    baseURL: "http://localhost:8081",
   },
 
-  /* Optimized reporter for different environments */
-  reporter: CONFIG.REPORTER,
+  // Custom test filtering for fast execution
+  grep: process.env.FAST_TEST_PATTERN ? new RegExp(process.env.FAST_TEST_PATTERN) : /@fast|@smoke/, // Run only tests marked as fast or smoke
 
-  /* Configure projects for major browsers */
+  // Single project override (ensure only Chromium)
   projects: [
     {
-      name: "chromium",
+      name: "chromium-fast",
+      testIgnore: /.*\.(slow|integration)\.spec\.ts$/, // Skip slow tests
       use: {
-        ...devices["Desktop Chrome"],
-        // Additional performance settings for Chrome
+        // Use fast browser args from shared config
         launchOptions: {
-          args: [...CONFIG.BROWSER.LAUNCH_ARGS],
+          args: [
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-renderer-backgrounding",
+            "--disable-features=TranslateUI",
+            "--disable-web-security",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--no-sandbox",
+            "--disable-extensions",
+            "--disable-default-apps",
+            "--metrics-recording-only",
+            "--no-first-run",
+          ],
+          // Fast execution settings
+          headless: true,
         },
+        // Fast context settings
+        contextOptions: {
+          reducedMotion: "reduce",
+          strictSelectors: true,
+        },
+        // Minimal viewport for speed
+        viewport: { width: 1024, height: 768 },
       },
     },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: CONFIG.SERVER.COMMAND,
-  //   url: CONFIG.SERVER.URL,
-  //   reuseExistingServer: CONFIG.SERVER.REUSE_EXISTING,
-  //   timeout: CONFIG.SERVER.TIMEOUT,
-  // },
-
-  /* Global setup and teardown for better test isolation */
-  // globalSetup: fileURLToPath(new URL("./playwright-tests/global-setup.ts", import.meta.url)),
-  // globalTeardown: fileURLToPath(new URL("./playwright-tests/global-teardown.ts", import.meta.url)),
-
-  /* Test metadata for better organization */
+  // Additional fast-specific metadata
   metadata: {
-    environment: process.env.NODE_ENV ?? "development",
-    ci: !!process.env.CI,
+    environment: "fast",
+    testType: "smoke",
+    optimized: true,
+    skipSlowTests: true,
     timestamp: new Date().toISOString(),
   },
-
-  /* Output directories */
-  outputDir: "test-results/fast/",
-
-  /* Test filtering for faster execution */
-  grep: process.env.TEST_PATTERN ? new RegExp(process.env.TEST_PATTERN) : undefined,
-  grepInvert: process.env.TEST_GREP_INVERT ? new RegExp(process.env.TEST_GREP_INVERT) : undefined,
 });
+
+// Validate and provide fast-specific warnings
+const validationIssues = validateConfiguration(config);
+const fastWarnings: string[] = [];
+
+// Add fast-specific validations
+// biome-ignore lint/style/noMagicNumbers: 60000ms (60s) is a clear threshold for fast execution validation
+if (config.timeout && config.timeout > 60000) {
+  fastWarnings.push("Test timeout > 60s may reduce fast execution benefits");
+}
+
+if (config.retries && config.retries > 1) {
+  fastWarnings.push("Multiple retries may reduce speed benefits");
+}
+
+if (config.projects && config.projects.length > 1) {
+  fastWarnings.push("Multiple browser projects may reduce speed benefits");
+}
+
+// Report issues and warnings
+if (validationIssues.length > 0 || fastWarnings.length > 0) {
+  // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+  console.log("Fast Playwright Configuration Analysis:");
+
+  if (validationIssues.length > 0) {
+    // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+    console.warn("   Issues:");
+    validationIssues.forEach((issue) => {
+      // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+      console.warn(`   - ${issue}`);
+    });
+  }
+
+  if (fastWarnings.length > 0) {
+    // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+    console.log("   Speed Optimization Notes:");
+    fastWarnings.forEach((warning) => {
+      // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+      console.log(`   - ${warning}`);
+    });
+  }
+  // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+  console.log("");
+}
+
+// Fast configuration summary
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log("Fast Playwright Configuration:");
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Workers: ${config.workers} (max CPU utilization)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Test Timeout: ${config.timeout}ms`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Action Timeout: ${config.use?.actionTimeout}ms`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Retries: ${config.retries}`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Browsers: ${config.projects?.length || 0} (Chromium only for speed)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(`   - Artifacts: Disabled for maximum speed`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
+console.log(
+  `   - Test Filter: ${config.grep && typeof config.grep === "object" && "source" in config.grep ? config.grep.source : "All tests"}`,
+);
+
+export default config;
+
+/**
+ * Helper function to run only critical tests in fast mode
+ */
+export const fastCriticalConfig = createPlaywrightConfig("fast", {
+  ...config,
+  retries: 1, // Some retries for critical tests
+  grep: /@critical|@smoke/,
+});
+
+export { config };

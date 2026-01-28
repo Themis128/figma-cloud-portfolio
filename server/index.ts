@@ -1,13 +1,13 @@
 import cors from "cors";
 import "dotenv/config";
+import type { Server as HttpServer } from "node:http";
+import path from "node:path";
 import express, {
   type ErrorRequestHandler,
   type NextFunction,
   type Request,
   type Response,
 } from "express";
-import type { Server as HttpServer } from "node:http";
-import path from "node:path";
 import { Server as SocketIOServer } from "socket.io";
 import { handleAnalytics } from "./routes/analytics";
 import { handleContactForm } from "./routes/contact";

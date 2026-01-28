@@ -8,7 +8,18 @@
 
 ## Professional Summary
 
-Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments. Proven track record in designing secure, scalable cloud solutions and leading digital transformation initiatives. Expert in identity management, compliance frameworks, and enterprise security architecture.
+Technical Leadership and Cloud Innovation With 15+ years of IT expertise, I architect and deliver enterprise-grade cloud solutions specializing in Azure AD, Microsoft 365, and multi-cloud environments. My foundation combines a Computer Science degree with industry certifications (AWS Cloud Practitioner, Cisco DevNet Associate) and hands-on experience across network infrastructure, cybersecurity, and cloud migration strategies.
+
+**Impact-Driven Problem Solving** I excel at transforming complex technical challenges into scalable, resilient systems that drive business outcomes. My approach merges technical precision with strategic thinking—leveraging emerging technologies like AI/ML integration, zero-trust security models, and infrastructure-as-code to build future-ready solutions.
+
+**Community Impact and Social Innovation** Beyond technical expertise, I'm passionate about technology as a catalyst for positive change. During COVID-19, I supported vulnerable communities through telecommunications services, then contributed to Athens International Airport's critical infrastructure rebuild—enabling safe travel and economic recovery. Currently completing my Master's research in data-driven agricultural innovations, I'm exploring how smart technology can empower sustainable farming and rural communities. My work bridges technical mastery with social impact, creating solutions that are both efficient and meaningful.
+
+**Key Focus Areas:**
+• Cloud Architecture and Migration (Azure, AWS, M365)
+• Cybersecurity and Zero-Trust Implementation
+• AI/ML Integration and Data Analytics
+• Infrastructure Automation and DevOps
+• Sustainable Technology Solutions
 
 ---
 
@@ -42,71 +53,34 @@ Results-driven Cloud Architect and Cybersecurity Specialist with 15+ years of IT
 
 ## Professional Experience
 
-### Senior Cloud Architect
+### Systems and Network Engineer
 
-TechCorp Solutions | Athens, Greece
+Estarta Solutions | Athens, Greece
 
-January 2022 - Present
+December 2024 - March 2025
 
-- Architected and implemented zero-trust security model for Fortune 500 client using Azure AD Premium and Microsoft Defender suite
-- Led migration of 50,000+ users from on-premises AD to Azure AD, reducing authentication issues by 85%
-- Designed multi-cloud disaster recovery solution spanning Azure, AWS, and GCP with 99.9% uptime SLA
-- Implemented automated compliance monitoring using Azure Policy and Azure Monitor, achieving 100% CIS compliance
-- Mentored junior architects and conducted security awareness training for 200+ employees
+Key Responsibilities:
 
-**Key Achievements:**
+- Design, deploy, and manage Cisco virtualization platforms including Cisco UCS (Unified Computing System), HyperFlex, and Cisco ACI (Application Centric Infrastructure)
+- Implement and configure virtual machine environments using VMware vSphere, ESXi, and integration with Cisco hardware
+- Configure and optimize Cisco UCS B-Series and C-Series servers, fabric interconnects, and chassis management
+- Manage Cisco HyperFlex hyperconverged infrastructure solutions for storage, compute, and networking
+- Implement network virtualization solutions using Cisco ACI and Nexus platforms
+- Perform capacity planning, resource allocation, and performance tuning for virtualized environments
+- Troubleshoot complex virtualization issues across compute, network, and storage layers
+- Conduct system upgrades, firmware updates, and patch management on Cisco infrastructure
+- Create and maintain technical documentation including architecture diagrams, configuration standards, and runbooks
+- Collaborate with international teams and deliver solutions for clients across multiple regions
+- Monitor infrastructure performance and implement optimization strategies
 
-- Reduced security incidents by 60% through proactive threat hunting
-- Saved €2.5M annually through cloud optimization and reserved instances
-- Implemented automated backup solutions reducing RTO by 75%
+### Information Technology Support Engineer
 
-### Cybersecurity Consultant
+Cosmos Business Systems Group | Greece
 
-SecureCloud Systems | Remote
+March 2023 - May 2024
 
-March 2019 - December 2021
-
-- Conducted comprehensive security assessments for financial institutions under PSD2 and GDPR requirements
-- Designed and deployed Microsoft 365 security stack for enterprise clients, including Defender for Endpoint and Identity
-- Developed custom security monitoring solutions using Azure Sentinel and KQL queries
-- Led incident response for major data breaches, minimizing impact and ensuring regulatory compliance
-- Created security documentation and procedures for ISO 27001 certification
-
-**Key Achievements:**
-
-- Achieved SOC 2 Type II compliance for 3 major clients
-- Developed automated vulnerability scanning reducing exposure time by 80%
-- Trained 150+ IT professionals in cloud security best practices
-
-### IT Infrastructure Manager
-
-GlobalTech Enterprises | Athens, Greece
-
-June 2015 - February 2019
-
-- Managed enterprise IT infrastructure serving 10,000+ users across 15 countries
-- Led migration from legacy systems to Microsoft 365, improving productivity by 40%
-- Implemented Azure AD Connect and Azure AD Premium for hybrid identity management
-- Developed business continuity and disaster recovery plans with 4-hour RTO
-- Managed vendor relationships and negotiated contracts saving €500K annually
-
-**Key Achievements:**
-
-- Successfully migrated 100+ applications to cloud with zero downtime
-- Implemented multi-factor authentication reducing unauthorized access by 95%
-- Established ITIL-based service management processes
-
-### Systems Administrator
-
-TechSolutions Ltd | Athens, Greece
-
-January 2011 - May 2015
-
-- Administered Windows Server environments and Active Directory infrastructure
-- Implemented backup and recovery solutions using Veeam and Azure Backup
-- Deployed and managed VMware virtualization environment
-- Provided technical support and troubleshooting for enterprise applications
-- Participated in infrastructure upgrade projects and capacity planning
+Azure Active Directory (Azure AD) Support:
+As an Azure AD Support Specialist, I specialized in managing and troubleshooting Azure Active Directory services. I was responsible for maintaining secure identity and access management in Azure AD. My duties included user provisioning and de-provisioning, group management, and implementing access control through role-based access control (RBAC) and conditional access policies. I provided expert assistance in resolving authentication and authorization issues, configuring single sign-on (SSO) solutions, and ensuring compliance with security standards.
 
 ---
 
@@ -114,12 +88,11 @@ January 2011 - May 2015
 
 ### Certifications
 
-- **Microsoft Certified: Azure Solutions Architect Expert** (2023)
-- **Microsoft Certified: Security, Compliance, and Identity Fundamentals** (2023)
-- **Certified Information Systems Security Professional (CISSP)** (2022)
-- **Microsoft Certified: Azure Administrator Associate** (2021)
-- **Certified Ethical Hacker (CEH)** (2020)
-- **ITIL Foundation Certification** (2018)
+- **DevNet Associate**
+- **Mastering Common Interview Questions**
+- **AWS Certified Solutions Architect - Associate (SAA-C02) Cert Prep: 1 Cloud Services Overview**
+- **Windows Server 2016: Installation and Configuration**
+- **Communication within Teams**
 
 ### Education
 
@@ -131,21 +104,16 @@ National Technical University of Athens, Greece
 
 ## Projects & Achievements
 
-### Zero-Trust Implementation (2023)
+### Honors-Awards
 
-Led enterprise-wide zero-trust architecture implementation using Azure AD and Microsoft Defender, resulting in 70% reduction in security incidents.
+- **Scholarship**
+- **3rd Place – Cisco Incubator 12.0 (Customer Experience Track)**
 
-### Cloud Migration Program (2022)
+### Key Focus Areas
 
-Directed migration of legacy applications to Azure, achieving 40% cost reduction and 99.9% availability.
-
-### GDPR Compliance Framework (2021)
-
-Developed comprehensive GDPR compliance framework for European clients, ensuring data protection and audit readiness.
-
-### Security Operations Center (2020)
-
-Established 24/7 SOC using Azure Sentinel, reducing mean time to detect threats from 48 hours to 15 minutes.
+- **Didactics of Informatics**
+- **Information Technology and Education**
+- **Educational Software Design**
 
 ---
 
@@ -175,13 +143,6 @@ Established 24/7 SOC using Azure Sentinel, reducing mean time to detect threats 
 - Linux (Ubuntu, CentOS, RHEL)
 - macOS, iOS device management
 
-### **Soft Skills**
-
-- Leadership & Team Management
-- Project Management (Agile, Scrum)
-- Stakeholder Communication
-- Problem Solving & Critical Thinking
-
 ---
 
 ## Professional Memberships
@@ -194,9 +155,18 @@ Established 24/7 SOC using Azure Sentinel, reducing mean time to detect threats 
 
 ## Languages
 
-- **Greek**: Native
-- **English**: Professional Proficiency
+- **Greek**: Native or Bilingual
+- **English**: Full Professional
 - **German**: Intermediate
+
+---
+
+## Contact Information
+
+- **Phone**: +306977777838 (Mobile)
+- **Email**: baltzakis.themis@gmail.com
+- **LinkedIn**: www.linkedin.com/in/baltzakis-themis
+- **Company Website**: baltzakisthemis.com
 
 ---
 

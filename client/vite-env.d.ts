@@ -34,6 +34,7 @@ declare global {
   }
 
   interface Window {
+    webVitals?: boolean;
     webVitalsMetrics?: Array<{
       name: string;
       value: number;

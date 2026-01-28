@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
 interface PerformanceMetrics {
@@ -41,6 +41,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
         // Update global metrics for testing
         if (typeof window !== "undefined") {
+          window.webVitals = window.webVitals || true; // Set webVitals as available
           window.webVitalsMetrics = window.webVitalsMetrics || [];
           window.webVitalsMetrics.push({
             name: Object.keys(newMetrics)[0].toUpperCase(),
@@ -107,7 +108,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
   };
 
   // Get formatted metrics for display
-  const getFormattedMetrics = () => {
+  const formattedMetrics = useMemo(() => {
     return {
       "Largest Contentful Paint (LCP)": metrics.lcp
         ? `${metrics.lcp.toFixed(0)}ms`
@@ -121,12 +122,12 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
         : "Not measured",
       "Time to First Byte (TTFB)": metrics.ttfb ? `${metrics.ttfb.toFixed(0)}ms` : "Not measured",
     };
-  };
+  }, [metrics]);
 
   return {
     metrics,
     isSupported,
     performanceScore: getPerformanceScore(),
-    formattedMetrics: getFormattedMetrics(),
+    formattedMetrics,
   };
 }

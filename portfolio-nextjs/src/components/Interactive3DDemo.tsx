@@ -280,7 +280,7 @@ function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, "class
         <ProjectSphere
           key={project.id}
           project={project}
-          onClick={onProjectClick || (() => { })}
+          onClick={onProjectClick || (() => {})}
           isHovered={hoveredProject === project.id}
           onHover={setHoveredProject}
         />

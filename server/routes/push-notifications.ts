@@ -2,6 +2,12 @@ import type { Request, Response } from "express";
 
 import webpush from "web-push";
 
+// HTTP status codes
+const HTTP_STATUS = {
+  BAD_REQUEST: 400,
+  INTERNAL_SERVER_ERROR: 500,
+} as const;
+
 // VAPID keys for Web Push API
 const vapidKeys = {
   publicKey:
@@ -58,7 +64,7 @@ export async function handlePushNotificationsGet(req: Request, res: Response) {
   // Test endpoint - send to all stored subscriptions
   try {
     if (subscriptions.length === 0) {
-      res.status(400).json({
+      res.status(HTTP_STATUS.BAD_REQUEST).json({
         error: "No subscriptions found. Subscribe first using the client.",
       });
       return;
@@ -117,7 +123,7 @@ export async function handlePushNotificationsGet(req: Request, res: Response) {
       totalSubscriptions: subscriptions.length,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: "Failed to send test notification",
       details: (error as Error).message,
     });
@@ -130,8 +136,8 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
 
     // Validate message
     if (!message) {
-      res.status(400).json({
-        error: "Missing required fields",
+      res.status(HTTP_STATUS.BAD_REQUEST).json({
+        error: "Missing required field: message",
       });
       return;
     }
@@ -141,7 +147,7 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
     // If subscriptions provided, validate format
     if (subs !== undefined) {
       if (!Array.isArray(subs)) {
-        res.status(400).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           error: "Invalid subscriptions format. Must be an array.",
         });
         return;
@@ -150,7 +156,7 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
     } else {
       // No subscriptions provided, use all stored subscriptions
       if (subscriptions.length === 0) {
-        res.status(400).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           error: "No subscriptions found. Subscribe first using the client.",
         });
         return;
@@ -202,7 +208,7 @@ export async function handlePushNotificationsPost(req: Request, res: Response) {
       totalFailed: results.filter((r) => !r.success).length,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: "Failed to send push notification",
       details: (error as Error).message,
     });
@@ -214,7 +220,7 @@ export function handlePushNotificationsPut(req: Request, res: Response) {
     const subscription: PushSubscriptionData = req.body;
 
     if (!subscription.endpoint || !subscription.keys) {
-      res.status(400).json({
+      res.status(HTTP_STATUS.BAD_REQUEST).json({
         error: "Invalid subscription data",
       });
       return;
@@ -232,7 +238,7 @@ export function handlePushNotificationsPut(req: Request, res: Response) {
       totalSubscriptions: subscriptions.length,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: "Failed to store subscription",
       details: (error as Error).message,
     });
@@ -244,7 +250,7 @@ export function handlePushNotificationsDelete(req: Request, res: Response) {
     const endpoint = req.query.endpoint as string;
 
     if (!endpoint) {
-      res.status(400).json({
+      res.status(HTTP_STATUS.BAD_REQUEST).json({
         error: "Missing endpoint parameter",
       });
       return;
@@ -261,7 +267,7 @@ export function handlePushNotificationsDelete(req: Request, res: Response) {
       totalSubscriptions: subscriptions.length,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: "Failed to remove subscription",
       details: (error as Error).message,
     });
