@@ -168,7 +168,7 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: "autoUpdate",
         includeAssets: ["favicon.ico", "logo.jpg", "logo.jpeg", "robots.txt"],
-        srcDir: "public",
+        srcDir: "../public",
         filename: "sw.js",
         strategies: "injectManifest",
         manifest: {

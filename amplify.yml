@@ -5,12 +5,14 @@ frontend:
       commands:
         - npm install -g pnpm
         - pnpm install --frozen-lockfile
-        # Skip Chrome installation for Puppeteer in CI/CD to save memory
+        # Install Chrome for Puppeteer PDF generation
+        - pnpm exec puppeteer browsers install chrome
     build:
       commands:
-        - echo "Minimal build for Amplify CI/CD"
-        - npm run build:client
-        - npm run build:server
+        - echo "Building application for Amplify deployment"
+        - pnpm run build:resume
+        - pnpm run build:client
+        - pnpm run build:server
   artifacts:
     baseDirectory: dist/spa
     files:
@@ -18,6 +20,7 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+      - ~/.cache/puppeteer
   environment:
     NODE_OPTIONS: '--max-old-space-size=2048'
 
