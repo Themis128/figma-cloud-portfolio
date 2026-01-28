@@ -1,0 +1,8 @@
+{
+  "name": "contact",
+  "runtime": "nodejs18.x",
+  "memory": 512,
+  "timeout": 30,
+  "environment": {},
+  "layers": []
+}

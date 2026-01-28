@@ -1,0 +1,10 @@
+{
+  "name": "resume",
+  "runtime": "nodejs18.x",
+  "memory": 2048,
+  "timeout": 300,
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=2048"
+  },
+  "layers": []
+}

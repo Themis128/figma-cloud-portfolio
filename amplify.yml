@@ -18,6 +18,60 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+  environment:
+    NODE_OPTIONS: "--max-old-space-size=2048"
+
+# Lambda function configurations
+functions:
+  resume:
+    build:
+      commands:
+        - cd amplify/functions/resume && npm install
+    runtime: nodejs18.x
+    memory: 2048
+    timeout: 300
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=2048"
+
+  api:
+    build:
+      commands:
+        - cd amplify/functions/api && npm install
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
+
+  contact:
+    build:
+      commands:
+        - cd amplify/functions/contact && npm install
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
+
+  demo:
+    build:
+      commands:
+        - cd amplify/functions/demo && npm install
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
+
+  ping:
+    build:
+      commands:
+        - cd amplify/functions/ping && npm install
+    runtime: nodejs18.x
+    memory: 256
+    timeout: 10
+
+  push-notifications:
+    build:
+      commands:
+        - cd amplify/functions/push-notifications && npm install
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
 
 # Custom headers to fix MIME type issues
 customHeaders:
@@ -35,3 +89,11 @@ customHeaders:
         value: 'application/javascript'
       - key: 'Service-Worker-Allowed'
         value: '/'
+  - pattern: '**/api/**'
+    headers:
+      - key: 'Access-Control-Allow-Origin'
+        value: '*'
+      - key: 'Access-Control-Allow-Headers'
+        value: 'Content-Type,Authorization'
+      - key: 'Access-Control-Allow-Methods'
+        value: 'GET,POST,PUT,DELETE,OPTIONS'
