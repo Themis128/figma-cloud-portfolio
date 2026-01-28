@@ -15,9 +15,6 @@ if (workbox) {
   // Skip waiting
   workbox.core.skipWaiting()
 
-  // Precache and route - will be populated during build
-  workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || [])
-
   // Handle SPA navigation routes
   workbox.routing.registerRoute(
     new workbox.NavigationRoute(
