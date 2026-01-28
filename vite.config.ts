@@ -31,12 +31,12 @@ export default defineConfig(({ mode }) => {
       proxy:
         mode !== "production"
           ? {
-            "/api": {
-              target: "http://localhost:3000",
-              changeOrigin: true,
-              secure: false,
-            },
-          }
+              "/api": {
+                target: "http://localhost:3000",
+                changeOrigin: true,
+                secure: false,
+              },
+            }
           : undefined,
       fs: {
         allow: [".", "../client", "../shared"],
@@ -63,35 +63,35 @@ export default defineConfig(({ mode }) => {
           manualChunks: isCI
             ? undefined
             : {
-              // Core framework chunk
-              framework: ["react", "react-dom"],
-              // Router chunk
-              router: ["react-router-dom"],
-              // UI components chunk
-              ui: [
-                "@radix-ui/react-dialog",
-                "@radix-ui/react-dropdown-menu",
-                "@radix-ui/react-tooltip",
-                "@radix-ui/react-toast",
-                "@radix-ui/react-accordion",
-                "@radix-ui/react-popover",
-                "@radix-ui/react-select",
-                "@radix-ui/react-tabs",
-                "@radix-ui/react-toggle-group",
-                "lucide-react",
-                "sonner",
-              ],
-              // 3D graphics chunk
-              three: ["three", "@react-three/fiber", "@react-three/drei"],
-              // Utilities chunk
-              utils: ["clsx", "tailwind-merge", "date-fns", "zod"],
-              // Forms chunk
-              forms: ["react-hook-form", "@hookform/resolvers"],
-              // State management chunk
-              state: ["@tanstack/react-query"],
-              // Performance monitoring chunk
-              performance: ["web-vitals"],
-            },
+                // Core framework chunk
+                framework: ["react", "react-dom"],
+                // Router chunk
+                router: ["react-router-dom"],
+                // UI components chunk
+                ui: [
+                  "@radix-ui/react-dialog",
+                  "@radix-ui/react-dropdown-menu",
+                  "@radix-ui/react-tooltip",
+                  "@radix-ui/react-toast",
+                  "@radix-ui/react-accordion",
+                  "@radix-ui/react-popover",
+                  "@radix-ui/react-select",
+                  "@radix-ui/react-tabs",
+                  "@radix-ui/react-toggle-group",
+                  "lucide-react",
+                  "sonner",
+                ],
+                // 3D graphics chunk
+                three: ["three", "@react-three/fiber", "@react-three/drei"],
+                // Utilities chunk
+                utils: ["clsx", "tailwind-merge", "date-fns", "zod"],
+                // Forms chunk
+                forms: ["react-hook-form", "@hookform/resolvers"],
+                // State management chunk
+                state: ["@tanstack/react-query"],
+                // Performance monitoring chunk
+                performance: ["web-vitals"],
+              },
         },
       },
       // Performance budgets
@@ -111,63 +111,66 @@ export default defineConfig(({ mode }) => {
       terserOptions: isCI
         ? undefined
         : {
-          compress: {
-            drop_console: true, // Remove console logs in production
-            drop_debugger: true,
-            pure_funcs: ["console.log", "console.info", "console.debug"],
+            compress: {
+              drop_console: true, // Remove console logs in production
+              drop_debugger: true,
+              pure_funcs: ["console.log", "console.info", "console.debug"],
+            },
           },
-        },
     },
     plugins: [
       react(),
       isCI
         ? undefined
         : ViteImageOptimizer({
-          // Aggressive compression for maximum savings
-          png: {
-            quality: IMAGE_QUALITY_LOW,
-            compressionLevel: 9,
-            palette: true,
-            colors: 128, // Limit color palette
-          },
-          jpeg: {
-            quality: IMAGE_QUALITY_LOW,
-            progressive: true,
-            mozjpeg: true,
-          },
-          jpg: {
-            quality: IMAGE_QUALITY_LOW,
-            progressive: true,
-            mozjpeg: true,
-          },
-          webp: {
-            quality: IMAGE_QUALITY_MEDIUM,
-            effort: 6,
-            smartSubsample: true,
-            nearLossless: false,
-          },
-          avif: {
-            quality: IMAGE_QUALITY_LOW,
-            effort: 6,
-            chromaSubsampling: "4:2:0",
-          },
-          include: /\.(png|jpe?g|webp|avif)$/i,
-          exclude: /node_modules/,
-          // Additional optimization options
-          cache: true,
-          cacheLocation: ".vite/image-cache",
-        }),
+            // Aggressive compression for maximum savings
+            png: {
+              quality: IMAGE_QUALITY_LOW,
+              compressionLevel: 9,
+              palette: true,
+              colors: 128, // Limit color palette
+            },
+            jpeg: {
+              quality: IMAGE_QUALITY_LOW,
+              progressive: true,
+              mozjpeg: true,
+            },
+            jpg: {
+              quality: IMAGE_QUALITY_LOW,
+              progressive: true,
+              mozjpeg: true,
+            },
+            webp: {
+              quality: IMAGE_QUALITY_MEDIUM,
+              effort: 6,
+              smartSubsample: true,
+              nearLossless: false,
+            },
+            avif: {
+              quality: IMAGE_QUALITY_LOW,
+              effort: 6,
+              chromaSubsampling: "4:2:0",
+            },
+            include: /\.(png|jpe?g|webp|avif)$/i,
+            exclude: /node_modules/,
+            // Additional optimization options
+            cache: true,
+            cacheLocation: ".vite/image-cache",
+          }),
       mode === "analyze"
         ? visualizer({
-          filename: "dist/stats.html",
-          open: true,
-          gzipSize: true,
-          brotliSize: true,
-        })
+            filename: "dist/stats.html",
+            open: true,
+            gzipSize: true,
+            brotliSize: true,
+          })
         : undefined,
       VitePWA({
         registerType: "autoUpdate",
         includeAssets: ["favicon.ico", "logo.jpg", "logo.jpeg", "robots.txt"],
+        srcDir: "public",
+        filename: "sw.js",
+        strategies: "injectManifest",
         manifest: {
           name: "Themistoklis Baltzakis Portfolio",
           short_name: "TB Portfolio",
@@ -193,63 +196,6 @@ export default defineConfig(({ mode }) => {
           // Handle SPA navigation routes
           navigateFallback: "/index.html",
           navigateFallbackDenylist: [/^\/api\//, /^\/_/, /^\/[^/?]+\.[^/]+$/],
-          runtimeCaching: [
-            {
-              urlPattern: /^\/api\//,
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "local-api-cache",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 604800, // 1 week
-                },
-              },
-            },
-            {
-              urlPattern: /^https:\/\/api\./i,
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "api-cache",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 31536000, // 1 year
-                },
-              },
-            },
-            {
-              urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/i,
-              handler: "StaleWhileRevalidate",
-              options: {
-                cacheName: "google-fonts",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 31536000, // 1 year
-                },
-              },
-            },
-            {
-              urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
-              handler: "CacheFirst",
-              options: {
-                cacheName: "images",
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 2592000, // 30 days
-                },
-              },
-            },
-            {
-              urlPattern: /^https:\/\/.*\.(js|css)$/i,
-              handler: "StaleWhileRevalidate",
-              options: {
-                cacheName: "static-resources",
-                expiration: {
-                  maxEntries: 20,
-                  maxAgeSeconds: 604800, // 1 week
-                },
-              },
-            },
-          ],
         },
       }),
     ].filter(Boolean) as PluginOption[],
