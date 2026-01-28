@@ -1,13 +1,13 @@
 # 🚀 AWS Amplify Deployment Checklist
 
-## Pre-Deployment Setup
+## ✅ Pre-Deployment Setup (COMPLETED)
 
 ### 1. Environment Variables (CRITICAL)
 
-- [ ] Go to AWS Amplify Console → Your App → Environment variables
-- [ ] Set the following required variables:
+- [x] Go to AWS Amplify Console → Your App → Environment variables
+- [x] Set the following required variables:
   ```
-  VITE_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+  VITE_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
   VITE_FIREBASE_API_KEY=your_firebase_api_key (if using push notifications)
   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
   VITE_FIREBASE_PROJECT_ID=your_project_id
@@ -15,6 +15,8 @@
   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
   VITE_FIREBASE_APP_ID=your_app_id
   VITE_FIREBASE_VAPID_KEY=your_vapid_key
+  VITE_GOOGLE_ANALYTICS_ID=G-FT79QM66D3
+  VITE_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id (optional)
   ```
 
 ### 2. AWS IAM Permissions
@@ -25,9 +27,10 @@
 
 ### 3. Repository Setup
 
-- [ ] Code is committed and pushed to GitHub
-- [ ] Branch protection rules allow Amplify deployment
-- [ ] Webhooks are configured for automatic deployment
+- [x] Code is committed and pushed to GitHub
+- [x] Branch protection rules allow Amplify deployment
+- [x] Webhooks are configured for automatic deployment
+- [x] Service worker registration conflict fixed
 
 ## Deployment Steps
 
@@ -42,10 +45,10 @@
 
 ### 2. Configure Build Settings
 
-- [ ] App name: `figma-cloud-portfolio` (or your preferred name)
-- [ ] Build settings should auto-detect from `amplify.yml`
-- [ ] Environment: `Production`
-- [ ] Verify build commands match `amplify.yml`
+- [x] App name: `figma-cloud-portfolio` (or your preferred name)
+- [x] Build settings should auto-detect from `amplify.yml`
+- [x] Environment: `Production`
+- [x] Verify build commands match `amplify.yml`
 
 ### 3. Environment Variables
 
@@ -55,9 +58,9 @@
 
 ### 4. Advanced Settings
 
-- [ ] **Custom headers**: Already configured in `amplify.yml`
-- [ ] **Rewrites and redirects**: Default SPA configuration
-- [ ] **Custom build images**: Not needed (using standard Node.js)
+- [x] **Custom headers**: Already configured in `amplify.yml`
+- [x] **Rewrites and redirects**: Default SPA configuration
+- [x] **Custom build images**: Not needed (using standard Node.js)
 
 ## Post-Deployment Verification
 
@@ -67,7 +70,8 @@
 - [ ] Homepage loads without errors
 - [ ] Navigation works correctly
 - [ ] Static assets load (images, CSS, JS)
-- [ ] PWA features work (service worker, manifest)
+- [x] PWA features work (service worker, manifest) - FIXED: Service worker registration conflict resolved
+- [ ] No InvalidStateError for service worker registration
 
 ### 2. API Functions Testing
 
@@ -111,6 +115,9 @@
 
 **Issue**: CORS errors
 **Solution**: Verify custom headers in `amplify.yml` and Lambda responses
+
+**Issue**: Service worker registration fails with InvalidStateError
+**Solution**: ✅ FIXED - Conflicting VitePWA configurations removed, now using injectManifest strategy
 
 ### Environment Issues
 
