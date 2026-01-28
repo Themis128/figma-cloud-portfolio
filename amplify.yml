@@ -19,7 +19,7 @@ frontend:
     paths:
       - node_modules/**/*
   environment:
-    NODE_OPTIONS: "--max-old-space-size=2048"
+    NODE_OPTIONS: '--max-old-space-size=2048'
 
 # Lambda function configurations
 functions:
@@ -31,7 +31,7 @@ functions:
     memory: 2048
     timeout: 300
     environment:
-      NODE_OPTIONS: "--max-old-space-size=2048"
+      NODE_OPTIONS: '--max-old-space-size=2048'
 
   api:
     build:

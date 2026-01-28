@@ -3,6 +3,7 @@
 ## Pre-Deployment Setup
 
 ### 1. Environment Variables (CRITICAL)
+
 - [ ] Go to AWS Amplify Console → Your App → Environment variables
 - [ ] Set the following required variables:
   ```
@@ -17,11 +18,13 @@
   ```
 
 ### 2. AWS IAM Permissions
+
 - [ ] Ensure your AWS account has Amplify permissions
 - [ ] Lambda execution permissions are configured
 - [ ] CloudWatch logs permissions for monitoring
 
 ### 3. Repository Setup
+
 - [ ] Code is committed and pushed to GitHub
 - [ ] Branch protection rules allow Amplify deployment
 - [ ] Webhooks are configured for automatic deployment
@@ -29,6 +32,7 @@
 ## Deployment Steps
 
 ### 1. Connect Repository
+
 - [ ] Go to AWS Amplify Console
 - [ ] Click "New app" → "Host web app"
 - [ ] Select GitHub as provider
@@ -37,17 +41,20 @@
 - [ ] Select branch: `production`
 
 ### 2. Configure Build Settings
+
 - [ ] App name: `figma-cloud-portfolio` (or your preferred name)
 - [ ] Build settings should auto-detect from `amplify.yml`
 - [ ] Environment: `Production`
 - [ ] Verify build commands match `amplify.yml`
 
 ### 3. Environment Variables
+
 - [ ] Add all required environment variables
 - [ ] Mark sensitive variables as "secret" if needed
 - [ ] Verify variable names match your code expectations
 
 ### 4. Advanced Settings
+
 - [ ] **Custom headers**: Already configured in `amplify.yml`
 - [ ] **Rewrites and redirects**: Default SPA configuration
 - [ ] **Custom build images**: Not needed (using standard Node.js)
@@ -55,6 +62,7 @@
 ## Post-Deployment Verification
 
 ### 1. Frontend Deployment
+
 - [ ] App URL is accessible: `https://[branch-name].[app-id].amplifyapp.com`
 - [ ] Homepage loads without errors
 - [ ] Navigation works correctly
@@ -62,12 +70,14 @@
 - [ ] PWA features work (service worker, manifest)
 
 ### 2. API Functions Testing
+
 - [ ] Health check: `GET /api/ping` → Should return `{"message":"pong"}`
 - [ ] Contact form: Test form submission
 - [ ] Resume download: Test PDF generation
 - [ ] Push notifications: Test subscription (if implemented)
 
 ### 3. Performance & Security
+
 - [ ] Lighthouse score > 90
 - [ ] HTTPS certificate is valid
 - [ ] CORS headers are properly set
@@ -75,6 +85,7 @@
 - [ ] Service worker caching works
 
 ### 4. Monitoring Setup
+
 - [ ] CloudWatch logs are accessible
 - [ ] Error tracking (Sentry) is configured
 - [ ] Analytics (Google Analytics) is working
@@ -83,6 +94,7 @@
 ## Common Issues & Solutions
 
 ### Build Failures
+
 **Issue**: `pnpm install` fails
 **Solution**: Check Node.js version compatibility, ensure `amplify.yml` has correct pnpm setup
 
@@ -90,6 +102,7 @@
 **Solution**: Check function-specific `package.json` and dependencies
 
 ### Runtime Errors
+
 **Issue**: Lambda timeout errors
 **Solution**: Increase timeout in `amplify.yml` functions section (resume function needs 300s)
 
@@ -100,6 +113,7 @@
 **Solution**: Verify custom headers in `amplify.yml` and Lambda responses
 
 ### Environment Issues
+
 **Issue**: Missing environment variables
 **Solution**: Add variables in Amplify Console → Environment variables
 
@@ -109,12 +123,14 @@
 ## Rollback Plan
 
 ### Emergency Rollback
+
 1. Go to Amplify Console → Deployments
 2. Click "Rollback" on a previous successful deployment
 3. Monitor the rollback process
 4. Test functionality after rollback
 
 ### Gradual Rollback
+
 1. Create a new branch from the last working commit
 2. Deploy the branch to a staging environment
 3. Test thoroughly before promoting to production
@@ -122,6 +138,7 @@
 ## Performance Optimization
 
 ### Frontend Optimizations
+
 - [ ] Enable gzip compression (auto-enabled by Amplify)
 - [ ] CDN distribution (CloudFront auto-configured)
 - [ ] Image optimization (already implemented)
@@ -129,6 +146,7 @@
 - [ ] Service worker caching
 
 ### Lambda Optimizations
+
 - [ ] Provisioned concurrency for frequently used functions
 - [ ] Memory optimization to reduce cold start times
 - [ ] Function versioning for gradual deployments
@@ -145,6 +163,7 @@
 ## Monitoring & Alerts
 
 ### Set Up Alerts
+
 1. **CloudWatch Alarms**:
    - Lambda errors > 5%
    - Function duration > 80% of timeout
@@ -165,6 +184,7 @@
 ## 🎯 Success Criteria
 
 ✅ **Deployment successful** when:
+
 - App loads in < 3 seconds
 - All API endpoints respond correctly
 - Contact form submissions work
