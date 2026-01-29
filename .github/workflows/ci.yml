@@ -26,32 +26,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Fix formatting and auto-fix lint
         run: |
-          pnpm format:fix || true
-          pnpm lint:fix || true
-          pnpm lint
+          npm run format:fix || true
+          npm run lint:fix || true
+          npm run lint
 
       - name: Type check
-        run: pnpm typecheck
+        run: npm run typecheck
 
       - name: Check code formatting
-        run: pnpm format:check
+        run: npm run format:check
 
       - name: Run unit tests with coverage
-        run: pnpm test:unit --coverage
+        run: npm run test:unit -- --coverage
 
       - name: Upload coverage to Codacy
         if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
@@ -74,23 +71,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: pnpm test:e2e --project=chromium
+        run: npm run test:e2e -- --project=chromium
         env:
           CI: true
 
@@ -112,35 +106,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Install Chrome for Puppeteer (PDF generation)
         run: |
           # Install Chrome browser for Puppeteer
-          pnpm exec puppeteer browsers install chrome
+          npx puppeteer browsers install chrome
           # Verify installation
           echo "Chrome installed at:"
           find ~/.cache/puppeteer -name "chrome" -type f 2>/dev/null || echo "Chrome binary not found in default cache"
-        env:
-          PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
 
       - name: Build application (cross-platform)
         run: |
           node scripts/build-resume.js || true
-          pnpm run build:client
-          pnpm run build:server
-        env:
-          PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
+          npm run build:client
+          npm run build:server
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -165,24 +152,21 @@ jobs:
           queries: security-and-quality
         continue-on-error: true
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Run comprehensive code quality checks
         run: |
           echo "🔍 Running comprehensive code quality analysis..."
-          pnpm lint
-          pnpm typecheck
-          pnpm test:unit --run
+          npm run lint
+          npm run typecheck
+          npm run test:unit -- --run
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
