@@ -944,6 +944,32 @@
                 return null;
             }
 
+            getProxyHeaders() {
+                const headers = {};
+                const token = this.getGitHubToken();
+                if (token) {
+                    headers['Authorization'] = `token ${token}`;
+                }
+                return headers;
+            }
+
+            getDirectHeaders() {
+                const headers = {
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'Deployment-Monitor/1.0'
+                };
+                const token = this.getGitHubToken();
+                if (token) {
+                    headers['Authorization'] = `token ${token}`;
+                }
+                return headers;
+            }
+
+            setDeploymentStatus(status, message) {
+                this.elements.deploymentStatus.className = `status-badge status-${status}`;
+                this.elements.deploymentStatus.textContent = message;
+            }
+
             async fetchJobsDirect(runId) {
                 try {
                     const jobsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/runs/${runId}/jobs`;

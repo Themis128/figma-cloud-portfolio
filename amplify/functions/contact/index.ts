@@ -1,8 +1,18 @@
 import type { Handler } from 'aws-lambda'
-// import type {
-//   ContactFormRequest,
-//   ContactFormResponse,
-// } from '../../../shared/api'
+
+// Inline type definitions for Lambda function
+interface ContactFormRequest {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  recaptchaToken: string;
+}
+
+interface ContactFormResponse {
+  success: boolean;
+  message: string;
+}
 
 export const handler: Handler = async (event) => {
   // Handle CORS preflight

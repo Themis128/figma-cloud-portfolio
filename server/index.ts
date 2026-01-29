@@ -63,8 +63,8 @@ export function createServer() {
       "Content-Security-Policy",
       "default-src 'self'; " +
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; " +
+        "font-src 'self' https://fonts.gstatic.com https://use.typekit.net; " +
         "img-src 'self' data: https: blob:; " +
         "connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
         "frame-src 'self' https://www.recaptcha.net; " +

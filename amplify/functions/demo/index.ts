@@ -1,5 +1,9 @@
 import type { Handler } from 'aws-lambda'
-import type { DemoResponse } from '../../../shared/api'
+
+// Inline type definitions for Lambda function
+interface DemoResponse {
+  message: string;
+}
 
 export const handler: Handler = async (event) => {
   const response: DemoResponse = {
