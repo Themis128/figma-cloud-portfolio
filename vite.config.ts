@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
       port: 3001, // Changed from 8081 to avoid conflicts
       strictPort: false, // Allow fallback ports
       hmr: {
-        port: 24680, // Changed from 24679 to avoid conflicts with other Vite instances
+        port: 24681, // Changed to avoid conflicts with other Vite instances
       },
       // Proxy API requests to Express server during development/testing
       proxy:
