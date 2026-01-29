@@ -8,9 +8,8 @@ frontend:
     build:
       commands:
         - echo "Building application for Amplify deployment"
-        - AMPLIFY_BUILD_CONFIG=1 pnpm run build:resume
         - pnpm run build:client
-        # Skip server build for Amplify - Lambda functions are built separately
+        # Skip resume and server builds in CI/CD to prevent memory issues
   artifacts:
     baseDirectory: dist/spa
     files:
