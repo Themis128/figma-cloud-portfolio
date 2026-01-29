@@ -51,7 +51,7 @@ jobs:
         run: npm run test:unit -- --coverage
 
       - name: Upload coverage to Codacy
-        if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
+        if: secrets.CODACY_PROJECT_TOKEN
         run: |
           echo "Codacy token present — uploading coverage"
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
@@ -59,7 +59,7 @@ jobs:
           CODACY_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
       - name: Skip Codacy upload when token missing
-        if: ${{ secrets.CODACY_PROJECT_TOKEN == '' }}
+        if: '!secrets.CODACY_PROJECT_TOKEN'
         run: |
           echo "Codacy project token not configured, skipping coverage upload"
 
