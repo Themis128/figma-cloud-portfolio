@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { setupTestEnvironment, teardownTestEnvironment } from "./test-utils";
+import { setupTestEnvironment, teardownTestEnvironment, waitForAppReady } from "./test-utils";
 
 test.describe("Push Notifications", () => {
   test.beforeAll(async () => {
@@ -12,6 +12,7 @@ test.describe("Push Notifications", () => {
 
   test("should display notification button", async ({ page }) => {
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Wait for lazy-loaded components to appear (they load after 100ms)
     await page.waitForSelector('[data-testid="notification-button"]', { timeout: 5000 });

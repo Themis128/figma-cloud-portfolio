@@ -468,7 +468,7 @@ export function createPlaywrightConfig(
 
     // Use configuration
     use: {
-      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082",
+      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8081",
 
       // Timeouts
       actionTimeout: settings.timeouts.action,
@@ -504,32 +504,32 @@ export function createPlaywrightConfig(
     // Web server configuration (environment-aware)
     ...(settings.features.enableWebServer &&
       !process.env.CI && {
-      webServer: [
-        {
-          command: "npx tsx server/node-build.ts",
-          url: "http://localhost:3000/api/health",
-          reuseExistingServer: true,
-          timeout: settings.timeouts.webServer,
-          cwd: process.cwd(),
-        },
-        {
-          command: "pnpm dev",
-          url: "http://localhost:8082",
-          reuseExistingServer: true,
-          timeout: settings.timeouts.webServer,
-          cwd: process.cwd(),
-        },
-      ],
-    }),
+        webServer: [
+          {
+            command: "npx tsx server/node-build.ts",
+            url: "http://localhost:3000/api/health",
+            reuseExistingServer: true,
+            timeout: settings.timeouts.webServer,
+            cwd: process.cwd(),
+          },
+          {
+            command: "pnpm dev",
+            url: "http://localhost:8081",
+            reuseExistingServer: true,
+            timeout: settings.timeouts.webServer,
+            cwd: process.cwd(),
+          },
+        ],
+      }),
 
     // Test sharding for CI (environment-aware)
     ...(settings.features.enableSharding &&
       process.env.SHARD && {
-      shard: {
-        current: parseInt(process.env.SHARD.split("/")[0], 10),
-        total: parseInt(process.env.SHARD.split("/")[1], 10),
-      },
-    }),
+        shard: {
+          current: parseInt(process.env.SHARD.split("/")[0], 10),
+          total: parseInt(process.env.SHARD.split("/")[1], 10),
+        },
+      }),
 
     // Test filtering
     grep: process.env.TEST_GREP ? new RegExp(process.env.TEST_GREP) : undefined,

@@ -22,6 +22,9 @@ const config = createPlaywrightConfig("fast", {
   // Fast-specific overrides for edge cases
   retries: process.env.FAST_WITH_RETRIES === "true" ? 1 : 0, // Allow override for critical tests
 
+  // Disable webServer since we start it manually
+  webServer: undefined,
+
   // Override baseURL to match actual server port
   use: {
     baseURL: "http://localhost:8081",

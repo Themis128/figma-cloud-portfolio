@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test.describe("Logo Image Optimization", () => {
   test("should load logo with proper optimization", async ({ page }) => {

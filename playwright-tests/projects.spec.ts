@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test.describe("Projects Page", () => {
   test.beforeEach(async ({ page }) => {
@@ -16,6 +17,7 @@ test.describe("Projects Page", () => {
 
     // Navigate to projects page
     await page.goto("/projects");
+    await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
     // Wait for React to hydrate
     await page.waitForTimeout(2000);
@@ -43,9 +45,9 @@ test.describe("Projects Page", () => {
   test("should display project statistics", async ({ page }) => {
     // Check that project statistics are displayed on the page
     // The key requirement is that the numbers 5, 3, and 1 are visible (total, web, mobile)
-    await expect(page.getByText('5', { exact: true })).toBeVisible();
-    await expect(page.getByText('3', { exact: true })).toBeVisible();
-    await expect(page.getByText('1', { exact: true })).toBeVisible();
+    await expect(page.getByText("5", { exact: true })).toBeVisible();
+    await expect(page.getByText("3", { exact: true })).toBeVisible();
+    await expect(page.getByText("1", { exact: true })).toBeVisible();
 
     // Check that there are descriptive elements (cards or sections with statistics)
     const statElements = page.locator('[class*="text-3xl"]').filter({ hasText: /\d/ });
@@ -61,7 +63,10 @@ test.describe("Projects Page", () => {
     let hasProjectData = false;
     for (const script of structuredData) {
       const content = await script.textContent();
-      if (content && (content.includes("projects") || content.includes("Project") || content.includes("WebPage"))) {
+      if (
+        content &&
+        (content.includes("projects") || content.includes("Project") || content.includes("WebPage"))
+      ) {
         hasProjectData = true;
         break;
       }
@@ -95,7 +100,7 @@ test.describe("Projects Page", () => {
     // Check 3D demo content is visible
     await expect(page.locator("text=Interactive 3D Portfolio Demo")).toBeVisible();
     // Check that the 3D scene instructions are visible - look for the instruction text
-    const instructionText = page.locator('text=/🖱️ Click and drag to rotate/');
+    const instructionText = page.locator("text=/🖱️ Click and drag to rotate/");
     await expect(instructionText).toBeVisible();
   });
 
@@ -133,7 +138,9 @@ test.describe("Projects Page", () => {
 
     // Check that some projects are still visible (assuming React projects exist)
     // Use a more specific locator for project cards
-    const projectCards = page.locator('div[data-radix-scroll-area-viewport] article, [class*="grid"] [class*="hover:shadow-lg"]');
+    const projectCards = page.locator(
+      'div[data-radix-scroll-area-viewport] article, [class*="grid"] [class*="hover:shadow-lg"]',
+    );
     const visibleCards = await projectCards.count();
     expect(visibleCards).toBeGreaterThan(0);
   });

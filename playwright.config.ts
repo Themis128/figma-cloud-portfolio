@@ -1,77 +1,42 @@
 import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
 
 /**
- * Optimized Playwright Configuration for Fast E2E Testing
+ * Main Playwright Configuration for Development
  *
- * This configuration is optimized for speed while maintaining reliability:
- * - Single browser (Chromium) for maximum speed
- * - Reduced timeouts for faster execution
- * - Minimal artifacts and reporting
- * - No retries to avoid slowdowns
- * - Disabled visual comparison and global setup
+ * This configuration is optimized for development with:
+ * - Full browser coverage (Chromium, Firefox, WebKit)
+ * - Mobile device testing
+ * - Comprehensive reporting and debugging
+ * - Web server auto-start for both frontend and backend
+ * - Balanced timeouts for development workflow
+ *
+ * Use this configuration for:
+ * - Local development testing
+ * - Feature development and validation
+ * - Comprehensive test coverage
  */
 
-// Create optimized configuration for fast E2E testing
-const config = createPlaywrightConfig("fast", {
-  // Override fast config with even more aggressive optimizations
-  timeout: 30000, // 30 seconds per test (down from 60s)
-  retries: 0, // No retries for maximum speed
+// Create development configuration with full features
+const config = createPlaywrightConfig("development", {
+  // Development-specific overrides for comprehensive testing
+  retries: 1, // Single retry for development stability
 
-  // Disable webServer since we start it manually
-  webServer: undefined, // Explicitly disable webServer
-
-  // Override baseURL to match actual server port
-  use: {
-    baseURL: "http://localhost:8081",
-  },
-  projects: [
-    {
-      name: "chromium-fast",
-      testIgnore: /.*\.(slow|integration)\.spec\.ts$/, // Skip slow tests
-      use: {
-        // Fast browser args from shared config
-        launchOptions: {
-          args: [
-            "--disable-background-timer-throttling",
-            "--disable-backgrounding-occluded-windows",
-            "--disable-renderer-backgrounding",
-            "--disable-features=TranslateUI",
-            "--disable-web-security",
-            "--disable-dev-shm-usage",
-            "--disable-gpu",
-            "--no-sandbox",
-            "--disable-extensions",
-            "--disable-default-apps",
-            "--metrics-recording-only",
-            "--no-first-run",
-          ],
-          headless: true,
-        },
-        // Fast context settings
-        contextOptions: {
-          reducedMotion: "reduce",
-          strictSelectors: true,
-        },
-        // Minimal viewport for speed
-        viewport: { width: 1024, height: 768 },
-        // Aggressive timeouts
-        actionTimeout: 3000, // 3 seconds
-        navigationTimeout: 10000, // 10 seconds
-      },
-    },
-  ],
-
-  // Minimal reporting for speed
+  // Enhanced reporting for development
   reporter: [
-    ["line"], // Only console output for speed
+    ["line"], // Console output
+    ["html", {
+      open: "never",
+      outputFolder: "playwright-report/html",
+      attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
+    }],
   ],
 
-  // Additional metadata
+  // Additional metadata for development tracking
   metadata: {
-    environment: "fast-optimized",
-    testType: "e2e",
-    optimized: true,
-    singleBrowser: true,
+    environment: "development",
+    testType: "comprehensive",
+    fullBrowserCoverage: true,
+    mobileTesting: true,
     timestamp: new Date().toISOString(),
   },
 });
@@ -81,7 +46,7 @@ const validationIssues = validateConfiguration(config);
 
 if (validationIssues.length > 0) {
   // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-  console.log("Fast E2E Configuration Issues:");
+  console.log("Development Configuration Issues:");
   validationIssues.forEach((issue) => {
     // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
     console.warn(`   - ${issue}`);
@@ -90,23 +55,23 @@ if (validationIssues.length > 0) {
 
 // Configuration summary
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log("🚀 Optimized Fast E2E Configuration:");
+console.log("🚀 Development Configuration:");
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Browser: Chromium only (fastest)`);
+console.log(`   - Browser: Full coverage (Chromium, Firefox, WebKit)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
 console.log(`   - Workers: ${config.workers} (parallel execution)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Test Timeout: ${config.timeout}ms (30s per test)`);
+console.log(`   - Test Timeout: ${config.timeout}ms (120s per test)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Action Timeout: 3s, Navigation: 10s`);
+console.log(`   - Action Timeout: 15s, Navigation: 45s`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Retries: ${config.retries} (no retries for speed)`);
+console.log(`   - Retries: ${config.retries} (single retry for stability)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Artifacts: Disabled for maximum speed`);
+console.log(`   - Artifacts: On first retry, screenshots/videos on failure`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Visual Comparison: Disabled`);
+console.log(`   - Web Server: Auto-starts both frontend (8081) and backend (3000)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Global Setup: Disabled`);
+console.log(`   - Mobile Testing: Enabled for comprehensive coverage`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
 console.log("");
 

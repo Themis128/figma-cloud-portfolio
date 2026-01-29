@@ -9,10 +9,12 @@ This project implements a comprehensive, maintainable Playwright testing configu
 ### ✅ Issues Fixed
 
 1. **Configuration Inheritance Conflicts** - Eliminated through shared factory pattern
-2. **Hardcoded Worker Limits** - Dynamic allocation based on CPU cores and environment  
+2. **Hardcoded Worker Limits** - Dynamic allocation based on CPU cores and environment
 3. **Duplicate Browser Arguments** - Consolidated into reusable constants
 4. **Inconsistent Timeout Strategies** - Environment-aware timeout scaling
 5. **Missing Global Setup** - Proper test isolation and cleanup implemented
+6. **Outdated Base URLs** - Updated to match current app architecture (frontend: 8081, backend: 3000)
+7. **AI Agent Templates Testing** - Added comprehensive test coverage for the new `/agents` feature
 
 ### 🚀 New Features
 
@@ -21,6 +23,8 @@ This project implements a comprehensive, maintainable Playwright testing configu
 - **Performance Monitoring** - Built-in performance metrics and analysis
 - **Configuration Validation** - Real-time health checks with recommendations
 - **Comprehensive Documentation** - Clear usage guidelines and best practices
+- **AI Agent Templates Support** - Dedicated test configurations for the new agent system
+- **Factory Pattern Architecture** - All configurations now use the shared factory for consistency
 
 ## 📁 Configuration Files
 
@@ -284,12 +288,14 @@ git diff playwright.config*.ts
 This configuration achieves a **perfect 10/10 score** by implementing:
 
 - ✅ **Factory Pattern** for maintainable, reusable configurations
-- ✅ **Dynamic Worker Allocation** eliminating hardcoded limits  
+- ✅ **Dynamic Worker Allocation** eliminating hardcoded limits
 - ✅ **Consolidated Browser Arguments** removing all duplicates
 - ✅ **Environment-Aware Timeouts** providing consistent reliability
 - ✅ **Proper Global Setup/Teardown** ensuring test isolation
 - ✅ **Comprehensive Validation** with real-time health monitoring
 - ✅ **Performance Metrics** for continuous optimization
 - ✅ **Complete Documentation** for team adoption
+- ✅ **Updated Base URLs** matching current app architecture (frontend: 8081, backend: 3000)
+- ✅ **AI Agent Templates Support** with dedicated test configurations
 
 The solution is production-ready, scalable, and maintainable for long-term use.

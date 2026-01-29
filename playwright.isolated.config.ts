@@ -1,63 +1,80 @@
-import { defineConfig, devices } from "@playwright/test";
+import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
 
 /**
- * Isolated Playwright config to avoid Vitest conflicts
+ * Isolated Playwright Configuration
+ *
+ * Optimized for isolated testing scenarios with:
+ * - Single worker to avoid conflicts with other test suites
+ * - Comprehensive tracing and debugging
+ * - Full artifact collection for detailed analysis
+ * - Separate test directory for isolated test cases
+ *
+ * Use this configuration for:
+ * - Testing specific components in isolation
+ * - Debugging complex test scenarios
+ * - Running tests that might conflict with main test suite
  */
-export default defineConfig({
-  testDir: "./isolated-tests",
-  fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: 1,
-  reporter: "line",
 
+// Create isolated configuration using the shared factory
+const config = createPlaywrightConfig("isolated", {
+  // Isolated-specific overrides
+  testDir: "./isolated-tests", // Separate test directory
+  fullyParallel: false, // Single worker for isolation
+  workers: 1, // Explicit single worker
+
+  // Enhanced debugging and tracing
   use: {
-    baseURL: "http://localhost:9091",
-    trace: "on-first-retry",
-    actionTimeout: 10000,
+    baseURL: "http://localhost:8081", // Match main app port
+    trace: "on", // Full tracing for debugging
+    screenshot: "on", // Screenshots for all tests
+    video: "on", // Video recording for debugging
   },
 
-  projects: [
-    {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-        launchOptions: {
-          args: ["--disable-web-security", "--allow-running-insecure-content"],
-        },
-        actionTimeout: 5000,
-      },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-    {
-      name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"] },
-    },
-    {
-      name: "Mobile Safari",
-      use: { ...devices["iPhone 12"] },
-    },
+  // Simplified reporting for isolated testing
+  reporter: [
+    ["line"], // Console output
+    ["html", {
+      open: "never",
+      outputFolder: "playwright-report-isolated/html",
+    }],
   ],
 
-  // webServer: [
-  //   {
-  //     command: "npx tsx server/dev-server.ts",
-  //     url: "http://localhost:3001/api/ping",
-  //     reuseExistingServer: !process.env.CI,
-  //     timeout: 120000,
-  //   },
-  //   // {
-  //   //   command: "npx vite --host localhost --port 8082",
-  //   //   url: "http://localhost:8082",
-  //   //   reuseExistingServer: !process.env.CI,
-  //   //   timeout: WEBSERVER_TIMEOUT,
-  //   // },
-  // ],
+  // Isolated-specific metadata
+  metadata: {
+    environment: "isolated",
+    testType: "component-isolation",
+    singleWorker: true,
+    enhancedTracing: true,
+    timestamp: new Date().toISOString(),
+  },
 });
+
+// Validate isolated configuration
+const validationIssues = validateConfiguration(config);
+if (validationIssues.length > 0) {
+  // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+  console.error("Isolated Playwright Configuration Issues:");
+  validationIssues.forEach((issue) => {
+    // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+    console.error(`   - ${issue}`);
+  });
+  process.exit(1); // Fail fast for isolated config issues
+}
+
+// Isolated configuration logging
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log("Isolated Playwright Configuration Loaded:");
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log(`   - Test Directory: ${config.testDir}`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log(`   - Workers: ${config.workers} (single worker for isolation)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log(`   - Test Timeout: ${config.timeout}ms`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log(`   - Tracing: Full tracing enabled`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log(`   - Artifacts: All artifacts enabled for debugging`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for isolated setup
+console.log(`   - Parallel Execution: Disabled for isolation`);
+
+export default config;

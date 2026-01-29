@@ -1,143 +1,80 @@
-import { defineConfig, devices } from "@playwright/test";
-
-/* Constants for configuration */
-const CI_RETRIES = 2;
-const LOCAL_RETRIES = 1;
-const CI_WORKERS = 2;
-const LOCAL_WORKERS = 4;
+import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
 
 /**
- * @see https://playwright.dev/docs/test-configuration
+ * Temporary/Experimental Playwright Configuration
+ *
+ * A temporary configuration for experimental testing with:
+ * - Flexible settings for testing new approaches
+ * - Enhanced debugging capabilities
+ * - Customizable timeouts and retries
+ * - Experimental features enabled
+ *
+ * ⚠️  WARNING: This is a temporary configuration for experimentation
+ * Use only for testing new approaches, not for production CI/CD
  */
-export default defineConfig({
-  testDir: "./playwright-tests",
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? CI_WORKERS : LOCAL_WORKERS,
 
-  /* Circuit breaker configuration */
+// Create temporary configuration using the shared factory
+const config = createPlaywrightConfig("development", {
+  // Experimental overrides for testing new approaches
+  retries: process.env.CI ? 3 : 2, // Higher retries for experimentation
+  workers: process.env.CI ? 1 : 6, // Flexible worker count
+
+  // Enhanced debugging for experimental testing
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:9000",
-
-    /* Enhanced tracing and debugging */
-    trace: "retain-on-failure",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
-
-    /* Optimized timeouts for better reliability */
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
-
-    /* Enhanced browser context for better isolation */
-    viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
-
-    /* Performance monitoring */
-    extraHTTPHeaders: {
-      "X-Test-Session": "playwright-e2e",
-    },
+    trace: "on", // Full tracing for debugging experiments
+    screenshot: "on", // Screenshots for all tests
+    video: "on", // Video recording for analysis
   },
 
-  /* Enhanced reporting for issue tracking and resolution */
+  // Experimental reporting setup
   reporter: [
-    ["line"],
-    [
-      "html",
-      {
-        open: "never",
-        attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
-      },
-    ],
-    ["json", { outputFile: "test-results/results.json" }],
-    ["junit", { outputFile: "test-results/junit.xml" }],
+    ["line"], // Console output
+    ["html", {
+      open: "never",
+      outputFolder: "playwright-report-temp/html",
+      attachmentsBaseURL: `file://${process.cwd()}/playwright-report-temp/`,
+    }],
+    ["json", { outputFile: "test-results/results-temp.json" }],
+    ["junit", { outputFile: "test-results/junit-temp.xml" }],
   ],
 
-  /* Global setup and teardown for test environment preparation */
-  // globalSetup: "./playwright-tests/global-setup.ts",
-  // globalTeardown: "./playwright-tests/global-teardown.ts",
-
-  /* Test execution metadata */
+  // Experimental metadata
   metadata: {
-    environment: process.env.NODE_ENV || "development",
-    testType: "e2e",
+    environment: process.env.NODE_ENV || "experimental",
+    testType: "e2e-experimental",
     framework: "playwright",
+    temporary: true,
+    experimental: true,
+    warning: "Temporary configuration - use with caution",
     timestamp: new Date().toISOString(),
   },
-
-  /* Expect configuration for better assertions */
-  expect: {
-    timeout: 10000,
-    toHaveScreenshot: {
-      threshold: 0.2,
-      maxDiffPixels: 100,
-    },
-    toMatchSnapshot: {
-      threshold: 0.2,
-    },
-  },
-
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: "chromium",
-      use: {
-        ...devices["Desktop Chrome"],
-        launchOptions: {
-          args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
-        },
-        actionTimeout: 10000,
-        navigationTimeout: 30000,
-      },
-    },
-
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-        launchOptions: {
-          args: ["--disable-web-security", "--allow-running-insecure-content"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
-        launchOptions: {
-          args: ["--disable-web-security"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-
-    {
-      name: "Mobile Chrome",
-      use: {
-        ...devices["Pixel 5"],
-        launchOptions: {
-          args: ["--disable-web-security"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-    {
-      name: "Mobile Safari",
-      use: {
-        ...devices["iPhone 12"],
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-  ],
 });
+
+// Validate temporary configuration
+const validationIssues = validateConfiguration(config);
+if (validationIssues.length > 0) {
+  // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+  console.warn("⚠️  Temporary Playwright Configuration Warnings:");
+  validationIssues.forEach((issue) => {
+    // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+    console.warn(`   - ${issue}`);
+  });
+}
+
+// Temporary configuration logging
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log("��� Temporary/Experimental Playwright Configuration Loaded:");
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log(`   - Workers: ${config.workers} (flexible for experimentation)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log(`   - Test Timeout: ${config.timeout}ms`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log(`   - Retries: ${config.retries} (higher for experimental testing)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log(`   - Tracing: Full tracing enabled for debugging`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log(`   - Artifacts: All artifacts enabled for analysis`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
+console.log(`   ⚠️  WARNING: This is a temporary configuration for experimentation only`);
+
+export default config;

@@ -1,7 +1,9 @@
 import { test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test("debug elements", async ({ page }) => {
   await page.goto("http://localhost:8081/");
+  await waitForAppReady(page);
 
   // Check for semantic elements
   const mainCount = await page.locator("main").count();

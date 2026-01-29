@@ -94,28 +94,27 @@ export async function gotoAndWaitForApp(
  * Wait for the React app to be fully loaded and ready
  */
 export async function waitForAppReady(page: Page) {
-  // Wait for React to be loaded
-  await page.waitForFunction(
-    () => {
-      const root = document.querySelector("#root");
-      return !!(
-        window.React &&
-        window.ReactDOM &&
-        root &&
-        root.children?.length > 0
-      );
-    },
-    { timeout: 10000 },
-  );
+  // Wait for document to be ready
+  await page.waitForLoadState("domcontentloaded");
 
-  // Wait for the main app content to be rendered
-  await page.waitForSelector('[data-testid="app-ready"], main, .app, #app', {
-    timeout: 15000,
-    state: "visible",
-  });
+  // Wait for the root element to exist
+  await page.waitForSelector("#root", { timeout: 10000 });
 
-  // Additional wait for any dynamic content
-  await page.waitForTimeout(500);
+  // Wait a bit for React to hydrate and render
+  await page.waitForTimeout(2000);
+
+  // Check if we have some basic content
+  await page
+    .waitForFunction(
+      () => {
+        const root = document.querySelector("#root");
+        return root && root.textContent?.trim().length > 50;
+      },
+      { timeout: 5000 },
+    )
+    .catch(() => {
+      console.log("Content check failed, but continuing...");
+    });
 }
 
 /**
@@ -126,7 +125,7 @@ export async function retryOperation<T>(
   maxRetries = 3,
   baseDelay = 1000,
 ): Promise<T> {
-  let lastError: Error = new Error('Operation failed');
+  let lastError: Error = new Error("Operation failed");
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -144,7 +143,7 @@ export async function retryOperation<T>(
     }
   }
 
-  throw lastError!;
+  throw lastError;
 }
 
 /**

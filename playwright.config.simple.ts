@@ -1,139 +1,71 @@
-import { defineConfig, devices } from "@playwright/test";
-
-/* Constants for configuration */
-const CI_RETRIES = 2;
-const LOCAL_RETRIES = 1;
-const CI_WORKERS = 2;
-const LOCAL_WORKERS = 4;
+import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
 
 /**
- * @see https://playwright.dev/docs/test-configuration
+ * Simple Playwright Configuration
+ *
+ * A simplified configuration for basic testing needs with:
+ * - Standard browser coverage (Chromium, Firefox, WebKit)
+ * - Balanced timeouts and retries
+ * - Essential reporting and artifacts
+ * - Mobile device testing
+ *
+ * Use this configuration for:
+ * - Basic functionality testing
+ * - Learning and experimentation
+ * - Simple CI/CD pipelines
  */
-export default defineConfig({
-  testDir: "./playwright-tests",
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Enhanced retry strategy for automatic issue resolution */
-  retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? CI_WORKERS : LOCAL_WORKERS,
 
-  /* Circuit breaker configuration */
-  use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:8082",
+// Create simple configuration using the shared factory
+const config = createPlaywrightConfig("development", {
+  // Simple-specific overrides for basic testing
+  retries: process.env.CI ? 2 : 1, // Basic retry strategy
+  workers: process.env.CI ? 2 : 4, // Limited workers for simplicity
 
-    /* Enhanced tracing and debugging */
-    trace: "retain-on-failure",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
-
-    /* Optimized timeouts for better reliability */
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
-
-    /* Enhanced browser context for better isolation */
-    viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
-
-    /* Performance monitoring */
-    extraHTTPHeaders: {
-      "X-Test-Session": "playwright-e2e",
-    },
-  },
-
-  /* Enhanced reporting for issue tracking and resolution */
+  // Basic reporting setup
   reporter: [
-    ["line"],
-    [
-      "html",
-      {
-        open: "never",
-        attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
-      },
-    ],
+    ["line"], // Console output
+    ["html", {
+      open: "never",
+      outputFolder: "playwright-report/html",
+      attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
+    }],
     ["json", { outputFile: "test-results/results.json" }],
     ["junit", { outputFile: "test-results/junit.xml" }],
   ],
 
-  /* Test execution metadata */
+  // Simple metadata
   metadata: {
     environment: process.env.NODE_ENV || "development",
-    testType: "e2e",
+    testType: "e2e-simple",
     framework: "playwright",
+    simplified: true,
     timestamp: new Date().toISOString(),
   },
-
-  /* Expect configuration for better assertions */
-  expect: {
-    timeout: 10000,
-    toHaveScreenshot: {
-      threshold: 0.2,
-      maxDiffPixels: 100,
-    },
-    toMatchSnapshot: {
-      threshold: 0.2,
-    },
-  },
-
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: "chromium",
-      use: {
-        ...devices["Desktop Chrome"],
-        launchOptions: {
-          args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
-        },
-        actionTimeout: 10000,
-        navigationTimeout: 30000,
-      },
-    },
-
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-        launchOptions: {
-          args: ["--disable-web-security", "--allow-running-insecure-content"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
-        launchOptions: {
-          args: ["--disable-web-security"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-
-    {
-      name: "Mobile Chrome",
-      use: {
-        ...devices["Pixel 5"],
-        launchOptions: {
-          args: ["--disable-web-security"],
-        },
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-    {
-      name: "Mobile Safari",
-      use: {
-        ...devices["iPhone 12"],
-        actionTimeout: 15000,
-        navigationTimeout: 45000,
-      },
-    },
-  ],
 });
+
+// Validate simple configuration
+const validationIssues = validateConfiguration(config);
+if (validationIssues.length > 0) {
+  // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+  console.warn("Simple Playwright Configuration Warnings:");
+  validationIssues.forEach((issue) => {
+    // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+    console.warn(`   - ${issue}`);
+  });
+}
+
+// Simple configuration logging
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+console.log("Simple Playwright Configuration Loaded:");
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+console.log(`   - Workers: ${config.workers} (balanced for simplicity)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+console.log(`   - Test Timeout: ${config.timeout}ms`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+console.log(`   - Retries: ${config.retries}`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+console.log(`   - Browsers: Full coverage (Chromium, Firefox, WebKit, Mobile)`);
+// biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
+console.log(`   - Reporting: Console + HTML + JSON + JUnit`);
+
+export default config;

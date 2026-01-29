@@ -12,7 +12,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
         try {
           await page.goto("/", { timeout: 45000 });
           await waitForAppReady(page);
-          await page.waitForLoadState("networkidle", { timeout: 30000 });
+          await page.waitForLoadState("domcontentloaded", { timeout: 30000 });
           lastError = null;
           break; // Success, exit retry loop
         } catch (error) {
@@ -214,7 +214,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
         try {
           await page.goto("/", { timeout: 45000 });
           await waitForAppReady(page);
-          await page.waitForLoadState("networkidle", { timeout: 30000 });
+          await page.waitForLoadState("domcontentloaded", { timeout: 30000 });
           lastError = null;
           break; // Success, exit retry loop
         } catch (error) {
@@ -303,7 +303,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
 
       await page.goto("/");
       await waitForAppReady(page);
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Test touch targets
       const buttons = page.locator("button, a, input[type='button'], input[type='submit']");

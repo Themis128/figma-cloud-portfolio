@@ -61,6 +61,11 @@ const config = createPlaywrightConfig("ci", {
     // Add blob reporter for GitHub Actions if available
     ...(process.env.GITHUB_ACTIONS ? [["blob"]] : []),
   ],
+
+  // Override baseURL for CI environment
+  use: {
+    baseURL: process.env.CI_BASE_URL || "http://localhost:8081",
+  },
 });
 
 // Validate configuration specifically for CI issues

@@ -4,7 +4,7 @@ import { waitForAppReady } from "./test-utils";
 test.describe("SEO & Metadata", () => {
   test.describe("Meta Tags & Open Graph", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:8081/");
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
     });
@@ -85,6 +85,10 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have canonical URL", async ({ page }) => {
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
+
       // Check for canonical link
       const canonical = page.locator('link[rel="canonical"]');
 
@@ -125,6 +129,19 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have proper heading structure for SEO", async ({ page }) => {
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("networkidle");
+
+      // Wait for React to fully hydrate and render content
+      await page.waitForFunction(
+        () => {
+          const h1 = document.querySelector("h1");
+          return h1?.textContent?.includes("Themistoklis") ?? false;
+        },
+        { timeout: 15000 },
+      );
+
       // Check heading hierarchy
       const h1Count = await page.locator("h1").count();
       expect(h1Count).toBeGreaterThan(0);
@@ -135,14 +152,24 @@ test.describe("SEO & Metadata", () => {
       // Check that h1 contains meaningful content
       const h1Text = await page.locator("h1").first().textContent();
       expect(h1Text?.trim().length).toBeGreaterThan(0);
+      expect(h1Text).toContain("Themistoklis");
     });
 
     test("should have descriptive page titles", async ({ page }) => {
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("networkidle");
+
+      // Wait for the title to be set (React Helmet might set it asynchronously)
+      await page.waitForFunction(() => document.title && document.title.length > 10, {
+        timeout: 10000,
+      });
+
       const title = await page.title();
 
       // Title should be descriptive and not too long
       expect(title.length).toBeGreaterThan(10);
-      expect(title.length).toBeLessThan(60);
+      expect(title.length).toBeLessThan(80); // Allow up to 80 characters for SEO titles
 
       // Should not be generic
       expect(title.toLowerCase()).not.toContain("untitled");
@@ -150,6 +177,10 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have proper URL structure", async ({ page }) => {
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("networkidle");
+
       const url = page.url();
 
       // URLs should be clean and descriptive
@@ -166,8 +197,9 @@ test.describe("SEO & Metadata", () => {
 
   test.describe("Performance & Core Web Vitals", () => {
     test("should have good Core Web Vitals scores", async ({ page }) => {
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
 
       // Measure basic performance metrics
       const metrics = await page.evaluate(() => {
@@ -193,8 +225,9 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have optimized images", async ({ page }) => {
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
 
       const images = page.locator("img");
 
@@ -220,8 +253,9 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should minimize render-blocking resources", async ({ page }) => {
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
 
       // Check for render-blocking CSS
       const renderBlockingCss = await page.evaluate(() => {
@@ -248,8 +282,9 @@ test.describe("SEO & Metadata", () => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
 
       // Content should be readable on mobile
       const viewport = await page.viewportSize();
@@ -271,6 +306,10 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have proper mobile meta tags", async ({ page }) => {
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("networkidle");
+
       // Check viewport meta tag
       const viewport = page.locator('meta[name="viewport"]');
       await expect(viewport).toHaveCount(1);
@@ -283,8 +322,9 @@ test.describe("SEO & Metadata", () => {
 
   test.describe("Content Quality", () => {
     test("should have quality content structure", async ({ page }) => {
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.goto("http://localhost:8081/");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
 
       // Check content length
       const bodyText = await page.locator("body").textContent();

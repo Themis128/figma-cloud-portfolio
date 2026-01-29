@@ -1,8 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { waitForAppReady } from "./test-utils";
 
 test.describe("Resume Generation", () => {
   test("should load resume page and display UI elements", async ({ page }) => {
     await page.goto("/resume");
+    await waitForAppReady(page);
 
     await page.waitForLoadState("domcontentloaded");
 
