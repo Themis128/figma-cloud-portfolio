@@ -30,6 +30,7 @@ functions:
       commands:
         - cd amplify/functions && npm install
         - npx tsc ping.ts --target es2020 --module commonjs --outDir ping/
+        - mv ping/ping.js ping/index.js
     handler: ping/index.handler
 
   demo:
@@ -40,6 +41,7 @@ functions:
       commands:
         - cd amplify/functions && npm install
         - npx tsc demo.ts --target es2020 --module commonjs --outDir demo/
+        - mv demo/demo.js demo/index.js
     handler: demo/index.handler
 
   contact:
@@ -50,6 +52,7 @@ functions:
       commands:
         - cd amplify/functions && npm install
         - npx tsc contact.ts --target es2020 --module commonjs --outDir contact/
+        - mv contact/contact.js contact/index.js
     handler: contact/index.handler
 
   resume:
@@ -60,6 +63,7 @@ functions:
       commands:
         - cd amplify/functions && npm install
         - npx tsc resume.ts --target es2020 --module commonjs --outDir resume/
+        - mv resume/resume.js resume/index.js
     handler: resume/index.handler
     environment:
       NODE_OPTIONS: '--max-old-space-size=2048'
@@ -72,6 +76,7 @@ functions:
       commands:
         - cd amplify/functions && npm install
         - npx tsc push-notifications.ts --target es2020 --module commonjs --outDir push-notifications/
+        - mv push-notifications/push-notifications.js push-notifications/index.js
     handler: push-notifications/index.handler
 
 # Custom headers to fix MIME type issues
