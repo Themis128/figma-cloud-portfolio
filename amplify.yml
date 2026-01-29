@@ -26,29 +26,41 @@ functions:
     runtime: nodejs18.x
     memory: 256
     timeout: 10
-    handler: index.handler
-    source: amplify/functions/ping.ts
+    build:
+      commands:
+        - cd amplify/functions && npm install
+        - npx tsc ping.ts --target es2020 --module commonjs --outDir ping/
+    handler: ping/index.handler
 
   demo:
     runtime: nodejs18.x
     memory: 512
     timeout: 30
-    handler: index.handler
-    source: amplify/functions/demo.ts
+    build:
+      commands:
+        - cd amplify/functions && npm install
+        - npx tsc demo.ts --target es2020 --module commonjs --outDir demo/
+    handler: demo/index.handler
 
   contact:
     runtime: nodejs18.x
     memory: 512
     timeout: 30
-    handler: index.handler
-    source: amplify/functions/contact.ts
+    build:
+      commands:
+        - cd amplify/functions && npm install
+        - npx tsc contact.ts --target es2020 --module commonjs --outDir contact/
+    handler: contact/index.handler
 
   resume:
     runtime: nodejs18.x
     memory: 2048
     timeout: 300
-    handler: index.handler
-    source: amplify/functions/resume.ts
+    build:
+      commands:
+        - cd amplify/functions && npm install
+        - npx tsc resume.ts --target es2020 --module commonjs --outDir resume/
+    handler: resume/index.handler
     environment:
       NODE_OPTIONS: '--max-old-space-size=2048'
 
@@ -56,8 +68,11 @@ functions:
     runtime: nodejs18.x
     memory: 512
     timeout: 30
-    handler: index.handler
-    source: amplify/functions/push-notifications.ts
+    build:
+      commands:
+        - cd amplify/functions && npm install
+        - npx tsc push-notifications.ts --target es2020 --module commonjs --outDir push-notifications/
+    handler: push-notifications/index.handler
 
 # Custom headers to fix MIME type issues
 customHeaders:
