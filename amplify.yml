@@ -23,6 +23,7 @@ frontend:
       - ~/.cache/puppeteer
   environment:
     NODE_OPTIONS: '--max-old-space-size=2048'
+buildComputeType: LARGE_16GB
 
 # Lambda function configurations
 functions:
