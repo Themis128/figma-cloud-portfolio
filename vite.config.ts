@@ -22,10 +22,10 @@ export default defineConfig(({ mode }) => {
     publicDir: "../public",
     server: {
       host: true,
-      port: 8081,
-      strictPort: true,
+      port: 3001, // Changed from 8081 to avoid conflicts
+      strictPort: false, // Allow fallback ports
       hmr: {
-        port: 24678, // Use a different port for HMR
+        port: 24680, // Changed from 24679 to avoid conflicts with other Vite instances
       },
       // Proxy API requests to Express server during development/testing
       proxy:
