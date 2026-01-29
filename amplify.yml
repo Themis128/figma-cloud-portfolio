@@ -20,58 +20,6 @@ frontend:
     NODE_OPTIONS: '--max-old-space-size=2048'
 buildComputeType: LARGE_16GB
 
-# Lambda function configurations
-functions:
-  resume:
-    build:
-      commands:
-        - cd amplify/functions/resume && npm install
-    runtime: nodejs18.x
-    memory: 2048
-    timeout: 300
-    environment:
-      NODE_OPTIONS: '--max-old-space-size=2048'
-
-  api:
-    build:
-      commands:
-        - cd amplify/functions/api && npm install
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-
-  contact:
-    build:
-      commands:
-        - cd amplify/functions/contact && npm install
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-
-  demo:
-    build:
-      commands:
-        - cd amplify/functions/demo && npm install
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-
-  ping:
-    build:
-      commands:
-        - cd amplify/functions/ping && npm install
-    runtime: nodejs18.x
-    memory: 256
-    timeout: 10
-
-  push-notifications:
-    build:
-      commands:
-        - cd amplify/functions/push-notifications && npm install
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-
 # Custom headers to fix MIME type issues
 customHeaders:
   - pattern: '**/*.js'
