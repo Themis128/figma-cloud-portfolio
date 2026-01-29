@@ -1,0 +1,8 @@
+{
+  "name": "resume-function",
+  "version": "1.0.0",
+  "dependencies": {
+    "@sparticuz/chromium": "^123.0.0",
+    "puppeteer-core": "^24.35.0"
+  }
+}
