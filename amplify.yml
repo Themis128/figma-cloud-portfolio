@@ -5,14 +5,12 @@ frontend:
       commands:
         - npm install -g pnpm
         - pnpm install --frozen-lockfile
-        # Install Chrome for Puppeteer PDF generation
-        - pnpm exec puppeteer browsers install chrome
     build:
       commands:
         - echo "Building application for Amplify deployment"
         - AMPLIFY_BUILD_CONFIG=1 pnpm run build:resume
         - pnpm run build:client
-        - pnpm run build:server
+        # Skip server build for Amplify - Lambda functions are built separately
   artifacts:
     baseDirectory: dist/spa
     files:
@@ -20,7 +18,6 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-      - ~/.cache/puppeteer
   environment:
     NODE_OPTIONS: '--max-old-space-size=2048'
 buildComputeType: LARGE_16GB
