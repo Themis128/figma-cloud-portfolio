@@ -4,6 +4,7 @@ frontend:
     preBuild:
       commands:
         - npm install
+        - npx amplify build
     build:
       commands:
         - echo "Building application for Amplify deployment"
@@ -19,65 +20,6 @@ frontend:
   environment:
     NODE_OPTIONS: '--max-old-space-size=2048'
 buildComputeType: LARGE_16GB
-
-# Lambda function configurations
-functions:
-  ping:
-    runtime: nodejs18.x
-    memory: 256
-    timeout: 10
-    build:
-      commands:
-        - cd amplify/functions && npm install
-        - npx tsc ping.ts --target es2020 --module commonjs --outDir ping/
-        - mv ping/ping.js ping/index.js
-    handler: ping/index.handler
-
-  demo:
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-    build:
-      commands:
-        - cd amplify/functions && npm install
-        - npx tsc demo.ts --target es2020 --module commonjs --outDir demo/
-        - mv demo/demo.js demo/index.js
-    handler: demo/index.handler
-
-  contact:
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-    build:
-      commands:
-        - cd amplify/functions && npm install
-        - npx tsc contact.ts --target es2020 --module commonjs --outDir contact/
-        - mv contact/contact.js contact/index.js
-    handler: contact/index.handler
-
-  resume:
-    runtime: nodejs18.x
-    memory: 2048
-    timeout: 300
-    build:
-      commands:
-        - cd amplify/functions && npm install
-        - npx tsc resume.ts --target es2020 --module commonjs --outDir resume/
-        - mv resume/resume.js resume/index.js
-    handler: resume/index.handler
-    environment:
-      NODE_OPTIONS: '--max-old-space-size=2048'
-
-  push-notifications:
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-    build:
-      commands:
-        - cd amplify/functions && npm install
-        - npx tsc push-notifications.ts --target es2020 --module commonjs --outDir push-notifications/
-        - mv push-notifications/push-notifications.js push-notifications/index.js
-    handler: push-notifications/index.handler
 
 # Custom headers to fix MIME type issues
 customHeaders:
