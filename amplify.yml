@@ -10,7 +10,7 @@ frontend:
     build:
       commands:
         - echo "Building application for Amplify deployment"
-        - pnpm run build:resume
+        - AMPLIFY_BUILD_CONFIG=1 pnpm run build:resume
         - pnpm run build:client
         - pnpm run build:server
   artifacts:
