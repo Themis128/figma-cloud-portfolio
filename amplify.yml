@@ -20,6 +20,45 @@ frontend:
     NODE_OPTIONS: '--max-old-space-size=2048'
 buildComputeType: LARGE_16GB
 
+# Lambda function configurations
+functions:
+  ping:
+    runtime: nodejs18.x
+    memory: 256
+    timeout: 10
+    handler: index.handler
+    source: amplify/functions/ping.ts
+
+  demo:
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
+    handler: index.handler
+    source: amplify/functions/demo.ts
+
+  contact:
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
+    handler: index.handler
+    source: amplify/functions/contact.ts
+
+  resume:
+    runtime: nodejs18.x
+    memory: 2048
+    timeout: 300
+    handler: index.handler
+    source: amplify/functions/resume.ts
+    environment:
+      NODE_OPTIONS: '--max-old-space-size=2048'
+
+  push-notifications:
+    runtime: nodejs18.x
+    memory: 512
+    timeout: 30
+    handler: index.handler
+    source: amplify/functions/push-notifications.ts
+
 # Custom headers to fix MIME type issues
 customHeaders:
   - pattern: '**/*.js'
