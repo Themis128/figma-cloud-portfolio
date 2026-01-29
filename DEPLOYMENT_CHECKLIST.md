@@ -383,11 +383,9 @@ After deployment, use these scripts to verify everything works:
 
 **Linux/Mac:**
 
-
 ```bash
 ./scripts/verify-deployment.sh
 ```
-
 
 **Windows:**
 

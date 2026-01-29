@@ -15,20 +15,29 @@ import { createPlaywrightConfig, validateConfiguration } from "./playwright.conf
  * - Simple CI/CD pipelines
  */
 
+// Configuration constants for simple setup
+const CI_WORKERS = 2;
+const DEVELOPMENT_WORKERS = 4;
+const CI_RETRIES = 2;
+const DEVELOPMENT_RETRIES = 1;
+
 // Create simple configuration using the shared factory
 const config = createPlaywrightConfig("development", {
   // Simple-specific overrides for basic testing
-  retries: process.env.CI ? 2 : 1, // Basic retry strategy
-  workers: process.env.CI ? 2 : 4, // Limited workers for simplicity
+  retries: process.env.CI ? CI_RETRIES : DEVELOPMENT_RETRIES, // Basic retry strategy
+  workers: process.env.CI ? CI_WORKERS : DEVELOPMENT_WORKERS, // Limited workers for simplicity
 
   // Basic reporting setup
   reporter: [
     ["line"], // Console output
-    ["html", {
-      open: "never",
-      outputFolder: "playwright-report/html",
-      attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
-    }],
+    [
+      "html",
+      {
+        open: "never",
+        outputFolder: "playwright-report/html",
+        attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
+      },
+    ],
     ["json", { outputFile: "test-results/results.json" }],
     ["junit", { outputFile: "test-results/junit.xml" }],
   ],

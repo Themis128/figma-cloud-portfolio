@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
-const swPath = join(process.cwd(), 'dist', 'spa', 'sw.js')
+const swPath = join(process.cwd(), "dist", "spa", "sw.js");
 
 try {
   // Read the generated service worker
-  let swContent = readFileSync(swPath, 'utf8')
+  let swContent = readFileSync(swPath, "utf8");
 
   // Add push notification handlers before the final closing
   const pushHandlers = `
@@ -143,16 +143,16 @@ async function doPeriodicSync() {
     console.error('Periodic sync failed:', error);
   }
 }
-`
+`;
 
   // Insert the push handlers before the final closing
-  swContent = swContent.replace(/\}\)\);\s*$/, pushHandlers + '\n});')
+  swContent = swContent.replace(/\}\)\);\s*$/, `${pushHandlers}\n});`);
 
   // Write back the modified service worker
-  writeFileSync(swPath, swContent, 'utf8')
+  writeFileSync(swPath, swContent, "utf8");
 
-  console.log('✅ Push notification handlers added to service worker')
+  console.log("✅ Push notification handlers added to service worker");
 } catch (error) {
-  console.error('❌ Failed to add push notification handlers:', error)
-  process.exit(1)
+  console.error("❌ Failed to add push notification handlers:", error);
+  process.exit(1);
 }

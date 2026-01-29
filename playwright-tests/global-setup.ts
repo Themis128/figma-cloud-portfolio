@@ -8,6 +8,11 @@ import { waitForAppReady } from "./test-utils";
  * It ensures consistent test conditions across all test runs.
  */
 
+// Extend global type for test utilities
+declare global {
+  var waitForAppReadyGlobal: (page: import("@playwright/test").Page) => Promise<void>;
+}
+
 export default async function globalSetup(config: FullConfig) {
   console.log("\n🎭 Starting Playwright Test Environment Setup...");
   console.log("═".repeat(60));
@@ -58,10 +63,10 @@ export default async function globalSetup(config: FullConfig) {
  */
 async function setupGlobalFunctions(): Promise<void> {
   console.log("🔧 Setting up global test functions...");
-  
+
   // Make waitForAppReady available globally
-  (globalThis as any).waitForAppReady = waitForAppReady;
-  
+  globalThis.waitForAppReadyGlobal = waitForAppReady;
+
   console.log("   ✓ Global functions configured");
 }
 

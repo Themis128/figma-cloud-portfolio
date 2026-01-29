@@ -196,26 +196,31 @@ const environmentSettings = {
 ## 🚀 Best Practices Implemented
 
 ### 1. Dynamic Resource Allocation
+
 - Workers automatically scale with CPU cores
 - Environment-aware memory management
 - Resource contention prevention
 
 ### 2. Comprehensive Error Handling
+
 - Graceful fallbacks for configuration issues
 - Detailed error messages with recommendations
 - Non-blocking teardown for robustness
 
 ### 3. Environment Isolation
+
 - Clear separation between dev/CI/fast configs
 - No hardcoded values affecting scalability
 - Environment-specific optimizations
 
 ### 4. Maintainability
+
 - Single source of truth for shared settings
 - Reusable constants and utilities
 - Comprehensive documentation
 
 ### 5. Performance Optimization
+
 - Consolidated browser arguments
 - Intelligent timeout strategies
 - Efficient artifact management
@@ -225,7 +230,7 @@ const environmentSettings = {
 ### Before vs After
 
 | Metric | Before | After | Improvement |
-|--------|--------|--------|-------------|
+| -------- | -------- | -------- | ------------- |
 | Configuration Score | 7-9/10 | **10/10** | ✅ Perfect |
 | Worker Allocation | Hardcoded | **Dynamic** | ✅ Scalable |
 | Browser Args | Duplicated | **Consolidated** | ✅ Clean |
@@ -238,18 +243,21 @@ const environmentSettings = {
 ### Common Issues
 
 1. **Tests timing out**
+
    ```bash
    # Check timeout configuration
    npx tsx playwright.config.validation.ts
    ```
 
 2. **Resource contention**
+
    ```bash
    # Reduce worker count temporarily
    PLAYWRIGHT_WORKERS=2 npx playwright test
    ```
 
 3. **Service not available**
+
    ```bash
    # Check service health in setup
    DEBUG_PLAYWRIGHT_CONFIG=true npx playwright test

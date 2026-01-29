@@ -173,12 +173,13 @@ export function NotificationButton({ "data-testid": testId }: { "data-testid"?: 
         onClick={permission === "default" ? requestPermission : undefined}
         variant='outline'
         size='sm'
-        className={`gap-2 ${permission === "denied"
+        className={`gap-2 ${
+          permission === "denied"
             ? "border-red-400/50 text-red-400 cursor-not-allowed"
             : permission === "granted"
               ? "border-green-400/50 text-green-400"
               : "border-cyan-400/50 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300"
-          }`}
+        }`}
         disabled={permission === "denied"}
         data-testid={testId || "notification-button"}
       >
