@@ -55,28 +55,28 @@ jobs:
             echo "environment=rollback" >> $GITHUB_OUTPUT
           fi
 
-    - name: Update deployment status badge
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const fs = require('fs');
-          const badgeColor = '${{ steps.deployment-status.outputs.badge_color }}';
-          const badgeText = '${{ steps.deployment-status.outputs.badge_text }}';
-          const environment = '${{ steps.deployment-status.outputs.environment }}';
+      - name: Update deployment status badge
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const badgeColor = '${{ steps.deployment-status.outputs.badge_color }}';
+            const badgeText = '${{ steps.deployment-status.outputs.badge_text }}';
+            const environment = '${{ steps.deployment-status.outputs.environment }}';
 
-          // Create or update a status file that can be used for badges
-          const statusData = {
-            environment: environment,
-            status: badgeColor === 'brightgreen' || badgeColor === 'green' ? 'success' : 'failed',
-            lastUpdated: new Date().toISOString(),
-            badgeUrl: `https://img.shields.io/badge/${badgeText}-${badgeColor}`
-          };
+            // Create or update a status file that can be used for badges
+            const statusData = {
+              environment: environment,
+              status: badgeColor === 'brightgreen' || badgeColor === 'green' ? 'success' : 'failed',
+              lastUpdated: new Date().toISOString(),
+              badgeUrl: `https://img.shields.io/badge/${badgeText}-${badgeColor}`
+            };
 
-          // Write to a JSON file that can be served statically
-          fs.writeFileSync(`public/deployment-status-${environment}.json`, JSON.stringify(statusData, null, 2));
+            // Write to a JSON file that can be served statically
+            fs.writeFileSync(`public/deployment-status-${environment}.json`, JSON.stringify(statusData, null, 2));
 
-          console.log(`Updated deployment status for ${environment}`);
+            console.log(`Updated deployment status for ${environment}`);
 
   create-issue-summary:
     runs-on: ubuntu-latest

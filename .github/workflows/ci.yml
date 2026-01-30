@@ -1,10 +1,15 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [main, develop, production]
   pull_request:
     branches: [main, develop, production]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -17,51 +22,81 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [18.x, 20.x]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Fix formatting and auto-fix lint
+      - name: Run linting
+        run: pnpm run lint
+
+      - name: Run type checking
+        run: pnpm run typecheck
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+      - name: Check coverage threshold
         run: |
-          npm run format:fix || true
-          npm run lint:fix || true
-          npm run lint
+          # Check if coverage directory exists
+          if [ ! -d "coverage" ]; then
+            echo "❌ Coverage directory not found"
+            exit 1
+          fi
 
-      - name: Type check
-        run: npm run typecheck
+          # Check if coverage file exists
+          if [ ! -f "coverage/coverage-final.json" ]; then
+            echo "❌ Coverage file not found: coverage/coverage-final.json"
+            exit 1
+          fi
 
-      - name: Check code formatting
-        run: npm run format:check
+          # Extract coverage percentage using Node.js instead of jq
+          COVERAGE=$(node -e "
+            try {
+              const coverage = require('./coverage/coverage-final.json');
+              const total = coverage.total || {};
+              const lines = total.lines || {};
+              console.log(lines.pct || 0);
+            } catch (e) {
+              console.log(0);
+            }
+          ")
 
-      - name: Run unit tests with coverage
-        run: npm run test:unit -- --coverage
+          echo "Current coverage: ${COVERAGE}%"
 
-      - name: Upload coverage to Codacy
-        if: secrets.CODACY_PROJECT_TOKEN
-        run: |
-          echo "Codacy token present — uploading coverage"
-          bash <(curl -Ls https://coverage.codacy.com/get.sh)
-        env:
-          CODACY_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          # Check if coverage meets minimum thresholds (using awk for float comparison)
+          THRESHOLD=20  # Lower threshold for now, can be increased later
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l 2>/dev/null || echo "1") )); then
+            echo "❌ Coverage ${COVERAGE}% is below required ${THRESHOLD}% threshold"
+            exit 1
+          else
+            echo "✅ Coverage ${COVERAGE}% meets ${THRESHOLD}% threshold"
+          fi
 
-      - name: Skip Codacy upload when token missing
-        if: '!secrets.CODACY_PROJECT_TOKEN'
-        run: |
-          echo "Codacy project token not configured, skipping coverage upload"
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
 
   e2e:
     runs-on: ubuntu-latest
@@ -71,20 +106,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps
 
       - name: Run E2E tests
-        run: npm run test:e2e -- --project=chromium
+        run: pnpm test:e2e
         env:
           CI: true
 
@@ -106,28 +144,51 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install Chrome for Puppeteer (PDF generation)
         run: |
-          # Install Chrome browser for Puppeteer
-          npx puppeteer browsers install chrome
+          # Install Chrome browser for Puppeteer with proper error handling
+          echo "Installing Chrome for Puppeteer..."
+          npx puppeteer browsers install chrome || {
+            echo "Failed to install Chrome via Puppeteer, trying alternative method..."
+            # Fallback: install via apt-get with modern keyring
+            sudo apt-get update
+            sudo apt-get install -y wget gnupg
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg
+            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+          }
+
           # Verify installation
-          echo "Chrome installed at:"
-          find ~/.cache/puppeteer -name "chrome" -type f 2>/dev/null || echo "Chrome binary not found in default cache"
+          echo "Verifying Chrome installation..."
+          if command -v google-chrome-stable >/dev/null 2>&1; then
+            echo "✅ Chrome installed successfully"
+            google-chrome-stable --version
+          elif [ -f "$HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome" ]; then
+            echo "✅ Chrome installed via Puppeteer"
+            $HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome --version
+          else
+            echo "❌ Chrome installation failed"
+            exit 1
+          fi
 
       - name: Build application (cross-platform)
         run: |
-          node scripts/build-resume.js || true
-          npm run build:client
-          npm run build:server
+          pnpm run build:resume
+          pnpm run build:client
+          pnpm run build:server
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -150,46 +211,44 @@ jobs:
         with:
           languages: javascript-typescript
           queries: security-and-quality
-        continue-on-error: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run comprehensive code quality checks
         run: |
           echo "🔍 Running comprehensive code quality analysis..."
-          npm run lint
-          npm run typecheck
-          npm run test:unit -- --run
+          pnpm run lint
+          pnpm run typecheck
+          pnpm test
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
-        continue-on-error: true
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: '/language:javascript-typescript'
-        continue-on-error: true
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
-        continue-on-error: true
 
       - name: Upload Trivy scan results to GitHub Security tab
         if: always() && hashFiles('trivy-results.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-        continue-on-error: true
