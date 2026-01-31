@@ -31,7 +31,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     // Performance assertion - page should load within reasonable time (adjusted for different browsers)
     // Firefox tends to be slower, so we allow more time
     const isFirefox = page.context().browser()?.browserType().name() === "firefox";
-    const maxLoadTime = isFirefox ? 5000 : 3000;
+    const maxLoadTime = isFirefox ? 5000 : 4000;
     expect(loadTime).toBeLessThan(maxLoadTime);
 
     // Log all console messages

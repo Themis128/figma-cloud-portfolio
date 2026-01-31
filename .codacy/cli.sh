@@ -90,14 +90,6 @@ download_cli() {
     # OS name lower case
     suffix=$(echo "$os_name" | tr '[:upper:]' '[:lower:]')
 
-    # Handle Cygwin as Windows
-    if [[ "$suffix" == cygwin* ]]; then
-        suffix="windows"
-        file_extension="zip"
-    else
-        file_extension="tar.gz"
-    fi
-
     local bin_folder="$1"
     local bin_path="$2"
     local version="$3"
@@ -105,23 +97,11 @@ download_cli() {
     if [ ! -f "$bin_path" ]; then
         echo "📥 Downloading CLI version $version..."
 
-        remote_file="codacy-cli-v2_${version}_${suffix}_${arch}.${file_extension}"
+        remote_file="codacy-cli-v2_${version}_${suffix}_${arch}.tar.gz"
         url="https://github.com/codacy/codacy-cli-v2/releases/download/${version}/${remote_file}"
 
         download "$url" "$bin_folder"
-
-        # Extract based on file type
-        if [ "$file_extension" = "zip" ]; then
-            if command -v 7z > /dev/null 2>&1; then
-                7z x "${bin_folder}/${remote_file}" -o"${bin_folder}"
-            elif command -v unzip > /dev/null 2>&1; then
-                unzip "${bin_folder}/${remote_file}" -d "${bin_folder}"
-            else
-                fatal "Error: Could not find 7z or unzip to extract the archive"
-            fi
-        else
-            tar xzfv "${bin_folder}/${remote_file}" -C "${bin_folder}"
-        fi
+        tar xzfv "${bin_folder}/${remote_file}" -C "${bin_folder}"
     fi
 }
 

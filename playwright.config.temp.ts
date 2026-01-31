@@ -1,4 +1,8 @@
-import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
+import {
+  createPlaywrightConfig,
+  VALIDATION_CONSTANTS,
+  validateConfiguration,
+} from "./playwright.config.shared";
 
 /**
  * Temporary/Experimental Playwright Configuration
@@ -13,11 +17,17 @@ import { createPlaywrightConfig, validateConfiguration } from "./playwright.conf
  * Use only for testing new approaches, not for production CI/CD
  */
 
+// Configuration constants for experimental setup using shared validation constants
+const EXPERIMENTAL_RETRIES_CI = VALIDATION_CONSTANTS.MAX_CI_RETRIES;
+const EXPERIMENTAL_RETRIES_LOCAL = 2;
+const EXPERIMENTAL_WORKERS_CI = 1;
+const EXPERIMENTAL_WORKERS_LOCAL = VALIDATION_CONSTANTS.MAX_LOCAL_WORKERS;
+
 // Create temporary configuration using the shared factory
 const config = createPlaywrightConfig("development", {
   // Experimental overrides for testing new approaches
-  retries: process.env.CI ? 3 : 2, // Higher retries for experimentation
-  workers: process.env.CI ? 1 : 6, // Flexible worker count
+  retries: process.env.CI ? EXPERIMENTAL_RETRIES_CI : EXPERIMENTAL_RETRIES_LOCAL, // Higher retries for experimentation
+  workers: process.env.CI ? EXPERIMENTAL_WORKERS_CI : EXPERIMENTAL_WORKERS_LOCAL, // Flexible worker count
 
   // Enhanced debugging for experimental testing
   use: {
@@ -29,11 +39,14 @@ const config = createPlaywrightConfig("development", {
   // Experimental reporting setup
   reporter: [
     ["line"], // Console output
-    ["html", {
-      open: "never",
-      outputFolder: "playwright-report-temp/html",
-      attachmentsBaseURL: `file://${process.cwd()}/playwright-report-temp/`,
-    }],
+    [
+      "html",
+      {
+        open: "never",
+        outputFolder: "playwright-report-temp/html",
+        attachmentsBaseURL: `file://${process.cwd()}/playwright-report-temp/`,
+      },
+    ],
     ["json", { outputFile: "test-results/results-temp.json" }],
     ["junit", { outputFile: "test-results/junit-temp.xml" }],
   ],
@@ -63,7 +76,7 @@ if (validationIssues.length > 0) {
 
 // Temporary configuration logging
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
-console.log("э╖к Temporary/Experimental Playwright Configuration Loaded:");
+console.log("тЪая╕П Temporary/Experimental Playwright Configuration Loaded:");
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup
 console.log(`   - Workers: ${config.workers} (flexible for experimentation)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for experimental setup

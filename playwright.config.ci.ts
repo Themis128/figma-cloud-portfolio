@@ -16,24 +16,21 @@ import { createPlaywrightConfig, validateConfiguration } from "./playwright.conf
 
 // Create CI configuration using the ci preset
 const config = createPlaywrightConfig("ci", {
-  // CI-specific overrides
+  // CI-specific overrides with enhanced provider detection
   metadata: {
     // Inherit base metadata and add CI-specific info
     ci: true,
-    ciProvider: process.env.GITHUB_ACTIONS
-      ? "github-actions"
-      : process.env.GITLAB_CI
-        ? "gitlab"
-        : process.env.JENKINS_URL
-          ? "jenkins"
-          : "unknown",
+    ciProvider: detectCIProvider(),
     pr: process.env.GITHUB_PR_NUMBER || process.env.CI_MERGE_REQUEST_IID,
     run: process.env.GITHUB_RUN_ID || process.env.CI_PIPELINE_ID,
     buildNumber: process.env.GITHUB_RUN_NUMBER || process.env.CI_BUILD_NUMBER,
     actor: process.env.GITHUB_ACTOR || process.env.CI_COMMIT_AUTHOR,
+    branch: process.env.GITHUB_REF_NAME || process.env.CI_BRANCH || "unknown",
+    commit: process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || "unknown",
+    repository: process.env.GITHUB_REPOSITORY || process.env.CI_PROJECT_NAME || "unknown",
   },
 
-  // Enhanced CI reporting
+  // Enhanced CI reporting with better artifact handling
   reporter: [
     ["github"], // GitHub Actions annotations
     [
@@ -41,6 +38,7 @@ const config = createPlaywrightConfig("ci", {
       {
         outputFile: "test-results/junit-ci.xml",
         includeProjectInTestName: true,
+        suiteName: "E2E Tests",
       },
     ],
     [
@@ -54,19 +52,128 @@ const config = createPlaywrightConfig("ci", {
       {
         open: "never",
         outputFolder: "playwright-html-report-ci",
-        attachmentsBaseURL:
-          process.env.CI_PAGES_URL || `file://${process.cwd()}/playwright-report-ci/`,
+        attachmentsBaseURL: getCIArtifactsURL(),
       },
     ],
     // Add blob reporter for GitHub Actions if available
-    ...(process.env.GITHUB_ACTIONS ? [["blob"]] : []),
+    ...(process.env.GITHUB_ACTIONS ? [["blob"] as const] : []),
   ],
 
-  // Override baseURL for CI environment
+  // Enhanced CI environment configuration
   use: {
-    baseURL: process.env.CI_BASE_URL || "http://localhost:8081",
+    baseURL: getCIBaseURL(),
+    // CI-specific browser context
+    extraHTTPHeaders: {
+      "X-CI-Provider": detectCIProvider(),
+      "X-CI-Run-ID": process.env.GITHUB_RUN_ID || process.env.CI_PIPELINE_ID || "unknown",
+      "X-CI-Commit": process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || "unknown",
+    },
   },
+
+  // CI-specific test configuration
+  grep: process.env.CI_TEST_GREP ? new RegExp(process.env.CI_TEST_GREP) : /@smoke|@critical/, // Run critical tests in CI by default
+  updateSnapshots: process.env.CI_UPDATE_SNAPSHOTS === "true" ? "all" : "none", // Never update snapshots in CI unless explicitly requested
 });
+
+/**
+ * Detect CI provider from environment variables
+ */
+function detectCIProvider(): string {
+  if (process.env.GITHUB_ACTIONS) return "github-actions";
+  if (process.env.GITLAB_CI) return "gitlab";
+  if (process.env.JENKINS_URL) return "jenkins";
+  if (process.env.CIRCLECI) return "circleci";
+  if (process.env.TRAVIS) return "travis";
+  if (process.env.BUILDKITE) return "buildkite";
+  if (process.env.CI) return "generic-ci";
+  return "unknown";
+}
+
+/**
+ * Get CI provider-specific reporter configuration
+ */
+function _getCIProviderReporter() {
+  const provider = detectCIProvider();
+
+  switch (provider) {
+    case "github-actions":
+      return [
+        [
+          "github",
+          {
+            title: "Playwright E2E Tests",
+            summary: true,
+            annotations: true,
+          },
+        ],
+      ];
+    case "gitlab":
+      return [
+        [
+          "junit",
+          {
+            outputFile: "test-results/gitlab-junit.xml",
+            includeProjectInTestName: true,
+          },
+        ],
+      ];
+    case "jenkins":
+      return [
+        [
+          "junit",
+          {
+            outputFile: "test-results/jenkins-junit.xml",
+            includeProjectInTestName: true,
+          },
+        ],
+      ];
+    default:
+      return [["line"]]; // Fallback to console output
+  }
+}
+
+/**
+ * Get appropriate base URL for CI environment
+ */
+function getCIBaseURL(): string {
+  // Check for explicit CI base URL
+  if (process.env.CI_BASE_URL) return process.env.CI_BASE_URL;
+
+  // GitHub Pages deployment
+  if (process.env.GITHUB_PAGES_URL) return process.env.GITHUB_PAGES_URL;
+
+  // Vercel deployment
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+
+  // Netlify deployment
+  if (process.env.NETLIFY_URL) return process.env.NETLIFY_URL;
+
+  // AWS Amplify deployment
+  if (process.env.AWS_AMPLIFY_URL) return process.env.AWS_AMPLIFY_URL;
+
+  // Default fallback
+  return "http://localhost:8081";
+}
+
+/**
+ * Get artifacts URL for CI environment
+ */
+function getCIArtifactsURL(): string {
+  const provider = detectCIProvider();
+
+  switch (provider) {
+    case "github-actions":
+      return process.env.GITHUB_PAGES_URL
+        ? `${process.env.GITHUB_PAGES_URL}/playwright-report-ci/`
+        : `file://${process.cwd()}/playwright-report-ci/`;
+    case "gitlab":
+      return process.env.CI_PAGES_URL
+        ? `${process.env.CI_PAGES_URL}/playwright-report-ci/`
+        : `file://${process.cwd()}/playwright-report-ci/`;
+    default:
+      return `file://${process.cwd()}/playwright-report-ci/`;
+  }
+}
 
 // Validate configuration specifically for CI issues
 const validationIssues = validateConfiguration(config);

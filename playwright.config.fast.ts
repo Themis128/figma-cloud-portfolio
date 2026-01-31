@@ -1,4 +1,9 @@
-import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
+import {
+  BROWSER_LAUNCH_ARGS,
+  createPlaywrightConfig,
+  VALIDATION_CONSTANTS,
+  validateConfiguration,
+} from "./playwright.config.shared";
 
 /**
  * Fast Playwright Configuration
@@ -27,34 +32,21 @@ const config = createPlaywrightConfig("fast", {
 
   // Override baseURL to match actual server port
   use: {
-    baseURL: "http://localhost:8081",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3001",
   },
 
-  // Custom test filtering for fast execution
+  // Custom test filtering for fast execution using new annotation system
   grep: process.env.FAST_TEST_PATTERN ? new RegExp(process.env.FAST_TEST_PATTERN) : /@fast|@smoke/, // Run only tests marked as fast or smoke
 
-  // Single project override (ensure only Chromium)
+  // Single project override (ensure only Chromium) with improved launch args
   projects: [
     {
       name: "chromium-fast",
       testIgnore: /.*\.(slow|integration)\.spec\.ts$/, // Skip slow tests
       use: {
-        // Use fast browser args from shared config
+        // Use optimized fast browser args from shared config
         launchOptions: {
-          args: [
-            "--disable-background-timer-throttling",
-            "--disable-backgrounding-occluded-windows",
-            "--disable-renderer-backgrounding",
-            "--disable-features=TranslateUI",
-            "--disable-web-security",
-            "--disable-dev-shm-usage",
-            "--disable-gpu",
-            "--no-sandbox",
-            "--disable-extensions",
-            "--disable-default-apps",
-            "--metrics-recording-only",
-            "--no-first-run",
-          ],
+          args: BROWSER_LAUNCH_ARGS.getArgs("fast"),
           // Fast execution settings
           headless: true,
         },
@@ -65,6 +57,9 @@ const config = createPlaywrightConfig("fast", {
         },
         // Minimal viewport for speed
         viewport: { width: 1024, height: 768 },
+        // Use fast timeouts from shared constants
+        actionTimeout: VALIDATION_CONSTANTS.FAST_ACTION_TIMEOUT_MS,
+        navigationTimeout: VALIDATION_CONSTANTS.FAST_NAVIGATION_TIMEOUT_MS,
       },
     },
   ],

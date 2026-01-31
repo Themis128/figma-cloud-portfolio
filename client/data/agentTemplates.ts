@@ -21,7 +21,13 @@ export interface AgentNode {
   id: string;
   type: "llm" | "decision" | "data-processor" | "output" | "input" | "tool";
   position: { x: number; y: number };
-  config: Record<string, unknown>;
+  config: Record<string, unknown> & {
+    provider?: "anthropic" | "openai" | "together";
+    model?: string;
+    temperature?: number;
+    maxTokens?: number;
+    systemPrompt?: string;
+  };
   label: string;
 }
 
@@ -63,10 +69,11 @@ export const agentTemplates: AgentTemplate[] = [
           type: "llm",
           position: { x: 300, y: 100 },
           config: {
-            model: "gpt-3.5-turbo",
+            model: "claude-3-haiku-20240307",
             temperature: 0.7,
             maxTokens: 500,
             systemPrompt: "You are a helpful assistant.",
+            provider: "anthropic",
           },
           label: "AI Response",
         },
@@ -435,6 +442,65 @@ export const agentTemplates: AgentTemplate[] = [
       "Code quality checks",
       "Technical debt assessment",
     ],
+    createdAt: "2024-01-20T00:00:00Z",
+    updatedAt: "2024-01-20T00:00:00Z",
+  },
+];
+
+// Claude-powered agent templates
+export const claudeAgentTemplates: AgentTemplate[] = [
+  {
+    id: "claude-chatbot",
+    name: "Claude Chatbot",
+    description:
+      "A conversational AI powered by Anthropic's Claude, offering more natural and nuanced responses.",
+    category: "basic",
+    difficulty: "beginner",
+    icon: "🤖",
+    tags: ["conversation", "claude", "anthropic", "ai"],
+    estimatedTime: "5 minutes",
+    workflow: {
+      nodes: [
+        {
+          id: "input-1",
+          type: "input",
+          position: { x: 100, y: 100 },
+          config: { prompt: "Hello! How can I help you today?" },
+          label: "User Input",
+        },
+        {
+          id: "llm-1",
+          type: "llm",
+          position: { x: 300, y: 100 },
+          config: {
+            provider: "anthropic",
+            model: "claude-3-haiku-20240307",
+            temperature: 0.7,
+            maxTokens: 500,
+            systemPrompt: "You are Claude, a helpful and harmless AI assistant built by Anthropic.",
+          },
+          label: "Claude Response",
+        },
+        {
+          id: "output-1",
+          type: "output",
+          position: { x: 500, y: 100 },
+          config: {},
+          label: "Response",
+        },
+      ],
+      connections: [
+        { id: "conn-1", source: "input-1", target: "llm-1" },
+        { id: "conn-2", source: "llm-1", target: "output-1" },
+      ],
+    },
+    features: [
+      "Natural language processing",
+      "Context awareness",
+      "Constitutional AI",
+      "Helpful responses",
+    ],
+    useCases: ["Customer support", "General assistance", "Information queries", "Creative writing"],
     createdAt: "2024-01-20T00:00:00Z",
     updatedAt: "2024-01-20T00:00:00Z",
   },

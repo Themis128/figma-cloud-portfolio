@@ -91,6 +91,16 @@
       }
     },
     {
+      "includes": ["test-backend-apis.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["playwright-tests/**/*.ts"],
       "linter": {
         "rules": {
@@ -109,6 +119,23 @@
         "rules": {
           "suspicious": {
             "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "tests/**/*.ts",
+        "tests/**/*.tsx",
+        "isolated-tests/**/*.ts",
+        "isolated-tests/**/*.tsx",
+        "playwright-tests/**/*.ts",
+        "playwright-tests/**/*.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
           }
         }
       }

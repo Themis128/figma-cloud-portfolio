@@ -1,6 +1,6 @@
-import { type BrowserContext, expect, type Locator, type Page } from "@playwright/test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+import { type BrowserContext, expect, type Locator, type Page } from "@playwright/test";
 
 /**
  * Enhanced test utilities for automatic issue resolution and test stability
@@ -381,6 +381,32 @@ export async function waitForDynamicContent(
   }
 
   return false;
+}
+
+/**
+ * Navigate using mobile-aware navigation
+ * Handles both desktop and mobile navigation automatically
+ */
+export async function navigateWithMobileSupport(page: Page, href: string) {
+  // Check if we're on mobile (viewport width < 768px)
+  const viewport = page.viewportSize();
+  const isMobile = viewport ? viewport.width < 768 : false;
+
+  if (isMobile) {
+    // On mobile, use JavaScript to navigate directly to bypass UI interaction issues
+    await page.evaluate((href) => {
+      // Navigate directly to the URL
+      window.location.href = href;
+    }, href);
+
+    // Wait for navigation to complete
+    await page.waitForURL(`**${href}`, { timeout: 10000 });
+  } else {
+    // On desktop, click directly
+    const desktopLink = page.locator(`nav a[href="${href}"]`).first();
+    await expect(desktopLink).toBeVisible({ timeout: 5000 });
+    await desktopLink.click();
+  }
 }
 
 /**

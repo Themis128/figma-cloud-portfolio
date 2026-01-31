@@ -153,22 +153,34 @@ export default function Settings() {
                 <div className='space-y-4'>
                   <div className='flex items-center justify-between'>
                     <div className='space-y-0.5'>
-                      <Label className='text-base'>Animations</Label>
+                      <Label htmlFor='animations-switch' className='text-base'>
+                        Animations
+                      </Label>
                       <p className='text-sm text-muted-foreground'>
                         Enable smooth transitions and animations
                       </p>
                     </div>
-                    <Switch checked={animations} onCheckedChange={setAnimations} />
+                    <Switch
+                      id='animations-switch'
+                      checked={animations}
+                      onCheckedChange={setAnimations}
+                    />
                   </div>
 
                   <div className='flex items-center justify-between'>
                     <div className='space-y-0.5'>
-                      <Label className='text-base'>Reduced Motion</Label>
+                      <Label htmlFor='reduced-motion-switch' className='text-base'>
+                        Reduced Motion
+                      </Label>
                       <p className='text-sm text-muted-foreground'>
                         Minimize animations and transitions
                       </p>
                     </div>
-                    <Switch checked={reducedMotion} onCheckedChange={setReducedMotion} />
+                    <Switch
+                      id='reduced-motion-switch'
+                      checked={reducedMotion}
+                      onCheckedChange={setReducedMotion}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -185,12 +197,18 @@ export default function Settings() {
               <CardContent>
                 <div className='flex items-center justify-between'>
                   <div className='space-y-0.5'>
-                    <Label className='text-base'>Push Notifications</Label>
+                    <Label htmlFor='push-notifications-switch' className='text-base'>
+                      Push Notifications
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       Receive notifications about updates and new features
                     </p>
                   </div>
-                  <Switch checked={notifications} onCheckedChange={setNotifications} />
+                  <Switch
+                    id='push-notifications-switch'
+                    checked={notifications}
+                    onCheckedChange={setNotifications}
+                  />
                 </div>
               </CardContent>
             </Card>

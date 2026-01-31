@@ -9,6 +9,7 @@ import express, {
   type Response,
 } from "express";
 import { Server as SocketIOServer } from "socket.io";
+import { executeAgent, executeClaude } from "./routes/ai";
 import { handleAnalytics } from "./routes/analytics";
 import { handleContactForm } from "./routes/contact";
 import { handleDemo } from "./routes/demo";
@@ -132,6 +133,10 @@ export function createServer() {
   app.post("/api/push-notifications", handlePushNotificationsPost);
   app.put("/api/push-notifications", handlePushNotificationsPut);
   app.delete("/api/push-notifications", handlePushNotificationsDelete);
+
+  // AI routes
+  app.post("/api/ai/claude", executeClaude);
+  app.post("/api/ai/agent", executeAgent);
 
   // Health check endpoints
   app.get("/api/health", (_req, res) => {

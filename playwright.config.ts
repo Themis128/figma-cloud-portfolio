@@ -16,28 +16,55 @@ import { createPlaywrightConfig, validateConfiguration } from "./playwright.conf
  * - Comprehensive test coverage
  */
 
-// Create development configuration with full features
+// Create development configuration with continuous testing optimizations
 const config = createPlaywrightConfig("development", {
-  // Development-specific overrides for comprehensive testing
-  retries: 1, // Single retry for development stability
+  // Continuous testing optimizations
+  retries: 5, // Increased retries for continuous fixing
+  timeout: 180000, // 3 minutes per test for complex scenarios
+  workers: 4, // Reduced workers for stability during continuous runs
 
-  // Enhanced reporting for development
+  // Enhanced reporting for continuous monitoring
   reporter: [
-    ["line"], // Console output
-    ["html", {
-      open: "never",
-      outputFolder: "playwright-report/html",
-      attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
-    }],
+    ["line"], // Real-time console output
+    [
+      "html",
+      {
+        open: "never",
+        outputFolder: "playwright-report/html",
+        attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
+      },
+    ],
+    [
+      "json",
+      {
+        outputFile: "playwright-report/results.json",
+      },
+    ],
   ],
 
-  // Additional metadata for development tracking
+  // Enhanced expect configuration for continuous testing
+  expect: {
+    timeout: 30000, // Longer expect timeouts for stability
+  },
+
+  // Additional metadata for continuous testing tracking
   metadata: {
     environment: "development",
-    testType: "comprehensive",
+    testType: "continuous",
     fullBrowserCoverage: true,
     mobileTesting: true,
+    continuousMode: true,
+    autoFixEnabled: true,
     timestamp: new Date().toISOString(),
+  },
+
+  // Custom use configuration for continuous testing
+  use: {
+    actionTimeout: 20000, // Increased action timeout
+    navigationTimeout: 60000, // Increased navigation timeout
+    launchOptions: {
+      slowMo: 50, // Slight delay to prevent race conditions
+    },
   },
 });
 

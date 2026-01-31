@@ -130,25 +130,83 @@ describe("ActivityModal Component", () => {
     }
   });
 
-  it("closes modal on escape key", () => {
+  it("handles keyboard events for Enter and Space keys", () => {
     const mockOnOpenChange = vi.fn();
 
     render(
       <ActivityModal
         trigger={<span>Open Modal</span>}
-        isOpen={true}
+        isOpen={false}
         onOpenChange={mockOnOpenChange}
       >
         <div>Modal Content</div>
       </ActivityModal>,
     );
 
-    // Fire escape key on the backdrop element
-    const backdrop = document.querySelector(".fixed.inset-0.bg-black\\/50");
-    if (backdrop) {
-      fireEvent.keyDown(backdrop, { key: "Escape" });
-      expect(mockOnOpenChange).toHaveBeenCalledWith(false);
-    }
+    const trigger = screen.getByRole("button");
+
+    // Test Enter key
+    fireEvent.keyDown(trigger, { key: "Enter" });
+    expect(mockOnOpenChange).toHaveBeenCalledWith(true);
+
+    // Reset mock
+    mockOnOpenChange.mockClear();
+
+    // Test Space key
+    fireEvent.keyDown(trigger, { key: " " });
+    expect(mockOnOpenChange).toHaveBeenCalledWith(true);
+  });
+
+  it("handles other keys without opening modal", () => {
+    const mockOnOpenChange = vi.fn();
+
+    render(
+      <ActivityModal
+        trigger={<span>Open Modal</span>}
+        isOpen={false}
+        onOpenChange={mockOnOpenChange}
+      >
+        <div>Modal Content</div>
+      </ActivityModal>,
+    );
+
+    const trigger = screen.getByRole("button");
+
+    // Test other keys (should not open modal)
+    fireEvent.keyDown(trigger, { key: "Tab" });
+    fireEvent.keyDown(trigger, { key: "ArrowDown" });
+
+    expect(mockOnOpenChange).not.toHaveBeenCalled();
+  });
+
+  it("handles pre-rendering with cleanup", async () => {
+    const mockOnOpenChange = vi.fn();
+
+    render(
+      <ActivityModal
+        trigger={<span>Open Modal</span>}
+        isOpen={false}
+        onOpenChange={mockOnOpenChange}
+        preRender={true}
+      >
+        <div>Modal Content</div>
+      </ActivityModal>,
+    );
+
+    // Initially, modal should not be visible
+    expect(screen.queryByText("Modal Content")).not.toBeInTheDocument();
+
+    // Wait for pre-render delay
+    await waitFor(
+      () => {
+        expect(screen.getByText("Modal Content")).toBeInTheDocument();
+      },
+      { timeout: 300 },
+    );
+
+    // Modal should be hidden initially (check the overlay div)
+    const modalOverlay = screen.getByText("Modal Content").parentElement?.parentElement;
+    expect(modalOverlay).toHaveClass("hidden");
   });
 });
 
@@ -185,5 +243,38 @@ describe("ActivityBoundary Component", () => {
 
     // Aggressive mode should have shorter delay
     expect(document.querySelectorAll(".activity-placeholder")).toHaveLength(1);
+  });
+
+  it("clones elements with activity IDs", () => {
+    render(
+      <ActivityBoundary mode='moderate'>
+        <button type='button'>Button 1</button>
+        <span>Span 1</span>
+      </ActivityBoundary>,
+    );
+
+    // Check that the boundary wrapper exists
+    const boundary = document.querySelector(
+      '.activity-boundary[data-activity-boundary="moderate"]',
+    );
+    expect(boundary).toBeInTheDocument();
+
+    // Check that activity children are created (they may be wrapped in Activity components)
+    const activityChildren = document.querySelectorAll(".activity-child");
+    expect(activityChildren).toHaveLength(2);
+  });
+
+  it("handles non-element children", () => {
+    render(
+      <ActivityBoundary mode='moderate'>
+        {"Text Child"}
+        {42}
+        {null}
+        {undefined}
+      </ActivityBoundary>,
+    );
+
+    // Should render without crashing
+    expect(document.querySelector(".activity-boundary")).toBeInTheDocument();
   });
 });

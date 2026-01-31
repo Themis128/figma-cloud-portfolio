@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { navigateWithMobileSupport } from "./test-utils";
 
 /**
  * API Integration and Backend Testing Suite
@@ -24,73 +25,88 @@ test.describe("API Integration Tests", () => {
       expect(true).toBe(true);
     });
 
-    test("should handle resume generation errors gracefully", { tag: "@smoke" }, async ({ page }) => {
-      await page.goto("/");
+    test(
+      "should handle resume generation errors gracefully",
+      { tag: "@smoke" },
+      async ({ page }) => {
+        await page.goto("/");
 
-      // Mock a failed API response
-      await page.route("**/api/resume/download", route => {
-        route.fulfill({
-          status: 500,
-          contentType: "application/json",
-          body: JSON.stringify({ error: "Resume generation failed" })
+        // Mock a failed API response
+        await page.route("**/api/resume/download", (route) => {
+          route.fulfill({
+            status: 500,
+            contentType: "application/json",
+            body: JSON.stringify({ error: "Resume generation failed" }),
+          });
         });
-      });
 
-      // Attempt to download resume
-      await page.locator('nav a[href*="resume"]').first().click();
+        // Attempt to download resume - navigate directly for mobile compatibility
+        const viewportWidth = page.viewportSize()?.width;
+        if (viewportWidth && viewportWidth < 768) {
+          // On mobile, navigate directly to avoid menu issues
+          await page.goto("/resume");
+        } else {
+          // On desktop, use navigation
+          await navigateWithMobileSupport(page, "/resume");
+        }
 
-      // Should handle error gracefully (no crash, user feedback)
-      await expect(page.locator("body")).toBeVisible();
-    });
+        // Should handle error gracefully (no crash, user feedback)
+        await expect(page.locator("body")).toBeVisible();
+      },
+    );
   });
 
   test.describe("Push Notifications API", () => {
-    test("should handle push notification subscription", { tag: "@fast" }, async ({ page, context }) => {
-      // Grant notification permission
-      await context.grantPermissions(["notifications"]);
+    test(
+      "should handle push notification subscription",
+      { tag: "@fast" },
+      async ({ page, context }) => {
+        // Grant notification permission
+        await context.grantPermissions(["notifications"]);
 
-      await page.goto("/");
+        await page.goto("/");
 
-      // Check if push notifications are supported
-      const pushSupport = await page.evaluate(() => {
-        return "serviceWorker" in navigator && "PushManager" in window;
-      });
-
-      if (pushSupport) {
-        // Test subscription flow with timeout
-        const subscriptionResult = await page.evaluate(async () => {
-          try {
-            // Wait for service worker with timeout
-            const registration = await Promise.race([
-              navigator.serviceWorker.ready,
-              new Promise<never>((_, reject) =>
-                setTimeout(() => reject(new Error("Service worker timeout")), 5000)
-              )
-            ]);
-
-            // Attempt subscription with timeout
-            const subscription = await Promise.race([
-              registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: new Uint8Array([1, 2, 3, 4]) // Mock key
-              }),
-              new Promise<never>((_, reject) =>
-                setTimeout(() => reject(new Error("Subscription timeout")), 3000)
-              )
-            ]);
-
-            return { success: true, endpoint: subscription.endpoint };
-          } catch (error) {
-            return { success: false, error: String(error) };
-          }
+        // Check if push notifications are supported
+        const pushSupport = await page.evaluate(() => {
+          return "serviceWorker" in navigator && "PushManager" in window;
         });
 
-        // Should either succeed or fail gracefully
-        expect(typeof subscriptionResult.success).toBe("boolean");
-      } else {
-        console.log("Push notifications not supported in this browser");
-      }
-    });
+        if (pushSupport) {
+          // Test subscription flow with timeout
+          const subscriptionResult = await page.evaluate(async () => {
+            try {
+              // Wait for service worker with timeout
+              const registration = await Promise.race([
+                navigator.serviceWorker.ready,
+                new Promise<never>((_, reject) =>
+                  setTimeout(() => reject(new Error("Service worker timeout")), 5000),
+                ),
+              ]);
+
+              // Attempt subscription with timeout
+              const subscription = await Promise.race([
+                registration.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: new Uint8Array([1, 2, 3, 4]), // Mock key
+                }),
+                new Promise<never>((_, reject) =>
+                  setTimeout(() => reject(new Error("Subscription timeout")), 3000),
+                ),
+              ]);
+
+              return { success: true, endpoint: subscription.endpoint };
+            } catch (error) {
+              return { success: false, error: String(error) };
+            }
+          });
+
+          // Should either succeed or fail gracefully
+          expect(typeof subscriptionResult.success).toBe("boolean");
+        } else {
+          console.log("Push notifications not supported in this browser");
+        }
+      },
+    );
 
     test("should handle VAPID key retrieval", { tag: "@smoke" }, async ({ page }) => {
       await page.goto("/");
@@ -114,13 +130,16 @@ test.describe("API Integration Tests", () => {
       await page.goto("/contact");
 
       // Check if contact form exists
-      const formExists = await page.locator('form, [data-testid="contact-form"]').count() > 0;
+      const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
 
       if (formExists) {
         // Fill out contact form (adjust selectors based on actual implementation)
         await page.fill('input[name="name"], input[placeholder*="name"]', "Test User");
         await page.fill('input[name="email"], input[type="email"]', "test@example.com");
-        await page.fill('textarea[name="message"], textarea[placeholder*="message"]', "Test message");
+        await page.fill(
+          'textarea[name="message"], textarea[placeholder*="message"]',
+          "Test message",
+        );
 
         // Submit form
         await page.click('button[type="submit"], button:has-text("Send")');
@@ -137,15 +156,15 @@ test.describe("API Integration Tests", () => {
       await page.goto("/contact");
 
       // Check if contact form exists
-      const formExists = await page.locator('form, [data-testid="contact-form"]').count() > 0;
+      const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
 
       if (formExists) {
         // Try to submit empty form
         await page.click('button[type="submit"], button:has-text("Send")');
 
         // Should show validation errors
-        const errorMessages = await page.$$eval('[class*="error"], .invalid-feedback', elements =>
-          elements.map(el => el.textContent?.trim()).filter(Boolean)
+        const errorMessages = await page.$$eval('[class*="error"], .invalid-feedback', (elements) =>
+          elements.map((el) => el.textContent?.trim()).filter(Boolean),
         );
 
         // Should have some form of validation feedback
@@ -162,9 +181,11 @@ test.describe("API Integration Tests", () => {
 
       // Check if GA script is loaded
       const gaLoaded = await page.evaluate(() => {
-        return !!document.querySelector('script[src*="googletagmanager"]') ||
+        return (
+          !!document.querySelector('script[src*="googletagmanager"]') ||
           !!(window as unknown as { gtag?: unknown }).gtag ||
-          !!(window as unknown as { dataLayer?: unknown }).dataLayer;
+          !!(window as unknown as { dataLayer?: unknown }).dataLayer
+        );
       });
 
       // GA might be conditionally loaded
@@ -174,8 +195,15 @@ test.describe("API Integration Tests", () => {
     test("should track page views", { tag: "@smoke" }, async ({ page }) => {
       await page.goto("/");
 
-      // Navigate to another page using a more specific selector
-      await page.locator('nav a[href="/agents"]').first().click();
+      // Navigate to another page - use direct navigation for mobile compatibility
+      const viewportWidth = page.viewportSize()?.width;
+      if (viewportWidth && viewportWidth < 768) {
+        // On mobile, navigate directly to avoid menu issues
+        await page.goto("/agents");
+      } else {
+        // On desktop, use navigation
+        await navigateWithMobileSupport(page, "/agents");
+      }
 
       // Check if tracking events are sent (this is hard to test directly)
       // Instead, verify the page loads successfully
@@ -199,13 +227,13 @@ test.describe("API Integration Tests", () => {
       await page.goto("/");
 
       // Mock network failure for API calls
-      await page.route("**/api/**", route => {
+      await page.route("**/api/**", (route) => {
         route.abort();
       });
 
       // Try to perform an action that makes API calls - check if any API buttons exist
       const apiButton = page.locator('button:has-text("Download"), a[href*="api"]').first();
-      if (await apiButton.count() > 0) {
+      if ((await apiButton.count()) > 0) {
         await apiButton.click();
       }
 
@@ -239,7 +267,7 @@ test.describe("API Integration Tests", () => {
 
       // Check if web vitals are being tracked
       const webVitals = await page.evaluate(() => {
-        return ((window as unknown as { webVitalsMetrics?: unknown[] }).webVitalsMetrics || []);
+        return (window as unknown as { webVitalsMetrics?: unknown[] }).webVitalsMetrics || [];
       });
 
       // Web vitals might be collected over time

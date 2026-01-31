@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useDeviceType, useOptimizedAnimation } from "../client/hooks/useDeviceType";
 import { usePWA } from "../client/hooks/usePWA";
@@ -97,10 +97,38 @@ describe("usePWA", () => {
     expect(result.current.isInstallable).toBe(true);
   });
 
-  it.skip("should install PWA when installPWA is called", async () => {
-    // Skip this test due to complex event dispatching setup
-    // The PWA functionality works in practice but is hard to test with mocks
-    expect(true).toBe(true);
+  it("should install PWA when installPWA is called", async () => {
+    // Mock the beforeinstallprompt event
+    const mockPrompt = vi.fn().mockResolvedValue(undefined);
+    const mockUserChoice = Promise.resolve({ outcome: "accepted" as const, platform: "web" });
+    const mockEvent = {
+      platforms: ["web"],
+      prompt: mockPrompt,
+      userChoice: mockUserChoice,
+      preventDefault: vi.fn(),
+    } as BeforeInstallPromptEvent;
+
+    // Simulate the beforeinstallprompt event
+    const { result } = renderHook(() => usePWA());
+
+    // Manually trigger the beforeinstallprompt event
+    act(() => {
+      // Create a proper event that mimics the browser's beforeinstallprompt event
+      const event = Object.assign(new Event("beforeinstallprompt"), mockEvent);
+      window.dispatchEvent(event);
+    });
+
+    // Wait for state update
+    await waitFor(() => {
+      expect(result.current.isInstallable).toBe(true);
+    });
+
+    // Call installPWA
+    await act(async () => {
+      result.current.installPWA();
+    });
+
+    expect(mockPrompt).toHaveBeenCalled();
   });
 });
 

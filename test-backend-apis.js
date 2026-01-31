@@ -24,7 +24,7 @@ function makeRequest(url, options = {}) {
         try {
           const json = JSON.parse(body);
           resolve({ status: res.statusCode, headers: res.headers, data: json });
-        } catch (e) {
+        } catch (_e) {
           resolve({ status: res.statusCode, headers: res.headers, data: body });
         }
       });

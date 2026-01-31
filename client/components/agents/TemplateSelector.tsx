@@ -6,6 +6,7 @@ import { HoverCard } from "@/components/ui/hover-card";
 import {
   type AgentTemplate,
   agentTemplates,
+  claudeAgentTemplates,
   cloneTemplate,
   getTemplatesByCategory,
   searchTemplates,
@@ -44,11 +45,24 @@ export default function TemplateSelector({
     "all",
   );
 
+  const allTemplates = [...agentTemplates, ...claudeAgentTemplates];
+
   const filteredTemplates = searchQuery
-    ? searchTemplates(searchQuery)
+    ? [
+        ...searchTemplates(searchQuery),
+        ...claudeAgentTemplates.filter(
+          (template) =>
+            template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            template.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
+        ),
+      ]
     : selectedCategory === "all"
-      ? agentTemplates
-      : getTemplatesByCategory(selectedCategory);
+      ? allTemplates
+      : [
+          ...getTemplatesByCategory(selectedCategory),
+          ...claudeAgentTemplates.filter((template) => template.category === selectedCategory),
+        ];
 
   const categories = [
     {

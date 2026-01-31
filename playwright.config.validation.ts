@@ -6,7 +6,8 @@
  */
 
 import type { PlaywrightTestConfig } from "@playwright/test";
-import { PRESET_CONFIGS } from "./playwright.config.shared";
+import * as os from "node:os";
+import { PRESET_CONFIGS } from "./playwright.config.shared.ts";
 
 // =============================================================================
 // CONSTANTS
@@ -20,6 +21,10 @@ const VALIDATION_CONSTANTS = {
   MIN_WORKER_COUNT: 2,
   MAX_WORKER_COUNT: 8,
 
+  // Worker calculation constants
+  WORKER_MULTIPLIER: 1.5,
+  MIN_WORKER_BASE: 8,
+
   // Timeout thresholds (in milliseconds)
   MIN_TEST_TIMEOUT_MS: 10000,
   MIN_ACTION_TIMEOUT_MS: 1000,
@@ -30,19 +35,23 @@ const VALIDATION_CONSTANTS = {
   // Retry thresholds
   MAX_RETRY_COUNT: 5,
 
-  // Score deductions
-  SCORE_DEDUCTION_CRITICAL_WORKERS: 2,
-  SCORE_DEDUCTION_TIMEOUT: 2,
-  SCORE_DEDUCTION_ACTION_TIMEOUT: 1.5,
-  SCORE_DEDUCTION_SETUP: 1,
-  SCORE_DEDUCTION_HIGH_WORKERS: 0.5,
-  SCORE_DEDUCTION_NO_PROJECTS: 2,
-  SCORE_DEDUCTION_RETRY_STRATEGY: 0.5,
-  SCORE_DEDUCTION_HIGH_RETRIES: 0.5,
-  SCORE_DEDUCTION_NO_REPORTERS: 0.5,
-  SCORE_DEDUCTION_NO_OUTPUT_DIR: 0.2,
-  SCORE_DEDUCTION_NO_METADATA: 0.3,
-  SCORE_DEDUCTION_NO_BASE_URL: 0.5,
+  // Score deductions (adjusted for better balance)
+  SCORE_DEDUCTION_CRITICAL_WORKERS: 1.5, // Reduced from 2
+  SCORE_DEDUCTION_TIMEOUT: 1.5, // Reduced from 2
+  SCORE_DEDUCTION_ACTION_TIMEOUT: 1, // Reduced from 1.5
+  SCORE_DEDUCTION_SETUP: 0.5, // Reduced from 1
+  SCORE_DEDUCTION_HIGH_WORKERS: 0.3, // Reduced from 0.5
+  SCORE_DEDUCTION_NO_PROJECTS: 1.5, // Reduced from 2
+  SCORE_DEDUCTION_RETRY_STRATEGY: 0.3, // Reduced from 0.5
+  SCORE_DEDUCTION_HIGH_RETRIES: 0.3, // Reduced from 0.5
+  SCORE_DEDUCTION_NO_REPORTERS: 0.3, // Reduced from 0.5
+  SCORE_DEDUCTION_NO_OUTPUT_DIR: 0.1, // Reduced from 0.2
+  SCORE_DEDUCTION_NO_METADATA: 0.2, // Reduced from 0.3
+  SCORE_DEDUCTION_NO_BASE_URL: 0.3, // Reduced from 0.5
+
+  // Bonus scores
+  SCORE_BONUS_COMPREHENSIVE_METADATA: 0.2,
+  MIN_METADATA_KEYS_FOR_BONUS: 5,
 
   // Grade thresholds
   GRADE_A_PLUS_THRESHOLD: 9.5,
@@ -56,7 +65,18 @@ const VALIDATION_CONSTANTS = {
   SUMMARY_GOOD_THRESHOLD: 7,
   SUMMARY_DECENT_THRESHOLD: 5,
 
-  // Display constants
+  // Browser launch argument validation
+  SCORE_DEDUCTION_BROWSER_ARGS: 0.3,
+  SCORE_DEDUCTION_PERFORMANCE_ARGS: 0.2,
+  SCORE_DEDUCTION_REDUNDANT_ARGS: 0.1,
+
+  // Performance validation thresholds
+  MAX_BROWSER_ARGS_COUNT: 50, // Maximum reasonable number of launch args
+  MIN_PERFORMANCE_ARGS: 5, // Minimum performance optimizations
+  MIN_PERFORMANCE_ARGS_NON_CHROMIUM: 4, // Lower threshold for Firefox/WebKit
+  MAX_DUPLICATE_ARGS: 2, // Maximum allowed duplicate args
+
+  // Report formatting
   REPORT_WIDTH: 80,
 } as const;
 
@@ -91,7 +111,8 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
   if (
     typeof config.workers === "number" &&
     config.workers <= VALIDATION_CONSTANTS.MIN_WORKER_COUNT &&
-    !process.env.CI
+    !process.env.CI &&
+    !config.metadata?.environment?.includes("isolated") // Allow single worker for isolated mode
   ) {
     issues.push({
       severity: "critical",
@@ -130,13 +151,16 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
 
   // Check for global setup/teardown
   if (!config.globalSetup && !config.globalTeardown) {
-    issues.push({
-      severity: "warning",
-      category: "reliability",
-      message: "Missing global setup/teardown may affect test isolation",
-      recommendation: "Implement global setup and teardown for better test isolation",
-    });
-    score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_SETUP;
+    // Allow fast mode to skip global setup for speed
+    if (!config.metadata?.environment?.includes("fast")) {
+      issues.push({
+        severity: "info", // Changed from warning to info
+        category: "reliability",
+        message: "Missing global setup/teardown may affect test isolation",
+        recommendation: "Implement global setup and teardown for better test isolation",
+      });
+      score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_SETUP;
+    }
   } else {
     strengths.push("Global setup/teardown configured for proper test isolation");
   }
@@ -144,16 +168,20 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
   // === PERFORMANCE CHECKS ===
 
   // Check worker configuration
+  const maxRecommendedWorkers = Math.max(
+    VALIDATION_CONSTANTS.MIN_WORKER_BASE,
+    Math.floor(os.cpus().length * VALIDATION_CONSTANTS.WORKER_MULTIPLIER),
+  );
   if (
     config.workers &&
     typeof config.workers === "number" &&
-    config.workers > VALIDATION_CONSTANTS.MAX_WORKER_COUNT
+    config.workers > maxRecommendedWorkers
   ) {
     issues.push({
       severity: "warning",
       category: "performance",
-      message: "Very high worker count may cause resource contention",
-      recommendation: "Consider limiting workers based on CPU cores and memory",
+      message: `Worker count (${config.workers}) may cause resource contention on ${os.cpus().length} CPU cores`,
+      recommendation: `Consider limiting workers to ${maxRecommendedWorkers} for better resource management`,
     });
     score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_HIGH_WORKERS;
   }
@@ -226,6 +254,11 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
     });
     score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_NO_METADATA;
   } else {
+    // Bonus points for comprehensive metadata
+    const metadataKeys = Object.keys(config.metadata);
+    if (metadataKeys.length >= VALIDATION_CONSTANTS.MIN_METADATA_KEYS_FOR_BONUS) {
+      score += VALIDATION_CONSTANTS.SCORE_BONUS_COMPREHENSIVE_METADATA; // Small bonus for comprehensive metadata
+    }
     strengths.push("Test metadata configured for better tracking");
   }
 
@@ -240,6 +273,114 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
       recommendation: "Configure base URL for consistent test execution",
     });
     score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_NO_BASE_URL;
+  }
+
+  // === BROWSER LAUNCH ARGUMENT VALIDATION ===
+
+  // Check browser projects for launch arguments
+  if (config.projects && Array.isArray(config.projects)) {
+    for (const project of config.projects) {
+      if (project.use?.launchOptions?.args) {
+        const args = project.use.launchOptions.args as string[];
+
+        // Check for excessive arguments
+        if (args.length > VALIDATION_CONSTANTS.MAX_BROWSER_ARGS_COUNT) {
+          issues.push({
+            severity: "warning",
+            category: "performance",
+            message: `Browser project '${project.name}' has ${args.length} launch arguments (max recommended: ${VALIDATION_CONSTANTS.MAX_BROWSER_ARGS_COUNT})`,
+            recommendation: "Review and optimize browser launch arguments for better performance",
+          });
+          score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_BROWSER_ARGS;
+        }
+
+        // Check for duplicate arguments
+        const uniqueArgs = new Set(args);
+        const duplicates = args.length - uniqueArgs.size;
+        if (duplicates > VALIDATION_CONSTANTS.MAX_DUPLICATE_ARGS) {
+          issues.push({
+            severity: "info",
+            category: "maintainability",
+            message: `Browser project '${project.name}' has ${duplicates} duplicate launch arguments`,
+            recommendation: "Remove duplicate browser launch arguments",
+          });
+          score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_REDUNDANT_ARGS;
+        }
+
+        // Check for conflicting arguments (more precise detection)
+        const conflictingPairs = [
+          // Only truly conflicting combinations
+          ["--disable-gpu", "--use-gl=desktop"], // GPU disable vs specific GL usage
+          ["--no-sandbox", "--disable-setuid-sandbox"], // Redundant sandbox options
+          ["--disable-web-security", "--disable-features=VizDisplayCompositor"], // Security vs compositor
+        ];
+
+        for (const [arg1, arg2] of conflictingPairs) {
+          // More precise matching - check for exact arg matches
+          const hasArg1 = args.some((arg) => arg === arg1 || arg.startsWith(`${arg1}=`));
+          const hasArg2 = args.some((arg) => arg === arg2 || arg.startsWith(`${arg2}=`));
+
+          if (hasArg1 && hasArg2) {
+            issues.push({
+              severity: "warning",
+              category: "reliability",
+              message: `Browser project '${project.name}' has potentially conflicting launch arguments: ${arg1} and ${arg2}`,
+              recommendation: "Review conflicting browser launch arguments",
+            });
+            score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_BROWSER_ARGS;
+          }
+        }
+
+        // Check for performance optimizations (browser-aware)
+        const isChromium =
+          project.name.toLowerCase().includes("chrome") ||
+          project.name.toLowerCase().includes("chromium");
+        const isFirefox = project.name.toLowerCase().includes("firefox");
+        const isWebKit =
+          project.name.toLowerCase().includes("webkit") ||
+          project.name.toLowerCase().includes("safari");
+
+        let performanceArgs: string[] = [];
+        if (isChromium) {
+          performanceArgs = [
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--disable-software-rasterizer",
+            "--memory-pressure-off",
+            "--max_old_space_size",
+          ];
+        } else if (isFirefox || isWebKit) {
+          // Firefox and WebKit support fewer performance args
+          performanceArgs = [
+            "--disable-dev-shm-usage",
+            "--memory-pressure-off",
+            "--max_old_space_size",
+            "--disable-background-timer-throttling",
+            "--disable-renderer-backgrounding",
+          ];
+        }
+
+        const performanceCount = performanceArgs.filter((arg) =>
+          args.some((launchArg) => launchArg.includes(arg)),
+        ).length;
+
+        const minPerformanceArgs = isChromium
+          ? VALIDATION_CONSTANTS.MIN_PERFORMANCE_ARGS
+          : VALIDATION_CONSTANTS.MIN_PERFORMANCE_ARGS_NON_CHROMIUM;
+
+        if (performanceCount < minPerformanceArgs) {
+          issues.push({
+            severity: "info",
+            category: "performance",
+            message: `Browser project '${project.name}' has limited performance optimizations (${performanceCount}/${minPerformanceArgs})`,
+            recommendation: "Consider adding more performance-focused browser launch arguments",
+          });
+          score -= VALIDATION_CONSTANTS.SCORE_DEDUCTION_PERFORMANCE_ARGS;
+        } else {
+          strengths.push(`Browser project '${project.name}' has good performance optimizations`);
+        }
+      }
+    }
   }
 
   // === ADDITIONAL STRENGTH CHECKS ===
@@ -262,8 +403,8 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
 
   // === SCORE CALCULATION AND GRADING ===
 
-  // Ensure score doesn't go below 0
-  score = Math.max(0, score);
+  // Ensure score doesn't go below 0 and cap at 10.0
+  score = Math.max(0, Math.min(10, score));
 
   // Determine grade
   let grade: ConfigHealthReport["grade"];
@@ -386,4 +527,78 @@ export function generateConfigReport(): string {
 if (import.meta.url === `file://${process.argv[1]}`) {
   // biome-ignore lint/suspicious/noConsole: Direct script execution for debugging is appropriate
   console.log(generateConfigReport());
+}
+
+/**
+ * Analyze browser launch arguments and provide optimization recommendations
+ */
+export function analyzeBrowserArgs(args: string[]): {
+  recommendations: string[];
+  score: number;
+  issues: string[];
+} {
+  const recommendations: string[] = [];
+  const issues: string[] = [];
+  let score = 10;
+
+  // Constants for scoring
+  const PROBLEMATIC_COMBO_PENALTY = 0.5;
+  const MISSING_ARGS_PENALTY = 0.2;
+  const MAX_RECOMMENDED_ARGS_SHOWN = 3;
+
+  // Check for known problematic combinations
+  const problematicCombos = [
+    {
+      args: ["--disable-gpu", "--use-gl=desktop"],
+      issue: "Conflicting GPU settings",
+      fix: "Remove --disable-gpu or --use-gl=desktop",
+    },
+    {
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      issue: "Redundant sandbox disabling",
+      fix: "Use only --no-sandbox for most cases",
+    },
+    {
+      args: ["--disable-web-security", "--disable-features=VizDisplayCompositor"],
+      issue: "Web security and compositor conflict",
+      fix: "Choose one security approach",
+    },
+  ];
+
+  for (const combo of problematicCombos) {
+    const hasAllArgs = combo.args.every((arg) =>
+      args.some((launchArg) => launchArg.includes(arg.split("=")[0])),
+    );
+    if (hasAllArgs) {
+      issues.push(combo.issue);
+      recommendations.push(combo.fix);
+      score -= PROBLEMATIC_COMBO_PENALTY;
+    }
+  }
+
+  // Check for missing modern optimizations
+  const recommendedArgs = [
+    "--disable-dev-shm-usage",
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--disable-backgrounding-occluded-windows",
+  ];
+
+  const missingArgs = recommendedArgs.filter(
+    (arg) => !args.some((launchArg) => launchArg.includes(arg.split("=")[0])),
+  );
+
+  if (missingArgs.length > 0) {
+    recommendations.push(
+      `Consider adding: ${missingArgs.slice(0, MAX_RECOMMENDED_ARGS_SHOWN).join(", ")}`,
+    );
+    score -= MISSING_ARGS_PENALTY;
+  }
+
+  // General recommendation for browser-specific args
+  recommendations.push("Ensure browser-specific arguments are properly configured");
+
+  return { recommendations, score: Math.max(0, score), issues };
 }

@@ -1,4 +1,8 @@
-import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
+import {
+  createPlaywrightConfig,
+  VALIDATION_CONSTANTS,
+  validateConfiguration,
+} from "./playwright.config.shared";
 
 /**
  * Isolated Playwright Configuration
@@ -22,21 +26,26 @@ const config = createPlaywrightConfig("isolated", {
   fullyParallel: false, // Single worker for isolation
   workers: 1, // Explicit single worker
 
-  // Enhanced debugging and tracing
+  // Enhanced debugging and tracing with extended timeouts for debugging
   use: {
     baseURL: "http://localhost:8081", // Match main app port
     trace: "on", // Full tracing for debugging
     screenshot: "on", // Screenshots for all tests
     video: "on", // Video recording for debugging
+    actionTimeout: VALIDATION_CONSTANTS.DEBUG_ACTION_TIMEOUT_MS, // Extended timeout for debugging
+    navigationTimeout: VALIDATION_CONSTANTS.DEBUG_NAVIGATION_TIMEOUT_MS, // Extended navigation timeout
   },
 
   // Simplified reporting for isolated testing
   reporter: [
     ["line"], // Console output
-    ["html", {
-      open: "never",
-      outputFolder: "playwright-report-isolated/html",
-    }],
+    [
+      "html",
+      {
+        open: "never",
+        outputFolder: "playwright-report-isolated/html",
+      },
+    ],
   ],
 
   // Isolated-specific metadata

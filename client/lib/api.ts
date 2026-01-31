@@ -3,7 +3,15 @@
  * This replaces the direct /api/* routes with Lambda function URLs
  */
 
-import type { AnalyticsEvent, ContactFormRequest, ResumeData } from "@shared/api";
+import type {
+  AgentExecutionRequest,
+  AgentExecutionResponse,
+  AnalyticsEvent,
+  ClaudeRequest,
+  ClaudeResponse,
+  ContactFormRequest,
+  ResumeData,
+} from "@shared/api";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -208,3 +216,30 @@ export async function sendAnalyticsEvent(event: AnalyticsEvent): Promise<{ succe
   });
   return response.json();
 }
+
+/**
+ * Claude AI API integration
+ */
+export const claudeApi = {
+  /**
+   * Execute Claude API call
+   */
+  async executeClaude(request: ClaudeRequest): Promise<ClaudeResponse> {
+    const response = await apiRequest("ai/claude", {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+    return response.json();
+  },
+
+  /**
+   * Execute AI Agent workflow
+   */
+  async executeAgent(request: AgentExecutionRequest): Promise<AgentExecutionResponse> {
+    const response = await apiRequest("ai/agent", {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+    return response.json();
+  },
+};

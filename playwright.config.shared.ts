@@ -1,5 +1,5 @@
 import { devices, type PlaywrightTestConfig } from "@playwright/test";
-import os from "node:os";
+import * as os from "node:os";
 
 /**
  * Shared Playwright Configuration Factory
@@ -59,64 +59,221 @@ export interface EnvironmentSettings {
 /**
  * Consolidated Browser Launch Arguments
  * Removes duplicates and provides optimized settings for different scenarios
+ * Updated for Playwright 1.58+ with latest performance optimizations
  */
 export const BROWSER_LAUNCH_ARGS = {
-  // Performance optimization arguments
+  // Performance optimization arguments (Playwright 1.58+ optimized, no duplicates)
   PERFORMANCE: [
     "--disable-background-timer-throttling",
     "--disable-backgrounding-occluded-windows",
     "--disable-renderer-backgrounding",
-    "--disable-features=TranslateUI",
+    "--disable-features=TranslateUI,BlinkGenPropertyTrees",
     "--disable-ipc-flooding-protection",
     "--disable-component-extensions-with-background-pages",
     "--disable-default-apps",
+    "--disable-hang-monitor",
+    "--disable-prompt-on-repost",
+    "--force-color-profile=srgb",
     "--metrics-recording-only",
     "--no-first-run",
-    "--enable-features=NetworkService,NetworkServiceInProcess",
+    "--enable-features=NetworkService,NetworkServiceInProcess,VizDisplayCompositor",
+    "--disable-background-networking",
+    "--disable-sync",
+    "--disable-translate",
+    "--hide-scrollbars",
+    "--mute-audio",
+    "--no-crash-upload",
+    "--no-default-browser-check",
+    "--disable-logging",
+    "--disable-dev-tools",
+    // Modern performance flags (Playwright 1.58+)
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--disable-accelerated-2d-canvas",
+    "--disable-software-rasterizer",
   ],
 
-  // Security and isolation arguments
+  // Security and isolation arguments (enhanced for modern browsers, no conflicts)
   SECURITY: [
-    "--disable-web-security",
-    "--disable-features=VizDisplayCompositor",
+    "--disable-blink-features=AutomationControlled",
+    "--disable-extensions-except",
+    "--disable-extensions",
     "--no-sandbox",
-    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu", // Safe for headless testing
   ],
 
-  // Resource optimization arguments
+  // Resource optimization arguments (memory and CPU focused)
   RESOURCES: [
     "--disable-dev-shm-usage",
-    "--disable-gpu",
     "--disable-software-rasterizer",
     "--disable-background-networking",
     "--disable-extensions",
+    "--disable-plugins",
+    "--disable-images",
+    "--disable-javascript-harmony-shipping",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--disable-backgrounding-occluded-windows",
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--optimize-for-size",
+    "--disable-logging",
+    "--disable-dev-tools",
   ],
 
-  // Get all arguments for a specific scenario
-  getArgs(scenario: "fast" | "stable" | "ci"): string[] {
+  // CI-specific optimizations (streamlined, removed redundancy and conflicts)
+  CI: [
+    "--disable-dev-shm-usage",
+    "--disable-software-rasterizer",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--disable-backgrounding-occluded-windows",
+    "--no-sandbox",
+    "--disable-blink-features=AutomationControlled",
+    "--disable-extensions",
+    "--disable-plugins",
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--disable-logging",
+    "--disable-dev-tools",
+    "--disable-component-extensions-with-background-pages",
+    "--disable-default-apps",
+    "--disable-hang-monitor",
+    "--disable-prompt-on-repost",
+    "--force-color-profile=srgb",
+    "--metrics-recording-only",
+    "--mute-audio",
+    "--no-crash-upload",
+    "--no-default-browser-check",
+    "--no-first-run",
+  ],
+
+  // Browser-specific argument sets for optimal performance
+  CHROMIUM_SPECIFIC: [
+    "--disable-blink-features=AutomationControlled",
+    "--enable-features=NetworkService,NetworkServiceInProcess",
+    "--disable-dev-shm-usage",
+    "--disable-gpu", // Safe for headless CI
+    "--disable-software-rasterizer",
+  ],
+
+  FIREFOX_SPECIFIC: [
+    // Firefox supports fewer args but gets key performance optimizations
+    "--disable-dev-shm-usage",
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--disable-backgrounding-occluded-windows",
+  ],
+
+  WEBKIT_SPECIFIC: [
+    // WebKit has limited flag support but gets essential performance args
+    "--disable-dev-shm-usage",
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--disable-backgrounding-occluded-windows",
+  ],
+
+  // Get all arguments for a specific scenario and browser
+  getArgs(
+    scenario: "fast" | "stable" | "ci" | "debug",
+    browser?: "chromium" | "firefox" | "webkit",
+  ): string[] {
     const base = [...this.PERFORMANCE, ...this.SECURITY];
 
+    let scenarioArgs: string[] = [];
     switch (scenario) {
       case "fast":
-        return [...base, ...this.RESOURCES];
+        scenarioArgs = [...base, ...this.RESOURCES];
+        break;
       case "ci":
-        return [...base, ...this.RESOURCES];
+        scenarioArgs = [...this.CI];
+        break;
+      case "debug":
+        scenarioArgs = [...this.PERFORMANCE]; // Keep some features for debugging
+        break;
       case "stable":
-        return base;
-      default:
-        return base;
+        scenarioArgs = base;
+        break;
     }
+
+    // Add browser-specific optimizations
+    if (browser) {
+      switch (browser) {
+        case "chromium":
+          scenarioArgs = [...scenarioArgs, ...this.CHROMIUM_SPECIFIC];
+          break;
+        case "firefox":
+          scenarioArgs = [...scenarioArgs, ...this.FIREFOX_SPECIFIC];
+          break;
+        case "webkit":
+          scenarioArgs = [...scenarioArgs, ...this.WEBKIT_SPECIFIC];
+          break;
+      }
+    }
+
+    // Remove duplicates while preserving order
+    return [...new Set(scenarioArgs)];
   },
 } as const;
 
 /**
  * Visual Comparison Thresholds
  * Consistent settings for screenshot and snapshot comparisons
+ * Updated for Playwright 1.58+ with better defaults
  */
 export const VISUAL_COMPARISON = {
-  THRESHOLD: 0.2,
-  MAX_DIFF_PIXELS: 100,
+  THRESHOLD: 0.15, // Slightly more lenient for stability
+  MAX_DIFF_PIXELS: 50, // Reduced for better accuracy
+  MAX_DIFF_PIXEL_RATIO: 0.01, // New: maximum ratio of different pixels
   ANIMATION_HANDLING: "disabled" as const,
+  CARETS: "hide" as const, // Hide text carets in screenshots
+  SCALE: "css" as const, // Use CSS scaling for consistency
+} as const;
+
+/**
+ * Test Annotation Constants
+ * Standardized annotations for test categorization
+ */
+export const TEST_ANNOTATIONS = {
+  // Test types
+  SMOKE: { type: "smoke", description: "Critical path tests" },
+  REGRESSION: { type: "regression", description: "Regression tests" },
+  INTEGRATION: { type: "integration", description: "Integration tests" },
+  E2E: { type: "e2e", description: "End-to-end tests" },
+
+  // Test priorities
+  CRITICAL: { type: "priority", description: "Critical priority" },
+  HIGH: { type: "priority", description: "High priority" },
+  MEDIUM: { type: "priority", description: "Medium priority" },
+  LOW: { type: "priority", description: "Low priority" },
+
+  // Test environments
+  VISUAL: { type: "visual", description: "Visual regression tests" },
+  ACCESSIBILITY: { type: "accessibility", description: "Accessibility tests" },
+  PERFORMANCE: { type: "performance", description: "Performance tests" },
+
+  // Browser compatibility
+  LEGACY: { type: "compatibility", description: "Legacy browser tests" },
+  MODERN: { type: "compatibility", description: "Modern browser tests" },
+} as const;
+
+/**
+ * Test Grouping Configuration
+ * Organize tests into logical groups for better execution control
+ */
+export const TEST_GROUPS = {
+  CRITICAL: ["@critical", "@smoke"],
+  FAST: ["@fast", "@smoke"],
+  VISUAL: ["@visual"],
+  ACCESSIBILITY: ["@accessibility"],
+  PERFORMANCE: ["@performance"],
+  REGRESSION: ["@regression"],
+  INTEGRATION: ["@integration"],
 } as const;
 
 /**
@@ -136,6 +293,16 @@ export const TEST_HEADERS = {
 export const VALIDATION_CONSTANTS = {
   MIN_TEST_TIMEOUT_MS: 10000, // 10 seconds
   MIN_ACTION_TIMEOUT_MS: 1000, // 1 second
+  MAX_CI_WORKERS: 4, // Maximum workers in CI environment
+  MAX_CI_RETRIES: 3, // Maximum retries in CI
+  CI_CPU_FRACTION: 0.6, // CPU fraction for CI environments
+  DEV_SLOW_MO_MS: 100, // Slow motion delay for development debugging
+  FAST_TIMEOUT_MS: 30000, // 30 seconds for fast execution
+  FAST_ACTION_TIMEOUT_MS: 5000, // 5 seconds for fast actions
+  FAST_NAVIGATION_TIMEOUT_MS: 10000, // 10 seconds for fast navigation
+  DEBUG_ACTION_TIMEOUT_MS: 30000, // 30 seconds for debugging
+  DEBUG_NAVIGATION_TIMEOUT_MS: 60000, // 60 seconds for debugging
+  MAX_LOCAL_WORKERS: 8, // Maximum workers in local development
 } as const;
 
 // =============================================================================
@@ -149,16 +316,16 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
   const baseSettings: Record<ConfigEnvironment, EnvironmentSettings> = {
     development: {
       timeouts: {
-        action: 15000,
-        navigation: 45000,
-        expect: 30000,
-        test: 120000,
-        webServer: 120000,
+        action: 10000, // Reduced for better responsiveness
+        navigation: 30000, // Balanced for development
+        expect: 20000, // Reasonable for assertions
+        test: 90000, // 90 seconds for complex tests
+        webServer: 60000, // Faster server startup
       },
       workers: {
         min: 1,
         max: Math.max(1, os.cpus().length - 1),
-        cpuFraction: 0.75,
+        cpuFraction: 0.8, // Use 80% of CPUs for better system responsiveness
       },
       retries: 1,
       artifacts: {
@@ -167,7 +334,7 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
         video: "retain-on-failure",
       },
       reporting: {
-        reporters: ["line", "html"],
+        reporters: ["line", "html", "json"],
         outputDir: "playwright-report",
       },
       features: {
@@ -180,18 +347,21 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 
     ci: {
       timeouts: {
-        action: 20000, // Slightly higher for CI stability
-        navigation: 60000, // More time for slower CI environments
-        expect: 30000,
-        test: 180000, // 3 minutes for complex CI scenarios
-        webServer: 120000,
+        action: 15000, // Slightly higher for CI stability
+        navigation: 45000, // More time for slower CI environments
+        expect: 25000, // Higher for CI reliability
+        test: 120000, // 2 minutes for complex CI scenarios
+        webServer: 90000, // More time for CI server startup
       },
       workers: {
         min: 1,
-        max: 4, // Limit for CI resource management
-        cpuFraction: 0.5,
+        max: Math.min(
+          VALIDATION_CONSTANTS.MAX_CI_WORKERS,
+          Math.floor(os.cpus().length * VALIDATION_CONSTANTS.CI_CPU_FRACTION),
+        ), // Limit for CI resource management
+        cpuFraction: VALIDATION_CONSTANTS.CI_CPU_FRACTION, // Conservative CPU usage in CI
       },
-      retries: 3,
+      retries: 2, // Reduced from 3 for faster feedback
       artifacts: {
         trace: "retain-on-failure",
         screenshot: "only-on-failure",
@@ -211,16 +381,16 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 
     fast: {
       timeouts: {
-        action: 5000, // Balanced fast timeouts
-        navigation: 15000,
-        expect: 5000,
-        test: 60000,
-        webServer: 30000,
+        action: 3000, // Aggressive but reasonable timeouts
+        navigation: 10000, // Fast navigation timeout
+        expect: 3000, // Quick assertions
+        test: 30000, // 30 seconds max per test
+        webServer: 15000, // Fast server startup
       },
       workers: {
         min: 1,
-        max: os.cpus().length,
-        cpuFraction: 1.0, // Use all available CPUs for speed
+        max: os.cpus().length, // Use all available CPUs for speed
+        cpuFraction: 1.0,
       },
       retries: 0, // No retries for maximum speed
       artifacts: {
@@ -229,7 +399,7 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
         video: "off",
       },
       reporting: {
-        reporters: ["line"],
+        reporters: ["line", "json"],
         outputDir: "playwright-report-fast",
       },
       features: {
@@ -242,25 +412,25 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 
     isolated: {
       timeouts: {
-        action: 10000,
-        navigation: 30000,
-        expect: 15000,
-        test: 90000,
-        webServer: 60000,
+        action: 8000, // Moderate timeouts for debugging
+        navigation: 25000, // Reasonable navigation time
+        expect: 12000, // Good for debugging assertions
+        test: 60000, // 1 minute for debugging scenarios
+        webServer: 30000, // Moderate server startup time
       },
       workers: {
         min: 1,
         max: 1, // Single worker for isolation
         cpuFraction: 1.0,
       },
-      retries: 2,
+      retries: 1, // Single retry for debugging
       artifacts: {
-        trace: "on",
-        screenshot: "on",
-        video: "on",
+        trace: "on", // Full tracing for debugging
+        screenshot: "on", // Screenshots for all tests
+        video: "on", // Video recording for debugging
       },
       reporting: {
-        reporters: ["line", "html"],
+        reporters: ["line", "html", "json"],
         outputDir: "playwright-report-isolated",
       },
       features: {
@@ -296,30 +466,54 @@ export function getOptimalWorkers(environment: ConfigEnvironment): number {
     );
   }
 
-  // Local development
-  return Math.min(
+  // Local development - be more conservative to avoid resource contention
+  const recommendedWorkers = Math.min(
     settings.workers.max,
-    Math.max(settings.workers.min, Math.floor(cpuCount * settings.workers.cpuFraction)),
+    Math.max(
+      settings.workers.min,
+      Math.min(cpuCount - 1, Math.floor(cpuCount * settings.workers.cpuFraction)),
+    ),
   );
+
+  return recommendedWorkers;
 }
 
 /**
  * Get browser projects configuration based on environment
  */
 export function getBrowserProjects(environment: ConfigEnvironment) {
-  const launchArgs = BROWSER_LAUNCH_ARGS.getArgs(environment === "fast" ? "fast" : "stable");
+  const scenario = environment === "fast" ? "fast" : environment === "ci" ? "ci" : "stable";
+
+  const baseBrowserConfig = {
+    launchOptions: {
+      // Browser-specific args will be added per project
+      ignoreDefaultArgs: ["--enable-automation"], // Remove automation indicators
+      ignoreHTTPSErrors: true,
+    },
+    contextOptions: {
+      reducedMotion: "reduce",
+      strictSelectors: true,
+      acceptDownloads: true,
+      bypassCSP: environment === "development", // Allow CSP bypass in development
+      permissions: ["geolocation", "notifications"],
+    },
+  };
 
   const baseProjects = [
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        ...baseBrowserConfig,
         launchOptions: {
-          args: launchArgs,
+          ...baseBrowserConfig.launchOptions,
+          args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "chromium"),
         },
         contextOptions: {
-          reducedMotion: "reduce",
-          strictSelectors: true,
+          ...baseBrowserConfig.contextOptions,
+          // Chromium-specific settings
+          colorScheme: "light",
+          viewport: { width: 1280, height: 720 },
         },
       },
     },
@@ -332,12 +526,16 @@ export function getBrowserProjects(environment: ConfigEnvironment) {
         name: "firefox",
         use: {
           ...devices["Desktop Firefox"],
+          ...baseBrowserConfig,
           launchOptions: {
-            args: launchArgs.filter((arg) => !arg.includes("disable-features")), // Firefox-specific filtering
+            ...baseBrowserConfig.launchOptions,
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "firefox"),
           },
           contextOptions: {
-            reducedMotion: "reduce",
-            strictSelectors: true,
+            ...baseBrowserConfig.contextOptions,
+            // Firefox-specific settings
+            colorScheme: "light",
+            viewport: { width: 1280, height: 720 },
           },
         },
       },
@@ -345,12 +543,16 @@ export function getBrowserProjects(environment: ConfigEnvironment) {
         name: "webkit",
         use: {
           ...devices["Desktop Safari"],
+          ...baseBrowserConfig,
           launchOptions: {
-            args: launchArgs.filter((arg) => !arg.includes("sandbox")), // WebKit-specific filtering
+            ...baseBrowserConfig.launchOptions,
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "webkit"),
           },
           contextOptions: {
-            reducedMotion: "reduce",
-            strictSelectors: true,
+            ...baseBrowserConfig.contextOptions,
+            // WebKit-specific settings
+            colorScheme: "light",
+            viewport: { width: 1280, height: 720 },
           },
         },
       },
@@ -358,31 +560,39 @@ export function getBrowserProjects(environment: ConfigEnvironment) {
   }
 
   // Add mobile projects for comprehensive testing (except fast mode)
-  if (environment === "development" || environment === "ci") {
+  if (environment === "development" || environment === "ci" || environment === "isolated") {
     baseProjects.push(
       {
         name: "Mobile Chrome",
         use: {
-          ...devices["Pixel 5"],
+          ...devices["Pixel 7"],
+          ...baseBrowserConfig,
           launchOptions: {
-            args: launchArgs,
+            ...baseBrowserConfig.launchOptions,
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "chromium"),
           },
           contextOptions: {
-            reducedMotion: "reduce",
-            strictSelectors: true,
+            ...baseBrowserConfig.contextOptions,
+            // Mobile-specific settings
+            colorScheme: "light",
+            viewport: { width: 412, height: 915 }, // Pixel 7 viewport
           },
         },
       },
       {
         name: "Mobile Safari",
         use: {
-          ...devices["iPhone 12"],
+          ...devices["iPhone 14"],
+          ...baseBrowserConfig,
           launchOptions: {
-            args: launchArgs.filter((arg) => !arg.includes("sandbox")), // WebKit-specific filtering
+            ...baseBrowserConfig.launchOptions,
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "webkit"),
           },
           contextOptions: {
-            reducedMotion: "reduce",
-            strictSelectors: true,
+            ...baseBrowserConfig.contextOptions,
+            // Mobile Safari-specific settings
+            colorScheme: "light",
+            viewport: { width: 390, height: 844 }, // iPhone 14 viewport
           },
         },
       },
@@ -451,91 +661,101 @@ export function createPlaywrightConfig(
       }
     }),
 
-    // Expect configuration
+    // Enhanced expect configuration with modern features
     expect: {
       timeout: settings.timeouts.expect,
       ...(settings.features.enableVisualComparison && {
         toHaveScreenshot: {
           threshold: VISUAL_COMPARISON.THRESHOLD,
           maxDiffPixels: VISUAL_COMPARISON.MAX_DIFF_PIXELS,
+          maxDiffPixelRatio: VISUAL_COMPARISON.MAX_DIFF_PIXEL_RATIO,
           animations: VISUAL_COMPARISON.ANIMATION_HANDLING,
+          caret: VISUAL_COMPARISON.CARETS,
+          scale: VISUAL_COMPARISON.SCALE,
         },
         toMatchSnapshot: {
           threshold: VISUAL_COMPARISON.THRESHOLD,
+          maxDiffPixelRatio: VISUAL_COMPARISON.MAX_DIFF_PIXEL_RATIO,
         },
       }),
     },
 
-    // Use configuration
+    // Use configuration with modern browser settings
     use: {
-      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8081",
+      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3001",
 
-      // Timeouts
+      // Enhanced timeouts
       actionTimeout: settings.timeouts.action,
       navigationTimeout: settings.timeouts.navigation,
 
-      // Artifacts
+      // Enhanced artifacts with better control
       trace: settings.artifacts.trace as "on" | "off" | "on-first-retry" | "retain-on-failure",
       screenshot: settings.artifacts.screenshot as "on" | "off" | "only-on-failure",
       video: settings.artifacts.video as "on" | "off" | "retain-on-failure",
 
-      // Browser context
+      // Enhanced browser context
       viewport: { width: 1280, height: 720 },
       ignoreHTTPSErrors: true,
       locale: "en-US",
       timezoneId: "America/New_York",
 
-      // Headers for test identification
+      // Enhanced context options
+      bypassCSP: environment === "development",
+      acceptDownloads: true,
+      hasTouch: false,
+      isMobile: false,
+      colorScheme: "light",
+      serviceWorkers: "block",
+      permissions: [],
+      geolocation: undefined,
       extraHTTPHeaders: {
         ...TEST_HEADERS,
         "X-Test-Environment": TEST_HEADERS["X-Test-Environment"](environment),
+        "X-Playwright-Config": environment,
+        "X-Playwright-Version": "1.58.0",
       },
 
-      // Context options
-      permissions: [],
-      geolocation: undefined,
-      colorScheme: "light",
-      serviceWorkers: "block",
-      offline: false,
+      // Enhanced browser launch options
+      launchOptions: {
+        slowMo: environment === "development" ? VALIDATION_CONSTANTS.DEV_SLOW_MO_MS : 0, // Slight delay in development for debugging
+        headless: environment !== "isolated", // Headless except for isolated debugging
+      },
     },
 
     projects: projects as PlaywrightTestConfig["projects"],
 
     // Web server configuration (environment-aware)
     ...(settings.features.enableWebServer &&
-      !process.env.CI && {
-        webServer: [
-          {
-            command: "npx tsx server/node-build.ts",
-            url: "http://localhost:3000/api/health",
-            reuseExistingServer: true,
-            timeout: settings.timeouts.webServer,
-            cwd: process.cwd(),
-          },
-          {
-            command: "pnpm dev",
-            url: "http://localhost:8081",
-            reuseExistingServer: true,
-            timeout: settings.timeouts.webServer,
-            cwd: process.cwd(),
-          },
-        ],
-      }),
+      !process.env.CI &&
+      !process.env.PLAYWRIGHT_SKIP_WEBSERVER && {
+      webServer: [
+        {
+          command: "npx tsx server/node-build.ts",
+          url: "http://localhost:3000/api/health",
+          reuseExistingServer: true,
+          timeout: settings.timeouts.webServer,
+          cwd: process.cwd(),
+        },
+        {
+          command: "pnpm dev",
+          url: "http://localhost:3001",
+          reuseExistingServer: true,
+          timeout: settings.timeouts.webServer,
+          cwd: process.cwd(),
+        },
+      ],
+    }),
 
     // Test sharding for CI (environment-aware)
     ...(settings.features.enableSharding &&
       process.env.SHARD && {
-        shard: {
-          current: parseInt(process.env.SHARD.split("/")[0], 10),
-          total: parseInt(process.env.SHARD.split("/")[1], 10),
-        },
-      }),
+      shard: {
+        current: parseInt(process.env.SHARD.split("/")[0], 10),
+        total: parseInt(process.env.SHARD.split("/")[1], 10),
+      },
+    }),
 
-    // Test filtering
-    grep: process.env.TEST_GREP ? new RegExp(process.env.TEST_GREP) : undefined,
-    grepInvert: process.env.TEST_GREP_INVERT ? new RegExp(process.env.TEST_GREP_INVERT) : undefined,
-
-    // Snapshot handling
+    // Enhanced snapshot handling
     updateSnapshots: process.env.UPDATE_SNAPSHOTS === "true" ? "all" : "missing",
 
     // Metadata for debugging and reporting

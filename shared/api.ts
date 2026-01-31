@@ -114,3 +114,67 @@ export interface LinkPreviewData {
   lastFetched: string;
   error: string | null;
 }
+
+/**
+ * AI Agent API types
+ */
+export interface ClaudeMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ClaudeRequest {
+  model:
+    | "claude-3-opus-20240229"
+    | "claude-3-sonnet-20240229"
+    | "claude-3-haiku-20240307"
+    | "claude-3-5-sonnet-20240620";
+  max_tokens: number;
+  messages: ClaudeMessage[];
+  system?: string;
+  temperature?: number;
+  top_p?: number;
+  top_k?: number;
+  stop_sequences?: string[];
+}
+
+export interface ClaudeResponse {
+  id: string;
+  type: string;
+  role: string;
+  content: Array<{
+    type: string;
+    text: string;
+  }>;
+  model: string;
+  stop_reason: string | null;
+  stop_sequence: string | null;
+  usage: {
+    input_tokens: number;
+    output_tokens: number;
+  };
+}
+
+export interface AgentExecutionRequest {
+  templateId: string;
+  inputs: Record<string, unknown>;
+  model?:
+    | "claude-3-opus-20240229"
+    | "claude-3-sonnet-20240229"
+    | "claude-3-haiku-20240307"
+    | "claude-3-5-sonnet-20240620"
+    | "gpt-4"
+    | "gpt-3.5-turbo";
+  provider?: "anthropic" | "openai" | "together";
+}
+
+export interface AgentExecutionResponse {
+  success: boolean;
+  output: string;
+  usage?: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+  };
+  error?: string;
+}

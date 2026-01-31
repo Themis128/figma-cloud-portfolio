@@ -156,7 +156,7 @@ test.describe("Code Quality", () => {
       return link ? link.getAttribute("href") : null;
     });
 
-    expect(manifest).toContain("manifest.json");
+    expect(manifest).toContain("manifest.webmanifest");
 
     // Check service worker
     const swState = await page.evaluate(() => {
@@ -300,6 +300,16 @@ test.describe("Code Quality", () => {
     // Check for proper routing
     const currentUrl = page.url();
     expect(currentUrl).toContain("/");
+
+    // Check if mobile menu exists (mobile viewport)
+    const mobileMenuButton = page.locator('button[aria-label="Toggle mobile menu"]');
+    const isMobile = await mobileMenuButton.isVisible().catch(() => false);
+
+    if (isMobile) {
+      // Open mobile menu
+      await mobileMenuButton.click();
+      await page.waitForTimeout(100); // Wait for animation
+    }
 
     // Navigate to different pages
     await page.locator('a[href="/about"]').first().click();

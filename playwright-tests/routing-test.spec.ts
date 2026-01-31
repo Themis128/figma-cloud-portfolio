@@ -2,7 +2,7 @@ import { test } from "@playwright/test";
 import { waitForAppReady } from "./test-utils";
 
 test("check routing", async ({ page }) => {
-  await page.goto("http://localhost:8081/projects");
+  await page.goto("/projects");
   await waitForAppReady(page);
   console.log("URL:", page.url());
   console.log("Title:", await page.title());

@@ -19,7 +19,7 @@ export default async function globalSetup(config: FullConfig) {
 
   const startTime = Date.now();
   const environment = process.env.NODE_ENV || "development";
-  const baseURL = config.projects[0]?.use?.baseURL || "http://localhost:8082";
+  const baseURL = config.projects[0]?.use?.baseURL || "http://localhost:3001";
 
   try {
     // 1. Setup global functions
@@ -28,8 +28,14 @@ export default async function globalSetup(config: FullConfig) {
     // 2. Environment validation
     await validateEnvironment(config);
 
-    // 3. Service health checks
-    await checkServiceHealth(baseURL);
+    // 3. Service health checks - skip if web servers are configured to auto-start
+    const hasWebServers =
+      config.webServer && Array.isArray(config.webServer) && config.webServer.length > 0;
+    if (!hasWebServers) {
+      await checkServiceHealth(baseURL);
+    } else {
+      console.log("🏥 Skipping service health check (web servers will auto-start)...");
+    }
 
     // 4. Browser compatibility check
     await checkBrowserCompatibility();

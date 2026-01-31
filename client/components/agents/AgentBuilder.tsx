@@ -1,10 +1,11 @@
-import { ArrowLeft, Play, Save, Settings } from "lucide-react";
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";
+import { executeAgent } from "@/lib/agentExecutor";
+import { ArrowLeft, Play, Save, Settings } from "lucide-react";
+import { useState } from "react";
 import { WorkflowBuilder } from "./WorkflowBuilder";
 
 interface AgentBuilderProps {
@@ -13,12 +14,11 @@ interface AgentBuilderProps {
   onCancel: () => void;
 }
 
-// Agent execution constants
-const AGENT_EXECUTION_SIMULATION_DELAY_MS = 2000; // 2 seconds
-
 export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
   const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` });
   const [isRunning, setIsRunning] = useState(false);
+  const [executionResult, setExecutionResult] = useState<Record<string, unknown> | null>(null);
+  const [executionError, setExecutionError] = useState<string | null>(null);
 
   const handleWorkflowUpdate = (nodes: AgentNode[], connections: AgentConnection[]) => {
     setAgent((prev) => ({
@@ -33,11 +33,17 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
 
   const handleRunAgent = async () => {
     setIsRunning(true);
-    // Simulate agent execution
-    await new Promise((resolve) => setTimeout(resolve, AGENT_EXECUTION_SIMULATION_DELAY_MS));
-    setIsRunning(false);
-    // TODO: Implement actual agent execution logic
-    // Running agent
+    setExecutionResult(null);
+    setExecutionError(null);
+    try {
+      // Execute the actual agent workflow
+      const result = await executeAgent(agent);
+      setExecutionResult(result);
+    } catch (error) {
+      setExecutionError(error instanceof Error ? error.message : "Unknown error occurred");
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   return (
@@ -164,6 +170,26 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
               </div>
             </div>
           </div>
+
+          {/* Execution Results */}
+          {(executionResult || executionError) && (
+            <div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6'>
+              <h3 className='text-lg font-semibold text-white mb-4'>Execution Results</h3>
+              {executionError && (
+                <div className='bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4'>
+                  <p className='text-red-400 text-sm'>Error: {executionError}</p>
+                </div>
+              )}
+              {executionResult && (
+                <div className='bg-green-500/10 border border-green-500/20 rounded-lg p-4'>
+                  <p className='text-green-400 text-sm mb-2'>Execution completed successfully!</p>
+                  <pre className='text-white/80 text-xs overflow-x-auto'>
+                    {JSON.stringify(executionResult, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Agent Stats */}
           <div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6'>

@@ -1,4 +1,8 @@
-import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
+import {
+  createPlaywrightConfig,
+  VALIDATION_CONSTANTS,
+  validateConfiguration,
+} from "./playwright.config.shared";
 
 /**
  * Simple Playwright Configuration
@@ -15,8 +19,8 @@ import { createPlaywrightConfig, validateConfiguration } from "./playwright.conf
  * - Simple CI/CD pipelines
  */
 
-// Configuration constants for simple setup
-const CI_WORKERS = 2;
+// Configuration constants for simple setup using shared validation constants
+const CI_WORKERS = VALIDATION_CONSTANTS.MAX_CI_WORKERS;
 const DEVELOPMENT_WORKERS = 4;
 const CI_RETRIES = 2;
 const DEVELOPMENT_RETRIES = 1;

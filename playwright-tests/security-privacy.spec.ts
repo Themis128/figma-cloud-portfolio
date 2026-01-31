@@ -24,8 +24,9 @@ test.describe("Security & Privacy", () => {
       // Check for mixed content (HTTP resources on HTTPS pages)
       const mixedContent = await page.evaluate(() => {
         const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
-        return resources.some(resource =>
-          resource.name.startsWith("http://") && window.location.protocol === "https:"
+        return resources.some(
+          (resource) =>
+            resource.name.startsWith("http://") && window.location.protocol === "https:",
         );
       });
 
@@ -48,7 +49,7 @@ test.describe("Security & Privacy", () => {
       // Test that script injection is prevented
       const scriptInjection = await page.evaluate(() => {
         const testElement = document.createElement("div");
-        testElement.innerHTML = '<script>window.testXSS = true;</script>';
+        testElement.innerHTML = "<script>window.testXSS = true;</script>";
         document.body.appendChild(testElement);
 
         return new Promise<boolean>((resolve) => {
@@ -73,16 +74,10 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Check that no sensitive data is logged
-      const sensitivePatterns = [
-        /password/i,
-        /token/i,
-        /key/i,
-        /secret/i,
-        /api[_-]?key/i
-      ];
+      const sensitivePatterns = [/password/i, /token/i, /key/i, /secret/i, /api[_-]?key/i];
 
-      const hasSensitiveData = consoleMessages.some(msg =>
-        sensitivePatterns.some(pattern => pattern.test(msg))
+      const hasSensitiveData = consoleMessages.some((msg) =>
+        sensitivePatterns.some((pattern) => pattern.test(msg)),
       );
 
       expect(hasSensitiveData).toBe(false);
@@ -94,11 +89,11 @@ test.describe("Security & Privacy", () => {
       // Check that forms don't autocomplete sensitive information
       const sensitiveInputs = await page.$$eval(
         'input[type="password"], input[name*="password"], input[name*="token"]',
-        inputs => inputs.map(input => (input as HTMLInputElement).autocomplete)
+        (inputs) => inputs.map((input) => (input as HTMLInputElement).autocomplete),
       );
 
       // Sensitive inputs should have autocomplete off or appropriate values
-      sensitiveInputs.forEach(autocomplete => {
+      sensitiveInputs.forEach((autocomplete) => {
         expect(["off", "current-password", "new-password"]).toContain(autocomplete);
       });
     });
@@ -109,7 +104,7 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Check if contact form exists
-      const formExists = await page.locator('form, [data-testid="contact-form"]').count() > 0;
+      const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
 
       if (formExists) {
         // Test contact form with SQL injection payload
@@ -132,7 +127,7 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Check if contact form exists
-      const formExists = await page.locator('form, [data-testid="contact-form"]').count() > 0;
+      const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
 
       if (formExists) {
         // Test with XSS payload
@@ -155,7 +150,7 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Check if email input exists
-      const emailInputExists = await page.locator('input[type="email"]').count() > 0;
+      const emailInputExists = (await page.locator('input[type="email"]').count()) > 0;
 
       if (emailInputExists) {
         // Test with invalid email
@@ -208,12 +203,12 @@ test.describe("Security & Privacy", () => {
       });
 
       // Check for sensitive data patterns
-      const sensitiveKeys = Object.keys(localStorageData).filter(key =>
-        /password|token|key|secret|auth/i.test(key)
+      const sensitiveKeys = Object.keys(localStorageData).filter((key) =>
+        /password|token|key|secret|auth/i.test(key),
       );
 
-      const sensitiveValues = Object.values(localStorageData).filter(value =>
-        /password|token|key|secret|auth/i.test(value)
+      const sensitiveValues = Object.values(localStorageData).filter((value) =>
+        /password|token|key|secret|auth/i.test(value),
       );
 
       expect(sensitiveKeys.length).toBe(0);
@@ -251,7 +246,7 @@ test.describe("Security & Privacy", () => {
 
       // Check if API button exists
       const apiButton = page.locator('button:has-text("Download"), a[href*="api"]').first();
-      if (await apiButton.count() > 0) {
+      if ((await apiButton.count()) > 0) {
         await apiButton.click();
 
         try {
@@ -272,8 +267,8 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Check that external scripts use HTTPS
-      const insecureScripts = await page.$$eval('script[src^="http://"]', scripts =>
-        scripts.map(script => (script as HTMLScriptElement).src)
+      const insecureScripts = await page.$$eval('script[src^="http://"]', (scripts) =>
+        scripts.map((script) => (script as HTMLScriptElement).src),
       );
 
       expect(insecureScripts.length).toBe(0);
@@ -283,8 +278,8 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Block a common third-party service (Google Analytics, etc.)
-      await page.route("**/*googletagmanager*/**", route => route.abort());
-      await page.route("**/*google-analytics*/**", route => route.abort());
+      await page.route("**/*googletagmanager*/**", (route) => route.abort());
+      await page.route("**/*google-analytics*/**", (route) => route.abort());
 
       // Page should still load
       await expect(page.locator("body")).toBeVisible();
@@ -296,20 +291,21 @@ test.describe("Security & Privacy", () => {
       await page.goto("/");
 
       // Trigger an error condition
-      await page.route("**/api/**", route => {
+      await page.route("**/api/**", (route) => {
         route.fulfill({
           status: 500,
           contentType: "application/json",
           body: JSON.stringify({
             error: "Internal server error",
-            stack: "Error: Something went wrong\n    at someInternalFunction (/app/internal.js:123:45)"
-          })
+            stack:
+              "Error: Something went wrong\n    at someInternalFunction (/app/internal.js:123:45)",
+          }),
         });
       });
 
       // Check if API button exists
       const apiButton = page.locator('button:has-text("Download"), a[href*="api"]').first();
-      if (await apiButton.count() > 0) {
+      if ((await apiButton.count()) > 0) {
         // Try to make an API call
         await apiButton.click();
 

@@ -191,16 +191,19 @@ test.describe("reCAPTCHA and Google Analytics Integration", () => {
       await page.fill("#subject", "Test Subject");
       await page.fill("#message", "Test message");
 
-      // Click submit button multiple times rapidly
+      // Click submit button once
       const submitButton = page.getByRole("button", { name: "Send Message" });
       await submitButton.click();
-      await submitButton.click();
-      await submitButton.click();
 
-      // Button may or may not be disabled in test environment
+      // Button should be disabled immediately after first click
+      await expect(submitButton).toBeDisabled();
+
+      // Wait a bit and check it's still disabled
       await page.waitForTimeout(1000);
-      // Just check that multiple clicks don't crash the page
-      await expect(page.locator("body")).toBeVisible();
+      await expect(submitButton).toBeDisabled();
+
+      // Should show loading state
+      await expect(page.locator("text=Sending...")).toBeVisible();
     });
 
     test("should handle network errors during reCAPTCHA verification", async ({ page }) => {

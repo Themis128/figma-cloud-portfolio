@@ -24,7 +24,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -97,7 +97,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -132,7 +132,7 @@ test.describe("Analytics Integration", () => {
       }
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -229,7 +229,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -259,7 +259,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -293,7 +293,7 @@ test.describe("Analytics Integration", () => {
     });
 
     // Don't mock Google Analytics - test that app loads without GA
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -333,7 +333,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -362,7 +362,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -407,7 +407,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -452,7 +452,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -512,7 +512,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -551,7 +551,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -593,7 +593,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -635,7 +635,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -678,7 +678,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
@@ -719,7 +719,7 @@ test.describe("Analytics Integration", () => {
       };
     });
 
-    await page.goto("http://localhost:8081/");
+    await page.goto("/");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
 
