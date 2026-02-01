@@ -3,6 +3,13 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "recommended": true
+      },
+      "security": {
+        "recommended": true,
+        "noDangerouslySetInnerHtml": "off"
+      },
       "correctness": {
         "noUnusedVariables": "warn",
         "noUnusedImports": "error"
@@ -11,9 +18,6 @@
         "noExplicitAny": "warn",
         "noConsole": "warn",
         "noDebugger": "warn"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
       },
       "style": {
         "useConst": "error",
@@ -45,8 +49,7 @@
       "portfolio-nextjs/*.config.{js,ts}",
       "*.{js,ts,tsx}",
       "*.config.{js,ts}"
-    ],
-    "ignoreUnknown": true
+    ]
   },
   "overrides": [
     {
@@ -58,6 +61,7 @@
         "**/playwright-report/**",
         "**/performance-test-results/**",
         "**/test-results/**",
+        "**/coverage/**",
         "amplify-build-config.json"
       ],
       "linter": {
@@ -114,11 +118,14 @@
       }
     },
     {
-      "includes": ["server/**/*.ts"],
+      "includes": ["server/**/*.ts", "server/**/*.js"],
       "linter": {
         "rules": {
           "suspicious": {
             "noConsole": "off"
+          },
+          "style": {
+            "noMagicNumbers": "off"
           }
         }
       }
