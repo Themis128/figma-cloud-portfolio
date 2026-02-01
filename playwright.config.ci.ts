@@ -63,16 +63,22 @@ const config = createPlaywrightConfig("ci", {
   use: {
     baseURL: getCIBaseURL(),
     // CI-specific browser context
-    extraHTTPHeaders: {
-      "X-CI-Provider": detectCIProvider(),
-      "X-CI-Run-ID": process.env.GITHUB_RUN_ID || process.env.CI_PIPELINE_ID || "unknown",
-      "X-CI-Commit": process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || "unknown",
-    },
+    // Note: Removed extraHTTPHeaders to avoid CORS issues with external resources
   },
 
   // CI-specific test configuration
-  grep: process.env.CI_TEST_GREP ? new RegExp(process.env.CI_TEST_GREP) : /@smoke|@critical/, // Run critical tests in CI by default
+  grep: process.env.CI_TEST_GREP ? new RegExp(process.env.CI_TEST_GREP) : undefined, // Only filter if explicitly requested
   updateSnapshots: process.env.CI_UPDATE_SNAPSHOTS === "true" ? "all" : "none", // Never update snapshots in CI unless explicitly requested
+
+  // Web server configuration - auto-start production server before tests
+  webServer: {
+    command: "node dist/server/node-build.mjs",
+    port: 3001,
+    timeout: 120000, // 2 minutes to start
+    reuseExistingServer: false, // Always start fresh in CI
+    stdout: "pipe",
+    stderr: "pipe",
+  },
 });
 
 /**
@@ -151,8 +157,8 @@ function getCIBaseURL(): string {
   // AWS Amplify deployment
   if (process.env.AWS_AMPLIFY_URL) return process.env.AWS_AMPLIFY_URL;
 
-  // Default fallback
-  return "http://localhost:8081";
+  // Local development fallback - use the correct port
+  return "http://localhost:3001";
 }
 
 /**
