@@ -30,13 +30,16 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.1
+        # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4.0.0
+        # v4.0.0
+        uses: pnpm/action-setup@0c17529a66aca453f9227af23103ed11469b1e47
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4.0.1
+        # v4.0.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
@@ -91,10 +94,11 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.5
+        # v3.1.5
+        uses: codecov/codecov-action@41dd13387183a0c1e7e237138dc1cbd8e9c53f11
         with:
           file: ./coverage/lcov.info
-          flags: unittests # cspell: disable-line
+          flags: unittests # cspell: disable-line # cspell: disable-line
           name: codecov-umbrella
           fail_ci_if_error: false
 
@@ -104,13 +108,16 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.1
+        # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4.0.0
+        # v4.0.0
+        uses: pnpm/action-setup@0c17529a66aca453f9227af23103ed11469b1e47
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.0.1
+        # v4.0.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
         with:
           node-version: 20.x
           cache: 'pnpm'
@@ -186,13 +193,16 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.1
+        # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4.0.0
+        # v4.0.0
+        uses: pnpm/action-setup@0c17529a66aca453f9227af23103ed11469b1e47
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.0.1
+        # v4.0.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
         with:
           node-version: 20.x
           cache: 'pnpm'
@@ -209,7 +219,7 @@ jobs:
             # Fallback: install via apt-get with modern keyring
             sudo apt-get update
             sudo apt-get install -y wget gnupg
-            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor # cspell: disable-line -o /usr/share/keyrings # cspell: disable-line/google-chrome-keyring.gpg
             echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
             sudo apt-get update
             sudo apt-get install -y google-chrome-stable
@@ -220,7 +230,7 @@ jobs:
           if command -v google-chrome-stable >/dev/null 2>&1; then
             echo "✅ Chrome installed successfully"
             google-chrome-stable --version
-          elif [ -f "$HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome" ]; then
+          elif [ # cspell: disable-line -f "$HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome" ]; then
             echo "✅ Chrome installed via Puppeteer"
             $HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome --version
           else
@@ -277,7 +287,7 @@ jobs:
   #         pnpm test
   #
   #     - name: Autobuild
-  #       uses: github/codeql-action/autobuild@v4
+  #       uses: github/codeql-action/autobuild # cspell: disable-line@v4
   #
   #     - name: Perform CodeQL Analysis
   #       uses: github/codeql-action/analyze@v4
@@ -285,11 +295,11 @@ jobs:
   #         category: '/language:javascript-typescript'
   #
   #     - name: Run Trivy vulnerability scanner
-  #       uses: aquasecurity/trivy-action@0.24.0
+  #       uses: aquasecurity # cspell: disable-line/trivy-action@0.24.0
   #       with:
   #         scan-type: 'fs'
   #         scan-ref: '.'
-  #         format: 'sarif'
+  #         format: 'sarif' # cspell: disable-line
   #         output: 'trivy-results.sarif'
   #
   #     - name: Upload Trivy scan results to GitHub Security tab
@@ -297,3 +307,5 @@ jobs:
   #       uses: github/codeql-action/upload-sarif@v4
   #       with:
   #         sarif_file: 'trivy-results.sarif'
+
+
