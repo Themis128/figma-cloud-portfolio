@@ -1,5 +1,5 @@
-import { devices, type PlaywrightTestConfig } from "@playwright/test";
 import * as os from "node:os";
+import { devices, type PlaywrightTestConfig } from "@playwright/test";
 
 /**
  * Shared Playwright Configuration Factory
@@ -728,32 +728,32 @@ export function createPlaywrightConfig(
     ...(settings.features.enableWebServer &&
       !process.env.CI &&
       !process.env.PLAYWRIGHT_SKIP_WEBSERVER && {
-      webServer: [
-        {
-          command: "npx tsx server/node-build.ts",
-          url: "http://localhost:3000/api/health",
-          reuseExistingServer: true,
-          timeout: settings.timeouts.webServer,
-          cwd: process.cwd(),
-        },
-        {
-          command: "pnpm dev",
-          url: "http://localhost:3001",
-          reuseExistingServer: true,
-          timeout: settings.timeouts.webServer,
-          cwd: process.cwd(),
-        },
-      ],
-    }),
+        webServer: [
+          {
+            command: "npx tsx server/node-build.ts",
+            url: "http://localhost:3000/api/health",
+            reuseExistingServer: true, // Reverted to true for manual server management
+            timeout: settings.timeouts.webServer,
+            cwd: process.cwd(),
+          },
+          {
+            command: "pnpm dev",
+            url: "http://localhost:3001",
+            reuseExistingServer: true, // Reverted to true for manual server management
+            timeout: settings.timeouts.webServer * 2, // Double timeout for dev server startup
+            cwd: process.cwd(),
+          },
+        ],
+      }),
 
     // Test sharding for CI (environment-aware)
     ...(settings.features.enableSharding &&
       process.env.SHARD && {
-      shard: {
-        current: parseInt(process.env.SHARD.split("/")[0], 10),
-        total: parseInt(process.env.SHARD.split("/")[1], 10),
-      },
-    }),
+        shard: {
+          current: parseInt(process.env.SHARD.split("/")[0], 10),
+          total: parseInt(process.env.SHARD.split("/")[1], 10),
+        },
+      }),
 
     // Enhanced snapshot handling
     updateSnapshots: process.env.UPDATE_SNAPSHOTS === "true" ? "all" : "missing",

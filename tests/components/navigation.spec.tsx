@@ -1,8 +1,8 @@
-import Navigation from "@/components/Navigation";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
+import Navigation from "@/components/Navigation";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(

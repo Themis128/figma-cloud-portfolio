@@ -1,6 +1,6 @@
-import Resume from "@/pages/Resume";
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import Resume from "@/pages/Resume";
 
 // Mock all external dependencies
 vi.mock("@/components/Navigation", () => ({

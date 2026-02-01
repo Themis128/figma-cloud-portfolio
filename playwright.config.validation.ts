@@ -5,8 +5,8 @@
  * and health checks to ensure optimal test execution.
  */
 
-import type { PlaywrightTestConfig } from "@playwright/test";
 import * as os from "node:os";
+import type { PlaywrightTestConfig } from "@playwright/test";
 import { PRESET_CONFIGS } from "./playwright.config.shared.ts";
 
 // =============================================================================
