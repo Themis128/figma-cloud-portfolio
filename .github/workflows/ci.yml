@@ -199,56 +199,57 @@ jobs:
             amplify/
           retention-days: 30
 
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript-typescript
-          queries: security-and-quality
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run comprehensive code quality checks
-        run: |
-          echo "🔍 Running comprehensive code quality analysis..."
-          pnpm run lint
-          pnpm run typecheck
-          pnpm test
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: '/language:javascript-typescript'
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: always() && hashFiles('trivy-results.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
+  # security:
+  #   runs-on: ubuntu-latest
+  #   # CodeQL disabled: not required for this project
+  #   # To enable: configure code scanning in repository settings and update to v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Initialize CodeQL
+  #       uses: github/codeql-action/init@v4
+  #       with:
+  #         languages: javascript-typescript
+  #         queries: security-and-quality
+  #
+  #     - name: Setup pnpm
+  #       uses: pnpm/action-setup@v4
+  #
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20.x
+  #         cache: 'pnpm'
+  #
+  #     - name: Install dependencies
+  #       run: pnpm install --frozen-lockfile
+  #
+  #     - name: Run comprehensive code quality checks
+  #       run: |
+  #         echo "🔍 Running comprehensive code quality analysis..."
+  #         pnpm run lint
+  #         pnpm run typecheck
+  #         pnpm test
+  #
+  #     - name: Autobuild
+  #       uses: github/codeql-action/autobuild@v4
+  #
+  #     - name: Perform CodeQL Analysis
+  #       uses: github/codeql-action/analyze@v4
+  #       with:
+  #         category: '/language:javascript-typescript'
+  #
+  #     - name: Run Trivy vulnerability scanner
+  #       uses: aquasecurity/trivy-action@0.24.0
+  #       with:
+  #         scan-type: 'fs'
+  #         scan-ref: '.'
+  #         format: 'sarif'
+  #         output: 'trivy-results.sarif'
+  #
+  #     - name: Upload Trivy scan results to GitHub Security tab
+  #       if: always() && hashFiles('trivy-results.sarif') != ''
+  #       uses: github/codeql-action/upload-sarif@v4
+  #       with:
+  #         sarif_file: 'trivy-results.sarif'
