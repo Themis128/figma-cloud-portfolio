@@ -30,13 +30,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v4.0.0
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.1
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
@@ -91,10 +91,10 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.1.5
         with:
           file: ./coverage/lcov.info
-          flags: unittests
+          flags: unittests # cspell: disable-line
           name: codecov-umbrella
           fail_ci_if_error: false
 
@@ -104,13 +104,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v4.0.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.1
         with:
           node-version: 20.x
           cache: 'pnpm'
@@ -144,7 +144,8 @@ jobs:
 
       - name: Start Vite dev server
         run: |
-          pnpm dev > frontend.log 2>&1 &
+          # Run vite directly without secrets wrapper (CI has env vars set)
+          pnpm exec vite --port 3001 --host 0.0.0.0 > frontend.log 2>&1 &
           FRONTEND_PID=$!
           echo "Frontend PID: $FRONTEND_PID"
           
@@ -170,7 +171,7 @@ jobs:
         timeout-minutes: 10
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.1
         if: always()
         with:
           name: test-results
@@ -185,13 +186,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v4.0.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.1
         with:
           node-version: 20.x
           cache: 'pnpm'
@@ -234,7 +235,7 @@ jobs:
           pnpm run build:server
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.1
         with:
           name: build-artifacts
           path: |
