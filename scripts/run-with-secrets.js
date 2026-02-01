@@ -10,7 +10,7 @@ const logger = {
   info: (msg) => console.log(`[INFO] ${msg}`),
   warn: (msg) => console.warn(`[WARN] ${msg}`),
   error: (msg) => console.error(`[ERROR] ${msg}`),
-  debug: (msg) => console.log(`[DEBUG] ${msg}`)
+  debug: (msg) => console.log(`[DEBUG] ${msg}`),
 };
 
 /**
@@ -22,20 +22,20 @@ const logger = {
 function validateCommand(command, args) {
   // Shell metacharacters that indicate injection attempts
   const injectionPatterns = /[;&|`$(){}[\]\\]/;
-  
+
   // Patterns for dangerous commands (only check command, not arguments)
   const dangerousCommands = [
-    /^\s*rm\s+/,        // Dangerous commands
-    /^\s*del\s+/,       // Dangerous commands
-    /^\s*format\s+/,    // Dangerous commands
-    /^\s*shutdown\s+/,  // Dangerous commands
-    /^\s*poweroff\s+/,  // Dangerous commands
-    /^\s*reboot\s+/     // Dangerous commands
+    /^\s*rm\s+/, // Dangerous commands
+    /^\s*del\s+/, // Dangerous commands
+    /^\s*format\s+/, // Dangerous commands
+    /^\s*shutdown\s+/, // Dangerous commands
+    /^\s*poweroff\s+/, // Dangerous commands
+    /^\s*reboot\s+/, // Dangerous commands
   ];
 
   // Validate command
-  if (!command || typeof command !== 'string') {
-    logger.error('Invalid command provided');
+  if (!command || typeof command !== "string") {
+    logger.error("Invalid command provided");
     return false;
   }
 
@@ -55,11 +55,11 @@ function validateCommand(command, args) {
 
   // Validate arguments - only check for injection patterns, not dangerous command names
   for (const arg of args) {
-    if (typeof arg !== 'string') {
+    if (typeof arg !== "string") {
       logger.error(`Invalid argument type: ${arg}`);
       return false;
     }
-    
+
     // Only block shell metacharacters in arguments (not command names)
     if (injectionPatterns.test(arg)) {
       logger.error(`Argument contains shell metacharacters: ${arg}`);
@@ -75,13 +75,13 @@ function validateCommand(command, args) {
  * @param {string} str - String to sanitize
  * @returns {string} - Sanitized string
  */
-function sanitizeString(str) {
-  if (typeof str !== 'string') return '';
-  
+function _sanitizeString(str) {
+  if (typeof str !== "string") return "";
+
   // Remove or escape dangerous characters
   return str
-    .replace(/[;&|`$(){}[\]\\]/g, '')  // Remove shell metacharacters
-    .replace(/\s+/g, ' ')              // Normalize whitespace
+    .replace(/[;&|`$(){}[\]\\]/g, "") // Remove shell metacharacters
+    .replace(/\s+/g, " ") // Normalize whitespace
     .trim();
 }
 
@@ -97,7 +97,7 @@ const isWindows = process.platform === "win32";
 
 // Input validation
 if (!validateCommand(command, commandArgs)) {
-  logger.error('Command validation failed. Aborting execution.');
+  logger.error("Command validation failed. Aborting execution.");
   process.exit(1);
 }
 
@@ -105,7 +105,7 @@ logger.info(`Executing command: ${command} with ${commandArgs.length} arguments`
 
 if (isWindows) {
   // Verify PowerShell script exists
-  const psScriptPath = join(process.cwd(), 'scripts', 'load-secrets.ps1');
+  const psScriptPath = join(process.cwd(), "scripts", "load-secrets.ps1");
   if (!existsSync(psScriptPath)) {
     logger.error(`PowerShell script not found: ${psScriptPath}`);
     process.exit(1);
@@ -115,24 +115,28 @@ if (isWindows) {
     // Use proper argument passing - pass command and args as separate parameters
     const psArgs = [
       "-NoProfile",
-      "-ExecutionPolicy", "Bypass",
-      "-File", "scripts/load-secrets.ps1",
-      "-Command", command,
-      "-CommandArgs", ...commandArgs
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      "scripts/load-secrets.ps1",
+      "-Command",
+      command,
+      "-CommandArgs",
+      ...commandArgs,
     ];
 
-    logger.debug(`PowerShell arguments: ${psArgs.join(' ')}`);
-    
-    const result = spawnSync("powershell", psArgs, { 
+    logger.debug(`PowerShell arguments: ${psArgs.join(" ")}`);
+
+    const result = spawnSync("powershell", psArgs, {
       stdio: "inherit",
-      shell: false  // Disable shell to prevent injection
+      shell: false, // Disable shell to prevent injection
     });
-    
+
     if (result.error) {
       logger.error(`PowerShell execution failed: ${result.error.message}`);
       process.exit(1);
     }
-    
+
     process.exit(result.status ?? 1);
   } catch (error) {
     logger.error(`Failed to execute PowerShell: ${error.message}`);
@@ -143,7 +147,7 @@ if (isWindows) {
 // Unix/Linux implementation
 try {
   // Verify shell script exists
-  const shScriptPath = join(process.cwd(), 'scripts', 'load-secrets.sh');
+  const shScriptPath = join(process.cwd(), "scripts", "load-secrets.sh");
   if (!existsSync(shScriptPath)) {
     logger.error(`Shell script not found: ${shScriptPath}`);
     process.exit(1);
@@ -151,31 +155,31 @@ try {
 
   // Make sure script is executable
   try {
-    spawnSync('chmod', ['+x', shScriptPath]);
+    spawnSync("chmod", ["+x", shScriptPath]);
   } catch (error) {
     logger.warn(`Could not make script executable: ${error.message}`);
   }
 
   // Build arguments array - use proper array structure to prevent injection
   const shArgs = ["scripts/load-secrets.sh", "--command", command];
-  
+
   // Add arguments safely
   if (commandArgs.length > 0) {
     shArgs.push("--", ...commandArgs);
   }
 
-  logger.debug(`Shell arguments: ${shArgs.join(' ')}`);
-  
-  const result = spawnSync("bash", shArgs, { 
+  logger.debug(`Shell arguments: ${shArgs.join(" ")}`);
+
+  const result = spawnSync("bash", shArgs, {
     stdio: "inherit",
-    shell: false  // Disable shell to prevent injection
+    shell: false, // Disable shell to prevent injection
   });
-  
+
   if (result.error) {
     logger.error(`Shell execution failed: ${result.error.message}`);
     process.exit(1);
   }
-  
+
   process.exit(result.status ?? 1);
 } catch (error) {
   logger.error(`Failed to execute shell script: ${error.message}`);
