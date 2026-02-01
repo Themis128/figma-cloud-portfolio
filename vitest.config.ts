@@ -13,7 +13,15 @@ export default defineConfig({
     exclude: ["./tests/app.spec.ts", "./tests/logo.spec.ts"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "text-summary", "json", "html", "lcov", "cobertura"],
+      reporter: [
+        "text",
+        "text-summary",
+        "json",
+        "json-summary",
+        "html",
+        "lcov",
+        "cobertura",
+      ],
       reportsDirectory: "./coverage",
       // CRITICAL: Must include source files for coverage
       include: ["client/**/*.{ts,tsx}", "shared/**/*.{ts,tsx}"],
