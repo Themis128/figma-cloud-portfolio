@@ -51,7 +51,19 @@ A modern, full-stack portfolio website built with React, TypeScript, Express, an
    pnpm install
    ```
 
-3. **Set up environment variables**
+3. **Install required external tools (recommended)**
+
+   ```bash
+   pnpm setup:tools
+   ```
+
+   This installs:
+   - gitleaks (secret scanning)
+   - AWS CLI (deployment)
+   - Python (for scripts)
+   - Playwright browsers (E2E testing)
+
+4. **Set up environment variables**
 
    ```bash
    cp .env.example .env
@@ -140,6 +152,8 @@ pnpm test:e2e         # Run E2E tests
 
 # Setup & Utilities
 pnpm setup:codacy     # Configure Codacy integration
+pnpm setup:tools      # Install required external tools (gitleaks, AWS CLI, Python, Playwright browsers)
+pnpm setup:playwright # Install Playwright browsers only
 pnpm format           # Format code with Biome
 pnpm optimize-images  # Optimize images for web
 ```

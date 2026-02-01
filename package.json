@@ -27,6 +27,7 @@
     "coverage": "bash scripts/run-coverage.sh",
     "coverage:upload": "bash scripts/run-codacy-coverage.sh",
     "codacy:mcp": "node scripts/codacy-mcp-endpoint.js",
+    "context7:mcp": "node scripts/context7-mcp-server.js",
     "setup:fonts": "powershell -ExecutionPolicy Bypass -File scripts/setup-terminal-fonts.ps1",
     "setup:tools": "node scripts/setup-tools.js",
     "setup:playwright": "pnpm exec playwright install",
