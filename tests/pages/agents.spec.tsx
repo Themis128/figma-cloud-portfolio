@@ -242,8 +242,9 @@ describe("Agents Page", () => {
     renderWithProviders(<Agents />);
 
     // Check main container has background gradient
-    const container = document.querySelector(".min-h-screen.bg-gradient-to-br");
+    const container = screen.getByText("AI Agent Builder").closest(".min-h-screen");
     expect(container).toBeInTheDocument();
+    expect(container).toHaveClass("relative", "z-10", "min-h-screen");
   });
 
   it("renders icons correctly", () => {

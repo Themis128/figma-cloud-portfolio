@@ -4,12 +4,6 @@ import { vi } from "vitest";
 // Constants for mock implementations
 const MOCK_TIME_REMAINING_MS = 50;
 
-// Don't mock React - let it work normally
-// Only mock specific modules that need to be controlled
-
-// Don't mock React - let it work normally
-// Only mock specific modules that need to be controlled
-
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -71,4 +65,35 @@ global.requestIdleCallback = vi.fn().mockImplementation((callback) => {
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
   clearTimeout(id);
+});
+
+// Mock document.documentElement for ThemeProvider
+Object.defineProperty(document, "documentElement", {
+  writable: true,
+  value: {
+    classList: {
+      remove: vi.fn(),
+      add: vi.fn(),
+      contains: vi.fn().mockReturnValue(false),
+      toggle: vi.fn(),
+    },
+  },
+});
+
+// NOTE: Do NOT mock React hooks like useState, useMemo, useEffect, or useContext
+// as they break the React rendering process. Vitest provides sufficient mocking
+// capabilities without needing to mock core React functionality.
+
+// Mock meta theme-color for ThemeProvider
+const mockMetaThemeColor = {
+  setAttribute: vi.fn(),
+};
+Object.defineProperty(document, "querySelector", {
+  writable: true,
+  value: vi.fn().mockImplementation((selector) => {
+    if (selector === 'meta[name="theme-color"]') {
+      return mockMetaThemeColor;
+    }
+    return null;
+  }),
 });

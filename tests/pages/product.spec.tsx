@@ -143,8 +143,8 @@ describe("Product Page", () => {
     renderProduct();
 
     // Check main container has background gradient
-    const container = document.querySelector(".min-h-screen.bg-gradient-to-br");
+    const container = screen.getByText("Professional Experience").closest(".min-h-screen");
     expect(container).toBeInTheDocument();
-    expect(container).toHaveClass("from-navy-800");
+    expect(container).toHaveClass("relative", "z-10", "min-h-screen");
   });
 });

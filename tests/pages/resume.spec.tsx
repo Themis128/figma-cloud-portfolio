@@ -7,8 +7,6 @@ import Resume from "@/pages/Resume";
 
 // Constants for test timeouts and delays
 const AUTO_SAVE_DELAY = 2000;
-const _PDF_GENERATION_TIMEOUT = 15000;
-const _PDF_ERROR_TIMEOUT = 5000;
 
 // Mock all external dependencies
 vi.mock("@/components/Navigation", () => ({

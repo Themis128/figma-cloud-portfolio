@@ -64,13 +64,12 @@ vi.mock("@/components/Interactive3DDemo", () => ({
   ),
 }));
 
-// Mock React hooks
+// Mock React hooks - DON'T mock core React hooks as they break rendering
 vi.mock("react", async () => {
   const actual = await vi.importActual("react");
   return {
     ...actual,
-    useState: vi.fn(),
-    useMemo: vi.fn(),
+    // Don't mock useState, useMemo, useEffect, or useContext
   };
 });
 
@@ -226,7 +225,7 @@ describe("Projects Page", () => {
     render(<Projects />);
 
     // Check main container has background gradient
-    const container = screen.getByTestId("projects-container");
+    const container = screen.getByText("Projects & Portfolio").closest(".min-h-screen");
     expect(container).toBeInTheDocument();
     expect(container).toHaveClass(
       "min-h-screen",

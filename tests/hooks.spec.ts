@@ -3,6 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useDeviceType, useOptimizedAnimation } from "../client/hooks/useDeviceType";
 import { usePWA } from "../client/hooks/usePWA";
 
+// Local type declaration for the test
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
 // Test constants for device breakpoints
 const MOBILE_BREAKPOINT = 375;
 const TABLET_BREAKPOINT = 800;
@@ -106,7 +116,7 @@ describe("usePWA", () => {
       prompt: mockPrompt,
       userChoice: mockUserChoice,
       preventDefault: vi.fn(),
-    } as BeforeInstallPromptEvent;
+    } as unknown as BeforeInstallPromptEvent;
 
     // Simulate the beforeinstallprompt event
     const { result } = renderHook(() => usePWA());

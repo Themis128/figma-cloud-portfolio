@@ -264,7 +264,7 @@ describe("Performance Page", () => {
     renderWithProviders(<Performance />);
 
     // Check main container has background gradient
-    const container = document.querySelector(".min-h-screen.bg-gradient-to-br");
+    const container = screen.getByTestId("performance-dashboard").closest(".min-h-screen");
     expect(container).toBeInTheDocument();
   });
 

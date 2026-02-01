@@ -1,27 +1,18 @@
-import { render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import About from "@/pages/About";
-
-const renderWithProviders = (component: React.ReactElement) => {
-  return render(
-    <BrowserRouter>
-      <ThemeProvider>{component}</ThemeProvider>
-    </BrowserRouter>,
-  );
-};
+import { render } from "../renderWithProviders";
 
 describe("About Page", () => {
   it("renders the about page", () => {
-    renderWithProviders(<About />);
+    render(<About />);
 
     // Check for the main heading instead of main element
     expect(screen.getByRole("heading", { name: /about me/i, level: 1 })).toBeInTheDocument();
   });
 
   it("displays about content", () => {
-    renderWithProviders(<About />);
+    render(<About />);
 
     // Check for about section content
     expect(screen.getByText("Cloud Architect & Cybersecurity Specialist")).toBeInTheDocument();
@@ -29,7 +20,7 @@ describe("About Page", () => {
   });
 
   it("includes personal information", () => {
-    renderWithProviders(<About />);
+    render(<About />);
 
     // Check for personal details section - use getAllByText and check length
     const expertiseTexts = screen.getAllByText(/15\+ years of IT expertise/i);
