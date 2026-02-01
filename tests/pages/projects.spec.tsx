@@ -12,6 +12,16 @@ vi.mock("react-helmet-async", () => ({
   ),
 }));
 
+// Mock React hooks
+vi.mock("react", async () => {
+  const actual = await vi.importActual("react");
+  return {
+    ...actual,
+    useState: vi.fn(),
+    useMemo: vi.fn(),
+  };
+});
+
 // Mock the components
 vi.mock("@/components/Interactive3DDemo", () => ({
   useSampleProjects: () => [
@@ -53,6 +63,16 @@ vi.mock("@/components/Interactive3DDemo", () => ({
     </div>
   ),
 }));
+
+// Mock React hooks
+vi.mock("react", async () => {
+  const actual = await vi.importActual("react");
+  return {
+    ...actual,
+    useState: vi.fn(),
+    useMemo: vi.fn(),
+  };
+});
 
 vi.mock("@/components/SearchableProjects", () => ({
   default: ({ projects }: { projects: any[] }) => (
@@ -206,9 +226,14 @@ describe("Projects Page", () => {
     render(<Projects />);
 
     // Check main container has background gradient
-    const container = document.querySelector(".min-h-screen.bg-gradient-to-br");
+    const container = screen.getByTestId("projects-container");
     expect(container).toBeInTheDocument();
-    expect(container).toHaveClass("from-slate-50", "to-slate-100");
+    expect(container).toHaveClass(
+      "min-h-screen",
+      "bg-gradient-to-br",
+      "from-slate-50",
+      "to-slate-100",
+    );
   });
 
   it("renders statistics cards", () => {

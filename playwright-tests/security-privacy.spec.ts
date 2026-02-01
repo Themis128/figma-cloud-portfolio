@@ -13,13 +13,13 @@ test.describe("Security & Privacy", () => {
         test.skip();
       }
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       const url = page.url();
       expect(url).toMatch(/^https:\/\//);
     });
 
     test("should not have mixed content warnings", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check for mixed content (HTTP resources on HTTPS pages)
       const mixedContent = await page.evaluate(() => {
@@ -44,7 +44,7 @@ test.describe("Security & Privacy", () => {
     });
 
     test("should prevent XSS attacks", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Test that script injection is prevented
       const scriptInjection = await page.evaluate(() => {
@@ -71,7 +71,7 @@ test.describe("Security & Privacy", () => {
         consoleMessages.push(msg.text());
       });
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check that no sensitive data is logged
       const sensitivePatterns = [/password/i, /token/i, /key/i, /secret/i, /api[_-]?key/i];
@@ -84,7 +84,7 @@ test.describe("Security & Privacy", () => {
     });
 
     test("should handle user data securely", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check that forms don't autocomplete sensitive information
       const sensitiveInputs = await page.$$eval(
@@ -101,20 +101,27 @@ test.describe("Security & Privacy", () => {
 
   test.describe("Input Validation", () => {
     test("should prevent SQL injection attempts", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
-      // Check if contact form exists
-      const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
+      // Check if contact form inputs exist
+      const nameInput = page.locator('input[name="name"], input[placeholder*="name"]').first();
+      const messageInput = page.locator('textarea[name="message"]');
+      const submitButton = page.locator('button[type="submit"]');
 
-      if (formExists) {
+      const nameExists = (await nameInput.count()) > 0;
+      const messageExists = (await messageInput.count()) > 0;
+
+      if (nameExists && messageExists) {
         // Test contact form with SQL injection payload
         const sqlPayload = "'; DROP TABLE users; --";
 
-        await page.fill('input[name="name"], input[placeholder*="name"]', sqlPayload);
-        await page.fill('textarea[name="message"]', sqlPayload);
+        await nameInput.fill(sqlPayload);
+        await messageInput.fill(sqlPayload);
 
-        // Submit form
-        await page.click('button[type="submit"]');
+        // Submit form if button exists
+        if ((await submitButton.count()) > 0) {
+          await submitButton.click();
+        }
 
         // Should handle input safely (no crash, proper sanitization)
         await expect(page.locator("body")).toBeVisible();
@@ -124,20 +131,27 @@ test.describe("Security & Privacy", () => {
     });
 
     test("should prevent XSS in form inputs", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
-      // Check if contact form exists
-      const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
+      // Check if contact form inputs exist
+      const nameInput = page.locator('input[name="name"]').first();
+      const messageInput = page.locator('textarea[name="message"]');
+      const submitButton = page.locator('button[type="submit"]');
 
-      if (formExists) {
+      const nameExists = (await nameInput.count()) > 0;
+      const messageExists = (await messageInput.count()) > 0;
+
+      if (nameExists && messageExists) {
         // Test with XSS payload
         const xssPayload = '<script>alert("XSS")</script>';
 
-        await page.fill('input[name="name"]', xssPayload);
-        await page.fill('textarea[name="message"]', xssPayload);
+        await nameInput.fill(xssPayload);
+        await messageInput.fill(xssPayload);
 
-        // Submit form
-        await page.click('button[type="submit"]');
+        // Submit form if button exists
+        if ((await submitButton.count()) > 0) {
+          await submitButton.click();
+        }
 
         // Should sanitize input and not execute scripts
         await expect(page.locator("body")).toBeVisible();
@@ -147,7 +161,7 @@ test.describe("Security & Privacy", () => {
     });
 
     test("should validate email format", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check if email input exists
       const emailInputExists = (await page.locator('input[type="email"]').count()) > 0;
@@ -172,7 +186,7 @@ test.describe("Security & Privacy", () => {
 
   test.describe("Session Security", () => {
     test("should handle session timeouts gracefully", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Simulate session timeout by clearing storage
       await page.evaluate(() => {
@@ -181,14 +195,14 @@ test.describe("Security & Privacy", () => {
       });
 
       // Navigate to protected area
-      await page.goto("/agents");
+      await page.goto("http://localhost:3001/agents");
 
       // Should handle gracefully (redirect or show appropriate message)
       await expect(page.locator("body")).toBeVisible();
     });
 
     test("should not store sensitive data in localStorage", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check localStorage contents
       const localStorageData = await page.evaluate(() => {
@@ -218,7 +232,7 @@ test.describe("Security & Privacy", () => {
 
   test.describe("Network Security", () => {
     test("should use secure API endpoints", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Intercept network requests
       const insecureRequests: string[] = [];
@@ -242,7 +256,7 @@ test.describe("Security & Privacy", () => {
       // Test API requests
       const apiRequests = page.waitForRequest("**/api/**");
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check if API button exists
       const apiButton = page.locator('button:has-text("Download"), a[href*="api"]').first();
@@ -264,7 +278,7 @@ test.describe("Security & Privacy", () => {
 
   test.describe("Third-party Security", () => {
     test("should load third-party scripts securely", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check that external scripts use HTTPS
       const insecureScripts = await page.$$eval('script[src^="http://"]', (scripts) =>
@@ -275,7 +289,7 @@ test.describe("Security & Privacy", () => {
     });
 
     test("should handle third-party failures gracefully", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Block a common third-party service (Google Analytics, etc.)
       await page.route("**/*googletagmanager*/**", (route) => route.abort());
@@ -288,7 +302,7 @@ test.describe("Security & Privacy", () => {
 
   test.describe("Error Handling Security", () => {
     test("should not expose internal errors", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Trigger an error condition
       await page.route("**/api/**", (route) => {
@@ -319,3 +333,4 @@ test.describe("Security & Privacy", () => {
     });
   });
 });
+

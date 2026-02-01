@@ -211,7 +211,7 @@
   },
   "version": "1.0.0",
   "description": "A modern, full-stack portfolio website built with React, TypeScript, Express, and deployed on AWS Amplify.",
-  "main": "postcss.config.js",
+  "main": "dist/server/node-build.mjs",
   "directories": {
     "doc": "docs",
     "test": "tests"
