@@ -8,11 +8,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
     setupFiles: ["./tests/vitest-setup.ts"],
     include: ["./tests/**/*.{spec,test}.{ts,tsx}"],
     exclude: ["./tests/app.spec.ts", "./tests/logo.spec.ts"],
