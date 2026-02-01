@@ -108,7 +108,7 @@ const GoogleAnalytics = () => {
                         event_category: "Performance",
                         event_label: script.src,
                         value: Math.round(entry.duration),
-                        transfer_size: entry.transferSize || 0,
+                        transfer_size: (entry as PerformanceResourceTiming)?.transferSize || 0,
                       });
                     } catch {}
                   }
@@ -122,7 +122,7 @@ const GoogleAnalytics = () => {
                       event_category: "Performance",
                       event_label: script.src,
                       value: Math.round(entry.duration),
-                      transfer_size: entry.transferSize || 0,
+                      transfer_size: (entry as PerformanceResourceTiming)?.transferSize || 0,
                     },
                   });
                 }
