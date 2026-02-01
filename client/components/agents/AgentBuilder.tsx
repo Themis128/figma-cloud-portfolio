@@ -1,11 +1,11 @@
+import { ArrowLeft, Play, Save, Settings } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";
 import { executeAgent } from "@/lib/agentExecutor";
-import { ArrowLeft, Play, Save, Settings } from "lucide-react";
-import { useState } from "react";
 import { WorkflowBuilder } from "./WorkflowBuilder";
 
 interface AgentBuilderProps {
