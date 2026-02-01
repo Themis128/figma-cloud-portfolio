@@ -61,9 +61,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
           const hasGrecaptcha = !!(window as typeof window & { grecaptcha?: unknown }).grecaptcha;
 
           // Check for reCAPTCHA scripts
-          const captchaScripts = Array.from(
-            document.querySelectorAll('script[src*="recaptcha"]')
-          );
+          const captchaScripts = Array.from(document.querySelectorAll('script[src*="recaptcha"]'));
 
           // Check for reCAPTCHA badge
           const badge = document.querySelector(".grecaptcha-badge");
@@ -72,12 +70,10 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             grecaptchaLoaded: hasGrecaptcha,
             scriptsFound: captchaScripts.length,
             badgeVisible: !!badge,
-            badgePosition: badge
-              ? window.getComputedStyle(badge).position
-              : null,
+            badgePosition: badge ? window.getComputedStyle(badge).position : null,
           };
         });
-      }
+      },
     );
 
     usageTracker.recordCall("reCAPTCHA", duration);
@@ -143,7 +139,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
                     success: true,
                     token: token,
                     tokenLength: token.length,
-                    tokenPrefix: token.substring(0, 20) + "...",
+                    tokenPrefix: `${token.substring(0, 20)}...`,
                   });
                 })
                 .catch((error) => {
@@ -163,7 +159,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             }, 10000);
           });
         });
-      }
+      },
     );
 
     usageTracker.recordCall("reCAPTCHA Token", duration);
@@ -255,7 +251,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             error: String(error),
           };
         }
-      }
+      },
     );
 
     usageTracker.recordCall("reCAPTCHA Verification", duration);
@@ -302,7 +298,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
           await page.fill('input[type="email"]', "test@example.com");
           await page.fill(
             'textarea[name="message"], textarea[placeholder*="message"]',
-            "This is a real API test submission with reCAPTCHA verification"
+            "This is a real API test submission with reCAPTCHA verification",
           );
 
           // Submit form (will trigger reCAPTCHA)
@@ -326,7 +322,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             error: String(error),
           };
         }
-      }
+      },
     );
 
     usageTracker.recordCall("Contact Form", duration);
@@ -373,13 +369,13 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
           const totalDuration = captchaResources.reduce(
             (sum: number, resource: PerformanceEntry) =>
               sum + (resource as PerformanceResourceTiming).duration,
-            0
+            0,
           );
 
           const totalSize = captchaResources.reduce(
             (sum: number, resource: PerformanceEntry) =>
               sum + ((resource as PerformanceResourceTiming).transferSize || 0),
-            0
+            0,
           );
 
           return {
@@ -393,7 +389,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             })),
           };
         });
-      }
+      },
     );
 
     usageTracker.recordCall("reCAPTCHA Performance", duration);
@@ -405,13 +401,11 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
 
     if (perfImpact.resources && perfImpact.resources.length > 0) {
       console.log(`  Detailed Breakdown:`);
-      perfImpact.resources.forEach(
-        (resource: { url?: string; duration: number; size: number }) => {
-          console.log(
-            `    - ${resource.url || "unknown"}: ${resource.duration}ms (${(resource.size / 1024).toFixed(2)} KB)`
-          );
-        }
-      );
+      perfImpact.resources.forEach((resource: { url?: string; duration: number; size: number }) => {
+        console.log(
+          `    - ${resource.url || "unknown"}: ${resource.duration}ms (${(resource.size / 1024).toFixed(2)} KB)`,
+        );
+      });
     }
 
     // reCAPTCHA should have reasonable performance impact
@@ -435,7 +429,9 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
     const dailyLimit = 33333;
     const usage = (currentTestCount / dailyLimit) * 100;
 
-    console.log(`  This test suite: ~${currentTestCount} assessments (${usage.toFixed(4)}% of daily limit)`);
+    console.log(
+      `  This test suite: ~${currentTestCount} assessments (${usage.toFixed(4)}% of daily limit)`,
+    );
 
     expect(usage).toBeLessThan(1); // Should use less than 1% of daily quota
   });
@@ -455,15 +451,15 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             invisibleMode: true, // reCAPTCHA v3 is always invisible
             badgeVisible: !!document.querySelector(".grecaptcha-badge"),
             noExplicitButton: !document.querySelector('input[type="checkbox"].g-recaptcha'),
-            scriptLoadedAsync: Array.from(document.querySelectorAll("script[src*='recaptcha']")).some(
-              (script) => (script as HTMLScriptElement).async
-            ),
+            scriptLoadedAsync: Array.from(
+              document.querySelectorAll("script[src*='recaptcha']"),
+            ).some((script) => (script as HTMLScriptElement).async),
             privacyTermsVisible: !!document.querySelector('a[href*="recaptcha/terms"]'),
           };
 
           return checks;
         });
-      }
+      },
     );
 
     usageTracker.recordCall("reCAPTCHA Best Practices", duration);
@@ -472,7 +468,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
     console.log(`  Invisible Mode (v3): ${bestPractices.invisibleMode ? "✅" : "❌"}`);
     console.log(`  Badge Visible: ${bestPractices.badgeVisible ? "✅" : "❌"}`);
     console.log(
-      `  No Checkbox (v2): ${bestPractices.noExplicitButton ? "✅" : "⚠️  (v2 detected)"}`
+      `  No Checkbox (v2): ${bestPractices.noExplicitButton ? "✅" : "⚠️  (v2 detected)"}`,
     );
     console.log(`  Async Loading: ${bestPractices.scriptLoadedAsync ? "✅" : "⚠️"}`);
 
