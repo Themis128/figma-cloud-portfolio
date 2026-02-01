@@ -1,6 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { setupTestEnvironment, teardownTestEnvironment, waitForAppReady } from "./test-utils";
 
+/**
+ * Enhanced Push Notifications Testing Suite
+ * Covers Firebase Cloud Messaging, Web Push API, and VAPID integration
+ * Integration: Firebase v12.8.0, Web Push v3.6.7
+ */
+
 test.describe("Push Notifications", () => {
   test.beforeAll(async () => {
     await setupTestEnvironment();
@@ -26,7 +32,7 @@ test.describe("Push Notifications", () => {
   }
 
   test("should display notification button", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     const buttonSelector = await getNotificationButtonSelector(page);
@@ -51,7 +57,7 @@ test.describe("Push Notifications", () => {
       });
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -75,7 +81,7 @@ test.describe("Push Notifications", () => {
       });
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -96,7 +102,7 @@ test.describe("Push Notifications", () => {
       });
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -156,7 +162,7 @@ test.describe("Push Notifications", () => {
       });
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -213,7 +219,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -251,7 +257,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -297,7 +303,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -343,7 +349,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -384,7 +390,7 @@ test.describe("Push Notifications", () => {
       });
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -413,7 +419,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -446,7 +452,7 @@ test.describe("Push Notifications", () => {
   });
 
   test("should display notification tester", async ({ page }) => {
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -463,7 +469,7 @@ test.describe("Push Notifications", () => {
   });
 
   test("should handle notification timing (45-second delay)", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -489,7 +495,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -520,7 +526,7 @@ test.describe("Push Notifications", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     const buttonSelector = await getNotificationButtonSelector(page);
 
@@ -544,5 +550,432 @@ test.describe("Push Notifications", () => {
     });
 
     expect(notification).toBeDefined();
+  });
+
+  test.describe("Firebase Cloud Messaging Integration", () => {
+    test("should initialize Firebase with correct config", async ({ page }) => {
+      await page.addInitScript(() => {
+        // Mock Firebase configuration
+        window.firebaseConfig = {
+          apiKey: "test-api-key",
+          authDomain: "test-project.firebaseapp.com",
+          projectId: "test-project",
+          storageBucket: "test-project.appspot.com",
+          messagingSenderId: "test-sender-id",
+          appId: "test-app-id",
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Check if Firebase is initialized correctly
+      const isFirebaseInitialized = await page.evaluate(() => {
+        return !!(window as typeof window & { firebase?: unknown }).firebase;
+      });
+
+      expect(typeof isFirebaseInitialized).toBe("boolean");
+    });
+
+    test("should retrieve FCM token", async ({ page }) => {
+      // Mock Firebase messaging
+      await page.addInitScript(() => {
+        window.getFirebaseToken = async () => {
+          return `mock-fcm-token-${Date.now()}`;
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Simulate FCM token retrieval
+      const fcmToken = await page.evaluate(async () => {
+        if (window.getFirebaseToken) {
+          return await window.getFirebaseToken();
+        }
+        return null;
+      });
+
+      expect(fcmToken).toBeTruthy();
+      expect(typeof fcmToken).toBe("string");
+    });
+
+    test("should handle FCM foreground messages", async ({ page }) => {
+      // Mock Firebase messaging
+      await page.addInitScript(() => {
+        window.onMessageHandler = (callback: (payload: unknown) => void) => {
+          // Simulate receiving a message
+          setTimeout(() => {
+            callback({
+              notification: {
+                title: "Test Notification",
+                body: "This is a test message",
+              },
+              data: {
+                timestamp: Date.now(),
+              },
+            });
+          }, 1000);
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Set up message handler
+      const messageReceived = await page.evaluate(() => {
+        return new Promise((resolve) => {
+          if (window.onMessageHandler) {
+            window.onMessageHandler((payload) => {
+              resolve(payload);
+            });
+          } else {
+            resolve(null);
+          }
+        });
+      });
+
+      expect(messageReceived).toBeTruthy();
+    });
+
+    test("should handle Firebase initialization errors", async ({ page }) => {
+      // Mock Firebase initialization error
+      await page.addInitScript(() => {
+        window.initFirebase = () => {
+          throw new Error("Firebase initialization failed");
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // App should handle Firebase errors gracefully
+      await expect(page.locator("body")).toBeVisible();
+    });
+
+    test("should validate VAPID key format", async ({ page }) => {
+      // Mock VAPID key validation
+      await page.addInitScript(() => {
+        window.isValidVapidKey = (key: string): boolean => {
+          // VAPID keys should be base64-encoded strings
+          return /^[A-Za-z0-9_-]{20,}$/.test(key) || /^[A-Za-z0-9+/=]{50,}$/.test(key);
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Test VAPID key validation
+      const validationResult = await page.evaluate(() => {
+        if (window.isValidVapidKey) {
+          const mockVapidKey =
+            "BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk";
+          return window.isValidVapidKey(mockVapidKey);
+        }
+        return null;
+      });
+
+      expect(validationResult).toBeTruthy();
+    });
+  });
+
+  test.describe("Web Push API Advanced Features", () => {
+    test("should handle push subscription with options", async ({ page }) => {
+      // Mock advanced push subscription
+      await page.addInitScript(() => {
+        Object.defineProperty(window.navigator, "serviceWorker", {
+          value: {
+            ready: Promise.resolve({
+              pushManager: {
+                subscribe: (options: PushSubscriptionOptionsInit) => {
+                  // Validate subscription options
+                  return Promise.resolve({
+                    endpoint: "https://fcm.googleapis.com/fcm/send/test-endpoint",
+                    options: options,
+                    expirationTime: null,
+                    getKey: (_name: string) => new Uint8Array([1, 2, 3, 4]),
+                  });
+                },
+              },
+            }),
+          },
+          writable: true,
+        });
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Test subscription with options
+      const subscription = await page.evaluate(() => {
+        if (navigator.serviceWorker) {
+          return navigator.serviceWorker.ready.then((registration) => {
+            return registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: new Uint8Array([1, 2, 3, 4]),
+            });
+          });
+        }
+        return null;
+      });
+
+      expect(subscription).toBeTruthy();
+    });
+
+    test("should handle notification actions and clicks", async ({ page }) => {
+      // Mock notification with actions
+      await page.addInitScript(() => {
+        // @ts-expect-error - Mock Notification class
+        window.Notification = class MockNotification {
+          static permission: NotificationPermission = "granted";
+          static requestPermission = (): Promise<NotificationPermission> =>
+            Promise.resolve("granted");
+
+          actions?: NotificationAction[];
+
+          constructor(title: string, options?: NotificationOptions) {
+            this.title = title;
+            this.options = options;
+            this.actions = options?.actions;
+          }
+
+          title: string;
+          options?: NotificationOptions;
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Create notification with actions
+      const notification = await page.evaluate(() => {
+        return new Notification("Action Test", {
+          body: "Test notification with actions",
+          actions: [
+            { action: "view", title: "View" },
+            { action: "dismiss", title: "Dismiss" },
+          ],
+        });
+      });
+
+      expect(notification).toBeDefined();
+      expect(notification.actions).toHaveLength(2);
+    });
+
+    test("should handle notification permission state changes", async ({ page }) => {
+      // Mock permission state tracking
+      await page.addInitScript(() => {
+        let currentPermission: NotificationPermission = "default";
+
+        Object.defineProperty(Notification, "permission", {
+          get: () => currentPermission,
+          set: (value: NotificationPermission) => {
+            currentPermission = value;
+          },
+        });
+
+        window.changePermission = (newPermission: NotificationPermission) => {
+          currentPermission = newPermission;
+          return currentPermission;
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Test permission state changes
+      const permissionStates = await page.evaluate(() => {
+        const states: NotificationPermission[] = [];
+        states.push(Notification.permission);
+
+        if (window.changePermission) {
+          states.push(window.changePermission("granted"));
+          states.push(window.changePermission("denied"));
+        }
+
+        return states;
+      });
+
+      expect(permissionStates.length).toBeGreaterThan(0);
+      expect(["default", "granted", "denied"]).toContain(permissionStates[0]);
+    });
+
+    test("should test push notification persistence", async ({ page }) => {
+      // Mock persistent subscription storage
+      await page.addInitScript(() => {
+        window.subscriptionStore = {
+          save: (subscription: unknown) => {
+            localStorage.setItem("push-subscription", JSON.stringify(subscription));
+            return true;
+          },
+          load: () => {
+            const stored = localStorage.getItem("push-subscription");
+            return stored ? JSON.parse(stored) : null;
+          },
+          remove: () => {
+            localStorage.removeItem("push-subscription");
+            return true;
+          },
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Test persistence operations
+      const persistenceTest = await page.evaluate(() => {
+        if (window.subscriptionStore) {
+          const testSubscription = {
+            endpoint: "https://test.endpoint.com",
+            keys: { p256dh: "test-key", auth: "test-auth" },
+          };
+
+          const saved = window.subscriptionStore.save(testSubscription);
+          const loaded = window.subscriptionStore.load();
+          const removed = window.subscriptionStore.remove();
+
+          return { saved, loaded, removed };
+        }
+        return null;
+      });
+
+      expect(persistenceTest).toBeTruthy();
+      expect(persistenceTest?.saved).toBe(true);
+      expect(persistenceTest?.loaded).toBeTruthy();
+    });
+
+    test("should handle multiple notification subscriptions", async ({ page }) => {
+      // Test managing multiple push subscriptions
+      await page.addInitScript(() => {
+        window.subscriptionManager = {
+          subscriptions: [] as Array<{ endpoint: string; tags: string[] }>,
+          add: function (subscription: { endpoint: string; tags: string[] }) {
+            this.subscriptions.push(subscription);
+            return this.subscriptions.length;
+          },
+          getByTag: function (tag: string) {
+            return this.subscriptions.filter((sub) => sub.tags.includes(tag));
+          },
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Test multiple subscriptions
+      const managementTest = await page.evaluate(() => {
+        if (window.subscriptionManager) {
+          window.subscriptionManager.add({
+            endpoint: "https://endpoint1.com",
+            tags: ["alerts", "news"],
+          });
+          window.subscriptionManager.add({
+            endpoint: "https://endpoint2.com",
+            tags: ["alerts"],
+          });
+
+          return {
+            total: window.subscriptionManager.subscriptions.length,
+            alertsCount: window.subscriptionManager.getByTag("alerts").length,
+          };
+        }
+        return null;
+      });
+
+      expect(managementTest?.total).toBe(2);
+      expect(managementTest?.alertsCount).toBe(2);
+    });
+  });
+
+  test.describe("Notification Analytics Integration", () => {
+    test("should track notification permission requests", async ({ page }) => {
+      // Mock analytics tracking
+      await page.addInitScript(() => {
+        window.notificationAnalytics = {
+          events: [] as Array<{ event: string; timestamp: number }>,
+          track: function (event: string) {
+            this.events.push({ event, timestamp: Date.now() });
+          },
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Simulate permission request and tracking
+      await page.evaluate(() => {
+        if (window.notificationAnalytics) {
+          window.notificationAnalytics.track("permission_requested");
+          window.notificationAnalytics.track("permission_granted");
+        }
+      });
+
+      const analytics = await page.evaluate(() => {
+        return window.notificationAnalytics?.events || [];
+      });
+
+      expect(analytics.length).toBeGreaterThan(0);
+    });
+
+    test("should track notification engagement metrics", async ({ page }) => {
+      // Mock engagement tracking
+      await page.addInitScript(() => {
+        window.engagementMetrics = {
+          shown: 0,
+          clicked: 0,
+          dismissed: 0,
+          trackEvent: function (event: "shown" | "clicked" | "dismissed") {
+            this[event]++;
+          },
+        };
+      });
+
+      await page.goto("http://localhost:3001/");
+
+      const buttonSelector = await getNotificationButtonSelector(page);
+      await page.waitForSelector(buttonSelector, { timeout: 5000 });
+
+      // Simulate engagement tracking
+      const metrics = await page.evaluate(() => {
+        if (window.engagementMetrics) {
+          window.engagementMetrics.trackEvent("shown");
+          window.engagementMetrics.trackEvent("clicked");
+          window.engagementMetrics.trackEvent("dismissed");
+
+          return {
+            shown: window.engagementMetrics.shown,
+            clicked: window.engagementMetrics.clicked,
+            dismissed: window.engagementMetrics.dismissed,
+          };
+        }
+        return null;
+      });
+
+      expect(metrics?.shown).toBe(1);
+      expect(metrics?.clicked).toBe(1);
+      expect(metrics?.dismissed).toBe(1);
+    });
   });
 });

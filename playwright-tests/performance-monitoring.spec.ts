@@ -11,7 +11,7 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should track Core Web Vitals metrics", async ({ page }) => {
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     // Wait for performance monitoring to initialize and metrics to be captured
     // Web vitals are measured asynchronously as the page loads and user interacts
@@ -49,7 +49,7 @@ test.describe("Performance Monitoring", () => {
       }
     });
 
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     // Wait for analytics to be sent - analytics are sent asynchronously
     await page.waitForTimeout(3000);
@@ -71,20 +71,20 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should track navigation timing", async ({ page, browserName }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // For mobile browsers, navigate directly to avoid menu interaction issues
     if (browserName.includes("Mobile") || (page.viewportSize()?.width || 0) < 768) {
       // Navigate directly to about page
-      await page.goto("/about");
+      await page.goto("http://localhost:3001/about");
       await page.waitForURL("**/about");
 
       // Navigate back to home
-      await page.goto("/");
-      await page.waitForURL("/");
+      await page.goto("http://localhost:3001/");
+      await page.waitForURL("**/");
 
       // Navigate to contact page
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
       await page.waitForURL("**/contact");
     } else {
       // Desktop navigation
@@ -98,11 +98,11 @@ test.describe("Performance Monitoring", () => {
 
       // Navigate to about page
       await page.locator('a[href="/about"]').first().click();
-      await page.waitForURL("/about");
+      await page.waitForURL("**/about");
 
       // Navigate back to home for contact link
-      await page.goto("/");
-      await page.waitForURL("/");
+      await page.goto("http://localhost:3001/");
+      await page.waitForURL("**/");
 
       // Open mobile menu again if present
       if (await menuButton.isVisible()) {
@@ -112,7 +112,7 @@ test.describe("Performance Monitoring", () => {
 
       // Navigate to contact page
       await page.locator('a[href="/contact"]').first().click();
-      await page.waitForURL("/contact");
+      await page.waitForURL("**/contact");
     }
 
     // Check navigation timing in performance API
@@ -127,7 +127,7 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should track resource loading performance", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Wait for page to load - use domcontentloaded instead of networkidle for dev environment
     await page.waitForLoadState("domcontentloaded");
@@ -152,7 +152,7 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should track memory usage", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check memory usage if available
     const memoryInfo = await page.evaluate(() => {
@@ -186,7 +186,7 @@ test.describe("Performance Monitoring", () => {
       };
     });
 
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     // Wait for the page to load and main content to be visible
     await page.waitForSelector('h1:has-text("Performance Dashboard")', { timeout: 10000 });
@@ -216,7 +216,7 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should display performance dashboard", async ({ page }) => {
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     // Wait for page to load - use domcontentloaded instead of networkidle for dev environment
     await page.waitForLoadState("domcontentloaded");
@@ -244,20 +244,20 @@ test.describe("Performance Monitoring", () => {
       }
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // For mobile browsers, navigate directly
     if (browserName.includes("Mobile") || (page.viewportSize()?.width || 0) < 768) {
       // Navigate to about page
-      await page.goto("/about");
+      await page.goto("http://localhost:3001/about");
       await page.waitForURL("**/about");
 
       // Navigate back to home
-      await page.goto("/");
-      await page.waitForURL("/");
+      await page.goto("http://localhost:3001/");
+      await page.waitForURL("**/");
 
       // Navigate to contact page
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
       await page.waitForURL("**/contact");
     } else {
       // Desktop navigation
@@ -274,8 +274,8 @@ test.describe("Performance Monitoring", () => {
       await page.waitForURL("**/about");
 
       // Navigate back to home
-      await page.goto("/");
-      await page.waitForURL("/");
+      await page.goto("http://localhost:3001/");
+      await page.waitForURL("**/");
 
       // Open mobile menu again if present
       if (await menuButton.isVisible()) {
@@ -295,7 +295,7 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should measure interaction responsiveness", async ({ page }) => {
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     // Wait for the page to load
     await page.waitForSelector('h1:has-text("Performance Dashboard")', { timeout: 10000 });
@@ -317,7 +317,7 @@ test.describe("Performance Monitoring", () => {
   });
 
   test("should track bundle loading performance", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Wait for page to load - use domcontentloaded instead of networkidle for dev environment
     await page.waitForLoadState("domcontentloaded");
@@ -368,7 +368,7 @@ test.describe("Performance Monitoring", () => {
       };
     });
 
-    await page.goto("/performance");
+    await page.goto("http://localhost:3001/performance");
 
     // Wait for GA initialization and events
     await page.waitForTimeout(2000);

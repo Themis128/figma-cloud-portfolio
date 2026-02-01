@@ -6,7 +6,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
   test.describe("reCAPTCHA v3 Server-Side Validation", () => {
     test("should validate reCAPTCHA token with Google API", async ({ request }) => {
       // Test with a mock token that simulates Google's response
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Test User",
           email: "test@example.com",
@@ -26,7 +26,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should reject requests without reCAPTCHA token", async ({ request }) => {
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Test User",
           email: "test@example.com",
@@ -45,7 +45,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should handle reCAPTCHA verification network failures", async ({ request }) => {
       // This test verifies that the server handles cases where Google's API is unreachable
       // We'll test this by making a request that should trigger the verification logic
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Network Test",
           email: "network@example.com",
@@ -64,7 +64,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should validate email format before reCAPTCHA", async ({ request }) => {
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Test User",
           email: "invalid-email-format",
@@ -114,7 +114,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       ];
 
       for (const testCase of testCases) {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: testCase,
         });
 
@@ -128,7 +128,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
     test("should handle malformed JSON gracefully", async ({ request }) => {
       // Send malformed data that could cause parsing errors
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: null, // Invalid type
           email: "test@example.com",
@@ -147,7 +147,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should process valid contact form submissions", async ({ request }) => {
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Valid User",
           email: "valid@example.com",
@@ -170,7 +170,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
   test.describe("Google Analytics Integration Verification", () => {
     test("should load homepage with GA configuration", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Wait for page to load and stabilize
       await page.waitForLoadState("networkidle");
@@ -190,7 +190,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should load contact page with GA configuration", async ({ page }) => {
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Wait for page to load and stabilize
       await page.waitForLoadState("networkidle");
@@ -214,7 +214,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       await page.route("**/googletagmanager.com/**", (route) => route.abort());
       await page.route("**/google-analytics.com/**", (route) => route.abort());
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Page should still load normally
       await expect(page.locator("body")).toBeVisible();
@@ -229,10 +229,10 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       await page.route("**/googletagmanager.com/**", (route) => route.abort());
       await page.route("**/google-analytics.com/**", (route) => route.abort());
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Should be able to navigate
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Page should still load
       await expect(page.locator("body")).toBeVisible();
@@ -245,7 +245,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
         await route.continue();
       });
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Should still load eventually
       await expect(page.locator("body")).toBeVisible();
@@ -254,7 +254,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should work with JavaScript disabled simulation", async ({ page }) => {
       // This test simulates basic functionality without JavaScript
       // by checking that the HTML structure is correct
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check for basic HTML structure
       await expect(page.locator("html")).toBeAttached();
@@ -269,7 +269,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
   test.describe("Combined Integration Scenarios", () => {
     test("should handle contact form submission with both services available", async ({ page }) => {
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Wait for page to load
       await page.waitForLoadState("networkidle");
@@ -288,7 +288,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       await page.route("**/googletagmanager.com/**", (route) => route.abort());
       await page.route("**/google-analytics.com/**", (route) => route.abort());
 
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Page should still load
       await page.waitForLoadState("networkidle");
@@ -303,7 +303,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       // Block reCAPTCHA but allow other functionality
       await page.route("**/recaptcha/**", (route) => route.abort());
 
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Page should still load
       await page.waitForLoadState("networkidle");
@@ -320,7 +320,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       await page.route("**/google-analytics.com/**", (route) => route.abort());
       await page.route("**/recaptcha/**", (route) => route.abort());
 
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Page should still load
       await page.waitForLoadState("networkidle");
@@ -333,16 +333,16 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
     test("should handle rapid page navigation", async ({ page }) => {
       // Test rapid navigation between pages
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await page.waitForLoadState("networkidle");
 
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
       await page.waitForLoadState("networkidle");
 
-      await page.goto("/about");
+      await page.goto("http://localhost:3001/about");
       await page.waitForLoadState("networkidle");
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await page.waitForLoadState("networkidle");
 
       // All pages should load successfully
@@ -355,7 +355,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
       for (let i = 0; i < 10; i++) {
         promises.push(
-          request.get("/api/ping").then((response) => ({
+          request.get("http://localhost:3000/api/ping").then((response) => ({
             status: response.status(),
             index: i,
           })),
@@ -374,17 +374,17 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       // Test various error scenarios
       const errorCases = [
         // Invalid method
-        { method: "put", endpoint: "/api/contact", expectedStatus: 404 },
-        { method: "delete", endpoint: "/api/contact", expectedStatus: 404 },
-        { method: "patch", endpoint: "/api/contact", expectedStatus: 404 },
+        { method: "put", endpoint: "/contact", expectedStatus: 404 },
+        { method: "delete", endpoint: "/contact", expectedStatus: 404 },
+        { method: "patch", endpoint: "/contact", expectedStatus: 404 },
         // Invalid endpoint
-        { method: "get", endpoint: "/api/nonexistent", expectedStatus: 404 },
-        { method: "post", endpoint: "/api/nonexistent", expectedStatus: 404 },
+        { method: "get", endpoint: "/nonexistent", expectedStatus: 404 },
+        { method: "post", endpoint: "/nonexistent", expectedStatus: 404 },
       ];
 
       for (const testCase of errorCases) {
         const method = testCase.method as "get" | "post" | "put" | "delete" | "patch";
-        const response = await request[method](`/api${testCase.endpoint}`);
+        const response = await request[method](`http://localhost:3000/api${testCase.endpoint}`);
 
         if (!response) throw new Error("No response received");
         expect(response.status()).toBe(testCase.expectedStatus);
@@ -404,7 +404,11 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       const pages = await Promise.all(contexts.map((context) => context.newPage()));
 
       // Load different pages concurrently
-      await Promise.all([pages[0].goto("/"), pages[1].goto("/contact"), pages[2].goto("/about")]);
+      await Promise.all([
+        pages[0].goto("http://localhost:3001/"),
+        pages[1].goto("http://localhost:3001/contact"),
+        pages[2].goto("http://localhost:3001/about"),
+      ]);
 
       // All should load successfully
       await Promise.all(pages.map((page) => expect(page.locator("body")).toBeVisible()));
@@ -414,7 +418,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should handle page reloads gracefully", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Reload multiple times
       for (let i = 0; i < 3; i++) {
@@ -425,10 +429,10 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should handle navigation with browser back/forward", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await page.waitForLoadState("networkidle");
 
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
       await page.waitForLoadState("networkidle");
 
       await page.goBack();
@@ -444,7 +448,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       // Test with large message content
       const largeMessage = "A".repeat(10000); // 10KB message
 
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Large Payload Test",
           email: "large@example.com",
@@ -465,7 +469,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should handle special characters in form data", async ({ request }) => {
       const specialMessage = "Special chars: àáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ @#$%^&*()";
 
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Special Chars Test ñ",
           email: "special@example.com",
@@ -494,7 +498,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       ];
 
       for (const xssPayload of xssAttempts) {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "XSS Test",
             email: "xss@example.com",
@@ -526,7 +530,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       ];
 
       for (const invalidEmail of invalidEmails) {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Email Validation Test",
             email: invalidEmail,
@@ -556,7 +560,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       ];
 
       for (const sqlPayload of sqlInjections) {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "SQL Injection Test",
             email: "sql@example.com",
@@ -579,7 +583,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       const commandInjections = ["; rm -rf /", "| cat /etc/passwd", "`whoami`", "$(rm -rf /)"];
 
       for (const cmdPayload of commandInjections) {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Command Injection Test",
             email: "cmd@example.com",
@@ -603,7 +607,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should handle reCAPTCHA service unavailability", async ({ request }) => {
       // This test verifies that the server handles cases where reCAPTCHA verification fails
       // due to network issues or invalid tokens
-      const response = await request.post("/api/contact", {
+      const response = await request.post("http://localhost:3000/api/contact", {
         data: {
           name: "Service Unavailable Test",
           email: "unavailable@example.com",
@@ -632,7 +636,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       ];
 
       for (const token of tokenFormats) {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Token Format Test",
             email: "token@example.com",
@@ -655,7 +659,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       // Test that the application works with different GA configurations
       // This is more of a configuration test than a functional test
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Page should load regardless of GA configuration
       await expect(page.locator("body")).toBeVisible();

@@ -10,7 +10,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
 
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          await page.goto("/", { timeout: 45000 });
+          await page.goto("http://localhost:3001/", { timeout: 45000 });
           await waitForAppReady(page);
           await page.waitForLoadState("domcontentloaded", { timeout: 30000 });
           lastError = null;
@@ -234,7 +234,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
 
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          await page.goto("/", { timeout: 45000 });
+          await page.goto("http://localhost:3001/", { timeout: 45000 });
           await waitForAppReady(page);
           await page.waitForLoadState("domcontentloaded", { timeout: 30000 });
           lastError = null;
@@ -353,7 +353,7 @@ test.describe("Accessibility (WCAG 2.1 AA)", () => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 

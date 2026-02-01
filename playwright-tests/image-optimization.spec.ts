@@ -56,7 +56,7 @@ test.describe("Image Optimization Features", () => {
   });
 
   test("should have responsive image sizes", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -79,7 +79,7 @@ test.describe("Image Optimization Features", () => {
   });
 
   test("should optimize images for different screen densities", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -105,7 +105,7 @@ test.describe("Image Optimization Features", () => {
   });
 
   test("should preload critical images", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check for preload links in the head
     const preloadLinks = page.locator('link[rel="preload"][as="image"]');
@@ -123,7 +123,7 @@ test.describe("Image Optimization Features", () => {
   });
 
   test("should handle image loading errors gracefully", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 

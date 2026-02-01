@@ -16,7 +16,7 @@ test.describe("Projects Page", () => {
     });
 
     // Navigate to projects page
-    await page.goto("/projects");
+    await page.goto("http://localhost:3001/projects");
     await waitForAppReady(page);
     await page.waitForLoadState("domcontentloaded");
     // Wait for React to hydrate

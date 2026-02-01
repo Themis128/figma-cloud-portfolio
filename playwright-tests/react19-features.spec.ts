@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("React 19 Features", () => {
   test.describe("View Transitions", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await page.waitForLoadState("domcontentloaded");
     });
 
@@ -49,7 +49,7 @@ test.describe("React 19 Features", () => {
 
     test("should handle route transitions smoothly", async ({ page }) => {
       // Navigate between pages and check for smooth transitions
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Click on a navigation link
       const navLink = page.locator('a[href="/about"]').first();
@@ -57,7 +57,7 @@ test.describe("React 19 Features", () => {
         const startTime = Date.now();
 
         await navLink.click();
-        await page.waitForURL("/about");
+        await page.waitForURL("**/about");
 
         const transitionTime = Date.now() - startTime;
 
@@ -92,7 +92,7 @@ test.describe("React 19 Features", () => {
 
   test.describe("useDeferredValue", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await page.waitForLoadState("domcontentloaded");
     });
 
@@ -169,7 +169,7 @@ test.describe("React 19 Features", () => {
 
   test.describe("Activity Components", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await page.waitForLoadState("domcontentloaded");
     });
 
@@ -252,7 +252,7 @@ test.describe("React 19 Features", () => {
 
   test.describe("React 19 Performance", () => {
     test("should leverage React 19 optimizations", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check for React 19 specific features
       const reactVersion = await page.evaluate(() => {
@@ -282,7 +282,7 @@ test.describe("React 19 Features", () => {
     });
 
     test("should handle concurrent rendering", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Test multiple rapid interactions with safe buttons
       const safeButtons = page

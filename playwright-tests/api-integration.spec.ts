@@ -10,7 +10,7 @@ test.describe("API Integration Tests", () => {
   test.describe("Resume API", () => {
     test("should generate and download resume PDF", { tag: "@fast" }, async ({ page }) => {
       // Navigate to resume page
-      await page.goto("/resume");
+      await page.goto("http://localhost:3001/resume");
 
       // Wait for the page to load
       await page.waitForSelector('button:has-text("Download PDF")');
@@ -29,7 +29,7 @@ test.describe("API Integration Tests", () => {
       "should handle resume generation errors gracefully",
       { tag: "@smoke" },
       async ({ page }) => {
-        await page.goto("/");
+        await page.goto("http://localhost:3001/");
 
         // Mock a failed API response
         await page.route("**/api/resume/download", (route) => {
@@ -44,7 +44,7 @@ test.describe("API Integration Tests", () => {
         const viewportWidth = page.viewportSize()?.width;
         if (viewportWidth && viewportWidth < 768) {
           // On mobile, navigate directly to avoid menu issues
-          await page.goto("/resume");
+          await page.goto("http://localhost:3001/resume");
         } else {
           // On desktop, use navigation
           await navigateWithMobileSupport(page, "/resume");
@@ -64,7 +64,7 @@ test.describe("API Integration Tests", () => {
         // Grant notification permission
         await context.grantPermissions(["notifications"]);
 
-        await page.goto("/");
+        await page.goto("http://localhost:3001/");
 
         // Check if push notifications are supported
         const pushSupport = await page.evaluate(() => {
@@ -109,10 +109,12 @@ test.describe("API Integration Tests", () => {
     );
 
     test("should handle VAPID key retrieval", { tag: "@smoke" }, async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Test VAPID key endpoint
-      const response = await page.request.get("/api/push-notifications?action=vapid-public-key");
+      const response = await page.request.get(
+        "http://localhost:3000/api/push-notifications?action=vapid-public-key",
+      );
 
       if (response.ok()) {
         const data = await response.json();
@@ -127,7 +129,7 @@ test.describe("API Integration Tests", () => {
   test.describe("Contact Form API", () => {
     test("should submit contact form successfully", { tag: "@fast" }, async ({ page }) => {
       // Navigate to contact page
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Check if contact form exists
       const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
@@ -153,7 +155,7 @@ test.describe("API Integration Tests", () => {
 
     test("should validate contact form fields", { tag: "@smoke" }, async ({ page }) => {
       // Navigate to contact page
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Check if contact form exists
       const formExists = (await page.locator('form, [data-testid="contact-form"]').count()) > 0;
@@ -177,7 +179,7 @@ test.describe("API Integration Tests", () => {
 
   test.describe("Analytics Integration", () => {
     test("should load Google Analytics", { tag: "@fast" }, async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check if GA script is loaded
       const gaLoaded = await page.evaluate(() => {
@@ -193,13 +195,13 @@ test.describe("API Integration Tests", () => {
     });
 
     test("should track page views", { tag: "@smoke" }, async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Navigate to another page - use direct navigation for mobile compatibility
       const viewportWidth = page.viewportSize()?.width;
       if (viewportWidth && viewportWidth < 768) {
         // On mobile, navigate directly to avoid menu issues
-        await page.goto("/agents");
+        await page.goto("http://localhost:3001/agents");
       } else {
         // On desktop, use navigation
         await navigateWithMobileSupport(page, "/agents");
@@ -213,7 +215,7 @@ test.describe("API Integration Tests", () => {
 
   test.describe("Error Handling", () => {
     test("should handle 404 errors gracefully", { tag: "@fast" }, async ({ page }) => {
-      await page.goto("/nonexistent-page");
+      await page.goto("http://localhost:3001/nonexistent-page");
 
       // Should show 404 page or redirect to home
       await expect(page.locator("body")).toBeVisible();
@@ -224,7 +226,7 @@ test.describe("API Integration Tests", () => {
     });
 
     test("should handle network errors gracefully", { tag: "@smoke" }, async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Mock network failure for API calls
       await page.route("**/api/**", (route) => {
@@ -244,7 +246,7 @@ test.describe("API Integration Tests", () => {
 
   test.describe("WebSocket Integration", () => {
     test("should establish WebSocket connection", { tag: "@fast" }, async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check if WebSocket connection is established
       const wsConnection = await page.evaluate(() => {
@@ -260,7 +262,7 @@ test.describe("API Integration Tests", () => {
 
   test.describe("Performance Monitoring", () => {
     test("should capture Core Web Vitals", { tag: "@smoke" }, async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Wait for performance metrics to be collected
       await page.waitForTimeout(2000);
@@ -275,7 +277,7 @@ test.describe("API Integration Tests", () => {
     });
 
     test("should handle performance data collection", { tag: "@fast" }, async ({ page }) => {
-      await page.goto("/performance");
+      await page.goto("http://localhost:3001/performance");
 
       // Check if performance dashboard loads
       await expect(page.locator("h1")).toContainText(/performance|dashboard/i);

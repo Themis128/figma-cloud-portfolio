@@ -4,7 +4,7 @@ import { waitForAppReady } from "./test-utils";
 test.describe("SEO & Metadata", () => {
   test.describe("Meta Tags & Open Graph", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
     });
@@ -85,7 +85,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have canonical URL", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 
@@ -141,7 +141,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have proper heading structure for SEO", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
 
@@ -168,7 +168,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have descriptive page titles", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
 
@@ -189,7 +189,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have proper URL structure", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
 
@@ -209,7 +209,7 @@ test.describe("SEO & Metadata", () => {
 
   test.describe("Performance & Core Web Vitals", () => {
     test("should have good Core Web Vitals scores", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 
@@ -237,7 +237,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have optimized images", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 
@@ -265,7 +265,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should minimize render-blocking resources", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 
@@ -294,7 +294,7 @@ test.describe("SEO & Metadata", () => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 
@@ -318,7 +318,7 @@ test.describe("SEO & Metadata", () => {
     });
 
     test("should have proper mobile meta tags", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
 
@@ -334,7 +334,7 @@ test.describe("SEO & Metadata", () => {
 
   test.describe("Content Quality", () => {
     test("should have quality content structure", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
 

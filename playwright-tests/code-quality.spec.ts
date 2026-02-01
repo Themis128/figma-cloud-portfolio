@@ -13,7 +13,7 @@ test.describe("Code Quality", () => {
   test("should have no TypeScript compilation errors", async ({ page }) => {
     // This test would typically run TypeScript compilation
     // For now, we'll check that the application loads without errors
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for TypeScript compilation errors in console
@@ -31,7 +31,7 @@ test.describe("Code Quality", () => {
   test("should have no Biome linting errors", async ({ page }) => {
     // This test would typically run Biome linting
     // For now, we'll check that the application loads without syntax errors
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for syntax errors in console
@@ -50,7 +50,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have optimized bundle size", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Wait for all resources to load
@@ -86,7 +86,7 @@ test.describe("Code Quality", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Try to trigger an error
@@ -117,7 +117,7 @@ test.describe("Code Quality", () => {
       }
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Wait for page to load
@@ -129,7 +129,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper image optimization", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check that images are optimized
@@ -147,7 +147,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper PWA configuration", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check manifest
@@ -167,7 +167,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper accessibility features", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for proper heading structure
@@ -195,7 +195,7 @@ test.describe("Code Quality", () => {
   test("should have proper security headers", async ({ page }) => {
     // This would typically check HTTP headers
     // For now, we'll check for basic security features
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for CSP meta tag
@@ -211,7 +211,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper performance monitoring", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check that performance monitoring is active
@@ -246,7 +246,7 @@ test.describe("Code Quality", () => {
       };
     });
 
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Try to trigger an API error
@@ -268,7 +268,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper loading states", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for loading indicators
@@ -281,7 +281,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper form validation", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("http://localhost:3001/contact");
     await waitForAppReady(page);
 
     // Check for form validation
@@ -294,7 +294,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper routing", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for proper routing
@@ -313,20 +313,20 @@ test.describe("Code Quality", () => {
 
     // Navigate to different pages
     await page.locator('a[href="/about"]').first().click();
-    await page.waitForURL("/about");
+    await page.waitForURL("**/about");
 
     const aboutUrl = page.url();
     expect(aboutUrl).toContain("/about");
 
     // Check for 404 handling
-    await page.goto("/non-existent-page");
+    await page.goto("http://localhost:3001/non-existent-page");
     // Should either redirect to home or show 404 page
     const finalUrl = page.url();
     expect(finalUrl).toBeDefined();
   });
 
   test("should have proper state management", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for state management (Redux, Zustand, etc.)
@@ -345,7 +345,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper code splitting", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for code splitting through dynamic imports
@@ -366,7 +366,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper caching strategy", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for caching headers (would need network interception)
@@ -383,7 +383,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper internationalization", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for i18n support
@@ -403,7 +403,7 @@ test.describe("Code Quality", () => {
   });
 
   test("should have proper testing utilities", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
     await waitForAppReady(page);
 
     // Check for testing utilities

@@ -12,7 +12,9 @@ test.describe("Push Notifications API", () => {
 
   test.describe("GET /api/push-notifications", () => {
     test("should return VAPID public key", async ({ request }) => {
-      const response = await request.get("/api/push-notifications?action=vapid-public-key");
+      const response = await request.get(
+        "http://localhost:3000/api/push-notifications?action=vapid-public-key",
+      );
 
       expect(response.ok()).toBe(true);
       const data = await response.json();
@@ -23,7 +25,9 @@ test.describe("Push Notifications API", () => {
     });
 
     test("should return subscriptions count", async ({ request }) => {
-      const response = await request.get("/api/push-notifications?action=subscriptions");
+      const response = await request.get(
+        "http://localhost:3000/api/push-notifications?action=subscriptions",
+      );
 
       expect(response.ok()).toBe(true);
       const data = await response.json();
@@ -44,12 +48,12 @@ test.describe("Push Notifications API", () => {
         },
       };
 
-      await request.put("/api/push-notifications", {
+      await request.put("http://localhost:3000/api/push-notifications", {
         data: subscription,
       });
 
       // Now send test notification
-      const response = await request.get("/api/push-notifications");
+      const response = await request.get("http://localhost:3000/api/push-notifications");
 
       expect(response.ok()).toBe(true);
       const data = await response.json();
@@ -65,7 +69,7 @@ test.describe("Push Notifications API", () => {
       // Clear subscriptions first (assuming there's a way to do this)
       // For now, we'll test the error case by making the request without subscriptions
 
-      const response = await request.get("/api/push-notifications");
+      const response = await request.get("http://localhost:3000/api/push-notifications");
 
       // This might fail if there are existing subscriptions, but let's test the structure
       if (!response.ok()) {
@@ -103,7 +107,7 @@ test.describe("Push Notifications API", () => {
         },
       ];
 
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions,
           message: testMessage,
@@ -122,7 +126,7 @@ test.describe("Push Notifications API", () => {
     });
 
     test("should return error for missing message", async ({ request }) => {
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions: [],
         },
@@ -135,7 +139,7 @@ test.describe("Push Notifications API", () => {
     });
 
     test("should return error for invalid subscriptions array", async ({ request }) => {
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions: "invalid",
           message: { title: "Test", body: "Test" },
@@ -165,7 +169,7 @@ test.describe("Push Notifications API", () => {
         },
       ];
 
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions,
           message: testMessage,
@@ -193,7 +197,7 @@ test.describe("Push Notifications API", () => {
         },
       };
 
-      const response = await request.put("/api/push-notifications", {
+      const response = await request.put("http://localhost:3000/api/push-notifications", {
         data: subscription,
       });
 
@@ -212,7 +216,7 @@ test.describe("Push Notifications API", () => {
         keys: {},
       };
 
-      const response = await request.put("/api/push-notifications", {
+      const response = await request.put("http://localhost:3000/api/push-notifications", {
         data: invalidSubscription,
       });
 
@@ -239,12 +243,12 @@ test.describe("Push Notifications API", () => {
       };
 
       // Store first subscription
-      await request.put("/api/push-notifications", {
+      await request.put("http://localhost:3000/api/push-notifications", {
         data: subscription1,
       });
 
       // Store second subscription with same endpoint (should update)
-      const response = await request.put("/api/push-notifications", {
+      const response = await request.put("http://localhost:3000/api/push-notifications", {
         data: subscription2,
       });
 
@@ -265,7 +269,7 @@ test.describe("Push Notifications API", () => {
         },
       };
 
-      await request.put("/api/push-notifications", {
+      await request.put("http://localhost:3000/api/push-notifications", {
         data: subscription,
       });
 
@@ -283,7 +287,7 @@ test.describe("Push Notifications API", () => {
     });
 
     test("should return error for missing endpoint parameter", async ({ request }) => {
-      const response = await request.delete("/api/push-notifications");
+      const response = await request.delete("http://localhost:3000/api/push-notifications");
 
       expect(response.status()).toBe(400);
       const data = await response.json();
@@ -303,7 +307,7 @@ test.describe("Push Notifications API", () => {
 
   test.describe("Error Handling", () => {
     test("should handle malformed JSON in request body", async ({ request }) => {
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: "invalid json",
         headers: {
           "Content-Type": "application/json",
@@ -331,7 +335,7 @@ test.describe("Push Notifications API", () => {
         },
       ];
 
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions,
           message: testMessage,
@@ -350,7 +354,9 @@ test.describe("Push Notifications API", () => {
 
   test.describe("Security & Validation", () => {
     test("should validate VAPID key format", async ({ request }) => {
-      const response = await request.get("/api/push-notifications?action=vapid-public-key");
+      const response = await request.get(
+        "http://localhost:3000/api/push-notifications?action=vapid-public-key",
+      );
 
       expect(response.ok()).toBe(true);
       const data = await response.json();
@@ -378,7 +384,7 @@ test.describe("Push Notifications API", () => {
         },
       ];
 
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions,
           message: maliciousMessage,
@@ -398,7 +404,7 @@ test.describe("Push Notifications API", () => {
         },
       };
 
-      const response = await request.put("/api/push-notifications", {
+      const response = await request.put("http://localhost:3000/api/push-notifications", {
         data: invalidSubscription,
       });
 
@@ -428,7 +434,7 @@ test.describe("Push Notifications API", () => {
       const promises = Array(5)
         .fill(null)
         .map(() =>
-          request.post("/api/push-notifications", {
+          request.post("http://localhost:3000/api/push-notifications", {
             data: {
               subscriptions,
               message: testMessage,
@@ -461,7 +467,7 @@ test.describe("Push Notifications API", () => {
           },
         }));
 
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions,
           message: testMessage,
@@ -497,7 +503,7 @@ test.describe("Push Notifications API", () => {
         },
       ];
 
-      const response = await request.post("/api/push-notifications", {
+      const response = await request.post("http://localhost:3000/api/push-notifications", {
         data: {
           subscriptions,
           message: largeMessage,
@@ -539,7 +545,7 @@ test.describe("Push Notifications API", () => {
         });
       });
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Open mobile menu to access notification button
       const mobileMenuButton = page.locator('button[aria-label="Toggle mobile menu"]');
@@ -594,10 +600,10 @@ test.describe("Push Notifications API", () => {
         });
       });
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Navigate to a test URL to trigger component test mode detection
-      await page.goto("/?test=true");
+      await page.goto("http://localhost:3001/?test=true");
 
       // The NotificationButton component detects test mode and shows a simple button
       // In test mode, it uses the provided testId

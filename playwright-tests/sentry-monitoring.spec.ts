@@ -67,13 +67,14 @@ test.describe("Sentry Error Tracking", () => {
       const dsnValidation = await page.evaluate(() => {
         const validateDSN = (dsn: string): boolean => {
           // Sentry DSN format: https://<key>@<organization>.ingest.sentry.io/<project>
-          const dsnPattern =
-            /^https:\/\/[a-f0-9]{32}@[a-z0-9]+\.ingest\.sentry\.io\/\d+$/;
+          const dsnPattern = /^https:\/\/[a-f0-9]{32}@[a-z0-9]+\.ingest\.sentry\.io\/\d+$/;
           return dsnPattern.test(dsn);
         };
 
         return {
-          validDSN: validateDSN("https://1234567890abcdef1234567890abcdef@o123456.ingest.sentry.io/123456"),
+          validDSN: validateDSN(
+            "https://1234567890abcdef1234567890abcdef@o123456.ingest.sentry.io/123456",
+          ),
           invalidDSN: validateDSN("invalid-dsn"),
           emptyDSN: validateDSN(""),
         };
@@ -216,9 +217,7 @@ test.describe("Sentry Error Tracking", () => {
             if (!event.message) return true;
 
             // Filter out ignored errors
-            return !this.ignoredPatterns.some((pattern) =>
-              pattern.test(event.message || "")
-            );
+            return !this.ignoredPatterns.some((pattern) => pattern.test(event.message || ""));
           },
         };
 
@@ -249,11 +248,7 @@ test.describe("Sentry Error Tracking", () => {
             level: string;
             timestamp: number;
           }>,
-          addBreadcrumb: function (
-            category: string,
-            message: string,
-            level = "info"
-          ) {
+          addBreadcrumb: function (category: string, message: string, level = "info") {
             this.crumbs.push({
               category,
               message,
@@ -377,7 +372,7 @@ test.describe("Sentry Error Tracking", () => {
         if (window.sentryPerformance) {
           const transaction = window.sentryPerformance.startTransaction(
             "GET /api/data",
-            "http.request"
+            "http.request",
           );
           transaction.finish();
 
@@ -515,9 +510,7 @@ test.describe("Sentry Error Tracking", () => {
       await waitForAppReady(page);
 
       const fingerprintTest = await page.evaluate(() => {
-        const customFingerprint = (
-          event: { message?: string; transaction?: string }
-        ): string[] => {
+        const customFingerprint = (event: { message?: string; transaction?: string }): string[] => {
           const fingerprint: string[] = [];
 
           if (event.transaction) {
@@ -601,7 +594,7 @@ test.describe("Sentry Error Tracking", () => {
             acc[error.release].push(error);
             return acc;
           },
-          {} as Record<string, typeof errors>
+          {} as Record<string, typeof errors>,
         );
 
         return {
@@ -629,7 +622,7 @@ test.describe("Sentry Error Tracking", () => {
         };
 
         return {
-          validToken: validateAuthToken("sntrys_" + "a".repeat(40)),
+          validToken: validateAuthToken(`sntrys_${"a".repeat(40)}`),
           invalidToken: validateAuthToken("invalid-token"),
         };
       });

@@ -5,7 +5,7 @@ test.describe("Advanced PWA Features", () => {
     page,
     context: _context,
   }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Wait for service worker to register
     await page.waitForLoadState("domcontentloaded");
@@ -40,7 +40,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should cache assets for offline use", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -82,7 +82,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should work offline for cached content", async ({ page, context }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -122,7 +122,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should handle push notification subscription", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -133,7 +133,9 @@ test.describe("Advanced PWA Features", () => {
 
     if (pushSupport) {
       // Check that we can get VAPID key from API (may not be implemented yet)
-      const response = await page.request.get("/api/push-notifications?action=vapid-public-key");
+      const response = await page.request.get(
+        "http://localhost:3000/api/push-notifications?action=vapid-public-key",
+      );
       expect(response.status()).toBe(200);
 
       const data = await response.json();
@@ -148,7 +150,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should have proper web app manifest", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check for manifest link
     const manifestLink = page.locator('link[rel="manifest"]');
@@ -159,7 +161,11 @@ test.describe("Advanced PWA Features", () => {
 
     // Fetch and validate manifest content
     if (manifestHref) {
-      const response = await page.request.get(manifestHref);
+      // Construct full URL if href is relative
+      const fullManifestUrl = manifestHref.startsWith("http")
+        ? manifestHref
+        : `http://localhost:3001${manifestHref}`;
+      const response = await page.request.get(fullManifestUrl);
       expect(response.status()).toBe(200);
 
       const manifest = await response.json();
@@ -175,7 +181,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should have proper PWA meta tags", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check for theme-color meta tag
     const themeColor = page.locator('meta[name="theme-color"]');
@@ -195,7 +201,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should handle background sync when offline", async ({ page, context }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -232,7 +238,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should update service worker when new version available", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("domcontentloaded");
 
@@ -253,7 +259,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should be installable as PWA", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check for beforeinstallprompt event capability
     const installPromptSupport = await page.evaluate(() => {
@@ -271,7 +277,11 @@ test.describe("Advanced PWA Features", () => {
     // Verify manifest has installable properties
     const manifestHref = await manifestLink.getAttribute("href");
     if (manifestHref) {
-      const response = await page.request.get(manifestHref);
+      // Construct full URL if href is relative
+      const fullManifestUrl = manifestHref.startsWith("http")
+        ? manifestHref
+        : `http://localhost:3001${manifestHref}`;
+      const response = await page.request.get(fullManifestUrl);
       const manifest = await response.json();
 
       // Check for basic PWA manifest properties
@@ -283,7 +293,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should handle PWA update notifications", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check if update notification component exists
     const updateNotification = page.locator('[data-testid="pwa-update"], .pwa-update, #pwa-update');
@@ -303,7 +313,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should maintain functionality during service worker updates", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Wait for initial load
     await page.waitForLoadState("domcontentloaded");
@@ -325,7 +335,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should handle offline page transitions", async ({ page, context }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check if service worker is available for offline functionality
     const hasServiceWorker = await page.evaluate(async () => {
@@ -349,7 +359,7 @@ test.describe("Advanced PWA Features", () => {
 
         try {
           // Try to navigate back to home - should work from cache if implemented
-          await page.goto("/", { timeout: 5000 }).catch(() => {
+          await page.goto("http://localhost:3001/", { timeout: 5000 }).catch(() => {
             // If navigation fails, that's expected for offline mode
           });
 
@@ -370,7 +380,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should validate cache strategies", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     await page.waitForLoadState("networkidle");
 
@@ -395,7 +405,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should handle push notification permissions", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check notification permission state
     // const _initialPermission = await context.grantPermissions([], {
@@ -417,7 +427,7 @@ test.describe("Advanced PWA Features", () => {
   });
 
   test("should validate PWA security headers", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("http://localhost:3001/");
 
     // Check for security-related meta tags
     const cspMeta = page.locator('meta[http-equiv="Content-Security-Policy"]');

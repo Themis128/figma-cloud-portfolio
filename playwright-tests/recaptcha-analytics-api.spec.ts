@@ -7,7 +7,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
     }) => {
       try {
         // Test the API endpoint directly with a mock reCAPTCHA token
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Test User",
             email: "test@example.com",
@@ -43,7 +43,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
 
     test("should reject contact form submission without reCAPTCHA token", async ({ request }) => {
       try {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Test User",
             email: "test@example.com",
@@ -67,7 +67,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
 
     test("should reject contact form submission with invalid email", async ({ request }) => {
       try {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Test User",
             email: "invalid-email",
@@ -93,7 +93,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       request,
     }) => {
       try {
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: "Test User",
             // Missing email, subject, message
@@ -116,7 +116,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
     test("should handle server errors gracefully", async ({ request }) => {
       try {
         // Test with malformed data that might cause server errors
-        const response = await request.post("/api/contact", {
+        const response = await request.post("http://localhost:3000/api/contact", {
           data: {
             name: null, // Invalid data type
             email: "test@example.com",
@@ -142,7 +142,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
 
   test.describe("Google Analytics Integration Verification", () => {
     test("should load homepage with GA script references", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Check that the page loads
       await expect(page.locator("body")).toBeVisible();
@@ -155,7 +155,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
     });
 
     test("should load contact page with GA script references", async ({ page }) => {
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
 
       // Check that the page loads
       await expect(page.locator("body")).toBeVisible();
@@ -172,7 +172,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       await page.route("**/googletagmanager.com/**", (route) => route.abort());
       await page.route("**/google-analytics.com/**", (route) => route.abort());
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Page should still load normally
       await expect(page.locator("body")).toBeVisible();
@@ -188,14 +188,14 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       await page.route("**/google-analytics.com/**", (route) => route.abort());
 
       try {
-        await page.goto("/contact", { timeout: 10000 });
+        await page.goto("http://localhost:3001/contact", { timeout: 10000 });
 
         // Page should still load and be functional
         await expect(page.locator("html")).toBeAttached();
         await expect(page.locator("body")).toBeAttached();
 
         // Should be able to navigate
-        await page.goto("/", { timeout: 10000 });
+        await page.goto("http://localhost:3001/", { timeout: 10000 });
         await expect(page.locator("html")).toBeAttached();
         await expect(page.locator("body")).toBeAttached();
       } catch (_error) {
@@ -214,7 +214,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       await page.route("**/recaptcha/**", (route) => route.abort());
 
       try {
-        await page.goto("/contact", { timeout: 10000 });
+        await page.goto("http://localhost:3001/contact", { timeout: 10000 });
 
         // Page should still load
         await expect(page.locator("html")).toBeAttached();
@@ -238,7 +238,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       });
 
       try {
-        await page.goto("/", { timeout: 15000 });
+        await page.goto("http://localhost:3001/", { timeout: 15000 });
 
         // Should still load eventually
         await expect(page.locator("html")).toBeAttached();
@@ -256,14 +256,14 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       await page.route("**/google-analytics.com/**", (route) => route.abort());
       await page.route("**/recaptcha/**", (route) => route.abort());
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Should be able to navigate to contact page
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
       await expect(page.locator("body")).toBeVisible();
 
       // Should be able to navigate back
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await expect(page.locator("body")).toBeVisible();
     });
 
@@ -277,7 +277,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       await page.route("**/fonts.googleapis.com/**", (route) => route.abort());
       await page.route("**/fonts.gstatic.com/**", (route) => route.abort());
 
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Core functionality should still work
       await expect(page.locator("body")).toBeVisible();
@@ -291,7 +291,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
   test.describe("Environment Configuration Tests", () => {
     test("should handle missing environment variables gracefully", async ({ page }) => {
       // Test with current environment (should have variables set)
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
 
       // Page should load normally
       await expect(page.locator("body")).toBeVisible();
@@ -299,20 +299,20 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
 
     test("should work with different base URLs", async ({ page }) => {
       // Test navigation to different pages
-      await page.goto("/");
+      await page.goto("http://localhost:3001/");
       await expect(page.locator("body")).toBeVisible();
 
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/contact");
       await expect(page.locator("body")).toBeVisible();
 
-      await page.goto("/about");
+      await page.goto("http://localhost:3001/about");
       await expect(page.locator("body")).toBeVisible();
     });
 
     test("should handle API endpoint availability", async ({ request }) => {
       try {
         // Test basic API connectivity
-        const response = await request.get("/api/ping");
+        const response = await request.get("http://localhost:3000/api/ping");
 
         // Should get some response
         expect(response.status()).toBeGreaterThanOrEqual(200);
@@ -328,11 +328,11 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
   test.describe("Performance and Reliability Tests", () => {
     test("should handle rapid page navigation", async ({ page }) => {
       // Rapidly navigate between pages
-      await page.goto("/");
-      await page.goto("/contact");
-      await page.goto("/about");
-      await page.goto("/");
-      await page.goto("/contact");
+      await page.goto("http://localhost:3001/");
+      await page.goto("http://localhost:3001/contact");
+      await page.goto("http://localhost:3001/about");
+      await page.goto("http://localhost:3001/");
+      await page.goto("http://localhost:3001/contact");
 
       // Should handle all navigation without issues
       await expect(page.locator("body")).toBeVisible();
@@ -343,7 +343,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
         // Make multiple API calls
         const promises = [];
         for (let i = 0; i < 5; i++) {
-          promises.push(request.get("/api/ping"));
+          promises.push(request.get("http://localhost:3000/api/ping"));
         }
 
         const responses = await Promise.all(promises);
