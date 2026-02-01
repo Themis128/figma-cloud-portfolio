@@ -62,15 +62,15 @@ jobs:
           fi
 
           # Check if coverage file exists
-          if [ ! -f "coverage/coverage-final.json" ]; then
-            echo "❌ Coverage file not found: coverage/coverage-final.json"
+          if [ ! -f "coverage/coverage-summary.json" ]; then
+            echo "❌ Coverage file not found: coverage/coverage-summary.json"
             exit 1
           fi
 
           # Extract coverage percentage using Node.js instead of jq
           COVERAGE=$(node -e "
             try {
-              const coverage = require('./coverage/coverage-final.json');
+              const coverage = require('./coverage/coverage-summary.json');
               const total = coverage.total || {};
               const lines = total.lines || {};
               console.log(lines.pct || 0);
@@ -93,7 +93,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./coverage/coverage-final.json
+          file: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
