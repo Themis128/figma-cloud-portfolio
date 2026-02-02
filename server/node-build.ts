@@ -1,8 +1,11 @@
+// @ts-check
+/// <reference types="node" />
+
 import path from "node:path";
 import * as express from "express";
 import { createServer, initializeSocketIO } from "./index";
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3002; // Using 3002 to match CI configuration
 const HTTP_STATUS_NOT_FOUND = 404;
 
 const app = createServer();
@@ -28,13 +31,11 @@ app.get("/{*splat}", (req, res) => {
 
 const server = app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
-  if (process.env.NODE_ENV === "production") {
-  }
 });
 
 // Initialize Socket.IO
-// @ts-expect-error _io is intentionally unused but needed for initialization
 const _io = initializeSocketIO(server);
+void _io; // Mark as intentionally unused
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
