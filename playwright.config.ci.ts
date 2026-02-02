@@ -70,20 +70,8 @@ const config = createPlaywrightConfig("ci", {
   grep: process.env.CI_TEST_GREP ? new RegExp(process.env.CI_TEST_GREP) : undefined, // Only filter if explicitly requested
   updateSnapshots: process.env.CI_UPDATE_SNAPSHOTS === "true" ? "all" : "none", // Never update snapshots in CI unless explicitly requested
 
-  // Web server configuration - auto-start production server before tests
-  webServer: {
-    command: "node dist/server/node-build.mjs",
-    port: 3002, // Using 3002 to avoid port conflicts (dev uses 3001, old prod was 3000)
-    url: "http://localhost:3002/api/health",
-    timeout: 180000, // 3 minutes to start in CI
-    reuseExistingServer: false, // Always start fresh in CI
-    stdout: "pipe",
-    stderr: "pipe",
-    env: {
-      PORT: "3002",
-      NODE_ENV: "production",
-    },
-  },
+  // Web server configuration - use servers started by CI workflow
+  webServer: undefined, // CI workflow starts servers manually
 });
 
 /**
@@ -162,8 +150,8 @@ function getCIBaseURL(): string {
   // AWS Amplify deployment
   if (process.env.AWS_AMPLIFY_URL) return process.env.AWS_AMPLIFY_URL;
 
-  // Local development fallback - production server runs on port 3002
-  return "http://localhost:3002";
+  // Local development fallback - CI workflow starts frontend on port 3001
+  return "http://localhost:3001";
 }
 
 /**

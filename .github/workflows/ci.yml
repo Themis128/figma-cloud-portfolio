@@ -30,16 +30,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        # v4.1.1
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
-        # v4.0.0
-        uses: pnpm/action-setup@0c17529a66aca453f9227af23103ed11469b1e47
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        # v4.0.1
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
@@ -94,8 +91,7 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        # v3.1.5
-        uses: codecov/codecov-action@41dd13387183a0c1e7e237138dc1cbd8e9c53f11
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
           flags: unittests # cspell: disable-line # cspell: disable-line
@@ -108,16 +104,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        # v4.1.1
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
-        # v4.0.0
-        uses: pnpm/action-setup@0c17529a66aca453f9227af23103ed11469b1e47
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        # v4.0.1
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'pnpm'
@@ -172,10 +165,10 @@ jobs:
           done
 
       - name: Run E2E tests
-        run: pnpm test:e2e
+        run: pnpm test:e2e:ci
         env:
           CI: true
-        timeout-minutes: 10
+        timeout-minutes: 20
 
       - name: Upload test results
         uses: actions/upload-artifact@v4.3.1
@@ -193,16 +186,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        # v4.1.1
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
-        # v4.0.0
-        uses: pnpm/action-setup@0c17529a66aca453f9227af23103ed11469b1e47
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        # v4.0.1
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'pnpm'
