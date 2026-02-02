@@ -1,7 +1,10 @@
 name: Deploy to Production
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types:
+      - completed
     branches: [production]
   workflow_dispatch:
 
@@ -20,6 +23,8 @@ jobs:
   deploy-amplify-production:
     runs-on: ubuntu-latest
     environment: production
+    # Only run if CI workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout code
@@ -46,7 +51,8 @@ jobs:
       - name: Build application
         run: |
           echo "Building application..."
-          pnpm run build:resume || echo "Resume build failed, continuing..."
+          # Build resume - fail if it fails
+          pnpm run build:resume
           pnpm run build:client
           pnpm run build:server
         env:
@@ -73,7 +79,7 @@ jobs:
         run: |
           echo "🚀 Production deployment will be handled automatically by Amplify!"
           echo "📊 Amplify auto-deployment is enabled for the production branch"
-          echo "🔗 Check AWS Amplify Console: https://${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}.amplifyapp.com"
+          echo "🔗 Check AWS Amplify Console for deployment status"
           echo "⏳ Deployment will start automatically when CI completes successfully"
 
   health-check:
@@ -87,7 +93,7 @@ jobs:
           if [ "${{ needs.deploy-amplify-production.result }}" == "success" ]; then
             echo "✅ Production deployment completed successfully"
             echo "📊 Amplify will handle the build and deployment automatically"
-            echo "🔗 Check AWS Amplify Console: https://${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}.amplifyapp.com"
+            echo "🔗 Check AWS Amplify Console for deployment status"
           else
             echo "❌ Production deployment failed"
             echo "📊 Check the Amplify Console for detailed error logs"

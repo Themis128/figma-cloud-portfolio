@@ -51,7 +51,7 @@ const config = createPlaywrightConfig("ci", {
       "html",
       {
         open: "never",
-        outputFolder: "playwright-html-report-ci",
+        outputFolder: "playwright-html-report",
         attachmentsBaseURL: getCIArtifactsURL(),
       },
     ],
@@ -73,11 +73,16 @@ const config = createPlaywrightConfig("ci", {
   // Web server configuration - auto-start production server before tests
   webServer: {
     command: "node dist/server/node-build.mjs",
-    port: 3001,
-    timeout: 120000, // 2 minutes to start
+    port: 3002, // Using 3002 to avoid port conflicts (dev uses 3001, old prod was 3000)
+    url: "http://localhost:3002/api/health",
+    timeout: 180000, // 3 minutes to start in CI
     reuseExistingServer: false, // Always start fresh in CI
     stdout: "pipe",
     stderr: "pipe",
+    env: {
+      PORT: "3002",
+      NODE_ENV: "production",
+    },
   },
 });
 
@@ -157,8 +162,8 @@ function getCIBaseURL(): string {
   // AWS Amplify deployment
   if (process.env.AWS_AMPLIFY_URL) return process.env.AWS_AMPLIFY_URL;
 
-  // Local development fallback - use the correct port
-  return "http://localhost:3001";
+  // Local development fallback - production server runs on port 3002
+  return "http://localhost:3002";
 }
 
 /**
@@ -170,14 +175,14 @@ function getCIArtifactsURL(): string {
   switch (provider) {
     case "github-actions":
       return process.env.GITHUB_PAGES_URL
-        ? `${process.env.GITHUB_PAGES_URL}/playwright-report-ci/`
-        : `file://${process.cwd()}/playwright-report-ci/`;
+        ? `${process.env.GITHUB_PAGES_URL}/playwright-html-report/`
+        : `file://${process.cwd()}/playwright-html-report/`;
     case "gitlab":
       return process.env.CI_PAGES_URL
-        ? `${process.env.CI_PAGES_URL}/playwright-report-ci/`
-        : `file://${process.cwd()}/playwright-report-ci/`;
+        ? `${process.env.CI_PAGES_URL}/playwright-html-report/`
+        : `file://${process.cwd()}/playwright-html-report/`;
     default:
-      return `file://${process.cwd()}/playwright-report-ci/`;
+      return `file://${process.cwd()}/playwright-html-report/`;
   }
 }
 

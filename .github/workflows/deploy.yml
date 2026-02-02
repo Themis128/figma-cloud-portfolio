@@ -1,0 +1,414 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - production
+      - main
+  pull_request:
+    branches:
+      - production
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  PNPM_VERSION: 10.14.0
+  NODE_VERSION: 24
+
+jobs:
+  quality-checks:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Biome linting
+        run: pnpm lint
+
+      - name: Type check with TypeScript
+        run: pnpm typecheck
+
+      - name: Check code formatting
+        run: pnpm format:check
+
+      - name: Upload linting results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linting-results
+          path: |
+            .biome/
+            coverage/
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run npm audit
+        continue-on-error: true
+        run: pnpm audit --audit-level=high
+
+      - name: Check for hardcoded secrets (multi-pattern)
+        run: |
+          echo "🔍 Scanning for hardcoded secrets..."
+
+          # Define patterns to search for
+          PATTERNS=(
+            "ghp_[a-zA-Z0-9]{36}"
+            "gho_[a-zA-Z0-9]{36}"
+            "github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59}"
+            "sk-[a-zA-Z0-9]{48}"
+            "sk-ant-[a-zA-Z0-9-]{95}"
+            "AKIA[0-9A-Z]{16}"
+            "[0-9]a-zA-Z]{40}"
+            "AIza[0-9A-Za-z\\-_]{35}"
+          )
+
+          FOUND=0
+          for pattern in "${PATTERNS[@]}"; do
+            if grep -rE "$pattern" . \
+              --exclude-dir=node_modules \
+              --exclude-dir=.git \
+              --exclude-dir=dist \
+              --exclude-dir=.next \
+              --exclude="*.lock" \
+              --exclude="pnpm-lock.yaml" \
+              --exclude="*.md"; then
+              echo "❌ ERROR: Potential secret detected matching pattern: $pattern"
+              FOUND=1
+            fi
+          done
+
+          if [ $FOUND -eq 1 ]; then
+            echo "❌ Hardcoded secrets found! Please remove them."
+            exit 1
+          fi
+
+          echo "✅ No hardcoded secrets found"
+
+  build:
+    name: Build Application
+    needs: [quality-checks, security-audit]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Load secrets from AWS Secrets Manager
+        run: |
+          echo "🔐 Loading secrets from AWS Secrets Manager..."
+
+          # Try to get secrets from AWS Secrets Manager
+          SECRET_JSON=$(aws secretsmanager get-secret-value \
+            --secret-id ${{ secrets.AWS_SECRETS_MANAGER_ID || 'portfolio/env' }} \
+            --query SecretString \
+            --output text \
+            2>/dev/null || echo "{}")
+
+          if [ "$SECRET_JSON" != "{}" ]; then
+            echo "✅ Secrets loaded from AWS Secrets Manager"
+            echo "$SECRET_JSON" | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
+          else
+            echo "⚠️ AWS Secrets Manager unavailable, using GitHub Secrets"
+          fi
+        env:
+          AWS_SECRETS_MANAGER_ID: ${{ secrets.AWS_SECRETS_MANAGER_ID }}
+
+      - name: Set build environment variables
+        run: |
+          # Set required environment variables from GitHub Secrets
+          echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}" >> $GITHUB_ENV
+          echo "VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}" >> $GITHUB_ENV
+          echo "VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}" >> $GITHUB_ENV
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
+          echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> $GITHUB_ENV
+          echo "VITE_FIREBASE_VAPID_KEY=${{ secrets.VITE_FIREBASE_VAPID_KEY }}" >> $GITHUB_ENV
+          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.VITE_RECAPTCHA_SITE_KEY }}" >> $GITHUB_ENV
+          echo "RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}" >> $GITHUB_ENV
+          echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> $GITHUB_ENV
+          echo "VITE_GOOGLE_ANALYTICS_ID=${{ secrets.VITE_GOOGLE_ANALYTICS_ID }}" >> $GITHUB_ENV
+          echo "NODE_ENV=production" >> $GITHUB_ENV
+
+      - name: Build application
+        run: |
+          echo "🏗️ Building application..."
+          pnpm build
+        env:
+          NODE_ENV: production
+          CI: true
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            public/
+          retention-days: 7
+
+  unit-tests:
+    name: Unit Tests
+    needs: [quality-checks]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm test:unit --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  e2e-tests:
+    name: E2E Tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/production'
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Set test environment
+        run: |
+          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.VITE_RECAPTCHA_SITE_KEY }}" >> $GITHUB_ENV
+          echo "VITE_GOOGLE_ANALYTICS_ID=${{ secrets.VITE_GOOGLE_ANALYTICS_ID }}" >> $GITHUB_ENV
+          echo "NODE_ENV=test" >> $GITHUB_ENV
+
+      - name: Run E2E tests
+        run: pnpm test:e2e:ci
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  deploy:
+    name: Deploy to AWS Amplify
+    needs: [build, unit-tests]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/production' || github.ref == 'refs/heads/main')
+    environment:
+      name: ${{ github.ref == 'refs/heads/production' && 'production' || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./
+
+      - name: Deploy to Amplify
+        run: |
+          echo "🚀 Starting deployment to AWS Amplify..."
+
+          APP_ID=${{ github.ref == 'refs/heads/production' && secrets.AMPLIFY_PRODUCTION_APP_ID || secrets.AMPLIFY_STAGING_APP_ID }}
+          BRANCH=${{ github.ref == 'refs/heads/production' && 'production' || 'main' }}
+
+          echo "📦 Deploying to app: $APP_ID"
+          echo "🌿 Branch: $BRANCH"
+
+          # Trigger Amplify build
+          aws amplify start-job \
+            --app-id $APP_ID \
+            --branch-name $BRANCH \
+            --job-type RELEASE \
+            --region ${{ env.AWS_REGION }}
+
+          echo "✅ Deployment triggered successfully"
+
+      - name: Wait for deployment
+        run: |
+          echo "⏳ Waiting for deployment to complete..."
+
+          APP_ID=${{ github.ref == 'refs/heads/production' && secrets.AMPLIFY_PRODUCTION_APP_ID || secrets.AMPLIFY_STAGING_APP_ID }}
+          BRANCH=${{ github.ref == 'refs/heads/production' && 'production' || 'main' }}
+
+          # Wait up to 15 minutes for deployment
+          for i in {1..30}; do
+            STATUS=$(aws amplify get-job \
+              --app-id $APP_ID \
+              --branch-name $BRANCH \
+              --job-id $(aws amplify list-jobs --app-id $APP_ID --branch-name $BRANCH --max-results 1 --query 'jobSummaries[0].jobId' --output text) \
+              --query 'job.summary.status' \
+              --output text \
+              --region ${{ env.AWS_REGION }})
+
+            echo "Status: $STATUS"
+
+            if [ "$STATUS" = "SUCCEED" ]; then
+              echo "✅ Deployment successful!"
+              exit 0
+            elif [ "$STATUS" = "FAILED" ] || [ "$STATUS" = "CANCELLED" ]; then
+              echo "❌ Deployment failed with status: $STATUS"
+              exit 1
+            fi
+
+            sleep 30
+          done
+
+          echo "⏰ Deployment timeout reached"
+          exit 1
+
+      - name: Post deployment status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const emoji = status === 'success' ? '✅' : '❌';
+            const env = '${{ github.ref == 'refs/heads/production' && 'Production' || 'Staging' }}';
+            const message = `${emoji} ${env} Deployment ${status}\n\nCommit: ${context.sha.substring(0, 7)}\nBranch: ${context.ref.replace('refs/heads/', '')}`;
+
+            if (context.issue.number) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: message
+              });
+            }
+
+  notify:
+    name: Notify Team
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status
+        id: status
+        run: |
+          if [ "${{ needs.deploy.result }}" = "success" ]; then
+            echo "status=✅ Deployment Successful" >> $GITHUB_OUTPUT
+            echo "color=28a745" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ Deployment Failed" >> $GITHUB_OUTPUT
+            echo "color=cb2431" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: env.SLACK_WEBHOOK_URL != ''
+        uses: slackapi/slack-github-action@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "${{ steps.status.outputs.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Portfolio Deployment Status*\n${{ steps.status.outputs.status }}\n\nEnvironment: `${{ github.ref == 'refs/heads/production' && 'Production' || 'Staging' }}`\nBranch: `${{ github.ref_name }}`\nCommit: `${{ github.sha }}`\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }

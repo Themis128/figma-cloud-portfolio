@@ -47,6 +47,15 @@ jobs:
           CI: true
           NODE_ENV: production
 
+      - name: Verify build output
+        run: |
+          if [ ! -f dist/server/node-build.mjs ]; then
+            echo "❌ Server build file not found!"
+            exit 1
+          fi
+          echo "✅ Server build verified"
+          ls -lh dist/server/
+
       - name: Run Playwright tests
         run: npx playwright test --config=playwright.config.ci.ts --shard=${{ matrix.shard }}
         env:
@@ -64,6 +73,13 @@ jobs:
         with:
           name: test-results-${{ strategy.job-index }}
           path: test-results/
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blob-report-${{ strategy.job-index }}
+          path: blob-report/
           retention-days: 30
 
   merge-reports:
@@ -89,9 +105,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: all-blob-reports
+          pattern: blob-report-*
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Contents of all-blob-reports directory:"
+          ls -laR all-blob-reports/
 
       - name: Merge test reports
-        run: npx playwright merge-reports ./all-blob-reports
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
 
       - uses: actions/upload-artifact@v4
         if: always()
