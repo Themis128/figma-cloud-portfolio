@@ -129,7 +129,7 @@ jobs:
           
           # Wait for backend to be ready (max 30 seconds)
           for i in {1..30}; do
-            if curl -s http://localhost:3000/api/ping > /dev/null 2>&1; then
+            if curl -s http://localhost:3002/api/ping > /dev/null 2>&1; then
               echo "✅ Backend server is ready"
               break
             fi

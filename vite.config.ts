@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
         mode !== "production"
           ? {
               "/api": {
-                target: "http://localhost:3000",
+                target: "http://localhost:3002",
                 changeOrigin: true,
                 secure: false,
               },
