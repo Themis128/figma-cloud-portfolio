@@ -1,3 +1,6 @@
+// @ts-check
+/// <reference types="node" />
+
 import {
   createPlaywrightConfig,
   VALIDATION_CONSTANTS,

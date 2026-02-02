@@ -52,7 +52,7 @@ CODACY_API_TOKEN                  → Your Codacy API token
 CODACY_PROJECT_TOKEN              → Your Codacy project token
 SENTRY_DSN                        → Your Sentry DSN
 VITE_SENTRY_DSN                   → Your Sentry DSN
-GITHUB_PORTFOLIO_TOKEN            → Your GitHub personal access token
+VITE_GITHUB_TOKEN            → Your GitHub personal access token
 ```
 
 ## 🔑 How to Get These Secrets

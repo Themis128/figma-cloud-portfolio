@@ -96,7 +96,7 @@ console.log(`   - Retries: ${config.retries} (single retry for stability)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
 console.log(`   - Artifacts: On first retry, screenshots/videos on failure`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Web Server: Auto-starts both frontend (8081) and backend (3000)`);
+console.log(`   - Web Server: Auto-starts both frontend (3001) and backend (3000)`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
 console.log(`   - Mobile Testing: Enabled for comprehensive coverage`);
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback

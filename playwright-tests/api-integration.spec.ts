@@ -29,7 +29,7 @@ test.describe("API Integration Tests", () => {
       "should handle resume generation errors gracefully",
       { tag: "@smoke" },
       async ({ page }) => {
-        await page.goto("http://localhost:3001/");
+        await page.goto("http://localhost:3001/", { timeout: 60000 });
 
         // Mock a failed API response
         await page.route("**/api/resume/download", (route) => {

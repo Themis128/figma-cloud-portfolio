@@ -86,7 +86,7 @@ async function callGitHubApi(path: string, token?: string) {
     "User-Agent": "Deployment-Monitor-Proxy",
   };
 
-  const serverToken = process.env.GITHUB_PORTFOLIO_TOKEN;
+  const serverToken = process.env.VITE_GITHUB_TOKEN;
   if (serverToken) {
     headers.Authorization = `token ${serverToken}`;
   } else if (token) {
@@ -118,7 +118,7 @@ export const handleGetWorkflows: RequestHandler = async (req, res) => {
 
     // Cache key (only safe to cache when server token is present)
     const cacheKey = `/workflows?owner=${req.query.owner || "Themis128"}&repo=${req.query.repo || "figma-cloud-portfolio"}`;
-    const serverTokenPresent = Boolean(process.env.GITHUB_PORTFOLIO_TOKEN);
+    const serverTokenPresent = Boolean(process.env.VITE_GITHUB_TOKEN);
     if (serverTokenPresent) {
       const cached = getCached(cacheKey);
       if (cached) return res.status(cached.status).json(cached.body);
@@ -164,7 +164,7 @@ export const handleGetWorkflowRuns: RequestHandler = async (req, res) => {
 
     const perPage = req.query.per_page || "1";
     const cacheKey = `/workflows/${workflowId}/runs?owner=${owner}&repo=${repo}&per_page=${perPage}`;
-    const serverTokenPresent = Boolean(process.env.GITHUB_PORTFOLIO_TOKEN);
+    const serverTokenPresent = Boolean(process.env.VITE_GITHUB_TOKEN);
     if (serverTokenPresent) {
       const cached = getCached(cacheKey);
       if (cached) return res.status(cached.status).json(cached.body);
@@ -201,7 +201,7 @@ export const handleGetRunJobs: RequestHandler = async (req, res) => {
         : undefined;
 
     const cacheKey = `/runs/${runId}/jobs?owner=${owner}&repo=${repo}`;
-    const serverTokenPresent = Boolean(process.env.GITHUB_PORTFOLIO_TOKEN);
+    const serverTokenPresent = Boolean(process.env.VITE_GITHUB_TOKEN);
     if (serverTokenPresent) {
       const cached = getCached(cacheKey);
       if (cached) return res.status(cached.status).json(cached.body);

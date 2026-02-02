@@ -10,7 +10,6 @@ const logger = {
   info: (msg) => console.log(`[INFO] ${msg}`),
   warn: (msg) => console.warn(`[WARN] ${msg}`),
   error: (msg) => console.error(`[ERROR] ${msg}`),
-  debug: (msg) => console.log(`[DEBUG] ${msg}`),
 };
 
 /**
@@ -70,21 +69,6 @@ function validateCommand(command, args) {
   return true;
 }
 
-/**
- * Sanitizes a string for safe use in command execution
- * @param {string} str - String to sanitize
- * @returns {string} - Sanitized string
- */
-function _sanitizeString(str) {
-  if (typeof str !== "string") return "";
-
-  // Remove or escape dangerous characters
-  return str
-    .replace(/[;&|`$(){}[\]\\]/g, "") // Remove shell metacharacters
-    .replace(/\s+/g, " ") // Normalize whitespace
-    .trim();
-}
-
 const args = process.argv.slice(2);
 if (args.length === 0) {
   console.error("Usage: node scripts/run-with-secrets.js <command> [args...]");
@@ -121,11 +105,13 @@ if (isWindows) {
       "scripts/load-secrets.ps1",
       "-Command",
       command,
-      "-CommandArgs",
-      ...commandArgs,
     ];
 
-    logger.debug(`PowerShell arguments: ${psArgs.join(" ")}`);
+    // Add command arguments - PowerShell will bind them to -CommandArgs parameter
+    if (commandArgs.length > 0) {
+      psArgs.push("-CommandArgs");
+      psArgs.push(...commandArgs);
+    }
 
     const result = spawnSync("powershell", psArgs, {
       stdio: "inherit",
@@ -167,8 +153,6 @@ try {
   if (commandArgs.length > 0) {
     shArgs.push("--", ...commandArgs);
   }
-
-  logger.debug(`Shell arguments: ${shArgs.join(" ")}`);
 
   const result = spawnSync("bash", shArgs, {
     stdio: "inherit",

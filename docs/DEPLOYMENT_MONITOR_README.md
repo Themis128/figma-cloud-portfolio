@@ -61,17 +61,17 @@ The monitor connects to:
 ### Server-side proxy and tokens
 
 - The monitor now uses a server-side proxy at `/api/github/*` to call the GitHub API.
-- For private repos, set a server env var `GITHUB_TOKEN` (recommended) so tokens are not required from the browser:
+- For private repos, set a server env var `VITE_GITHUB_TOKEN` (recommended) so tokens are not required from the browser:
 
 ```bash
-export GITHUB_TOKEN=ghp_... # on Windows PowerShell: $env:GITHUB_TOKEN='ghp_...'
+export VITE_GITHUB_TOKEN=ghp_... # on Windows PowerShell: $env:VITE_GITHUB_TOKEN='ghp_...'
 ```
 
 - If you prefer local token usage from the UI, the monitor will forward a locally-saved token to the proxy **without exposing it publicly**.
 
 ### Proxy caching & rate limits
 
-- Server caches GitHub responses when `GITHUB_TOKEN` is present to reduce API calls. Configure with env vars:
+- Server caches GitHub responses when `VITE_GITHUB_TOKEN` is present to reduce API calls. Configure with env vars:
   - `GITHUB_CACHE_TTL_SECONDS` (default 15)
   - `GITHUB_CACHE_MAX_ENTRIES` (default 200)
 

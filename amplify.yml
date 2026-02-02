@@ -7,6 +7,7 @@ frontend:
     build:
       commands:
         - echo "Building application for Amplify deployment"
+        - bash scripts/load-secrets.sh --write-env .env.production
         - npm run build:client
         # Skip resume and server builds in CI/CD to prevent memory issues
   artifacts:

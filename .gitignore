@@ -48,6 +48,8 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.backup*
+.env*.backup
 
 # IDE and editor files
 .vscode/settings.json
@@ -89,3 +91,11 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# MCP configuration files (may contain sensitive tokens)
+mcp.json
+*.mcp.json
+cline_mcp_settings.json
+
+# Codacy MCP Server (separate project)
+codacy-mcp-server/

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-env node */
+
 /**
  * Comprehensive Code Quality Check Script
  * Runs all quality checks locally before CI/CD
@@ -79,6 +81,11 @@ if (!testResult.success) allPassed = false;
 const buildResult = runCommand("pnpm build", "Production build");
 results.push({ name: "Build", ...buildResult });
 if (!buildResult.success) allPassed = false;
+
+// 7. Security audit
+const auditResult = runCommand("pnpm audit", "Security vulnerability check");
+results.push({ name: "Security Audit", ...auditResult });
+if (!auditResult.success) allPassed = false;
 
 // Summary
 console.log(`\n${"=".repeat(QUALITY_CHECK_CONSTANTS.SUMMARY_LINE_LENGTH)}`);
