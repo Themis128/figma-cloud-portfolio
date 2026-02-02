@@ -1,16 +1,7 @@
-import { render, screen } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
-import { ThemeProvider } from '@/components/ThemeProvider'
+import { describe, it, expect } from 'vitest'
+import { screen } from '@testing-library/react'
+import { renderWithProviders } from '../test-utils'
 import Index from '@/pages/Index'
-
-const renderWithProviders = (component: React.ReactElement) => {
-  return render(
-    <BrowserRouter>
-      <ThemeProvider>{component}</ThemeProvider>
-    </BrowserRouter>,
-  )
-}
 
 describe('Index Page', () => {
   it('renders the main page content', () => {

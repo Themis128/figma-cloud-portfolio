@@ -67,6 +67,20 @@ global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
   clearTimeout(id)
 })
 
+// React 19 new features support
+// Mock for React 19's new useTransition hook
+global.startTransition = vi.fn((callback) => {
+  callback()
+})
+
+// Mock for React 19's new use hook for promises
+global.use = vi.fn((promise) => {
+  if (promise instanceof Promise) {
+    return undefined
+  }
+  return promise
+})
+
 // Mock document.documentElement for ThemeProvider
 Object.defineProperty(document, 'documentElement', {
   writable: true,
@@ -80,9 +94,15 @@ Object.defineProperty(document, 'documentElement', {
   },
 })
 
-// NOTE: Do NOT mock React hooks like useState, useMemo, useEffect, or useContext
+// NOTE: Do NOT mock React hooks like useState, useMemo, useEffect, useContext, or useTransition
 // as they break the React rendering process. Vitest provides sufficient mocking
 // capabilities without needing to mock core React functionality.
+//
+// React 19 changes:
+// - useTransition hook now supports priority levels
+// - New use() hook for consuming promises/context values
+// - Improved Suspense behavior with Server Components
+// These all require actual React implementations to work correctly in tests.
 
 // Mock meta theme-color for ThemeProvider
 const mockMetaThemeColor = {

@@ -10,7 +10,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/vitest-setup.ts'],
     include: ['./tests/**/*.{spec,test}.{ts,tsx}'],
-    exclude: ['./tests/app.spec.ts', './tests/logo.spec.ts'],
+    exclude: ['./isolated-tests/app.spec.ts', './isolated-tests/logo.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'json', 'json-summary', 'html', 'lcov', 'cobertura'],
@@ -48,15 +48,16 @@ export default defineConfig({
     },
     testTimeout: 10000,
     reporters: ['verbose'],
-    // React 18 specific configuration
+    // React 19 specific configuration
+    // - Optimized dependency pre-bundling for React 19
+    // - Proper handling of React's new concurrent features
     deps: {
       optimizer: {
         web: {
-          include: ['react', 'react-dom'],
+          include: ['react', 'react-dom', 'react-router-dom'],
         },
       },
     },
-    // Add resolve configuration for test environment - MOVED TO TOP LEVEL
   },
   resolve: {
     alias: {
@@ -74,7 +75,8 @@ export default defineConfig({
       target: 'es2020',
     },
   },
-  // React 18 compatibility fix
+  // React 19 compatibility configuration
+  // Ensures proper transpilation for React 19's new features
   esbuild: {
     target: 'es2020',
   },
