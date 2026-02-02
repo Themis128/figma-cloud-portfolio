@@ -1,59 +1,59 @@
-import { Plus, Save, X } from "lucide-react";
-import { useState } from "react";
+import { Plus, Save, X } from 'lucide-react'
+import { useState } from 'react'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import type { AgentTemplate } from "@/data/agentTemplates";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import type { AgentTemplate } from '@/data/agentTemplates'
 
 interface TemplateCreatorProps {
-  onCreateTemplate: (template: AgentTemplate) => void;
-  onCancel: () => void;
+  onCreateTemplate: (template: AgentTemplate) => void
+  onCancel: () => void
 }
 
-const defaultTemplate: Omit<AgentTemplate, "id" | "createdAt" | "updatedAt"> = {
-  name: "",
-  description: "",
-  category: "basic",
-  difficulty: "beginner",
-  icon: "🤖",
+const defaultTemplate: Omit<AgentTemplate, 'id' | 'createdAt' | 'updatedAt'> = {
+  name: '',
+  description: '',
+  category: 'basic',
+  difficulty: 'beginner',
+  icon: '🤖',
   tags: [],
-  estimatedTime: "10 minutes",
+  estimatedTime: '10 minutes',
   workflow: {
     nodes: [
       {
-        id: "input-1",
-        type: "input",
+        id: 'input-1',
+        type: 'input',
         position: { x: 100, y: 100 },
         config: {},
-        label: "Input",
+        label: 'Input',
       },
       {
-        id: "output-1",
-        type: "output",
+        id: 'output-1',
+        type: 'output',
         position: { x: 500, y: 100 },
         config: {},
-        label: "Output",
+        label: 'Output',
       },
     ],
     connections: [],
   },
   features: [],
   useCases: [],
-};
+}
 
 export default function TemplateCreator({ onCreateTemplate, onCancel }: TemplateCreatorProps) {
-  const [template, setTemplate] = useState(defaultTemplate);
-  const [newTag, setNewTag] = useState("");
-  const [newFeature, setNewFeature] = useState("");
-  const [newUseCase, setNewUseCase] = useState("");
+  const [template, setTemplate] = useState(defaultTemplate)
+  const [newTag, setNewTag] = useState('')
+  const [newFeature, setNewFeature] = useState('')
+  const [newUseCase, setNewUseCase] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!template.name.trim() || !template.description.trim()) {
-      return;
+    if (!(template.name.trim() && template.description.trim())) {
+      return
     }
 
     const newTemplate: AgentTemplate = {
@@ -61,61 +61,61 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
       id: `custom-${Date.now()}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    }
 
-    onCreateTemplate(newTemplate);
-  };
+    onCreateTemplate(newTemplate)
+  }
 
   const addTag = () => {
     if (newTag.trim() && !template.tags.includes(newTag.trim())) {
       setTemplate((prev) => ({
         ...prev,
         tags: [...prev.tags, newTag.trim()],
-      }));
-      setNewTag("");
+      }))
+      setNewTag('')
     }
-  };
+  }
 
   const removeTag = (tagToRemove: string) => {
     setTemplate((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }));
-  };
+    }))
+  }
 
   const addFeature = () => {
     if (newFeature.trim() && !template.features.includes(newFeature.trim())) {
       setTemplate((prev) => ({
         ...prev,
         features: [...prev.features, newFeature.trim()],
-      }));
-      setNewFeature("");
+      }))
+      setNewFeature('')
     }
-  };
+  }
 
   const removeFeature = (featureToRemove: string) => {
     setTemplate((prev) => ({
       ...prev,
       features: prev.features.filter((feature) => feature !== featureToRemove),
-    }));
-  };
+    }))
+  }
 
   const addUseCase = () => {
     if (newUseCase.trim() && !template.useCases.includes(newUseCase.trim())) {
       setTemplate((prev) => ({
         ...prev,
         useCases: [...prev.useCases, newUseCase.trim()],
-      }));
-      setNewUseCase("");
+      }))
+      setNewUseCase('')
     }
-  };
+  }
 
   const removeUseCase = (useCaseToRemove: string) => {
     setTemplate((prev) => ({
       ...prev,
       useCases: prev.useCases.filter((useCase) => useCase !== useCaseToRemove),
-    }));
-  };
+    }))
+  }
 
   return (
     <div className='w-full max-w-2xl mx-auto p-6 space-y-6'>
@@ -204,7 +204,7 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
                 onChange={(e) =>
                   setTemplate((prev) => ({
                     ...prev,
-                    category: e.target.value as AgentTemplate["category"],
+                    category: e.target.value as AgentTemplate['category'],
                   }))
                 }
                 className='w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-cyan-400/50'
@@ -228,7 +228,7 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
                 onChange={(e) =>
                   setTemplate((prev) => ({
                     ...prev,
-                    difficulty: e.target.value as AgentTemplate["difficulty"],
+                    difficulty: e.target.value as AgentTemplate['difficulty'],
                   }))
                 }
                 className='w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-cyan-400/50'
@@ -275,9 +275,9 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
               placeholder='Add a tag...'
               className='bg-white/5 border-white/10 text-white placeholder-white/50'
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addTag();
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addTag()
                 }
               }}
             />
@@ -324,9 +324,9 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
               placeholder='Add a feature...'
               className='bg-white/5 border-white/10 text-white placeholder-white/50'
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addFeature();
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addFeature()
                 }
               }}
             />
@@ -370,9 +370,9 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
               placeholder='Add a use case...'
               className='bg-white/5 border-white/10 text-white placeholder-white/50'
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addUseCase();
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addUseCase()
                 }
               }}
             />
@@ -417,7 +417,7 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
           <Button
             type='submit'
             className='flex-1 bg-cyan-400 hover:bg-cyan-500 text-black font-medium'
-            disabled={!template.name.trim() || !template.description.trim()}
+            disabled={!(template.name.trim() && template.description.trim())}
           >
             <Save className='w-4 h-4 mr-2' />
             Create Template
@@ -425,5 +425,5 @@ export default function TemplateCreator({ onCreateTemplate, onCancel }: Template
         </div>
       </form>
     </div>
-  );
+  )
 }

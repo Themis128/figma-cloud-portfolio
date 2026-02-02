@@ -1,50 +1,50 @@
-import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { AnimatedSection } from "@/components/AnimatedSection";
-import Navigation from "@/components/Navigation";
-import { RealtimeTest } from "@/components/RealtimeTest";
-import { useTheme } from "@/components/ThemeProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+import { AnimatedSection } from '@/components/AnimatedSection'
+import Navigation from '@/components/Navigation'
+import { RealtimeTest } from '@/components/RealtimeTest'
+import { useTheme } from '@/components/ThemeProvider'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 
 // Constants for update checking simulation
-const UPDATE_CHECK_SIMULATION_DELAY_MS = 2000;
+const UPDATE_CHECK_SIMULATION_DELAY_MS = 2000
 
 export default function Settings() {
-  const { theme, setTheme } = useTheme();
-  const navigate = useNavigate();
-  const [notifications, setNotifications] = useState(true);
-  const [animations, setAnimations] = useState(true);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const { theme, setTheme } = useTheme()
+  const navigate = useNavigate()
+  const [notifications, setNotifications] = useState(true)
+  const [animations, setAnimations] = useState(true)
+  const [reducedMotion, setReducedMotion] = useState(false)
   const [updateStatus, setUpdateStatus] = useState<
-    "idle" | "checking" | "available" | "up-to-date" | "error"
-  >("idle");
-  const [updateMessage, setUpdateMessage] = useState("");
+    'idle' | 'checking' | 'available' | 'up-to-date' | 'error'
+  >('idle')
+  const [updateMessage, setUpdateMessage] = useState('')
 
   const checkForUpdates = async () => {
-    setUpdateStatus("checking");
-    setUpdateMessage("Checking for updates...");
+    setUpdateStatus('checking')
+    setUpdateMessage('Checking for updates...')
 
     try {
       // Simulate API call to check for updates
       // In a real app, this would call your backend API
-      await new Promise((resolve) => setTimeout(resolve, UPDATE_CHECK_SIMULATION_DELAY_MS));
+      await new Promise((resolve) => setTimeout(resolve, UPDATE_CHECK_SIMULATION_DELAY_MS))
 
       // Check if service worker has updates available
-      if ("serviceWorker" in navigator && "controller" in navigator.serviceWorker) {
-        const registration = await navigator.serviceWorker.ready;
+      if ('serviceWorker' in navigator && 'controller' in navigator.serviceWorker) {
+        const registration = await navigator.serviceWorker.ready
 
         // Check if there's a waiting service worker (update available)
         if (registration.waiting) {
-          setUpdateStatus("available");
-          setUpdateMessage("A new version is available! Refresh to update.");
-          return;
+          setUpdateStatus('available')
+          setUpdateMessage('A new version is available! Refresh to update.')
+          return
         }
 
         // Check for updates by calling update()
@@ -52,40 +52,40 @@ export default function Settings() {
           .update()
           .then(() => {
             if (registration.installing) {
-              setUpdateStatus("checking");
-              setUpdateMessage("Downloading update...");
+              setUpdateStatus('checking')
+              setUpdateMessage('Downloading update...')
             } else {
-              setUpdateStatus("up-to-date");
-              setUpdateMessage("You're running the latest version.");
+              setUpdateStatus('up-to-date')
+              setUpdateMessage("You're running the latest version.")
             }
           })
           .catch(() => {
-            setUpdateStatus("error");
-            setUpdateMessage("Failed to check for updates.");
-          });
+            setUpdateStatus('error')
+            setUpdateMessage('Failed to check for updates.')
+          })
       } else {
         // Fallback: simulate version check
-        const currentVersion = "1.0.0";
-        const latestVersion = "1.0.0"; // In real app, fetch from API
+        const currentVersion = '1.0.0'
+        const latestVersion = '1.0.0' // In real app, fetch from API
 
         if (currentVersion === latestVersion) {
-          setUpdateStatus("up-to-date");
-          setUpdateMessage("You're running the latest version.");
+          setUpdateStatus('up-to-date')
+          setUpdateMessage("You're running the latest version.")
         } else {
-          setUpdateStatus("available");
-          setUpdateMessage(`Version ${latestVersion} is available!`);
+          setUpdateStatus('available')
+          setUpdateMessage(`Version ${latestVersion} is available!`)
         }
       }
     } catch (_error) {
-      setUpdateStatus("error");
-      setUpdateMessage("Failed to check for updates. Please try again.");
+      setUpdateStatus('error')
+      setUpdateMessage('Failed to check for updates. Please try again.')
     }
-  };
+  }
 
   const viewChangelog = () => {
     // Open GitHub releases page for the portfolio repository
-    window.open("https://github.com/Themis128/figma-cloud-portfolio/releases", "_blank");
-  };
+    window.open('https://github.com/Themis128/figma-cloud-portfolio/releases', '_blank')
+  }
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-background via-background to-muted/20'>
@@ -96,7 +96,7 @@ export default function Settings() {
             <Button
               variant='ghost'
               onClick={() => {
-                navigate(-1);
+                navigate(-1)
               }}
               className='mb-4'
             >
@@ -121,7 +121,7 @@ export default function Settings() {
                   <Label className='text-base font-medium'>Theme</Label>
                   <RadioGroup
                     value={theme}
-                    onValueChange={(value) => setTheme(value as "light" | "dark" | "system")}
+                    onValueChange={(value) => setTheme(value as 'light' | 'dark' | 'system')}
                     className='grid grid-cols-3 gap-4'
                   >
                     <div className='flex items-center space-x-2'>
@@ -279,13 +279,13 @@ export default function Settings() {
                 {updateMessage && (
                   <div
                     className={`p-3 rounded-md text-sm ${
-                      updateStatus === "available"
-                        ? "bg-green-50 text-green-800 border border-green-200"
-                        : updateStatus === "up-to-date"
-                          ? "bg-blue-50 text-blue-800 border border-blue-200"
-                          : updateStatus === "error"
-                            ? "bg-red-50 text-red-800 border border-red-200"
-                            : "bg-gray-50 text-gray-800 border border-gray-200"
+                      updateStatus === 'available'
+                        ? 'bg-green-50 text-green-800 border border-green-200'
+                        : updateStatus === 'up-to-date'
+                          ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                          : updateStatus === 'error'
+                            ? 'bg-red-50 text-red-800 border border-red-200'
+                            : 'bg-gray-50 text-gray-800 border border-gray-200'
                     }`}
                   >
                     {updateMessage}
@@ -299,9 +299,9 @@ export default function Settings() {
                     variant='outline'
                     size='sm'
                     onClick={checkForUpdates}
-                    disabled={updateStatus === "checking"}
+                    disabled={updateStatus === 'checking'}
                   >
-                    {updateStatus === "checking" ? "Checking..." : "Check for Updates"}
+                    {updateStatus === 'checking' ? 'Checking...' : 'Check for Updates'}
                   </Button>
                   <Button variant='outline' size='sm' onClick={viewChangelog}>
                     View Changelog
@@ -328,5 +328,5 @@ export default function Settings() {
         </div>
       </div>
     </div>
-  );
+  )
 }

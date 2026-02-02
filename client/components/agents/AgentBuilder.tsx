@@ -1,50 +1,50 @@
-import { ArrowLeft, Play, Save, Settings } from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";
-import { executeAgent } from "@/lib/agentExecutor";
-import { WorkflowBuilder } from "./WorkflowBuilder";
+import { ArrowLeft, Play, Save, Settings } from 'lucide-react'
+import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import type { AgentConnection, AgentNode, AgentTemplate } from '@/data/agentTemplates'
+import { executeAgent } from '@/lib/agentExecutor'
+import { WorkflowBuilder } from './WorkflowBuilder'
 
 interface AgentBuilderProps {
-  template: AgentTemplate;
-  onSave: (agent: AgentTemplate) => void;
-  onCancel: () => void;
+  template: AgentTemplate
+  onSave: (agent: AgentTemplate) => void
+  onCancel: () => void
 }
 
 export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
-  const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` });
-  const [isRunning, setIsRunning] = useState(false);
-  const [executionResult, setExecutionResult] = useState<Record<string, unknown> | null>(null);
-  const [executionError, setExecutionError] = useState<string | null>(null);
+  const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` })
+  const [isRunning, setIsRunning] = useState(false)
+  const [executionResult, setExecutionResult] = useState<Record<string, unknown> | null>(null)
+  const [executionError, setExecutionError] = useState<string | null>(null)
 
   const handleWorkflowUpdate = (nodes: AgentNode[], connections: AgentConnection[]) => {
     setAgent((prev) => ({
       ...prev,
       workflow: { nodes, connections },
-    }));
-  };
+    }))
+  }
 
   const handleSave = () => {
-    onSave(agent);
-  };
+    onSave(agent)
+  }
 
   const handleRunAgent = async () => {
-    setIsRunning(true);
-    setExecutionResult(null);
-    setExecutionError(null);
+    setIsRunning(true)
+    setExecutionResult(null)
+    setExecutionError(null)
     try {
       // Execute the actual agent workflow
-      const result = await executeAgent(agent);
-      setExecutionResult(result);
+      const result = await executeAgent(agent)
+      setExecutionResult(result)
     } catch (error) {
-      setExecutionError(error instanceof Error ? error.message : "Unknown error occurred");
+      setExecutionError(error instanceof Error ? error.message : 'Unknown error occurred')
     } finally {
-      setIsRunning(false);
+      setIsRunning(false)
     }
-  };
+  }
 
   return (
     <div className='max-w-7xl mx-auto space-y-8'>
@@ -158,7 +158,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                   onChange={(e) =>
                     setAgent((prev) => ({
                       ...prev,
-                      category: e.target.value as AgentTemplate["category"],
+                      category: e.target.value as AgentTemplate['category'],
                     }))
                   }
                   className='w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-cyan-400'
@@ -258,5 +258,5 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
         </div>
       </div>
     </div>
-  );
+  )
 }

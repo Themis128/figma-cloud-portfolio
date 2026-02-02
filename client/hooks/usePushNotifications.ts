@@ -1,25 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react'
 
-import { pushNotificationsApi } from "@/lib/api";
+import { pushNotificationsApi } from '@/lib/api'
 
 export interface PushSubscriptionData {
-  endpoint: string;
+  endpoint: string
   keys: {
-    p256dh: string;
-    auth: string;
-  };
+    p256dh: string
+    auth: string
+  }
 }
 
 export function usePushNotifications() {
-  const [isSupported, setIsSupported] = useState(false);
-  const [subscription, setSubscription] = useState<PushSubscription | null>(null);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [vapidPublicKey, setVapidPublicKey] = useState<string | null>(null);
+  const [isSupported, setIsSupported] = useState(false)
+  const [subscription, setSubscription] = useState<PushSubscription | null>(null)
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [vapidPublicKey, setVapidPublicKey] = useState<string | null>(null)
 
   const fetchVapidPublicKey = useCallback(async () => {
     try {
-      const data = await pushNotificationsApi.getVapidPublicKey();
-      setVapidPublicKey(data.publicKey);
+      const data = await pushNotificationsApi.getVapidPublicKey()
+      setVapidPublicKey(data.publicKey)
     } catch (_error) {
       // Silently fail in development if API server isn't running
       if (import.meta.env.DEV) {
@@ -27,83 +27,83 @@ export function usePushNotifications() {
       }
       // Don't set an error state, just leave vapidPublicKey as null
     }
-  }, []);
+  }, [])
 
   const checkSubscription = useCallback(async () => {
     try {
-      if (!("serviceWorker" in navigator)) return;
+      if (!('serviceWorker' in navigator)) return
 
-      const registration = await navigator.serviceWorker.ready;
-      const existingSubscription = await registration.pushManager.getSubscription();
+      const registration = await navigator.serviceWorker.ready
+      const existingSubscription = await registration.pushManager.getSubscription()
 
-      setSubscription(existingSubscription);
-      setIsSubscribed(!!existingSubscription);
+      setSubscription(existingSubscription)
+      setIsSubscribed(!!existingSubscription)
     } catch (_error) {}
-  }, []);
+  }, [])
 
   useEffect(() => {
     // Check if push notifications are supported
-    if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
-      setIsSupported(true);
-      checkSubscription();
-      fetchVapidPublicKey();
+    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
+      setIsSupported(true)
+      checkSubscription()
+      fetchVapidPublicKey()
     }
-  }, [checkSubscription, fetchVapidPublicKey]);
+  }, [checkSubscription, fetchVapidPublicKey])
 
   const subscribe = async () => {
     if (!isSupported) {
-      throw new Error("Push notifications are not supported");
+      throw new Error('Push notifications are not supported')
     }
 
     if (!vapidPublicKey) {
-      throw new Error("VAPID public key not available");
+      throw new Error('VAPID public key not available')
     }
 
     // Request notification permission first
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-      throw new Error("Notification permission denied");
+    const permission = await Notification.requestPermission()
+    if (permission !== 'granted') {
+      throw new Error('Notification permission denied')
     }
 
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.ready
 
     // Convert VAPID key to Uint8Array
-    const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+    const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey)
 
     const newSubscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey,
-    });
+    })
 
-    setSubscription(newSubscription);
-    setIsSubscribed(true);
+    setSubscription(newSubscription)
+    setIsSubscribed(true)
 
     // Send subscription data to server
-    await sendSubscriptionToServer(newSubscription);
+    await sendSubscriptionToServer(newSubscription)
 
-    return { subscription: newSubscription };
-  };
+    return { subscription: newSubscription }
+  }
 
   const unsubscribe = async () => {
-    if (!subscription) return;
+    if (!subscription) return
 
-    const result = await subscription.unsubscribe();
-    setSubscription(null);
-    setIsSubscribed(false);
+    const result = await subscription.unsubscribe()
+    setSubscription(null)
+    setIsSubscribed(false)
 
     // Remove subscription from server
-    await removeSubscriptionFromServer(subscription);
+    await removeSubscriptionFromServer(subscription)
 
-    return result;
-  };
+    return result
+  }
 
   const sendSubscriptionToServer = async (subscription: PushSubscription) => {
     // Get subscription keys
-    const p256dhKey = subscription.getKey("p256dh");
-    const authKey = subscription.getKey("auth");
+    const p256dhKey = subscription.getKey('p256dh')
+    const authKey = subscription.getKey('auth')
 
-    if (!p256dhKey || !authKey) {
-      throw new Error("Failed to get subscription keys");
+    if (!(p256dhKey && authKey)) {
+      throw new Error('Failed to get subscription keys')
     }
 
     const subscriptionData: PushSubscriptionData = {
@@ -112,24 +112,24 @@ export function usePushNotifications() {
         p256dh: btoa(String.fromCharCode(...new Uint8Array(p256dhKey))),
         auth: btoa(String.fromCharCode(...new Uint8Array(authKey))),
       },
-    };
+    }
 
     // Store locally for demo purposes
-    localStorage.setItem("push-subscription", JSON.stringify(subscriptionData));
+    localStorage.setItem('push-subscription', JSON.stringify(subscriptionData))
 
     // Send to server
-    await pushNotificationsApi.storeSubscription(subscriptionData);
-  };
+    await pushNotificationsApi.storeSubscription(subscriptionData)
+  }
 
   const removeSubscriptionFromServer = async (subscription: PushSubscription) => {
     try {
       // Remove from local storage
-      localStorage.removeItem("push-subscription");
+      localStorage.removeItem('push-subscription')
 
       // Remove from server
-      await pushNotificationsApi.removeSubscription(subscription.endpoint);
+      await pushNotificationsApi.removeSubscription(subscription.endpoint)
     } catch (_error) {}
-  };
+  }
 
   return {
     isSupported,
@@ -139,22 +139,22 @@ export function usePushNotifications() {
     subscribe,
     unsubscribe,
     checkSubscription,
-  };
+  }
 }
 
 // Utility function to convert VAPID key
 function urlBase64ToUint8Array(base64String: string) {
-  const BASE64_PADDING_SIZE = 4;
-  const padding = "=".repeat(
+  const BASE64_PADDING_SIZE = 4
+  const padding = '='.repeat(
     (BASE64_PADDING_SIZE - (base64String.length % BASE64_PADDING_SIZE)) % BASE64_PADDING_SIZE,
-  );
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  )
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
 
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
 
   for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+    outputArray[i] = rawData.charCodeAt(i)
   }
-  return outputArray;
+  return outputArray
 }

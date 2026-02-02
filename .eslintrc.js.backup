@@ -1,0 +1,125 @@
+export default {
+  root: true,
+  env: {
+    browser: true,
+    es2022: true,
+    node: true,
+    commonjs: true,
+  },
+  extends: [
+    'eslint:recommended',
+    '@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2022,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
+    project: ['./tsconfig.json', './tsconfig.client.json', './tsconfig.server.json'],
+  },
+  plugins: ['react', 'react-hooks', '@typescript-eslint'],
+  rules: {
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'no-console': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
+  },
+  overrides: [
+    // AWS Lambda functions - Node.js environment
+    {
+      files: ['amplify/functions/**/*.js'],
+      env: {
+        node: true,
+        es2022: true,
+      },
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    // Scripts and test files - Node.js environment
+    {
+      files: [
+        'scripts/**/*.js',
+        'test-*.js',
+        'tests/**/*.ts',
+        '**/*.spec.ts',
+        '**/*.test.ts',
+      ],
+      env: {
+        node: true,
+        es2022: true,
+      },
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    // Coverage files - browser environment
+    {
+      files: ['coverage/**/*.js'],
+      env: {
+        browser: true,
+        es2022: true,
+      },
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+        'no-redeclare': 'off',
+        'no-useless-escape': 'off',
+        'no-prototype-builtins': 'off',
+        'no-empty': 'off',
+      },
+    },
+    // Config files - Node.js environment
+    {
+      files: [
+        '*.config.js',
+        '*.config.ts',
+        '*.config.mjs',
+        'vite.config.*.ts',
+        'vitest.config.ts',
+      ],
+      env: {
+        node: true,
+        es2022: true,
+      },
+      rules: {
+        'no-undef': 'off',
+      },
+    },
+    // React components - browser environment
+    {
+      files: ['client/**/*.tsx', 'client/**/*.ts'],
+      env: {
+        browser: true,
+        es2022: true,
+      },
+      rules: {
+        'react/react-in-jsx-scope': 'off',
+        'react/prop-types': 'off',
+      },
+    },
+    // Next.js specific overrides
+    {
+      files: ['new-portfolio-next/**/*.{js,jsx,ts,tsx}'],
+      extends: ['next/core-web-vitals', 'next/typescript'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'error',
+        '@typescript-eslint/no-explicit-any': 'warn',
+      },
+    },
+  ],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+};

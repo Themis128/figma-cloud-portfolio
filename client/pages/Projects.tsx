@@ -1,46 +1,46 @@
-import { Grid3X3, Zap } from "lucide-react";
-import type React from "react";
-import { useMemo } from "react";
-import { Helmet } from "react-helmet-async";
+import { Grid3X3, Zap } from 'lucide-react'
+import type React from 'react'
+import { useMemo } from 'react'
+import { Helmet } from 'react-helmet-async'
 
-import Interactive3DDemo, { useSampleProjects } from "@/components/Interactive3DDemo";
-import SearchableProjects from "@/components/SearchableProjects";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Interactive3DDemo, { useSampleProjects } from '@/components/Interactive3DDemo'
+import SearchableProjects from '@/components/SearchableProjects'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const Projects: React.FC = () => {
-  const sampleProjects = useSampleProjects();
+  const sampleProjects = useSampleProjects()
 
   // Calculate project statistics
   const stats = useMemo(() => {
-    const totalProjects = sampleProjects.length;
-    const webApps = sampleProjects.filter((p) => p.category === "web").length;
-    const mobileApps = sampleProjects.filter((p) => p.category === "mobile").length;
+    const totalProjects = sampleProjects.length
+    const webApps = sampleProjects.filter((p) => p.category === 'web').length
+    const mobileApps = sampleProjects.filter((p) => p.category === 'mobile').length
 
     return {
       total: totalProjects,
       webApps,
       mobileApps,
-    };
-  }, [sampleProjects]);
+    }
+  }, [sampleProjects])
 
   // Structured data for SEO
   const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: "Projects & Portfolio - Themistoklis Baltzakis",
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Projects & Portfolio - Themistoklis Baltzakis',
     description:
-      "Explore my latest work and technical projects including web applications, AI tools, and mobile apps.",
-    url: "https://themistoklisbaltzakis.com/projects",
+      'Explore my latest work and technical projects including web applications, AI tools, and mobile apps.',
+    url: 'https://themistoklisbaltzakis.com/projects',
     mainEntity: {
-      "@type": "ItemList",
-      name: "Portfolio Projects",
+      '@type': 'ItemList',
+      name: 'Portfolio Projects',
       numberOfItems: stats.total,
       itemListElement: sampleProjects.map((project, index) => ({
-        "@type": "ListItem",
+        '@type': 'ListItem',
         position: index + 1,
         item: {
-          "@type": "SoftwareApplication",
+          '@type': 'SoftwareApplication',
           name: project.title,
           description: project.description,
           applicationCategory: project.category,
@@ -49,7 +49,7 @@ const Projects: React.FC = () => {
         },
       })),
     },
-  };
+  }
 
   return (
     <>
@@ -144,7 +144,7 @@ const Projects: React.FC = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Projects;
+export default Projects

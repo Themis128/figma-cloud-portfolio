@@ -1,51 +1,51 @@
-import type React from "react";
-import { useState } from "react";
+import type React from 'react'
+import { useState } from 'react'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useAgentRealtime } from "@/hooks/useAgentRealtime";
-import { useSocket } from "@/hooks/useSocket";
-import { useTypingIndicator } from "@/hooks/useTypingIndicator";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { useAgentRealtime } from '@/hooks/useAgentRealtime'
+import { useSocket } from '@/hooks/useSocket'
+import { useTypingIndicator } from '@/hooks/useTypingIndicator'
 
 // Test constants
-const PROGRESS_MAX_VALUE = 100; // Maximum progress value for percentage calculation
+const PROGRESS_MAX_VALUE = 100 // Maximum progress value for percentage calculation
 
 export function RealtimeTest() {
-  const [userId] = useState(() => `user-${Date.now()}`);
-  const [userName] = useState("Test User");
-  const [roomId, setRoomId] = useState("test-room");
-  const [message, setMessage] = useState("");
+  const [userId] = useState(() => `user-${Date.now()}`)
+  const [userName] = useState('Test User')
+  const [roomId, setRoomId] = useState('test-room')
+  const [message, setMessage] = useState('')
 
   const { isConnected, connectionError, presence } = useSocket({
     userId,
     userName,
-  });
+  })
 
   const { typingUsers, startTyping, stopTyping } = useTypingIndicator({
     roomId,
     userId,
     userName,
-  });
+  })
 
   const { agentStatuses, updateAgentStatus } = useAgentRealtime({
     roomId,
     userId,
-  });
+  })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
-    startTyping();
-  };
+    setMessage(e.target.value)
+    startTyping()
+  }
 
   const handleInputBlur = () => {
-    stopTyping();
-  };
+    stopTyping()
+  }
 
   const testAgentStatus = () => {
-    updateAgentStatus("test-agent", "running", { progress: Math.random() * PROGRESS_MAX_VALUE });
-  };
+    updateAgentStatus('test-agent', 'running', { progress: Math.random() * PROGRESS_MAX_VALUE })
+  }
 
   return (
     <div className='space-y-4 p-4'>
@@ -55,8 +55,8 @@ export function RealtimeTest() {
         </CardHeader>
         <CardContent className='space-y-4'>
           <div className='flex items-center gap-2'>
-            <Badge variant={isConnected ? "default" : "destructive"}>
-              {isConnected ? "Connected" : "Disconnected"}
+            <Badge variant={isConnected ? 'default' : 'destructive'}>
+              {isConnected ? 'Connected' : 'Disconnected'}
             </Badge>
             {connectionError && <span className='text-sm text-red-500'>{connectionError}</span>}
           </div>
@@ -131,19 +131,19 @@ export function RealtimeTest() {
                 <div key={status.agentId} className='flex items-center gap-2'>
                   <Badge
                     variant={
-                      status.status === "running"
-                        ? "default"
-                        : status.status === "error"
-                          ? "destructive"
-                          : status.status === "completed"
-                            ? "secondary"
-                            : "outline"
+                      status.status === 'running'
+                        ? 'default'
+                        : status.status === 'error'
+                          ? 'destructive'
+                          : status.status === 'completed'
+                            ? 'secondary'
+                            : 'outline'
                     }
                   >
                     {status.agentId}: {status.status}
                   </Badge>
                   <span className='text-xs text-gray-500'>
-                    {status.timestamp ? new Date(status.timestamp).toLocaleTimeString() : "N/A"}
+                    {status.timestamp ? new Date(status.timestamp).toLocaleTimeString() : 'N/A'}
                   </span>
                 </div>
               ))}
@@ -152,5 +152,5 @@ export function RealtimeTest() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

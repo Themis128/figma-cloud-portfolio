@@ -1,4 +1,4 @@
-import { createPlaywrightConfig, validateConfiguration } from "./playwright.config.shared";
+import { createPlaywrightConfig, validateConfiguration } from './playwright.config.shared'
 
 /**
  * Main Playwright Configuration for Development
@@ -17,7 +17,7 @@ import { createPlaywrightConfig, validateConfiguration } from "./playwright.conf
  */
 
 // Create development configuration with continuous testing optimizations
-const config = createPlaywrightConfig("development", {
+const config = createPlaywrightConfig('development', {
   // Continuous testing optimizations
   retries: 5, // Increased retries for continuous fixing
   timeout: 180000, // 3 minutes per test for complex scenarios
@@ -25,19 +25,19 @@ const config = createPlaywrightConfig("development", {
 
   // Enhanced reporting for continuous monitoring
   reporter: [
-    ["line"], // Real-time console output
+    ['line'], // Real-time console output
     [
-      "html",
+      'html',
       {
-        open: "never",
-        outputFolder: "playwright-report/html",
+        open: 'never',
+        outputFolder: 'playwright-report/html',
         attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
       },
     ],
     [
-      "json",
+      'json',
       {
-        outputFile: "playwright-report/results.json",
+        outputFile: 'playwright-report/results.json',
       },
     ],
   ],
@@ -49,8 +49,8 @@ const config = createPlaywrightConfig("development", {
 
   // Additional metadata for continuous testing tracking
   metadata: {
-    environment: "development",
-    testType: "continuous",
+    environment: 'development',
+    testType: 'continuous',
     fullBrowserCoverage: true,
     mobileTesting: true,
     continuousMode: true,
@@ -66,42 +66,42 @@ const config = createPlaywrightConfig("development", {
       slowMo: 50, // Slight delay to prevent race conditions
     },
   },
-});
+})
 
 // Validate and provide warnings
-const validationIssues = validateConfiguration(config);
+const validationIssues = validateConfiguration(config)
 
 if (validationIssues.length > 0) {
   // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-  console.log("Development Configuration Issues:");
+  console.log('Development Configuration Issues:')
   validationIssues.forEach((issue) => {
     // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-    console.warn(`   - ${issue}`);
-  });
+    console.warn(`   - ${issue}`)
+  })
 }
 
 // Configuration summary
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log("🚀 Development Configuration:");
+console.log('🚀 Development Configuration:')
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Browser: Full coverage (Chromium, Firefox, WebKit)`);
+console.log(`   - Browser: Full coverage (Chromium, Firefox, WebKit)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Workers: ${config.workers} (parallel execution)`);
+console.log(`   - Workers: ${config.workers} (parallel execution)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Test Timeout: ${config.timeout}ms (120s per test)`);
+console.log(`   - Test Timeout: ${config.timeout}ms (120s per test)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Action Timeout: 15s, Navigation: 45s`);
+console.log(`   - Action Timeout: 15s, Navigation: 45s`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Retries: ${config.retries} (single retry for stability)`);
+console.log(`   - Retries: ${config.retries} (single retry for stability)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Artifacts: On first retry, screenshots/videos on failure`);
+console.log(`   - Artifacts: On first retry, screenshots/videos on failure`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Web Server: Auto-starts both frontend (3001) and backend (3000)`);
+console.log(`   - Web Server: Auto-starts both frontend (3001) and backend (3000)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Mobile Testing: Enabled for comprehensive coverage`);
+console.log(`   - Mobile Testing: Enabled for comprehensive coverage`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log("");
+console.log('')
 
-export { config, validationIssues };
+export { config, validationIssues }
 
-export default config;
+export default config

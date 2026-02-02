@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Page } from '@playwright/test'
 
 /**
  * Real API Test Utilities
@@ -6,15 +6,15 @@ import type { Page } from "@playwright/test";
  */
 
 export interface RealAPITestConfig {
-  enableGitHub: boolean;
-  enableFirebase: boolean;
-  enableAnalytics: boolean;
-  enableSentry: boolean;
-  enableSocketIO: boolean;
-  enableAnthropic: boolean;
-  enableOpenAI: boolean;
-  rateLimitDelay: number;
-  maxConcurrentRequests: number;
+  enableGitHub: boolean
+  enableFirebase: boolean
+  enableAnalytics: boolean
+  enableSentry: boolean
+  enableSocketIO: boolean
+  enableAnthropic: boolean
+  enableOpenAI: boolean
+  rateLimitDelay: number
+  maxConcurrentRequests: number
 }
 
 /**
@@ -22,37 +22,37 @@ export interface RealAPITestConfig {
  */
 export function loadRealAPIConfig(): RealAPITestConfig {
   return {
-    enableGitHub: process.env.TEST_GITHUB_API === "true",
-    enableFirebase: process.env.TEST_FIREBASE === "true",
-    enableAnalytics: process.env.TEST_ANALYTICS === "true",
-    enableSentry: process.env.TEST_SENTRY === "true",
-    enableSocketIO: process.env.TEST_SOCKETIO === "true",
-    enableAnthropic: process.env.TEST_ANTHROPIC === "true",
-    enableOpenAI: process.env.TEST_OPENAI === "true",
-    rateLimitDelay: parseInt(process.env.RATE_LIMIT_DELAY_MS || "1000", 10),
-    maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || "2", 10),
-  };
+    enableGitHub: process.env.TEST_GITHUB_API === 'true',
+    enableFirebase: process.env.TEST_FIREBASE === 'true',
+    enableAnalytics: process.env.TEST_ANALYTICS === 'true',
+    enableSentry: process.env.TEST_SENTRY === 'true',
+    enableSocketIO: process.env.TEST_SOCKETIO === 'true',
+    enableAnthropic: process.env.TEST_ANTHROPIC === 'true',
+    enableOpenAI: process.env.TEST_OPENAI === 'true',
+    rateLimitDelay: parseInt(process.env.RATE_LIMIT_DELAY_MS || '1000', 10),
+    maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || '2', 10),
+  }
 }
 
 /**
  * Validate required environment variables for an API
  */
 export function validateAPICredentials(apiName: string, requiredVars: string[]): boolean {
-  const missing = requiredVars.filter((varName) => !process.env[varName]);
+  const missing = requiredVars.filter((varName) => !process.env[varName])
 
   if (missing.length > 0) {
-    console.warn(`⚠️  ${apiName}: Missing required environment variables: ${missing.join(", ")}`);
-    return false;
+    console.warn(`⚠️  ${apiName}: Missing required environment variables: ${missing.join(', ')}`)
+    return false
   }
 
-  return true;
+  return true
 }
 
 /**
  * Wait for rate limit delay between API calls
  */
 export async function rateLimitDelay(delayMs: number = 1000): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, delayMs));
+  await new Promise((resolve) => setTimeout(resolve, delayMs))
 }
 
 /**
@@ -63,20 +63,20 @@ export async function retryWithBackoff<T>(
   maxRetries: number = 3,
   baseDelay: number = 1000,
 ): Promise<T> {
-  let lastError: Error | undefined;
+  let lastError: Error | undefined
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      return await fn();
+      return await fn()
     } catch (error) {
-      lastError = error as Error;
-      const delay = baseDelay * 2 ** attempt;
-      console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms...`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      lastError = error as Error
+      const delay = baseDelay * 2 ** attempt
+      console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms...`)
+      await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
 
-  throw lastError || new Error("Max retries exceeded");
+  throw lastError || new Error('Max retries exceeded')
 }
 
 /**
@@ -86,17 +86,17 @@ export async function measureAPICall<T>(
   name: string,
   apiCall: () => Promise<T>,
 ): Promise<{ result: T; duration: number }> {
-  const startTime = Date.now();
+  const startTime = Date.now()
 
   try {
-    const result = await apiCall();
-    const duration = Date.now() - startTime;
-    console.log(`✅ ${name} completed in ${duration}ms`);
-    return { result, duration };
+    const result = await apiCall()
+    const duration = Date.now() - startTime
+    console.log(`✅ ${name} completed in ${duration}ms`)
+    return { result, duration }
   } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error(`❌ ${name} failed after ${duration}ms:`, error);
-    throw error;
+    const duration = Date.now() - startTime
+    console.error(`❌ ${name} failed after ${duration}ms:`, error)
+    throw error
   }
 }
 
@@ -106,46 +106,46 @@ export async function measureAPICall<T>(
 export async function setupRealAPIPage(page: Page): Promise<void> {
   // Don't mock any API calls - let them go through
   // Add logging for debugging
-  page.on("console", (msg) => {
-    if (msg.type() === "error") {
-      console.error(`Browser console error: ${msg.text()}`);
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      console.error(`Browser console error: ${msg.text()}`)
     }
-  });
+  })
 
-  page.on("pageerror", (error) => {
-    console.error(`Page error: ${error.message}`);
-  });
+  page.on('pageerror', (error) => {
+    console.error(`Page error: ${error.message}`)
+  })
 
-  page.on("requestfailed", (request) => {
-    console.warn(`Request failed: ${request.url()} - ${request.failure()?.errorText}`);
-  });
+  page.on('requestfailed', (request) => {
+    console.warn(`Request failed: ${request.url()} - ${request.failure()?.errorText}`)
+  })
 
   // Log API calls for monitoring
-  page.on("request", (request) => {
-    const url = request.url();
+  page.on('request', (request) => {
+    const url = request.url()
     if (
-      url.includes("/api/") ||
-      url.includes("firebase") ||
-      url.includes("github") ||
-      url.includes("sentry") ||
-      url.includes("anthropic")
+      url.includes('/api/') ||
+      url.includes('firebase') ||
+      url.includes('github') ||
+      url.includes('sentry') ||
+      url.includes('anthropic')
     ) {
-      console.log(`📡 API Request: ${request.method()} ${url}`);
+      console.log(`📡 API Request: ${request.method()} ${url}`)
     }
-  });
+  })
 
-  page.on("response", (response) => {
-    const url = response.url();
+  page.on('response', (response) => {
+    const url = response.url()
     if (
-      url.includes("/api/") ||
-      url.includes("firebase") ||
-      url.includes("github") ||
-      url.includes("sentry") ||
-      url.includes("anthropic")
+      url.includes('/api/') ||
+      url.includes('firebase') ||
+      url.includes('github') ||
+      url.includes('sentry') ||
+      url.includes('anthropic')
     ) {
-      console.log(`📥 API Response: ${response.status()} ${url}`);
+      console.log(`📥 API Response: ${response.status()} ${url}`)
     }
-  });
+  })
 }
 
 /**
@@ -155,17 +155,17 @@ export async function cleanupTestData(
   apiName: string,
   cleanupFn: () => Promise<void>,
 ): Promise<void> {
-  if (process.env.CLEANUP_TEST_DATA !== "true") {
-    console.log(`⏭️  Skipping cleanup for ${apiName} (CLEANUP_TEST_DATA=false)`);
-    return;
+  if (process.env.CLEANUP_TEST_DATA !== 'true') {
+    console.log(`⏭️  Skipping cleanup for ${apiName} (CLEANUP_TEST_DATA=false)`)
+    return
   }
 
   try {
-    console.log(`🧹 Cleaning up test data for ${apiName}...`);
-    await cleanupFn();
-    console.log(`✅ Cleanup complete for ${apiName}`);
+    console.log(`🧹 Cleaning up test data for ${apiName}...`)
+    await cleanupFn()
+    console.log(`✅ Cleanup complete for ${apiName}`)
   } catch (error) {
-    console.error(`❌ Cleanup failed for ${apiName}:`, error);
+    console.error(`❌ Cleanup failed for ${apiName}:`, error)
     // Don't throw - cleanup failures shouldn't fail tests
   }
 }
@@ -179,15 +179,15 @@ export async function checkAPIAvailability(
 ): Promise<boolean> {
   try {
     const response = await fetch(healthCheckUrl, {
-      method: "GET",
+      method: 'GET',
       signal: AbortSignal.timeout(5000),
-    });
-    const available = response.ok;
-    console.log(`${available ? "✅" : "❌"} ${apiName} availability: ${response.status}`);
-    return available;
+    })
+    const available = response.ok
+    console.log(`${available ? '✅' : '❌'} ${apiName} availability: ${response.status}`)
+    return available
   } catch (error) {
-    console.error(`❌ ${apiName} health check failed:`, error);
-    return false;
+    console.error(`❌ ${apiName} health check failed:`, error)
+    return false
   }
 }
 
@@ -196,11 +196,11 @@ export async function checkAPIAvailability(
  */
 export async function waitForAppReady(page: Page, timeout: number = 30000): Promise<void> {
   try {
-    await page.waitForSelector("body", { timeout });
-    await page.waitForLoadState("domcontentloaded", { timeout });
-    await page.waitForLoadState("networkidle", { timeout: timeout / 2 });
+    await page.waitForSelector('body', { timeout })
+    await page.waitForLoadState('domcontentloaded', { timeout })
+    await page.waitForLoadState('networkidle', { timeout: timeout / 2 })
   } catch (_error) {
-    console.warn("App readiness check timed out, proceeding anyway");
+    console.warn('App readiness check timed out, proceeding anyway')
   }
 }
 
@@ -211,12 +211,12 @@ export class APIUsageTracker {
   private metrics: Map<
     string,
     {
-      calls: number;
-      totalDuration: number;
-      errors: number;
-      estimatedCost: number;
+      calls: number
+      totalDuration: number
+      errors: number
+      estimatedCost: number
     }
-  > = new Map();
+  > = new Map()
 
   recordCall(apiName: string, duration: number, cost: number = 0, success: boolean = true) {
     const current = this.metrics.get(apiName) || {
@@ -224,37 +224,37 @@ export class APIUsageTracker {
       totalDuration: 0,
       errors: 0,
       estimatedCost: 0,
-    };
+    }
 
     this.metrics.set(apiName, {
       calls: current.calls + 1,
       totalDuration: current.totalDuration + duration,
       errors: current.errors + (success ? 0 : 1),
       estimatedCost: current.estimatedCost + cost,
-    });
+    })
   }
 
   getReport(): string {
-    let report = "\n📊 Real API Usage Report:\n";
-    report += `${"━".repeat(50)}\n`;
+    let report = '\n📊 Real API Usage Report:\n'
+    report += `${'━'.repeat(50)}\n`
 
     this.metrics.forEach((metrics, apiName) => {
-      const avgDuration = metrics.calls > 0 ? metrics.totalDuration / metrics.calls : 0;
-      const successRate = metrics.calls > 0 ? (1 - metrics.errors / metrics.calls) * 100 : 0;
+      const avgDuration = metrics.calls > 0 ? metrics.totalDuration / metrics.calls : 0
+      const successRate = metrics.calls > 0 ? (1 - metrics.errors / metrics.calls) * 100 : 0
 
-      report += `\n${apiName}:\n`;
-      report += `  Calls: ${metrics.calls}\n`;
-      report += `  Avg Duration: ${avgDuration.toFixed(0)}ms\n`;
-      report += `  Success Rate: ${successRate.toFixed(1)}%\n`;
+      report += `\n${apiName}:\n`
+      report += `  Calls: ${metrics.calls}\n`
+      report += `  Avg Duration: ${avgDuration.toFixed(0)}ms\n`
+      report += `  Success Rate: ${successRate.toFixed(1)}%\n`
       if (metrics.estimatedCost > 0) {
-        report += `  Est. Cost: $${metrics.estimatedCost.toFixed(4)}\n`;
+        report += `  Est. Cost: $${metrics.estimatedCost.toFixed(4)}\n`
       }
-    });
+    })
 
-    report += "━".repeat(50);
-    return report;
+    report += '━'.repeat(50)
+    return report
   }
 }
 
 // Global usage tracker
-export const usageTracker = new APIUsageTracker();
+export const usageTracker = new APIUsageTracker()

@@ -190,12 +190,17 @@ self.addEventListener('message', (event) => {
         self.skipWaiting()
         break
       case 'GET_VERSION':
-        event.ports[0].postMessage({ version: '1.0.0' })
+        // Safely send response only if port exists
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ version: '1.0.0' })
+        }
         break
       default:
         console.log('Unknown message type:', event.data.type)
     }
   }
+  
+  // Don't return anything - prevents "expecting async response" errors
 })
 
 // Background sync

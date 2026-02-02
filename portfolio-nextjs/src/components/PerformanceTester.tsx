@@ -1,48 +1,48 @@
-import { BarChart3, Download, Play, Square } from "lucide-react";
-import { useState } from "react";
+import { BarChart3, Download, Play, Square } from 'lucide-react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 // Test result generation constants
-const ERROR_PROBABILITY = 0.8; // 80% chance of success (20% error rate)
-const WARNING_PROBABILITY = 0.6; // 60% chance of success/warning (40% warning rate)
-const PROGRESS_PERCENTAGE_MULTIPLIER = 100; // Convert to percentage
+const ERROR_PROBABILITY = 0.8 // 80% chance of success (20% error rate)
+const WARNING_PROBABILITY = 0.6 // 60% chance of success/warning (40% warning rate)
+const PROGRESS_PERCENTAGE_MULTIPLIER = 100 // Convert to percentage
 
 interface TestResult {
-  name: string;
-  duration: number;
-  status: "success" | "warning" | "error";
-  details?: string;
+  name: string
+  duration: number
+  status: 'success' | 'warning' | 'error'
+  details?: string
 }
 
 export function PerformanceTester() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [results, setResults] = useState<TestResult[]>([]);
+  const [isRunning, setIsRunning] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [results, setResults] = useState<TestResult[]>([])
 
   const runPerformanceTests = async () => {
-    setIsRunning(true);
-    setProgress(0);
-    setResults([]);
+    setIsRunning(true)
+    setProgress(0)
+    setResults([])
 
     const tests = [
-      { name: "Bundle Size Analysis", duration: 2000 },
-      { name: "Image Optimization Check", duration: 1500 },
-      { name: "Font Loading Test", duration: 1000 },
-      { name: "JavaScript Execution Time", duration: 3000 },
-      { name: "Memory Usage Analysis", duration: 2500 },
-      { name: "Network Request Optimization", duration: 1800 },
-    ];
+      { name: 'Bundle Size Analysis', duration: 2000 },
+      { name: 'Image Optimization Check', duration: 1500 },
+      { name: 'Font Loading Test', duration: 1000 },
+      { name: 'JavaScript Execution Time', duration: 3000 },
+      { name: 'Memory Usage Analysis', duration: 2500 },
+      { name: 'Network Request Optimization', duration: 1800 },
+    ]
 
-    const newResults: TestResult[] = [];
+    const newResults: TestResult[] = []
 
     for (let i = 0; i < tests.length; i++) {
-      const test = tests[i];
+      const test = tests[i]
 
       // Simulate test execution
-      await new Promise((resolve) => setTimeout(resolve, test.duration));
+      await new Promise((resolve) => setTimeout(resolve, test.duration))
 
       // Generate mock results
       const result: TestResult = {
@@ -50,75 +50,75 @@ export function PerformanceTester() {
         duration: test.duration,
         status:
           Math.random() > ERROR_PROBABILITY
-            ? "error"
+            ? 'error'
             : Math.random() > WARNING_PROBABILITY
-              ? "warning"
-              : "success",
+              ? 'warning'
+              : 'success',
         details: generateTestDetails(test.name),
-      };
+      }
 
-      newResults.push(result);
-      setResults([...newResults]);
-      setProgress(((i + 1) / tests.length) * PROGRESS_PERCENTAGE_MULTIPLIER);
+      newResults.push(result)
+      setResults([...newResults])
+      setProgress(((i + 1) / tests.length) * PROGRESS_PERCENTAGE_MULTIPLIER)
     }
 
-    setIsRunning(false);
-  };
+    setIsRunning(false)
+  }
 
   const generateTestDetails = (testName: string): string => {
     const details = {
-      "Bundle Size Analysis": "Bundle size: 2.4MB (compressed). All chunks under 500KB.",
-      "Image Optimization Check": "All images optimized. WebP format used. Total savings: 45%.",
-      "Font Loading Test": "Fonts loaded efficiently. FOIT avoided with font-display: swap.",
-      "JavaScript Execution Time": "Main thread blocked for 120ms. Consider code splitting.",
-      "Memory Usage Analysis": "Peak memory usage: 85MB. No memory leaks detected.",
-      "Network Request Optimization": "32 requests optimized. Compression enabled.",
-    };
-    return details[testName as keyof typeof details] || "Test completed successfully.";
-  };
-
-  const getStatusColor = (status: TestResult["status"]) => {
-    switch (status) {
-      case "success":
-        return "text-green-400";
-      case "warning":
-        return "text-yellow-400";
-      case "error":
-        return "text-red-400";
-      default:
-        return "text-gray-400";
+      'Bundle Size Analysis': 'Bundle size: 2.4MB (compressed). All chunks under 500KB.',
+      'Image Optimization Check': 'All images optimized. WebP format used. Total savings: 45%.',
+      'Font Loading Test': 'Fonts loaded efficiently. FOIT avoided with font-display: swap.',
+      'JavaScript Execution Time': 'Main thread blocked for 120ms. Consider code splitting.',
+      'Memory Usage Analysis': 'Peak memory usage: 85MB. No memory leaks detected.',
+      'Network Request Optimization': '32 requests optimized. Compression enabled.',
     }
-  };
+    return details[testName as keyof typeof details] || 'Test completed successfully.'
+  }
 
-  const getStatusIcon = (status: TestResult["status"]) => {
+  const getStatusColor = (status: TestResult['status']) => {
     switch (status) {
-      case "success":
-        return "✅";
-      case "warning":
-        return "⚠️";
-      case "error":
-        return "❌";
+      case 'success':
+        return 'text-green-400'
+      case 'warning':
+        return 'text-yellow-400'
+      case 'error':
+        return 'text-red-400'
       default:
-        return "❓";
+        return 'text-gray-400'
     }
-  };
+  }
+
+  const getStatusIcon = (status: TestResult['status']) => {
+    switch (status) {
+      case 'success':
+        return '✅'
+      case 'warning':
+        return '⚠️'
+      case 'error':
+        return '❌'
+      default:
+        return '❓'
+    }
+  }
 
   const exportResults = () => {
     const csvContent = [
-      "Test Name,Duration (ms),Status,Details",
+      'Test Name,Duration (ms),Status,Details',
       ...results.map((r) => `"${r.name}",${r.duration},"${r.status}","${r.details}"`),
-    ].join("\n");
+    ].join('\n')
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `performance-test-results-${new Date().toISOString().split("T")[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `performance-test-results-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className='space-y-6'>
@@ -200,19 +200,19 @@ export function PerformanceTester() {
               <div className='grid grid-cols-3 gap-4 text-center'>
                 <div>
                   <div className='text-2xl font-bold text-green-400'>
-                    {results.filter((r) => r.status === "success").length}
+                    {results.filter((r) => r.status === 'success').length}
                   </div>
                   <div className='text-xs text-muted-foreground'>Passed</div>
                 </div>
                 <div>
                   <div className='text-2xl font-bold text-yellow-400'>
-                    {results.filter((r) => r.status === "warning").length}
+                    {results.filter((r) => r.status === 'warning').length}
                   </div>
                   <div className='text-xs text-muted-foreground'>Warnings</div>
                 </div>
                 <div>
                   <div className='text-2xl font-bold text-red-400'>
-                    {results.filter((r) => r.status === "error").length}
+                    {results.filter((r) => r.status === 'error').length}
                   </div>
                   <div className='text-xs text-muted-foreground'>Failed</div>
                 </div>
@@ -222,5 +222,5 @@ export function PerformanceTester() {
         )}
       </Card>
     </div>
-  );
+  )
 }

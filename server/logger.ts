@@ -1,4 +1,4 @@
-export type LogLevel = "info" | "warn" | "error" | "debug";
+export type LogLevel = 'info' | 'warn' | 'error' | 'debug'
 
 export const logger = {
   info: (_tag: string, _msg: string) => {},
@@ -8,6 +8,6 @@ export const logger = {
     if (process.env.DEBUG) {
     }
   },
-};
+}
 
-export default logger;
+export default logger

@@ -1,5 +1,15 @@
-import type { ContactFormRequest, ContactFormResponse } from "@shared/api";
-import type { Request, Response } from "express";
+import type { ContactFormRequest, ContactFormResponse } from '@shared/api'
+import type { Request, Response } from 'express'
+
+// reCAPTCHA response type
+interface RecaptchaResponse {
+  success: boolean
+  score?: number
+  action?: string
+  challenge_ts?: string
+  hostname?: string
+  'error-codes'?: string[]
+}
 
 // Constants for validation and HTTP status codes
 const CONTACT_CONSTANTS = {
@@ -15,26 +25,26 @@ const CONTACT_CONSTANTS = {
   },
   PROCESSING_DELAY_MS: 2000,
   RECAPTCHA_MIN_SCORE: 0.5,
-} as const;
+} as const
 
 export const handleContactForm = async (req: Request, res: Response) => {
   try {
-    const { name, email, subject, message, recaptchaToken }: ContactFormRequest = req.body;
+    const { name, email, subject, message, recaptchaToken }: ContactFormRequest = req.body
 
     // Basic validation
-    if (!name || !email || !subject || !message || !recaptchaToken) {
+    if (!(name && email && subject && message && recaptchaToken)) {
       const response: ContactFormResponse = {
         success: false,
-        message: "All fields are required",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+        message: 'All fields are required',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
     // Input sanitization and length limits
-    const sanitizedName = name.trim();
-    const sanitizedEmail = email.trim().toLowerCase();
-    const sanitizedSubject = subject.trim();
-    const sanitizedMessage = message.trim();
+    const sanitizedName = name.trim()
+    const sanitizedEmail = email.trim().toLowerCase()
+    const sanitizedSubject = subject.trim()
+    const sanitizedMessage = message.trim()
 
     // Length validation
     if (
@@ -44,9 +54,9 @@ export const handleContactForm = async (req: Request, res: Response) => {
     ) {
       const response: ContactFormResponse = {
         success: false,
-        message: "Input exceeds maximum length limits.",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+        message: 'Input exceeds maximum length limits.',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
     // Enhanced XSS and injection prevention with more comprehensive patterns
@@ -100,77 +110,77 @@ export const handleContactForm = async (req: Request, res: Response) => {
       /\$in/gi,
       /\$nin/gi,
       /\$regex/gi,
-    ];
+    ]
 
-    const allInputs = [sanitizedName, sanitizedEmail, sanitizedSubject, sanitizedMessage].join(" ");
+    const allInputs = [sanitizedName, sanitizedEmail, sanitizedSubject, sanitizedMessage].join(' ')
     for (const pattern of dangerousPatterns) {
       if (pattern.test(allInputs)) {
         const response: ContactFormResponse = {
           success: false,
-          message: "Invalid input detected. Please check your submission.",
-        };
-        return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+          message: 'Invalid input detected. Please check your submission.',
+        }
+        return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
       }
     }
 
     // Additional security: sanitize HTML entities
     const sanitizeHtml = (str: string): string => {
       return str
-        .replace(/&/g, "&")
-        .replace(/</g, "<")
-        .replace(/>/g, ">")
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
         .replace(/"/g, '"')
-        .replace(/'/g, "&#39;");
-    };
+        .replace(/'/g, '&#39;')
+    }
 
-    const safeEmail = sanitizeHtml(sanitizedEmail);
+    const safeEmail = sanitizeHtml(sanitizedEmail)
 
     // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(safeEmail)) {
       const response: ContactFormResponse = {
         success: false,
-        message: "Invalid email format",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+        message: 'Invalid email format',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
     // Verify reCAPTCHA
-    let recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    let recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY
 
     // Use test keys in development/test environment
-    if (process.env.NODE_ENV !== "production" || !recaptchaSecret) {
+    if (process.env.NODE_ENV !== 'production' || !recaptchaSecret) {
       // Google's test reCAPTCHA secret key - always validates successfully
-      recaptchaSecret = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
+      recaptchaSecret = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     }
 
     if (!recaptchaSecret) {
       const response: ContactFormResponse = {
         success: false,
-        message: "Server configuration error. Please try again later.",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json(response);
+        message: 'Server configuration error. Please try again later.',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json(response)
     }
 
-    const recaptchaResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-      method: "POST",
+    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         secret: recaptchaSecret,
         response: recaptchaToken,
       }),
-    });
+    })
 
-    const recaptchaData = await recaptchaResponse.json();
+    const recaptchaData = (await recaptchaResponse.json()) as RecaptchaResponse
 
     if (!recaptchaData.success) {
       const response: ContactFormResponse = {
         success: false,
-        message: "reCAPTCHA verification failed. Please try again.",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+        message: 'reCAPTCHA verification failed. Please try again.',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
     // Check reCAPTCHA score (for v3)
@@ -181,37 +191,37 @@ export const handleContactForm = async (req: Request, res: Response) => {
     ) {
       const response: ContactFormResponse = {
         success: false,
-        message: "Suspicious activity detected. Please try again.",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+        message: 'Suspicious activity detected. Please try again.',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
     // For test reCAPTCHA keys, score might be undefined - allow in development
-    const isTestKey = recaptchaSecret === "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
-    if (!isTestKey && process.env.NODE_ENV === "production" && recaptchaData.score === undefined) {
+    const isTestKey = recaptchaSecret === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+    if (!isTestKey && process.env.NODE_ENV === 'production' && recaptchaData.score === undefined) {
       const response: ContactFormResponse = {
         success: false,
-        message: "reCAPTCHA verification failed. Please try again.",
-      };
-      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response);
+        message: 'reCAPTCHA verification failed. Please try again.',
+      }
+      return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
     // Simulate processing delay (like sending email)
-    await new Promise((resolve) => setTimeout(resolve, CONTACT_CONSTANTS.PROCESSING_DELAY_MS));
+    await new Promise((resolve) => setTimeout(resolve, CONTACT_CONSTANTS.PROCESSING_DELAY_MS))
 
     const response: ContactFormResponse = {
       success: true,
       message: "Message sent successfully! I'll get back to you within 24 hours.",
-    };
+    }
 
-    res.status(CONTACT_CONSTANTS.HTTP_STATUS.OK).json(response);
-    return;
+    res.status(CONTACT_CONSTANTS.HTTP_STATUS.OK).json(response)
+    return
   } catch (_error) {
     const response: ContactFormResponse = {
       success: false,
-      message: "Failed to send message. Please try again or contact me directly via email.",
-    };
-    res.status(CONTACT_CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json(response);
-    return;
+      message: 'Failed to send message. Please try again or contact me directly via email.',
+    }
+    res.status(CONTACT_CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json(response)
+    return
   }
-};
+}

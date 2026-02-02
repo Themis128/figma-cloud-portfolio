@@ -1,62 +1,62 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react'
 
 interface ViewTransitionWrapperProps {
-  children: React.ReactNode;
-  className?: string;
-  name?: string;
+  children: React.ReactNode
+  className?: string
+  name?: string
 }
 
 export const ViewTransitionWrapper: React.FC<ViewTransitionWrapperProps> = ({
   children,
   className,
-  name = "page-transition",
+  name = 'page-transition',
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // Check if View Transitions API is supported
     if (!document.startViewTransition) {
       // View Transitions API not supported in this browser - fallback will be used
-      return;
+      return
     }
 
     // Apply view transition name to the container
     if (containerRef.current) {
-      containerRef.current.style.viewTransitionName = name;
+      containerRef.current.style.viewTransitionName = name
     }
-  }, [name]);
+  }, [name])
 
   return (
     <div ref={containerRef} className={className}>
       {children}
     </div>
-  );
-};
+  )
+}
 
 // Utility function to trigger view transitions programmatically
 export const startViewTransition = (updateCallback: () => void | Promise<void>) => {
   if (document.startViewTransition) {
-    return document.startViewTransition(updateCallback);
+    return document.startViewTransition(updateCallback)
   } else {
     // Fallback for browsers that don't support View Transitions
-    updateCallback();
-    return null;
+    updateCallback()
+    return null
   }
-};
+}
 
 // Hook for managing view transitions in components
 export const useViewTransition = () => {
   const triggerTransition = React.useCallback((updateCallback: () => void | Promise<void>) => {
-    return startViewTransition(updateCallback);
-  }, []);
+    return startViewTransition(updateCallback)
+  }, [])
 
-  return { triggerTransition, isSupported: !!document.startViewTransition };
-};
+  return { triggerTransition, isSupported: !!document.startViewTransition }
+}
 
 // CSS-in-JS styles for View Transitions
 const createViewTransitionStyles = () => {
-  if (typeof document !== "undefined") {
-    const style = document.createElement("style");
+  if (typeof document !== 'undefined') {
+    const style = document.createElement('style')
     style.textContent = `
       @keyframes slide-up {
         from {
@@ -127,12 +127,12 @@ const createViewTransitionStyles = () => {
         animation-duration: 300ms;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       }
-    `;
-    document.head.appendChild(style);
+    `
+    document.head.appendChild(style)
   }
-};
+}
 
 // Initialize styles
-createViewTransitionStyles();
+createViewTransitionStyles()
 
-export default ViewTransitionWrapper;
+export default ViewTransitionWrapper

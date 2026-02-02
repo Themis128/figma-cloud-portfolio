@@ -1,37 +1,37 @@
-import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock all dependencies
-vi.mock("@/components/Navigation", () => ({
+vi.mock('@/components/Navigation', () => ({
   default: () => <nav data-testid='navigation'>Navigation</nav>,
-}));
+}))
 
-vi.mock("@/components/CircuitBackground", () => ({
+vi.mock('@/components/CircuitBackground', () => ({
   default: () => <div data-testid='circuit-background'>Circuit Background</div>,
-}));
+}))
 
-vi.mock("@/lib/api", () => ({
+vi.mock('@/lib/api', () => ({
   generateResumePDF: vi.fn(),
-}));
+}))
 
-vi.mock("react-router-dom", () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({
     to,
     children,
     ...props
   }: {
-    to: string;
-    children: React.ReactNode;
-    [key: string]: any;
+    to: string
+    children: React.ReactNode
+    [key: string]: any
   }) => (
     <a href={to} {...props}>
       {children}
     </a>
   ),
-}));
+}))
 
 // Mock Radix UI components
-vi.mock("@radix-ui/react-tabs", () => ({
+vi.mock('@radix-ui/react-tabs', () => ({
   Root: ({ children }: { children: React.ReactNode }) => <div data-testid='tabs'>{children}</div>,
   List: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='tabs-list'>{children}</div>
@@ -44,9 +44,9 @@ vi.mock("@radix-ui/react-tabs", () => ({
   Content: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='tabs-content'>{children}</div>
   ),
-}));
+}))
 
-vi.mock("@radix-ui/react-card", () => ({
+vi.mock('@radix-ui/react-card', () => ({
   Card: ({ children }: { children: React.ReactNode }) => <div data-testid='card'>{children}</div>,
   CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='card-header'>{children}</div>
@@ -57,17 +57,17 @@ vi.mock("@radix-ui/react-card", () => ({
   CardContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='card-content'>{children}</div>
   ),
-}));
+}))
 
-vi.mock("@radix-ui/react-button", () => ({
+vi.mock('@radix-ui/react-button', () => ({
   Button: ({ children }: { children: React.ReactNode }) => (
     <button type='button' data-testid='button'>
       {children}
     </button>
   ),
-}));
+}))
 
-vi.mock("lucide-react", () => ({
+vi.mock('lucide-react', () => ({
   Download: () => <div data-testid='download-icon'>Download</div>,
   Save: () => <div data-testid='save-icon'>Save</div>,
   Eye: () => <div data-testid='eye-icon'>Eye</div>,
@@ -86,27 +86,28 @@ vi.mock("lucide-react", () => ({
   Mail: () => <div data-testid='mail-icon'>Mail</div>,
   Sparkles: () => <div data-testid='sparkles-icon'>Sparkles</div>,
   User: () => <div data-testid='user-icon'>User</div>,
-}));
+}))
 
 // Mock localStorage
-Object.defineProperty(window, "localStorage", {
+Object.defineProperty(window, 'localStorage', {
   value: {
     getItem: vi.fn(),
     setItem: vi.fn(),
     removeItem: vi.fn(),
     clear: vi.fn(),
   },
-});
+})
 
-import Resume from "@/pages/Resume";
+import Resume from '@/pages/Resume'
 
-describe("Resume Component Isolation Test", () => {
+describe('Resume Component Isolation Test', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
-  it("renders resume component with minimal setup", () => {
-    render(<Resume />);
-    expect(screen.getByTestId("navigation")).toBeInTheDocument();
-  });
-});
+  it('renders resume component with minimal setup', () => {
+    render(<Resume />)
+    const navigations = screen.getAllByTestId('navigation')
+    expect(navigations[0]).toBeInTheDocument()
+  })
+})

@@ -10,16 +10,16 @@ import {
   Mail,
   Shield,
   User,
-} from "lucide-react";
-import AIBrain from "@/components/AIBrain";
-import { AnimatedSection } from "@/components/AnimatedSection";
-import CircuitBackground from "@/components/CircuitBackground";
-import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
-import Navigation from "@/components/Navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from 'lucide-react'
+import AIBrain from '@/components/AIBrain'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import { HoverButton, HoverIcon } from '@/components/HoverAnimations'
+import Navigation from '@/components/Navigation'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 export default function Index() {
   return (
@@ -463,5 +463,5 @@ export default function Index() {
         </div>
       </footer>
     </div>
-  );
+  )
 }

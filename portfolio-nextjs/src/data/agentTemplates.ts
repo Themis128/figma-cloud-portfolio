@@ -1,36 +1,36 @@
 export interface AgentTemplate {
-  id: string;
-  name: string;
-  description: string;
-  category: "basic" | "advanced" | "specialized";
-  difficulty: "beginner" | "intermediate" | "advanced";
-  icon: string;
-  tags: string[];
-  estimatedTime: string;
+  id: string
+  name: string
+  description: string
+  category: 'basic' | 'advanced' | 'specialized'
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  icon: string
+  tags: string[]
+  estimatedTime: string
   workflow: {
-    nodes: AgentNode[];
-    connections: AgentConnection[];
-  };
-  features: string[];
-  useCases: string[];
-  createdAt: string;
-  updatedAt: string;
+    nodes: AgentNode[]
+    connections: AgentConnection[]
+  }
+  features: string[]
+  useCases: string[]
+  createdAt: string
+  updatedAt: string
 }
 
 export interface AgentNode {
-  id: string;
-  type: "llm" | "decision" | "data-processor" | "output" | "input" | "tool";
-  position: { x: number; y: number };
-  config: Record<string, unknown>;
-  label: string;
+  id: string
+  type: 'llm' | 'decision' | 'data-processor' | 'output' | 'input' | 'tool'
+  position: { x: number; y: number }
+  config: Record<string, unknown>
+  label: string
 }
 
 export interface AgentConnection {
-  id: string;
-  source: string;
-  target: string;
-  sourceHandle?: string;
-  targetHandle?: string;
+  id: string
+  source: string
+  target: string
+  sourceHandle?: string
+  targetHandle?: string
 }
 
 // Constants for workflow positioning and configuration
@@ -75,431 +75,431 @@ const WORKFLOW_CONSTANTS = {
     SUBSTR_START: 2,
     BASE_36: 36,
   },
-} as const;
+} as const
 
 export const agentTemplates: AgentTemplate[] = [
   {
-    id: "basic-chatbot",
-    name: "Basic Chatbot",
+    id: 'basic-chatbot',
+    name: 'Basic Chatbot',
     description:
-      "A simple conversational AI that can answer questions and engage in basic dialogue.",
-    category: "basic",
-    difficulty: "beginner",
-    icon: "💬",
-    tags: ["conversation", "qa", "basic"],
-    estimatedTime: "5 minutes",
+      'A simple conversational AI that can answer questions and engage in basic dialogue.',
+    category: 'basic',
+    difficulty: 'beginner',
+    icon: '💬',
+    tags: ['conversation', 'qa', 'basic'],
+    estimatedTime: '5 minutes',
     workflow: {
       nodes: [
         {
-          id: "input-1",
-          type: "input",
+          id: 'input-1',
+          type: 'input',
           position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
-          config: { prompt: "Hello! How can I help you today?" },
-          label: "User Input",
+          config: { prompt: 'Hello! How can I help you today?' },
+          label: 'User Input',
         },
         {
-          id: "llm-1",
-          type: "llm",
+          id: 'llm-1',
+          type: 'llm',
           position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
-            model: "gpt-3.5-turbo",
+            model: 'gpt-3.5-turbo',
             temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.BASIC.TEMPERATURE,
             maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.BASIC.MAX_TOKENS,
-            systemPrompt: "You are a helpful assistant.",
+            systemPrompt: 'You are a helpful assistant.',
           },
-          label: "AI Response",
+          label: 'AI Response',
         },
         {
-          id: "output-1",
-          type: "output",
+          id: 'output-1',
+          type: 'output',
           position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {},
-          label: "Response",
+          label: 'Response',
         },
       ],
       connections: [
-        { id: "conn-1", source: "input-1", target: "llm-1" },
-        { id: "conn-2", source: "llm-1", target: "output-1" },
+        { id: 'conn-1', source: 'input-1', target: 'llm-1' },
+        { id: 'conn-2', source: 'llm-1', target: 'output-1' },
       ],
     },
-    features: ["Natural language processing", "Context awareness", "Customizable personality"],
-    useCases: ["Customer support", "General assistance", "Information queries"],
-    createdAt: "2024-01-20T00:00:00Z",
-    updatedAt: "2024-01-20T00:00:00Z",
+    features: ['Natural language processing', 'Context awareness', 'Customizable personality'],
+    useCases: ['Customer support', 'General assistance', 'Information queries'],
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-20T00:00:00Z',
   },
   {
-    id: "content-writer",
-    name: "Content Writer",
+    id: 'content-writer',
+    name: 'Content Writer',
     description:
-      "An AI agent specialized in creating high-quality written content for blogs, articles, and marketing materials.",
-    category: "specialized",
-    difficulty: "intermediate",
-    icon: "✍️",
-    tags: ["writing", "content", "marketing"],
-    estimatedTime: "10 minutes",
+      'An AI agent specialized in creating high-quality written content for blogs, articles, and marketing materials.',
+    category: 'specialized',
+    difficulty: 'intermediate',
+    icon: '✍️',
+    tags: ['writing', 'content', 'marketing'],
+    estimatedTime: '10 minutes',
     workflow: {
       nodes: [
         {
-          id: "input-1",
-          type: "input",
+          id: 'input-1',
+          type: 'input',
           position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: {
-            prompt: "What type of content would you like me to create?",
+            prompt: 'What type of content would you like me to create?',
           },
-          label: "Content Request",
+          label: 'Content Request',
         },
         {
-          id: "llm-1",
-          type: "llm",
+          id: 'llm-1',
+          type: 'llm',
           position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
-            model: "gpt-4",
+            model: 'gpt-4',
             temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.ADVANCED.TEMPERATURE,
             maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.ADVANCED.MAX_TOKENS,
             systemPrompt:
-              "You are a professional content writer with expertise in SEO and engaging storytelling.",
+              'You are a professional content writer with expertise in SEO and engaging storytelling.',
           },
-          label: "Content Generation",
+          label: 'Content Generation',
         },
         {
-          id: "decision-1",
-          type: "decision",
+          id: 'decision-1',
+          type: 'decision',
           position: WORKFLOW_CONSTANTS.POSITIONS.DECISION_BRANCH,
           config: {
             conditions: [
-              { field: "tone", operator: "equals", value: "formal" },
-              { field: "tone", operator: "equals", value: "casual" },
+              { field: 'tone', operator: 'equals', value: 'formal' },
+              { field: 'tone', operator: 'equals', value: 'casual' },
             ],
           },
-          label: "Style Check",
+          label: 'Style Check',
         },
         {
-          id: "output-1",
-          type: "output",
+          id: 'output-1',
+          type: 'output',
           position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {},
-          label: "Final Content",
+          label: 'Final Content',
         },
       ],
       connections: [
-        { id: "conn-1", source: "input-1", target: "llm-1" },
-        { id: "conn-2", source: "llm-1", target: "decision-1" },
-        { id: "conn-3", source: "decision-1", target: "output-1" },
+        { id: 'conn-1', source: 'input-1', target: 'llm-1' },
+        { id: 'conn-2', source: 'llm-1', target: 'decision-1' },
+        { id: 'conn-3', source: 'decision-1', target: 'output-1' },
       ],
     },
     features: [
-      "SEO optimization",
-      "Multiple writing styles",
-      "Research integration",
-      "Content proofreading",
+      'SEO optimization',
+      'Multiple writing styles',
+      'Research integration',
+      'Content proofreading',
     ],
-    useCases: ["Blog posts", "Marketing copy", "Technical documentation", "Social media content"],
-    createdAt: "2024-01-20T00:00:00Z",
-    updatedAt: "2024-01-20T00:00:00Z",
+    useCases: ['Blog posts', 'Marketing copy', 'Technical documentation', 'Social media content'],
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-20T00:00:00Z',
   },
   {
-    id: "data-analyzer",
-    name: "Data Analyzer",
+    id: 'data-analyzer',
+    name: 'Data Analyzer',
     description:
-      "An intelligent agent that can analyze datasets, generate insights, and create visualizations.",
-    category: "advanced",
-    difficulty: "advanced",
-    icon: "📊",
-    tags: ["data", "analysis", "visualization"],
-    estimatedTime: "15 minutes",
+      'An intelligent agent that can analyze datasets, generate insights, and create visualizations.',
+    category: 'advanced',
+    difficulty: 'advanced',
+    icon: '📊',
+    tags: ['data', 'analysis', 'visualization'],
+    estimatedTime: '15 minutes',
     workflow: {
       nodes: [
         {
-          id: "input-1",
-          type: "input",
+          id: 'input-1',
+          type: 'input',
           position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
           config: {
-            prompt: "Upload your dataset or describe the data you want to analyze.",
+            prompt: 'Upload your dataset or describe the data you want to analyze.',
           },
-          label: "Data Input",
+          label: 'Data Input',
         },
         {
-          id: "data-processor-1",
-          type: "data-processor",
+          id: 'data-processor-1',
+          type: 'data-processor',
           position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
-            operations: ["clean", "normalize", "analyze"],
-            outputFormat: "json",
+            operations: ['clean', 'normalize', 'analyze'],
+            outputFormat: 'json',
           },
-          label: "Data Processing",
+          label: 'Data Processing',
         },
         {
-          id: "llm-1",
-          type: "llm",
+          id: 'llm-1',
+          type: 'llm',
           position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_ADVANCED,
           config: {
-            model: "gpt-4",
+            model: 'gpt-4',
             temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.ANALYTICAL.TEMPERATURE,
             maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.ANALYTICAL.MAX_TOKENS,
             systemPrompt:
-              "You are a data analysis expert. Provide clear, actionable insights from the processed data.",
+              'You are a data analysis expert. Provide clear, actionable insights from the processed data.',
           },
-          label: "Insight Generation",
+          label: 'Insight Generation',
         },
         {
-          id: "tool-1",
-          type: "tool",
+          id: 'tool-1',
+          type: 'tool',
           position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {
-            tool: "chart-generator",
-            chartType: "auto",
+            tool: 'chart-generator',
+            chartType: 'auto',
           },
-          label: "Visualization",
+          label: 'Visualization',
         },
         {
-          id: "output-1",
-          type: "output",
+          id: 'output-1',
+          type: 'output',
           position: WORKFLOW_CONSTANTS.POSITIONS.COMPLEX_OUTPUT,
           config: {},
-          label: "Analysis Report",
+          label: 'Analysis Report',
         },
       ],
       connections: [
-        { id: "conn-1", source: "input-1", target: "data-processor-1" },
-        { id: "conn-2", source: "data-processor-1", target: "llm-1" },
-        { id: "conn-3", source: "llm-1", target: "tool-1" },
-        { id: "conn-4", source: "tool-1", target: "output-1" },
+        { id: 'conn-1', source: 'input-1', target: 'data-processor-1' },
+        { id: 'conn-2', source: 'data-processor-1', target: 'llm-1' },
+        { id: 'conn-3', source: 'llm-1', target: 'tool-1' },
+        { id: 'conn-4', source: 'tool-1', target: 'output-1' },
       ],
     },
     features: [
-      "Automated data cleaning",
-      "Statistical analysis",
-      "Insight generation",
-      "Interactive visualizations",
+      'Automated data cleaning',
+      'Statistical analysis',
+      'Insight generation',
+      'Interactive visualizations',
     ],
     useCases: [
-      "Business intelligence",
-      "Market research",
-      "Performance analytics",
-      "Scientific data analysis",
+      'Business intelligence',
+      'Market research',
+      'Performance analytics',
+      'Scientific data analysis',
     ],
-    createdAt: "2024-01-20T00:00:00Z",
-    updatedAt: "2024-01-20T00:00:00Z",
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-20T00:00:00Z',
   },
   {
-    id: "customer-support",
-    name: "Customer Support Agent",
+    id: 'customer-support',
+    name: 'Customer Support Agent',
     description:
-      "A specialized AI agent for handling customer inquiries, troubleshooting, and providing support.",
-    category: "specialized",
-    difficulty: "intermediate",
-    icon: "🎧",
-    tags: ["support", "customer-service", "helpdesk"],
-    estimatedTime: "12 minutes",
+      'A specialized AI agent for handling customer inquiries, troubleshooting, and providing support.',
+    category: 'specialized',
+    difficulty: 'intermediate',
+    icon: '🎧',
+    tags: ['support', 'customer-service', 'helpdesk'],
+    estimatedTime: '12 minutes',
     workflow: {
       nodes: [
         {
-          id: "input-1",
-          type: "input",
+          id: 'input-1',
+          type: 'input',
           position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
-          config: { prompt: "How can I help you today?" },
-          label: "Customer Query",
+          config: { prompt: 'How can I help you today?' },
+          label: 'Customer Query',
         },
         {
-          id: "llm-1",
-          type: "llm",
+          id: 'llm-1',
+          type: 'llm',
           position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
-            model: "gpt-4",
+            model: 'gpt-4',
             temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_INITIAL.TEMPERATURE,
             maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_INITIAL.MAX_TOKENS,
             systemPrompt:
-              "You are a professional customer support agent. Be helpful, empathetic, and provide clear solutions.",
+              'You are a professional customer support agent. Be helpful, empathetic, and provide clear solutions.',
           },
-          label: "Initial Response",
+          label: 'Initial Response',
         },
         {
-          id: "decision-1",
-          type: "decision",
+          id: 'decision-1',
+          type: 'decision',
           position: WORKFLOW_CONSTANTS.POSITIONS.DECISION_BRANCH,
           config: {
             conditions: [
-              { field: "complexity", operator: "equals", value: "simple" },
-              { field: "complexity", operator: "equals", value: "complex" },
+              { field: 'complexity', operator: 'equals', value: 'simple' },
+              { field: 'complexity', operator: 'equals', value: 'complex' },
             ],
           },
-          label: "Issue Assessment",
+          label: 'Issue Assessment',
         },
         {
-          id: "tool-1",
-          type: "tool",
+          id: 'tool-1',
+          type: 'tool',
           position: WORKFLOW_CONSTANTS.POSITIONS.TOOL_PARALLEL,
           config: {
-            tool: "knowledge-base",
-            searchQuery: "auto",
+            tool: 'knowledge-base',
+            searchQuery: 'auto',
           },
-          label: "Knowledge Search",
+          label: 'Knowledge Search',
         },
         {
-          id: "llm-2",
-          type: "llm",
+          id: 'llm-2',
+          type: 'llm',
           position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {
-            model: "gpt-4",
+            model: 'gpt-4',
             temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_DETAILED.TEMPERATURE,
             maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.SUPPORT_DETAILED.MAX_TOKENS,
-            systemPrompt: "Provide detailed troubleshooting steps and escalate if needed.",
+            systemPrompt: 'Provide detailed troubleshooting steps and escalate if needed.',
           },
-          label: "Detailed Solution",
+          label: 'Detailed Solution',
         },
         {
-          id: "output-1",
-          type: "output",
+          id: 'output-1',
+          type: 'output',
           position: WORKFLOW_CONSTANTS.POSITIONS.COMPLEX_OUTPUT,
           config: {},
-          label: "Support Response",
+          label: 'Support Response',
         },
       ],
       connections: [
-        { id: "conn-1", source: "input-1", target: "llm-1" },
-        { id: "conn-2", source: "llm-1", target: "decision-1" },
+        { id: 'conn-1', source: 'input-1', target: 'llm-1' },
+        { id: 'conn-2', source: 'llm-1', target: 'decision-1' },
         {
-          id: "conn-3",
-          source: "decision-1",
-          target: "tool-1",
-          sourceHandle: "complex",
+          id: 'conn-3',
+          source: 'decision-1',
+          target: 'tool-1',
+          sourceHandle: 'complex',
         },
         {
-          id: "conn-4",
-          source: "decision-1",
-          target: "output-1",
-          sourceHandle: "simple",
+          id: 'conn-4',
+          source: 'decision-1',
+          target: 'output-1',
+          sourceHandle: 'simple',
         },
-        { id: "conn-5", source: "tool-1", target: "llm-2" },
-        { id: "conn-6", source: "llm-2", target: "output-1" },
+        { id: 'conn-5', source: 'tool-1', target: 'llm-2' },
+        { id: 'conn-6', source: 'llm-2', target: 'output-1' },
       ],
     },
     features: [
-      "Multi-language support",
-      "Knowledge base integration",
-      "Escalation workflows",
-      "Satisfaction tracking",
+      'Multi-language support',
+      'Knowledge base integration',
+      'Escalation workflows',
+      'Satisfaction tracking',
     ],
-    useCases: ["Technical support", "Product inquiries", "Troubleshooting", "Order assistance"],
-    createdAt: "2024-01-20T00:00:00Z",
-    updatedAt: "2024-01-20T00:00:00Z",
+    useCases: ['Technical support', 'Product inquiries', 'Troubleshooting', 'Order assistance'],
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-20T00:00:00Z',
   },
   {
-    id: "code-reviewer",
-    name: "Code Reviewer",
-    description: "An AI agent that reviews code for bugs, security issues, and best practices.",
-    category: "specialized",
-    difficulty: "advanced",
-    icon: "🔍",
-    tags: ["code", "review", "security", "quality"],
-    estimatedTime: "20 minutes",
+    id: 'code-reviewer',
+    name: 'Code Reviewer',
+    description: 'An AI agent that reviews code for bugs, security issues, and best practices.',
+    category: 'specialized',
+    difficulty: 'advanced',
+    icon: '🔍',
+    tags: ['code', 'review', 'security', 'quality'],
+    estimatedTime: '20 minutes',
     workflow: {
       nodes: [
         {
-          id: "input-1",
-          type: "input",
+          id: 'input-1',
+          type: 'input',
           position: WORKFLOW_CONSTANTS.POSITIONS.INPUT_START,
-          config: { prompt: "Paste your code for review or upload a file." },
-          label: "Code Input",
+          config: { prompt: 'Paste your code for review or upload a file.' },
+          label: 'Code Input',
         },
         {
-          id: "data-processor-1",
-          type: "data-processor",
+          id: 'data-processor-1',
+          type: 'data-processor',
           position: WORKFLOW_CONSTANTS.POSITIONS.PROCESSING_MIDDLE,
           config: {
-            operations: ["parse", "analyze-syntax", "extract-functions"],
-            language: "auto-detect",
+            operations: ['parse', 'analyze-syntax', 'extract-functions'],
+            language: 'auto-detect',
           },
-          label: "Code Analysis",
+          label: 'Code Analysis',
         },
         {
-          id: "tool-1",
-          type: "tool",
+          id: 'tool-1',
+          type: 'tool',
           position: WORKFLOW_CONSTANTS.POSITIONS.DECISION_BRANCH,
           config: {
-            tool: "security-scanner",
-            rules: ["owasp-top-10", "sast-rules"],
+            tool: 'security-scanner',
+            rules: ['owasp-top-10', 'sast-rules'],
           },
-          label: "Security Scan",
+          label: 'Security Scan',
         },
         {
-          id: "tool-2",
-          type: "tool",
+          id: 'tool-2',
+          type: 'tool',
           position: WORKFLOW_CONSTANTS.POSITIONS.TOOL_PARALLEL,
           config: {
-            tool: "quality-checker",
-            standards: ["pep8", "eslint", "sonar"],
+            tool: 'quality-checker',
+            standards: ['pep8', 'eslint', 'sonar'],
           },
-          label: "Quality Check",
+          label: 'Quality Check',
         },
         {
-          id: "llm-1",
-          type: "llm",
+          id: 'llm-1',
+          type: 'llm',
           position: WORKFLOW_CONSTANTS.POSITIONS.OUTPUT_END,
           config: {
-            model: "gpt-4",
+            model: 'gpt-4',
             temperature: WORKFLOW_CONSTANTS.LLM_CONFIG.REVIEW.TEMPERATURE,
             maxTokens: WORKFLOW_CONSTANTS.LLM_CONFIG.REVIEW.MAX_TOKENS,
             systemPrompt:
-              "You are an expert code reviewer. Provide constructive feedback, identify issues, and suggest improvements.",
+              'You are an expert code reviewer. Provide constructive feedback, identify issues, and suggest improvements.',
           },
-          label: "Review Generation",
+          label: 'Review Generation',
         },
         {
-          id: "output-1",
-          type: "output",
+          id: 'output-1',
+          type: 'output',
           position: WORKFLOW_CONSTANTS.POSITIONS.COMPLEX_OUTPUT,
           config: {},
-          label: "Review Report",
+          label: 'Review Report',
         },
       ],
       connections: [
-        { id: "conn-1", source: "input-1", target: "data-processor-1" },
-        { id: "conn-2", source: "data-processor-1", target: "tool-1" },
-        { id: "conn-3", source: "data-processor-1", target: "tool-2" },
-        { id: "conn-4", source: "tool-1", target: "llm-1" },
-        { id: "conn-5", source: "tool-2", target: "llm-1" },
-        { id: "conn-6", source: "llm-1", target: "output-1" },
+        { id: 'conn-1', source: 'input-1', target: 'data-processor-1' },
+        { id: 'conn-2', source: 'data-processor-1', target: 'tool-1' },
+        { id: 'conn-3', source: 'data-processor-1', target: 'tool-2' },
+        { id: 'conn-4', source: 'tool-1', target: 'llm-1' },
+        { id: 'conn-5', source: 'tool-2', target: 'llm-1' },
+        { id: 'conn-6', source: 'llm-1', target: 'output-1' },
       ],
     },
     features: [
-      "Multi-language support",
-      "Security vulnerability detection",
-      "Code quality analysis",
-      "Performance recommendations",
+      'Multi-language support',
+      'Security vulnerability detection',
+      'Code quality analysis',
+      'Performance recommendations',
     ],
     useCases: [
-      "Pull request reviews",
-      "Security audits",
-      "Code quality checks",
-      "Technical debt assessment",
+      'Pull request reviews',
+      'Security audits',
+      'Code quality checks',
+      'Technical debt assessment',
     ],
-    createdAt: "2024-01-20T00:00:00Z",
-    updatedAt: "2024-01-20T00:00:00Z",
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-20T00:00:00Z',
   },
-];
+]
 
-export const getTemplatesByCategory = (category: AgentTemplate["category"]) => {
-  return agentTemplates.filter((template) => template.category === category);
-};
+export const getTemplatesByCategory = (category: AgentTemplate['category']) => {
+  return agentTemplates.filter((template) => template.category === category)
+}
 
-export const getTemplatesByDifficulty = (difficulty: AgentTemplate["difficulty"]) => {
-  return agentTemplates.filter((template) => template.difficulty === difficulty);
-};
+export const getTemplatesByDifficulty = (difficulty: AgentTemplate['difficulty']) => {
+  return agentTemplates.filter((template) => template.difficulty === difficulty)
+}
 
 export const getTemplateById = (id: string) => {
-  return agentTemplates.find((template) => template.id === id);
-};
+  return agentTemplates.find((template) => template.id === id)
+}
 
 export const searchTemplates = (query: string) => {
-  const lowercaseQuery = query.toLowerCase();
+  const lowercaseQuery = query.toLowerCase()
   return agentTemplates.filter(
     (template) =>
       template.name.toLowerCase().includes(lowercaseQuery) ||
       template.description.toLowerCase().includes(lowercaseQuery) ||
       template.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery)),
-  );
-};
+  )
+}
 
 export const cloneTemplate = (template: AgentTemplate, newName?: string): AgentTemplate => {
   const clonedTemplate: AgentTemplate = {
@@ -524,7 +524,7 @@ export const cloneTemplate = (template: AgentTemplate, newName?: string): AgentT
           : connection.target,
       })),
     },
-  };
+  }
 
-  return clonedTemplate;
-};
+  return clonedTemplate
+}

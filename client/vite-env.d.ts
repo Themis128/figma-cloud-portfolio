@@ -1,53 +1,53 @@
 /// <reference types="vite/client" />
 
 // Extend JSX for @react-three/fiber
-import "@react-three/fiber";
+import '@react-three/fiber'
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      group: any;
+      group: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      mesh: any;
+      mesh: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      meshStandardMaterial: any;
+      meshStandardMaterial: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      meshBasicMaterial: any;
+      meshBasicMaterial: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      ambientLight: any;
+      ambientLight: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      directionalLight: any;
+      directionalLight: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      pointLight: any;
+      pointLight: any
       // @ts-expect-error - React Three Fiber JSX elements
       // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      planeGeometry: any;
+      planeGeometry: any
     }
   }
 
   interface Window {
-    webVitals?: boolean;
+    webVitals?: boolean
     webVitalsMetrics?: Array<{
-      name: string;
-      value: number;
-      timestamp: number;
-    }>;
+      name: string
+      value: number
+      timestamp: number
+    }>
     gaEvents?: Array<{
-      command: string;
-      eventName: string;
-      params?: Record<string, unknown>;
-    }>;
-    gtag?: (command: string, eventName: string, params?: Record<string, unknown>) => void;
-    trackContactFormSubmit?: () => void;
-    trackResumeDownload?: () => void;
-    trackError?: (error: string) => void;
+      command: string
+      eventName: string
+      params?: Record<string, unknown>
+    }>
+    gtag?: (command: string, eventName: string, params?: Record<string, unknown>) => void
+    trackContactFormSubmit?: () => void
+    trackResumeDownload?: () => void
+    trackError?: (error: string) => void
   }
 }

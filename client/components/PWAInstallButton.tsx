@@ -1,62 +1,62 @@
-import { Download, Smartphone, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Download, Smartphone, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Button } from "@/components/ui/button";
-import { usePWA } from "@/hooks/usePWA";
+import { Button } from '@/components/ui/button'
+import { usePWA } from '@/hooks/usePWA'
 
 // Constants for PWA timing
-const HOURS_PER_DAY = 24;
-const MINUTES_PER_HOUR = 60;
-const SECONDS_PER_MINUTE = 60;
-const MS_PER_SECOND = 1000;
-const ONE_DAY_MS = HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;
-const PWA_PROMPT_DELAY_MS = 30000; // Show PWA prompt after 30 seconds
+const HOURS_PER_DAY = 24
+const MINUTES_PER_HOUR = 60
+const SECONDS_PER_MINUTE = 60
+const MS_PER_SECOND = 1000
+const ONE_DAY_MS = HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND
+const PWA_PROMPT_DELAY_MS = 30000 // Show PWA prompt after 30 seconds
 
 export function PWAInstallButton() {
-  const { isInstallable, isInstalled, installPWA } = usePWA();
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const { isInstallable, isInstalled, installPWA } = usePWA()
+  const [showPrompt, setShowPrompt] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
   // Check if user has dismissed the prompt before
   useEffect(() => {
-    const dismissedPrompt = localStorage.getItem("pwa-prompt-dismissed");
+    const dismissedPrompt = localStorage.getItem('pwa-prompt-dismissed')
     if (dismissedPrompt) {
-      const dismissedTime = parseInt(dismissedPrompt, 10);
+      const dismissedTime = parseInt(dismissedPrompt, 10)
       if (Date.now() - dismissedTime < ONE_DAY_MS) {
-        setDismissed(true);
+        setDismissed(true)
       } else {
-        localStorage.removeItem("pwa-prompt-dismissed");
+        localStorage.removeItem('pwa-prompt-dismissed')
       }
     }
-  }, []);
+  }, [])
 
   // Show prompt after user has been on the site for a bit
   useEffect(() => {
     if (isInstallable && !isInstalled && !dismissed) {
       const timer = setTimeout(() => {
-        setShowPrompt(true);
-      }, PWA_PROMPT_DELAY_MS);
+        setShowPrompt(true)
+      }, PWA_PROMPT_DELAY_MS)
 
       return () => {
-        clearTimeout(timer);
-      };
+        clearTimeout(timer)
+      }
     }
-    return undefined;
-  }, [isInstallable, isInstalled, dismissed]);
+    return undefined
+  }, [isInstallable, isInstalled, dismissed])
 
   const handleDismiss = () => {
-    setShowPrompt(false);
-    setDismissed(true);
-    localStorage.setItem("pwa-prompt-dismissed", Date.now().toString());
-  };
+    setShowPrompt(false)
+    setDismissed(true)
+    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString())
+  }
 
   const handleInstall = async () => {
-    await installPWA();
-    setShowPrompt(false);
-  };
+    await installPWA()
+    setShowPrompt(false)
+  }
 
   if (isInstalled || !isInstallable) {
-    return null;
+    return null
   }
 
   // Show compact button if prompt not shown
@@ -71,7 +71,7 @@ export function PWAInstallButton() {
         <Download className='h-4 w-4' />
         Install App
       </Button>
-    );
+    )
   }
 
   // Show full prompt
@@ -118,5 +118,5 @@ export function PWAInstallButton() {
         </div>
       </div>
     </div>
-  );
+  )
 }

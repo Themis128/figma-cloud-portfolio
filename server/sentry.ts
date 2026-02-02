@@ -1,9 +1,10 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node'
+import type { ErrorRequestHandler } from 'express'
 
 // Constants for Sentry configuration
-const SENTRY_TRACES_SAMPLE_RATE_PRODUCTION = 0.1;
-const SENTRY_TRACES_SAMPLE_RATE_DEVELOPMENT = 1.0;
-const HTTP_STATUS_ERROR_THRESHOLD = 400;
+const SENTRY_TRACES_SAMPLE_RATE_PRODUCTION = 0.1
+const SENTRY_TRACES_SAMPLE_RATE_DEVELOPMENT = 1.0
+const HTTP_STATUS_ERROR_THRESHOLD = 400
 
 // Initialize Sentry for the server
 Sentry.init({
@@ -18,60 +19,60 @@ Sentry.init({
   ],
   // Performance Monitoring
   tracesSampleRate:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? SENTRY_TRACES_SAMPLE_RATE_PRODUCTION
       : SENTRY_TRACES_SAMPLE_RATE_DEVELOPMENT,
   // Release tracking
-  release: process.env.npm_package_version ?? "1.0.0",
+  release: process.env.npm_package_version ?? '1.0.0',
   // Error filtering
   beforeSend(event, hint) {
-    const error = hint.originalException;
-    if (error && typeof error === "object" && "message" in error) {
-      const message = String(error.message).toLowerCase();
+    const error = hint.originalException
+    if (error && typeof error === 'object' && 'message' in error) {
+      const message = String(error.message).toLowerCase()
 
       // Filter out common non-actionable server errors
       if (
-        message.includes("client disconnected") ||
-        message.includes("connection reset") ||
-        message.includes("timeout") ||
-        message.includes("econnreset") ||
-        (message.includes("enotfound") && message.includes("localhost"))
+        message.includes('client disconnected') ||
+        message.includes('connection reset') ||
+        message.includes('timeout') ||
+        message.includes('econnreset') ||
+        (message.includes('enotfound') && message.includes('localhost'))
       ) {
-        return null;
+        return null
       }
     }
 
-    return event;
+    return event
   },
-});
+})
 
 // Request handler for Express - handled automatically by integration in v10
 // export const sentryRequestHandler = (_req: any, _res: any, next: any) => next()
 
 // Error handler for Express (must be last)
-export const sentryErrorHandler = Sentry.expressErrorHandler();
+export const sentryErrorHandler: ErrorRequestHandler = Sentry.expressErrorHandler()
 
 // Performance monitoring helper
 export const measurePerformance = (name: string, fn: () => void | Promise<void>) => {
   return Sentry.startSpan(
     {
       name,
-      op: "function",
+      op: 'function',
     },
     () => {
       try {
-        const result = fn();
+        const result = fn()
         if (result instanceof Promise) {
-          return result;
+          return result
         }
-        return result;
+        return result
       } catch (error) {
-        Sentry.captureException(error);
-        throw error;
+        Sentry.captureException(error)
+        throw error
       }
     },
-  );
-};
+  )
+}
 
 // User tracking
 export const setUser = (user: { id: string; email?: string; username?: string }) => {
@@ -79,30 +80,30 @@ export const setUser = (user: { id: string; email?: string; username?: string })
     id: user.id,
     email: user.email,
     username: user.username,
-  });
-};
+  })
+}
 
 export const setTag = (key: string, value: string) => {
-  Sentry.setTag(key, value);
-};
+  Sentry.setTag(key, value)
+}
 
 export const setContext = (key: string, context: Record<string, unknown>) => {
-  Sentry.setContext(key, context);
-};
+  Sentry.setContext(key, context)
+}
 
 // Custom error reporting
 export const reportError = (error: Error, context?: Record<string, unknown>) => {
   if (context) {
     Sentry.withScope((scope) => {
       Object.entries(context).forEach(([key, value]) => {
-        scope.setTag(key, String(value));
-      });
-      Sentry.captureException(error);
-    });
+        scope.setTag(key, String(value))
+      })
+      Sentry.captureException(error)
+    })
   } else {
-    Sentry.captureException(error);
+    Sentry.captureException(error)
   }
-};
+}
 
 // API request tracking
 export const trackApiRequest = (
@@ -112,17 +113,17 @@ export const trackApiRequest = (
   duration: number,
 ) => {
   Sentry.addBreadcrumb({
-    category: "api",
+    category: 'api',
     message: `${method} ${path} - ${statusCode} (${duration}ms)`,
-    level: statusCode >= HTTP_STATUS_ERROR_THRESHOLD ? "warning" : "info",
+    level: statusCode >= HTTP_STATUS_ERROR_THRESHOLD ? 'warning' : 'info',
     data: {
       method,
       path,
       statusCode,
       duration,
     },
-  });
-};
+  })
+}
 
 // Database operation tracking
 export const trackDatabaseOperation = (
@@ -132,16 +133,16 @@ export const trackDatabaseOperation = (
   success: boolean,
 ) => {
   Sentry.addBreadcrumb({
-    category: "database",
+    category: 'database',
     message: `${operation} on ${collection} (${duration}ms)`,
-    level: success ? "info" : "warning",
+    level: success ? 'info' : 'warning',
     data: {
       operation,
       collection,
       duration,
       success,
     },
-  });
-};
+  })
+}
 
-export { Sentry };
+export { Sentry }

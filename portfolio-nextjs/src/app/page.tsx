@@ -1,17 +1,17 @@
-import { Globe as GlobeIcon, Linkedin, Mail } from "lucide-react";
-import type { Metadata } from "next";
+import { Globe as GlobeIcon, Linkedin, Mail } from 'lucide-react'
+import type { Metadata } from 'next'
 
-import AIBrain from "@/components/AIBrain";
-import { AnimatedSection } from "@/components/AnimatedSection";
-import CircuitBackground from "@/components/CircuitBackground";
-import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
-import Navigation from "@/components/Navigation";
+import AIBrain from '@/components/AIBrain'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import { HoverButton, HoverIcon } from '@/components/HoverAnimations'
+import Navigation from '@/components/Navigation'
 
 export const metadata: Metadata = {
-  title: "Home | Themistoklis Baltzakis",
+  title: 'Home | Themistoklis Baltzakis',
   description:
-    "Full-stack developer specializing in React, Next.js, AWS, and cloud solutions. Building modern, scalable web applications with cutting-edge technologies.",
-};
+    'Full-stack developer specializing in React, Next.js, AWS, and cloud solutions. Building modern, scalable web applications with cutting-edge technologies.',
+}
 
 export default function HomePage() {
   return (
@@ -140,5 +140,5 @@ export default function HomePage() {
         </div>
       </main>
     </div>
-  );
+  )
 }

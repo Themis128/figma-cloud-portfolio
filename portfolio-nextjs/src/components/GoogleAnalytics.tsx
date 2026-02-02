@@ -1,40 +1,40 @@
-"use client";
+'use client'
 
-import { usePathname, useSearchParams } from "next/navigation";
-import Script from "next/script";
-import { Suspense, useEffect } from "react";
+import { usePathname, useSearchParams } from 'next/navigation'
+import Script from 'next/script'
+import { Suspense, useEffect } from 'react'
 
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID
 
 // Initialize gtag
 declare global {
   interface Window {
-    gtag: (...args: unknown[]) => void;
-    dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void
+    dataLayer: unknown[]
   }
 }
 
 function GoogleAnalyticsInner() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (!GA_TRACKING_ID) return;
+    if (!GA_TRACKING_ID) return
 
-    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '')
 
     // Track page view
-    window.gtag?.("config", GA_TRACKING_ID, {
+    window.gtag?.('config', GA_TRACKING_ID, {
       page_path: url,
-    });
-  }, [pathname, searchParams]);
+    })
+  }, [pathname, searchParams])
 
-  return null;
+  return null
 }
 
 export function GoogleAnalytics() {
   if (!GA_TRACKING_ID) {
-    return null;
+    return null
   }
 
   return (
@@ -63,27 +63,27 @@ export function GoogleAnalytics() {
         <GoogleAnalyticsInner />
       </Suspense>
     </>
-  );
+  )
 }
 
 // Event tracking helper
 export function trackEvent(action: string, category: string, label?: string, value?: number) {
-  if (!GA_TRACKING_ID || typeof window === "undefined") return;
+  if (!GA_TRACKING_ID || typeof window === 'undefined') return
 
-  window.gtag?.("event", action, {
+  window.gtag?.('event', action, {
     event_category: category,
     event_label: label,
     value: value,
-  });
+  })
 }
 
 // Conversion tracking helper
 export function trackConversion(conversionId: string, conversionLabel?: string) {
-  if (!GA_TRACKING_ID || typeof window === "undefined") return;
+  if (!GA_TRACKING_ID || typeof window === 'undefined') return
 
-  window.gtag?.("event", "conversion", {
+  window.gtag?.('event', 'conversion', {
     send_to: `${GA_TRACKING_ID}/${conversionLabel || conversionId}`,
-  });
+  })
 }
 
-export default GoogleAnalytics;
+export default GoogleAnalytics

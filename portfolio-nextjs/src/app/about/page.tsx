@@ -1,17 +1,17 @@
-import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
+import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from 'lucide-react'
+import type { Metadata } from 'next'
+import Link from 'next/link'
 
-import { AnimatedSection } from "@/components/AnimatedSection";
-import CircuitBackground from "@/components/CircuitBackground";
-import { HoverCard } from "@/components/HoverAnimations";
-import Navigation from "@/components/Navigation";
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import { HoverCard } from '@/components/HoverAnimations'
+import Navigation from '@/components/Navigation'
 
 export const metadata: Metadata = {
-  title: "About Me",
+  title: 'About Me',
   description:
-    "Learn about Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise in Azure AD, Microsoft 365, and multi-cloud environments.",
-};
+    'Learn about Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise in Azure AD, Microsoft 365, and multi-cloud environments.',
+}
 
 export default function AboutPage() {
   return (
@@ -136,11 +136,11 @@ export default function AboutPage() {
                   </div>
                   <ul className='space-y-4'>
                     {[
-                      "Microsoft Azure Solutions Architect Expert",
-                      "Certified Information Systems Security Professional (CISSP)",
-                      "Certified Ethical Hacker (CEH)",
-                      "ITIL Foundation Certification",
-                      "Azure AD & Identity Management",
+                      'Microsoft Azure Solutions Architect Expert',
+                      'Certified Information Systems Security Professional (CISSP)',
+                      'Certified Ethical Hacker (CEH)',
+                      'ITIL Foundation Certification',
+                      'Azure AD & Identity Management',
                     ].map((skill) => (
                       <li
                         key={skill}
@@ -162,11 +162,11 @@ export default function AboutPage() {
                   </div>
                   <ul className='space-y-4'>
                     {[
-                      "Zero Trust Security Architecture",
-                      "Multi-Cloud Migration & Management",
-                      "Microsoft 365 Security Implementation",
-                      "Compliance & Risk Management",
-                      "Enterprise Infrastructure Design",
+                      'Zero Trust Security Architecture',
+                      'Multi-Cloud Migration & Management',
+                      'Microsoft 365 Security Implementation',
+                      'Compliance & Risk Management',
+                      'Enterprise Infrastructure Design',
                     ].map((cert) => (
                       <li
                         key={cert}
@@ -239,5 +239,5 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

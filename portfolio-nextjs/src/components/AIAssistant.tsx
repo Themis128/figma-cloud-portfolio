@@ -1,117 +1,117 @@
-import { Bot, Loader2, Send, Sparkles, User } from "lucide-react";
-import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/components/ui/use-toast";
-import { aiService } from "@/lib/aiService";
+import { Bot, Loader2, Send, Sparkles, User } from 'lucide-react'
+import type React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useToast } from '@/components/ui/use-toast'
+import { aiService } from '@/lib/aiService'
 
 interface Message {
-  id: string;
-  text: string;
-  sender: "user" | "ai";
-  timestamp: Date;
+  id: string
+  text: string
+  sender: 'user' | 'ai'
+  timestamp: Date
 }
 
 interface AIAssistantProps {
-  className?: string;
+  className?: string
 }
 
 // Constants for time-based greetings and delays
-const MORNING_HOUR_CUTOFF = 12;
-const AFTERNOON_HOUR_CUTOFF = 18;
-const AUTO_SUBMIT_DELAY_MS = 100;
+const MORNING_HOUR_CUTOFF = 12
+const AFTERNOON_HOUR_CUTOFF = 18
+const AUTO_SUBMIT_DELAY_MS = 100
 
 const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [inputValue, setInputValue] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false)
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
 
   useEffect(() => {
-    scrollToBottom();
-  }, [scrollToBottom]);
+    scrollToBottom()
+  }, [scrollToBottom])
 
   const generateAIResponse = async (userMessage: string): Promise<string> => {
     try {
-      const response = await aiService.generateResponse(userMessage);
-      return response.content;
+      const response = await aiService.generateResponse(userMessage)
+      return response.content
     } catch (_error) {
       // Fallback response if AI service fails
-      return "I'm sorry, I'm having trouble connecting to my AI services right now. Please try again in a moment, or feel free to explore the portfolio directly!";
+      return "I'm sorry, I'm having trouble connecting to my AI services right now. Please try again in a moment, or feel free to explore the portfolio directly!"
     }
-  };
+  }
 
   const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim()) return
 
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputValue.trim(),
-      sender: "user",
+      sender: 'user',
       timestamp: new Date(),
-    };
+    }
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-    setIsTyping(true);
+    setMessages((prev) => [...prev, userMessage])
+    setInputValue('')
+    setIsTyping(true)
 
     try {
-      const aiResponseText = await generateAIResponse(userMessage.text);
+      const aiResponseText = await generateAIResponse(userMessage.text)
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: aiResponseText,
-        sender: "ai",
+        sender: 'ai',
         timestamp: new Date(),
-      };
+      }
 
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiMessage])
     } catch (_error) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: "Sorry, I'm having trouble responding right now. Please try again.",
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
     } finally {
-      setIsTyping(false);
+      setIsTyping(false)
     }
-  };
+  }
 
   const getGreetingMessage = () => {
-    const hour = new Date().getHours();
-    if (hour < MORNING_HOUR_CUTOFF) return "Good morning! How can I help you today?";
-    if (hour < AFTERNOON_HOUR_CUTOFF) return "Good afternoon! How can I help you today?";
-    return "Good evening! How can I help you today?";
-  };
+    const hour = new Date().getHours()
+    if (hour < MORNING_HOUR_CUTOFF) return 'Good morning! How can I help you today?'
+    if (hour < AFTERNOON_HOUR_CUTOFF) return 'Good afternoon! How can I help you today?'
+    return 'Good evening! How can I help you today?'
+  }
 
   const quickQuestions = [
-    "Tell me about your experience with React",
-    "What projects are you most proud of?",
-    "How do you approach performance optimization?",
+    'Tell me about your experience with React',
+    'What projects are you most proud of?',
+    'How do you approach performance optimization?',
     "What's your experience with AI technologies?",
-  ];
+  ]
 
   const handleQuickQuestion = (question: string) => {
-    setInputValue(question);
+    setInputValue(question)
     // Auto-submit after setting the input
     setTimeout(() => {
-      const form = document.getElementById("ai-chat-form") as HTMLFormElement;
-      form?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
-    }, AUTO_SUBMIT_DELAY_MS);
-  };
+      const form = document.getElementById('ai-chat-form') as HTMLFormElement
+      form?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+    }, AUTO_SUBMIT_DELAY_MS)
+  }
 
   if (!isOpen) {
     return (
@@ -124,7 +124,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
           <Bot className='h-6 w-6' />
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -152,7 +152,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
             onClick={() => setIsMinimized(!isMinimized)}
             className='text-white hover:bg-white/10'
           >
-            {isMinimized ? "↗" : "↘"}
+            {isMinimized ? '↗' : '↘'}
           </Button>
           <Button
             variant='ghost'
@@ -191,10 +191,10 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
               <div
                 key={message.id}
                 className={`flex gap-3 mb-4 ${
-                  message.sender === "user" ? "justify-end" : "justify-start"
+                  message.sender === 'user' ? 'justify-end' : 'justify-start'
                 }`}
               >
-                {message.sender === "ai" && (
+                {message.sender === 'ai' && (
                   <Avatar className='h-8 w-8'>
                     <AvatarImage src='/api/placeholder/32/32' alt='AI' />
                     <AvatarFallback>
@@ -205,9 +205,9 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
 
                 <div
                   className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    message.sender === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    message.sender === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                   }`}
                 >
                   <p className='text-sm'>{message.text}</p>
@@ -216,7 +216,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
                   </p>
                 </div>
 
-                {message.sender === "user" && (
+                {message.sender === 'user' && (
                   <Avatar className='h-8 w-8'>
                     <AvatarImage src='/api/placeholder/32/32' alt='You' />
                     <AvatarFallback>
@@ -240,11 +240,11 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
                     <div className='w-2 h-2 bg-gray-400 rounded-full animate-bounce' />
                     <div
                       className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-                      style={{ animationDelay: "0.1s" }}
+                      style={{ animationDelay: '0.1s' }}
                     />
                     <div
                       className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-                      style={{ animationDelay: "0.2s" }}
+                      style={{ animationDelay: '0.2s' }}
                     />
                   </div>
                 </div>
@@ -298,7 +298,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AIAssistant;
+export default AIAssistant

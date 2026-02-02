@@ -1,19 +1,19 @@
-import type { LinkPreviewData } from "@shared/api";
-import { AlertCircle, ExternalLink, Image as ImageIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { LinkPreviewData } from '@shared/api'
+import { AlertCircle, ExternalLink, Image as ImageIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { generatePreviewCached } from "@/lib/linkPreviewService";
-import { cn } from "@/lib/utils";
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { generatePreviewCached } from '@/lib/linkPreviewService'
+import { cn } from '@/lib/utils'
 
 interface LinkPreviewProps {
-  url: string;
-  className?: string;
-  showImage?: boolean;
-  compact?: boolean;
-  onClick?: (url: string) => void;
+  url: string
+  className?: string
+  showImage?: boolean
+  compact?: boolean
+  onClick?: (url: string) => void
 }
 
 /**
@@ -27,71 +27,71 @@ export function LinkPreview({
   compact = false,
   onClick,
 }: LinkPreviewProps) {
-  const [preview, setPreview] = useState<LinkPreviewData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<LinkPreviewData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   // Skip loading previews in test environments
   const isTestEnvironment =
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname.includes("test") ||
-      window.location.hostname.includes("playwright"));
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname.includes('test') ||
+      window.location.hostname.includes('playwright'))
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true
 
     const loadPreview = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        setLoading(true)
+        setError(null)
 
         // Skip actual preview loading in test environments
         if (isTestEnvironment) {
           if (isMounted) {
-            setPreview(null);
-            setError("Preview disabled in test environment");
+            setPreview(null)
+            setError('Preview disabled in test environment')
           }
-          return;
+          return
         }
 
-        const previewData = await generatePreviewCached(url);
+        const previewData = await generatePreviewCached(url)
 
         if (isMounted) {
-          setPreview(previewData);
-          setError(previewData.error);
+          setPreview(previewData)
+          setError(previewData.error)
         }
       } catch (err) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : "Failed to load preview");
+          setError(err instanceof Error ? err.message : 'Failed to load preview')
         }
       } finally {
         if (isMounted) {
-          setLoading(false);
+          setLoading(false)
         }
       }
-    };
+    }
 
     if (url) {
-      loadPreview();
+      loadPreview()
     }
 
     return () => {
-      isMounted = false;
-    };
-  }, [url, isTestEnvironment]);
+      isMounted = false
+    }
+  }, [url, isTestEnvironment])
 
   const handleClick = () => {
     if (onClick) {
-      onClick(url);
+      onClick(url)
     } else {
-      window.open(url, "_blank", "noopener,noreferrer");
+      window.open(url, '_blank', 'noopener,noreferrer')
     }
-  };
+  }
 
   if (loading) {
     return (
-      <Card className={cn("w-full max-w-md", className)}>
+      <Card className={cn('w-full max-w-md', className)}>
         <CardContent className='p-4'>
           <div className='space-y-3'>
             <Skeleton className='h-4 w-3/4' />
@@ -101,14 +101,14 @@ export function LinkPreview({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   if (error || !preview) {
     return (
       <Card
         className={cn(
-          "w-full max-w-md cursor-pointer hover:shadow-md transition-shadow",
+          'w-full max-w-md cursor-pointer hover:shadow-md transition-shadow',
           className,
         )}
         onClick={handleClick}
@@ -118,19 +118,19 @@ export function LinkPreview({
             <AlertCircle className='w-5 h-5 text-red-500 flex-shrink-0' />
             <div className='flex-1 min-w-0'>
               <p className='text-sm font-medium text-gray-900 truncate'>{new URL(url).hostname}</p>
-              <p className='text-xs text-gray-500'>{error || "Preview unavailable"}</p>
+              <p className='text-xs text-gray-500'>{error || 'Preview unavailable'}</p>
             </div>
             <ExternalLink className='w-4 h-4 text-gray-400 flex-shrink-0' />
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
     <Card
       className={cn(
-        "w-full max-w-md cursor-pointer hover:shadow-md transition-shadow overflow-hidden",
+        'w-full max-w-md cursor-pointer hover:shadow-md transition-shadow overflow-hidden',
         className,
       )}
       onClick={handleClick}
@@ -145,8 +145,8 @@ export function LinkPreview({
             loading='lazy'
             onError={(e) => {
               // Hide broken images
-              e.currentTarget.style.display = "none";
-              e.currentTarget.nextElementSibling?.classList.remove("hidden");
+              e.currentTarget.style.display = 'none'
+              e.currentTarget.nextElementSibling?.classList.remove('hidden')
             }}
           />
           <div className='absolute inset-0 flex items-center justify-center bg-gray-100'>
@@ -155,7 +155,7 @@ export function LinkPreview({
         </div>
       )}
 
-      <CardContent className={cn("p-4", compact && "p-3")}>
+      <CardContent className={cn('p-4', compact && 'p-3')}>
         <div className='space-y-2'>
           {/* Title and favicon */}
           <div className='flex items-start gap-2'>
@@ -166,14 +166,14 @@ export function LinkPreview({
                 alt=''
                 className='w-4 h-4 flex-shrink-0 mt-0.5'
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  e.currentTarget.style.display = 'none'
                 }}
               />
             )}
             <h3
               className={cn(
-                "font-medium text-gray-900 leading-tight",
-                compact ? "text-sm" : "text-base",
+                'font-medium text-gray-900 leading-tight',
+                compact ? 'text-sm' : 'text-base',
               )}
             >
               {preview.title}
@@ -189,7 +189,7 @@ export function LinkPreview({
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <span className='text-xs text-gray-500'>{preview.siteName}</span>
-              {preview.type && preview.type !== "website" && (
+              {preview.type && preview.type !== 'website' && (
                 <Badge variant='secondary' className='text-xs px-1.5 py-0.5'>
                   {preview.type}
                 </Badge>
@@ -216,14 +216,14 @@ export function LinkPreview({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 /**
  * Compact version for use in lists or small spaces
  */
 export function CompactLinkPreview(props: LinkPreviewProps) {
-  return <LinkPreview {...props} compact showImage={false} />;
+  return <LinkPreview {...props} compact showImage={false} />
 }
 
 /**
@@ -231,10 +231,10 @@ export function CompactLinkPreview(props: LinkPreviewProps) {
  * Displays multiple link previews in a grid or list
  */
 interface LinkPreviewListProps {
-  urls: string[];
-  className?: string;
-  compact?: boolean;
-  maxItems?: number;
+  urls: string[]
+  className?: string
+  compact?: boolean
+  maxItems?: number
 }
 
 export function LinkPreviewList({
@@ -243,13 +243,13 @@ export function LinkPreviewList({
   compact = false,
   maxItems,
 }: LinkPreviewListProps) {
-  const displayUrls = maxItems ? urls.slice(0, maxItems) : urls;
+  const displayUrls = maxItems ? urls.slice(0, maxItems) : urls
 
   return (
     <div
       className={cn(
-        "grid gap-4",
-        compact ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+        'grid gap-4',
+        compact ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
         className,
       )}
     >
@@ -257,7 +257,7 @@ export function LinkPreviewList({
         <LinkPreview key={url} url={url} compact={compact} showImage={!compact} />
       ))}
     </div>
-  );
+  )
 }
 
-export default LinkPreview;
+export default LinkPreview

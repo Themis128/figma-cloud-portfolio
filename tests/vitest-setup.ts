@@ -1,11 +1,11 @@
-import "@testing-library/jest-dom";
-import { vi } from "vitest";
+import '@testing-library/jest-dom'
+import { vi } from 'vitest'
 
 // Constants for mock implementations
-const MOCK_TIME_REMAINING_MS = 50;
+const MOCK_TIME_REMAINING_MS = 50
 
 // Mock window.matchMedia
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -17,7 +17,7 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-});
+})
 
 // Mock window.localStorage
 const localStorageMock = {
@@ -25,10 +25,10 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-};
-Object.defineProperty(window, "localStorage", {
+}
+Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
-});
+})
 
 // Mock window.sessionStorage
 const sessionStorageMock = {
@@ -36,39 +36,39 @@ const sessionStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-};
-Object.defineProperty(window, "sessionStorage", {
+}
+Object.defineProperty(window, 'sessionStorage', {
   value: sessionStorageMock,
-});
+})
 
 // Mock ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}));
+}))
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}));
+}))
 
 // React 19 specific mocks
 global.requestIdleCallback = vi.fn().mockImplementation((callback) => {
   return setTimeout(
     () => callback({ didTimeout: false, timeRemaining: () => MOCK_TIME_REMAINING_MS }),
     0,
-  );
-});
+  )
+})
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
-  clearTimeout(id);
-});
+  clearTimeout(id)
+})
 
 // Mock document.documentElement for ThemeProvider
-Object.defineProperty(document, "documentElement", {
+Object.defineProperty(document, 'documentElement', {
   writable: true,
   value: {
     classList: {
@@ -78,7 +78,7 @@ Object.defineProperty(document, "documentElement", {
       toggle: vi.fn(),
     },
   },
-});
+})
 
 // NOTE: Do NOT mock React hooks like useState, useMemo, useEffect, or useContext
 // as they break the React rendering process. Vitest provides sufficient mocking
@@ -87,13 +87,13 @@ Object.defineProperty(document, "documentElement", {
 // Mock meta theme-color for ThemeProvider
 const mockMetaThemeColor = {
   setAttribute: vi.fn(),
-};
-Object.defineProperty(document, "querySelector", {
+}
+Object.defineProperty(document, 'querySelector', {
   writable: true,
   value: vi.fn().mockImplementation((selector) => {
     if (selector === 'meta[name="theme-color"]') {
-      return mockMetaThemeColor;
+      return mockMetaThemeColor
     }
-    return null;
+    return null
   }),
-});
+})

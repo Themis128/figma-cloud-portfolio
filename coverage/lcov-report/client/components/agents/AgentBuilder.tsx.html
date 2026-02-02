@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/236</span>
+                <span class='fraction'>0/262</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/236</span>
+                <span class='fraction'>0/262</span>
             </div>
         
             
@@ -299,7 +299,59 @@
 <a name='L234'></a><a href='#L234'>234</a>
 <a name='L235'></a><a href='#L235'>235</a>
 <a name='L236'></a><a href='#L236'>236</a>
-<a name='L237'></a><a href='#L237'>237</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -542,6 +594,7 @@
 <span class="cstat-no" title="statement not covered" >import { Input } from "@/components/ui/input";</span>
 <span class="cstat-no" title="statement not covered" >import { Textarea } from "@/components/ui/textarea";</span>
 <span class="cstat-no" title="statement not covered" >import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";</span>
+<span class="cstat-no" title="statement not covered" >import { executeAgent } from "@/lib/agentExecutor";</span>
 <span class="cstat-no" title="statement not covered" >import { WorkflowBuilder } from "./WorkflowBuilder";</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface AgentBuilderProps {</span>
@@ -550,12 +603,11 @@
 <span class="cstat-no" title="statement not covered" >  onCancel: () =&gt; void;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Agent execution constants</span>
-<span class="cstat-no" title="statement not covered" >const AGENT_EXECUTION_SIMULATION_DELAY_MS = 2000; // 2 seconds</span>
-<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {</span>
 <span class="cstat-no" title="statement not covered" >  const [agent, setAgent] = useState&lt;AgentTemplate&gt;({ ...template, id: `agent-${Date.now()}` });</span>
 <span class="cstat-no" title="statement not covered" >  const [isRunning, setIsRunning] = useState(false);</span>
+<span class="cstat-no" title="statement not covered" >  const [executionResult, setExecutionResult] = useState&lt;Record&lt;string, unknown&gt; | null&gt;(null);</span>
+<span class="cstat-no" title="statement not covered" >  const [executionError, setExecutionError] = useState&lt;string | null&gt;(null);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const handleWorkflowUpdate = (nodes: AgentNode[], connections: AgentConnection[]) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setAgent((prev) =&gt; ({</span>
@@ -570,11 +622,17 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const handleRunAgent = async () =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setIsRunning(true);</span>
-<span class="cstat-no" title="statement not covered" >    // Simulate agent execution</span>
-<span class="cstat-no" title="statement not covered" >    await new Promise((resolve) =&gt; setTimeout(resolve, AGENT_EXECUTION_SIMULATION_DELAY_MS));</span>
-<span class="cstat-no" title="statement not covered" >    setIsRunning(false);</span>
-<span class="cstat-no" title="statement not covered" >    // TODO: Implement actual agent execution logic</span>
-<span class="cstat-no" title="statement not covered" >    // Running agent</span>
+<span class="cstat-no" title="statement not covered" >    setExecutionResult(null);</span>
+<span class="cstat-no" title="statement not covered" >    setExecutionError(null);</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      // Execute the actual agent workflow</span>
+<span class="cstat-no" title="statement not covered" >      const result = await executeAgent(agent);</span>
+<span class="cstat-no" title="statement not covered" >      setExecutionResult(result);</span>
+<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >      setExecutionError(error instanceof Error ? error.message : "Unknown error occurred");</span>
+<span class="cstat-no" title="statement not covered" >    } finally {</span>
+<span class="cstat-no" title="statement not covered" >      setIsRunning(false);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  return (</span>
@@ -702,6 +760,26 @@
 <span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          {/* Execution Results */}</span>
+<span class="cstat-no" title="statement not covered" >          {(executionResult || executionError) &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6'&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;h3 className='text-lg font-semibold text-white mb-4'&gt;Execution Results&lt;/h3&gt;</span>
+<span class="cstat-no" title="statement not covered" >              {executionError &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className='bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4'&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;p className='text-red-400 text-sm'&gt;Error: {executionError}&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              )}</span>
+<span class="cstat-no" title="statement not covered" >              {executionResult &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className='bg-green-500/10 border border-green-500/20 rounded-lg p-4'&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;p className='text-green-400 text-sm mb-2'&gt;Execution completed successfully!&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;pre className='text-white/80 text-xs overflow-x-auto'&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    {JSON.stringify(executionResult, null, 2)}</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;/pre&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              )}</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          )}</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >          {/* Agent Stats */}</span>
 <span class="cstat-no" title="statement not covered" >          &lt;div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6'&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;h3 className='text-lg font-semibold text-white mb-4'&gt;Agent Stats&lt;/h3&gt;</span>
@@ -778,7 +856,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-29T19:54:35.384Z
+                at 2026-02-01T23:02:11.539Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

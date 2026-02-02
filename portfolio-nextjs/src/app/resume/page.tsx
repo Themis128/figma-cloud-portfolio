@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Resume",
+  title: 'Resume',
   description:
-    "Professional resume and experience of Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
-};
+    'Professional resume and experience of Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer',
+}
 
 export default function ResumePage() {
   return (
@@ -17,5 +17,5 @@ export default function ResumePage() {
         </p>
       </div>
     </div>
-  );
+  )
 }

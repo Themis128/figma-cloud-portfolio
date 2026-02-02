@@ -1,59 +1,59 @@
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { motion } from 'framer-motion'
+import type { ReactNode } from 'react'
 
-import { useOptimizedAnimation } from "@/hooks/useDeviceType";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useOptimizedAnimation } from '@/hooks/useDeviceType'
+import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 // Constants for animation thresholds
-const SCROLL_ANIMATION_THRESHOLD = 0.2;
+const SCROLL_ANIMATION_THRESHOLD = 0.2
 
 interface AnimatedSectionProps {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-  direction?: "up" | "down" | "left" | "right";
-  duration?: number;
+  children: ReactNode
+  className?: string
+  delay?: number
+  direction?: 'up' | 'down' | 'left' | 'right'
+  duration?: number
 }
 
 export function AnimatedSection({
   children,
-  className = "",
+  className = '',
   delay = 0,
-  direction = "up",
+  direction = 'up',
   duration,
 }: AnimatedSectionProps) {
-  const { ref, isVisible } = useScrollAnimation(SCROLL_ANIMATION_THRESHOLD);
-  const { duration: optimizedDuration, stiffness, damping, disabled } = useOptimizedAnimation();
+  const { ref, isVisible } = useScrollAnimation(SCROLL_ANIMATION_THRESHOLD)
+  const { duration: optimizedDuration, stiffness, damping, disabled } = useOptimizedAnimation()
 
-  const finalDuration = duration ?? optimizedDuration;
+  const finalDuration = duration ?? optimizedDuration
 
   const getInitialPosition = () => {
     switch (direction) {
-      case "up":
-        return { y: 40, opacity: 0 };
-      case "down":
-        return { y: -40, opacity: 0 };
-      case "left":
-        return { x: 40, opacity: 0 };
-      case "right":
-        return { x: -40, opacity: 0 };
+      case 'up':
+        return { y: 40, opacity: 0 }
+      case 'down':
+        return { y: -40, opacity: 0 }
+      case 'left':
+        return { x: 40, opacity: 0 }
+      case 'right':
+        return { x: -40, opacity: 0 }
       default:
-        return { y: 40, opacity: 0 };
+        return { y: 40, opacity: 0 }
     }
-  };
+  }
 
   const getAnimatePosition = () => {
     switch (direction) {
-      case "up":
-      case "down":
-        return { y: 0, opacity: 1 };
-      case "left":
-      case "right":
-        return { x: 0, opacity: 1 };
+      case 'up':
+      case 'down':
+        return { y: 0, opacity: 1 }
+      case 'left':
+      case 'right':
+        return { x: 0, opacity: 1 }
       default:
-        return { y: 0, opacity: 1 };
+        return { y: 0, opacity: 1 }
     }
-  };
+  }
 
   return (
     <motion.div
@@ -64,12 +64,12 @@ export function AnimatedSection({
       transition={{
         duration: finalDuration,
         delay,
-        type: "spring",
+        type: 'spring',
         stiffness,
         damping,
       }}
     >
       {children}
     </motion.div>
-  );
+  )
 }

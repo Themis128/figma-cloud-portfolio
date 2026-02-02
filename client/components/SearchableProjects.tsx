@@ -1,28 +1,28 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
-import React, { useDeferredValue, useMemo, useState } from "react";
+import { AnimatePresence, motion } from 'framer-motion'
+import { Code, ExternalLink, Filter, Github, Search } from 'lucide-react'
+import React, { useDeferredValue, useMemo, useState } from 'react'
 
-import { LinkPreview } from "@/components/LinkPreview";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { LinkPreview } from '@/components/LinkPreview'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 // Animation and display constants
-const PROJECT_ANIMATION_DURATION = 0.3;
-const PROJECT_ANIMATION_DELAY_INCREMENT = 0.1;
-const MAX_TECHNOLOGIES_DISPLAYED = 4;
+const PROJECT_ANIMATION_DURATION = 0.3
+const PROJECT_ANIMATION_DELAY_INCREMENT = 0.1
+const MAX_TECHNOLOGIES_DISPLAYED = 4
 
 interface Project {
-  id: string;
-  title: string;
-  description: string;
-  technologies: string[];
-  category: "web" | "mobile" | "ai" | "tools" | "game";
-  image?: string;
-  demoUrl?: string;
-  githubUrl?: string;
-  year: number;
-  featured?: boolean;
+  id: string
+  title: string
+  description: string
+  technologies: string[]
+  category: 'web' | 'mobile' | 'ai' | 'tools' | 'game'
+  image?: string
+  demoUrl?: string
+  githubUrl?: string
+  year: number
+  featured?: boolean
 }
 
 const categoryIcons = {
@@ -31,73 +31,73 @@ const categoryIcons = {
   ai: Code,
   tools: Code,
   game: Code,
-};
+}
 
 const categoryColors = {
-  web: "bg-blue-100 text-blue-800",
-  mobile: "bg-green-100 text-green-800",
-  ai: "bg-purple-100 text-purple-800",
-  tools: "bg-orange-100 text-orange-800",
-  game: "bg-red-100 text-red-800",
-};
+  web: 'bg-blue-100 text-blue-800',
+  mobile: 'bg-green-100 text-green-800',
+  ai: 'bg-purple-100 text-purple-800',
+  tools: 'bg-orange-100 text-orange-800',
+  game: 'bg-red-100 text-red-800',
+}
 
 interface SearchableProjectsProps {
-  className?: string;
-  projects?: Project[];
+  className?: string
+  projects?: Project[]
 }
 
 const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, projects }) => {
   // Use provided projects or default sample projects
   const defaultProjects: Project[] = [
     {
-      id: "portfolio",
-      title: "Portfolio Website",
-      description: "Modern React portfolio with 3D elements",
-      technologies: ["React", "Three.js", "TypeScript"],
-      category: "web",
+      id: 'portfolio',
+      title: 'Portfolio Website',
+      description: 'Modern React portfolio with 3D elements',
+      technologies: ['React', 'Three.js', 'TypeScript'],
+      category: 'web',
       year: 2024,
     },
     {
-      id: "ecommerce",
-      title: "E-commerce Platform",
-      description: "Full-stack e-commerce solution",
-      technologies: ["Next.js", "Stripe", "PostgreSQL"],
-      category: "web",
+      id: 'ecommerce',
+      title: 'E-commerce Platform',
+      description: 'Full-stack e-commerce solution',
+      technologies: ['Next.js', 'Stripe', 'PostgreSQL'],
+      category: 'web',
       year: 2024,
     },
     {
-      id: "dashboard",
-      title: "Analytics Dashboard",
-      description: "Real-time data visualization dashboard",
-      technologies: ["React", "D3.js", "WebSocket"],
-      category: "web",
+      id: 'dashboard',
+      title: 'Analytics Dashboard',
+      description: 'Real-time data visualization dashboard',
+      technologies: ['React', 'D3.js', 'WebSocket'],
+      category: 'web',
       year: 2023,
     },
     {
-      id: "mobile-app",
-      title: "Mobile App",
-      description: "Cross-platform mobile application",
-      technologies: ["React Native", "Firebase", "Expo"],
-      category: "mobile",
+      id: 'mobile-app',
+      title: 'Mobile App',
+      description: 'Cross-platform mobile application',
+      technologies: ['React Native', 'Firebase', 'Expo'],
+      category: 'mobile',
       year: 2023,
     },
     {
-      id: "api",
-      title: "REST API",
-      description: "Scalable REST API with authentication",
-      technologies: ["Node.js", "Express", "JWT"],
-      category: "tools",
+      id: 'api',
+      title: 'REST API',
+      description: 'Scalable REST API with authentication',
+      technologies: ['Node.js', 'Express', 'JWT'],
+      category: 'tools',
       year: 2024,
     },
-  ];
+  ]
 
-  const projectData = projects || defaultProjects;
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"year" | "title">("year");
+  const projectData = projects || defaultProjects
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [sortBy, setSortBy] = useState<'year' | 'title'>('year')
 
   // Use useDeferredValue for smooth search experience
-  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const deferredSearchQuery = useDeferredValue(searchQuery)
 
   const filteredProjects = useMemo(() => {
     const filtered = projectData.filter((project) => {
@@ -106,59 +106,59 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
         project.description.toLowerCase().includes(deferredSearchQuery.toLowerCase()) ||
         project.technologies.some((tech) =>
           tech.toLowerCase().includes(deferredSearchQuery.toLowerCase()),
-        );
+        )
 
-      const matchesCategory = selectedCategory === "all" || project.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'all' || project.category === selectedCategory
 
-      return matchesSearch && matchesCategory;
-    });
+      return matchesSearch && matchesCategory
+    })
 
     // Sort projects
     filtered.sort((a, b) => {
-      if (sortBy === "year") {
-        return b.year - a.year;
+      if (sortBy === 'year') {
+        return b.year - a.year
       } else {
-        return a.title.localeCompare(b.title);
+        return a.title.localeCompare(b.title)
       }
-    });
+    })
 
-    return filtered;
-  }, [deferredSearchQuery, selectedCategory, sortBy, projectData]);
+    return filtered
+  }, [deferredSearchQuery, selectedCategory, sortBy, projectData])
 
   const categories = [
-    { key: "all", label: "All Projects", count: projectData.length },
+    { key: 'all', label: 'All Projects', count: projectData.length },
     {
-      key: "web",
-      label: "Web Applications",
-      count: projectData.filter((p) => p.category === "web").length,
+      key: 'web',
+      label: 'Web Applications',
+      count: projectData.filter((p) => p.category === 'web').length,
     },
     {
-      key: "mobile",
-      label: "Mobile Apps",
-      count: projectData.filter((p) => p.category === "mobile").length,
+      key: 'mobile',
+      label: 'Mobile Apps',
+      count: projectData.filter((p) => p.category === 'mobile').length,
     },
     {
-      key: "ai",
-      label: "AI & ML",
-      count: projectData.filter((p) => p.category === "ai").length,
+      key: 'ai',
+      label: 'AI & ML',
+      count: projectData.filter((p) => p.category === 'ai').length,
     },
     {
-      key: "tools",
-      label: "Developer Tools",
-      count: projectData.filter((p) => p.category === "tools").length,
+      key: 'tools',
+      label: 'Developer Tools',
+      count: projectData.filter((p) => p.category === 'tools').length,
     },
     {
-      key: "game",
-      label: "Games",
-      count: projectData.filter((p) => p.category === "game").length,
+      key: 'game',
+      label: 'Games',
+      count: projectData.filter((p) => p.category === 'game').length,
     },
-  ];
+  ]
 
   const motionVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
-  };
+  }
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -190,7 +190,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
             {categories.map((category) => (
               <Badge
                 key={category.key}
-                variant={selectedCategory === category.key ? "default" : "outline"}
+                variant={selectedCategory === category.key ? 'default' : 'outline'}
                 className='cursor-pointer hover:bg-gray-100'
                 onClick={() => setSelectedCategory(category.key)}
               >
@@ -205,7 +205,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
             <span>Sort by:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "year" | "title")}
+              onChange={(e) => setSortBy(e.target.value as 'year' | 'title')}
               className='border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
             >
               <option value='year'>Year</option>
@@ -219,7 +219,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
       <div className='space-y-4'>
         <div className='flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>
-            {filteredProjects.length} Project{filteredProjects.length !== 1 ? "s" : ""} Found
+            {filteredProjects.length} Project{filteredProjects.length !== 1 ? 's' : ''} Found
           </h2>
           {deferredSearchQuery && (
             <p className='text-sm text-gray-600'>Showing results for "{deferredSearchQuery}"</p>
@@ -258,7 +258,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
                     <div className='flex items-center justify-between'>
                       <Badge className={categoryColors[project.category]}>
                         {React.createElement(categoryIcons[project.category], {
-                          className: "h-3 w-3 mr-1",
+                          className: 'h-3 w-3 mr-1',
                         })}
                         {project.category}
                       </Badge>
@@ -345,7 +345,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SearchableProjects;
+export default SearchableProjects

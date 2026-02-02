@@ -1,53 +1,53 @@
-import { Globe, Linkedin, Mail, MapPin, Phone, Send } from "lucide-react";
-import { useState } from "react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { Link } from "react-router-dom";
+import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
+import { useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { Link } from 'react-router-dom'
 
-import { AnimatedSection } from "@/components/AnimatedSection";
-import CircuitBackground from "@/components/CircuitBackground";
-import { HoverButton, HoverCard } from "@/components/HoverAnimations";
-import Navigation from "@/components/Navigation";
-import { submitContactForm } from "@/lib/api";
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import { HoverButton, HoverCard } from '@/components/HoverAnimations'
+import Navigation from '@/components/Navigation'
+import { submitContactForm } from '@/lib/api'
 
 export default function Contact() {
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   // Form feedback timing constants
-  const SUCCESS_MESSAGE_DURATION_MS = 3000;
-  const ERROR_FEEDBACK_DURATION_MS = 2000;
+  const SUCCESS_MESSAGE_DURATION_MS = 3000
+  const ERROR_FEEDBACK_DURATION_MS = 2000
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     // Disable button immediately when form is submitted
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
 
     try {
       // Check if reCAPTCHA is available (skip in test environments)
-      let recaptchaToken = "test-token";
+      let recaptchaToken = 'test-token'
 
       if (executeRecaptcha) {
         try {
           // Execute reCAPTCHA
-          recaptchaToken = await executeRecaptcha("contact_form_submit");
+          recaptchaToken = await executeRecaptcha('contact_form_submit')
         } catch (_recaptchaError) {
           // Continue with test token for development/testing
         }
@@ -57,31 +57,31 @@ export default function Contact() {
       const response = await submitContactForm({
         ...formData,
         recaptchaToken,
-      });
+      })
 
       if (response.success) {
-        setSubmitStatus("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', subject: '', message: '' })
         // Track contact form submission
-        if (typeof window !== "undefined" && window.trackContactFormSubmit) {
-          window.trackContactFormSubmit();
+        if (typeof window !== 'undefined' && window.trackContactFormSubmit) {
+          window.trackContactFormSubmit()
         }
         // Keep success state for a moment before re-enabling
         setTimeout(() => {
-          setIsSubmitting(false);
-          setSubmitStatus("idle");
-        }, SUCCESS_MESSAGE_DURATION_MS);
+          setIsSubmitting(false)
+          setSubmitStatus('idle')
+        }, SUCCESS_MESSAGE_DURATION_MS)
       } else {
-        setSubmitStatus("error");
+        setSubmitStatus('error')
         // Keep button disabled for a short time to show error feedback
-        setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS);
+        setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS)
       }
     } catch (_error) {
-      setSubmitStatus("error");
+      setSubmitStatus('error')
       // Keep button disabled for a short time to show error feedback
-      setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS);
+      setTimeout(() => setIsSubmitting(false), ERROR_FEEDBACK_DURATION_MS)
     }
-  };
+  }
   return (
     <div className='min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden'>
       <CircuitBackground />
@@ -135,13 +135,13 @@ export default function Contact() {
                       aria-required='true'
                       aria-describedby='name-error'
                       className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
-                        submitStatus === "error" && !formData.name
-                          ? "border-red-400/50"
-                          : "border-white/20"
+                        submitStatus === 'error' && !formData.name
+                          ? 'border-red-400/50'
+                          : 'border-white/20'
                       }`}
                       placeholder='Your full name'
                     />
-                    {submitStatus === "error" && !formData.name && (
+                    {submitStatus === 'error' && !formData.name && (
                       <p id='name-error' className='text-red-400 text-xs mt-1' role='alert'>
                         Full name is required
                       </p>
@@ -164,13 +164,13 @@ export default function Contact() {
                       aria-required='true'
                       aria-describedby='email-error'
                       className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
-                        submitStatus === "error" && !formData.email
-                          ? "border-red-400/50"
-                          : "border-white/20"
+                        submitStatus === 'error' && !formData.email
+                          ? 'border-red-400/50'
+                          : 'border-white/20'
                       }`}
                       placeholder='your.email@example.com'
                     />
-                    {submitStatus === "error" && !formData.email && (
+                    {submitStatus === 'error' && !formData.email && (
                       <p id='email-error' className='text-red-400 text-xs mt-1' role='alert'>
                         Valid email address is required
                       </p>
@@ -195,13 +195,13 @@ export default function Contact() {
                     aria-required='true'
                     aria-describedby='subject-error'
                     className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
-                      submitStatus === "error" && !formData.subject
-                        ? "border-red-400/50"
-                        : "border-white/20"
+                      submitStatus === 'error' && !formData.subject
+                        ? 'border-red-400/50'
+                        : 'border-white/20'
                     }`}
                     placeholder='Project inquiry, consultation, etc.'
                   />
-                  {submitStatus === "error" && !formData.subject && (
+                  {submitStatus === 'error' && !formData.subject && (
                     <p id='subject-error' className='text-red-400 text-xs mt-1' role='alert'>
                       Subject is required
                     </p>
@@ -225,13 +225,13 @@ export default function Contact() {
                     aria-describedby='message-error'
                     rows={5}
                     className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base min-h-[120px] ${
-                      submitStatus === "error" && !formData.message
-                        ? "border-red-400/50"
-                        : "border-white/20"
+                      submitStatus === 'error' && !formData.message
+                        ? 'border-red-400/50'
+                        : 'border-white/20'
                     }`}
                     placeholder='Tell me about your project, requirements, or how I can help you...'
                   />
-                  {submitStatus === "error" && !formData.message && (
+                  {submitStatus === 'error' && !formData.message && (
                     <p id='message-error' className='text-red-400 text-xs mt-1' role='alert'>
                       Message is required
                     </p>
@@ -277,13 +277,13 @@ export default function Contact() {
                   </div>
                 </div>
 
-                {submitStatus === "success" && (
+                {submitStatus === 'success' && (
                   <div className='p-4 bg-green-500/10 border border-green-500/20 rounded-lg'>
                     <p className='text-green-400 font-medium'>Message sent successfully!</p>
                   </div>
                 )}
 
-                {submitStatus === "error" && (
+                {submitStatus === 'error' && (
                   <div className='p-4 bg-red-500/10 border border-red-500/20 rounded-lg'>
                     <p className='text-red-400 font-medium'>
                       ❌ Failed to send message. Please try again or contact me directly via email.
@@ -531,5 +531,5 @@ export default function Contact() {
         </div>
       </div>
     </div>
-  );
+  )
 }

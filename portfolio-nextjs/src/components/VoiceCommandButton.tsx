@@ -1,29 +1,29 @@
-import { Mic, MicOff, Volume2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Mic, MicOff, Volume2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { commonVoiceCommands, useVoiceCommands, type VoiceCommand } from "@/hooks/useVoiceCommands";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { commonVoiceCommands, useVoiceCommands, type VoiceCommand } from '@/hooks/useVoiceCommands'
 
 interface VoiceCommandButtonProps {
-  customCommands?: VoiceCommand[];
-  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
-  size?: "sm" | "md" | "lg";
+  customCommands?: VoiceCommand[]
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export default function VoiceCommandButton({
   customCommands = [],
-  position = "bottom-right",
-  size = "md",
+  position = 'bottom-right',
+  size = 'md',
 }: VoiceCommandButtonProps) {
   // Voice command constants
-  const TRANSCRIPT_AUTO_HIDE_MS = 3000; // 3 seconds
-  const CONFIDENCE_PERCENTAGE_MULTIPLIER = 100;
-  const MAX_DISPLAYED_COMMANDS = 8;
+  const TRANSCRIPT_AUTO_HIDE_MS = 3000 // 3 seconds
+  const CONFIDENCE_PERCENTAGE_MULTIPLIER = 100
+  const MAX_DISPLAYED_COMMANDS = 8
 
-  const [isOpen, setIsOpen] = useState(false);
-  const allCommands = [...commonVoiceCommands, ...customCommands];
+  const [isOpen, setIsOpen] = useState(false)
+  const allCommands = [...commonVoiceCommands, ...customCommands]
 
   const {
     isListening,
@@ -35,47 +35,47 @@ export default function VoiceCommandButton({
     stopListening,
     speak,
     availableCommands,
-  } = useVoiceCommands(allCommands);
+  } = useVoiceCommands(allCommands)
 
-  const [showTranscript, setShowTranscript] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false)
 
   // Auto-hide transcript after 3 seconds
   useEffect(() => {
     if (transcript) {
-      setShowTranscript(true);
+      setShowTranscript(true)
       const timer = setTimeout(() => {
-        setShowTranscript(false);
-      }, TRANSCRIPT_AUTO_HIDE_MS);
+        setShowTranscript(false)
+      }, TRANSCRIPT_AUTO_HIDE_MS)
       return () => {
-        clearTimeout(timer);
-      };
+        clearTimeout(timer)
+      }
     }
-    return undefined;
-  }, [transcript]);
+    return undefined
+  }, [transcript])
 
   // Position classes
   const positionClasses = {
-    "bottom-right": "bottom-6 right-6",
-    "bottom-left": "bottom-6 left-6",
-    "top-right": "top-6 right-6",
-    "top-left": "top-6 left-6",
-  };
+    'bottom-right': 'bottom-6 right-6',
+    'bottom-left': 'bottom-6 left-6',
+    'top-right': 'top-6 right-6',
+    'top-left': 'top-6 left-6',
+  }
 
   // Size classes
   const sizeClasses = {
-    sm: "w-12 h-12",
-    md: "w-16 h-16",
-    lg: "w-20 h-20",
-  };
+    sm: 'w-12 h-12',
+    md: 'w-16 h-16',
+    lg: 'w-20 h-20',
+  }
 
   const iconSizes = {
-    sm: "w-5 h-5",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
-  };
+    sm: 'w-5 h-5',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8',
+  }
 
   if (!isSupported) {
-    return null; // Don't render if not supported
+    return null // Don't render if not supported
   }
 
   return (
@@ -88,11 +88,11 @@ export default function VoiceCommandButton({
               size='icon'
               className={`${sizeClasses[size]} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
                 isListening
-                  ? "bg-red-500 hover:bg-red-600 animate-pulse"
-                  : "bg-cyan-500 hover:bg-cyan-600"
+                  ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                  : 'bg-cyan-500 hover:bg-cyan-600'
               }`}
               onClick={isListening ? stopListening : startListening}
-              aria-label={isListening ? "Stop voice commands" : "Start voice commands"}
+              aria-label={isListening ? 'Stop voice commands' : 'Start voice commands'}
             >
               {isListening ? (
                 <MicOff className={iconSizes[size]} />
@@ -113,8 +113,8 @@ export default function VoiceCommandButton({
 
               {/* Status */}
               <div className='flex items-center justify-center gap-2'>
-                <Badge variant={isListening ? "destructive" : "secondary"}>
-                  {isListening ? "Listening..." : "Ready"}
+                <Badge variant={isListening ? 'destructive' : 'secondary'}>
+                  {isListening ? 'Listening...' : 'Ready'}
                 </Badge>
                 {confidence > 0 && (
                   <Badge variant='outline'>
@@ -177,7 +177,7 @@ export default function VoiceCommandButton({
                   size='sm'
                   variant='outline'
                   onClick={() => {
-                    setIsOpen(false);
+                    setIsOpen(false)
                   }}
                 >
                   Close
@@ -207,5 +207,5 @@ export default function VoiceCommandButton({
         </div>
       )}
     </>
-  );
+  )
 }

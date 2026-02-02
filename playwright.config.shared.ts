@@ -1,5 +1,5 @@
-import * as os from "node:os";
-import { devices, type PlaywrightTestConfig } from "@playwright/test";
+import * as os from 'node:os'
+import { devices, type PlaywrightTestConfig } from '@playwright/test'
 
 /**
  * Shared Playwright Configuration Factory
@@ -19,37 +19,37 @@ import { devices, type PlaywrightTestConfig } from "@playwright/test";
 // CONFIGURATION TYPES AND INTERFACES
 // =============================================================================
 
-export type ConfigEnvironment = "development" | "ci" | "fast" | "isolated";
+export type ConfigEnvironment = 'development' | 'ci' | 'fast' | 'isolated'
 
 export interface EnvironmentSettings {
   timeouts: {
-    action: number;
-    navigation: number;
-    expect: number;
-    test: number;
-    webServer: number;
-  };
+    action: number
+    navigation: number
+    expect: number
+    test: number
+    webServer: number
+  }
   workers: {
-    min: number;
-    max: number;
-    cpuFraction: number;
-  };
-  retries: number;
+    min: number
+    max: number
+    cpuFraction: number
+  }
+  retries: number
   artifacts: {
-    trace: string;
-    screenshot: string;
-    video: string;
-  };
+    trace: string
+    screenshot: string
+    video: string
+  }
   reporting: {
-    reporters: string[];
-    outputDir: string;
-  };
+    reporters: string[]
+    outputDir: string
+  }
   features: {
-    enableGlobalSetup: boolean;
-    enableWebServer: boolean;
-    enableSharding: boolean;
-    enableVisualComparison: boolean;
-  };
+    enableGlobalSetup: boolean
+    enableWebServer: boolean
+    enableSharding: boolean
+    enableVisualComparison: boolean
+  }
 }
 
 // =============================================================================
@@ -64,162 +64,162 @@ export interface EnvironmentSettings {
 export const BROWSER_LAUNCH_ARGS = {
   // Performance optimization arguments (Playwright 1.58+ optimized, no duplicates)
   PERFORMANCE: [
-    "--disable-background-timer-throttling",
-    "--disable-backgrounding-occluded-windows",
-    "--disable-renderer-backgrounding",
-    "--disable-features=TranslateUI,BlinkGenPropertyTrees",
-    "--disable-ipc-flooding-protection",
-    "--disable-component-extensions-with-background-pages",
-    "--disable-default-apps",
-    "--disable-hang-monitor",
-    "--disable-prompt-on-repost",
-    "--force-color-profile=srgb",
-    "--metrics-recording-only",
-    "--no-first-run",
-    "--enable-features=NetworkService,NetworkServiceInProcess,VizDisplayCompositor",
-    "--disable-background-networking",
-    "--disable-sync",
-    "--disable-translate",
-    "--hide-scrollbars",
-    "--mute-audio",
-    "--no-crash-upload",
-    "--no-default-browser-check",
-    "--disable-logging",
-    "--disable-dev-tools",
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--disable-features=TranslateUI,BlinkGenPropertyTrees',
+    '--disable-ipc-flooding-protection',
+    '--disable-component-extensions-with-background-pages',
+    '--disable-default-apps',
+    '--disable-hang-monitor',
+    '--disable-prompt-on-repost',
+    '--force-color-profile=srgb',
+    '--metrics-recording-only',
+    '--no-first-run',
+    '--enable-features=NetworkService,NetworkServiceInProcess,VizDisplayCompositor',
+    '--disable-background-networking',
+    '--disable-sync',
+    '--disable-translate',
+    '--hide-scrollbars',
+    '--mute-audio',
+    '--no-crash-upload',
+    '--no-default-browser-check',
+    '--disable-logging',
+    '--disable-dev-tools',
     // Modern performance flags (Playwright 1.58+)
-    "--memory-pressure-off",
-    "--max_old_space_size=4096",
-    "--disable-accelerated-2d-canvas",
-    "--disable-software-rasterizer",
+    '--memory-pressure-off',
+    '--max_old_space_size=4096',
+    '--disable-accelerated-2d-canvas',
+    '--disable-software-rasterizer',
   ],
 
   // Security and isolation arguments (enhanced for modern browsers, no conflicts)
   SECURITY: [
-    "--disable-blink-features=AutomationControlled",
-    "--disable-extensions-except",
-    "--disable-extensions",
-    "--no-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-gpu", // Safe for headless testing
+    '--disable-blink-features=AutomationControlled',
+    '--disable-extensions-except',
+    '--disable-extensions',
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu', // Safe for headless testing
   ],
 
   // Resource optimization arguments (memory and CPU focused)
   RESOURCES: [
-    "--disable-dev-shm-usage",
-    "--disable-software-rasterizer",
-    "--disable-background-networking",
-    "--disable-extensions",
-    "--disable-plugins",
-    "--disable-images",
-    "--disable-javascript-harmony-shipping",
-    "--disable-background-timer-throttling",
-    "--disable-renderer-backgrounding",
-    "--disable-backgrounding-occluded-windows",
-    "--memory-pressure-off",
-    "--max_old_space_size=4096",
-    "--optimize-for-size",
-    "--disable-logging",
-    "--disable-dev-tools",
+    '--disable-dev-shm-usage',
+    '--disable-software-rasterizer',
+    '--disable-background-networking',
+    '--disable-extensions',
+    '--disable-plugins',
+    '--disable-images',
+    '--disable-javascript-harmony-shipping',
+    '--disable-background-timer-throttling',
+    '--disable-renderer-backgrounding',
+    '--disable-backgrounding-occluded-windows',
+    '--memory-pressure-off',
+    '--max_old_space_size=4096',
+    '--optimize-for-size',
+    '--disable-logging',
+    '--disable-dev-tools',
   ],
 
   // CI-specific optimizations (streamlined, removed redundancy and conflicts)
   CI: [
-    "--disable-dev-shm-usage",
-    "--disable-software-rasterizer",
-    "--disable-background-timer-throttling",
-    "--disable-renderer-backgrounding",
-    "--disable-backgrounding-occluded-windows",
-    "--no-sandbox",
-    "--disable-blink-features=AutomationControlled",
-    "--disable-extensions",
-    "--disable-plugins",
-    "--memory-pressure-off",
-    "--max_old_space_size=4096",
-    "--disable-logging",
-    "--disable-dev-tools",
-    "--disable-component-extensions-with-background-pages",
-    "--disable-default-apps",
-    "--disable-hang-monitor",
-    "--disable-prompt-on-repost",
-    "--force-color-profile=srgb",
-    "--metrics-recording-only",
-    "--mute-audio",
-    "--no-crash-upload",
-    "--no-default-browser-check",
-    "--no-first-run",
+    '--disable-dev-shm-usage',
+    '--disable-software-rasterizer',
+    '--disable-background-timer-throttling',
+    '--disable-renderer-backgrounding',
+    '--disable-backgrounding-occluded-windows',
+    '--no-sandbox',
+    '--disable-blink-features=AutomationControlled',
+    '--disable-extensions',
+    '--disable-plugins',
+    '--memory-pressure-off',
+    '--max_old_space_size=4096',
+    '--disable-logging',
+    '--disable-dev-tools',
+    '--disable-component-extensions-with-background-pages',
+    '--disable-default-apps',
+    '--disable-hang-monitor',
+    '--disable-prompt-on-repost',
+    '--force-color-profile=srgb',
+    '--metrics-recording-only',
+    '--mute-audio',
+    '--no-crash-upload',
+    '--no-default-browser-check',
+    '--no-first-run',
   ],
 
   // Browser-specific argument sets for optimal performance
   CHROMIUM_SPECIFIC: [
-    "--disable-blink-features=AutomationControlled",
-    "--enable-features=NetworkService,NetworkServiceInProcess",
-    "--disable-dev-shm-usage",
-    "--disable-gpu", // Safe for headless CI
-    "--disable-software-rasterizer",
+    '--disable-blink-features=AutomationControlled',
+    '--enable-features=NetworkService,NetworkServiceInProcess',
+    '--disable-dev-shm-usage',
+    '--disable-gpu', // Safe for headless CI
+    '--disable-software-rasterizer',
   ],
 
   FIREFOX_SPECIFIC: [
     // Firefox supports fewer args but gets key performance optimizations
-    "--disable-dev-shm-usage",
-    "--memory-pressure-off",
-    "--max_old_space_size=4096",
-    "--disable-background-timer-throttling",
-    "--disable-renderer-backgrounding",
-    "--disable-backgrounding-occluded-windows",
+    '--disable-dev-shm-usage',
+    '--memory-pressure-off',
+    '--max_old_space_size=4096',
+    '--disable-background-timer-throttling',
+    '--disable-renderer-backgrounding',
+    '--disable-backgrounding-occluded-windows',
   ],
 
   WEBKIT_SPECIFIC: [
     // WebKit has limited flag support but gets essential performance args
-    "--disable-dev-shm-usage",
-    "--memory-pressure-off",
-    "--max_old_space_size=4096",
-    "--disable-background-timer-throttling",
-    "--disable-renderer-backgrounding",
-    "--disable-backgrounding-occluded-windows",
+    '--disable-dev-shm-usage',
+    '--memory-pressure-off',
+    '--max_old_space_size=4096',
+    '--disable-background-timer-throttling',
+    '--disable-renderer-backgrounding',
+    '--disable-backgrounding-occluded-windows',
   ],
 
   // Get all arguments for a specific scenario and browser
   getArgs(
-    scenario: "fast" | "stable" | "ci" | "debug",
-    browser?: "chromium" | "firefox" | "webkit",
+    scenario: 'fast' | 'stable' | 'ci' | 'debug',
+    browser?: 'chromium' | 'firefox' | 'webkit',
   ): string[] {
-    const base = [...this.PERFORMANCE, ...this.SECURITY];
+    const base = [...this.PERFORMANCE, ...this.SECURITY]
 
-    let scenarioArgs: string[] = [];
+    let scenarioArgs: string[] = []
     switch (scenario) {
-      case "fast":
-        scenarioArgs = [...base, ...this.RESOURCES];
-        break;
-      case "ci":
-        scenarioArgs = [...this.CI];
-        break;
-      case "debug":
-        scenarioArgs = [...this.PERFORMANCE]; // Keep some features for debugging
-        break;
-      case "stable":
-        scenarioArgs = base;
-        break;
+      case 'fast':
+        scenarioArgs = [...base, ...this.RESOURCES]
+        break
+      case 'ci':
+        scenarioArgs = [...this.CI]
+        break
+      case 'debug':
+        scenarioArgs = [...this.PERFORMANCE] // Keep some features for debugging
+        break
+      case 'stable':
+        scenarioArgs = base
+        break
     }
 
     // Add browser-specific optimizations
     if (browser) {
       switch (browser) {
-        case "chromium":
-          scenarioArgs = [...scenarioArgs, ...this.CHROMIUM_SPECIFIC];
-          break;
-        case "firefox":
-          scenarioArgs = [...scenarioArgs, ...this.FIREFOX_SPECIFIC];
-          break;
-        case "webkit":
-          scenarioArgs = [...scenarioArgs, ...this.WEBKIT_SPECIFIC];
-          break;
+        case 'chromium':
+          scenarioArgs = [...scenarioArgs, ...this.CHROMIUM_SPECIFIC]
+          break
+        case 'firefox':
+          scenarioArgs = [...scenarioArgs, ...this.FIREFOX_SPECIFIC]
+          break
+        case 'webkit':
+          scenarioArgs = [...scenarioArgs, ...this.WEBKIT_SPECIFIC]
+          break
       }
     }
 
     // Remove duplicates while preserving order
-    return [...new Set(scenarioArgs)];
+    return [...new Set(scenarioArgs)]
   },
-} as const;
+} as const
 
 /**
  * Visual Comparison Thresholds
@@ -230,10 +230,10 @@ export const VISUAL_COMPARISON = {
   THRESHOLD: 0.15, // Slightly more lenient for stability
   MAX_DIFF_PIXELS: 50, // Reduced for better accuracy
   MAX_DIFF_PIXEL_RATIO: 0.01, // New: maximum ratio of different pixels
-  ANIMATION_HANDLING: "disabled" as const,
-  CARETS: "hide" as const, // Hide text carets in screenshots
-  SCALE: "css" as const, // Use CSS scaling for consistency
-} as const;
+  ANIMATION_HANDLING: 'disabled' as const,
+  CARETS: 'hide' as const, // Hide text carets in screenshots
+  SCALE: 'css' as const, // Use CSS scaling for consistency
+} as const
 
 /**
  * Test Annotation Constants
@@ -241,50 +241,50 @@ export const VISUAL_COMPARISON = {
  */
 export const TEST_ANNOTATIONS = {
   // Test types
-  SMOKE: { type: "smoke", description: "Critical path tests" },
-  REGRESSION: { type: "regression", description: "Regression tests" },
-  INTEGRATION: { type: "integration", description: "Integration tests" },
-  E2E: { type: "e2e", description: "End-to-end tests" },
+  SMOKE: { type: 'smoke', description: 'Critical path tests' },
+  REGRESSION: { type: 'regression', description: 'Regression tests' },
+  INTEGRATION: { type: 'integration', description: 'Integration tests' },
+  E2E: { type: 'e2e', description: 'End-to-end tests' },
 
   // Test priorities
-  CRITICAL: { type: "priority", description: "Critical priority" },
-  HIGH: { type: "priority", description: "High priority" },
-  MEDIUM: { type: "priority", description: "Medium priority" },
-  LOW: { type: "priority", description: "Low priority" },
+  CRITICAL: { type: 'priority', description: 'Critical priority' },
+  HIGH: { type: 'priority', description: 'High priority' },
+  MEDIUM: { type: 'priority', description: 'Medium priority' },
+  LOW: { type: 'priority', description: 'Low priority' },
 
   // Test environments
-  VISUAL: { type: "visual", description: "Visual regression tests" },
-  ACCESSIBILITY: { type: "accessibility", description: "Accessibility tests" },
-  PERFORMANCE: { type: "performance", description: "Performance tests" },
+  VISUAL: { type: 'visual', description: 'Visual regression tests' },
+  ACCESSIBILITY: { type: 'accessibility', description: 'Accessibility tests' },
+  PERFORMANCE: { type: 'performance', description: 'Performance tests' },
 
   // Browser compatibility
-  LEGACY: { type: "compatibility", description: "Legacy browser tests" },
-  MODERN: { type: "compatibility", description: "Modern browser tests" },
-} as const;
+  LEGACY: { type: 'compatibility', description: 'Legacy browser tests' },
+  MODERN: { type: 'compatibility', description: 'Modern browser tests' },
+} as const
 
 /**
  * Test Grouping Configuration
  * Organize tests into logical groups for better execution control
  */
 export const TEST_GROUPS = {
-  CRITICAL: ["@critical", "@smoke"],
-  FAST: ["@fast", "@smoke"],
-  VISUAL: ["@visual"],
-  ACCESSIBILITY: ["@accessibility"],
-  PERFORMANCE: ["@performance"],
-  REGRESSION: ["@regression"],
-  INTEGRATION: ["@integration"],
-} as const;
+  CRITICAL: ['@critical', '@smoke'],
+  FAST: ['@fast', '@smoke'],
+  VISUAL: ['@visual'],
+  ACCESSIBILITY: ['@accessibility'],
+  PERFORMANCE: ['@performance'],
+  REGRESSION: ['@regression'],
+  INTEGRATION: ['@integration'],
+} as const
 
 /**
  * Default HTTP Headers for Test Identification
  */
 export const TEST_HEADERS = {
-  "X-Test-Session": "playwright-e2e",
-  "X-Test-Framework": "playwright",
-  "X-Test-Environment": (env: string) => env,
-  "X-Test-Run-ID": process.env.GITHUB_RUN_ID || process.env.CI_RUN_ID || "local",
-} as const;
+  'X-Test-Session': 'playwright-e2e',
+  'X-Test-Framework': 'playwright',
+  'X-Test-Environment': (env: string) => env,
+  'X-Test-Run-ID': process.env.GITHUB_RUN_ID || process.env.CI_RUN_ID || 'local',
+} as const
 
 /**
  * Validation Constants
@@ -303,7 +303,7 @@ export const VALIDATION_CONSTANTS = {
   DEBUG_ACTION_TIMEOUT_MS: 30000, // 30 seconds for debugging
   DEBUG_NAVIGATION_TIMEOUT_MS: 60000, // 60 seconds for debugging
   MAX_LOCAL_WORKERS: 8, // Maximum workers in local development
-} as const;
+} as const
 
 // =============================================================================
 // ENVIRONMENT-SPECIFIC SETTINGS
@@ -329,13 +329,13 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
       },
       retries: 1,
       artifacts: {
-        trace: "on-first-retry",
-        screenshot: "only-on-failure",
-        video: "retain-on-failure",
+        trace: 'on-first-retry',
+        screenshot: 'only-on-failure',
+        video: 'retain-on-failure',
       },
       reporting: {
-        reporters: ["line", "html", "json"],
-        outputDir: "playwright-report",
+        reporters: ['line', 'html', 'json'],
+        outputDir: 'playwright-report',
       },
       features: {
         enableGlobalSetup: true,
@@ -363,13 +363,13 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
       },
       retries: 2, // Reduced from 3 for faster feedback
       artifacts: {
-        trace: "retain-on-failure",
-        screenshot: "only-on-failure",
-        video: "retain-on-failure",
+        trace: 'retain-on-failure',
+        screenshot: 'only-on-failure',
+        video: 'retain-on-failure',
       },
       reporting: {
-        reporters: ["github", "junit", "json", "html"],
-        outputDir: "playwright-report-ci",
+        reporters: ['github', 'junit', 'json', 'html'],
+        outputDir: 'playwright-report-ci',
       },
       features: {
         enableGlobalSetup: true,
@@ -394,13 +394,13 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
       },
       retries: 0, // No retries for maximum speed
       artifacts: {
-        trace: "off",
-        screenshot: "off",
-        video: "off",
+        trace: 'off',
+        screenshot: 'off',
+        video: 'off',
       },
       reporting: {
-        reporters: ["line", "json"],
-        outputDir: "playwright-report-fast",
+        reporters: ['line', 'json'],
+        outputDir: 'playwright-report-fast',
       },
       features: {
         enableGlobalSetup: false, // Skip for speed
@@ -425,13 +425,13 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
       },
       retries: 1, // Single retry for debugging
       artifacts: {
-        trace: "on", // Full tracing for debugging
-        screenshot: "on", // Screenshots for all tests
-        video: "on", // Video recording for debugging
+        trace: 'on', // Full tracing for debugging
+        screenshot: 'on', // Screenshots for all tests
+        video: 'on', // Video recording for debugging
       },
       reporting: {
-        reporters: ["line", "html", "json"],
-        outputDir: "playwright-report-isolated",
+        reporters: ['line', 'html', 'json'],
+        outputDir: 'playwright-report-isolated',
       },
       features: {
         enableGlobalSetup: true,
@@ -440,30 +440,30 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
         enableVisualComparison: true,
       },
     },
-  };
+  }
 
-  return baseSettings[environment];
+  return baseSettings[environment]
 }
 
 /**
  * Calculate optimal worker count based on environment and CPU cores
  */
 export function getOptimalWorkers(environment: ConfigEnvironment): number {
-  const settings = getEnvironmentSettings(environment);
-  const cpuCount = os.cpus().length || 2; // Fallback to 2 if detection fails
-  const isCI = !!process.env.CI;
-  const isGitHubActions = !!process.env.GITHUB_ACTIONS;
+  const settings = getEnvironmentSettings(environment)
+  const cpuCount = os.cpus().length || 2 // Fallback to 2 if detection fails
+  const isCI = !!process.env.CI
+  const isGitHubActions = !!process.env.GITHUB_ACTIONS
 
   // Special handling for known CI environments
   if (isGitHubActions) {
-    return Math.min(2, settings.workers.max);
+    return Math.min(2, settings.workers.max)
   }
 
   if (isCI) {
     return Math.min(
       settings.workers.max,
       Math.max(settings.workers.min, Math.floor(cpuCount * settings.workers.cpuFraction)),
-    );
+    )
   }
 
   // Local development - be more conservative to avoid resource contention
@@ -473,133 +473,133 @@ export function getOptimalWorkers(environment: ConfigEnvironment): number {
       settings.workers.min,
       Math.min(cpuCount - 1, Math.floor(cpuCount * settings.workers.cpuFraction)),
     ),
-  );
+  )
 
-  return recommendedWorkers;
+  return recommendedWorkers
 }
 
 /**
  * Get browser projects configuration based on environment
  */
 export function getBrowserProjects(environment: ConfigEnvironment) {
-  const scenario = environment === "fast" ? "fast" : environment === "ci" ? "ci" : "stable";
+  const scenario = environment === 'fast' ? 'fast' : environment === 'ci' ? 'ci' : 'stable'
 
   const baseBrowserConfig = {
     launchOptions: {
       // Browser-specific args will be added per project
-      ignoreDefaultArgs: ["--enable-automation"], // Remove automation indicators
+      ignoreDefaultArgs: ['--enable-automation'], // Remove automation indicators
       ignoreHTTPSErrors: true,
     },
     contextOptions: {
-      reducedMotion: "reduce",
+      reducedMotion: 'reduce',
       strictSelectors: true,
       acceptDownloads: true,
-      bypassCSP: environment === "development", // Allow CSP bypass in development
-      permissions: ["geolocation", "notifications"],
+      bypassCSP: environment === 'development', // Allow CSP bypass in development
+      permissions: ['geolocation', 'notifications'],
     },
-  };
+  }
 
   const baseProjects = [
     {
-      name: "chromium",
+      name: 'chromium',
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices['Desktop Chrome'],
         ...baseBrowserConfig,
         launchOptions: {
           ...baseBrowserConfig.launchOptions,
-          args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "chromium"),
+          args: BROWSER_LAUNCH_ARGS.getArgs(scenario, 'chromium'),
         },
         contextOptions: {
           ...baseBrowserConfig.contextOptions,
           // Chromium-specific settings
-          colorScheme: "light",
+          colorScheme: 'light',
           viewport: { width: 1280, height: 720 },
         },
       },
     },
-  ];
+  ]
 
   // Add additional browsers for non-fast environments
-  if (environment !== "fast") {
+  if (environment !== 'fast') {
     baseProjects.push(
       {
-        name: "firefox",
+        name: 'firefox',
         use: {
-          ...devices["Desktop Firefox"],
+          ...devices['Desktop Firefox'],
           ...baseBrowserConfig,
           launchOptions: {
             ...baseBrowserConfig.launchOptions,
-            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "firefox"),
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, 'firefox'),
           },
           contextOptions: {
             ...baseBrowserConfig.contextOptions,
             // Firefox-specific settings
-            colorScheme: "light",
+            colorScheme: 'light',
             viewport: { width: 1280, height: 720 },
           },
         },
       },
       {
-        name: "webkit",
+        name: 'webkit',
         use: {
-          ...devices["Desktop Safari"],
+          ...devices['Desktop Safari'],
           ...baseBrowserConfig,
           launchOptions: {
             ...baseBrowserConfig.launchOptions,
-            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "webkit"),
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, 'webkit'),
           },
           contextOptions: {
             ...baseBrowserConfig.contextOptions,
             // WebKit-specific settings
-            colorScheme: "light",
+            colorScheme: 'light',
             viewport: { width: 1280, height: 720 },
           },
         },
       },
-    );
+    )
   }
 
   // Add mobile projects for comprehensive testing (except fast mode)
-  if (environment === "development" || environment === "ci" || environment === "isolated") {
+  if (environment === 'development' || environment === 'ci' || environment === 'isolated') {
     baseProjects.push(
       {
-        name: "Mobile Chrome",
+        name: 'Mobile Chrome',
         use: {
-          ...devices["Pixel 7"],
+          ...devices['Pixel 7'],
           ...baseBrowserConfig,
           launchOptions: {
             ...baseBrowserConfig.launchOptions,
-            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "chromium"),
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, 'chromium'),
           },
           contextOptions: {
             ...baseBrowserConfig.contextOptions,
             // Mobile-specific settings
-            colorScheme: "light",
+            colorScheme: 'light',
             viewport: { width: 412, height: 915 }, // Pixel 7 viewport
           },
         },
       },
       {
-        name: "Mobile Safari",
+        name: 'Mobile Safari',
         use: {
-          ...devices["iPhone 14"],
+          ...devices['iPhone 14'],
           ...baseBrowserConfig,
           launchOptions: {
             ...baseBrowserConfig.launchOptions,
-            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, "webkit"),
+            args: BROWSER_LAUNCH_ARGS.getArgs(scenario, 'webkit'),
           },
           contextOptions: {
             ...baseBrowserConfig.contextOptions,
             // Mobile Safari-specific settings
-            colorScheme: "light",
+            colorScheme: 'light',
             viewport: { width: 390, height: 844 }, // iPhone 14 viewport
           },
         },
       },
-    );
+    )
   }
 
-  return baseProjects as typeof baseProjects;
+  return baseProjects as typeof baseProjects
 }
 
 // =============================================================================
@@ -617,12 +617,12 @@ export function createPlaywrightConfig(
   environment: ConfigEnvironment,
   customOverrides: Partial<PlaywrightTestConfig> = {},
 ): PlaywrightTestConfig {
-  const settings = getEnvironmentSettings(environment);
-  const workers = getOptimalWorkers(environment);
-  const projects = getBrowserProjects(environment);
+  const settings = getEnvironmentSettings(environment)
+  const workers = getOptimalWorkers(environment)
+  const projects = getBrowserProjects(environment)
 
   const baseConfig: PlaywrightTestConfig = {
-    testDir: "./playwright-tests",
+    testDir: './playwright-tests',
 
     // Execution settings
     fullyParallel: true,
@@ -633,8 +633,8 @@ export function createPlaywrightConfig(
 
     // Global setup and teardown (properly enabled)
     ...(settings.features.enableGlobalSetup && {
-      globalSetup: "./playwright-tests/global-setup.ts",
-      globalTeardown: "./playwright-tests/global-teardown.ts",
+      globalSetup: './playwright-tests/global-setup.ts',
+      globalTeardown: './playwright-tests/global-teardown.ts',
     }),
 
     // Output configuration
@@ -643,21 +643,21 @@ export function createPlaywrightConfig(
     // Enhanced reporting
     reporter: settings.reporting.reporters.map((reporter) => {
       switch (reporter) {
-        case "html":
+        case 'html':
           return [
-            "html",
+            'html',
             {
-              open: "never",
+              open: 'never',
               outputFolder: `${settings.reporting.outputDir}/html`,
               attachmentsBaseURL: `file://${process.cwd()}/${settings.reporting.outputDir}/`,
             },
-          ];
-        case "junit":
-          return ["junit", { outputFile: `${settings.reporting.outputDir}/junit.xml` }];
-        case "json":
-          return ["json", { outputFile: `${settings.reporting.outputDir}/results.json` }];
+          ]
+        case 'junit':
+          return ['junit', { outputFile: `${settings.reporting.outputDir}/junit.xml` }]
+        case 'json':
+          return ['json', { outputFile: `${settings.reporting.outputDir}/results.json` }]
         default:
-          return [reporter];
+          return [reporter]
       }
     }),
 
@@ -682,47 +682,47 @@ export function createPlaywrightConfig(
 
     // Use configuration with modern browser settings
     use: {
-      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3001",
+      baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001',
 
       // Enhanced timeouts
       actionTimeout: settings.timeouts.action,
       navigationTimeout: settings.timeouts.navigation,
 
       // Enhanced artifacts with better control
-      trace: settings.artifacts.trace as "on" | "off" | "on-first-retry" | "retain-on-failure",
-      screenshot: settings.artifacts.screenshot as "on" | "off" | "only-on-failure",
-      video: settings.artifacts.video as "on" | "off" | "retain-on-failure",
+      trace: settings.artifacts.trace as 'on' | 'off' | 'on-first-retry' | 'retain-on-failure',
+      screenshot: settings.artifacts.screenshot as 'on' | 'off' | 'only-on-failure',
+      video: settings.artifacts.video as 'on' | 'off' | 'retain-on-failure',
 
       // Enhanced browser context
       viewport: { width: 1280, height: 720 },
       ignoreHTTPSErrors: true,
-      locale: "en-US",
-      timezoneId: "America/New_York",
+      locale: 'en-US',
+      timezoneId: 'America/New_York',
 
       // Enhanced context options
-      bypassCSP: environment === "development",
+      bypassCSP: environment === 'development',
       acceptDownloads: true,
       hasTouch: false,
       isMobile: false,
-      colorScheme: "light",
-      serviceWorkers: "block",
+      colorScheme: 'light',
+      serviceWorkers: 'block',
       permissions: [],
       geolocation: undefined,
       extraHTTPHeaders: {
         ...TEST_HEADERS,
-        "X-Test-Environment": TEST_HEADERS["X-Test-Environment"](environment),
-        "X-Playwright-Config": environment,
-        "X-Playwright-Version": "1.58.0",
+        'X-Test-Environment': TEST_HEADERS['X-Test-Environment'](environment),
+        'X-Playwright-Config': environment,
+        'X-Playwright-Version': '1.58.0',
       },
 
       // Enhanced browser launch options
       launchOptions: {
-        slowMo: environment === "development" ? VALIDATION_CONSTANTS.DEV_SLOW_MO_MS : 0, // Slight delay in development for debugging
-        headless: environment !== "isolated", // Headless except for isolated debugging
+        slowMo: environment === 'development' ? VALIDATION_CONSTANTS.DEV_SLOW_MO_MS : 0, // Slight delay in development for debugging
+        headless: environment !== 'isolated', // Headless except for isolated debugging
       },
     },
 
-    projects: projects as PlaywrightTestConfig["projects"],
+    projects: projects as PlaywrightTestConfig['projects'],
 
     // Web server configuration (environment-aware)
     ...(settings.features.enableWebServer &&
@@ -730,15 +730,15 @@ export function createPlaywrightConfig(
       !process.env.PLAYWRIGHT_SKIP_WEBSERVER && {
         webServer: [
           {
-            command: "npx tsx server/node-build.ts",
-            url: "http://localhost:3000/api/health",
+            command: 'npx tsx server/node-build.ts',
+            url: 'http://localhost:3000/api/health',
             reuseExistingServer: true, // Reverted to true for manual server management
             timeout: settings.timeouts.webServer,
             cwd: process.cwd(),
           },
           {
-            command: "pnpm dev",
-            url: "http://localhost:3001",
+            command: 'pnpm dev',
+            url: 'http://localhost:3001',
             reuseExistingServer: true, // Reverted to true for manual server management
             timeout: settings.timeouts.webServer * 2, // Double timeout for dev server startup
             cwd: process.cwd(),
@@ -749,23 +749,29 @@ export function createPlaywrightConfig(
     // Test sharding for CI (environment-aware)
     ...(settings.features.enableSharding &&
       process.env.SHARD && {
-        shard: {
-          current: parseInt(process.env.SHARD.split("/")[0], 10),
-          total: parseInt(process.env.SHARD.split("/")[1], 10),
-        },
+        shard: (() => {
+          const shardParts = process.env.SHARD?.split('/')
+          if (shardParts && shardParts.length === 2) {
+            return {
+              current: parseInt(shardParts[0] || '1', 10),
+              total: parseInt(shardParts[1] || '1', 10),
+            }
+          }
+          return { current: 1, total: 1 }
+        })(),
       }),
 
     // Enhanced snapshot handling
-    updateSnapshots: process.env.UPDATE_SNAPSHOTS === "true" ? "all" : "missing",
+    updateSnapshots: process.env.UPDATE_SNAPSHOTS === 'true' ? 'all' : 'missing',
 
     // Metadata for debugging and reporting
     metadata: {
       environment,
-      testType: "e2e",
-      framework: "playwright",
+      testType: 'e2e',
+      framework: 'playwright',
       timestamp: new Date().toISOString(),
-      commit: process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || "local",
-      branch: process.env.GITHUB_REF_NAME || process.env.CI_BRANCH || "unknown",
+      commit: process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || 'local',
+      branch: process.env.GITHUB_REF_NAME || process.env.CI_BRANCH || 'unknown',
       workers,
       ci: !!process.env.CI,
       ...(process.env.CI && {
@@ -773,59 +779,59 @@ export function createPlaywrightConfig(
         run: process.env.GITHUB_RUN_ID,
       }),
     },
-  };
+  }
 
   // Apply custom overrides
-  return { ...baseConfig, ...customOverrides };
+  return { ...baseConfig, ...customOverrides }
 }
 
 /**
  * Validate configuration for common issues
  */
 export function validateConfiguration(config: PlaywrightTestConfig): string[] {
-  const issues: string[] = [];
+  const issues: string[] = []
 
   // Check for reasonable timeout values
   if (config.timeout && config.timeout < VALIDATION_CONSTANTS.MIN_TEST_TIMEOUT_MS) {
-    issues.push("Test timeout is very low (< 10s), may cause false failures");
+    issues.push('Test timeout is very low (< 10s), may cause false failures')
   }
 
   if (
     config.use?.actionTimeout &&
     config.use.actionTimeout < VALIDATION_CONSTANTS.MIN_ACTION_TIMEOUT_MS
   ) {
-    issues.push("Action timeout is very low (< 1s), may cause false failures");
+    issues.push('Action timeout is very low (< 1s), may cause false failures')
   }
 
   // Check worker configuration
   if (
     config.workers &&
-    typeof config.workers === "number" &&
+    typeof config.workers === 'number' &&
     config.workers > os.cpus().length * 2
   ) {
     issues.push(
       `Worker count (${config.workers}) exceeds 2x CPU cores, may cause resource contention`,
-    );
+    )
   }
 
   // Check for missing essential configuration
   if (!config.testDir) {
-    issues.push("Missing testDir configuration");
+    issues.push('Missing testDir configuration')
   }
 
   if (!config.projects || config.projects.length === 0) {
-    issues.push("No browser projects configured");
+    issues.push('No browser projects configured')
   }
 
-  return issues;
+  return issues
 }
 
 /**
  * Export commonly used configurations
  */
 export const PRESET_CONFIGS = {
-  development: () => createPlaywrightConfig("development"),
-  ci: () => createPlaywrightConfig("ci"),
-  fast: () => createPlaywrightConfig("fast"),
-  isolated: () => createPlaywrightConfig("isolated"),
-} as const;
+  development: () => createPlaywrightConfig('development'),
+  ci: () => createPlaywrightConfig('ci'),
+  fast: () => createPlaywrightConfig('fast'),
+  isolated: () => createPlaywrightConfig('isolated'),
+} as const

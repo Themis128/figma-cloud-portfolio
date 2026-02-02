@@ -2,7 +2,7 @@ import {
   createPlaywrightConfig,
   VALIDATION_CONSTANTS,
   validateConfiguration,
-} from "./playwright.config.shared";
+} from './playwright.config.shared'
 
 /**
  * Simple Playwright Configuration
@@ -20,65 +20,65 @@ import {
  */
 
 // Configuration constants for simple setup using shared validation constants
-const CI_WORKERS = VALIDATION_CONSTANTS.MAX_CI_WORKERS;
-const DEVELOPMENT_WORKERS = 4;
-const CI_RETRIES = 2;
-const DEVELOPMENT_RETRIES = 1;
+const CI_WORKERS = VALIDATION_CONSTANTS.MAX_CI_WORKERS
+const DEVELOPMENT_WORKERS = 4
+const CI_RETRIES = 2
+const DEVELOPMENT_RETRIES = 1
 
 // Create simple configuration using the shared factory
-const config = createPlaywrightConfig("development", {
+const config = createPlaywrightConfig('development', {
   // Simple-specific overrides for basic testing
   retries: process.env.CI ? CI_RETRIES : DEVELOPMENT_RETRIES, // Basic retry strategy
   workers: process.env.CI ? CI_WORKERS : DEVELOPMENT_WORKERS, // Limited workers for simplicity
 
   // Basic reporting setup
   reporter: [
-    ["line"], // Console output
+    ['line'], // Console output
     [
-      "html",
+      'html',
       {
-        open: "never",
-        outputFolder: "playwright-report/html",
+        open: 'never',
+        outputFolder: 'playwright-report/html',
         attachmentsBaseURL: `file://${process.cwd()}/playwright-report/`,
       },
     ],
-    ["json", { outputFile: "test-results/results.json" }],
-    ["junit", { outputFile: "test-results/junit.xml" }],
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['junit', { outputFile: 'test-results/junit.xml' }],
   ],
 
   // Simple metadata
   metadata: {
-    environment: process.env.NODE_ENV || "development",
-    testType: "e2e-simple",
-    framework: "playwright",
+    environment: process.env.NODE_ENV || 'development',
+    testType: 'e2e-simple',
+    framework: 'playwright',
     simplified: true,
     timestamp: new Date().toISOString(),
   },
-});
+})
 
 // Validate simple configuration
-const validationIssues = validateConfiguration(config);
+const validationIssues = validateConfiguration(config)
 if (validationIssues.length > 0) {
   // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-  console.warn("Simple Playwright Configuration Warnings:");
+  console.warn('Simple Playwright Configuration Warnings:')
   validationIssues.forEach((issue) => {
     // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-    console.warn(`   - ${issue}`);
-  });
+    console.warn(`   - ${issue}`)
+  })
 }
 
 // Simple configuration logging
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-console.log("Simple Playwright Configuration Loaded:");
+console.log('Simple Playwright Configuration Loaded:')
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-console.log(`   - Workers: ${config.workers} (balanced for simplicity)`);
+console.log(`   - Workers: ${config.workers} (balanced for simplicity)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-console.log(`   - Test Timeout: ${config.timeout}ms`);
+console.log(`   - Test Timeout: ${config.timeout}ms`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-console.log(`   - Retries: ${config.retries}`);
+console.log(`   - Retries: ${config.retries}`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-console.log(`   - Browsers: Full coverage (Chromium, Firefox, WebKit, Mobile)`);
+console.log(`   - Browsers: Full coverage (Chromium, Firefox, WebKit, Mobile)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for simple setup
-console.log(`   - Reporting: Console + HTML + JSON + JUnit`);
+console.log(`   - Reporting: Console + HTML + JSON + JUnit`)
 
-export default config;
+export default config

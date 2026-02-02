@@ -2,10 +2,10 @@
 # Usage: .\setup-github-secrets.ps1 -Repo "Themis128/figma-cloud-portfolio" -Token "ghp_..."
 
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$Repo,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$Token
 )
 
@@ -37,7 +37,7 @@ function Set-GitHubSecret {
         # Get public key for encryption
         $publicKeyResponse = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/actions/secrets/public-key" -Headers @{
             "Authorization" = "token $Token"
-            "Accept" = "application/vnd.github.v3+json"
+            "Accept"        = "application/vnd.github.v3+json"
         }
 
         $keyId = $publicKeyResponse.key_id
@@ -50,12 +50,12 @@ function Set-GitHubSecret {
         # Create the secret
         $body = @{
             encrypted_value = $encryptedValue
-            key_id = $keyId
+            key_id          = $keyId
         } | ConvertTo-Json
 
         Invoke-RestMethod -Method Put -Uri "https://api.github.com/repos/$Repo/actions/secrets/$Name" -Headers @{
             "Authorization" = "token $Token"
-            "Accept" = "application/vnd.github.v3+json"
+            "Accept"        = "application/vnd.github.v3+json"
         } -Body $body -ContentType "application/json"
 
         Write-Host "✅ Successfully set $Name" -ForegroundColor Green
@@ -107,7 +107,7 @@ Write-Host "   - CODACY_API_TOKEN" -ForegroundColor Yellow
 Write-Host "   - CODACY_PROJECT_TOKEN" -ForegroundColor Yellow
 Write-Host "   - SENTRY_DSN" -ForegroundColor Yellow
 Write-Host "   - VITE_SENTRY_DSN" -ForegroundColor Yellow
-Write-Host "   - GITHUB_PORTFOLIO_TOKEN" -ForegroundColor Yellow
+Write-Host "   - VITE_GITHUB_TOKEN" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "3. Add missing AWS secrets:" -ForegroundColor Cyan
 Write-Host "   - AWS_ACCESS_KEY_ID" -ForegroundColor Red

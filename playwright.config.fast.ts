@@ -3,7 +3,7 @@ import {
   createPlaywrightConfig,
   VALIDATION_CONSTANTS,
   validateConfiguration,
-} from "./playwright.config.shared";
+} from './playwright.config.shared'
 
 /**
  * Fast Playwright Configuration
@@ -23,16 +23,16 @@ import {
  */
 
 // Create fast configuration with optimizations
-const config = createPlaywrightConfig("fast", {
+const config = createPlaywrightConfig('fast', {
   // Fast-specific overrides for edge cases
-  retries: process.env.FAST_WITH_RETRIES === "true" ? 1 : 0, // Allow override for critical tests
+  retries: process.env.FAST_WITH_RETRIES === 'true' ? 1 : 0, // Allow override for critical tests
 
   // Disable webServer since we start it manually
   webServer: undefined,
 
   // Override baseURL to match actual server port
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3001",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001',
   },
 
   // Custom test filtering for fast execution using new annotation system
@@ -41,18 +41,18 @@ const config = createPlaywrightConfig("fast", {
   // Single project override (ensure only Chromium) with improved launch args
   projects: [
     {
-      name: "chromium-fast",
+      name: 'chromium-fast',
       testIgnore: /.*\.(slow|integration)\.spec\.ts$/, // Skip slow tests
       use: {
         // Use optimized fast browser args from shared config
         launchOptions: {
-          args: BROWSER_LAUNCH_ARGS.getArgs("fast"),
+          args: BROWSER_LAUNCH_ARGS.getArgs('fast'),
           // Fast execution settings
           headless: true,
         },
         // Fast context settings
         contextOptions: {
-          reducedMotion: "reduce",
+          reducedMotion: 'reduce',
           strictSelectors: true,
         },
         // Minimal viewport for speed
@@ -66,87 +66,87 @@ const config = createPlaywrightConfig("fast", {
 
   // Additional fast-specific metadata
   metadata: {
-    environment: "fast",
-    testType: "smoke",
+    environment: 'fast',
+    testType: 'smoke',
     optimized: true,
     skipSlowTests: true,
     timestamp: new Date().toISOString(),
   },
-});
+})
 
 // Validate and provide fast-specific warnings
-const validationIssues = validateConfiguration(config);
-const fastWarnings: string[] = [];
+const validationIssues = validateConfiguration(config)
+const fastWarnings: string[] = []
 
 // Add fast-specific validations
 // biome-ignore lint/style/noMagicNumbers: 60000ms (60s) is a clear threshold for fast execution validation
 if (config.timeout && config.timeout > 60000) {
-  fastWarnings.push("Test timeout > 60s may reduce fast execution benefits");
+  fastWarnings.push('Test timeout > 60s may reduce fast execution benefits')
 }
 
 if (config.retries && config.retries > 1) {
-  fastWarnings.push("Multiple retries may reduce speed benefits");
+  fastWarnings.push('Multiple retries may reduce speed benefits')
 }
 
 if (config.projects && config.projects.length > 1) {
-  fastWarnings.push("Multiple browser projects may reduce speed benefits");
+  fastWarnings.push('Multiple browser projects may reduce speed benefits')
 }
 
 // Report issues and warnings
 if (validationIssues.length > 0 || fastWarnings.length > 0) {
   // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-  console.log("Fast Playwright Configuration Analysis:");
+  console.log('Fast Playwright Configuration Analysis:')
 
   if (validationIssues.length > 0) {
     // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-    console.warn("   Issues:");
+    console.warn('   Issues:')
     validationIssues.forEach((issue) => {
       // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-      console.warn(`   - ${issue}`);
-    });
+      console.warn(`   - ${issue}`)
+    })
   }
 
   if (fastWarnings.length > 0) {
     // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-    console.log("   Speed Optimization Notes:");
+    console.log('   Speed Optimization Notes:')
     fastWarnings.forEach((warning) => {
       // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-      console.log(`   - ${warning}`);
-    });
+      console.log(`   - ${warning}`)
+    })
   }
   // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-  console.log("");
+  console.log('')
 }
 
 // Fast configuration summary
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log("Fast Playwright Configuration:");
+console.log('Fast Playwright Configuration:')
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Workers: ${config.workers} (max CPU utilization)`);
+console.log(`   - Workers: ${config.workers} (max CPU utilization)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Test Timeout: ${config.timeout}ms`);
+console.log(`   - Test Timeout: ${config.timeout}ms`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Action Timeout: ${config.use?.actionTimeout}ms`);
+console.log(`   - Action Timeout: ${config.use?.actionTimeout}ms`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Retries: ${config.retries}`);
+console.log(`   - Retries: ${config.retries}`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Browsers: ${config.projects?.length || 0} (Chromium only for speed)`);
+console.log(`   - Browsers: ${config.projects?.length || 0} (Chromium only for speed)`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
-console.log(`   - Artifacts: Disabled for maximum speed`);
+console.log(`   - Artifacts: Disabled for maximum speed`)
 // biome-ignore lint/suspicious/noConsole: Configuration logging is appropriate for setup feedback
 console.log(
-  `   - Test Filter: ${config.grep && typeof config.grep === "object" && "source" in config.grep ? config.grep.source : "All tests"}`,
-);
+  `   - Test Filter: ${config.grep && typeof config.grep === 'object' && 'source' in config.grep ? config.grep.source : 'All tests'}`,
+)
 
-export default config;
+export default config
 
 /**
  * Helper function to run only critical tests in fast mode
  */
-export const fastCriticalConfig = createPlaywrightConfig("fast", {
+export const fastCriticalConfig = createPlaywrightConfig('fast', {
   ...config,
   retries: 1, // Some retries for critical tests
   grep: /@critical|@smoke/,
-});
+})
 
-export { config };
+export { config }

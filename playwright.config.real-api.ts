@@ -1,4 +1,4 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test'
 
 /**
  * Playwright Configuration for Real API Integration Testing
@@ -19,7 +19,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 
 export default defineConfig({
-  testDir: "./playwright-tests/real-api",
+  testDir: './playwright-tests/real-api',
   testMatch: /.*\.real\.spec\.ts$/,
 
   // Real API tests need more time
@@ -36,50 +36,50 @@ export default defineConfig({
 
   // Reporters
   reporter: [
-    ["html", { outputFolder: "playwright-report-real-api" }],
-    ["json", { outputFile: "test-results/real-api-results.json" }],
-    ["list"],
+    ['html', { outputFolder: 'playwright-report-real-api' }],
+    ['json', { outputFile: 'test-results/real-api-results.json' }],
+    ['list'],
   ],
 
   // Output directory for test artifacts
-  outputDir: "test-results/real-api",
+  outputDir: 'test-results/real-api',
 
   use: {
     // Base URL for testing
-    baseURL: process.env.BASE_URL || "http://localhost:3001",
+    baseURL: process.env.BASE_URL || 'http://localhost:3001',
 
     // Longer timeouts for real API calls
     actionTimeout: 15000,
     navigationTimeout: 30000,
 
     // Collect trace on failure
-    trace: "on-first-retry",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
 
     // Extra HTTP headers for API authentication
     extraHTTPHeaders: {
-      "X-Test-Mode": "real-api",
+      'X-Test-Mode': 'real-api',
     },
   },
 
   // Test against multiple browsers
   projects: [
     {
-      name: "chromium-real-api",
-      use: { ...devices["Desktop Chrome"] },
+      name: 'chromium-real-api',
+      use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: "firefox-real-api",
-      use: { ...devices["Desktop Firefox"] },
+      name: 'firefox-real-api',
+      use: { ...devices['Desktop Firefox'] },
     },
   ],
 
   // Web server configuration
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3001",
+    command: 'npm run dev',
+    url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
-});
+})

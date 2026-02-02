@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Performance",
-  description: "Performance monitoring dashboard for the portfolio website",
-};
+  title: 'Performance',
+  description: 'Performance monitoring dashboard for the portfolio website',
+}
 
 export default function PerformancePage() {
   return (
@@ -15,5 +15,5 @@ export default function PerformancePage() {
         </p>
       </div>
     </div>
-  );
+  )
 }

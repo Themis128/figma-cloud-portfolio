@@ -145,7 +145,8 @@
 @layer utilities {
   /* Mobile-first touch targets */
   .touch-target {
-    @apply min-h-[44px] min-w-[44px];
+    min-height: 44px;
+    min-width: 44px;
   }
 
   /* Better mobile scrolling */
@@ -156,50 +157,214 @@
 
   /* Mobile-optimized text sizes */
   .text-responsive-xs {
-    @apply text-xs sm:text-sm;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  @screen sm {
+    .text-responsive-xs {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
   }
 
   .text-responsive-sm {
-    @apply text-sm sm:text-base;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  @screen sm {
+    .text-responsive-sm {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
   }
 
   .text-responsive-base {
-    @apply text-base sm:text-lg;
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  @screen sm {
+    .text-responsive-base {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
   }
 
   .text-responsive-lg {
-    @apply text-lg sm:text-xl;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  @screen sm {
+    .text-responsive-lg {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+    }
   }
 
   .text-responsive-xl {
-    @apply text-xl sm:text-2xl md:text-3xl;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  @screen sm {
+    .text-responsive-xl {
+      font-size: 1.5rem;
+      line-height: 2rem;
+    }
+  }
+
+  @screen md {
+    .text-responsive-xl {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
   }
 
   .text-responsive-2xl {
-    @apply text-2xl sm:text-3xl md:text-4xl;
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  @screen sm {
+    .text-responsive-2xl {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
+  }
+
+  @screen md {
+    .text-responsive-2xl {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
   }
 
   .text-responsive-3xl {
-    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  @screen sm {
+    .text-responsive-3xl {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  @screen md {
+    .text-responsive-3xl {
+      font-size: 3rem;
+      line-height: 1;
+    }
+  }
+
+  @screen lg {
+    .text-responsive-3xl {
+      font-size: 3.75rem;
+      line-height: 1;
+    }
   }
 
   /* Mobile-optimized spacing */
   .space-responsive {
-    @apply space-y-4 sm:space-y-6 md:space-y-8;
+    gap: 1rem;
+  }
+
+  @screen sm {
+    .space-responsive {
+      gap: 1.5rem;
+    }
+  }
+
+  @screen md {
+    .space-responsive {
+      gap: 2rem;
+    }
   }
 
   /* Better mobile containers */
   .container-mobile {
-    @apply px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @screen sm {
+    .container-mobile {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @screen md {
+    .container-mobile {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  @screen lg {
+    .container-mobile {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+
+  @screen xl {
+    .container-mobile {
+      padding-left: 5rem;
+      padding-right: 5rem;
+    }
   }
 
   /* Mobile-friendly buttons */
   .btn-mobile {
-    @apply px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-3 text-sm sm:text-base min-h-[44px] flex items-center justify-center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @screen sm {
+    .btn-mobile {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  @screen md {
+    .btn-mobile {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
 
   /* Mobile-optimized cards */
   .card-mobile {
-    @apply p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-xl;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  @screen sm {
+    .card-mobile {
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+    }
+  }
+
+  @screen md {
+    .card-mobile {
+      padding: 2rem;
+    }
   }
 }

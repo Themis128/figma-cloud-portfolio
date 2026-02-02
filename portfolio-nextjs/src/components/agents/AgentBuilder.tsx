@@ -1,41 +1,41 @@
-import { ArrowLeft, Play, Save, Settings } from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import type { AgentConnection, AgentNode, AgentTemplate } from "@/data/agentTemplates";
-import { WorkflowBuilder } from "./WorkflowBuilder";
+import { ArrowLeft, Play, Save, Settings } from 'lucide-react'
+import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import type { AgentConnection, AgentNode, AgentTemplate } from '@/data/agentTemplates'
+import { WorkflowBuilder } from './WorkflowBuilder'
 
-const SIMULATION_TIMEOUT_MS = 2000;
+const SIMULATION_TIMEOUT_MS = 2000
 
 interface AgentBuilderProps {
-  template: AgentTemplate;
-  onSave: (agent: AgentTemplate) => void;
-  onCancel: () => void;
+  template: AgentTemplate
+  onSave: (agent: AgentTemplate) => void
+  onCancel: () => void
 }
 
 export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
-  const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` });
-  const [isRunning, setIsRunning] = useState(false);
+  const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` })
+  const [isRunning, setIsRunning] = useState(false)
 
   const handleWorkflowUpdate = (nodes: AgentNode[], connections: AgentConnection[]) => {
     setAgent((prev) => ({
       ...prev,
       workflow: { nodes, connections },
-    }));
-  };
+    }))
+  }
 
   const handleSave = () => {
-    onSave(agent);
-  };
+    onSave(agent)
+  }
 
   const handleRunAgent = async () => {
-    setIsRunning(true);
+    setIsRunning(true)
     // Simulate agent execution
-    await new Promise((resolve) => setTimeout(resolve, SIMULATION_TIMEOUT_MS));
-    setIsRunning(false);
-  };
+    await new Promise((resolve) => setTimeout(resolve, SIMULATION_TIMEOUT_MS))
+    setIsRunning(false)
+  }
 
   return (
     <div className='max-w-7xl mx-auto space-y-8'>
@@ -149,7 +149,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                   onChange={(e) =>
                     setAgent((prev) => ({
                       ...prev,
-                      category: e.target.value as AgentTemplate["category"],
+                      category: e.target.value as AgentTemplate['category'],
                     }))
                   }
                   className='w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-cyan-400'
@@ -220,5 +220,5 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
         </div>
       </div>
     </div>
-  );
+  )
 }

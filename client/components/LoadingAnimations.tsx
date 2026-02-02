@@ -1,29 +1,29 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion'
 
 // Animation constants
-const LOADING_SCALE_MIN = 1;
-const LOADING_SCALE_MAX = 1.2;
-const LOADING_OPACITY_MIN = 0.7;
-const LOADING_OPACITY_MAX = 1;
-const LOADING_ANIMATION_DURATION = 1.5;
-const LOADING_DELAY_INCREMENT = 0.2;
+const LOADING_SCALE_MIN = 1
+const LOADING_SCALE_MAX = 1.2
+const LOADING_OPACITY_MIN = 0.7
+const LOADING_OPACITY_MAX = 1
+const LOADING_ANIMATION_DURATION = 1.5
+const LOADING_DELAY_INCREMENT = 0.2
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg";
-  color?: string;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg'
+  color?: string
+  className?: string
 }
 
 export function LoadingSpinner({
-  size = "md",
-  color = "text-cyan-400",
-  className = "",
+  size = 'md',
+  color = 'text-cyan-400',
+  className = '',
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
-  };
+    sm: 'w-4 h-4',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8',
+  }
 
   return (
     <motion.div
@@ -32,7 +32,7 @@ export function LoadingSpinner({
       transition={{
         duration: 1,
         repeat: Infinity,
-        ease: "linear",
+        ease: 'linear',
       }}
     >
       <svg
@@ -58,31 +58,31 @@ export function LoadingSpinner({
         />
       </svg>
     </motion.div>
-  );
+  )
 }
 
 interface LoadingDotsProps {
-  size?: "sm" | "md" | "lg";
-  color?: string;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg'
+  color?: string
+  className?: string
 }
 
 export function LoadingDots({
-  size = "md",
-  color = "bg-cyan-400",
-  className = "",
+  size = 'md',
+  color = 'bg-cyan-400',
+  className = '',
 }: LoadingDotsProps) {
   const sizeClasses = {
-    sm: "w-1 h-1",
-    md: "w-2 h-2",
-    lg: "w-3 h-3",
-  };
+    sm: 'w-1 h-1',
+    md: 'w-2 h-2',
+    lg: 'w-3 h-3',
+  }
 
   const containerClasses = {
-    sm: "space-x-1",
-    md: "space-x-2",
-    lg: "space-x-3",
-  };
+    sm: 'space-x-1',
+    md: 'space-x-2',
+    lg: 'space-x-3',
+  }
 
   return (
     <div
@@ -102,20 +102,20 @@ export function LoadingDots({
             duration: LOADING_ANIMATION_DURATION,
             repeat: Infinity,
             delay: index * LOADING_DELAY_INCREMENT,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
       ))}
     </div>
-  );
+  )
 }
 
 interface PageLoaderProps {
-  message?: string;
-  className?: string;
+  message?: string
+  className?: string
 }
 
-export function PageLoader({ message = "Loading...", className = "" }: PageLoaderProps) {
+export function PageLoader({ message = 'Loading...', className = '' }: PageLoaderProps) {
   return (
     <motion.div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-navy-900/80 backdrop-blur-sm ${className}`}
@@ -140,5 +140,5 @@ export function PageLoader({ message = "Loading...", className = "" }: PageLoade
         </motion.p>
       </motion.div>
     </motion.div>
-  );
+  )
 }

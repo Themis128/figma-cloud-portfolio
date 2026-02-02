@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: 'Contact',
   description:
-    "Get in touch with Themistoklis Baltzakis for collaboration, consulting, or job opportunities.",
-};
+    'Get in touch with Themistoklis Baltzakis for collaboration, consulting, or job opportunities.',
+}
 
 export default function ContactPage() {
   return (
@@ -52,5 +52,5 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

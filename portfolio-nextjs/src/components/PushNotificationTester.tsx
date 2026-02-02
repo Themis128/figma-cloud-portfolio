@@ -1,177 +1,177 @@
-import { AlertCircle, Bell, CheckCircle, Send, Settings, Users, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { AlertCircle, Bell, CheckCircle, Send, Settings, Users, XCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { pushNotificationsApi } from "@/lib/api";
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { pushNotificationsApi } from '@/lib/api'
 
 interface NotificationResult {
-  success: boolean;
-  message: string;
-  totalSent?: number;
-  totalFailed?: number;
+  success: boolean
+  message: string
+  totalSent?: number
+  totalFailed?: number
   results?: Array<{
-    endpoint: string;
-    success: boolean;
-    statusCode?: number;
-    error?: string;
-  }>;
+    endpoint: string
+    success: boolean
+    statusCode?: number
+    error?: string
+  }>
 }
 
 export function PushNotificationTester() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<NotificationResult | null>(null);
-  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [result, setResult] = useState<NotificationResult | null>(null)
+  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(null)
   const [notificationPermission, setNotificationPermission] =
-    useState<NotificationPermission>("default");
+    useState<NotificationPermission>('default')
 
   // Custom notification fields
-  const [customTitle, setCustomTitle] = useState("Custom Test Notification");
+  const [customTitle, setCustomTitle] = useState('Custom Test Notification')
   const [customBody, setCustomBody] = useState(
-    "This is a custom push notification using Web Push API!",
-  );
-  const [customUrl, setCustomUrl] = useState("/about");
+    'This is a custom push notification using Web Push API!',
+  )
+  const [customUrl, setCustomUrl] = useState('/about')
 
   const [serviceWorkerStatus, setServiceWorkerStatus] = useState<{
-    registered: boolean;
-    active: boolean;
-    state?: string;
-  }>({ registered: false, active: false });
+    registered: boolean
+    active: boolean
+    state?: string
+  }>({ registered: false, active: false })
 
   // Check service worker status on mount
   useEffect(() => {
     const checkServiceWorker = async () => {
-      if ("serviceWorker" in navigator) {
+      if ('serviceWorker' in navigator) {
         try {
-          const registration = await navigator.serviceWorker.getRegistration();
+          const registration = await navigator.serviceWorker.getRegistration()
           if (registration) {
             setServiceWorkerStatus({
               registered: true,
               active: registration.active !== null,
               state: registration.active?.state,
-            });
+            })
           }
         } catch (_error) {}
       }
-    };
+    }
 
-    checkServiceWorker();
-  }, []);
+    checkServiceWorker()
+  }, [])
 
   const checkSubscriptions = async () => {
     try {
-      setIsLoading(true);
-      const data = await pushNotificationsApi.getSubscriptionCount();
-      setSubscriptionCount(data.subscriptions);
+      setIsLoading(true)
+      const data = await pushNotificationsApi.getSubscriptionCount()
+      setSubscriptionCount(data.subscriptions)
       setResult({
         success: true,
-        message: `Found ${data.subscriptions} active subscription${data.subscriptions !== 1 ? "s" : ""}`,
-      });
+        message: `Found ${data.subscriptions} active subscription${data.subscriptions !== 1 ? 's' : ''}`,
+      })
     } catch (error) {
       setResult({
         success: false,
-        message: `Error checking subscriptions: ${error instanceof Error ? error.message : "Unknown error"}`,
-      });
+        message: `Error checking subscriptions: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const sendTestNotification = async () => {
-    setIsLoading(true);
-    setResult(null);
+    setIsLoading(true)
+    setResult(null)
 
     try {
-      const data = await pushNotificationsApi.sendTestNotification();
+      const data = await pushNotificationsApi.sendTestNotification()
 
       setResult({
         success: true,
         message: `Test notification sent successfully!`,
         totalSent: data.totalSubscriptions,
         results: data.results,
-      });
+      })
     } catch (error: unknown) {
       setResult({
         success: false,
-        message: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-      });
+        message: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const sendCustomNotification = async () => {
-    setIsLoading(true);
-    setResult(null);
+    setIsLoading(true)
+    setResult(null)
 
     try {
       // Check if there are any subscriptions first
-      const subsData = await pushNotificationsApi.getSubscriptionCount();
+      const subsData = await pushNotificationsApi.getSubscriptionCount()
 
       if (!subsData.subscriptions || subsData.subscriptions === 0) {
         setResult({
           success: false,
-          message: "No subscriptions found. Subscribe first using the Notification Button.",
-        });
-        setIsLoading(false);
-        return;
+          message: 'No subscriptions found. Subscribe first using the Notification Button.',
+        })
+        setIsLoading(false)
+        return
       }
 
       // Send custom message to all stored subscriptions on server
       const data = await pushNotificationsApi.sendCustomNotification({
         title: customTitle,
         body: customBody,
-        icon: "/logo.jpg",
-        badge: "/logo.jpg",
+        icon: '/logo.jpg',
+        badge: '/logo.jpg',
         url: customUrl,
         data: {
           custom: true,
           timestamp: new Date().toISOString(),
         },
-      });
+      })
 
       setResult({
         success: true,
-        message: "Custom notification sent successfully!",
+        message: 'Custom notification sent successfully!',
         totalSent: data.totalSent,
         totalFailed: data.totalFailed,
         results: data.results,
-      });
+      })
     } catch (error) {
       setResult({
         success: false,
         message: `Network error: ${(error as Error).message}`,
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const requestNotificationPermission = async () => {
-    if ("Notification" in window) {
+    if ('Notification' in window) {
       try {
-        const permission = await Notification.requestPermission();
-        setNotificationPermission(permission);
+        const permission = await Notification.requestPermission()
+        setNotificationPermission(permission)
       } catch (_error) {}
     }
-  };
+  }
 
   const getPermissionStatus = () => {
     switch (notificationPermission) {
-      case "granted":
-        return { icon: CheckCircle, color: "text-green-500", text: "Granted" };
-      case "denied":
-        return { icon: XCircle, color: "text-red-500", text: "Denied" };
+      case 'granted':
+        return { icon: CheckCircle, color: 'text-green-500', text: 'Granted' }
+      case 'denied':
+        return { icon: XCircle, color: 'text-red-500', text: 'Denied' }
       default:
-        return { icon: AlertCircle, color: "text-yellow-500", text: "Not Requested" };
+        return { icon: AlertCircle, color: 'text-yellow-500', text: 'Not Requested' }
     }
-  };
+  }
 
-  const permissionStatus = getPermissionStatus();
-  const PermissionIcon = permissionStatus.icon;
+  const permissionStatus = getPermissionStatus()
+  const PermissionIcon = permissionStatus.icon
 
   return (
     <Card className='p-6 space-y-6'>
@@ -192,7 +192,7 @@ export function PushNotificationTester() {
           <span className='text-sm font-medium'>Notification Permission:</span>
           <span className={`text-sm ${permissionStatus.color}`}>{permissionStatus.text}</span>
         </div>
-        {notificationPermission !== "granted" && (
+        {notificationPermission !== 'granted' && (
           <Button onClick={requestNotificationPermission} size='sm' variant='outline'>
             Request Permission
           </Button>
@@ -216,8 +216,8 @@ export function PushNotificationTester() {
             {serviceWorkerStatus.registered
               ? serviceWorkerStatus.active
                 ? `Active (${serviceWorkerStatus.state})`
-                : "Registered (Inactive)"
-              : "Not Registered"}
+                : 'Registered (Inactive)'
+              : 'Not Registered'}
           </span>
         </div>
       </div>
@@ -228,7 +228,7 @@ export function PushNotificationTester() {
           <Users className='w-4 h-4 text-blue-500' />
           <span className='text-sm font-medium'>Active Subscriptions:</span>
           <span className='text-sm'>
-            {subscriptionCount !== null ? subscriptionCount : "Unknown"}
+            {subscriptionCount !== null ? subscriptionCount : 'Unknown'}
           </span>
         </div>
         <Button onClick={checkSubscriptions} disabled={isLoading} size='sm' variant='outline'>
@@ -244,7 +244,7 @@ export function PushNotificationTester() {
           className='flex items-center gap-2'
         >
           <Send className='w-4 h-4' />
-          {isLoading ? "Sending..." : "Send Test Notification"}
+          {isLoading ? 'Sending...' : 'Send Test Notification'}
         </Button>
 
         <Button
@@ -254,7 +254,7 @@ export function PushNotificationTester() {
           className='flex items-center gap-2'
         >
           <Settings className='w-4 h-4' />
-          {isLoading ? "Sending..." : "Send Custom Notification"}
+          {isLoading ? 'Sending...' : 'Send Custom Notification'}
         </Button>
       </div>
 
@@ -304,8 +304,8 @@ export function PushNotificationTester() {
         <div
           className={`p-4 rounded-lg border ${
             result.success
-              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-              : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+              : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
           }`}
         >
           <div className='flex items-start gap-3'>
@@ -332,8 +332,8 @@ export function PushNotificationTester() {
                         key={endpointResult.endpoint}
                         className={`text-xs p-2 rounded flex items-center gap-2 ${
                           endpointResult.success
-                            ? "bg-green-100 dark:bg-green-900/30"
-                            : "bg-red-100 dark:bg-red-900/30"
+                            ? 'bg-green-100 dark:bg-green-900/30'
+                            : 'bg-red-100 dark:bg-red-900/30'
                         }`}
                       >
                         {endpointResult.success ? (
@@ -342,7 +342,7 @@ export function PushNotificationTester() {
                           <XCircle className='w-3 h-3 text-red-600' />
                         )}
                         <span className='truncate flex-1'>
-                          {endpointResult.endpoint.split("/").pop()}
+                          {endpointResult.endpoint.split('/').pop()}
                         </span>
                         {endpointResult.statusCode && (
                           <span className='text-muted-foreground'>{endpointResult.statusCode}</span>
@@ -367,7 +367,7 @@ export function PushNotificationTester() {
         <p className='font-medium mb-2'>📋 Requirements for notifications to appear:</p>
         <ul className='space-y-1 ml-4'>
           <li className='flex items-center gap-2'>
-            {notificationPermission === "granted" ? (
+            {notificationPermission === 'granted' ? (
               <CheckCircle className='w-3 h-3 text-green-500' />
             ) : (
               <XCircle className='w-3 h-3 text-red-500' />
@@ -401,5 +401,5 @@ export function PushNotificationTester() {
         </ul>
       </div>
     </Card>
-  );
+  )
 }

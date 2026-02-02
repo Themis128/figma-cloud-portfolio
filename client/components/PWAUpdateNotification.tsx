@@ -1,67 +1,67 @@
-import { RefreshCw, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { RefreshCw, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 
 export function PWAUpdateNotification() {
-  const [showUpdate, setShowUpdate] = useState(false);
-  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
+  const [showUpdate, setShowUpdate] = useState(false)
+  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null)
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then((reg) => {
-        setRegistration(reg);
+        setRegistration(reg)
 
         // Listen for updates
-        reg.addEventListener("updatefound", () => {
-          const newWorker = reg.installing;
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing
           if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
-              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 // New version available
-                setShowUpdate(true);
+                setShowUpdate(true)
               }
-            });
+            })
           }
-        });
-      });
+        })
+      })
 
       // Also check for waiting service worker on load
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         for (const reg of registrations) {
           if (reg.waiting) {
-            setRegistration(reg);
-            setShowUpdate(true);
-            break;
+            setRegistration(reg)
+            setShowUpdate(true)
+            break
           }
         }
-      });
+      })
     }
-  }, []);
+  }, [])
 
   const handleUpdate = () => {
     if (registration?.waiting) {
       // Tell the waiting service worker to skip waiting
-      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' })
 
       // Listen for the controlling change
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
         // Reload the page to get the new version
-        window.location.reload();
-      });
+        window.location.reload()
+      })
     }
-    setShowUpdate(false);
-  };
+    setShowUpdate(false)
+  }
 
   const handleDismiss = () => {
-    setShowUpdate(false);
+    setShowUpdate(false)
     // Remember dismissal for this session
-    sessionStorage.setItem("pwa-update-dismissed", "true");
-  };
+    sessionStorage.setItem('pwa-update-dismissed', 'true')
+  }
 
   // Don't show if dismissed in this session
-  if (!showUpdate || sessionStorage.getItem("pwa-update-dismissed")) {
-    return null;
+  if (!showUpdate || sessionStorage.getItem('pwa-update-dismissed')) {
+    return null
   }
 
   return (
@@ -107,5 +107,5 @@ export function PWAUpdateNotification() {
         </div>
       </div>
     </div>
-  );
+  )
 }

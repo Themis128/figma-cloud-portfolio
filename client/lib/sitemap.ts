@@ -1,182 +1,182 @@
-import type { metadataConfigs } from "@/components/DynamicMetadata";
+import type { metadataConfigs } from '@/components/DynamicMetadata'
 
 interface SitemapEntry {
-  url: string;
-  lastModified: string;
-  changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
-  priority: number;
+  url: string
+  lastModified: string
+  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
+  priority: number
 }
 
 interface Project {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  publishedAt: string;
+  id: string
+  slug: string
+  title: string
+  description: string
+  publishedAt: string
 }
 
 // Static pages configuration
 const staticPages: SitemapEntry[] = [
   {
-    url: "/",
+    url: '/',
     lastModified: new Date().toISOString(),
-    changeFrequency: "weekly",
+    changeFrequency: 'weekly',
     priority: 1.0,
   },
   {
-    url: "/about",
+    url: '/about',
     lastModified: new Date().toISOString(),
-    changeFrequency: "monthly",
+    changeFrequency: 'monthly',
     priority: 0.8,
   },
   {
-    url: "/projects",
+    url: '/projects',
     lastModified: new Date().toISOString(),
-    changeFrequency: "weekly",
+    changeFrequency: 'weekly',
     priority: 0.9,
   },
   {
-    url: "/resume",
+    url: '/resume',
     lastModified: new Date().toISOString(),
-    changeFrequency: "monthly",
+    changeFrequency: 'monthly',
     priority: 0.7,
   },
   {
-    url: "/contact",
+    url: '/contact',
     lastModified: new Date().toISOString(),
-    changeFrequency: "monthly",
+    changeFrequency: 'monthly',
     priority: 0.8,
   },
   {
-    url: "/performance",
+    url: '/performance',
     lastModified: new Date().toISOString(),
-    changeFrequency: "monthly",
+    changeFrequency: 'monthly',
     priority: 0.6,
   },
   {
-    url: "/settings",
+    url: '/settings',
     lastModified: new Date().toISOString(),
-    changeFrequency: "monthly",
+    changeFrequency: 'monthly',
     priority: 0.5,
   },
   {
-    url: "/agents",
+    url: '/agents',
     lastModified: new Date().toISOString(),
-    changeFrequency: "monthly",
+    changeFrequency: 'monthly',
     priority: 0.6,
   },
-];
+]
 
 // Sample projects for dynamic sitemap generation
 const sampleProjects: Project[] = [
   {
-    id: "1",
-    slug: "ecommerce-dashboard",
-    title: "E-Commerce Dashboard",
+    id: '1',
+    slug: 'ecommerce-dashboard',
+    title: 'E-Commerce Dashboard',
     description:
-      "A comprehensive admin dashboard for e-commerce platforms with real-time analytics and inventory management.",
-    publishedAt: "2024-03-15T10:00:00Z",
+      'A comprehensive admin dashboard for e-commerce platforms with real-time analytics and inventory management.',
+    publishedAt: '2024-03-15T10:00:00Z',
   },
   {
-    id: "2",
-    slug: "ai-content-generator",
-    title: "AI Content Generator",
+    id: '2',
+    slug: 'ai-content-generator',
+    title: 'AI Content Generator',
     description:
-      "AI-powered content generation tool that creates blog posts, social media content, and marketing copy.",
-    publishedAt: "2024-02-20T10:00:00Z",
+      'AI-powered content generation tool that creates blog posts, social media content, and marketing copy.',
+    publishedAt: '2024-02-20T10:00:00Z',
   },
   {
-    id: "3",
-    slug: "mobile-fitness-tracker",
-    title: "Mobile Fitness Tracker",
+    id: '3',
+    slug: 'mobile-fitness-tracker',
+    title: 'Mobile Fitness Tracker',
     description:
-      "Cross-platform mobile application for tracking fitness activities, nutrition, and health metrics.",
-    publishedAt: "2023-12-10T10:00:00Z",
+      'Cross-platform mobile application for tracking fitness activities, nutrition, and health metrics.',
+    publishedAt: '2023-12-10T10:00:00Z',
   },
   {
-    id: "4",
-    slug: "code-collaboration-tool",
-    title: "Code Collaboration Tool",
+    id: '4',
+    slug: 'code-collaboration-tool',
+    title: 'Code Collaboration Tool',
     description:
-      "Real-time collaborative code editor with version control integration and team management features.",
-    publishedAt: "2023-10-05T10:00:00Z",
+      'Real-time collaborative code editor with version control integration and team management features.',
+    publishedAt: '2023-10-05T10:00:00Z',
   },
   {
-    id: "5",
-    slug: "3d-portfolio-showcase",
-    title: "3D Portfolio Showcase",
+    id: '5',
+    slug: '3d-portfolio-showcase',
+    title: '3D Portfolio Showcase',
     description:
-      "Interactive 3D portfolio website built with Three.js and React, showcasing projects in an immersive environment.",
-    publishedAt: "2024-01-25T10:00:00Z",
+      'Interactive 3D portfolio website built with Three.js and React, showcasing projects in an immersive environment.',
+    publishedAt: '2024-01-25T10:00:00Z',
   },
   {
-    id: "6",
-    slug: "task-management-game",
-    title: "Task Management Game",
+    id: '6',
+    slug: 'task-management-game',
+    title: 'Task Management Game',
     description:
-      "Gamified task management application that turns productivity into an RPG experience.",
-    publishedAt: "2023-08-15T10:00:00Z",
+      'Gamified task management application that turns productivity into an RPG experience.',
+    publishedAt: '2023-08-15T10:00:00Z',
   },
-];
+]
 
 export class SitemapGenerator {
-  private baseURL: string;
+  private baseURL: string
 
-  constructor(baseURL = "") {
-    this.baseURL = baseURL || this.getBaseURL();
+  constructor(baseURL = '') {
+    this.baseURL = baseURL || this.getBaseURL()
   }
 
   /**
    * Get the base URL (public getter for testing)
    */
   getBaseURL(): string {
-    if (typeof window !== "undefined") {
-      return window.location.origin;
+    if (typeof window !== 'undefined') {
+      return window.location.origin
     }
-    return "https://www.baltzakisthemis.com";
+    return 'https://www.baltzakisthemis.com'
   }
 
   /**
    * Get the current base URL
    */
   get baseUrl(): string {
-    return this.baseURL;
+    return this.baseURL
   }
 
   /**
    * Generate sitemap entries for all pages
    */
   generateSitemapEntries(): SitemapEntry[] {
-    const baseURL = this.baseURL;
+    const baseURL = this.baseURL
 
     // Static pages
     const staticSitemap = staticPages.map((page) => ({
       ...page,
       url: `${baseURL}${page.url}`,
-    }));
+    }))
 
     // Dynamic project pages
     const projectSitemap = sampleProjects.map((project) => ({
       url: `${baseURL}/projects/${project.slug}`,
       lastModified: project.publishedAt,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.7,
-    }));
+    }))
 
-    return [...staticSitemap, ...projectSitemap];
+    return [...staticSitemap, ...projectSitemap]
   }
 
   /**
    * Generate XML sitemap string
    */
   generateXMLSitemap(): string {
-    const entries = this.generateSitemapEntries();
+    const entries = this.generateSitemapEntries()
 
     const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">`;
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">`
 
     const xmlEntries = entries
       .map(
@@ -188,12 +188,12 @@ export class SitemapGenerator {
     <priority>${entry.priority.toFixed(1)}</priority>
   </url>`,
       )
-      .join("");
+      .join('')
 
     const xmlFooter = `
-</urlset>`;
+</urlset>`
 
-    return xmlHeader + xmlEntries + xmlFooter;
+    return xmlHeader + xmlEntries + xmlFooter
   }
 
   /**
@@ -212,7 +212,7 @@ export class SitemapGenerator {
     <category>Projects</category>
   </item>`,
       )
-      .join("");
+      .join('')
 
     const rssHeader = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -224,13 +224,13 @@ export class SitemapGenerator {
     <language>en-us</language>
     <pubDate>${new Date().toUTCString()}</pubDate>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>Portfolio Sitemap Generator</generator>`;
+    <generator>Portfolio Sitemap Generator</generator>`
 
     const rssFooter = `
   </channel>
-</rss>`;
+</rss>`
 
-    return rssHeader + entries + rssFooter;
+    return rssHeader + entries + rssFooter
   }
 
   /**
@@ -267,7 +267,7 @@ Allow: /settings
 Allow: /agents
 
 # Allow project pages
-${sampleProjects.map((project) => `Allow: /projects/${project.slug}`).join("\n")}
+${sampleProjects.map((project) => `Allow: /projects/${project.slug}`).join('\n')}
 
 # Allow resources
 Allow: /favicon.ico
@@ -275,37 +275,37 @@ Allow: /logo.svg
 Allow: /manifest.webmanifest
 Allow: /sw.js
 Allow: /global.css
-Allow: /resume.pdf`;
+Allow: /resume.pdf`
   }
 
   /**
    * Generate robots meta tags for individual pages
    */
   generateRobotsMetaTags(pageType: keyof typeof metadataConfigs): string {
-    let robotsContent = "index, follow";
+    let robotsContent = 'index, follow'
 
     // Adjust robots directives based on page type
     switch (pageType) {
-      case "home":
-        robotsContent = "index, follow, max-image-preview:large";
-        break;
-      case "about":
-        robotsContent = "index, follow, max-snippet:-1, max-image-preview:large";
-        break;
-      case "projects":
-        robotsContent = "index, follow, max-snippet:-1, max-image-preview:large";
-        break;
-      case "resume":
-        robotsContent = "index, follow, max-snippet:-1";
-        break;
-      case "contact":
-        robotsContent = "index, follow, max-snippet:-1";
-        break;
+      case 'home':
+        robotsContent = 'index, follow, max-image-preview:large'
+        break
+      case 'about':
+        robotsContent = 'index, follow, max-snippet:-1, max-image-preview:large'
+        break
+      case 'projects':
+        robotsContent = 'index, follow, max-snippet:-1, max-image-preview:large'
+        break
+      case 'resume':
+        robotsContent = 'index, follow, max-snippet:-1'
+        break
+      case 'contact':
+        robotsContent = 'index, follow, max-snippet:-1'
+        break
       default:
-        robotsContent = "index, follow";
+        robotsContent = 'index, follow'
     }
 
-    return robotsContent;
+    return robotsContent
   }
 
   /**
@@ -313,8 +313,8 @@ Allow: /resume.pdf`;
    */
   generateCanonicalURL(path: string): string {
     // Remove trailing slashes and ensure proper formatting
-    const cleanPath = path.replace(/\/+$/, "");
-    return `${this.baseURL}${cleanPath || "/"}`;
+    const cleanPath = path.replace(/\/+$/, '')
+    return `${this.baseURL}${cleanPath || '/'}`
   }
 
   /**
@@ -322,13 +322,13 @@ Allow: /resume.pdf`;
    */
   generateHreflangTags(currentPath: string): string[] {
     const languages = [
-      { lang: "en", url: `${this.baseURL}${currentPath}` },
-      { lang: "el", url: `${this.baseURL}/el${currentPath}` },
-    ];
+      { lang: 'en', url: `${this.baseURL}${currentPath}` },
+      { lang: 'el', url: `${this.baseURL}/el${currentPath}` },
+    ]
 
     return languages.map(
       (lang) => `<link rel="alternate" hreflang="${lang.lang}" href="${lang.url}" />`,
-    );
+    )
   }
 
   /**
@@ -336,43 +336,43 @@ Allow: /resume.pdf`;
    */
   private escapeXml(str: string): string {
     return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
   }
 
   /**
    * Download sitemap as XML file
    */
   downloadSitemap(): void {
-    const sitemap = this.generateXMLSitemap();
-    const blob = new Blob([sitemap], { type: "application/xml" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "sitemap.xml";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const sitemap = this.generateXMLSitemap()
+    const blob = new Blob([sitemap], { type: 'application/xml' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'sitemap.xml'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   /**
    * Download robots.txt file
    */
   downloadRobotsTxt(): void {
-    const robotsTxt = this.generateRobotsTxt();
-    const blob = new Blob([robotsTxt], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "robots.txt";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const robotsTxt = this.generateRobotsTxt()
+    const blob = new Blob([robotsTxt], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'robots.txt'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   /**
@@ -381,29 +381,29 @@ Allow: /resume.pdf`;
   submitToSearchEngines(): void {
     // biome-ignore lint/suspicious/noConsole: This method logs submission URLs for testing purposes
     console.log(
-      "Submit to Google:",
+      'Submit to Google:',
       `https://www.google.com/webmasters/sitemaps/ping?sitemap=${encodeURIComponent(`${this.baseURL}/sitemap.xml`)}`,
-    );
+    )
     // biome-ignore lint/suspicious/noConsole: This method logs submission URLs for testing purposes
     console.log(
-      "Submit to Bing:",
+      'Submit to Bing:',
       `https://www.bing.com/webmaster/ping.aspx?siteMap=${encodeURIComponent(`${this.baseURL}/sitemap.xml`)}`,
-    );
+    )
     // biome-ignore lint/suspicious/noConsole: This method logs submission URLs for testing purposes
     console.log(
-      "Submit to Yandex:",
+      'Submit to Yandex:',
       `https://webmaster.yandex.com/site/map.xml?host=${encodeURIComponent(this.baseURL)}`,
-    );
+    )
   }
 }
 
 // Export singleton instance
-export const sitemapGenerator = new SitemapGenerator();
+export const sitemapGenerator = new SitemapGenerator()
 
 // Utility functions for easy access
-export const generateSitemap = () => sitemapGenerator.generateXMLSitemap();
-export const generateRobotsTxt = () => sitemapGenerator.generateRobotsTxt();
-export const generateRSSFeed = () => sitemapGenerator.generateRSSFeed();
+export const generateSitemap = () => sitemapGenerator.generateXMLSitemap()
+export const generateRobotsTxt = () => sitemapGenerator.generateRobotsTxt()
+export const generateRSSFeed = () => sitemapGenerator.generateRSSFeed()
 export const getRobotsMetaTags = (pageType: keyof typeof metadataConfigs) =>
-  sitemapGenerator.generateRobotsMetaTags(pageType);
-export const getCanonicalURL = (path: string) => sitemapGenerator.generateCanonicalURL(path);
+  sitemapGenerator.generateRobotsMetaTags(pageType)
+export const getCanonicalURL = (path: string) => sitemapGenerator.generateCanonicalURL(path)

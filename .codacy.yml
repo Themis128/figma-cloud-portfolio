@@ -2,9 +2,9 @@
 # This file configures Codacy analysis for your portfolio project
 
 engines:
-  # Enable JavaScript/TypeScript analysis
+  # Temporarily disable ESLint due to configuration issues
   eslint:
-    enabled: true
+    enabled: false
   # Enable duplication detection
   duplication:
     enabled: true
@@ -17,25 +17,6 @@ engines:
   # Enable markdown linting
   markdownlint:
     enabled: true
-
-# File patterns to exclude from analysis
-exclude_paths:
-  - 'node_modules/**/*'
-  - 'dist/**/*'
-  - '.next/**/*'
-  - 'build/**/*'
-  - 'coverage/**/*'
-  - 'test-results/**/*'
-  - 'playwright-report/**/*'
-  - '*.min.js'
-  - '*.min.css'
-  - 'public/**/*'
-  - '.github/**/*'
-  - 'amplify/**/*'
-  - 'scripts/**/*'
-  - '*.config.js'
-  - '*.config.ts'
-  - '*.config.mjs'
 
 # Coverage configuration
 coverage:

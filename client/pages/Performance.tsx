@@ -1,66 +1,66 @@
-import { Activity, ArrowLeft, BarChart3, Cpu, HardDrive, Network, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Activity, ArrowLeft, BarChart3, Cpu, HardDrive, Network, Zap } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-import Navigation from "@/components/Navigation";
-import { PerformanceDashboard } from "@/components/PerformanceDashboard";
-import { PerformanceTester } from "@/components/PerformanceTester";
-import { PushNotificationTester } from "@/components/PushNotificationTester";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import Navigation from '@/components/Navigation'
+import { PerformanceDashboard } from '@/components/PerformanceDashboard'
+import { PerformanceTester } from '@/components/PerformanceTester'
+import { PushNotificationTester } from '@/components/PushNotificationTester'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 // Performance simulation constants
-const MEMORY_SIMULATION_BASE_MB = 20;
-const MEMORY_SIMULATION_RANGE_MB = 100;
-const CPU_SIMULATION_BASE_PERCENT = 5;
-const CPU_SIMULATION_RANGE_PERCENT = 30;
-const NETWORK_SIMULATION_BASE_REQUESTS = 10;
-const NETWORK_SIMULATION_RANGE_REQUESTS = 50;
-const METRICS_UPDATE_INTERVAL_MS = 2000;
+const MEMORY_SIMULATION_BASE_MB = 20
+const MEMORY_SIMULATION_RANGE_MB = 100
+const CPU_SIMULATION_BASE_PERCENT = 5
+const CPU_SIMULATION_RANGE_PERCENT = 30
+const NETWORK_SIMULATION_BASE_REQUESTS = 10
+const NETWORK_SIMULATION_RANGE_REQUESTS = 50
+const METRICS_UPDATE_INTERVAL_MS = 2000
 
 // Bundle and performance constants
-const DEFAULT_BUNDLE_SIZE_MB = 2.4;
-const DEFAULT_LIGHTHOUSE_SCORE = 92;
-const BYTES_TO_MB_CONVERSION = 1048576;
-const FALLBACK_MEMORY_LIMIT_MB = 200;
-const PERCENTAGE_MULTIPLIER = 100;
-const BUNDLE_SIZE_TARGET_MB = 5;
-const BUNDLE_SIZE_OPTIMAL_MB = 2.5;
+const DEFAULT_BUNDLE_SIZE_MB = 2.4
+const DEFAULT_LIGHTHOUSE_SCORE = 92
+const BYTES_TO_MB_CONVERSION = 1048576
+const FALLBACK_MEMORY_LIMIT_MB = 200
+const PERCENTAGE_MULTIPLIER = 100
+const BUNDLE_SIZE_TARGET_MB = 5
+const BUNDLE_SIZE_OPTIMAL_MB = 2.5
 
 // Lighthouse category scores
-const LIGHTHOUSE_ACCESSIBILITY_SCORE = 95;
-const LIGHTHOUSE_BEST_PRACTICES_SCORE = 92;
-const LIGHTHOUSE_SEO_SCORE = 98;
-const LIGHTHOUSE_PWA_SCORE = 90;
+const LIGHTHOUSE_ACCESSIBILITY_SCORE = 95
+const LIGHTHOUSE_BEST_PRACTICES_SCORE = 92
+const LIGHTHOUSE_SEO_SCORE = 98
+const LIGHTHOUSE_PWA_SCORE = 90
 
 // Display constants
-const DECIMAL_PLACES_DISPLAY = 1;
+const DECIMAL_PLACES_DISPLAY = 1
 
 // Performance test constants
-const PERFORMANCE_TEST_DELAY_MS = 2000;
-const HIGH_MEMORY_THRESHOLD_PERCENT = 80;
-const HIGH_CPU_THRESHOLD_PERCENT = 50;
-const LIGHTHOUSE_OPTIMAL_SCORE = 90;
+const PERFORMANCE_TEST_DELAY_MS = 2000
+const HIGH_MEMORY_THRESHOLD_PERCENT = 80
+const HIGH_CPU_THRESHOLD_PERCENT = 50
+const LIGHTHOUSE_OPTIMAL_SCORE = 90
 
 interface PerformanceMetrics {
-  memoryUsage: number;
-  memoryLimit: number;
-  cpuUsage: number;
-  networkRequests: number;
-  bundleSize: number;
-  lighthouseScore: number;
+  memoryUsage: number
+  memoryLimit: number
+  cpuUsage: number
+  networkRequests: number
+  bundleSize: number
+  lighthouseScore: number
 }
 
 interface PerformanceTestResults {
-  timestamp: string;
-  duration: number;
-  memoryUsage: number;
-  cpuUsage: number;
-  networkRequests: number;
-  lighthouseScore: number;
-  coreWebVitals: Record<string, string>;
-  recommendations: string[];
+  timestamp: string
+  duration: number
+  memoryUsage: number
+  cpuUsage: number
+  networkRequests: number
+  lighthouseScore: number
+  coreWebVitals: Record<string, string>
+  recommendations: string[]
 }
 
 export default function Performance() {
@@ -71,11 +71,11 @@ export default function Performance() {
     networkRequests: 0,
     bundleSize: 0,
     lighthouseScore: 0,
-  });
+  })
 
-  const [isMonitoring, setIsMonitoring] = useState(false);
-  const [isRunningTest, setIsRunningTest] = useState(false);
-  const [testResults, setTestResults] = useState<PerformanceTestResults | null>(null);
+  const [isMonitoring, setIsMonitoring] = useState(false)
+  const [isRunningTest, setIsRunningTest] = useState(false)
+  const [testResults, setTestResults] = useState<PerformanceTestResults | null>(null)
 
   useEffect(() => {
     // Simulate real-time metrics updates
@@ -88,12 +88,12 @@ export default function Performance() {
           networkRequests:
             Math.floor(Math.random() * NETWORK_SIMULATION_RANGE_REQUESTS) +
             NETWORK_SIMULATION_BASE_REQUESTS, // 10-60 requests
-        }));
+        }))
       }
-    }, METRICS_UPDATE_INTERVAL_MS);
+    }, METRICS_UPDATE_INTERVAL_MS)
 
-    return () => clearInterval(interval);
-  }, [isMonitoring]);
+    return () => clearInterval(interval)
+  }, [isMonitoring])
 
   // Get bundle size (simulated)
   useEffect(() => {
@@ -102,31 +102,31 @@ export default function Performance() {
       ...prev,
       bundleSize: DEFAULT_BUNDLE_SIZE_MB, // MB
       lighthouseScore: DEFAULT_LIGHTHOUSE_SCORE, // Score out of 100
-    }));
-  }, []);
+    }))
+  }, [])
 
   const getMemoryUsage = () => {
-    if (typeof performance !== "undefined" && "memory" in performance) {
+    if (typeof performance !== 'undefined' && 'memory' in performance) {
       const perfMemory = (
         performance as typeof performance & {
-          memory: { usedJSHeapSize: number; jsHeapSizeLimit: number };
+          memory: { usedJSHeapSize: number; jsHeapSizeLimit: number }
         }
-      ).memory;
+      ).memory
       return {
         used: Math.round(perfMemory.usedJSHeapSize / BYTES_TO_MB_CONVERSION), // MB
         limit: Math.round(perfMemory.jsHeapSizeLimit / BYTES_TO_MB_CONVERSION), // MB
-      };
+      }
     }
-    return { used: metrics.memoryUsage, limit: FALLBACK_MEMORY_LIMIT_MB };
-  };
+    return { used: metrics.memoryUsage, limit: FALLBACK_MEMORY_LIMIT_MB }
+  }
 
-  const memory = getMemoryUsage();
-  const memoryPercentage = (memory.used / memory.limit) * PERCENTAGE_MULTIPLIER;
+  const memory = getMemoryUsage()
+  const memoryPercentage = (memory.used / memory.limit) * PERCENTAGE_MULTIPLIER
 
   // Performance test handler
   const handleRunPerformanceTest = async () => {
-    setIsRunningTest(true);
-    const startTime = Date.now();
+    setIsRunningTest(true)
+    const startTime = Date.now()
 
     try {
       // Simulate performance testing by measuring current metrics
@@ -135,36 +135,36 @@ export default function Performance() {
         cpuUsage: metrics.cpuUsage,
         networkRequests: metrics.networkRequests,
         lighthouseScore: metrics.lighthouseScore,
-      };
+      }
 
       // Wait for Core Web Vitals to be measured (simulate)
-      await new Promise((resolve) => setTimeout(resolve, PERFORMANCE_TEST_DELAY_MS));
+      await new Promise((resolve) => setTimeout(resolve, PERFORMANCE_TEST_DELAY_MS))
 
       // Get current web vitals
-      const coreWebVitals: Record<string, string> = {};
-      if (typeof window !== "undefined" && window.webVitalsMetrics) {
+      const coreWebVitals: Record<string, string> = {}
+      if (typeof window !== 'undefined' && window.webVitalsMetrics) {
         window.webVitalsMetrics.forEach((metric: { name: string; value: number }) => {
-          coreWebVitals[metric.name] = `${metric.value}${metric.name.includes("CLS") ? "" : "ms"}`;
-        });
+          coreWebVitals[metric.name] = `${metric.value}${metric.name.includes('CLS') ? '' : 'ms'}`
+        })
       }
 
       // Generate recommendations based on metrics
-      const recommendations: string[] = [];
+      const recommendations: string[] = []
       if (memoryPercentage > HIGH_MEMORY_THRESHOLD_PERCENT) {
         recommendations.push(
-          "High memory usage detected. Consider optimizing memory-intensive operations.",
-        );
+          'High memory usage detected. Consider optimizing memory-intensive operations.',
+        )
       }
       if (metrics.cpuUsage > HIGH_CPU_THRESHOLD_PERCENT) {
-        recommendations.push("High CPU usage detected. Consider optimizing JavaScript execution.");
+        recommendations.push('High CPU usage detected. Consider optimizing JavaScript execution.')
       }
       if (metrics.bundleSize > BUNDLE_SIZE_OPTIMAL_MB) {
         recommendations.push(
-          "Bundle size is above optimal. Consider code splitting and tree shaking.",
-        );
+          'Bundle size is above optimal. Consider code splitting and tree shaking.',
+        )
       }
       if (metrics.lighthouseScore < LIGHTHOUSE_OPTIMAL_SCORE) {
-        recommendations.push("Lighthouse score could be improved. Focus on Core Web Vitals.");
+        recommendations.push('Lighthouse score could be improved. Focus on Core Web Vitals.')
       }
 
       const results: PerformanceTestResults = {
@@ -173,26 +173,26 @@ export default function Performance() {
         ...testMetrics,
         coreWebVitals,
         recommendations,
-      };
+      }
 
-      setTestResults(results);
+      setTestResults(results)
     } catch {
       // Handle error silently for now
     } finally {
-      setIsRunningTest(false);
+      setIsRunningTest(false)
     }
-  };
+  }
 
   // Report generation handler
   const handleGenerateReport = async () => {
     if (!testResults) {
-      alert("Please run a performance test first.");
-      return;
+      alert('Please run a performance test first.')
+      return
     }
 
     try {
       const reportData = {
-        title: "Performance Test Report",
+        title: 'Performance Test Report',
         generatedAt: new Date().toISOString(),
         testResults,
         systemInfo: {
@@ -200,25 +200,25 @@ export default function Performance() {
           url: window.location.href,
           timestamp: new Date().toISOString(),
         },
-      };
+      }
 
       // Create and download the report
-      const reportJson = JSON.stringify(reportData, null, 2);
-      const blob = new Blob([reportJson], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
+      const reportJson = JSON.stringify(reportData, null, 2)
+      const blob = new Blob([reportJson], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `performance-report-${new Date().toISOString().split("T")[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `performance-report-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
 
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url)
     } catch {
       // Handle error silently for now
     }
-  };
+  }
 
   return (
     <div
@@ -316,11 +316,11 @@ export default function Performance() {
             <div className='flex flex-wrap gap-4'>
               <Button
                 onClick={() => setIsMonitoring(!isMonitoring)}
-                variant={isMonitoring ? "destructive" : "default"}
+                variant={isMonitoring ? 'destructive' : 'default'}
                 className='flex items-center gap-2'
               >
                 <Activity className='w-4 h-4' />
-                {isMonitoring ? "Stop Monitoring" : "Start Real-time Monitoring"}
+                {isMonitoring ? 'Stop Monitoring' : 'Start Real-time Monitoring'}
               </Button>
               <Button
                 variant='outline'
@@ -329,7 +329,7 @@ export default function Performance() {
                 disabled={isRunningTest}
               >
                 <Zap className='w-4 h-4' />
-                {isRunningTest ? "Running Test..." : "Run Performance Test"}
+                {isRunningTest ? 'Running Test...' : 'Run Performance Test'}
               </Button>
               <Button
                 variant='outline'
@@ -500,5 +500,5 @@ export default function Performance() {
         </div>
       </div>
     </div>
-  );
+  )
 }

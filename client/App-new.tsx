@@ -1,30 +1,30 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { lazy, Suspense } from "react";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "sonner";
-import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
-import AIAssistant from "@/components/AIAssistant";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-import { PageLoader } from "@/components/LoadingAnimations";
-import { PerformanceMonitor } from "@/components/PerformanceMonitor";
-import PerformanceOptimizer from "@/components/PerformanceOptimizer";
-import { PWAInstallButton } from "@/components/PWAInstallButton";
-import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
-import ResourcePreloader from "@/components/ResourcePreloader";
-import { PersonStructuredData, WebsiteStructuredData } from "@/components/StructuredData";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { useViewTransition } from "@/components/ViewTransitionWrapper";
-import VoiceCommandButton from "@/components/VoiceCommandButton";
-import Index from "./pages/Index";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React, { lazy, Suspense } from 'react'
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Toaster as Sonner } from 'sonner'
+import AccessibilityEnhancer from '@/components/AccessibilityEnhancer'
+import AIAssistant from '@/components/AIAssistant'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
+import { PageLoader } from '@/components/LoadingAnimations'
+import { PerformanceMonitor } from '@/components/PerformanceMonitor'
+import PerformanceOptimizer from '@/components/PerformanceOptimizer'
+import { PWAInstallButton } from '@/components/PWAInstallButton'
+import { PWAUpdateNotification } from '@/components/PWAUpdateNotification'
+import ResourcePreloader from '@/components/ResourcePreloader'
+import { PersonStructuredData, WebsiteStructuredData } from '@/components/StructuredData'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { Toaster } from '@/components/ui/toaster'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { useViewTransition } from '@/components/ViewTransitionWrapper'
+import VoiceCommandButton from '@/components/VoiceCommandButton'
+import Index from './pages/Index'
 
 // Initialize View Transition styles
 const initViewTransitionStyles = () => {
-  if (typeof document !== "undefined") {
-    const style = document.createElement("style");
+  if (typeof document !== 'undefined') {
+    const style = document.createElement('style')
     style.textContent = `
       /* View Transition animations */
       ::view-transition-old(root) {
@@ -91,57 +91,56 @@ const initViewTransitionStyles = () => {
           opacity: 1;
         }
       }
-    `;
-    document.head.appendChild(style);
+    `
+    document.head.appendChild(style)
   }
-};
+}
 
 // Initialize styles on component mount
-initViewTransitionStyles();
+initViewTransitionStyles()
 
 // Import Index directly (no lazy loading for main page)
-import Projects from "./pages/Projects";
+import Projects from './pages/Projects'
 
 // Lazy load other pages for code splitting with preloading
-const About = lazy(() => import("./pages/About"));
-const Product = lazy(() => import("./pages/Product"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Performance = lazy(() => import("./pages/Performance"));
-const Resume = lazy(() => import("./pages/Resume"));
-const Settings = lazy(() => import("./pages/Settings"));
-const Agents = lazy(() => import("./pages/Agents"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const About = lazy(() => import('./pages/About'))
+const Product = lazy(() => import('./pages/Product'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Performance = lazy(() => import('./pages/Performance'))
+const Resume = lazy(() => import('./pages/Resume'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Agents = lazy(() => import('./pages/Agents'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Preload critical pages on idle
-if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
   requestIdleCallback(() => {
     // Preload critical pages after initial render
-    import("./pages/About");
-    import("./pages/Contact");
-    import("./pages/Resume");
-  });
+    import('./pages/About')
+    import('./pages/Contact')
+    import('./pages/Resume')
+  })
 }
 
 // Route transition wrapper component
 const RouteTransitionWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { triggerTransition } = useViewTransition();
+  const { triggerTransition } = useViewTransition()
 
   React.useEffect(() => {
     // Trigger view transition on route change
     triggerTransition(() => {
       // The actual route change happens through React Router
-    });
-  }, [triggerTransition]);
+    })
+  }, [triggerTransition])
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 const App = () => {
-  const recaptchaKey =
-    import.meta.env.VITE_RECAPTCHA_SITE_KEY || import.meta.env.RECAPTCHA_SITE_KEY;
-  const hasRecaptcha = recaptchaKey && recaptchaKey.trim() !== "";
+  const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || import.meta.env.RECAPTCHA_SITE_KEY
+  const hasRecaptcha = recaptchaKey && recaptchaKey.trim() !== ''
 
   const AppContent = () => (
     <ResourcePreloader>
@@ -188,7 +187,7 @@ const App = () => {
         </ErrorBoundary>
       </PerformanceOptimizer>
     </ResourcePreloader>
-  );
+  )
 
   return hasRecaptcha ? (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
@@ -196,7 +195,7 @@ const App = () => {
     </GoogleReCaptchaProvider>
   ) : (
     <AppContent />
-  );
-};
+  )
+}
 
-export default App;
+export default App

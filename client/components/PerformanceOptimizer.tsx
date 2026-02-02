@@ -1,32 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
 interface PerformanceOptimizerProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 interface CacheEntry {
-  url: string;
-  data: unknown;
-  timestamp: number;
-  ttl: number;
+  url: string
+  data: unknown
+  timestamp: number
+  ttl: number
 }
 
 // Performance monitoring constants
-const MEMORY_USAGE_WARNING_THRESHOLD = 0.8;
-const PERFORMANCE_CHECK_INTERVAL_MS = 30000; // 30 seconds
-const LONG_TASK_DURATION_MS = 50; // 50ms
+const MEMORY_USAGE_WARNING_THRESHOLD = 0.8
+const PERFORMANCE_CHECK_INTERVAL_MS = 30000 // 30 seconds
+const LONG_TASK_DURATION_MS = 50 // 50ms
 
 class PerformanceCache {
-  private cache = new Map<string, CacheEntry>();
-  private maxSize = 100;
+  private cache = new Map<string, CacheEntry>()
+  private maxSize = 100
 
   set(key: string, data: unknown, ttl = 300000): void {
     // 5 minutes default TTL
     if (this.cache.size >= this.maxSize) {
       // Remove oldest entry
-      const oldestKey = this.cache.keys().next().value;
+      const oldestKey = this.cache.keys().next().value
       if (oldestKey) {
-        this.cache.delete(oldestKey);
+        this.cache.delete(oldestKey)
       }
     }
 
@@ -35,184 +35,184 @@ class PerformanceCache {
       data,
       timestamp: Date.now(),
       ttl,
-    });
+    })
   }
 
   get(key: string): unknown | null {
-    const entry = this.cache.get(key);
-    if (!entry) return null;
+    const entry = this.cache.get(key)
+    if (!entry) return null
 
     if (Date.now() - entry.timestamp > entry.ttl) {
-      this.cache.delete(key);
-      return null;
+      this.cache.delete(key)
+      return null
     }
 
-    return entry.data;
+    return entry.data
   }
 
   clear(): void {
-    this.cache.clear();
+    this.cache.clear()
   }
 
   has(key: string): boolean {
-    return this.cache.has(key);
+    return this.cache.has(key)
   }
 
   size(): number {
-    return this.cache.size;
+    return this.cache.size
   }
 }
 
-const performanceCache = new PerformanceCache();
+const performanceCache = new PerformanceCache()
 
 // Performance optimization utilities
 const optimizeRender = () => {
   // Debounce scroll events
-  let ticking = false;
+  let ticking = false
   const optimizeScroll = () => {
     if (!ticking) {
       requestAnimationFrame(() => {
         // Optimize scroll handlers
-        const scrollElements = document.querySelectorAll("[data-scroll-optimize]");
+        const scrollElements = document.querySelectorAll('[data-scroll-optimize]')
         for (const _el of scrollElements) {
           // Implement scroll optimization logic
         }
-        ticking = false;
-      });
-      ticking = true;
+        ticking = false
+      })
+      ticking = true
     }
-  };
+  }
 
-  window.addEventListener("scroll", optimizeScroll, { passive: true });
-};
+  window.addEventListener('scroll', optimizeScroll, { passive: true })
+}
 
 const optimizeAnimations = () => {
   // Use CSS transforms instead of layout properties for animations
-  const animatedElements = document.querySelectorAll("[data-animate]");
+  const animatedElements = document.querySelectorAll('[data-animate]')
   for (const el of animatedElements) {
-    const element = el as HTMLElement;
-    element.style.transform = element.style.transform || "translateZ(0)";
-    element.style.willChange = "transform, opacity";
+    const element = el as HTMLElement
+    element.style.transform = element.style.transform || 'translateZ(0)'
+    element.style.willChange = 'transform, opacity'
   }
-};
+}
 
 const optimizeFonts = () => {
   // Fonts are loaded via CSS @import - no additional preloading needed
   // This function is kept for potential future font optimization strategies
-};
+}
 
 const setupPerformanceMonitoring = () => {
   // Monitor memory usage
-  if ("memory" in performance) {
+  if ('memory' in performance) {
     setInterval(() => {
       const perfWithMemory = performance as typeof performance & {
-        memory: { usedJSHeapSize: number; jsHeapSizeLimit: number };
-      };
-      const memory = perfWithMemory.memory;
+        memory: { usedJSHeapSize: number; jsHeapSizeLimit: number }
+      }
+      const memory = perfWithMemory.memory
       if (
         memory &&
         memory.usedJSHeapSize > memory.jsHeapSizeLimit * MEMORY_USAGE_WARNING_THRESHOLD
       ) {
         // High memory usage detected - could implement warning UI here
       }
-    }, PERFORMANCE_CHECK_INTERVAL_MS); // Check every 30 seconds
+    }, PERFORMANCE_CHECK_INTERVAL_MS) // Check every 30 seconds
   }
 
   // Monitor long tasks (if supported)
-  if ("PerformanceObserver" in window) {
+  if ('PerformanceObserver' in window) {
     try {
       const longTaskObserver = new PerformanceObserver((list) => {
-        const entries = list.getEntries();
+        const entries = list.getEntries()
         for (const entry of entries) {
           if (entry.duration > LONG_TASK_DURATION_MS) {
             // Long task detected - could implement performance tracking here
           }
         }
-      });
+      })
 
       // Check if 'longtask' is supported before observing
-      if (PerformanceObserver.supportedEntryTypes?.includes("longtask")) {
-        longTaskObserver.observe({ entryTypes: ["longtask"] });
+      if (PerformanceObserver.supportedEntryTypes?.includes('longtask')) {
+        longTaskObserver.observe({ entryTypes: ['longtask'] })
       }
     } catch (_error) {
       // Silently fail if longtask monitoring is not supported
       // Long task monitoring not supported in this browser
     }
   }
-};
+}
 
 const PerformanceOptimizer: React.FC<PerformanceOptimizerProps> = ({ children }) => {
-  const [isOptimized, setIsOptimized] = useState(false);
+  const [isOptimized, setIsOptimized] = useState(false)
 
   // Initialize performance monitoring on mount
   useEffect(() => {
-    setupPerformanceMonitoring();
-  }, []);
+    setupPerformanceMonitoring()
+  }, [])
 
   // Apply optimizations
   useEffect(() => {
     if (isOptimized) {
-      optimizeRender();
-      optimizeAnimations();
-      optimizeFonts();
+      optimizeRender()
+      optimizeAnimations()
+      optimizeFonts()
     }
-  }, [isOptimized]);
+  }, [isOptimized])
 
   // Auto-enable optimizations after initial render
   useEffect(() => {
-    setIsOptimized(true);
-  }, []);
+    setIsOptimized(true)
+  }, [])
 
-  return children;
-};
+  return children
+}
 
 // Utility functions for manual optimization
 export const lazyLoadImage = (src: string, placeholder?: string): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = src;
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.src = src
     if (placeholder) {
-      img.src = placeholder;
+      img.src = placeholder
       img.onload = () => {
-        img.src = src;
-      };
+        img.src = src
+      }
     }
-  });
-};
+  })
+}
 
-export const preloadResource = (url: string, type: "image" | "script" | "style"): Promise<void> => {
+export const preloadResource = (url: string, type: 'image' | 'script' | 'style'): Promise<void> => {
   return new Promise((resolve, reject) => {
-    let element: HTMLElement;
+    let element: HTMLElement
 
-    if (type === "image") {
-      element = new Image();
-      (element as HTMLImageElement).onload = () => resolve();
-      (element as HTMLImageElement).onerror = () => reject(element);
-      (element as HTMLImageElement).src = url;
-    } else if (type === "script") {
-      element = document.createElement("script");
-      element.onload = () => resolve();
-      element.onerror = () => reject(element);
-      (element as HTMLScriptElement).src = url;
-      document.head.appendChild(element);
-    } else if (type === "style") {
-      element = document.createElement("link");
-      (element as HTMLLinkElement).rel = "preload";
-      (element as HTMLLinkElement).as = "style";
-      (element as HTMLLinkElement).href = url;
-      element.onload = () => resolve();
-      element.onerror = () => reject(element);
-      document.head.appendChild(element);
+    if (type === 'image') {
+      element = new Image()
+      ;(element as HTMLImageElement).onload = () => resolve()
+      ;(element as HTMLImageElement).onerror = () => reject(element)
+      ;(element as HTMLImageElement).src = url
+    } else if (type === 'script') {
+      element = document.createElement('script')
+      element.onload = () => resolve()
+      element.onerror = () => reject(element)
+      ;(element as HTMLScriptElement).src = url
+      document.head.appendChild(element)
+    } else if (type === 'style') {
+      element = document.createElement('link')
+      ;(element as HTMLLinkElement).rel = 'preload'
+      ;(element as HTMLLinkElement).as = 'style'
+      ;(element as HTMLLinkElement).href = url
+      element.onload = () => resolve()
+      element.onerror = () => reject(element)
+      document.head.appendChild(element)
     }
-  });
-};
+  })
+}
 
 export const clearPerformanceCache = () => {
-  performanceCache.clear();
-};
+  performanceCache.clear()
+}
 
-export const getCacheSize = () => performanceCache.size();
+export const getCacheSize = () => performanceCache.size()
 
-export default PerformanceOptimizer;
+export default PerformanceOptimizer

@@ -1,14 +1,14 @@
 interface LogoProps {
-  className?: string;
-  size?: "sm" | "md" | "lg";
+  className?: string
+  size?: 'sm' | 'md' | 'lg'
 }
 
-export function Logo({ className, size = "md" }: LogoProps) {
+export function Logo({ className, size = 'md' }: LogoProps) {
   const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12",
-  };
+    sm: 'w-8 h-8',
+    md: 'w-10 h-10',
+    lg: 'w-12 h-12',
+  }
 
   return (
     <picture className={sizeClasses[size]}>
@@ -22,10 +22,10 @@ export function Logo({ className, size = "md" }: LogoProps) {
         sizes='(max-width: 768px) 32px, 40px'
         loading='eager'
         decoding='async'
-        className={`w-full h-full object-cover ${className || ""}`}
+        className={`w-full h-full object-cover ${className || ''}`}
       />
     </picture>
-  );
+  )
 }
 
-export default Logo;
+export default Logo

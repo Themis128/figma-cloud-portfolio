@@ -1,150 +1,150 @@
-import { Bell, BellOff, Settings, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Bell, BellOff, Settings, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Button } from "@/components/ui/button";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { reportError } from "@/lib/sentry";
+import { Button } from '@/components/ui/button'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
+import { reportError } from '@/lib/sentry'
 
 // Constants for notification timing
-const HOURS_PER_DAY = 24;
-const MINUTES_PER_HOUR = 60;
-const SECONDS_PER_MINUTE = 60;
-const MS_PER_SECOND = 1000;
-const DAYS_PER_WEEK = 7;
+const HOURS_PER_DAY = 24
+const MINUTES_PER_HOUR = 60
+const SECONDS_PER_MINUTE = 60
+const MS_PER_SECOND = 1000
+const DAYS_PER_WEEK = 7
 
 const ONE_WEEK_MS =
-  DAYS_PER_WEEK * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;
-const PROMPT_DELAY_MS = 45000; // Show prompt after 45 seconds
+  DAYS_PER_WEEK * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND
+const PROMPT_DELAY_MS = 45000 // Show prompt after 45 seconds
 
-export function NotificationButton({ "data-testid": testId }: { "data-testid"?: string } = {}) {
-  const [permission, setPermission] = useState<NotificationPermission>("default");
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: string } = {}) {
+  const [permission, setPermission] = useState<NotificationPermission>('default')
+  const [showPrompt, setShowPrompt] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
-  const { isSupported, isSubscribed, subscribe } = usePushNotifications();
+  const { isSupported, isSubscribed, subscribe } = usePushNotifications()
 
   // Check notification permission on mount
   useEffect(() => {
-    if ("Notification" in window) {
-      setPermission(Notification.permission);
+    if ('Notification' in window) {
+      setPermission(Notification.permission)
 
       // Check if user has dismissed the prompt before
-      const dismissedPrompt = localStorage.getItem("notification-prompt-dismissed");
+      const dismissedPrompt = localStorage.getItem('notification-prompt-dismissed')
       if (dismissedPrompt) {
-        const dismissedTime = parseInt(dismissedPrompt, 10);
+        const dismissedTime = parseInt(dismissedPrompt, 10)
         if (Date.now() - dismissedTime < ONE_WEEK_MS) {
-          setDismissed(true);
+          setDismissed(true)
         } else {
-          localStorage.removeItem("notification-prompt-dismissed");
+          localStorage.removeItem('notification-prompt-dismissed')
         }
       }
     }
-  }, []);
+  }, [])
 
   // Show prompt after user has been on the site for a bit
   useEffect(() => {
     const isTestEnvironment =
-      import.meta.env.MODE === "test" ||
-      window.location.href.includes("test") ||
-      document.title.includes("test");
+      import.meta.env.MODE === 'test' ||
+      window.location.href.includes('test') ||
+      document.title.includes('test')
 
     if (
-      permission === "default" &&
+      permission === 'default' &&
       !dismissed &&
       !isSubscribed &&
       isSupported &&
       !isTestEnvironment
     ) {
       const timer = setTimeout(() => {
-        setShowPrompt(true);
-      }, PROMPT_DELAY_MS); // Show after 45 seconds
+        setShowPrompt(true)
+      }, PROMPT_DELAY_MS) // Show after 45 seconds
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
-    return undefined;
-  }, [permission, dismissed, isSubscribed, isSupported]);
+    return undefined
+  }, [permission, dismissed, isSubscribed, isSupported])
 
   const handleDismiss = () => {
-    setShowPrompt(false);
-    setDismissed(true);
-    localStorage.setItem("notification-prompt-dismissed", Date.now().toString());
-  };
+    setShowPrompt(false)
+    setDismissed(true)
+    localStorage.setItem('notification-prompt-dismissed', Date.now().toString())
+  }
 
   const requestPermission = async () => {
     try {
-      if (!("Notification" in window)) {
-        alert("This browser does not support notifications");
-        return;
+      if (!('Notification' in window)) {
+        alert('This browser does not support notifications')
+        return
       }
 
-      const result = await Notification.requestPermission();
-      setPermission(result);
+      const result = await Notification.requestPermission()
+      setPermission(result)
 
-      if (result === "granted") {
-        setShowPrompt(false);
+      if (result === 'granted') {
+        setShowPrompt(false)
         // Subscribe to push notifications
         try {
-          await subscribe();
+          await subscribe()
           showNotification(
-            "Notifications enabled!",
+            'Notifications enabled!',
             "You'll now receive updates from Baltzakis Themistoklis.",
-          );
+          )
         } catch (error) {
           reportError(
-            error instanceof Error ? error : new Error("Failed to subscribe to push notifications"),
+            error instanceof Error ? error : new Error('Failed to subscribe to push notifications'),
             {
-              context: "notification-subscription",
+              context: 'notification-subscription',
             },
-          );
+          )
           showNotification(
-            "Notifications enabled",
-            "However, push notifications may not work properly.",
-          );
+            'Notifications enabled',
+            'However, push notifications may not work properly.',
+          )
         }
-      } else if (result === "denied") {
-        setShowPrompt(false);
+      } else if (result === 'denied') {
+        setShowPrompt(false)
       }
     } catch (error) {
       reportError(
-        error instanceof Error ? error : new Error("Error requesting notification permission"),
+        error instanceof Error ? error : new Error('Error requesting notification permission'),
         {
-          context: "notification-permission-request",
+          context: 'notification-permission-request',
         },
-      );
+      )
     }
-  };
+  }
 
   const showNotification = (title: string, body: string) => {
-    if (permission === "granted") {
+    if (permission === 'granted') {
       new Notification(title, {
         body,
-        icon: "/logo.jpg",
-        badge: "/logo.jpg",
-      });
+        icon: '/logo.jpg',
+        badge: '/logo.jpg',
+      })
     }
-  };
+  }
 
   const getButtonIcon = () => {
-    if (permission === "denied") return BellOff;
-    if (isSubscribed) return Bell;
-    return Settings;
-  };
+    if (permission === 'denied') return BellOff
+    if (isSubscribed) return Bell
+    return Settings
+  }
 
   const getButtonText = () => {
-    if (permission === "denied") return "Notifications blocked";
-    if (isSubscribed) return "Notifications on";
-    return "Enable notifications";
-  };
+    if (permission === 'denied') return 'Notifications blocked'
+    if (isSubscribed) return 'Notifications on'
+    return 'Enable notifications'
+  }
 
-  const ButtonIcon = getButtonIcon();
+  const ButtonIcon = getButtonIcon()
 
   // Always show button in test mode (detect various test environments)
   const isTestEnvironment =
-    import.meta.env.MODE === "test" ||
-    window.location.href.includes("test") ||
-    document.title.includes("test") ||
+    import.meta.env.MODE === 'test' ||
+    window.location.href.includes('test') ||
+    document.title.includes('test') ||
     window.navigator.webdriver || // Playwright sets this
-    window.location.hostname === "localhost"; // Development/test server
+    window.location.hostname === 'localhost' // Development/test server
 
   if (isTestEnvironment) {
     return (
@@ -153,40 +153,40 @@ export function NotificationButton({ "data-testid": testId }: { "data-testid"?: 
         variant='outline'
         size='sm'
         className='gap-2 border-cyan-400/50 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300'
-        data-testid={testId || "notification-button"}
+        data-testid={testId || 'notification-button'}
       >
         <Settings className='h-4 w-4' />
         <span className='hidden lg:inline'>Enable notifications</span>
       </Button>
-    );
+    )
   }
 
   // Don't show button if notifications are not supported
   if (!isSupported) {
-    return null;
+    return null
   }
 
   // Show compact button if prompt not shown
   if (!showPrompt) {
     return (
       <Button
-        onClick={permission === "default" ? requestPermission : undefined}
+        onClick={permission === 'default' ? requestPermission : undefined}
         variant='outline'
         size='sm'
         className={`gap-2 ${
-          permission === "denied"
-            ? "border-red-400/50 text-red-400 cursor-not-allowed"
-            : permission === "granted"
-              ? "border-green-400/50 text-green-400"
-              : "border-cyan-400/50 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300"
+          permission === 'denied'
+            ? 'border-red-400/50 text-red-400 cursor-not-allowed'
+            : permission === 'granted'
+              ? 'border-green-400/50 text-green-400'
+              : 'border-cyan-400/50 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300'
         }`}
-        disabled={permission === "denied"}
-        data-testid={testId || "notification-button"}
+        disabled={permission === 'denied'}
+        data-testid={testId || 'notification-button'}
       >
         <ButtonIcon className='h-4 w-4' />
         <span className='hidden lg:inline'>{getButtonText()}</span>
       </Button>
-    );
+    )
   }
 
   // Show full prompt
@@ -213,7 +213,7 @@ export function NotificationButton({ "data-testid": testId }: { "data-testid"?: 
                 onClick={requestPermission}
                 size='sm'
                 className='bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-8'
-                data-testid={testId || "notification-button"}
+                data-testid={testId || 'notification-button'}
               >
                 Enable
               </Button>
@@ -239,5 +239,5 @@ export function NotificationButton({ "data-testid": testId }: { "data-testid"?: 
         </div>
       </div>
     </div>
-  );
+  )
 }

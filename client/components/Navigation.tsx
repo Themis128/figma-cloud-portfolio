@@ -1,21 +1,21 @@
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Menu, X } from 'lucide-react'
+import { useState } from 'react'
 
-import { HoverButton } from "@/components/HoverAnimations";
-import { Logo } from "@/components/Logo";
-import { NotificationButton } from "@/components/NotificationButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { HoverButton } from '@/components/HoverAnimations'
+import { Logo } from '@/components/Logo'
+import { NotificationButton } from '@/components/NotificationButton'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const navigationItems = [
-    { name: "About", href: "/about" },
-    { name: "Resume", href: "/resume" },
-    { name: "Contact", href: "/contact" },
-    { name: "Performance", href: "/performance" },
-    { name: "Agents", href: "/agents" },
-  ];
+    { name: 'About', href: '/about' },
+    { name: 'Resume', href: '/resume' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Performance', href: '/performance' },
+    { name: 'Agents', href: '/agents' },
+  ]
 
   return (
     <nav className='relative z-50' aria-label='Main navigation'>
@@ -65,7 +65,7 @@ export default function Navigation() {
       {/* Mobile Navigation */}
       <div
         className={`md:hidden absolute top-full left-0 right-0 bg-white/10 backdrop-blur-md border-t border-white/20 transition-all duration-300 ${
-          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
         }`}
       >
         <div className='container mx-auto px-4 py-4 space-y-3'>
@@ -100,5 +100,5 @@ export default function Navigation() {
         </div>
       </div>
     </nav>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Contrast,
@@ -11,123 +11,123 @@ import {
   Text,
   Volume2,
   VolumeX,
-} from "lucide-react";
-import type React from "react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Toggle } from "@/components/ui/toggle";
-import { useToast } from "@/components/ui/use-toast";
+} from 'lucide-react'
+import type React from 'react'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
+import { Toggle } from '@/components/ui/toggle'
+import { useToast } from '@/components/ui/use-toast'
 
 interface AccessibilitySettings {
-  fontSize: number;
-  contrast: "normal" | "high";
-  animations: boolean;
-  focusIndicator: boolean;
-  screenReader: boolean;
-  keyboardNavigation: boolean;
+  fontSize: number
+  contrast: 'normal' | 'high'
+  animations: boolean
+  focusIndicator: boolean
+  screenReader: boolean
+  keyboardNavigation: boolean
 }
 
 // Constants for font size limits
-const MIN_FONT_SIZE_PERCENT = 80;
-const MAX_FONT_SIZE_PERCENT = 150;
+const MIN_FONT_SIZE_PERCENT = 80
+const MAX_FONT_SIZE_PERCENT = 150
 
 const AccessibilityEnhancer: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: 100,
-    contrast: "normal",
+    contrast: 'normal',
     animations: true,
     focusIndicator: true,
     screenReader: false,
     keyboardNavigation: true,
-  });
+  })
 
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   // Apply settings to document
   useEffect(() => {
-    const root = document.documentElement;
+    const root = document.documentElement
 
     // Font size
-    root.style.setProperty("--accessibility-font-size", `${settings.fontSize}%`);
+    root.style.setProperty('--accessibility-font-size', `${settings.fontSize}%`)
 
     // Contrast
-    if (settings.contrast === "high") {
-      root.classList.add("high-contrast");
+    if (settings.contrast === 'high') {
+      root.classList.add('high-contrast')
     } else {
-      root.classList.remove("high-contrast");
+      root.classList.remove('high-contrast')
     }
 
     // Animations
-    if (!settings.animations) {
-      root.style.setProperty("--animation-duration", "0ms");
+    if (settings.animations) {
+      root.style.setProperty('--animation-duration', '300ms')
     } else {
-      root.style.setProperty("--animation-duration", "300ms");
+      root.style.setProperty('--animation-duration', '0ms')
     }
 
     // Focus indicators
     if (settings.focusIndicator) {
-      root.classList.add("focus-visible");
+      root.classList.add('focus-visible')
     } else {
-      root.classList.remove("focus-visible");
+      root.classList.remove('focus-visible')
     }
 
     // Screen reader optimizations
     if (settings.screenReader) {
-      root.classList.add("screen-reader-mode");
+      root.classList.add('screen-reader-mode')
     } else {
-      root.classList.remove("screen-reader-mode");
+      root.classList.remove('screen-reader-mode')
     }
 
     // Keyboard navigation
     if (settings.keyboardNavigation) {
-      root.classList.add("keyboard-navigation");
+      root.classList.add('keyboard-navigation')
     } else {
-      root.classList.remove("keyboard-navigation");
+      root.classList.remove('keyboard-navigation')
     }
-  }, [settings]);
+  }, [settings])
 
   const updateSetting = <K extends keyof AccessibilitySettings>(
     key: K,
     value: AccessibilitySettings[K],
   ) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
+    setSettings((prev) => ({ ...prev, [key]: value }))
     toast({
-      title: "Accessibility Updated",
+      title: 'Accessibility Updated',
       description: `Setting updated: ${key}`,
       duration: 2000,
-    });
-  };
+    })
+  }
 
   const resetSettings = () => {
     setSettings({
       fontSize: 100,
-      contrast: "normal",
+      contrast: 'normal',
       animations: true,
       focusIndicator: true,
       screenReader: false,
       keyboardNavigation: true,
-    });
+    })
     toast({
-      title: "Settings Reset",
-      description: "All accessibility settings have been reset to default",
+      title: 'Settings Reset',
+      description: 'All accessibility settings have been reset to default',
       duration: 3000,
-    });
-  };
+    })
+  }
 
   const increaseFontSize = () => {
     if (settings.fontSize < MAX_FONT_SIZE_PERCENT) {
-      updateSetting("fontSize", settings.fontSize + 10);
+      updateSetting('fontSize', settings.fontSize + 10)
     }
-  };
+  }
 
   const decreaseFontSize = () => {
     if (settings.fontSize > MIN_FONT_SIZE_PERCENT) {
-      updateSetting("fontSize", settings.fontSize - 10);
+      updateSetting('fontSize', settings.fontSize - 10)
     }
-  };
+  }
 
   if (!isOpen) {
     return (
@@ -141,7 +141,7 @@ const AccessibilityEnhancer: React.FC = () => {
           <Settings className='h-6 w-6 text-gray-600 dark:text-gray-300' />
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -215,7 +215,7 @@ const AccessibilityEnhancer: React.FC = () => {
             max={150}
             step={10}
             value={[settings.fontSize]}
-            onValueChange={(value) => updateSetting("fontSize", value[0])}
+            onValueChange={(value) => updateSetting('fontSize', value[0])}
             className='w-full'
           />
           <p className='text-xs text-gray-500 dark:text-gray-400 text-right'>
@@ -231,17 +231,17 @@ const AccessibilityEnhancer: React.FC = () => {
           </Label>
           <div className='grid grid-cols-2 gap-2'>
             <Button
-              variant={settings.contrast === "normal" ? "default" : "outline"}
+              variant={settings.contrast === 'normal' ? 'default' : 'outline'}
               size='sm'
-              onClick={() => updateSetting("contrast", "normal")}
+              onClick={() => updateSetting('contrast', 'normal')}
               className='justify-start'
             >
               Normal
             </Button>
             <Button
-              variant={settings.contrast === "high" ? "default" : "outline"}
+              variant={settings.contrast === 'high' ? 'default' : 'outline'}
               size='sm'
-              onClick={() => updateSetting("contrast", "high")}
+              onClick={() => updateSetting('contrast', 'high')}
               className='justify-start'
             >
               High Contrast
@@ -257,7 +257,7 @@ const AccessibilityEnhancer: React.FC = () => {
           </Label>
           <Toggle
             pressed={settings.animations}
-            onPressedChange={(pressed) => updateSetting("animations", pressed)}
+            onPressedChange={(pressed) => updateSetting('animations', pressed)}
             className='w-full justify-between'
           >
             <span className='text-sm'>Enable smooth transitions</span>
@@ -277,7 +277,7 @@ const AccessibilityEnhancer: React.FC = () => {
           </Label>
           <Toggle
             pressed={settings.focusIndicator}
-            onPressedChange={(pressed) => updateSetting("focusIndicator", pressed)}
+            onPressedChange={(pressed) => updateSetting('focusIndicator', pressed)}
             className='w-full justify-between'
           >
             <span className='text-sm'>Show focus outlines</span>
@@ -293,7 +293,7 @@ const AccessibilityEnhancer: React.FC = () => {
           </Label>
           <Toggle
             pressed={settings.screenReader}
-            onPressedChange={(pressed) => updateSetting("screenReader", pressed)}
+            onPressedChange={(pressed) => updateSetting('screenReader', pressed)}
             className='w-full justify-between'
           >
             <span className='text-sm'>Enhanced screen reader support</span>
@@ -313,7 +313,7 @@ const AccessibilityEnhancer: React.FC = () => {
           </Label>
           <Toggle
             pressed={settings.keyboardNavigation}
-            onPressedChange={(pressed) => updateSetting("keyboardNavigation", pressed)}
+            onPressedChange={(pressed) => updateSetting('keyboardNavigation', pressed)}
             className='w-full justify-between'
           >
             <span className='text-sm'>Tab navigation enhancements</span>
@@ -348,13 +348,13 @@ const AccessibilityEnhancer: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Global accessibility styles
 const createAccessibilityStyles = () => {
-  if (typeof document !== "undefined") {
-    const style = document.createElement("style");
+  if (typeof document !== 'undefined') {
+    const style = document.createElement('style')
     style.textContent = `
       /* High Contrast Mode */
       .high-contrast {
@@ -436,12 +436,12 @@ const createAccessibilityStyles = () => {
       .skip-link:focus {
         top: 6px;
       }
-    `;
-    document.head.appendChild(style);
+    `
+    document.head.appendChild(style)
   }
-};
+}
 
 // Initialize styles
-createAccessibilityStyles();
+createAccessibilityStyles()
 
-export default AccessibilityEnhancer;
+export default AccessibilityEnhancer

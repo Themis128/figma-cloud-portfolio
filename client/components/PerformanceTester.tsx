@@ -1,46 +1,47 @@
-import { BarChart3, Download, Play, Square } from "lucide-react";
-import { useState } from "react";
+import { BarChart3, Download, Play, Square } from 'lucide-react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 interface TestResult {
-  name: string;
-  duration: number;
-  status: "success" | "warning" | "error";
-  details?: string;
+  name: string
+  duration: number
+  status: 'success' | 'warning' | 'error'
+  details?: string
 }
 
 // Constants for progress calculation
-const PROGRESS_PERCENTAGE_MULTIPLIER = 100;
+const PROGRESS_PERCENTAGE_MULTIPLIER = 100
 
 export function PerformanceTester() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [results, setResults] = useState<TestResult[]>([]);
+  const [isRunning, setIsRunning] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [results, setResults] = useState<TestResult[]>([])
 
   const runPerformanceTests = async () => {
-    setIsRunning(true);
-    setProgress(0);
-    setResults([]);
+    setIsRunning(true)
+    setProgress(0)
+    setResults([])
 
     const tests = [
-      { name: "Bundle Size Analysis", duration: 2000 },
-      { name: "Image Optimization Check", duration: 1500 },
-      { name: "Font Loading Test", duration: 1000 },
-      { name: "JavaScript Execution Time", duration: 3000 },
-      { name: "Memory Usage Analysis", duration: 2500 },
-      { name: "Network Request Optimization", duration: 1800 },
-    ];
+      { name: 'Bundle Size Analysis', duration: 2000 },
+      { name: 'Image Optimization Check', duration: 1500 },
+      { name: 'Font Loading Test', duration: 1000 },
+      { name: 'JavaScript Execution Time', duration: 3000 },
+      { name: 'Memory Usage Analysis', duration: 2500 },
+      { name: 'Network Request Optimization', duration: 1800 },
+    ]
 
-    const newResults: TestResult[] = [];
+    const newResults: TestResult[] = []
 
     for (let i = 0; i < tests.length; i++) {
-      const test = tests[i];
+      const test = tests[i]
+      if (!test) continue
 
       // Simulate test execution
-      await new Promise((resolve) => setTimeout(resolve, test.duration));
+      await new Promise((resolve) => setTimeout(resolve, test.duration))
 
       // Generate realistic results based on test details
       const result: TestResult = {
@@ -48,84 +49,84 @@ export function PerformanceTester() {
         duration: test.duration,
         status: getRealisticStatus(test.name),
         details: generateTestDetails(test.name),
-      };
+      }
 
-      newResults.push(result);
-      setResults([...newResults]);
-      setProgress(((i + 1) / tests.length) * PROGRESS_PERCENTAGE_MULTIPLIER);
+      newResults.push(result)
+      setResults([...newResults])
+      setProgress(((i + 1) / tests.length) * PROGRESS_PERCENTAGE_MULTIPLIER)
     }
 
-    setIsRunning(false);
-  };
+    setIsRunning(false)
+  }
 
-  const getRealisticStatus = (testName: string): TestResult["status"] => {
+  const getRealisticStatus = (testName: string): TestResult['status'] => {
     const statusMap = {
-      "Bundle Size Analysis": "success", // Reduced from 2.4MB to 2.1MB with better chunking
-      "Image Optimization Check": "success", // 45% savings with WebP
-      "Font Loading Test": "success", // FOIT avoided with font-display: swap
-      "JavaScript Execution Time": "success", // Reduced from 120ms to 80ms with lazy loading
-      "Memory Usage Analysis": "success", // 78MB peak, no leaks
-      "Network Request Optimization": "success", // 32 requests optimized
-    };
-    return (statusMap[testName as keyof typeof statusMap] as TestResult["status"]) || "success";
-  };
+      'Bundle Size Analysis': 'success', // Reduced from 2.4MB to 2.1MB with better chunking
+      'Image Optimization Check': 'success', // 45% savings with WebP
+      'Font Loading Test': 'success', // FOIT avoided with font-display: swap
+      'JavaScript Execution Time': 'success', // Reduced from 120ms to 80ms with lazy loading
+      'Memory Usage Analysis': 'success', // 78MB peak, no leaks
+      'Network Request Optimization': 'success', // 32 requests optimized
+    }
+    return (statusMap[testName as keyof typeof statusMap] as TestResult['status']) || 'success'
+  }
 
   const generateTestDetails = (testName: string): string => {
     const details = {
-      "Bundle Size Analysis":
-        "Bundle size: 2.1MB (compressed). Main chunk: 447KB. Improved chunking implemented.",
-      "Image Optimization Check": "All images optimized. WebP format used. Total savings: 45%.",
-      "Font Loading Test": "Fonts loaded efficiently. FOIT avoided with font-display: swap.",
-      "JavaScript Execution Time":
-        "Main thread blocked for 80ms. Code splitting optimizations applied.",
-      "Memory Usage Analysis": "Peak memory usage: 78MB. No memory leaks detected.",
-      "Network Request Optimization": "32 requests optimized. Compression enabled.",
-    };
-    return details[testName as keyof typeof details] || "Test completed successfully.";
-  };
-
-  const getStatusColor = (status: TestResult["status"]) => {
-    switch (status) {
-      case "success":
-        return "text-green-400";
-      case "warning":
-        return "text-yellow-400";
-      case "error":
-        return "text-red-400";
-      default:
-        return "text-gray-400";
+      'Bundle Size Analysis':
+        'Bundle size: 2.1MB (compressed). Main chunk: 447KB. Improved chunking implemented.',
+      'Image Optimization Check': 'All images optimized. WebP format used. Total savings: 45%.',
+      'Font Loading Test': 'Fonts loaded efficiently. FOIT avoided with font-display: swap.',
+      'JavaScript Execution Time':
+        'Main thread blocked for 80ms. Code splitting optimizations applied.',
+      'Memory Usage Analysis': 'Peak memory usage: 78MB. No memory leaks detected.',
+      'Network Request Optimization': '32 requests optimized. Compression enabled.',
     }
-  };
+    return details[testName as keyof typeof details] || 'Test completed successfully.'
+  }
 
-  const getStatusIcon = (status: TestResult["status"]) => {
+  const getStatusColor = (status: TestResult['status']) => {
     switch (status) {
-      case "success":
-        return "✅";
-      case "warning":
-        return "⚠️";
-      case "error":
-        return "❌";
+      case 'success':
+        return 'text-green-400'
+      case 'warning':
+        return 'text-yellow-400'
+      case 'error':
+        return 'text-red-400'
       default:
-        return "❓";
+        return 'text-gray-400'
     }
-  };
+  }
+
+  const getStatusIcon = (status: TestResult['status']) => {
+    switch (status) {
+      case 'success':
+        return '✅'
+      case 'warning':
+        return '⚠️'
+      case 'error':
+        return '❌'
+      default:
+        return '❓'
+    }
+  }
 
   const exportResults = () => {
     const csvContent = [
-      "Test Name,Duration (ms),Status,Details",
+      'Test Name,Duration (ms),Status,Details',
       ...results.map((r) => `"${r.name}",${r.duration},"${r.status}","${r.details}"`),
-    ].join("\n");
+    ].join('\n')
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `performance-test-results-${new Date().toISOString().split("T")[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `performance-test-results-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className='space-y-6'>
@@ -207,19 +208,19 @@ export function PerformanceTester() {
               <div className='grid grid-cols-3 gap-4 text-center'>
                 <div>
                   <div className='text-2xl font-bold text-green-400'>
-                    {results.filter((r) => r.status === "success").length}
+                    {results.filter((r) => r.status === 'success').length}
                   </div>
                   <div className='text-xs text-muted-foreground'>Passed</div>
                 </div>
                 <div>
                   <div className='text-2xl font-bold text-yellow-400'>
-                    {results.filter((r) => r.status === "warning").length}
+                    {results.filter((r) => r.status === 'warning').length}
                   </div>
                   <div className='text-xs text-muted-foreground'>Warnings</div>
                 </div>
                 <div>
                   <div className='text-2xl font-bold text-red-400'>
-                    {results.filter((r) => r.status === "error").length}
+                    {results.filter((r) => r.status === 'error').length}
                   </div>
                   <div className='text-xs text-muted-foreground'>Failed</div>
                 </div>
@@ -229,5 +230,5 @@ export function PerformanceTester() {
         )}
       </Card>
     </div>
-  );
+  )
 }

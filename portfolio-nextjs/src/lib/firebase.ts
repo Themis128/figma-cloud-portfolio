@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { initializeApp } from 'firebase/app'
+import { getMessaging, getToken, onMessage } from 'firebase/messaging'
 
 // Firebase configuration
 const firebaseConfig = {
@@ -9,28 +9,28 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
+}
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig)
 
 // Initialize Firebase Cloud Messaging
-export const messaging = getMessaging(app);
+export const messaging = getMessaging(app)
 
 // Function to get FCM token
 export const getFCMToken = async (vapidKey?: string) => {
   const token = await getToken(messaging, {
     vapidKey: vapidKey || import.meta.env.VITE_FIREBASE_VAPID_KEY,
-  });
-  return token;
-};
+  })
+  return token
+}
 
 // Function to handle foreground messages
 export const onMessageListener = () =>
   new Promise((resolve) => {
     onMessage(messaging, (payload) => {
-      resolve(payload);
-    });
-  });
+      resolve(payload)
+    })
+  })
 
-export default app;
+export default app

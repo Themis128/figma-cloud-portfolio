@@ -1,10 +1,10 @@
-import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
-import { AnimatedSection } from "@/components/AnimatedSection";
-import CircuitBackground from "@/components/CircuitBackground";
-import { HoverCard } from "@/components/HoverAnimations";
-import Navigation from "@/components/Navigation";
+import { AnimatedSection } from '@/components/AnimatedSection'
+import CircuitBackground from '@/components/CircuitBackground'
+import { HoverCard } from '@/components/HoverAnimations'
+import Navigation from '@/components/Navigation'
 
 export default function About() {
   return (
@@ -261,5 +261,5 @@ export default function About() {
         </div>
       </div>
     </div>
-  );
+  )
 }

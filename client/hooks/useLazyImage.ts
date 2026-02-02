@@ -1,51 +1,51 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react'
 
 interface UseLazyImageOptions {
-  rootMargin?: string;
-  threshold?: number;
+  rootMargin?: string
+  threshold?: number
 }
 
 // Constants for intersection observer
-const DEFAULT_INTERSECTION_THRESHOLD = 0.1;
+const DEFAULT_INTERSECTION_THRESHOLD = 0.1
 
 export function useLazyImage(options: UseLazyImageOptions = {}) {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [isIntersecting, setIsIntersecting] = useState(false)
+  const [hasLoaded, setHasLoaded] = useState(false)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
-    const img = imgRef.current;
-    if (!img) return;
+    const img = imgRef.current
+    if (!img) return
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          observer.disconnect();
+        const entry = entries[0]
+        if (entry?.isIntersecting) {
+          setIsIntersecting(true)
+          observer.disconnect()
         }
       },
       {
-        rootMargin: options.rootMargin ?? "50px",
+        rootMargin: options.rootMargin ?? '50px',
         threshold: options.threshold ?? DEFAULT_INTERSECTION_THRESHOLD,
       },
-    );
+    )
 
-    observer.observe(img);
+    observer.observe(img)
 
     return () => {
-      observer.disconnect();
-    };
-  }, [options.rootMargin, options.threshold]);
+      observer.disconnect()
+    }
+  }, [options.rootMargin, options.threshold])
 
   const handleLoad = () => {
-    setHasLoaded(true);
-  };
+    setHasLoaded(true)
+  }
 
   const handleError = () => {
     // Fallback handling can be added here
-    setHasLoaded(true);
-  };
+    setHasLoaded(true)
+  }
 
   return {
     imgRef,
@@ -53,5 +53,5 @@ export function useLazyImage(options: UseLazyImageOptions = {}) {
     hasLoaded,
     handleLoad,
     handleError,
-  };
+  }
 }
