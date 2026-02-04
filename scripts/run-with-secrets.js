@@ -96,7 +96,7 @@ if (isWindows) {
   }
 
   try {
-    // Use proper argument passing - pass command and args as separate parameters
+    // Use proper argument passing - only include -CommandArgs if there are arguments
     const psArgs = [
       '-NoProfile',
       '-ExecutionPolicy',

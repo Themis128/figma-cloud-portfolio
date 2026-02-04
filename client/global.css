@@ -373,4 +373,21 @@
       padding: 2rem; /* p-8 */
     }
   }
+
+  /* Enhanced loading dot animations */
+  .enhanced-loading-dot-delay-0 {
+    animation-delay: 0s;
+  }
+
+  .enhanced-loading-dot-delay-1 {
+    animation-delay: 0.1s;
+  }
+
+  .enhanced-loading-dot-delay-2 {
+    animation-delay: 0.2s;
+  }
+
+  .enhanced-loading-dot-duration {
+    animation-duration: 0.6s;
+  }
 }

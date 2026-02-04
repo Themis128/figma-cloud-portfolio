@@ -22,10 +22,10 @@ export default defineConfig(({ mode }) => {
     publicDir: '../public',
     server: {
       host: true,
-      port: 3001, // Changed from 8081 to avoid conflicts
+      port: 8081, // Frontend port as per architecture
       strictPort: true, // Fail if port is in use instead of using another port
       hmr: {
-        port: 24681, // Changed to avoid conflicts with other Vite instances
+        port: 24681, // HMR port to avoid conflicts
       },
       // Proxy API requests to Express server during development/testing
       proxy:
@@ -47,13 +47,13 @@ export default defineConfig(({ mode }) => {
       // (proxy is configured above based on mode)
       // Security headers for development
       headers: {
-        'X-Frame-Options': 'DENY',
-        'X-Content-Type-Options': 'nosniff',
-        'X-XSS-Protection': '1; mode=block',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Content-Security-Policy':
-          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
-        'X-DNS-Prefetch-Control': 'off',
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Content-Security-Policy":
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+        "X-DNS-Prefetch-Control": "off",
       },
     },
     build: {
@@ -63,11 +63,13 @@ export default defineConfig(({ mode }) => {
           manualChunks: isCI
             ? undefined
             : {
-                // Core framework chunk
-                framework: ['react', 'react-dom'],
-                // Router chunk
-                router: ['react-router-dom'],
-                // UI components chunk
+                // Core React chunk - highest priority
+                "react-core": ["react", "react-dom"],
+
+                // Router chunk - navigation critical
+                router: ["react-router-dom"],
+
+                // UI library - design system components
                 ui: [
                   '@radix-ui/react-dialog',
                   '@radix-ui/react-dropdown-menu',
@@ -81,42 +83,213 @@ export default defineConfig(({ mode }) => {
                   'lucide-react',
                   'sonner',
                 ],
-                // 3D graphics chunk
-                three: ['three', '@react-three/fiber', '@react-three/drei'],
-                // Utilities chunk
-                utils: ['clsx', 'tailwind-merge', 'date-fns', 'zod'],
-                // Forms chunk
-                forms: ['react-hook-form', '@hookform/resolvers'],
-                // State management chunk
-                state: ['@tanstack/react-query'],
-                // Performance monitoring chunk
-                performance: ['web-vitals'],
+
+                // 3D graphics - heavy chunk, lazy load
+                three: ["three", "@react-three/fiber", "@react-three/drei"],
+
+                // Utilities - shared across components
+                utils: ["clsx", "tailwind-merge", "date-fns", "zod"],
+
+                // Forms - feature-specific
+                forms: ["react-hook-form", "@hookform/resolvers"],
+
+                // State management
+                state: ["@tanstack/react-query"],
+
+                // Performance monitoring
+                performance: ["web-vitals"],
+
+                // Animation libraries - split for lazy loading
+                animations: ["framer-motion", "lottie-web"],
+
+                // Chart libraries - heavy, component-specific
+                charts: ["recharts"],
+
+                // PDF and document processing
+                "pdf-utils": ["jspdf", "html2canvas"],
+
+                // Real-time features (Socket.IO)
+                realtime: ["socket.io-client"],
+
+                // Development utilities
+                ...(mode === "development" && {
+                  devtools: ["@redux-devtools/extension", "react-error-boundary"],
+                }),
               },
+
+          // Enhanced chunk naming with better organization
+          chunkFileNames: (chunkInfo) => {
+            const facadeModuleId = chunkInfo.facadeModuleId;
+
+            if (facadeModuleId) {
+              // Page-level chunks
+              if (facadeModuleId.includes("pages/")) {
+                const pageName = chunkInfo.name || "page";
+                return `pages/${pageName.toLowerCase()}.[hash].js`;
+              }
+
+              // Component-level chunks
+              if (facadeModuleId.includes("components/")) {
+                const componentName = chunkInfo.name || "component";
+                return `components/${componentName.toLowerCase()}.[hash].js`;
+              }
+
+              // Feature-level chunks
+              if (facadeModuleId.includes("features/")) {
+                const featureName = chunkInfo.name || "feature";
+                return `features/${featureName.toLowerCase()}.[hash].js`;
+              }
+
+              // Library chunks
+              if (facadeModuleId.includes("lib/")) {
+                const libName = chunkInfo.name || "lib";
+                return `lib/${libName.toLowerCase()}.[hash].js`;
+              }
+
+              // Hook chunks
+              if (facadeModuleId.includes("hooks/")) {
+                const hookName = chunkInfo.name || "hook";
+                return `hooks/${hookName.toLowerCase()}.[hash].js`;
+              }
+            }
+
+            // Vendor chunks get special naming
+            if (
+              chunkInfo.name &&
+              ["react-core", "ui", "charts", "three"].includes(chunkInfo.name)
+            ) {
+              return `vendor/${chunkInfo.name}.[hash].js`;
+            }
+
+            // Default chunks
+            return "chunks/[name].[hash].js";
+          },
+
+          // Enhanced asset naming
+          assetFileNames: (assetInfo) => {
+            const name = assetInfo.name || "asset";
+
+            // CSS files
+            if (name.endsWith(".css")) {
+              return "css/[name].[hash].[ext]";
+            }
+
+            // Images with type-based organization
+            if (name.match(/\.(png|jpe?g|svg|gif|webp|avif)$/i)) {
+              return "images/[name].[hash].[ext]";
+            }
+
+            // Fonts
+            if (name.match(/\.(woff2?|eot|ttf|otf)$/i)) {
+              return "fonts/[name].[hash].[ext]";
+            }
+
+            // Audio/Video
+            if (name.match(/\.(mp3|mp4|webm|ogg|wav)$/i)) {
+              return "media/[name].[hash].[ext]";
+            }
+
+            // Documents
+            if (name.match(/\.(pdf|doc|docx|txt)$/i)) {
+              return "documents/[name].[hash].[ext]";
+            }
+
+            return "assets/[name].[hash].[ext]";
+          },
+        },
+
+        // Advanced tree shaking for React 19
+        treeshake: {
+          moduleSideEffects: (id, external) => {
+            // Preserve CSS imports
+            if (id.includes(".css") || id.includes(".scss") || id.includes(".less")) {
+              return true;
+            }
+
+            // Preserve polyfills
+            if (id.includes("polyfill") || id.includes("core-js")) {
+              return true;
+            }
+
+            // Preserve service worker registration
+            if (id.includes("sw.js") || id.includes("workbox")) {
+              return true;
+            }
+
+            // Remove side effects from utility libraries
+            if (id.includes("lodash") || id.includes("ramda") || id.includes("date-fns")) {
+              return false;
+            }
+
+            // React 19 specific optimizations
+            if (id.includes("react-dom/client") || id.includes("react/jsx-runtime")) {
+              return true;
+            }
+
+            return true;
+          },
+
+          // Functions that can be safely removed if unused
+          /** @ts-expect-error */
+          pure: ["console.log", "console.info", "console.warn", "console.debug", "console.trace"],
+
+          // Enable aggressive unused export removal
+          unusedExports: true,
+        },
+
+        // External dependencies (for library builds)
+        external: (id) => {
+          // Don't externalize anything in application builds
+          return false;
         },
       },
-      // Performance budgets
-      chunkSizeWarningLimit: 400, // Optimized for better performance
-      reportCompressedSize: !isCI, // Disable in CI to save memory
-      // Additional optimizations
-      minify: 'esbuild',
-      sourcemap: false, // Disable sourcemaps in production for better performance
-      cssCodeSplit: true, // Split CSS for better caching
-      target: 'esnext', // Use modern JS for better performance
+      // Performance budgets with React 19 considerations
+      chunkSizeWarningLimit: 500, // Keep chunks small for better loading
+      reportCompressedSize: !isCI, // Skip in CI to save memory
 
-      // Additional performance optimizations
-      assetsInlineLimit: 4096, // Inline assets smaller than 4kb
-      cssTarget: ['chrome61', 'firefox60', 'safari11', 'edge16'],
+      // Advanced optimizations
+      minify: "esbuild", // Faster than terser, good quality
+      sourcemap: false, // Disable for production performance
+      cssCodeSplit: true, // Better caching with split CSS
+      target: "esnext", // Modern JS for React 19 features
 
-      // Tree shaking optimization
+      // Asset handling
+      assetsInlineLimit: 4096, // Inline smaller assets
+      cssTarget: ["chrome91", "firefox89", "safari14", "edge91"], // Modern CSS
+
+      // Advanced terser options for production
       terserOptions: isCI
         ? undefined
         : {
             compress: {
-              drop_console: true, // Remove console logs in production
+              drop_console: false, // Keep console in development
               drop_debugger: true,
-              pure_funcs: ['console.log', 'console.info', 'console.debug'],
+              pure_funcs:
+                mode === "production" ? ["console.log", "console.info", "console.debug"] : [],
+              passes: 2, // Multiple passes for better compression
+            },
+            mangle: {
+              properties: {
+                regex: /^_[a-zA-Z]/, // Mangle private properties
+              },
+            },
+            format: {
+              comments: false, // Remove comments
             },
           },
+
+      // Enhanced CSS minimization
+      cssMinify: "esbuild",
+
+      // Improve build performance
+      emptyOutDir: true,
+      copyPublicDir: true,
+      watch:
+        mode === "development"
+          ? {
+              exclude: ["node_modules/**", "dist/**", "coverage/**"],
+            }
+          : null,
     },
     plugins: [
       react({
@@ -167,36 +340,107 @@ export default defineConfig(({ mode }) => {
           })
         : undefined,
       VitePWA({
-        registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'logo.jpg', 'logo.jpeg', 'robots.txt'],
-        srcDir: '../public',
-        filename: 'sw.js',
-        strategies: 'injectManifest',
+        registerType: "autoUpdate",
+        includeAssets: ["favicon.ico", "logo.jpg", "logo.jpeg", "robots.txt", "*.woff2"],
+        srcDir: "../public",
+        filename: "sw.js",
+        strategies: "injectManifest",
+        devOptions: {
+          enabled: true,
+          type: "module",
+        },
         manifest: {
-          name: 'Themistoklis Baltzakis Portfolio',
-          short_name: 'TB Portfolio',
-          description: 'Cloud Architect & Cybersecurity Specialist Portfolio',
-          theme_color: '#0f172a',
-          background_color: '#0f172a',
-          display: 'standalone',
+          name: "Themistoklis Baltzakis Portfolio",
+          short_name: "TB Portfolio",
+          description: "Cloud Architect & Cybersecurity Specialist Portfolio with AI Agents",
+          theme_color: "#0f172a",
+          background_color: "#0f172a",
+          display: "standalone",
+          orientation: "portrait-primary",
+          scope: "/",
+          start_url: "/",
+          categories: ["productivity", "business", "technology"],
+          lang: "en-US",
           icons: [
             {
-              src: '/logo.jpg',
-              sizes: '192x192',
-              type: 'image/jpeg',
+              src: "/logo.jpg",
+              sizes: "192x192",
+              type: "image/jpeg",
+              purpose: "maskable",
             },
             {
-              src: '/logo.jpg',
-              sizes: '512x512',
-              type: 'image/jpeg',
+              src: "/logo.jpg",
+              sizes: "512x512",
+              type: "image/jpeg",
+              purpose: "any",
             },
           ],
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,svg,woff2,woff}"],
+          // Advanced caching strategies
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: "CacheFirst",
+              options: {
+                cacheName: "google-fonts-cache",
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                },
+                cacheKeyWillBeUsed: async ({ request }) => `${request.url}`,
+              },
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              handler: "CacheFirst",
+              options: {
+                cacheName: "gstatic-fonts-cache",
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365,
+                },
+              },
+            },
+            {
+              urlPattern: /\/api\/.*\.(json)$/,
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "api-cache",
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 60 * 5, // 5 minutes
+                },
+                networkTimeoutSeconds: 10,
+              },
+            },
+            {
+              urlPattern: /.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
+              handler: "CacheFirst",
+              options: {
+                cacheName: "images-cache",
+                expiration: {
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                },
+              },
+            },
+            {
+              urlPattern: /.*\.(js|css)$/,
+              handler: "StaleWhileRevalidate",
+              options: {
+                cacheName: "static-resources",
+              },
+            },
+          ],
           // Handle SPA navigation routes
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/api\//, /^\/_/, /^\/[^/?]+\.[^/]+$/],
+          // Enhanced offline support
+          skipWaiting: true,
+          clientsClaim: true,
+          cleanupOutdatedCaches: true,
         },
       }),
     ].filter(Boolean) as PluginOption[],

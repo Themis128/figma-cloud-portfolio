@@ -167,9 +167,7 @@ if ($Command) {
     Write-Log -Level 'ERROR' -Message 'Command validation failed. Aborting execution.'
     exit 1
   }
-  
   Write-Log -Level 'INFO' -Message "Executing command: $Command with $($CommandArgs.Count) arguments"
-  
   try {
     & $Command @CommandArgs
     $exitCode = $LASTEXITCODE

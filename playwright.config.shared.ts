@@ -305,6 +305,50 @@ export const VALIDATION_CONSTANTS = {
   MAX_LOCAL_WORKERS: 8, // Maximum workers in local development
 } as const
 
+/**
+ * Modern Web API Testing Configuration
+ * Updated for React 19 and Next.js 16 features
+ */
+export const MODERN_WEB_API_CONFIG = {
+  // React 19 specific features
+  REACT_19: {
+    serverComponents: true,
+    automaticBatching: true,
+    errorHandling: true,
+    suspense: true,
+  },
+  // Next.js 16 specific features
+  NEXT_16: {
+    appRouter: true,
+    serverActions: true,
+    streaming: true,
+    caching: true,
+  },
+  // Performance monitoring
+  PERFORMANCE: {
+    lighthouse: true,
+    webVitals: true,
+    coverage: true,
+  },
+  // Security features
+  SECURITY: {
+    csp: true,
+    xss: true,
+    headers: true,
+  },
+  // Accessibility
+  ACCESSIBILITY: {
+    wcag21: true,
+    aria: true,
+    keyboard: true,
+  },
+  // Real-time features
+  REAL_TIME: {
+    websockets: true,
+    serverSentEvents: true,
+  },
+} as const;
+
 // =============================================================================
 // ENVIRONMENT-SPECIFIC SETTINGS
 // =============================================================================
@@ -710,9 +754,9 @@ export function createPlaywrightConfig(
       geolocation: undefined,
       extraHTTPHeaders: {
         ...TEST_HEADERS,
-        'X-Test-Environment': TEST_HEADERS['X-Test-Environment'](environment),
-        'X-Playwright-Config': environment,
-        'X-Playwright-Version': '1.58.0',
+        "X-Test-Environment": TEST_HEADERS["X-Test-Environment"](environment),
+        "X-Playwright-Config": environment,
+        "X-Playwright-Version": "1.58.1",
       },
 
       // Enhanced browser launch options

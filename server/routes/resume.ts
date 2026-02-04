@@ -840,13 +840,13 @@ function generateHTML(resume: ResumeData): string {
 function validateResumeData(data: any): ResumeData {
   // Sanitize and validate all string inputs
   const sanitizeString = (str: any): string => {
-    if (typeof str !== 'string') return '';
-    return str.replace(/[<>"'&]/g, '').substring(0, 1000); // Remove potential XSS chars and limit length
+    if (typeof str !== "string") return "";
+    return str.replace(/[<>"'&]/g, "").substring(0, 1000); // Remove potential XSS chars and limit length
   };
 
   const sanitizeArray = (arr: any): string[] => {
     if (!Array.isArray(arr)) return [];
-    return arr.slice(0, 50).map(item => sanitizeString(item)); // Limit array size
+    return arr.slice(0, 50).map((item) => sanitizeString(item)); // Limit array size
   };
 
   return {
@@ -859,23 +859,29 @@ function validateResumeData(data: any): ResumeData {
     },
     summary: sanitizeString(data?.summary),
     competencies: Object.fromEntries(
-      Object.entries(data?.competencies || {}).slice(0, 20).map(([key, value]) => [
-        sanitizeString(key),
-        sanitizeArray(value)
-      ])
+      Object.entries(data?.competencies || {})
+        .slice(0, 20)
+        .map(([key, value]) => [sanitizeString(key), sanitizeArray(value)]),
     ),
-    experience: (Array.isArray(data?.experience) ? data.experience.slice(0, 20) : []).map((exp: any) => ({
-      title: sanitizeString(exp?.title),
-      company: sanitizeString(exp?.company),
-      date: sanitizeString(exp?.date),
-      achievements: sanitizeArray(exp?.achievements),
-    })),
-    education: (Array.isArray(data?.education) ? data.education.slice(0, 10) : []).map((edu: any) => ({
-      degree: sanitizeString(edu?.degree),
-      institution: sanitizeString(edu?.institution),
-      date: sanitizeString(edu?.date),
-    })),
-    certifications: (Array.isArray(data?.certifications) ? data.certifications.slice(0, 20) : []).map((cert: any) => ({
+    experience: (Array.isArray(data?.experience) ? data.experience.slice(0, 20) : []).map(
+      (exp: any) => ({
+        title: sanitizeString(exp?.title),
+        company: sanitizeString(exp?.company),
+        date: sanitizeString(exp?.date),
+        achievements: sanitizeArray(exp?.achievements),
+      }),
+    ),
+    education: (Array.isArray(data?.education) ? data.education.slice(0, 10) : []).map(
+      (edu: any) => ({
+        degree: sanitizeString(edu?.degree),
+        institution: sanitizeString(edu?.institution),
+        date: sanitizeString(edu?.date),
+      }),
+    ),
+    certifications: (Array.isArray(data?.certifications)
+      ? data.certifications.slice(0, 20)
+      : []
+    ).map((cert: any) => ({
       name: sanitizeString(cert?.name),
       issuer: sanitizeString(cert?.issuer),
       year: sanitizeString(cert?.year),
