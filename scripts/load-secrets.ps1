@@ -1,4 +1,4 @@
-w to fix this: param (
+param (
   [string]$SecretId = $env:AWS_SECRETS_MANAGER_ID,
   [string]$Region = $env:AWS_REGION,
   [string]$OutputEnvFile = "",
