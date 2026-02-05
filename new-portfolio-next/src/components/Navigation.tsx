@@ -1,30 +1,33 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import ThemeToggle from './ThemeToggle'
+import Link from "next/link";
+import { useState } from "react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'Contact', href: '/contact' },
-  ]
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Contact", href: "/contact" },
+  ];
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-sm fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white">
+            <Link
+              href="/"
+              className="text-xl font-bold text-gray-900 dark:text-white"
+            >
               Portfolio
             </Link>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               <Link
@@ -71,5 +74,5 @@ export default function Navigation() {
         </div>
       )}
     </nav>
-  )
+  );
 }

@@ -9,42 +9,81 @@ import { join } from 'node:path'
 
 const REQUIRED_SECRETS = {
   // Core
-  NODE_ENV: { required: false, description: 'Environment (development/production)' },
+  NODE_ENV: {
+    required: false,
+    description: 'Environment (development/production)',
+  },
 
   // Firebase (Cloud Messaging)
   VITE_FIREBASE_API_KEY: { required: true, description: 'Firebase API Key' },
-  VITE_FIREBASE_AUTH_DOMAIN: { required: true, description: 'Firebase Auth Domain' },
-  VITE_FIREBASE_PROJECT_ID: { required: true, description: 'Firebase Project ID' },
-  VITE_FIREBASE_STORAGE_BUCKET: { required: true, description: 'Firebase Storage Bucket' },
+  VITE_FIREBASE_AUTH_DOMAIN: {
+    required: true,
+    description: 'Firebase Auth Domain',
+  },
+  VITE_FIREBASE_PROJECT_ID: {
+    required: true,
+    description: 'Firebase Project ID',
+  },
+  VITE_FIREBASE_STORAGE_BUCKET: {
+    required: true,
+    description: 'Firebase Storage Bucket',
+  },
   VITE_FIREBASE_MESSAGING_SENDER_ID: {
     required: true,
     description: 'Firebase Messaging Sender ID',
   },
   VITE_FIREBASE_APP_ID: { required: true, description: 'Firebase App ID' },
-  VITE_FIREBASE_VAPID_KEY: { required: true, description: 'Firebase VAPID Key' },
+  VITE_FIREBASE_VAPID_KEY: {
+    required: true,
+    description: 'Firebase VAPID Key',
+  },
 
   // Google Services
-  VITE_RECAPTCHA_SITE_KEY: { required: true, description: 'reCAPTCHA Site Key (public)' },
-  RECAPTCHA_SECRET_KEY: { required: true, description: 'reCAPTCHA Secret Key (private)' },
-  VITE_GOOGLE_ANALYTICS_ID: { required: false, description: 'Google Analytics ID' },
+  VITE_RECAPTCHA_SITE_KEY: {
+    required: true,
+    description: 'reCAPTCHA Site Key (public)',
+  },
+  RECAPTCHA_SECRET_KEY: {
+    required: true,
+    description: 'reCAPTCHA Secret Key (private)',
+  },
+  VITE_GOOGLE_ANALYTICS_ID: {
+    required: false,
+    description: 'Google Analytics ID',
+  },
 
   // Sentry
   VITE_SENTRY_DSN: { required: true, description: 'Sentry DSN (client-side)' },
   SENTRY_DSN: { required: true, description: 'Sentry DSN (server-side)' },
   SENTRY_ENVIRONMENT: { required: false, description: 'Sentry Environment' },
-  SENTRY_TRACES_SAMPLE_RATE: { required: false, description: 'Sentry Traces Sample Rate' },
+  SENTRY_TRACES_SAMPLE_RATE: {
+    required: false,
+    description: 'Sentry Traces Sample Rate',
+  },
 
   // GitHub
-  GITHUB_TOKEN: { required: false, description: 'GitHub Personal Access Token' },
-  VITE_GITHUB_TOKEN: { required: false, description: 'GitHub PAT (client-side)' },
+  GITHUB_TOKEN: {
+    required: false,
+    description: 'GitHub Personal Access Token',
+  },
+  VITE_GITHUB_TOKEN: {
+    required: false,
+    description: 'GitHub PAT (client-side)',
+  },
 
   // AI Services (at least one recommended)
-  VITE_ANTHROPIC_API_KEY: { required: false, description: 'Anthropic Claude API Key' },
+  VITE_ANTHROPIC_API_KEY: {
+    required: false,
+    description: 'Anthropic Claude API Key',
+  },
   VITE_OPENAI_API_KEY: { required: false, description: 'OpenAI API Key' },
 
   // Codacy
   CODACY_API_TOKEN: { required: false, description: 'Codacy API Token' },
-  CODACY_PROJECT_TOKEN: { required: false, description: 'Codacy Project Token' },
+  CODACY_PROJECT_TOKEN: {
+    required: false,
+    description: 'Codacy Project Token',
+  },
 }
 
 const PLACEHOLDER_PATTERNS = [
@@ -119,7 +158,11 @@ function validateSecrets() {
       }
     } else if (isPlaceholder(value)) {
       if (config.required) {
-        results.placeholder.push({ key, description: config.description, value })
+        results.placeholder.push({
+          key,
+          description: config.description,
+          value,
+        })
       } else {
         results.optional.push({ key, description: config.description })
       }

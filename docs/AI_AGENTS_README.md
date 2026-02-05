@@ -69,22 +69,22 @@ client/
 
 ```typescript
 interface AgentTemplate {
-  id: string
-  name: string
-  description: string
-  category: 'basic' | 'advanced' | 'specialized'
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
-  icon: string
-  tags: string[]
-  estimatedTime: string
+  id: string;
+  name: string;
+  description: string;
+  category: "basic" | "advanced" | "specialized";
+  difficulty: "beginner" | "intermediate" | "advanced";
+  icon: string;
+  tags: string[];
+  estimatedTime: string;
   workflow: {
-    nodes: AgentNode[]
-    connections: AgentConnection[]
-  }
-  features: string[]
-  useCases: string[]
-  createdAt: string
-  updatedAt: string
+    nodes: AgentNode[];
+    connections: AgentConnection[];
+  };
+  features: string[];
+  useCases: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 ```
 

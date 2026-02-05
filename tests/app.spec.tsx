@@ -56,7 +56,7 @@ vi.mock('../client/pages/Settings', () => ({
   default: () => <div data-testid='settings-page'>Settings Page</div>,
 }))
 
-// Mock the components
+// Mock the components with lazy loading support
 vi.mock('@/components/GoogleAnalytics', () => ({
   default: () => <div data-testid='google-analytics'>Google Analytics</div>,
 }))
@@ -74,7 +74,28 @@ vi.mock('@/components/ThemeProvider', () => ({
   }),
 }))
 
-// Mock the hook
+// Mock the enhanced loading components
+vi.mock('@/components/ui/enhanced-loading', () => ({
+  LoadingErrorBoundary: ({ children }: any) => <>{children}</>,
+  PageLoading: () => <div data-testid='page-loading'>Loading...</div>,
+}))
+
+// Mock the NetworkOptimizer component
+vi.mock('@/components/NetworkOptimizer', () => ({
+  NetworkOptimizer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useNetworkAwareLoading: vi.fn(() => ({
+    networkMetrics: {},
+    isSlowConnection: false,
+    isOnline: true,
+    loadingStrategy: {
+      preload: true,
+      prefetch: true,
+      lazyLoad: false,
+      quality: 'high',
+      animations: true,
+    },
+  })),
+}))
 vi.mock('@/hooks/usePerformanceMonitoring', () => ({
   usePerformanceMonitoring: vi.fn(() => ({
     isSupported: true,
@@ -94,28 +115,28 @@ describe('App', () => {
     vi.clearAllMocks()
   })
 
-  it('renders without crashing', () => {
+  it('renders without crashing', async () => {
     render(<App />)
-    expect(screen.getByTestId('theme-provider')).toBeInTheDocument()
+    expect(await screen.findByTestId('theme-provider')).toBeInTheDocument()
   })
 
-  it('wraps content with HelmetProvider', () => {
+  it('wraps content with HelmetProvider', async () => {
     render(<App />)
     // HelmetProvider doesn't render anything visible, but ThemeProvider should be inside it
-    expect(screen.getByTestId('theme-provider')).toBeInTheDocument()
+    expect(await screen.findByTestId('theme-provider')).toBeInTheDocument()
   })
 
-  it('includes ThemeProvider with correct props', () => {
+  it('includes ThemeProvider with correct props', async () => {
     render(<App />)
-    const themeProvider = screen.getByTestId('theme-provider')
+    const themeProvider = await screen.findByTestId('theme-provider')
     const props = JSON.parse(themeProvider.getAttribute('data-props') || '{}')
     expect(props.defaultTheme).toBe('dark')
     expect(props.storageKey).toBe('portfolio-theme')
   })
 
-  it('includes GoogleAnalytics component', () => {
+  it('includes GoogleAnalytics component', async () => {
     render(<App />)
-    expect(screen.getByTestId('google-analytics')).toBeInTheDocument()
+    expect(await screen.findByTestId('google-analytics')).toBeInTheDocument()
   })
 
   it('renders Index page by default', async () => {

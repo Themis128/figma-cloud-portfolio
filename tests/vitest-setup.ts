@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
 // Constants for mock implementations
-const MOCK_TIME_REMAINING_MS = 50
+const _MOCK_TIME_REMAINING_MS = 50
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -49,19 +49,52 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 }))
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}))
-
-// React 19 specific mocks
-global.requestIdleCallback = vi.fn().mockImplementation((callback) => {
-  return setTimeout(
-    () => callback({ didTimeout: false, timeRemaining: () => MOCK_TIME_REMAINING_MS }),
-    0,
-  )
+global.IntersectionObserver = vi.fn().mockImplementation((callback, options) => {
+  const mockObserver = {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  }
+  // Store callback for potential manual triggering in tests
+  mockObserver.callback = callback
+  mockObserver.options = options
+  return mockObserver
 })
+
+// Mock Blob
+global.Blob = vi.fn().mockImplementation((content, options) => {
+  const blobContent = Array.isArray(content) ? content.join('') : content || ''
+  return {
+    content: blobContent,
+    options: options || {},
+    size: blobContent.length,
+    type: options?.type || '',
+    arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(blobContent.length)),
+    slice: vi.fn(),
+    stream: vi.fn(),
+    text: vi.fn().mockResolvedValue(blobContent),
+  }
+})
+
+// Mock performance API
+global.performance = {
+  now: vi.fn(() => Date.now()),
+  mark: vi.fn(),
+  measure: vi.fn(),
+  getEntriesByName: vi.fn(() => []),
+  getEntriesByType: vi.fn(() => []),
+  clearMarks: vi.fn(),
+  clearMeasures: vi.fn(),
+  timing: {
+    navigationStart: Date.now(),
+    loadEventEnd: Date.now() + 1000,
+    domContentLoadedEventEnd: Date.now() + 500,
+  },
+  navigation: {
+    type: 0,
+    redirectCount: 0,
+  },
+}
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
   clearTimeout(id)

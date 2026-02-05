@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useOptimizedAnimation } from '@/hooks/useDeviceType'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
@@ -27,7 +28,7 @@ export function AnimatedSection({
 
   const finalDuration = duration ?? optimizedDuration
 
-  const getInitialPosition = () => {
+  const getInitialPosition = useCallback(() => {
     switch (direction) {
       case 'up':
         return { y: 40, opacity: 0 }
@@ -40,9 +41,9 @@ export function AnimatedSection({
       default:
         return { y: 40, opacity: 0 }
     }
-  }
+  }, [direction])
 
-  const getAnimatePosition = () => {
+  const getAnimatePosition = useCallback(() => {
     switch (direction) {
       case 'up':
       case 'down':
@@ -53,7 +54,18 @@ export function AnimatedSection({
       default:
         return { y: 0, opacity: 1 }
     }
-  }
+  }, [direction])
+
+  const transition = useMemo(
+    () => ({
+      duration: finalDuration,
+      delay,
+      type: 'spring',
+      stiffness,
+      damping,
+    }),
+    [finalDuration, delay, stiffness, damping],
+  )
 
   return (
     <motion.div
@@ -61,13 +73,7 @@ export function AnimatedSection({
       className={className}
       initial={getInitialPosition()}
       animate={isVisible && !disabled ? getAnimatePosition() : getInitialPosition()}
-      transition={{
-        duration: finalDuration,
-        delay,
-        type: 'spring',
-        stiffness,
-        damping,
-      }}
+      transition={transition}
     >
       {children}
     </motion.div>

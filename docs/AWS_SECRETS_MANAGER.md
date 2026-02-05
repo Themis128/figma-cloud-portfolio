@@ -44,6 +44,7 @@ aws configure
 ```
 
 Enter your credentials:
+
 - **AWS Access Key ID**: From IAM console
 - **AWS Secret Access Key**: From IAM console
 - **Default region**: `us-east-1` (or your preferred region)
@@ -61,6 +62,7 @@ aws secretsmanager create-secret \
 ```
 
 **secrets.json** (template):
+
 ```json
 {
   "NODE_ENV": "production",
@@ -92,6 +94,7 @@ export AWS_REGION=us-east-1
 ```
 
 **Windows PowerShell**:
+
 ```powershell
 $env:AWS_SECRETS_MANAGER_ID = "portfolio/env"
 $env:AWS_REGION = "us-east-1"
@@ -114,6 +117,7 @@ The `scripts/run-with-secrets.js` wrapper automatically fetches secrets from AWS
 ### How It Works
 
 1. **package.json Scripts**: Wrapped with `run-with-secrets.js`
+
    ```json
    {
      "dev": "node scripts/run-with-secrets.js vite --port 3001",
@@ -278,9 +282,7 @@ Create an IAM policy for your application:
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "kms:Decrypt"
-      ],
+      "Action": ["kms:Decrypt"],
       "Resource": "arn:aws:kms:us-east-1:*:key/*",
       "Condition": {
         "StringEquals": {
@@ -326,6 +328,7 @@ Add AWS credentials as GitHub Secrets:
    - `AWS_SECRETS_MANAGER_ID`
 
 **Workflow Example**:
+
 ```yaml
 name: Deploy
 
@@ -373,6 +376,7 @@ Amplify will use the app's IAM role to access Secrets Manager automatically.
 **Problem**: `An error occurred (AccessDeniedException) when calling the GetSecretValue operation`
 
 **Solutions**:
+
 1. Verify IAM permissions for `secretsmanager:GetSecretValue`
 2. Check KMS key permissions if using custom encryption
 3. Ensure correct secret name/ARN
@@ -391,6 +395,7 @@ aws secretsmanager get-secret-value --secret-id portfolio/env
 **Problem**: `Secrets Manager can't find the specified secret`
 
 **Solutions**:
+
 1. Verify secret name is correct
 2. Check you're in the correct AWS region
 3. Ensure secret hasn't been deleted
@@ -408,6 +413,7 @@ aws secretsmanager list-secrets --region us-east-1
 **Problem**: Secret value is not valid JSON
 
 **Solutions**:
+
 1. Validate JSON before upload: `cat secrets.json | jq .`
 2. Use proper escaping for special characters
 3. Ensure file encoding is UTF-8
@@ -424,6 +430,7 @@ jq . secrets.json
 **Problem**: `Unable to locate credentials`
 
 **Solutions**:
+
 ```bash
 # Configure AWS CLI
 aws configure
@@ -439,6 +446,7 @@ export AWS_REGION=us-east-1
 **Problem**: Secrets take too long to fetch
 
 **Solutions**:
+
 1. **Cache secrets** in application memory (refresh periodically)
 2. **Use VPC endpoints** to reduce latency
 3. **Reduce secret size** (split large secrets into multiple)
@@ -450,6 +458,7 @@ export AWS_REGION=us-east-1
 ### AWS Secrets Manager Pricing
 
 **As of 2024**:
+
 - **Storage**: $0.40 per secret per month
 - **API Calls**: $0.050 per 10,000 API calls
 
@@ -461,6 +470,7 @@ export AWS_REGION=us-east-1
 4. **Use Parameter Store for Non-Secret Config**: AWS Systems Manager Parameter Store is free for standard parameters
 
 **Example Monthly Cost**:
+
 - 1 secret = $0.40/month
 - 100,000 API calls = $0.50
 - **Total ≈ $0.90/month**
@@ -509,6 +519,7 @@ aws cloudwatch put-metric-alarm \
 ### From .env Files to Secrets Manager
 
 1. **Export current secrets**:
+
    ```bash
    # Convert .env to JSON
    cat .env | grep -v '^#' | grep '=' > temp.env
@@ -516,6 +527,7 @@ aws cloudwatch put-metric-alarm \
    ```
 
 2. **Create JSON secrets file**:
+
    ```json
    {
      "KEY_1": "value1",
@@ -524,6 +536,7 @@ aws cloudwatch put-metric-alarm \
    ```
 
 3. **Upload to Secrets Manager**:
+
    ```bash
    aws secretsmanager create-secret \
      --name portfolio/env \
@@ -551,11 +564,13 @@ aws cloudwatch put-metric-alarm \
 ## 🆘 Support
 
 **AWS Support**:
+
 - Free tier: AWS Documentation and forums
 - Developer: $29/month
 - Business: $100/month
 
 **Project-specific Issues**:
+
 - GitHub Issues: https://github.com/Themis128/figma-cloud-portfolio/issues
 - See also: `SECRETS_MANAGEMENT.md` for local secrets management
 

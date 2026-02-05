@@ -347,7 +347,7 @@ export const MODERN_WEB_API_CONFIG = {
     websockets: true,
     serverSentEvents: true,
   },
-} as const;
+} as const
 
 // =============================================================================
 // ENVIRONMENT-SPECIFIC SETTINGS
@@ -754,9 +754,9 @@ export function createPlaywrightConfig(
       geolocation: undefined,
       extraHTTPHeaders: {
         ...TEST_HEADERS,
-        "X-Test-Environment": TEST_HEADERS["X-Test-Environment"](environment),
-        "X-Playwright-Config": environment,
-        "X-Playwright-Version": "1.58.1",
+        'X-Test-Environment': TEST_HEADERS['X-Test-Environment'](environment),
+        'X-Playwright-Config': environment,
+        'X-Playwright-Version': '1.58.1',
       },
 
       // Enhanced browser launch options
@@ -781,8 +781,8 @@ export function createPlaywrightConfig(
             cwd: process.cwd(),
           },
           {
-            command: 'pnpm dev',
-            url: 'http://localhost:3001',
+            command: 'npx vite',
+            url: 'http://localhost:8081',
             reuseExistingServer: true, // Reverted to true for manual server management
             timeout: settings.timeouts.webServer * 2, // Double timeout for dev server startup
             cwd: process.cwd(),

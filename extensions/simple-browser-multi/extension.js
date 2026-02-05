@@ -1,83 +1,83 @@
-const vscode = require('vscode')
+const vscode = require("vscode");
 
 function activate(context) {
   // Helper to create a new browser panel
   function createBrowserPanel(url) {
-    const title = `Simple Browser — ${url}`
+    const title = `Simple Browser — ${url}`;
     const panel = vscode.window.createWebviewPanel(
-      'simpleBrowserMulti.view',
+      "simpleBrowserMulti.view",
       title,
       vscode.ViewColumn.Active,
       {
         enableScripts: true,
         retainContextWhenHidden: true,
       },
-    )
+    );
 
-    panel.webview.html = getWebviewContent(url)
+    panel.webview.html = getWebviewContent(url);
 
     // store the url in panel's state for serialization
     try {
-      panel.state = panel.state || {}
-      panel.state.url = url
+      panel.state = panel.state || {};
+      panel.state.url = url;
     } catch (e) {
       // ignore
     }
 
     panel.onDidDispose(() => {
       // noop
-    })
+    });
 
-    return panel
+    return panel;
   }
 
   // Show command (interactive)
   const showCmd = vscode.commands.registerCommand(
-    'simpleBrowserMulti.show',
+    "simpleBrowserMulti.show",
     async () => {
       const url = await vscode.window.showInputBox({
-        prompt: 'Enter URL to open',
-        placeHolder: 'https://example.com',
-        value: 'https://example.com',
-      })
-      if (typeof url !== 'string' || url.trim() === '') return
-      createBrowserPanel(url)
+        prompt: "Enter URL to open",
+        placeHolder: "https://example.com",
+        value: "https://example.com",
+      });
+      if (typeof url !== "string" || url.trim() === "") return;
+      createBrowserPanel(url);
     },
-  )
+  );
 
   // API open (accepts string or Uri)
   const apiOpen = vscode.commands.registerCommand(
-    'simpleBrowserMulti.api.open',
+    "simpleBrowserMulti.api.open",
     async (arg) => {
       const url =
-        (arg && (arg.toString ? arg.toString() : String(arg))) || 'about:blank'
-      createBrowserPanel(url)
+        (arg && (arg.toString ? arg.toString() : String(arg))) || "about:blank";
+      createBrowserPanel(url);
     },
-  )
+  );
 
   // Backwards-compatible API command name
   const legacyApiOpen = vscode.commands.registerCommand(
-    'simpleBrowser.api.open',
+    "simpleBrowser.api.open",
     async (arg) => {
       const url =
-        (arg && (arg.toString ? arg.toString() : String(arg))) || 'about:blank'
-      createBrowserPanel(url)
+        (arg && (arg.toString ? arg.toString() : String(arg))) || "about:blank";
+      createBrowserPanel(url);
     },
-  )
+  );
 
   // Alias to original simpleBrowser.show
   const simpleShow = vscode.commands.registerCommand(
-    'simpleBrowser.show',
+    "simpleBrowser.show",
     async () => {
       const url = await vscode.window.showInputBox({
-        prompt: 'Enter URL to open',
-        placeHolder: 'https://example.com',
-        value: 'https://example.com',
-      })
-      if (typeof url !== 'string' || url.trim() === '') return
-      createBrowserPanel(url)
+        prompt: "Enter URL to open",
+        placeHolder: "https://example.com",
+        value: "https://example.com",
+      });
+      if (typeof url !== "string" || url.trim() === "") return;
+      createBrowserPanel(url);
     },
-  )
+  );
 
   // Register a serializer so panels can be restored
   if (vscode.window.registerWebviewPanelSerializer) {
@@ -85,29 +85,29 @@ function activate(context) {
       const serializer = {
         async deserializeWebviewPanel(panel, state) {
           // state contains serialized view state; expect { url }
-          const url = (state && state.url) || 'about:blank'
-          panel.webview.html = getWebviewContent(url)
+          const url = (state && state.url) || "about:blank";
+          panel.webview.html = getWebviewContent(url);
         },
-      }
+      };
       context.subscriptions.push(
         vscode.window.registerWebviewPanelSerializer(
-          'simpleBrowserMulti.view',
+          "simpleBrowserMulti.view",
           serializer,
         ),
-      )
+      );
     } catch (e) {
       // ignore on older API
     }
   }
 
-  context.subscriptions.push(showCmd, apiOpen, legacyApiOpen, simpleShow)
+  context.subscriptions.push(showCmd, apiOpen, legacyApiOpen, simpleShow);
 }
 
 function deactivate() {}
 
 function getWebviewContent(targetUrl) {
   // Basic webview with an address bar and an iframe
-  const escapedUrl = escapeHtml(targetUrl)
+  const escapedUrl = escapeHtml(targetUrl);
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -153,16 +153,16 @@ function getWebviewContent(targetUrl) {
       });
     </script>
   </body>
-</html>`
+</html>`;
 }
 
 function escapeHtml(s) {
   return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
-module.exports = { activate, deactivate }
+module.exports = { activate, deactivate };

@@ -121,7 +121,9 @@ describe('Product Page', () => {
   it('displays call to action button', () => {
     renderProduct()
 
-    const contactLink = screen.getByRole('link', { name: /let's work together/i })
+    const contactLink = screen.getByRole('link', {
+      name: /let's work together/i,
+    })
     expect(contactLink).toBeInTheDocument()
     expect(contactLink).toHaveAttribute('href', '/contact')
   })

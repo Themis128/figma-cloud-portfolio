@@ -232,22 +232,22 @@ The Performance page provides comprehensive monitoring and testing tools for the
 
 ```typescript
 // Google Analytics 4 integration
-if (typeof window !== 'undefined' && (window as any).gtag) {
-  ;(window as any).gtag('event', 'web_vitals', {
-    event_category: 'Performance',
-    event_label: 'LCP',
+if (typeof window !== "undefined" && (window as any).gtag) {
+  (window as any).gtag("event", "web_vitals", {
+    event_category: "Performance",
+    event_label: "LCP",
     value: Math.round(metric.value),
     custom_parameter_metric_id: metric.id,
-  })
+  });
 }
 
 // Custom analytics endpoint
-sendToAnalytics('web_vitals', {
-  metric: 'LCP',
+sendToAnalytics("web_vitals", {
+  metric: "LCP",
   value: metric.value,
   id: metric.id,
   delta: metric.delta,
-})
+});
 ```
 
 ### **Analytics Endpoints**
@@ -268,11 +268,11 @@ sendToAnalytics('web_vitals', {
 
 ```typescript
 interface AnalyticsEvent {
-  event: string // Event type (e.g., 'web_vitals')
-  data: Record<string, unknown> // Event data
-  timestamp: number // Unix timestamp
-  url: string // Current page URL
-  userAgent: string // Browser user agent
+  event: string; // Event type (e.g., 'web_vitals')
+  data: Record<string, unknown>; // Event data
+  timestamp: number; // Unix timestamp
+  url: string; // Current page URL
+  userAgent: string; // Browser user agent
 }
 ```
 
@@ -490,26 +490,26 @@ DELETE /api/push-notifications?endpoint=<url>        // Remove subscription
 // Server-side VAPID configuration
 const vapidKeys = {
   publicKey:
-    'BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk',
-  privateKey: 'CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI',
-}
+    "BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk",
+  privateKey: "CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI",
+};
 
 webpush.setVapidDetails(
-  'mailto:example@example.com',
+  "mailto:example@example.com",
   vapidKeys.publicKey,
   vapidKeys.privateKey,
-)
+);
 ```
 
 #### **Client-Side Subscription**
 
 ```typescript
 // Create subscription with VAPID key
-const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey)
+const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
 const subscription = await registration.pushManager.subscribe({
   userVisibleOnly: true,
   applicationServerKey,
-})
+});
 ```
 
 #### **Notification Sending**
@@ -518,18 +518,18 @@ const subscription = await registration.pushManager.subscribe({
 // Send to multiple subscriptions
 for (const subscription of subscriptions) {
   try {
-    const result = await webpush.sendNotification(subscription, payload)
+    const result = await webpush.sendNotification(subscription, payload);
     results.push({
       endpoint: subscription.endpoint,
       success: true,
       statusCode: result.statusCode,
-    })
+    });
   } catch (error) {
     results.push({
       endpoint: subscription.endpoint,
       success: false,
       error: (error as Error).message,
-    })
+    });
   }
 }
 ```
@@ -586,7 +586,7 @@ pnpm test:e2e --grep "PWA"
 
 ```typescript
 // Current (Development)
-let subscriptions: PushSubscriptionData[] = []
+let subscriptions: PushSubscriptionData[] = [];
 
 // Production Recommendation
 // Use database: MongoDB, PostgreSQL, Redis, etc.
@@ -682,10 +682,10 @@ componentDidCatch(error: Error, errorInfo: ErrorInfo) {
 
 ```typescript
 // Before
-const os = require('os')
+const os = require("os");
 
 // After
-const os = require('node:os')
+const os = require("node:os");
 ```
 
 #### **✅ Bundle Size Optimization**
@@ -735,11 +735,11 @@ build: {
 
 ```typescript
 // Before
-console.log('Performance metric:', metric.value)
+console.log("Performance metric:", metric.value);
 
 // After
-if (process.env.NODE_ENV === 'development') {
-  console.log('Performance metric:', metric.value)
+if (process.env.NODE_ENV === "development") {
+  console.log("Performance metric:", metric.value);
 }
 ```
 
@@ -962,7 +962,7 @@ npx tsx server/node-build.ts    # Production-style server (serves static files)
 Import consistent types in both client and server:
 
 ```typescript
-import { DemoResponse } from '@shared/api'
+import { DemoResponse } from "@shared/api";
 ```
 
 Path aliases:
@@ -996,7 +996,7 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 
    ```typescript
    export interface MyRouteResponse {
-     message: string
+     message: string;
      // Add other response properties here
    }
    ```
@@ -1004,33 +1004,33 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 2. Create a new route handler in `server/routes/my-route.ts`:
 
    ```typescript
-   import { RequestHandler } from 'express'
-   import { MyRouteResponse } from '@shared/api' // Optional: for type safety
+   import { RequestHandler } from "express";
+   import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
 
    export const handleMyRoute: RequestHandler = (req, res) => {
      const response: MyRouteResponse = {
-       message: 'Hello from my endpoint!',
-     }
-     res.json(response)
-   }
+       message: "Hello from my endpoint!",
+     };
+     res.json(response);
+   };
    ```
 
 3. Register the route in `server/index.ts`:
 
    ```typescript
-   import { handleMyRoute } from './routes/my-route'
+   import { handleMyRoute } from "./routes/my-route";
 
    // Add to the createServer function:
-   app.get('/api/my-endpoint', handleMyRoute)
+   app.get("/api/my-endpoint", handleMyRoute);
    ```
 
 4. Use in React components with type safety:
 
    ```typescript
-   import { MyRouteResponse } from '@shared/api' // Optional: for type safety
+   import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
 
-   const response = await fetch('/api/my-endpoint')
-   const data: MyRouteResponse = await response.json()
+   const response = await fetch("/api/my-endpoint");
+   const data: MyRouteResponse = await response.json();
    ```
 
 ### New Page Route
@@ -1212,7 +1212,7 @@ Enable debug mode for detailed logging:
 const agent = new Agent({
   debug: true,
   tracing: true,
-})
+});
 ```
 
 ## Future Enhancements
@@ -1330,19 +1330,19 @@ FIGMA_WEBHOOK_SECRET=your_webhook_secret
 ### Asset Management
 
 ```typescript
-import { FigmaImporter } from '@/components/figma/FigmaImporter'
+import { FigmaImporter } from "@/components/figma/FigmaImporter";
 
 // Import assets from Figma
 const importer = new FigmaImporter({
-  fileId: 'your-figma-file-id',
+  fileId: "your-figma-file-id",
   accessToken: process.env.FIGMA_ACCESS_TOKEN,
-})
+});
 
 const assets = await importer.importAssets({
-  format: 'png',
+  format: "png",
   scale: 2,
   optimize: true,
-})
+});
 ```
 
 ### Style Synchronization
@@ -1391,14 +1391,14 @@ const assets = await importer.importAssets({
 
 ```typescript
 try {
-  const result = await figmaAPI.importFile(fileId)
+  const result = await figmaAPI.importFile(fileId);
 } catch (error) {
-  if (error.code === 'RATE_LIMIT') {
+  if (error.code === "RATE_LIMIT") {
     // Implement exponential backoff
-    await delay(Math.pow(2, retryCount) * 1000)
-    return retryImport()
+    await delay(Math.pow(2, retryCount) * 1000);
+    return retryImport();
   }
-  throw error
+  throw error;
 }
 ```
 
@@ -1469,34 +1469,34 @@ The client-side implementation uses the `react-ga4` library for seamless React i
 
 ```typescript
 // GoogleAnalytics.tsx
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import ReactGA from 'react-ga4'
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import ReactGA from "react-ga4";
 
 const GoogleAnalytics = () => {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
     const measurementId =
       import.meta.env.VITE_GOOGLE_ANALYTICS_ID ||
-      import.meta.env.GOOGLE_ANALYTICS_ID
+      import.meta.env.GOOGLE_ANALYTICS_ID;
 
     if (measurementId && !ReactGA.isInitialized) {
-      ReactGA.initialize(measurementId)
+      ReactGA.initialize(measurementId);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (ReactGA.isInitialized) {
       ReactGA.send({
-        hitType: 'pageview',
+        hitType: "pageview",
         page: location.pathname + location.search,
-      })
+      });
     }
-  }, [location])
+  }, [location]);
 
-  return null
-}
+  return null;
+};
 ```
 
 ### Configuration
@@ -1548,10 +1548,10 @@ The foundation is in place for custom event tracking:
 ```typescript
 // Example custom event tracking
 ReactGA.event({
-  category: 'engagement',
-  action: 'contact_form_submit',
-  label: 'contact_page',
-})
+  category: "engagement",
+  action: "contact_form_submit",
+  label: "contact_page",
+});
 ```
 
 ### SPA Route Tracking
@@ -1711,16 +1711,16 @@ If migrating from Universal Analytics (UA):
 ### Enhanced E-commerce Tracking
 
 ```typescript
-ReactGA.gtag('event', 'view_item', {
-  currency: 'USD',
+ReactGA.gtag("event", "view_item", {
+  currency: "USD",
   value: 9.99,
   items: [
     {
-      item_id: 'portfolio_download',
-      item_name: 'Resume Download',
+      item_id: "portfolio_download",
+      item_name: "Resume Download",
     },
   ],
-})
+});
 ```
 
 ### Custom Dimensions and Metrics
@@ -1728,12 +1728,12 @@ ReactGA.gtag('event', 'view_item', {
 Configure custom parameters for enhanced tracking:
 
 ```typescript
-ReactGA.gtag('config', 'GA_MEASUREMENT_ID', {
+ReactGA.gtag("config", "GA_MEASUREMENT_ID", {
   custom_map: {
-    dimension1: 'user_type',
-    metric1: 'form_submissions',
+    dimension1: "user_type",
+    metric1: "form_submissions",
   },
-})
+});
 ```
 
 ### A/B Testing Integration
@@ -1741,12 +1741,12 @@ ReactGA.gtag('config', 'GA_MEASUREMENT_ID', {
 Integrate with Google Optimize for A/B testing:
 
 ```typescript
-ReactGA.gtag('event', 'optimize.callback', {
-  name: 'experiment_id',
+ReactGA.gtag("event", "optimize.callback", {
+  name: "experiment_id",
   callback: (value) => {
-    console.log('Experiment variation:', value)
+    console.log("Experiment variation:", value);
   },
-})
+});
 ```
 
 ## Related Documentation
@@ -1789,7 +1789,7 @@ ViteImageOptimizer({
   avif: { quality: 70, effort: 6 },
   include: /\.(png|jpe?g|webp|avif)$/i,
   exclude: /node_modules/,
-})
+});
 ```
 
 **Features**:
@@ -1921,7 +1921,7 @@ ViteImageOptimizer({
     quality: 70,
     effort: 6,
   },
-})
+});
 ```
 
 ### Component Props
@@ -2061,15 +2061,15 @@ The application is configured as a Progressive Web App with offline capabilities
 
 ```typescript
 VitePWA({
-  registerType: 'autoUpdate',
+  registerType: "autoUpdate",
   workbox: {
-    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+    globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/api\./,
-        handler: 'NetworkFirst',
+        handler: "NetworkFirst",
         options: {
-          cacheName: 'api-cache',
+          cacheName: "api-cache",
           expiration: {
             maxEntries: 100,
             maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
@@ -2079,26 +2079,26 @@ VitePWA({
     ],
   },
   manifest: {
-    name: 'Themistoklis Baltzakis Portfolio',
-    short_name: 'TB Portfolio',
-    description: 'Cloud Architect & Cybersecurity Specialist Portfolio',
-    theme_color: '#0f172a',
-    background_color: '#0f172a',
-    display: 'standalone',
+    name: "Themistoklis Baltzakis Portfolio",
+    short_name: "TB Portfolio",
+    description: "Cloud Architect & Cybersecurity Specialist Portfolio",
+    theme_color: "#0f172a",
+    background_color: "#0f172a",
+    display: "standalone",
     icons: [
       {
-        src: '/logo-192.png',
-        sizes: '192x192',
-        type: 'image/png',
+        src: "/logo-192.png",
+        sizes: "192x192",
+        type: "image/png",
       },
       {
-        src: '/logo-512.png',
-        sizes: '512x512',
-        type: 'image/png',
+        src: "/logo-512.png",
+        sizes: "512x512",
+        type: "image/png",
       },
     ],
   },
-})
+});
 ```
 
 ### Service Worker Registration
@@ -2106,7 +2106,7 @@ VitePWA({
 **Location**: `client/main.tsx`
 
 ```typescript
-import { registerSW } from 'virtual:pwa-register'
+import { registerSW } from "virtual:pwa-register";
 
 const updateSW = registerSW({
   onNeedRefresh() {
@@ -2115,7 +2115,7 @@ const updateSW = registerSW({
   onOfflineReady() {
     // App is ready for offline use
   },
-})
+});
 ```
 
 ## Configuration
@@ -2173,41 +2173,41 @@ The application uses VAPID (Voluntary Application Server Identification) for web
 
 ```typescript
 const subscribeToNotifications = async () => {
-  const registration = await navigator.serviceWorker.ready
+  const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-  })
+  });
 
-  await fetch('/api/push-notifications', {
-    method: 'PUT',
+  await fetch("/api/push-notifications", {
+    method: "PUT",
     body: JSON.stringify(subscription),
-  })
-}
+  });
+};
 ```
 
 **Server-side** (`server/routes/push-notifications.ts`):
 
 ```typescript
-import webpush from 'web-push'
+import webpush from "web-push";
 
 webpush.setVapidDetails(
-  'mailto:example@example.com',
+  "mailto:example@example.com",
   vapidPublicKey,
   vapidPrivateKey,
-)
+);
 
-app.post('/api/push-notifications', async (req, res) => {
-  const { subscription, message } = req.body
+app.post("/api/push-notifications", async (req, res) => {
+  const { subscription, message } = req.body;
 
   await webpush.sendNotification(
     subscription,
     JSON.stringify({
-      title: 'Portfolio Update',
+      title: "Portfolio Update",
       body: message,
     }),
-  )
-})
+  );
+});
 ```
 
 ## Testing
@@ -2378,23 +2378,23 @@ The application includes Google reCAPTCHA v3 integration for enhanced security a
 **Location**: `client/components/Contact.tsx`
 
 ```typescript
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const Contact = () => {
-  const { executeRecaptcha } = useGoogleReCaptcha()
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleSubmit = async (data: ContactFormData) => {
     if (!executeRecaptcha) {
-      console.warn('Execute recaptcha not yet available')
-      return
+      console.warn("Execute recaptcha not yet available");
+      return;
     }
 
     try {
-      const token = await executeRecaptcha('contact_form')
+      const token = await executeRecaptcha("contact_form");
       const response = await submitContactForm({
         ...data,
         recaptchaToken: token,
-      })
+      });
 
       if (response.success) {
         // Handle success
@@ -2402,8 +2402,8 @@ const Contact = () => {
     } catch (error) {
       // Handle error
     }
-  }
-}
+  };
+};
 ```
 
 ### Server-Side Validation
@@ -2411,19 +2411,19 @@ const Contact = () => {
 **Location**: `server/routes/contact.ts`
 
 ```typescript
-import { verifyRecaptcha } from '@/lib/recaptcha'
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
-app.post('/api/contact', async (req, res) => {
-  const { name, email, message, recaptchaToken } = req.body
+app.post("/api/contact", async (req, res) => {
+  const { name, email, message, recaptchaToken } = req.body;
 
   try {
-    const recaptchaResult = await verifyRecaptcha(recaptchaToken)
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken);
 
     if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
       return res.status(400).json({
         success: false,
-        error: 'reCAPTCHA validation failed',
-      })
+        error: "reCAPTCHA validation failed",
+      });
     }
 
     // Process contact form
@@ -2431,10 +2431,10 @@ app.post('/api/contact', async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to process contact form',
-    })
+      error: "Failed to process contact form",
+    });
   }
-})
+});
 ```
 
 ## Configuration
@@ -2529,11 +2529,11 @@ Enable debug mode for detailed logging:
 ```typescript
 // Client-side debug
 window.grecaptcha.ready(() => {
-  window.grecaptcha.execute(siteKey, { action: 'debug' })
-})
+  window.grecaptcha.execute(siteKey, { action: "debug" });
+});
 
 // Server-side debug
-console.log('ReCAPTCHA result:', recaptchaResult)
+console.log("ReCAPTCHA result:", recaptchaResult);
 ```
 
 ## Best Practices
@@ -2608,31 +2608,31 @@ The application provides dynamic PDF generation from markdown content, creating 
 
 ```typescript
 const Resume = () => {
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await fetch('/api/resume/download')
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      setPdfUrl(url)
+      const response = await fetch("/api/resume/download");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      setPdfUrl(url);
 
       // Auto-download
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'Themistoklis_Baltzakis_Resume.pdf'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Themistoklis_Baltzakis_Resume.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading resume:', error)
+      console.error("Error downloading resume:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-}
+  };
+};
 ```
 
 ### Server-Side Generation
@@ -2640,32 +2640,32 @@ const Resume = () => {
 **Location**: `server/routes/resume.ts`
 
 ```typescript
-app.get('/api/resume/download', async (req, res) => {
+app.get("/api/resume/download", async (req, res) => {
   try {
     // Read markdown content
     const markdownContent = await fs.readFile(
-      path.join(__dirname, '../../public/resume-content.md'),
-      'utf-8',
-    )
+      path.join(__dirname, "../../public/resume-content.md"),
+      "utf-8",
+    );
 
     // Parse markdown to structured data
-    const resumeData = parseResumeMarkdown(markdownContent)
+    const resumeData = parseResumeMarkdown(markdownContent);
 
     // Generate HTML
-    const html = generateResumeHTML(resumeData)
+    const html = generateResumeHTML(resumeData);
 
     // Generate PDF
-    const pdfBuffer = await generatePDF(html)
+    const pdfBuffer = await generatePDF(html);
 
     // Send PDF
-    res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', 'attachment; filename="resume.pdf"')
-    res.send(pdfBuffer)
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="resume.pdf"');
+    res.send(pdfBuffer);
   } catch (error) {
-    console.error('Error generating resume:', error)
-    res.status(500).json({ error: 'Failed to generate resume' })
+    console.error("Error generating resume:", error);
+    res.status(500).json({ error: "Failed to generate resume" });
   }
-})
+});
 ```
 
 ## Content Structure
@@ -2718,32 +2718,32 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience...
 ```typescript
 export interface ResumeData {
   personalInfo: {
-    name: string
-    title: string
-    email: string
-    phone: string
-    location: string
-    linkedin?: string
-    github?: string
-  }
-  professionalSummary: string
+    name: string;
+    title: string;
+    email: string;
+    phone: string;
+    location: string;
+    linkedin?: string;
+    github?: string;
+  };
+  professionalSummary: string;
   skills: {
-    category: string
-    items: string[]
-  }[]
+    category: string;
+    items: string[];
+  }[];
   experience: {
-    title: string
-    company: string
-    period: string
-    description: string
-    achievements: string[]
-  }[]
+    title: string;
+    company: string;
+    period: string;
+    description: string;
+    achievements: string[];
+  }[];
   education: {
-    degree: string
-    institution: string
-    period: string
-    details?: string
-  }[]
+    degree: string;
+    institution: string;
+    period: string;
+    details?: string;
+  }[];
 }
 ```
 
@@ -2784,7 +2784,7 @@ function generateResumeHTML(data: ResumeData): string {
       <!-- Content sections -->
     </body>
     </html>
-  `
+  `;
 }
 ```
 
@@ -2792,24 +2792,24 @@ function generateResumeHTML(data: ResumeData): string {
 
 ```typescript
 async function generatePDF(html: string): Promise<Buffer> {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
 
-  await page.setContent(html, { waitUntil: 'networkidle0' })
+  await page.setContent(html, { waitUntil: "networkidle0" });
 
   const pdfBuffer = await page.pdf({
-    format: 'A4',
+    format: "A4",
     printBackground: true,
     margin: {
-      top: '20mm',
-      bottom: '20mm',
-      left: '15mm',
-      right: '15mm',
+      top: "20mm",
+      bottom: "20mm",
+      left: "15mm",
+      right: "15mm",
     },
-  })
+  });
 
-  await browser.close()
-  return pdfBuffer
+  await browser.close();
+  return pdfBuffer;
 }
 ```
 
@@ -2842,28 +2842,28 @@ async function generatePDF(html: string): Promise<Buffer> {
 
 ```typescript
 // In-memory cache for generated PDFs
-const pdfCache = new Map<string, { buffer: Buffer; timestamp: number }>()
+const pdfCache = new Map<string, { buffer: Buffer; timestamp: number }>();
 
-app.get('/api/resume/download', async (req, res) => {
-  const cacheKey = 'resume_pdf'
-  const cached = pdfCache.get(cacheKey)
+app.get("/api/resume/download", async (req, res) => {
+  const cacheKey = "resume_pdf";
+  const cached = pdfCache.get(cacheKey);
 
   if (cached && Date.now() - cached.timestamp < 300000) {
     // 5 minutes
-    res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', 'attachment; filename="resume.pdf"')
-    res.send(cached.buffer)
-    return
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="resume.pdf"');
+    res.send(cached.buffer);
+    return;
   }
 
   // Generate new PDF and cache
-  const pdfBuffer = await generateResumePDF()
-  pdfCache.set(cacheKey, { buffer: pdfBuffer, timestamp: Date.now() })
+  const pdfBuffer = await generateResumePDF();
+  pdfCache.set(cacheKey, { buffer: pdfBuffer, timestamp: Date.now() });
 
-  res.setHeader('Content-Type', 'application/pdf')
-  res.setHeader('Content-Disposition', 'attachment; filename="resume.pdf"')
-  res.send(pdfBuffer)
-})
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", 'attachment; filename="resume.pdf"');
+  res.send(pdfBuffer);
+});
 ```
 
 ## Testing
@@ -2872,41 +2872,41 @@ app.get('/api/resume/download', async (req, res) => {
 
 ```typescript
 // Test markdown parsing
-describe('parseResumeMarkdown', () => {
-  it('should parse basic resume structure', () => {
-    const markdown = '# John Doe\n## Contact\n- Email: john@example.com'
-    const result = parseResumeMarkdown(markdown)
-    expect(result.personalInfo.name).toBe('John Doe')
-  })
-})
+describe("parseResumeMarkdown", () => {
+  it("should parse basic resume structure", () => {
+    const markdown = "# John Doe\n## Contact\n- Email: john@example.com";
+    const result = parseResumeMarkdown(markdown);
+    expect(result.personalInfo.name).toBe("John Doe");
+  });
+});
 
 // Test PDF generation
-describe('generatePDF', () => {
-  it('should generate PDF from HTML', async () => {
-    const html = '<html><body><h1>Test</h1></body></html>'
-    const pdfBuffer = await generatePDF(html)
-    expect(pdfBuffer).toBeInstanceOf(Buffer)
-    expect(pdfBuffer.length).toBeGreaterThan(0)
-  })
-})
+describe("generatePDF", () => {
+  it("should generate PDF from HTML", async () => {
+    const html = "<html><body><h1>Test</h1></body></html>";
+    const pdfBuffer = await generatePDF(html);
+    expect(pdfBuffer).toBeInstanceOf(Buffer);
+    expect(pdfBuffer.length).toBeGreaterThan(0);
+  });
+});
 ```
 
 ### E2E Tests
 
 ```typescript
-test('resume download functionality', async ({ page }) => {
-  await page.goto('/resume')
+test("resume download functionality", async ({ page }) => {
+  await page.goto("/resume");
 
   // Click download button
-  await page.click('[data-testid="download-resume"]')
+  await page.click('[data-testid="download-resume"]');
 
   // Wait for download
-  const downloadPromise = page.waitForEvent('download')
-  await downloadPromise
+  const downloadPromise = page.waitForEvent("download");
+  await downloadPromise;
 
   // Verify PDF content
   // ...
-})
+});
 ```
 
 ## Security Considerations
@@ -2995,7 +2995,7 @@ The application provides comprehensive PDF generation functionality for resumes,
 **Location**: `server/services/pdfService.ts`
 
 ```typescript
-import puppeteer from 'puppeteer'
+import puppeteer from "puppeteer";
 
 export class PDFService {
   static async generatePDF(
@@ -3004,38 +3004,38 @@ export class PDFService {
   ): Promise<Buffer> {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    })
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
 
     try {
-      const page = await browser.newPage()
+      const page = await browser.newPage();
 
       // Set viewport for consistent rendering
       await page.setViewport({
         width: 1200,
         height: 800,
         deviceScaleFactor: 1,
-      })
+      });
 
       // Set HTML content
-      await page.setContent(html, { waitUntil: 'networkidle0' })
+      await page.setContent(html, { waitUntil: "networkidle0" });
 
       // Generate PDF
       const pdfBuffer = await page.pdf({
-        format: options.format || 'A4',
+        format: options.format || "A4",
         printBackground: true,
         margin: options.margin || {
-          top: '20mm',
-          bottom: '20mm',
-          left: '15mm',
-          right: '15mm',
+          top: "20mm",
+          bottom: "20mm",
+          left: "15mm",
+          right: "15mm",
         },
         ...options.pdfOptions,
-      })
+      });
 
-      return pdfBuffer
+      return pdfBuffer;
     } finally {
-      await browser.close()
+      await browser.close();
     }
   }
 }
@@ -3065,7 +3065,7 @@ export function generateResumeTemplate(data: ResumeData): string {
       </div>
     </body>
     </html>
-  `
+  `;
 }
 
 // Report template
@@ -3087,7 +3087,7 @@ export function generateReportTemplate(data: ReportData): string {
       </div>
     </body>
     </html>
-  `
+  `;
 }
 ```
 
@@ -3097,20 +3097,20 @@ export function generateReportTemplate(data: ReportData): string {
 
 ```typescript
 interface PDFGenerationOptions {
-  format?: 'A4' | 'A3' | 'Letter' | 'Legal'
+  format?: "A4" | "A3" | "Letter" | "Legal";
   margin?: {
-    top: string
-    bottom: string
-    left: string
-    right: string
-  }
+    top: string;
+    bottom: string;
+    left: string;
+    right: string;
+  };
   pdfOptions?: {
-    landscape?: boolean
-    scale?: number
-    displayHeaderFooter?: boolean
-    headerTemplate?: string
-    footerTemplate?: string
-  }
+    landscape?: boolean;
+    scale?: number;
+    displayHeaderFooter?: boolean;
+    headerTemplate?: string;
+    footerTemplate?: string;
+  };
 }
 ```
 
@@ -3119,12 +3119,12 @@ interface PDFGenerationOptions {
 ```typescript
 // Custom PDF generation
 const options: PDFGenerationOptions = {
-  format: 'A4',
+  format: "A4",
   margin: {
-    top: '25mm',
-    bottom: '25mm',
-    left: '20mm',
-    right: '20mm',
+    top: "25mm",
+    bottom: "25mm",
+    left: "20mm",
+    right: "20mm",
   },
   pdfOptions: {
     landscape: false,
@@ -3135,7 +3135,7 @@ const options: PDFGenerationOptions = {
     footerTemplate:
       '<div style="text-align: center; font-size: 10px;">Generated on ${new Date().toISOString()}</div>',
   },
-}
+};
 ```
 
 ## Performance Optimization
@@ -3145,22 +3145,22 @@ const options: PDFGenerationOptions = {
 ```typescript
 // PDF caching service
 class PDFCacheService {
-  private cache = new Map<string, { buffer: Buffer; timestamp: number }>()
-  private readonly CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+  private cache = new Map<string, { buffer: Buffer; timestamp: number }>();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   async getCachedPDF(key: string): Promise<Buffer | null> {
-    const cached = this.cache.get(key)
+    const cached = this.cache.get(key);
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
-      return cached.buffer
+      return cached.buffer;
     }
-    return null
+    return null;
   }
 
   setCachedPDF(key: string, buffer: Buffer): void {
     this.cache.set(key, {
       buffer,
       timestamp: Date.now(),
-    })
+    });
   }
 }
 ```
@@ -3174,29 +3174,29 @@ export async function generatePDFAsync(
   options: PDFGenerationOptions,
 ): Promise<string> {
   // Generate unique job ID
-  const jobId = crypto.randomUUID()
+  const jobId = crypto.randomUUID();
 
   // Queue job for background processing
-  await jobQueue.add('pdf-generation', {
+  await jobQueue.add("pdf-generation", {
     jobId,
     html,
     options,
-  })
+  });
 
-  return jobId
+  return jobId;
 }
 
 // Webhook for completion
-app.post('/api/pdf/webhook', async (req, res) => {
-  const { jobId, pdfUrl, status } = req.body
+app.post("/api/pdf/webhook", async (req, res) => {
+  const { jobId, pdfUrl, status } = req.body;
 
-  if (status === 'completed') {
+  if (status === "completed") {
     // Notify user or store result
-    await notifyUser(jobId, pdfUrl)
+    await notifyUser(jobId, pdfUrl);
   }
 
-  res.status(200).json({ success: true })
-})
+  res.status(200).json({ success: true });
+});
 ```
 
 ## Error Handling
@@ -3210,8 +3210,8 @@ export class PDFGenerationError extends Error {
     public originalError?: Error,
     public context?: any,
   ) {
-    super(message)
-    this.name = 'PDFGenerationError'
+    super(message);
+    this.name = "PDFGenerationError";
   }
 }
 
@@ -3221,29 +3221,32 @@ export async function safePDFGeneration(
 ): Promise<Buffer> {
   try {
     // Validate input
-    if (!html || typeof html !== 'string') {
-      throw new PDFGenerationError('Invalid HTML content provided')
+    if (!html || typeof html !== "string") {
+      throw new PDFGenerationError("Invalid HTML content provided");
     }
 
     // Generate PDF with timeout
-    const timeout = 30000 // 30 seconds
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), timeout)
+    const timeout = 30000; // 30 seconds
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-    const pdfBuffer = await PDFService.generatePDF(html, options)
-    clearTimeout(timeoutId)
+    const pdfBuffer = await PDFService.generatePDF(html, options);
+    clearTimeout(timeoutId);
 
-    return pdfBuffer
+    return pdfBuffer;
   } catch (error) {
-    if (error.name === 'TimeoutError') {
-      throw new PDFGenerationError('PDF generation timed out', error)
+    if (error.name === "TimeoutError") {
+      throw new PDFGenerationError("PDF generation timed out", error);
     }
 
-    if (error.name === 'BrowserError') {
-      throw new PDFGenerationError('Browser error during PDF generation', error)
+    if (error.name === "BrowserError") {
+      throw new PDFGenerationError(
+        "Browser error during PDF generation",
+        error,
+      );
     }
 
-    throw new PDFGenerationError('Failed to generate PDF', error)
+    throw new PDFGenerationError("Failed to generate PDF", error);
   }
 }
 ```
@@ -3254,37 +3257,37 @@ export async function safePDFGeneration(
 
 ```typescript
 // HTML sanitization
-import DOMPurify from 'isomorphic-dompurify'
+import DOMPurify from "isomorphic-dompurify";
 
 export function sanitizeHTML(html: string): string {
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [
-      'div',
-      'span',
-      'p',
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'ul',
-      'ol',
-      'li',
-      'table',
-      'thead',
-      'tbody',
-      'tr',
-      'td',
-      'th',
-      'strong',
-      'em',
-      'br',
-      'hr',
+      "div",
+      "span",
+      "p",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "ul",
+      "ol",
+      "li",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "td",
+      "th",
+      "strong",
+      "em",
+      "br",
+      "hr",
     ],
-    ALLOWED_ATTR: ['class', 'id', 'style'],
+    ALLOWED_ATTR: ["class", "id", "style"],
     ALLOW_DATA_ATTR: false,
-  })
+  });
 }
 
 // CSS sanitization
@@ -3292,8 +3295,8 @@ export function sanitizeCSS(css: string): string {
   // Remove potentially dangerous CSS properties
   return css.replace(
     /(expression|javascript|url\s*\(\s*['"]?\s*javascript)/gi,
-    '',
-  )
+    "",
+  );
 }
 ```
 
@@ -3302,21 +3305,21 @@ export function sanitizeCSS(css: string): string {
 ```typescript
 // Secure file operations
 export function secureFileOperations() {
-  const fs = require('fs')
-  const path = require('path')
+  const fs = require("fs");
+  const path = require("path");
 
   // Restrict file paths
   const allowedDirectories = [
-    path.resolve(__dirname, '../../public'),
-    path.resolve(__dirname, '../../templates'),
-  ]
+    path.resolve(__dirname, "../../public"),
+    path.resolve(__dirname, "../../templates"),
+  ];
 
   function isPathAllowed(filePath: string): boolean {
-    const resolvedPath = path.resolve(filePath)
-    return allowedDirectories.some((dir) => resolvedPath.startsWith(dir))
+    const resolvedPath = path.resolve(filePath);
+    return allowedDirectories.some((dir) => resolvedPath.startsWith(dir));
   }
 
-  return { isPathAllowed }
+  return { isPathAllowed };
 }
 ```
 
@@ -3325,52 +3328,52 @@ export function secureFileOperations() {
 ### Unit Tests
 
 ```typescript
-describe('PDF Generation Service', () => {
-  test('should generate PDF from valid HTML', async () => {
-    const html = '<html><body><h1>Test PDF</h1></body></html>'
-    const buffer = await PDFService.generatePDF(html)
+describe("PDF Generation Service", () => {
+  test("should generate PDF from valid HTML", async () => {
+    const html = "<html><body><h1>Test PDF</h1></body></html>";
+    const buffer = await PDFService.generatePDF(html);
 
-    expect(buffer).toBeInstanceOf(Buffer)
-    expect(buffer.length).toBeGreaterThan(0)
-  })
+    expect(buffer).toBeInstanceOf(Buffer);
+    expect(buffer.length).toBeGreaterThan(0);
+  });
 
-  test('should handle invalid HTML gracefully', async () => {
-    await expect(PDFService.generatePDF('')).rejects.toThrow()
-  })
+  test("should handle invalid HTML gracefully", async () => {
+    await expect(PDFService.generatePDF("")).rejects.toThrow();
+  });
 
-  test('should apply custom options', async () => {
-    const html = '<html><body><h1>Test</h1></body></html>'
+  test("should apply custom options", async () => {
+    const html = "<html><body><h1>Test</h1></body></html>";
     const options = {
-      format: 'A3' as const,
+      format: "A3" as const,
       margin: {
-        top: '10mm',
-        bottom: '10mm',
-        left: '10mm',
-        right: '10mm',
+        top: "10mm",
+        bottom: "10mm",
+        left: "10mm",
+        right: "10mm",
       },
-    }
+    };
 
-    const buffer = await PDFService.generatePDF(html, options)
-    expect(buffer).toBeInstanceOf(Buffer)
-  })
-})
+    const buffer = await PDFService.generatePDF(html, options);
+    expect(buffer).toBeInstanceOf(Buffer);
+  });
+});
 ```
 
 ### Integration Tests
 
 ```typescript
-describe('PDF API Endpoints', () => {
-  test('should download resume PDF', async () => {
+describe("PDF API Endpoints", () => {
+  test("should download resume PDF", async () => {
     const response = await request(app)
-      .get('/api/resume/download')
+      .get("/api/resume/download")
       .expect(200)
-      .expect('Content-Type', 'application/pdf')
-      .expect('Content-Disposition', /attachment; filename=".*\.pdf"/)
+      .expect("Content-Type", "application/pdf")
+      .expect("Content-Disposition", /attachment; filename=".*\.pdf"/);
 
-    expect(response.body).toBeInstanceOf(Buffer)
-    expect(response.body.length).toBeGreaterThan(0)
-  })
-})
+    expect(response.body).toBeInstanceOf(Buffer);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+});
 ```
 
 ## Monitoring and Analytics
@@ -3385,27 +3388,27 @@ export class PDFMetrics {
     averageGenerationTime: 0,
     errorRate: 0,
     cacheHitRate: 0,
-  }
+  };
 
   static recordGeneration(time: number, success: boolean): void {
-    this.metrics.totalGenerated++
+    this.metrics.totalGenerated++;
 
     if (success) {
       // Update average time
-      const currentAvg = this.metrics.averageGenerationTime
+      const currentAvg = this.metrics.averageGenerationTime;
       this.metrics.averageGenerationTime =
         (currentAvg * (this.metrics.totalGenerated - 1) + time) /
-        this.metrics.totalGenerated
+        this.metrics.totalGenerated;
     } else {
       // Update error rate
       this.metrics.errorRate =
         (this.metrics.errorRate * (this.metrics.totalGenerated - 1) + 1) /
-        this.metrics.totalGenerated
+        this.metrics.totalGenerated;
     }
   }
 
   static getMetrics(): typeof this.metrics {
-    return { ...this.metrics }
+    return { ...this.metrics };
   }
 }
 ```
@@ -3587,6 +3590,7 @@ Cloud Architect & Cybersecurity Specialist with 10+ years of experience in desig
    ```
 
 2. **Update contact information**:
+
    ```markdown
    ## Contact
 
@@ -3695,7 +3699,7 @@ The application includes validation for the markdown content:
    ```typescript
    // Add template for custom section
    function generateCustomSection(data: CustomSectionData): string {
-     return `<div class="custom-section">${data.content}</div>`
+     return `<div class="custom-section">${data.content}</div>`;
    }
    ```
 
@@ -3703,7 +3707,7 @@ The application includes validation for the markdown content:
    ```typescript
    export interface ResumeData {
      // ... existing fields
-     customSection?: CustomSectionData
+     customSection?: CustomSectionData;
    }
    ```
 
@@ -3719,7 +3723,7 @@ The application includes validation for the markdown content:
        padding: 15px;
        border: 1px solid #ddd;
      }
-   `
+   `;
    ```
 
 2. **Add conditional styling**:
@@ -3730,9 +3734,9 @@ The application includes validation for the markdown content:
          .custom-section {
            background-color: #f5f5f5;
          }
-       `
+       `;
      }
-     return ''
+     return "";
    }
    ```
 
@@ -3802,8 +3806,8 @@ The application includes validation for the markdown content:
 
    ```typescript
    // In server/routes/resume.ts
-   console.log('Resume content:', content)
-   console.log('Parsed data:', resumeData)
+   console.log("Resume content:", content);
+   console.log("Parsed data:", resumeData);
    ```
 
 2. **Test parsing separately**:
@@ -3885,67 +3889,67 @@ The application includes comprehensive visual progress tracking and performance 
 **Location**: `client/components/PerformanceMonitor.tsx`
 
 ```typescript
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
 export function PerformanceMonitor() {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
     // Track Core Web Vitals
     const trackWebVitals = () => {
       onCLS((metric) => {
         // Send to analytics service
-        sendToAnalytics('web_vitals', {
-          metric: 'CLS',
+        sendToAnalytics("web_vitals", {
+          metric: "CLS",
           value: metric.value,
           id: metric.id,
           delta: metric.delta,
-        })
-      })
+        });
+      });
 
       onINP((metric) => {
-        sendToAnalytics('web_vitals', {
-          metric: 'INP',
+        sendToAnalytics("web_vitals", {
+          metric: "INP",
           value: metric.value,
           id: metric.id,
           delta: metric.delta,
-        })
-      })
+        });
+      });
 
       onFCP((metric) => {
-        sendToAnalytics('web_vitals', {
-          metric: 'FCP',
+        sendToAnalytics("web_vitals", {
+          metric: "FCP",
           value: metric.value,
           id: metric.id,
           delta: metric.delta,
-        })
-      })
+        });
+      });
 
       onLCP((metric) => {
-        sendToAnalytics('web_vitals', {
-          metric: 'LCP',
+        sendToAnalytics("web_vitals", {
+          metric: "LCP",
           value: metric.value,
           id: metric.id,
           delta: metric.delta,
-        })
-      })
+        });
+      });
 
       onTTFB((metric) => {
-        sendToAnalytics('web_vitals', {
-          metric: 'TTFB',
+        sendToAnalytics("web_vitals", {
+          metric: "TTFB",
           value: metric.value,
           id: metric.id,
           delta: metric.delta,
-        })
-      })
-    }
+        });
+      });
+    };
 
-    trackWebVitals()
-  }, [location.pathname])
+    trackWebVitals();
+  }, [location.pathname]);
 
-  return null
+  return null;
 }
 ```
 

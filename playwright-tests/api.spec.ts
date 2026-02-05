@@ -126,7 +126,9 @@ test.describe('API Endpoints', () => {
   test('should handle API timeout gracefully', async ({ request }) => {
     // Test with a very short timeout - should either succeed or timeout gracefully
     try {
-      const response = await request.get('http://localhost:3000/api/demo', { timeout: 1 })
+      const response = await request.get('http://localhost:3000/api/demo', {
+        timeout: 1,
+      })
       // If we get here, the request succeeded despite short timeout
       expect(response.status()).toBe(200)
     } catch (error) {

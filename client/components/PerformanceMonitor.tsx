@@ -193,37 +193,12 @@ export function PerformanceMonitor() {
 
     trackWebVitals()
 
-    // Track navigation performance
     const trackNavigation = () => {
-      // Use a timeout to wait for page load to complete
       const checkNavigationTiming = () => {
-        if ('performance' in window && 'getEntriesByType' in window.performance) {
-          const navigation = window.performance.getEntriesByType(
-            'navigation',
-          )[0] as PerformanceEntry & {
-            domContentLoadedEventEnd: number
-            domContentLoadedEventStart: number
-            loadEventEnd: number
-            loadEventStart: number
-            fetchStart: number
-          }
-
+        if (isPerformanceSupported()) {
+          const navigation = getNavigationEntry()
           if (navigation) {
-            // Navigation timing variables calculated for potential future analytics use
-            // const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
-            // const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
-            // const totalTime = navigation.loadEventEnd - navigation.fetchStart;
-
-            if (process.env.NODE_ENV === 'production') {
-              // Send to analytics service
-              // analytics.track('navigation_timing', {
-              //   domContentLoaded,
-              //   loadComplete,
-              //   totalTime,
-              // })
-            } else {
-              // Debug logging removed - analytics handles production tracking
-            }
+            handleNavigationEntry(navigation)
           }
         }
       }
@@ -231,6 +206,38 @@ export function PerformanceMonitor() {
       // Check immediately and also after a short delay to catch load completion
       checkNavigationTiming()
       setTimeout(checkNavigationTiming, NAVIGATION_CHECK_DELAY_MS)
+    }
+
+    const isPerformanceSupported = () => {
+      return 'performance' in window && 'getEntriesByType' in window.performance
+    }
+
+    const getNavigationEntry = () => {
+      return window.performance.getEntriesByType('navigation')[0] as PerformanceEntry & {
+        domContentLoadedEventEnd: number
+        domContentLoadedEventStart: number
+        loadEventEnd: number
+        loadEventStart: number
+        fetchStart: number
+      }
+    }
+
+    const handleNavigationEntry = (
+      _navigation: PerformanceEntry & {
+        domContentLoadedEventEnd: number
+        domContentLoadedEventStart: number
+        loadEventEnd: number
+        loadEventStart: number
+        fetchStart: number
+      },
+    ) => {
+      if (process.env.NODE_ENV === 'production') {
+        // Send to analytics service
+        // const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
+        // const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
+        // const totalTime = navigation.loadEventEnd - navigation.fetchStart;
+        // analytics.track('navigation_timing', { domContentLoaded, loadComplete, totalTime })
+      }
     }
 
     trackNavigation()

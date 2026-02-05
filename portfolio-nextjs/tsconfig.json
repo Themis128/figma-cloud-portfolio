@@ -2,12 +2,8 @@
   "compilerOptions": {
     // Target modern JavaScript
     "target": "ES2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ES2022"
-    ],
-    
+    "lib": ["dom", "dom.iterable", "ES2022"],
+
     // Module system
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -15,11 +11,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    
+
     // JSX configuration
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    
+
     // Type checking
     "strict": true,
     "noUnusedLocals": true,
@@ -30,11 +26,11 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
-    
+
     // Performance optimizations
     "incremental": true,
     "tsBuildInfoFile": ".next/tsconfig.tsbuildinfo",
-    
+
     // Path mapping
     "baseUrl": ".",
     "paths": {
@@ -46,7 +42,7 @@
       "@/styles/*": ["./src/styles/*"],
       "@/types/*": ["./src/types/*"]
     },
-    
+
     // Advanced options
     "plugins": [
       {
@@ -60,7 +56,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    
+
     // Performance settings
     "skipDefaultLibCheck": true,
     "assumeChangesOnlyAffectDirectDependencies": true
@@ -74,10 +70,5 @@
     "**/*.mts",
     "**/*.cts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "out",
-    "dist"
-  ]
+  "exclude": ["node_modules", ".next", "out", "dist"]
 }

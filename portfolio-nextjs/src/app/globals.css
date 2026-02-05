@@ -5,7 +5,7 @@
   /* Font families */
   --font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
   --font-mono: var(--font-mono, ui-monospace, monospace);
-  
+
   /* Color system - Light mode (default) */
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(222.2 84% 4.9%);
@@ -31,7 +31,7 @@
   --color-chart-3: hsl(197 37% 24%);
   --color-chart-4: hsl(43 74% 66%);
   --color-chart-5: hsl(27 87% 67%);
-  
+
   /* Sidebar colors - Light */
   --color-sidebar: hsl(0 0% 98%);
   --color-sidebar-foreground: hsl(240 5.3% 26.1%);
@@ -41,7 +41,7 @@
   --color-sidebar-accent-foreground: hsl(240 5.9% 10%);
   --color-sidebar-border: hsl(220 13% 91%);
   --color-sidebar-ring: hsl(217.2 91.2% 59.8%);
-  
+
   /* Spacing */
   --radius: 0.5rem;
   --radius-sm: calc(var(--radius) - 4px);
@@ -167,7 +167,9 @@ html {
 
 body {
   @apply bg-background text-foreground;
-  font-feature-settings: "rlig" 1, "calt" 1;
+  font-feature-settings:
+    "rlig" 1,
+    "calt" 1;
 }
 
 /* Focus styles for accessibility */
@@ -220,26 +222,26 @@ html.transitioning *::after {
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  
+
   a,
   a:visited {
     text-decoration: underline;
   }
-  
+
   a[href]::after {
     content: " (" attr(href) ")";
   }
-  
+
   pre,
   blockquote {
     border: 1px solid #999;
     page-break-inside: avoid;
   }
-  
+
   img {
     max-width: 100% !important;
   }
-  
+
   @page {
     margin: 2cm;
   }
@@ -276,7 +278,8 @@ html.transitioning *::after {
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   }
   50% {

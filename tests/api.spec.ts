@@ -39,7 +39,9 @@ describe.skip('API Client', () => {
         expect.any(String),
         expect.objectContaining({
           method: 'POST',
-          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json',
+          }),
           body: JSON.stringify(formData),
         }),
       )
@@ -80,7 +82,10 @@ describe.skip('API Client', () => {
 
   describe('ping', () => {
     it('returns ping response', async () => {
-      const mockResponse = { message: 'pong', timestamp: '2025-01-23T12:00:00Z' }
+      const mockResponse = {
+        message: 'pong',
+        timestamp: '2025-01-23T12:00:00Z',
+      }
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockResponse),
@@ -91,7 +96,11 @@ describe.skip('API Client', () => {
     })
 
     it('throws on failure', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: false, status: 503, statusText: 'Unavailable' })
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        statusText: 'Unavailable',
+      })
       await expect(ping()).rejects.toThrow('API request failed')
     })
   })
@@ -133,7 +142,12 @@ describe.skip('API Client', () => {
     it('sendTestNotification sends notification', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ success: true, results: [], totalSubscriptions: 1 }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            results: [],
+            totalSubscriptions: 1,
+          }),
       })
 
       const result = await pushNotificationsApi.sendTestNotification()
@@ -143,7 +157,13 @@ describe.skip('API Client', () => {
     it('sendCustomNotification sends with message', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ success: true, results: [], totalSent: 1, totalFailed: 0 }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            results: [],
+            totalSent: 1,
+            totalFailed: 0,
+          }),
       })
 
       const result = await pushNotificationsApi.sendCustomNotification({
@@ -154,7 +174,10 @@ describe.skip('API Client', () => {
     })
 
     it('storeSubscription stores data', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({}),
+      })
 
       await pushNotificationsApi.storeSubscription({
         endpoint: 'https://test.com',
@@ -168,7 +191,10 @@ describe.skip('API Client', () => {
     })
 
     it('removeSubscription removes endpoint', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({}),
+      })
 
       await pushNotificationsApi.removeSubscription('https://test.com')
 

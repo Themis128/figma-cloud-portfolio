@@ -22,7 +22,10 @@ const mockMatchMedia = vi.fn().mockImplementation((query) => ({
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
 }))
-Object.defineProperty(window, 'matchMedia', { writable: true, value: mockMatchMedia })
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: mockMatchMedia,
+})
 
 describe('ThemeProvider', () => {
   beforeEach(() => {

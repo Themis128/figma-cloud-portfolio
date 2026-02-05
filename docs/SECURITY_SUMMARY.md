@@ -9,6 +9,7 @@
 ## 📊 Current Security Status
 
 ### ✅ Completed
+
 - [x] Repository visibility confirmed (PRIVATE)
 - [x] Security vulnerabilities identified and documented
 - [x] `.env` backup created
@@ -20,6 +21,7 @@
 - [x] All security tools and templates in place
 
 ### 🟡 Pending User Action
+
 - [ ] **Revoke exposed tokens** (GitHub, Sentry, reCAPTCHA, Figma, Codacy)
 - [ ] **Generate new tokens** for all services
 - [ ] **Update `.env` file** with new tokens
@@ -33,6 +35,7 @@
 ## 📁 Files Created
 
 ### Documentation
+
 1. **`SECURITY_REMEDIATION.md`**
    - Complete security remediation guide
    - List of all exposed tokens
@@ -50,6 +53,7 @@
    - Environment variable setup instructions
 
 ### Scripts
+
 4. **`scripts/rotate-tokens.sh`**
    - Interactive token rotation helper
    - Updates `.env` file with new tokens
@@ -70,6 +74,7 @@
    - Provides actionable feedback
 
 ### Backups
+
 8. **`.env.backup.YYYYMMDD_HHMMSS`**
    - Backup of current `.env` file
    - Created automatically by scripts
@@ -81,11 +86,13 @@
 ### Step 1: Understand the Situation
 
 **Good News**:
+
 - ✅ Repository is **PRIVATE** (risk is limited)
 - ✅ All security measures now in place
 - ✅ Automated tools ready to use
 
 **Need Action**:
+
 - ⚠️ Tokens are exposed in git history
 - ⚠️ Tokens hardcoded in `mcp.json`
 - ⚠️ Must rotate all tokens as precaution
@@ -93,9 +100,11 @@
 ### Step 2: Rotate Tokens (Required)
 
 **Option A: Interactive Script** (Easiest)
+
 ```bash
 ./scripts/rotate-tokens.sh
 ```
+
 Follow the prompts to update each token.
 
 **Option B: Manual Process**
@@ -106,6 +115,7 @@ Follow the detailed checklist in `TOKEN_ROTATION_CHECKLIST.md`
 Edit: `C:\Users\baltz\AppData\Roaming\Code - Insiders\User\mcp.json`
 
 Replace hardcoded tokens (lines 251, 262):
+
 ```json
 {
   "Authorization": "Bearer ${GITHUB_TOKEN}",
@@ -122,6 +132,7 @@ See `MCP_SECURE_CONFIG.md` for detailed instructions.
 ```
 
 This checks:
+
 - ✅ `.env` and `mcp.json` in `.gitignore`
 - ✅ No files tracked by git
 - ✅ No hardcoded secrets in code
@@ -146,13 +157,13 @@ Since repository is PRIVATE, this is optional but recommended:
 
 ## 🔑 Tokens Requiring Rotation
 
-| Service | Priority | Location | Action URL |
-|---------|----------|----------|------------|
-| GitHub | 🔴 CRITICAL | `mcp.json`, `.env` | https://github.com/settings/tokens |
-| Sentry | 🟡 HIGH | `.env` | https://sentry.io/settings/account/api/auth-tokens/ |
-| reCAPTCHA | 🟡 HIGH | `.env` | https://www.google.com/recaptcha/admin |
-| Figma | 🟢 MEDIUM | `.env` | https://www.figma.com/developers/api |
-| Codacy | 🟢 MEDIUM | `.env` | https://app.codacy.com/account/apiTokens |
+| Service   | Priority    | Location           | Action URL                                          |
+| --------- | ----------- | ------------------ | --------------------------------------------------- |
+| GitHub    | 🔴 CRITICAL | `mcp.json`, `.env` | https://github.com/settings/tokens                  |
+| Sentry    | 🟡 HIGH     | `.env`             | https://sentry.io/settings/account/api/auth-tokens/ |
+| reCAPTCHA | 🟡 HIGH     | `.env`             | https://www.google.com/recaptcha/admin              |
+| Figma     | 🟢 MEDIUM   | `.env`             | https://www.figma.com/developers/api                |
+| Codacy    | 🟢 MEDIUM   | `.env`             | https://app.codacy.com/account/apiTokens            |
 
 ---
 
@@ -169,16 +180,19 @@ For complete details, see:
 ## 🛠️ Available Commands
 
 ### Security Verification
+
 ```bash
 ./scripts/verify-security.sh
 ```
 
 ### Token Rotation
+
 ```bash
 ./scripts/rotate-tokens.sh
 ```
 
 ### Git History Cleanup
+
 ```bash
 # Bash
 ./scripts/cleanup-git-history.sh
@@ -188,6 +202,7 @@ For complete details, see:
 ```
 
 ### Manual Checks
+
 ```bash
 # Check if .env in git
 git ls-files | grep ".env"
@@ -222,12 +237,14 @@ After completing token rotation:
 ## 🎯 Prevention Measures Implemented
 
 ### Immediate Protection
+
 - ✅ `.env` in `.gitignore`
 - ✅ `mcp.json` in `.gitignore`
 - ✅ Security documentation in place
 - ✅ Automated verification tools
 
 ### Recommended Next Steps
+
 - [ ] Install git-secrets: `winget install gitleaks`
 - [ ] Add pre-commit hooks (template in `TOKEN_ROTATION_CHECKLIST.md`)
 - [ ] Enable GitHub secret scanning (if available)
@@ -239,6 +256,7 @@ After completing token rotation:
 ## 🆘 If Repository Becomes Public
 
 **Immediate Actions**:
+
 1. Make private again immediately
 2. Revoke ALL tokens within 1 hour
 3. Check GitHub security alerts
@@ -246,6 +264,7 @@ After completing token rotation:
 5. Monitor services for unauthorized access
 
 **Contact Support If Needed**:
+
 - GitHub: https://support.github.com/
 - Sentry: From dashboard
 - Google reCAPTCHA: https://support.google.com/
@@ -255,16 +274,19 @@ After completing token rotation:
 ## 📞 Need Help?
 
 ### Documentation Files
+
 - `SECURITY_REMEDIATION.md` - Complete remediation guide
 - `TOKEN_ROTATION_CHECKLIST.md` - Stepby-step token rotation
 - `MCP_SECURE_CONFIG.md` - MCP security guide
 
 ### Verification
+
 ```bash
 ./scripts/verify-security.sh
 ```
 
 ### All Scripts
+
 - `scripts/rotate-tokens.sh` - Token rotation helper
 - `scripts/cleanup-git-history.sh/.ps1` - Git cleanup
 - `scripts/verify-security.sh` - Security verification
@@ -298,6 +320,7 @@ After completing token rotation:
 ## ✨ Successfully Implemented
 
 Your repository now has:
+
 - ✅ Comprehensive security documentation
 - ✅ Auto tools for token management
 - ✅ Git history cleanup scripts

@@ -287,8 +287,11 @@ test.describe('Resource Preloading & Performance', () => {
                 faces.push({
                   family: rule.style.fontFamily,
                   display:
-                    (rule.style as CSSStyleDeclaration & { fontDisplay?: string }).fontDisplay ||
-                    'auto',
+                    (
+                      rule.style as CSSStyleDeclaration & {
+                        fontDisplay?: string
+                      }
+                    ).fontDisplay || 'auto',
                 })
               }
             }

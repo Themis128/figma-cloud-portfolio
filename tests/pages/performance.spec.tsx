@@ -1,7 +1,42 @@
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import Performance from '@/pages/Performance'
+
+// Mock React.lazy BEFORE importing the component
+vi.mock('react', async () => {
+  const actualReact = await vi.importActual('react')
+  return {
+    ...actualReact,
+    lazy: vi.fn((importFn) => {
+      // Return a synchronous component for testing with appropriate test IDs
+      const Component = () => {
+        // Check the import function to determine which component this is
+        const importPath = importFn.toString()
+        if (importPath.includes('PerformanceTester')) {
+          return <div data-testid='performance-tester'>Performance Tester</div>
+        } else if (importPath.includes('PushNotificationTester')) {
+          return <div data-testid='push-notification-tester'>Push Notification Tester</div>
+        }
+        return <div>Lazy Component</div>
+      }
+      Component.displayName = 'LazyComponent'
+      return Component
+    }),
+  }
+})
+
+// Mock lucide-react icons BEFORE importing components
+vi.mock('lucide-react', () => ({
+  Activity: () => <div data-testid='activity-icon' />,
+  ArrowLeft: () => <div data-testid='arrow-left-icon' />,
+  BarChart3: () => <div data-testid='bar-chart-icon' />,
+  Cpu: () => <div data-testid='cpu-icon' />,
+  HardDrive: () => <div data-testid='hard-drive-icon' />,
+  Network: () => <div data-testid='network-icon' />,
+  Zap: () => <div data-testid='zap-icon' />,
+  Menu: () => <div data-testid='menu-icon' />,
+  X: () => <div data-testid='x-icon' />,
+}))
 
 // Mock ThemeProvider to avoid DOM manipulation issues
 vi.mock('@/components/ThemeProvider', () => ({
@@ -15,16 +50,6 @@ vi.mock('@/components/Navigation', () => ({
 vi.mock('@/components/PerformanceDashboard', () => ({
   PerformanceDashboard: () => (
     <div data-testid='performance-dashboard-component'>Performance Dashboard</div>
-  ),
-}))
-
-vi.mock('@/components/PerformanceTester', () => ({
-  PerformanceTester: () => <div data-testid='performance-tester'>Performance Tester</div>,
-}))
-
-vi.mock('@/components/PushNotificationTester', () => ({
-  PushNotificationTester: () => (
-    <div data-testid='push-notification-tester'>Push Notification Tester</div>
   ),
 }))
 
@@ -51,16 +76,19 @@ vi.mock('@/components/ui/card', () => ({
 }))
 
 vi.mock('@/components/ui/progress', () => ({
-  Progress: ({ value, className }: any) => (
-    <div
-      className={className}
-      data-testid='progress'
-      data-value={value}
-      role='progressbar'
-      aria-valuenow={value}
-    />
+  Progress: ({ value, className, 'data-testid': dataTestId, ...props }: any) => (
+    <div className={className} data-testid={dataTestId} data-value={value} {...props}>
+      Progress: {value}%
+    </div>
   ),
 }))
+
+vi.mock('@/components/LoadingAnimations', () => ({
+  LoadingSpinner: () => <div data-testid='loading-spinner'>Loading...</div>,
+}))
+
+// Now import the component after mocking
+import Performance from '@/pages/Performance'
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
@@ -71,6 +99,8 @@ vi.mock('lucide-react', () => ({
   HardDrive: () => <div data-testid='hard-drive-icon' />,
   Network: () => <div data-testid='network-icon' />,
   Zap: () => <div data-testid='zap-icon' />,
+  Menu: () => <div data-testid='menu-icon' />,
+  X: () => <div data-testid='x-icon' />,
 }))
 
 // Constants for performance mock values

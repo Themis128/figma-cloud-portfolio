@@ -354,7 +354,7 @@ test.describe('Google reCAPTCHA v3 - Real Integration', () => {
         await waitForAppReady(page)
 
         return await page.evaluate(() => {
-          if (!(performance && performance.getEntriesByType)) {
+          if (!performance?.getEntriesByType) {
             return { impact: 0 }
           }
 

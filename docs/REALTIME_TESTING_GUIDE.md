@@ -33,27 +33,27 @@ Open browser console on `http://localhost:8081` and run:
 
 ```javascript
 // Test Socket.IO connection
-const socket = io('http://localhost:3000');
+const socket = io("http://localhost:3000");
 
-socket.on('connect', () => {
-  console.log('✅ Socket.IO connected:', socket.id);
+socket.on("connect", () => {
+  console.log("✅ Socket.IO connected:", socket.id);
 });
 
-socket.on('disconnect', () => {
-  console.log('❌ Socket.IO disconnected');
+socket.on("disconnect", () => {
+  console.log("❌ Socket.IO disconnected");
 });
 
 // Test presence join
-socket.emit('presence:join', {
-  userId: 'test-user',
-  username: 'Test User',
-  roomId: 'test-room',
-  metadata: { role: 'developer' }
+socket.emit("presence:join", {
+  userId: "test-user",
+  username: "Test User",
+  roomId: "test-room",
+  metadata: { role: "developer" },
 });
 
 // Listen for presence updates
-socket.on('presence:updated', (data) => {
-  console.log('👥 Presence updated:', data);
+socket.on("presence:updated", (data) => {
+  console.log("👥 Presence updated:", data);
 });
 ```
 
@@ -61,20 +61,20 @@ socket.on('presence:updated', (data) => {
 
 ```javascript
 // Test typing indicators
-socket.emit('typing:start', 'test-room');
-setTimeout(() => socket.emit('typing:stop', 'test-room'), 3000);
+socket.emit("typing:start", "test-room");
+setTimeout(() => socket.emit("typing:stop", "test-room"), 3000);
 
 // Test agent collaboration
-socket.emit('agent:status', {
-  agentId: 'test-agent',
-  status: 'running',
+socket.emit("agent:status", {
+  agentId: "test-agent",
+  status: "running",
   progress: 50,
-  metadata: { task: 'processing' }
+  metadata: { task: "processing" },
 });
 
 // Test room management
-socket.emit('room:join', 'project:123');
-socket.emit('room:leave', 'project:123');
+socket.emit("room:join", "project:123");
+socket.emit("room:leave", "project:123");
 ```
 
 ### 3. Multi-tab Testing
@@ -85,19 +85,19 @@ socket.emit('room:leave', 'project:123');
 
 ```javascript
 // Tab 1
-window.socket = io('http://localhost:3000');
-window.socket.emit('presence:join', {
-  userId: 'user1',
-  username: 'Alice',
-  roomId: 'test-room'
+window.socket = io("http://localhost:3000");
+window.socket.emit("presence:join", {
+  userId: "user1",
+  username: "Alice",
+  roomId: "test-room",
 });
 
 // Tab 2
-window.socket = io('http://localhost:3000');
-window.socket.emit('presence:join', {
-  userId: 'user2',
-  username: 'Bob',
-  roomId: 'test-room'
+window.socket = io("http://localhost:3000");
+window.socket.emit("presence:join", {
+  userId: "user2",
+  username: "Bob",
+  roomId: "test-room",
 });
 ```
 
@@ -125,7 +125,7 @@ export default function SocketTestPage() {
   return (
     <div className="p-8">
       <h1>Socket.IO Test Page</h1>
-      
+
       <div className="mb-4">
         <h2>Connection Status</h2>
         <p>State: {connectionState}</p>
@@ -135,13 +135,13 @@ export default function SocketTestPage() {
 
       <div className="mb-4">
         <h2>Room Management</h2>
-        <button 
+        <button
           onClick={() => joinRoom('test-room', 'Test User')}
           className="mr-2 px-4 py-2 bg-blue-500 text-white rounded"
         >
           Join Room
         </button>
-        <button 
+        <button
           onClick={() => leaveRoom('test-room')}
           className="px-4 py-2 bg-red-500 text-white rounded"
         >
@@ -175,13 +175,13 @@ export default function SocketTestPage() {
 
 ```typescript
 // Add to test component
-import { startTransition } from 'react';
+import { startTransition } from "react";
 
 const handleRapidUpdates = () => {
   // Test React 19 startTransition for smooth updates
   for (let i = 0; i < 100; i++) {
     startTransition(() => {
-      socket?.emit('test:rapid-update', { count: i });
+      socket?.emit("test:rapid-update", { count: i });
     });
   }
 };
@@ -224,14 +224,14 @@ import { CollaborationPanel } from '@/components/realtime/CollaborationComponent
 2. Start typing in one tab:
 
 ```javascript
-socket.emit('typing:start', 'test-room');
+socket.emit("typing:start", "test-room");
 ```
 
 3. Other tabs should show typing indicator
 4. Stop typing after 3 seconds:
 
 ```javascript
-setTimeout(() => socket.emit('typing:stop', 'test-room'), 3000);
+setTimeout(() => socket.emit("typing:stop", "test-room"), 3000);
 ```
 
 ## Testing Real-time Dashboard
@@ -282,14 +282,14 @@ import { AgentCollaborationWrapper } from '@/components/realtime/RealtimeIntegra
 
 ```javascript
 // Simulate agent status updates
-socket.emit('agent:status', {
-  agentId: 'test-agent',
-  status: 'running',
+socket.emit("agent:status", {
+  agentId: "test-agent",
+  status: "running",
   progress: 75,
   metadata: {
-    currentTask: 'Processing data',
-    estimatedTime: '2 minutes'
-  }
+    currentTask: "Processing data",
+    estimatedTime: "2 minutes",
+  },
 });
 ```
 
@@ -297,16 +297,16 @@ socket.emit('agent:status', {
 
 ```javascript
 // Test agent-specific events
-socket.emit('agent:error', {
-  agentId: 'test-agent',
-  error: 'Test error message',
-  timestamp: Date.now()
+socket.emit("agent:error", {
+  agentId: "test-agent",
+  error: "Test error message",
+  timestamp: Date.now(),
 });
 
-socket.emit('agent:completed', {
-  agentId: 'test-agent',
-  result: 'Task completed successfully',
-  duration: 30000
+socket.emit("agent:completed", {
+  agentId: "test-agent",
+  result: "Task completed successfully",
+  duration: 30000,
 });
 ```
 
@@ -331,7 +331,7 @@ Visit `http://localhost:8081/test-realtime`
 1. **Setup**: Open 3 browser windows/tabs
 2. **Join Room**: All users join same agent room
 3. **Test Presence**: Verify all users appear in presence indicators
-4. **Test Collaboration**: 
+4. **Test Collaboration**:
    - Start typing in one tab
    - Modify agent config in another tab
    - Broadcast agent status from third tab
@@ -346,7 +346,7 @@ socket.disconnect();
 
 // Test network issues simulation
 navigator.onLine = false; // Simulate offline
-setTimeout(() => navigator.onLine = true, 5000); // Back online
+setTimeout(() => (navigator.onLine = true), 5000); // Back online
 ```
 
 ## Performance Testing
@@ -363,7 +363,7 @@ setTimeout(() => navigator.onLine = true, 5000); // Back online
 
 ```javascript
 // Verify cleanup on component unmount
-console.log('Active listeners:', socket.eventNames().length);
+console.log("Active listeners:", socket.eventNames().length);
 // Should decrease when components unmount
 ```
 
@@ -391,26 +391,30 @@ pnpm test -- --grep "realtime"
 Create `playwright-tests/realtime.spec.ts`:
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('real-time features integration', async ({ browser }) => {
+test("real-time features integration", async ({ browser }) => {
   const context1 = await browser.newContext();
   const context2 = await browser.newContext();
-  
+
   const page1 = await context1.newPage();
   const page2 = await context2.newPage();
 
   // Navigate both pages
-  await page1.goto('http://localhost:8081/test-realtime');
-  await page2.goto('http://localhost:8081/test-realtime');
+  await page1.goto("http://localhost:8081/test-realtime");
+  await page2.goto("http://localhost:8081/test-realtime");
 
   // Test presence
   await page1.click('[data-testid="join-room"]');
   await page2.click('[data-testid="join-room"]');
 
   // Verify presence indicators
-  await expect(page1.locator('[data-testid="presence-indicator"]')).toContainText('2 users');
-  await expect(page2.locator('[data-testid="presence-indicator"]')).toContainText('2 users');
+  await expect(
+    page1.locator('[data-testid="presence-indicator"]'),
+  ).toContainText("2 users");
+  await expect(
+    page2.locator('[data-testid="presence-indicator"]'),
+  ).toContainText("2 users");
 
   await context1.close();
   await context2.close();
@@ -423,13 +427,13 @@ test('real-time features integration', async ({ browser }) => {
 // Simple load test
 const connections = [];
 for (let i = 0; i < 50; i++) {
-  const socket = io('http://localhost:3000');
+  const socket = io("http://localhost:3000");
   connections.push(socket);
-  
-  socket.emit('presence:join', {
+
+  socket.emit("presence:join", {
     userId: `load-test-${i}`,
     username: `User ${i}`,
-    roomId: 'load-test'
+    roomId: "load-test",
   });
 }
 
@@ -455,17 +459,17 @@ Enable debug logging:
 const DEBUG = true;
 
 // Or via environment
-localStorage.setItem('debug', 'socket.io-client:socket');
+localStorage.setItem("debug", "socket.io-client:socket");
 ```
 
 ### Server-side Debugging
 
 ```typescript
 // In server/index.ts
-const DEBUG = process.env.NODE_ENV === 'development';
+const DEBUG = process.env.NODE_ENV === "development";
 
 if (DEBUG) {
-  console.log('Socket event:', eventName, data);
+  console.log("Socket event:", eventName, data);
 }
 ```
 
@@ -480,14 +484,14 @@ if (DEBUG) {
 ✅ **Memory Management**: No memory leaks after extended use  
 ✅ **Multi-tab Support**: Consistent state across browser tabs  
 ✅ **Error Handling**: Graceful handling of connection issues  
-✅ **Performance**: No UI blocking during real-time updates  
+✅ **Performance**: No UI blocking during real-time updates
 
 ## Next Steps
 
 After successful testing:
 
 1. **Deploy to production** with environment variables
-2. **Configure Socket.IO clustering** for horizontal scaling  
+2. **Configure Socket.IO clustering** for horizontal scaling
 3. **Set up monitoring** for real-time metrics
 4. **Implement room persistence** with Redis
 5. **Add rate limiting** for socket events

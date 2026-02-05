@@ -32,12 +32,12 @@ A comprehensive template system for creating and managing AI agent configuration
 Main component for browsing and selecting templates.
 
 ```tsx
-import TemplateSelector from '@/components/agents/TemplateSelector'
-;<TemplateSelector
-  onSelectTemplate={(template) => console.log('Selected:', template)}
-  onCloneTemplate={(template) => console.log('Cloned:', template)}
+import TemplateSelector from "@/components/agents/TemplateSelector";
+<TemplateSelector
+  onSelectTemplate={(template) => console.log("Selected:", template)}
+  onCloneTemplate={(template) => console.log("Cloned:", template)}
   selectedTemplateId="basic-chatbot"
-/>
+/>;
 ```
 
 **Props:**
@@ -51,11 +51,11 @@ import TemplateSelector from '@/components/agents/TemplateSelector'
 Component for creating custom templates.
 
 ```tsx
-import TemplateCreator from '@/components/agents/TemplateCreator'
-;<TemplateCreator
-  onCreateTemplate={(template) => console.log('Created:', template)}
-  onCancel={() => console.log('Cancelled')}
-/>
+import TemplateCreator from "@/components/agents/TemplateCreator";
+<TemplateCreator
+  onCreateTemplate={(template) => console.log("Created:", template)}
+  onCancel={() => console.log("Cancelled")}
+/>;
 ```
 
 **Props:**
@@ -69,22 +69,22 @@ import TemplateCreator from '@/components/agents/TemplateCreator'
 
 ```typescript
 interface AgentTemplate {
-  id: string
-  name: string
-  description: string
-  category: 'basic' | 'advanced' | 'specialized'
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
-  icon: string
-  tags: string[]
-  estimatedTime: string
+  id: string;
+  name: string;
+  description: string;
+  category: "basic" | "advanced" | "specialized";
+  difficulty: "beginner" | "intermediate" | "advanced";
+  icon: string;
+  tags: string[];
+  estimatedTime: string;
   workflow: {
-    nodes: AgentNode[]
-    connections: AgentConnection[]
-  }
-  features: string[]
-  useCases: string[]
-  createdAt: string
-  updatedAt: string
+    nodes: AgentNode[];
+    connections: AgentConnection[];
+  };
+  features: string[];
+  useCases: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 ```
 
@@ -95,9 +95,9 @@ interface AgentTemplate {
 Creates a deep copy of a template with new IDs.
 
 ```typescript
-import { cloneTemplate } from '@/data/agentTemplates'
+import { cloneTemplate } from "@/data/agentTemplates";
 
-const cloned = cloneTemplate(originalTemplate, 'My Custom Copy')
+const cloned = cloneTemplate(originalTemplate, "My Custom Copy");
 ```
 
 ### `searchTemplates(query)`
@@ -105,9 +105,9 @@ const cloned = cloneTemplate(originalTemplate, 'My Custom Copy')
 Search templates by text query.
 
 ```typescript
-import { searchTemplates } from '@/data/agentTemplates'
+import { searchTemplates } from "@/data/agentTemplates";
 
-const results = searchTemplates('chatbot')
+const results = searchTemplates("chatbot");
 ```
 
 ### `getTemplatesByCategory(category)`
@@ -115,45 +115,45 @@ const results = searchTemplates('chatbot')
 Filter templates by category.
 
 ```typescript
-import { getTemplatesByCategory } from '@/data/agentTemplates'
+import { getTemplatesByCategory } from "@/data/agentTemplates";
 
-const basicTemplates = getTemplatesByCategory('basic')
+const basicTemplates = getTemplatesByCategory("basic");
 ```
 
 ## Usage Example
 
 ```tsx
-import { useState } from 'react'
-import TemplateSelector from '@/components/agents/TemplateSelector'
-import TemplateCreator from '@/components/agents/TemplateCreator'
-import type { AgentTemplate } from '@/data/agentTemplates'
+import { useState } from "react";
+import TemplateSelector from "@/components/agents/TemplateSelector";
+import TemplateCreator from "@/components/agents/TemplateCreator";
+import type { AgentTemplate } from "@/data/agentTemplates";
 
 function AgentBuilder() {
-  const [view, setView] = useState<'select' | 'create'>('select')
+  const [view, setView] = useState<"select" | "create">("select");
   const [selectedTemplate, setSelectedTemplate] =
-    useState<AgentTemplate | null>(null)
+    useState<AgentTemplate | null>(null);
 
-  if (view === 'create') {
+  if (view === "create") {
     return (
       <TemplateCreator
         onCreateTemplate={(template) => {
-          setSelectedTemplate(template)
-          setView('select')
+          setSelectedTemplate(template);
+          setView("select");
         }}
-        onCancel={() => setView('select')}
+        onCancel={() => setView("select")}
       />
-    )
+    );
   }
 
   return (
     <div>
-      <button onClick={() => setView('create')}>Create Custom Template</button>
+      <button onClick={() => setView("create")}>Create Custom Template</button>
 
       <TemplateSelector
         onSelectTemplate={setSelectedTemplate}
         onCloneTemplate={(template) => {
           // Handle cloned template
-          setSelectedTemplate(template)
+          setSelectedTemplate(template);
         }}
         selectedTemplateId={selectedTemplate?.id}
       />
@@ -165,7 +165,7 @@ function AgentBuilder() {
         </div>
       )}
     </div>
-  )
+  );
 }
 ```
 

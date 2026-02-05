@@ -17,59 +17,65 @@ Your portfolio application now has enterprise-grade deployment infrastructure an
 ✅ **Token Rotation** - Automated reminders, documented procedures  
 ✅ **GitHub Actions** - Full CI/CD pipeline with quality gates  
 ✅ **AWS Amplify** - Production deployment with auto-scaling  
-✅ **Monitoring** - CloudWatch, logging, error tracking  
+✅ **Monitoring** - CloudWatch, logging, error tracking
 
 ---
 
 ## Documentation Created
 
 ### 1️⃣ **SECRETS_MANAGEMENT.md** (400+ lines)
-   - AWS Secrets Manager configuration
-   - PowerShell/Bash loaders
-   - Local development setup
-   - Token storage best practices
-   - Emergency procedures
+
+- AWS Secrets Manager configuration
+- PowerShell/Bash loaders
+- Local development setup
+- Token storage best practices
+- Emergency procedures
 
 ### 2️⃣ **GITHUB_DEPLOYMENT_GUIDE.md** (NEW)
-   - GitHub Secrets setup (step-by-step)
-   - AWS Amplify integration
-   - GitHub Actions CI/CD workflow
-   - Token rotation procedures
-   - Endpoint protection strategies
-   - Troubleshooting guide
+
+- GitHub Secrets setup (step-by-step)
+- AWS Amplify integration
+- GitHub Actions CI/CD workflow
+- Token rotation procedures
+- Endpoint protection strategies
+- Troubleshooting guide
 
 ### 3️⃣ **TOKEN_ROTATION_SCHEDULE.md** (NEW)
-   - Rotation matrix (6 tokens/credentials)
-   - 90-day & 180-day rotation procedures
-   - Emergency revocation steps
-   - Automated GitHub Actions reminders
-   - Compliance audit log template
-   - Quick reference commands
+
+- Rotation matrix (6 tokens/credentials)
+- 90-day & 180-day rotation procedures
+- Emergency revocation steps
+- Automated GitHub Actions reminders
+- Compliance audit log template
+- Quick reference commands
 
 ### 4️⃣ **ENDPOINT_PROTECTION.md** (NEW)
-   - HTTPS/TLS enforcement
-   - CORS configuration
-   - Rate limiting strategies
-   - Input validation & sanitization
-   - Security headers
-   - AWS WAF setup
-   - DDoS protection
-   - Authentication/authorization
-   - Logging & monitoring
+
+- HTTPS/TLS enforcement
+- CORS configuration
+- Rate limiting strategies
+- Input validation & sanitization
+- Security headers
+- AWS WAF setup
+- DDoS protection
+- Authentication/authorization
+- Logging & monitoring
 
 ### 5️⃣ **.github/workflows/deploy.yml** (NEW)
-   - Quality checks (lint, types, format)
-   - Security audit stage
-   - Build artifacts
-   - Unit & E2E tests
-   - Amplify deployment
-   - Team notifications
+
+- Quality checks (lint, types, format)
+- Security audit stage
+- Build artifacts
+- Unit & E2E tests
+- Amplify deployment
+- Team notifications
 
 ---
 
 ## Infrastructure Components
 
 ### Local Development
+
 ```
 ├── .env (template with ${VAR} placeholders)
 ├── scripts/load-secrets.ps1 (PowerShell loader)
@@ -79,6 +85,7 @@ Your portfolio application now has enterprise-grade deployment infrastructure an
 ```
 
 ### AWS Secrets Manager
+
 ```
 portfolio/env
   ├── CODACY_ACCOUNT_TOKEN
@@ -89,6 +96,7 @@ portfolio/env
 ```
 
 ### GitHub Repository
+
 ```
 .github/
 ├── workflows/
@@ -103,6 +111,7 @@ portfolio/env
 ```
 
 ### AWS Amplify
+
 ```
 Hosting: https://yourdomain.com
 ├── Environment Variables:
@@ -114,6 +123,7 @@ Hosting: https://yourdomain.com
 ```
 
 ### Monitoring & Logging
+
 ```
 CloudWatch:
 ├── Logs: /aws/amplify/portfolio/*
@@ -133,18 +143,18 @@ Logging:
 
 ## Security Controls Summary
 
-| Control | Implementation | Status | Review Cycle |
-|---------|-----------------|--------|--------------|
-| **Secrets Storage** | AWS Secrets Manager | ✅ Active | Real-time |
-| **HTTPS/TLS** | AWS Amplify + CloudFront | ✅ Automatic | N/A |
-| **CORS Policy** | Whitelist origin validation | ✅ Configured | Per-deployment |
-| **Rate Limiting** | Redis-backed express-rate-limit | ⚠️ Ready to implement | 24/7 monitored |
-| **Input Validation** | Zod schema validation | ⚠️ Ready to implement | 24/7 monitored |
-| **Security Headers** | CSP, HSTS, X-Frame-Options | ⚠️ Ready to implement | Per-deployment |
-| **WAF Rules** | AWS WAF (Layer 7) | ⚠️ Ready to enable | 24/7 monitored |
-| **Token Rotation** | Scheduled procedures | ✅ Documented | Every 90/180 days |
-| **Monitoring** | CloudWatch + Custom logs | ✅ Configured | Real-time |
-| **Audit Logging** | JSON logs + CloudWatch Insights | ✅ Configured | Daily review |
+| Control              | Implementation                  | Status                | Review Cycle      |
+| -------------------- | ------------------------------- | --------------------- | ----------------- |
+| **Secrets Storage**  | AWS Secrets Manager             | ✅ Active             | Real-time         |
+| **HTTPS/TLS**        | AWS Amplify + CloudFront        | ✅ Automatic          | N/A               |
+| **CORS Policy**      | Whitelist origin validation     | ✅ Configured         | Per-deployment    |
+| **Rate Limiting**    | Redis-backed express-rate-limit | ⚠️ Ready to implement | 24/7 monitored    |
+| **Input Validation** | Zod schema validation           | ⚠️ Ready to implement | 24/7 monitored    |
+| **Security Headers** | CSP, HSTS, X-Frame-Options      | ⚠️ Ready to implement | Per-deployment    |
+| **WAF Rules**        | AWS WAF (Layer 7)               | ⚠️ Ready to enable    | 24/7 monitored    |
+| **Token Rotation**   | Scheduled procedures            | ✅ Documented         | Every 90/180 days |
+| **Monitoring**       | CloudWatch + Custom logs        | ✅ Configured         | Real-time         |
+| **Audit Logging**    | JSON logs + CloudWatch Insights | ✅ Configured         | Daily review      |
 
 ---
 
@@ -256,13 +266,13 @@ gh secret set GITHUB_TOKEN --body "new-token"
 1. Go to **Settings** → **Secrets and variables** → **Actions**
 2. Click **New repository secret** for each:
 
-| Secret Name | Where to Get | Storage |
-|-------------|-------------|---------|
-| `CODACY_ACCOUNT_TOKEN` | https://app.codacy.com/organizations → Settings → API Tokens | AWS Secrets Manager + GitHub |
-| `GITHUB_TOKEN` | https://github.com/settings/tokens → Generate new token | GitHub Secrets only |
-| `FIGMA_API_KEY` | https://www.figma.com/developers/api#access-tokens | AWS Secrets Manager + GitHub |
-| `AWS_ACCESS_KEY_ID` | AWS IAM Console | GitHub Secrets only |
-| `AWS_SECRET_ACCESS_KEY` | AWS IAM Console | GitHub Secrets only |
+| Secret Name             | Where to Get                                                 | Storage                      |
+| ----------------------- | ------------------------------------------------------------ | ---------------------------- |
+| `CODACY_ACCOUNT_TOKEN`  | https://app.codacy.com/organizations → Settings → API Tokens | AWS Secrets Manager + GitHub |
+| `GITHUB_TOKEN`          | https://github.com/settings/tokens → Generate new token      | GitHub Secrets only          |
+| `FIGMA_API_KEY`         | https://www.figma.com/developers/api#access-tokens           | AWS Secrets Manager + GitHub |
+| `AWS_ACCESS_KEY_ID`     | AWS IAM Console                                              | GitHub Secrets only          |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM Console                                              | GitHub Secrets only          |
 
 ⚠️ **IMPORTANT**: Never paste token values in chat, PRs, or issues. Always use GitHub Secrets + AWS Secrets Manager.
 
@@ -315,6 +325,7 @@ Create custom dashboard at: AWS Console → CloudWatch → Dashboards
 ### Alerts (Optional)
 
 Create CloudWatch alarms for:
+
 - Error rate > 5%
 - Request latency > 2 seconds
 - Security rule triggers in WAF
@@ -324,20 +335,24 @@ Create CloudWatch alarms for:
 ## Maintenance Calendar
 
 ### Weekly
+
 - [ ] Review CloudWatch logs for errors
 - [ ] Check GitHub Actions workflow status
 
 ### Monthly
+
 - [ ] Run security audit: `pnpm quality`
 - [ ] Review token rotation schedule
 - [ ] Check for dependency updates: `pnpm outdated`
 
 ### Quarterly
+
 - [ ] Rotate Codacy token (Feb, May, Aug, Nov)
 - [ ] Review security headers compliance
 - [ ] Audit AWS IAM permissions
 
 ### Semi-Annually
+
 - [ ] Rotate GitHub token (June, December)
 - [ ] Rotate AWS credentials (March, September)
 - [ ] Rotate Figma API key (April, October)
@@ -351,6 +366,7 @@ Create CloudWatch alarms for:
 ### Deployment Fails in GitHub Actions
 
 **Check:**
+
 ```bash
 # 1. Are GitHub Secrets configured?
 Settings → Secrets and variables → verify all 5 secrets exist
@@ -365,6 +381,7 @@ GitHub → Actions → Failed workflow → View detailed logs
 ### Amplify Build Fails with "No secret value"
 
 **Check:**
+
 ```bash
 # 1. Verify secret exists in AWS Secrets Manager
 aws secretsmanager describe-secret --secret-id portfolio/env
@@ -379,6 +396,7 @@ cat amplify.yml | grep load-secrets
 ### Local Dev: Secrets Not Loading
 
 **Check:**
+
 ```bash
 # 1. .env has correct values
 cat .env | grep AWS_
@@ -401,6 +419,7 @@ New team members should:
    - GITHUB_DEPLOYMENT_GUIDE.md
 
 2. **Set up local environment** (10 min)
+
    ```bash
    git clone [repo]
    pnpm install
@@ -470,12 +489,14 @@ curl https://yourdomain.com/health
 ## Success Metrics
 
 ✅ **Code Quality**
+
 - 0 linting errors
-- 0 type errors  
+- 0 type errors
 - 100% requirement test pass rate
 - 6 vulnerabilities → < 3 vulnerabilities (actively resolving)
 
 ✅ **Security**
+
 - All secrets secured (AWS Secrets Manager + GitHub)
 - Zero hardcoded credentials in code
 - Security headers configured
@@ -483,12 +504,14 @@ curl https://yourdomain.com/health
 - WAF enabled
 
 ✅ **Deployment**
+
 - Green CI/CD pipeline
 - Auto-deployment on push to production
 - Zero manual deploy steps
 - < 5 minute deployment time
 
 ✅ **Monitoring**
+
 - CloudWatch dashboard active
 - Error rate < 0.1%
 - Response time < 1 second

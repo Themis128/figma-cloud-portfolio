@@ -1,14 +1,17 @@
 import { ArrowLeft, Bot, Sparkles } from 'lucide-react'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatedSection } from '@/components/AnimatedSection'
-import { AgentBuilder } from '@/components/agents/AgentBuilder'
 import TemplateCreator from '@/components/agents/TemplateCreator'
 import TemplateSelector from '@/components/agents/TemplateSelector'
-import { WorkflowBuilder } from '@/components/agents/WorkflowBuilder'
 import CircuitBackground from '@/components/CircuitBackground'
 import Navigation from '@/components/Navigation'
+import { ComponentLoading } from '@/components/ui/enhanced-loading'
 import type { AgentTemplate } from '@/data/agentTemplates'
+
+// Lazy load heavy components that are conditionally rendered
+const AgentBuilder = lazy(() => import('@/components/agents/AgentBuilder'))
+const WorkflowBuilder = lazy(() => import('@/components/agents/WorkflowBuilder'))
 
 type ViewMode = 'select' | 'create' | 'configure' | 'build'
 
@@ -227,11 +230,13 @@ export default function Agents() {
                 {/* Template Workflow Preview */}
                 <div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-8'>
                   <h3 className='text-2xl font-bold text-white mb-6'>Workflow Preview</h3>
-                  <WorkflowBuilder
-                    nodes={selectedTemplate.workflow.nodes}
-                    connections={selectedTemplate.workflow.connections}
-                    readonly={true}
-                  />
+                  <Suspense fallback={<ComponentLoading />}>
+                    <WorkflowBuilder
+                      nodes={selectedTemplate.workflow.nodes}
+                      connections={selectedTemplate.workflow.connections}
+                      readonly={true}
+                    />
+                  </Suspense>
                 </div>
               </div>
             </AnimatedSection>
@@ -239,14 +244,16 @@ export default function Agents() {
 
           {viewMode === 'build' && selectedTemplate && (
             <AnimatedSection delay={0.2}>
-              <AgentBuilder
-                template={selectedTemplate}
-                onCancel={() => setViewMode('configure')}
-                onSave={(_agent) => {
-                  // TODO: Save agent to backend
-                  setViewMode('select')
-                }}
-              />
+              <Suspense fallback={<ComponentLoading />}>
+                <AgentBuilder
+                  template={selectedTemplate}
+                  onCancel={() => setViewMode('configure')}
+                  onSave={(_agent) => {
+                    // TODO: Save agent to backend
+                    setViewMode('select')
+                  }}
+                />
+              </Suspense>
             </AnimatedSection>
           )}
 

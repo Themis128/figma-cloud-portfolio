@@ -311,7 +311,10 @@ test.describe('GitHub API Integration', () => {
         const hit = getCacheItem('test-key')
 
         // Simulate expiration
-        cache.set('test-key', { value: { data: 'test-value' }, timestamp: Date.now() - 20000 })
+        cache.set('test-key', {
+          value: { data: 'test-value' },
+          timestamp: Date.now() - 20000,
+        })
 
         // Retrieve after expiration (should miss)
         const miss = getCacheItem('test-key')

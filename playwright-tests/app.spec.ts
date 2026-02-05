@@ -449,7 +449,9 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       // Check for contact form or contact information - look for any of these elements
       const formElement = page.locator('form')
       const contactHeading = page.getByRole('heading', { name: 'Contact Me' })
-      const getInTouchHeading = page.getByRole('heading', { name: 'Get In Touch' })
+      const getInTouchHeading = page.getByRole('heading', {
+        name: 'Get In Touch',
+      })
 
       // Check if any of these elements are visible
       const isFormVisible = await formElement.isVisible().catch(() => false)

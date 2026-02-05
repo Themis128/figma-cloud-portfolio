@@ -1,5 +1,5 @@
 import { Activity, Minus, TrendingDown, TrendingUp } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -20,7 +20,10 @@ interface PerformanceDashboardProps {
   compact?: boolean
 }
 
-export function PerformanceDashboard({ className, compact = false }: PerformanceDashboardProps) {
+export const PerformanceDashboard = memo(function PerformanceDashboard({
+  className,
+  compact = false,
+}: PerformanceDashboardProps) {
   const { isSupported, performanceScore, formattedMetrics } = usePerformanceMonitoring()
   const [isExpanded, setIsExpanded] = useState(false)
   const previousMetricsRef = useRef<Record<string, number>>({})
@@ -86,35 +89,46 @@ export function PerformanceDashboard({ className, compact = false }: Performance
     [],
   )
 
+  const getLCPStatus = useCallback((value: number) => {
+    if (value <= LCP_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
+    if (value <= LCP_NEEDS_IMPROVEMENT_THRESHOLD)
+      return { status: 'needs-improvement', color: 'text-yellow-400' }
+    return { status: 'poor', color: 'text-red-400' }
+  }, [])
+
+  const getCLSStatus = useCallback((value: number) => {
+    if (value <= CLS_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
+    if (value <= CLS_NEEDS_IMPROVEMENT_THRESHOLD)
+      return { status: 'needs-improvement', color: 'text-yellow-400' }
+    return { status: 'poor', color: 'text-red-400' }
+  }, [])
+
+  const getFCPTTFBStatus = useCallback((value: number) => {
+    if (value <= FCP_TTFB_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
+    if (value <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)
+      return { status: 'needs-improvement', color: 'text-yellow-400' }
+    return { status: 'poor', color: 'text-red-400' }
+  }, [])
+
   const getMetricStatus = useMemo(
     () => (key: string, value: string) => {
       const numericValue = parseFloat(value.replace(/[^\d.]/g, ''))
 
       if (key.includes('LCP')) {
-        if (numericValue <= LCP_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
-        if (numericValue <= LCP_NEEDS_IMPROVEMENT_THRESHOLD)
-          return { status: 'needs-improvement', color: 'text-yellow-400' }
-        return { status: 'poor', color: 'text-red-400' }
+        return getLCPStatus(numericValue)
       }
 
       if (key.includes('CLS')) {
-        if (numericValue <= CLS_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
-        if (numericValue <= CLS_NEEDS_IMPROVEMENT_THRESHOLD)
-          return { status: 'needs-improvement', color: 'text-yellow-400' }
-        return { status: 'poor', color: 'text-red-400' }
+        return getCLSStatus(numericValue)
       }
 
       if (key.includes('FCP') || key.includes('TTFB')) {
-        if (numericValue <= FCP_TTFB_GOOD_THRESHOLD)
-          return { status: 'good', color: 'text-green-400' }
-        if (numericValue <= FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)
-          return { status: 'needs-improvement', color: 'text-yellow-400' }
-        return { status: 'poor', color: 'text-red-400' }
+        return getFCPTTFBStatus(numericValue)
       }
 
       return { status: 'unknown', color: 'text-gray-400' }
     },
-    [],
+    [getLCPStatus, getCLSStatus, getFCPTTFBStatus],
   )
 
   if (!isSupported) {
@@ -270,4 +284,4 @@ export function PerformanceDashboard({ className, compact = false }: Performance
       </div>
     </Card>
   )
-}
+})

@@ -72,7 +72,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
 
   const requestPermission = async () => {
     try {
-      if (!('Notification' in window)) {
+      if (!isNotificationSupported()) {
         alert('This browser does not support notifications')
         return
       }
@@ -81,37 +81,49 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
       setPermission(result)
 
       if (result === 'granted') {
-        setShowPrompt(false)
-        // Subscribe to push notifications
-        try {
-          await subscribe()
-          showNotification(
-            'Notifications enabled!',
-            "You'll now receive updates from Baltzakis Themistoklis.",
-          )
-        } catch (error) {
-          reportError(
-            error instanceof Error ? error : new Error('Failed to subscribe to push notifications'),
-            {
-              context: 'notification-subscription',
-            },
-          )
-          showNotification(
-            'Notifications enabled',
-            'However, push notifications may not work properly.',
-          )
-        }
+        await handlePermissionGranted()
       } else if (result === 'denied') {
         setShowPrompt(false)
       }
     } catch (error) {
-      reportError(
-        error instanceof Error ? error : new Error('Error requesting notification permission'),
-        {
-          context: 'notification-permission-request',
-        },
-      )
+      handlePermissionError(error)
     }
+  }
+
+  const isNotificationSupported = () => {
+    return 'Notification' in window
+  }
+
+  const handlePermissionGranted = async () => {
+    setShowPrompt(false)
+    try {
+      await subscribe()
+      showNotification(
+        'Notifications enabled!',
+        "You'll now receive updates from Baltzakis Themistoklis.",
+      )
+    } catch (error) {
+      handleSubscriptionError(error)
+    }
+  }
+
+  const handleSubscriptionError = (error: unknown) => {
+    reportError(
+      error instanceof Error ? error : new Error('Failed to subscribe to push notifications'),
+      {
+        context: 'notification-subscription',
+      },
+    )
+    showNotification('Notifications enabled', 'However, push notifications may not work properly.')
+  }
+
+  const handlePermissionError = (error: unknown) => {
+    reportError(
+      error instanceof Error ? error : new Error('Error requesting notification permission'),
+      {
+        context: 'notification-permission-request',
+      },
+    )
   }
 
   const showNotification = (title: string, body: string) => {

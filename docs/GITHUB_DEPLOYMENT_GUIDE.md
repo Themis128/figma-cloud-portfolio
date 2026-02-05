@@ -1,6 +1,7 @@
 # GitHub Deployment & Secrets Configuration Guide
 
 This guide covers:
+
 1. Setting up GitHub Secrets for CI/CD
 2. Configuring AWS Amplify integration
 3. Testing secrets in GitHub Actions
@@ -14,16 +15,17 @@ This guide covers:
 1. Go to your repository → **Settings** → **Secrets and variables** → **Actions**
 2. Click **New repository secret** and add the following:
 
-| Secret Name | Value | Source |
-|-------------|-------|--------|
-| `CODACY_ACCOUNT_TOKEN` | Your Codacy API token | https://app.codacy.com/organizations |
-| `GITHUB_TOKEN` | GitHub Personal Access Token | https://github.com/settings/tokens |
-| `FIGMA_API_KEY` | Figma API key | https://www.figma.com/developers/api#get-files |
-| `AWS_ACCESS_KEY_ID` | AWS credential | AWS Console → IAM |
-| `AWS_SECRET_ACCESS_KEY` | AWS credential | AWS Console → IAM |
-| `AWS_REGION` | Region (e.g., `eu-central-1`) | Your AWS region |
+| Secret Name             | Value                         | Source                                         |
+| ----------------------- | ----------------------------- | ---------------------------------------------- |
+| `CODACY_ACCOUNT_TOKEN`  | Your Codacy API token         | https://app.codacy.com/organizations           |
+| `GITHUB_TOKEN`          | GitHub Personal Access Token  | https://github.com/settings/tokens             |
+| `FIGMA_API_KEY`         | Figma API key                 | https://www.figma.com/developers/api#get-files |
+| `AWS_ACCESS_KEY_ID`     | AWS credential                | AWS Console → IAM                              |
+| `AWS_SECRET_ACCESS_KEY` | AWS credential                | AWS Console → IAM                              |
+| `AWS_REGION`            | Region (e.g., `eu-central-1`) | Your AWS region                                |
 
 ### Important Security Notes:
+
 - **NEVER paste secrets in Pull Requests or Issues**
 - Secrets are encrypted and only available in Actions workflows
 - Use `$${{ secrets.SECRET_NAME }}$$ in workflows
@@ -34,6 +36,7 @@ This guide covers:
 ## Part 2: AWS Amplify Integration
 
 ### Prerequisites:
+
 - AWS Amplify CLI installed: `npm install -g @aws-amplify/cli`
 - AWS credentials configured locally
 
@@ -94,14 +97,14 @@ frontend:
   artifacts:
     baseDirectory: dist
     files:
-      - '**/*'
+      - "**/*"
   cache:
     paths:
-      - 'node_modules/**/*'
-
+      - "node_modules/**/*"
 ```
 
 **Key points:**
+
 - `load-secrets.sh --write-env .env.production` injects secrets from AWS Secrets Manager
 - Secrets are available during build phase
 - Artifacts copied from `dist/` (combined frontend + server)
@@ -139,7 +142,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -165,7 +168,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -186,7 +189,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -230,6 +233,7 @@ jobs:
 ## Part 4: Token Rotation Procedure
 
 ### Rotation Schedule
+
 - **Codacy Token**: Every 90 days
 - **GitHub Token**: Every 180 days
 - **AWS Credentials**: Every 90 days
@@ -238,6 +242,7 @@ jobs:
 ### Step-by-Step Rotation
 
 #### 1. Generate New Token
+
 ```bash
 # Example: Codacy
 # Go to: https://app.codacy.com/organizations
@@ -246,6 +251,7 @@ jobs:
 ```
 
 #### 2. Update AWS Secrets Manager
+
 ```bash
 # Update the secret with new token
 aws secretsmanager update-secret \
@@ -260,6 +266,7 @@ aws secretsmanager get-secret-value \
 ```
 
 #### 3. Update GitHub Secrets
+
 1. Go to Repository → **Settings** → **Secrets and variables** → **Actions**
 2. Click on the secret name
 3. Click **Update**
@@ -267,18 +274,21 @@ aws secretsmanager get-secret-value \
 5. Click **Update secret**
 
 #### 4. Update Local .env (if applicable)
+
 ```bash
 # PowerShell
 $env:CODACY_ACCOUNT_TOKEN = 'new-token-here'
 ```
 
 #### 5. Revoke Old Token
+
 ```bash
 # In Codacy dashboard:
 # Settings → API Tokens → Revoke [old token]
 ```
 
 #### 6. Test in CI/CD
+
 ```bash
 # Push test commit to verify new token works
 git add .
@@ -295,26 +305,26 @@ git push origin production
 Configure rate limiting in your backend (`server/index.ts`):
 
 ```typescript
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // 100 requests per window
-  message: 'Too many requests from this IP',
+  message: "Too many requests from this IP",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-app.use('/api/', limiter);
+app.use("/api/", limiter);
 ```
 
 ### 2. CORS Configuration
 
 ```typescript
-import cors from 'cors';
+import cors from "cors";
 
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com'],
+  origin: process.env.ALLOWED_ORIGINS?.split(",") || ["https://yourdomain.com"],
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -325,7 +335,7 @@ app.use(cors(corsOptions));
 ### 3. Input Validation
 
 ```typescript
-import { z } from 'zod';
+import { z } from "zod";
 
 const contactFormSchema = z.object({
   name: z.string().min(2).max(100),
@@ -333,7 +343,7 @@ const contactFormSchema = z.object({
   message: z.string().min(10).max(5000),
 });
 
-app.post('/api/contact', (req, res) => {
+app.post("/api/contact", (req, res) => {
   const validation = contactFormSchema.safeParse(req.body);
   if (!validation.success) {
     return res.status(400).json({ error: validation.error });
@@ -362,8 +372,8 @@ AWS Amplify automatically provides HTTPS. Ensure redirects in `amplify.yml`:
 
 ```yaml
 redirects:
-  - source: 'http://<yourdomain.com>/<*>'
-    target: 'https://<yourdomain.com>/<*>'
+  - source: "http://<yourdomain.com>/<*>"
+    target: "https://<yourdomain.com>/<*>"
     status: 301
 ```
 
@@ -373,11 +383,14 @@ Add security headers in your backend:
 
 ```typescript
 app.use((req, res, next) => {
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains",
+  );
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   next();
 });
 ```
@@ -385,6 +398,7 @@ app.use((req, res, next) => {
 ### 7. Environment Hardening
 
 **Production `.env.production`:**
+
 ```env
 VITE_ENVIRONMENT=production
 VITE_API_URL=https://api.yourdomain.com
@@ -394,6 +408,7 @@ DEBUG=false
 ```
 
 **Development `.env`:**
+
 ```env
 VITE_ENVIRONMENT=development
 VITE_API_URL=http://localhost:3000
@@ -408,30 +423,33 @@ LOG_LEVEL=debug
 ### AWS CloudWatch Integration
 
 ```typescript
-import CloudWatch from 'aws-sdk/clients/cloudwatch';
+import CloudWatch from "aws-sdk/clients/cloudwatch";
 
 const cloudwatch = new CloudWatch({ region: process.env.AWS_REGION });
 
 app.use((req, res, next) => {
-  res.on('finish', () => {
+  res.on("finish", () => {
     if (res.statusCode >= 400) {
-      cloudwatch.putMetricData({
-        Namespace: 'Portfolio/API',
-        MetricData: [
-          {
-            MetricName: 'ErrorCount',
-            Value: 1,
-            Unit: 'Count',
-            Timestamp: new Date(),
-            Dimensions: [
-              { Name: 'Endpoint', Value: req.path },
-              { Name: 'StatusCode', Value: String(res.statusCode) },
-            ],
-          },
-        ],
-      }, (err) => {
-        if (err) console.error('CloudWatch error:', err);
-      });
+      cloudwatch.putMetricData(
+        {
+          Namespace: "Portfolio/API",
+          MetricData: [
+            {
+              MetricName: "ErrorCount",
+              Value: 1,
+              Unit: "Count",
+              Timestamp: new Date(),
+              Dimensions: [
+                { Name: "Endpoint", Value: req.path },
+                { Name: "StatusCode", Value: String(res.statusCode) },
+              ],
+            },
+          ],
+        },
+        (err) => {
+          if (err) console.error("CloudWatch error:", err);
+        },
+      );
     }
   });
   next();
@@ -463,18 +481,22 @@ app.use((req, res, next) => {
 ## Troubleshooting
 
 ### "No secret value returned"
+
 - **Cause**: Secret doesn't exist or credentials lack permission
 - **Fix**: Verify secret exists: `aws secretsmanager describe-secret --secret-id production/codacy`
 
 ### "UnrecognizedClientException: Invalid AWS credentials"
+
 - **Cause**: AWS credentials expired or invalid
 - **Fix**: Update GitHub Secrets with fresh credentials from IAM
 
 ### "CORS error in production"
+
 - **Cause**: Origin not whitelisted
 - **Fix**: Add production domain to `ALLOWED_ORIGINS` in backend
 
 ### Secrets not loading in GitHub Actions
+
 - **Cause**: Secret name mismatch
 - **Fix**: Double-check secret names match exactly in workflow file
 
@@ -486,4 +508,3 @@ app.use((req, res, next) => {
 - [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/)
 - [AWS Amplify Hosting](https://docs.aws.amazon.com/amplify/)
 - [OWASP API Security](https://owasp.org/API-Security/)
-

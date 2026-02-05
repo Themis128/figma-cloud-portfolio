@@ -150,7 +150,9 @@ describe('Settings', () => {
         </MemoryRouter>,
       )
 
-      const animationsSwitch = screen.getByRole('switch', { name: /animations/i })
+      const animationsSwitch = screen.getByRole('switch', {
+        name: /animations/i,
+      })
       expect(animationsSwitch).toBeChecked()
 
       fireEvent.click(animationsSwitch)
@@ -164,7 +166,9 @@ describe('Settings', () => {
         </MemoryRouter>,
       )
 
-      const reducedMotionSwitch = screen.getByRole('switch', { name: /reduced motion/i })
+      const reducedMotionSwitch = screen.getByRole('switch', {
+        name: /reduced motion/i,
+      })
       expect(reducedMotionSwitch).not.toBeChecked()
 
       fireEvent.click(reducedMotionSwitch)
@@ -180,7 +184,9 @@ describe('Settings', () => {
         </MemoryRouter>,
       )
 
-      const notificationsSwitch = screen.getByRole('switch', { name: /push notifications/i })
+      const notificationsSwitch = screen.getByRole('switch', {
+        name: /push notifications/i,
+      })
       expect(notificationsSwitch).toBeChecked()
 
       fireEvent.click(notificationsSwitch)

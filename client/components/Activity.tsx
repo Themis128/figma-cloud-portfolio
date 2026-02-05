@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 // Constants for magic numbers
 const ACTIVITY_ID_RADIX = 36
@@ -25,55 +25,42 @@ export function Activity({
   const [isPreRendered, setIsPreRendered] = useState(trigger === 'manual')
   const [elementRef, setElementRef] = useState<HTMLElement | null>(null)
 
-  useEffect(() => {
-    if (trigger === 'manual') return
-
-    // Immediately pre-render in test environments to avoid mock issues
-    // Check if we're in a test environment
-    const isTestEnvironment =
+  const isTestEnvironment = useCallback(() => {
+    return (
       typeof process !== 'undefined' &&
       (process.env.NODE_ENV === 'test' ||
         process.env.NODE_ENV === 'testing' ||
         typeof vi !== 'undefined' ||
         typeof jest !== 'undefined')
+    )
+  }, [])
 
-    if (isTestEnvironment) {
-      setIsPreRendered(true)
-      return
-    }
+  const isIntersectionObserverValid = useCallback(() => {
+    return (
+      typeof IntersectionObserver === 'function' &&
+      IntersectionObserver.prototype &&
+      typeof IntersectionObserver.prototype.observe === 'function'
+    )
+  }, [])
 
-    let timeoutId: number
-
-    const handleTrigger = () => {
-      if (!isPreRendered) {
-        timeoutId = window.setTimeout(() => {
-          setIsPreRendered(true)
-        }, delay)
-      }
-    }
-
-    if (trigger === 'hover' && elementRef) {
-      // Pre-render on hover with delay
+  const setupHoverTrigger = useCallback(
+    (handleTrigger: () => void) => {
+      if (!elementRef) return () => {}
       elementRef.addEventListener('mouseenter', handleTrigger)
       elementRef.addEventListener('click', () => setIsPreRendered(true))
       return () => {
-        elementRef.removeEventListener('mouseenter', handleTrigger)
-        elementRef.removeEventListener('click', () => setIsPreRendered(true))
-        if (timeoutId) window.clearTimeout(timeoutId)
+        elementRef?.removeEventListener('mouseenter', handleTrigger)
+        elementRef?.removeEventListener('click', () => setIsPreRendered(true))
       }
-    } else if (trigger === 'viewport' && elementRef) {
-      // Pre-render when element enters viewport
+    },
+    [elementRef],
+  )
 
-      // Check if IntersectionObserver is available and is a valid constructor
-      const isObserverValid =
-        typeof IntersectionObserver === 'function' &&
-        IntersectionObserver.prototype &&
-        typeof IntersectionObserver.prototype.observe === 'function'
-
-      if (!isObserverValid) {
-        // If IntersectionObserver is not available, pre-render immediately
+  const setupViewportTrigger = useCallback(
+    (handleTrigger: () => void) => {
+      if (!(isIntersectionObserverValid() && elementRef)) {
         setIsPreRendered(true)
-        return
+        return () => {}
       }
 
       const observer = new IntersectionObserver(
@@ -88,16 +75,43 @@ export function Activity({
       )
 
       observer.observe(elementRef)
-      return () => {
-        observer.unobserve(elementRef)
-        if (timeoutId) window.clearTimeout(timeoutId)
+      return () => observer.unobserve(elementRef)
+    },
+    [elementRef, isIntersectionObserverValid],
+  )
+
+  const setupTriggerHandler = useCallback(() => {
+    let timeoutId: number
+
+    const handleTrigger = () => {
+      if (!isPreRendered) {
+        timeoutId = window.setTimeout(() => {
+          setIsPreRendered(true)
+        }, delay)
       }
+    }
+
+    if (trigger === 'hover' && elementRef) {
+      return setupHoverTrigger(handleTrigger)
+    } else if (trigger === 'viewport' && elementRef) {
+      return setupViewportTrigger(handleTrigger)
     }
 
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId)
     }
-  }, [trigger, delay, isPreRendered, elementRef])
+  }, [trigger, delay, isPreRendered, elementRef, setupHoverTrigger, setupViewportTrigger])
+
+  useEffect(() => {
+    if (trigger === 'manual') return
+
+    if (isTestEnvironment()) {
+      setIsPreRendered(true)
+      return
+    }
+
+    return setupTriggerHandler()
+  }, [trigger, isTestEnvironment, setupTriggerHandler])
 
   const activityId = React.useMemo(() => Math.random().toString(ACTIVITY_ID_RADIX), [])
 

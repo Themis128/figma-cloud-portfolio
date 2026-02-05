@@ -70,7 +70,7 @@ A modern, full-stack portfolio website built with React, TypeScript, Express, an
    # Edit .env with your configuration
    ```
 
-4. **Start development servers**
+5. **Start development servers**
    ```bash
    pnpm dev:all
    ```

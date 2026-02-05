@@ -102,7 +102,9 @@ test.describe('Analytics Integration', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for navigation to be ready
-    await page.waitForSelector('nav[aria-label="Main navigation"]', { timeout: 10000 })
+    await page.waitForSelector('nav[aria-label="Main navigation"]', {
+      timeout: 10000,
+    })
 
     // Navigate to different pages
     await page.locator('nav a[href="/about"]').first().click()
@@ -119,7 +121,11 @@ test.describe('Analytics Integration', () => {
   })
 
   test('should send custom analytics data to endpoint', async ({ page }) => {
-    const analyticsRequests: Array<{ url: string; method: string; postData: string | null }> = []
+    const analyticsRequests: Array<{
+      url: string
+      method: string
+      postData: string | null
+    }> = []
 
     // Intercept analytics requests
     page.on('request', (request) => {
@@ -457,7 +463,9 @@ test.describe('Analytics Integration', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for navigation to be ready
-    await page.waitForSelector('nav[aria-label="Main navigation"]', { timeout: 10000 })
+    await page.waitForSelector('nav[aria-label="Main navigation"]', {
+      timeout: 10000,
+    })
 
     // Simulate user interactions with specific selectors
     // Click the "Learn More" button
@@ -517,7 +525,9 @@ test.describe('Analytics Integration', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for navigation to be ready
-    await page.waitForSelector('nav[aria-label="Main navigation"]', { timeout: 10000 })
+    await page.waitForSelector('nav[aria-label="Main navigation"]', {
+      timeout: 10000,
+    })
 
     // Navigate to different pages
     await page.locator('nav a[href="/about"]').first().click()

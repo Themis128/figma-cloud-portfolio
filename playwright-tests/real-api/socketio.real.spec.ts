@@ -125,7 +125,11 @@ test.describe('Socket.IO - Real Integration', () => {
           const hasSocketIO = !!(window as typeof window & { io?: unknown }).io
 
           if (!hasSocketIO) {
-            resolve({ sent: false, received: false, error: 'Socket.IO not available' })
+            resolve({
+              sent: false,
+              received: false,
+              error: 'Socket.IO not available',
+            })
             return
           }
 

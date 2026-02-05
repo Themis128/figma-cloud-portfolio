@@ -50,14 +50,14 @@ ViteImageOptimizer({
   avif: {
     quality: 60,
     effort: 6,
-    chromaSubsampling: '4:2:0',
+    chromaSubsampling: "4:2:0",
   },
   include: /\.(png|jpe?g|webp|avif)$/i,
   exclude: /node_modules/,
   // Additional optimization options
   cache: true,
-  cacheLocation: '.vite/image-cache',
-})
+  cacheLocation: ".vite/image-cache",
+});
 ```
 
 **Features**:
@@ -200,7 +200,7 @@ ViteImageOptimizer({
     quality: 70,
     effort: 6,
   },
-})
+});
 ```
 
 ### Component Props

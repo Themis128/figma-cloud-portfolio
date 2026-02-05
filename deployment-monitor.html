@@ -1,1212 +1,1414 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Deployment Monitor - Figma Cloud Portfolio</title>
     <style>
-        :root {
-            --primary-color: #007bff;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --bg-color: #f8f9fa;
-            --text-color: #333;
-            --card-bg: #ffffff;
-            --border-color: #dee2e6;
-            --dark-bg: #1a1a1a;
-            --dark-card: #2d2d2d;
-            --dark-text: #e4e4e4;
-            --dark-border: #404040;
-        }
+      :root {
+        --primary-color: #007bff;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --bg-color: #f8f9fa;
+        --text-color: #333;
+        --card-bg: #ffffff;
+        --border-color: #dee2e6;
+        --dark-bg: #1a1a1a;
+        --dark-card: #2d2d2d;
+        --dark-text: #e4e4e4;
+        --dark-border: #404040;
+      }
 
-        [data-theme="dark"] {
-            --bg-color: var(--dark-bg);
-            --text-color: var(--dark-text);
-            --card-bg: var(--dark-card);
-            --border-color: var(--dark-border);
-        }
+      [data-theme="dark"] {
+        --bg-color: var(--dark-bg);
+        --text-color: var(--dark-text);
+        --card-bg: var(--dark-card);
+        --border-color: var(--dark-border);
+      }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
 
-        .theme-toggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
+      .theme-toggle {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all 0.3s ease;
+      }
 
-        .theme-toggle:hover {
-            background: var(--border-color);
-        }
+      .theme-toggle:hover {
+        background: var(--border-color);
+      }
 
-        .token-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e9ecef;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-        }
+      .token-section {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+      }
 
-        .token-input {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+      .token-input {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
 
-        .token-input input {
-            flex-grow: 1;
-            max-width: 400px;
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+      .token-input input {
+        flex-grow: 1;
+        max-width: 400px;
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
 
-        .token-input button {
-            padding: 8px 16px;
-            font-size: 0.9rem;
-        }
+      .token-input button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
 
-        .token-help {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 10px;
-            text-align: left;
-        }
+      .token-help {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 10px;
+        text-align: left;
+      }
 
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
+      h1 {
+        color: var(--primary-color);
+        margin-bottom: 10px;
+      }
 
-        .status-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
+      .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-top: 10px;
+      }
 
-        .status-running {
-            background-color: var(--warning-color);
-            color: #000;
-        }
+      .status-running {
+        background-color: var(--warning-color);
+        color: #000;
+      }
 
-        .status-success {
-            background-color: var(--success-color);
-            color: white;
-        }
+      .status-success {
+        background-color: var(--success-color);
+        color: white;
+      }
 
-        .status-failed {
-            background-color: var(--danger-color);
-            color: white;
-        }
+      .status-failed {
+        background-color: var(--danger-color);
+        color: white;
+      }
 
+      .dashboard {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      @media (min-width: 768px) {
         .dashboard {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
+          grid-template-columns: 2fr 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color);
+      }
+
+      .card h2 {
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+      }
+
+      .phase-list {
+        list-style: none;
+      }
+
+      .phase-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        background: #fafafa;
+        transition: all 0.3s ease;
+      }
+
+      .phase-item.running {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+        animation: pulse 2s infinite;
+      }
+
+      .phase-item.completed {
+        background: #d4edda;
+        border-color: #c3e6cb;
+      }
+
+      .phase-item.failed {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+
+      .phase-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .phase-icon.pending {
+        background-color: #6c757d;
+      }
+
+      .phase-icon.running {
+        background-color: var(--warning-color);
+        animation: spin 1s linear infinite;
+      }
+
+      .phase-icon.completed {
+        background-color: var(--success-color);
+      }
+
+      .phase-icon.failed {
+        background-color: var(--danger-color);
+      }
+
+      .phase-content {
+        flex-grow: 1;
+      }
+
+      .phase-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .phase-details {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .phase-time {
+        font-size: 0.8rem;
+        color: #888;
+        margin-left: auto;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background-color: #545b62;
+      }
+
+      .btn-refresh {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-refresh:hover {
+        background-color: #218838;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        background: var(--card-bg);
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .log-container {
+        max-height: 400px;
+        overflow-y: auto;
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        border: 1px solid var(--border-color);
+      }
+
+      .log-entry {
+        margin-bottom: 5px;
+        padding: 2px 0;
+        border-bottom: 1px solid #333;
+      }
+
+      .log-timestamp {
+        color: #888;
+        margin-right: 10px;
+      }
+
+      .log-info {
+        color: #4ec9b0;
+      }
+
+      .log-success {
+        color: #4ec9b0;
+      }
+
+      .log-warning {
+        color: #ffd700;
+      }
+
+      .log-error {
+        color: #f44747;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
 
-        @media (min-width: 768px) {
-            .dashboard {
-                grid-template-columns: 2fr 1fr;
-            }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
+        70% {
+          box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
         }
 
-        .card h2 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
         }
+      }
 
-        .phase-list {
-            list-style: none;
-        }
+      .hidden {
+        display: none;
+      }
 
-        .phase-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: #fafafa;
-            transition: all 0.3s ease;
-        }
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+      }
 
-        .phase-item.running {
-            background: #fff3cd;
-            border-color: #ffeaa7;
-            animation: pulse 2s infinite;
-        }
-
-        .phase-item.completed {
-            background: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .phase-item.failed {
-            background: #f8d7da;
-            border-color: #f5c6cb;
-        }
-
-        .phase-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .phase-icon.pending {
-            background-color: #6c757d;
-        }
-
-        .phase-icon.running {
-            background-color: var(--warning-color);
-            animation: spin 1s linear infinite;
-        }
-
-        .phase-icon.completed {
-            background-color: var(--success-color);
-        }
-
-        .phase-icon.failed {
-            background-color: var(--danger-color);
-        }
-
-        .phase-content {
-            flex-grow: 1;
-        }
-
-        .phase-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .phase-details {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .phase-time {
-            font-size: 0.8rem;
-            color: #888;
-            margin-left: auto;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #545b62;
-        }
-
-        .btn-refresh {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-refresh:hover {
-            background-color: #218838;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .log-container {
-            max-height: 400px;
-            overflow-y: auto;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-            padding: 2px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .log-timestamp {
-            color: #888;
-            margin-right: 10px;
-        }
-
-        .log-info {
-            color: #4ec9b0;
-        }
-
-        .log-success {
-            color: #4ec9b0;
-        }
-
-        .log-warning {
-            color: #ffd700;
-        }
-
-        .log-error {
-            color: #f44747;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
-            }
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #f5c6cb;
-            margin-bottom: 20px;
-        }
+      .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #f5c6cb;
+        margin-bottom: 20px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <header>
-            <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">🌙</button>
-            <h1>🚀 Deployment Monitor</h1>
-            <p>Real-time monitoring for Figma Cloud Portfolio deployment</p>
-            <div id="deploymentStatus" class="status-badge status-running">Monitoring...</div>
-            <div style="margin-top: 10px; font-size: 0.9rem; color: #666;">
-                Last updated: <span id="lastUpdated">--</span> |
-                Mode: <span id="connectionMode">Detecting...</span>
-            </div>
-
-            <div class="token-section">
-                <div class="token-input">
-                    <input type="password" id="githubToken" placeholder="Enter GitHub Personal Access Token (optional)">
-                    <button class="btn-secondary" id="saveToken">Save Token</button>
-                    <button class="btn-secondary" id="clearToken">Clear Token</button>
-                    <button class="btn-secondary" id="validateToken" style="background: #17a2b8;">Validate</button>
-                </div>
-                <div class="token-help">
-                    <strong>GitHub Token Required:</strong> This repository appears to be private. You need a GitHub
-                    Personal Access
-                    Token with 'repo' scope to access workflow data.
-                    <a href="https://github.com/settings/tokens/new?scopes=repo&description=Deployment+Monitor"
-                        target="_blank" style="color: var(--primary-color);">Create Token</a>
-                    <br><br>
-                    <strong>Note:</strong> The monitor works in both development (with local server) and production
-                    environments.
-                    In production, it uses direct GitHub API calls with your token.
-                    <div id="tokenStatus" style="margin-top: 5px; font-size: 0.8rem;"></div>
-                </div>
-            </div>
-        </header>
-
-        <div class="dashboard">
-            <div class="card">
-                <h2>Deployment Phases</h2>
-                <div class="controls">
-                    <button class="btn-primary" id="startMonitoring">Start Monitoring</button>
-                    <button class="btn-secondary" id="stopMonitoring">Stop Monitoring</button>
-                    <button class="btn-refresh" id="refreshNow">Refresh Now</button>
-                    <select id="workflowFilter"
-                        style="margin-left: auto; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
-                        <option value="all">All Workflows</option>
-                        <option value="deploy">Deploy Only</option>
-                        <option value="ci">CI Only</option>
-                    </select>
-                    <a href="https://github.com/Themis128/figma-cloud-portfolio/actions" target="_blank"
-                        class="btn-secondary"
-                        style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                        🔗 GitHub Actions
-                    </a>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalDuration">--</div>
-                        <div class="stat-label">Total Duration</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="currentPhase">--</div>
-                        <div class="stat-label">Current Phase</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="workflowCount">--</div>
-                        <div class="stat-label">Active Workflows</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="lastRun">--</div>
-                        <div class="stat-label">Last Run</div>
-                    </div>
-                </div>
-
-                <ul class="phase-list" id="phaseList">
-                    <!-- Phases will be populated here -->
-                </ul>
-            </div>
-
-            <div class="card">
-                <h2>Live Logs</h2>
-                <div class="controls">
-                    <button class="btn-secondary" id="clearLogs">Clear Logs</button>
-                    <button class="btn-secondary" id="exportLogs">Export Logs</button>
-                    <select id="logLevelFilter" style="margin-left: 10px;">
-                        <option value="all">All Levels</option>
-                        <option value="error">Errors Only</option>
-                        <option value="warn">Warnings+</option>
-                        <option value="info">Info+</option>
-                        <option value="debug">Debug+</option>
-                    </select>
-                    <input type="text" id="logSearch" placeholder="Search logs..."
-                        style="margin-left: 10px; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); width: 150px;">
-                    <span style="margin-left: auto; font-size: 0.8rem; color: #666;">
-                        Auto-refresh: <span id="autoRefreshStatus">ON</span>
-                    </span>
-                </div>
-                <div id="logContainer" class="log-container">
-                    <div class="log-entry">
-                        <span class="log-timestamp">[17:31:30]</span>
-                        <span class="log-info">🚀 Deployment monitoring started</span>
-                    </div>
-                    <div class="log-entry">
-                        <span class="log-timestamp">[17:31:30]</span>
-                        <span class="log-info">📡 Connecting to GitHub API...</span>
-                    </div>
-                </div>
-            </div>
+      <header>
+        <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+          🌙
+        </button>
+        <h1>🚀 Deployment Monitor</h1>
+        <p>Real-time monitoring for Figma Cloud Portfolio deployment</p>
+        <div id="deploymentStatus" class="status-badge status-running">
+          Monitoring...
+        </div>
+        <div style="margin-top: 10px; font-size: 0.9rem; color: #666">
+          Last updated: <span id="lastUpdated">--</span> | Mode:
+          <span id="connectionMode">Detecting...</span>
         </div>
 
-        <div id="errorMessage" class="error-message hidden"></div>
-
-        <div class="footer">
-            <p>Monitoring deployment to AWS Amplify (us-east-1)</p>
-            <p>Repository: Themis128/figma-cloud-portfolio</p>
+        <div class="token-section">
+          <div class="token-input">
+            <input
+              type="password"
+              id="githubToken"
+              placeholder="Enter GitHub Personal Access Token (optional)"
+            />
+            <button class="btn-secondary" id="saveToken">Save Token</button>
+            <button class="btn-secondary" id="clearToken">Clear Token</button>
+            <button
+              class="btn-secondary"
+              id="validateToken"
+              style="background: #17a2b8"
+            >
+              Validate
+            </button>
+          </div>
+          <div class="token-help">
+            <strong>GitHub Token Required:</strong> This repository appears to
+            be private. You need a GitHub Personal Access Token with 'repo'
+            scope to access workflow data.
+            <a
+              href="https://github.com/settings/tokens/new?scopes=repo&description=Deployment+Monitor"
+              target="_blank"
+              style="color: var(--primary-color)"
+              >Create Token</a
+            >
+            <br /><br />
+            <strong>Note:</strong> The monitor works in both development (with
+            local server) and production environments. In production, it uses
+            direct GitHub API calls with your token.
+            <div
+              id="tokenStatus"
+              style="margin-top: 5px; font-size: 0.8rem"
+            ></div>
+          </div>
         </div>
+      </header>
+
+      <div class="dashboard">
+        <div class="card">
+          <h2>Deployment Phases</h2>
+          <div class="controls">
+            <button class="btn-primary" id="startMonitoring">
+              Start Monitoring
+            </button>
+            <button class="btn-secondary" id="stopMonitoring">
+              Stop Monitoring
+            </button>
+            <button class="btn-refresh" id="refreshNow">Refresh Now</button>
+            <select
+              id="workflowFilter"
+              style="
+                margin-left: auto;
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+              "
+            >
+              <option value="all">All Workflows</option>
+              <option value="deploy">Deploy Only</option>
+              <option value="ci">CI Only</option>
+            </select>
+            <a
+              href="https://github.com/Themis128/figma-cloud-portfolio/actions"
+              target="_blank"
+              class="btn-secondary"
+              style="
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+              "
+            >
+              🔗 GitHub Actions
+            </a>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="totalDuration">--</div>
+              <div class="stat-label">Total Duration</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="currentPhase">--</div>
+              <div class="stat-label">Current Phase</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="workflowCount">--</div>
+              <div class="stat-label">Active Workflows</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="lastRun">--</div>
+              <div class="stat-label">Last Run</div>
+            </div>
+          </div>
+
+          <ul class="phase-list" id="phaseList">
+            <!-- Phases will be populated here -->
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Live Logs</h2>
+          <div class="controls">
+            <button class="btn-secondary" id="clearLogs">Clear Logs</button>
+            <button class="btn-secondary" id="exportLogs">Export Logs</button>
+            <select id="logLevelFilter" style="margin-left: 10px">
+              <option value="all">All Levels</option>
+              <option value="error">Errors Only</option>
+              <option value="warn">Warnings+</option>
+              <option value="info">Info+</option>
+              <option value="debug">Debug+</option>
+            </select>
+            <input
+              type="text"
+              id="logSearch"
+              placeholder="Search logs..."
+              style="
+                margin-left: 10px;
+                padding: 6px;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+                width: 150px;
+              "
+            />
+            <span style="margin-left: auto; font-size: 0.8rem; color: #666">
+              Auto-refresh: <span id="autoRefreshStatus">ON</span>
+            </span>
+          </div>
+          <div id="logContainer" class="log-container">
+            <div class="log-entry">
+              <span class="log-timestamp">[17:31:30]</span>
+              <span class="log-info">🚀 Deployment monitoring started</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-timestamp">[17:31:30]</span>
+              <span class="log-info">📡 Connecting to GitHub API...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="errorMessage" class="error-message hidden"></div>
+
+      <div class="footer">
+        <p>Monitoring deployment to AWS Amplify (us-east-1)</p>
+        <p>Repository: Themis128/figma-cloud-portfolio</p>
+      </div>
     </div>
 
     <script>
-        class DeploymentMonitor {
-            constructor() {
-                this.isMonitoring = false;
-                this.monitoringInterval = null;
-                this.refreshInterval = 15000; // 15 seconds to reduce API rate usage
-                this.maxLogs = 100;
+      class DeploymentMonitor {
+        constructor() {
+          this.isMonitoring = false;
+          this.monitoringInterval = null;
+          this.refreshInterval = 15000; // 15 seconds to reduce API rate usage
+          this.maxLogs = 100;
 
-                // DOM elements
-                this.elements = {
-                    deploymentStatus: document.getElementById('deploymentStatus'),
-                    lastUpdated: document.getElementById('lastUpdated'),
-                    connectionMode: document.getElementById('connectionMode'),
-                    phaseList: document.getElementById('phaseList'),
-                    totalDuration: document.getElementById('totalDuration'),
-                    currentPhase: document.getElementById('currentPhase'),
-                    workflowCount: document.getElementById('workflowCount'),
-                    lastRun: document.getElementById('lastRun'),
-                    logContainer: document.getElementById('logContainer'),
-                    errorMessage: document.getElementById('errorMessage'),
-                    autoRefreshStatus: document.getElementById('autoRefreshStatus'),
-                    tokenStatus: document.getElementById('tokenStatus')
-                };
+          // DOM elements
+          this.elements = {
+            deploymentStatus: document.getElementById("deploymentStatus"),
+            lastUpdated: document.getElementById("lastUpdated"),
+            connectionMode: document.getElementById("connectionMode"),
+            phaseList: document.getElementById("phaseList"),
+            totalDuration: document.getElementById("totalDuration"),
+            currentPhase: document.getElementById("currentPhase"),
+            workflowCount: document.getElementById("workflowCount"),
+            lastRun: document.getElementById("lastRun"),
+            logContainer: document.getElementById("logContainer"),
+            errorMessage: document.getElementById("errorMessage"),
+            autoRefreshStatus: document.getElementById("autoRefreshStatus"),
+            tokenStatus: document.getElementById("tokenStatus"),
+          };
 
-                // Check if all elements exist
-                for (const [key, element] of Object.entries(this.elements)) {
-                    if (!element) {
-                        console.error(`Missing DOM element: ${key}`);
-                    }
-                }
-
-                // Event listeners
-                document.getElementById('startMonitoring').addEventListener('click', () => this.startMonitoring());
-                document.getElementById('stopMonitoring').addEventListener('click', () => this.stopMonitoring());
-                document.getElementById('refreshNow').addEventListener('click', () => this.refreshData());
-                document.getElementById('clearLogs').addEventListener('click', () => this.clearLogs());
-                document.getElementById('exportLogs').addEventListener('click', () => this.exportLogs());
-                document.getElementById('logLevelFilter').addEventListener('change', (e) => this.filterLogs(e.target.value));
-                document.getElementById('logSearch').addEventListener('input', (e) => this.searchLogs(e.target.value));
-                document.getElementById('workflowFilter').addEventListener('change', (e) => this.filterWorkflows(e.target.value));
-                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
-
-                // Token management
-                document.getElementById('saveToken').addEventListener('click', () => this.saveToken());
-                document.getElementById('clearToken').addEventListener('click', () => this.clearToken());
-                document.getElementById('validateToken').addEventListener('click', () => this.validateToken());
-
-                // Initialize theme
-                this.initTheme();
-
-                // Initialize
-                this.addLog('info', 'Deployment monitor initialized - supports both local development and production environments');
-                this.setConnectionMode('Detecting...');
-                this.updateLastUpdated();
+          // Check if all elements exist
+          for (const [key, element] of Object.entries(this.elements)) {
+            if (!element) {
+              console.error(`Missing DOM element: ${key}`);
             }
+          }
 
-            addLog(type, message) {
-                const timestamp = new Date().toLocaleTimeString();
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.innerHTML = `
+          // Event listeners
+          document
+            .getElementById("startMonitoring")
+            .addEventListener("click", () => this.startMonitoring());
+          document
+            .getElementById("stopMonitoring")
+            .addEventListener("click", () => this.stopMonitoring());
+          document
+            .getElementById("refreshNow")
+            .addEventListener("click", () => this.refreshData());
+          document
+            .getElementById("clearLogs")
+            .addEventListener("click", () => this.clearLogs());
+          document
+            .getElementById("exportLogs")
+            .addEventListener("click", () => this.exportLogs());
+          document
+            .getElementById("logLevelFilter")
+            .addEventListener("change", (e) => this.filterLogs(e.target.value));
+          document
+            .getElementById("logSearch")
+            .addEventListener("input", (e) => this.searchLogs(e.target.value));
+          document
+            .getElementById("workflowFilter")
+            .addEventListener("change", (e) =>
+              this.filterWorkflows(e.target.value),
+            );
+          document
+            .getElementById("themeToggle")
+            .addEventListener("click", () => this.toggleTheme());
+
+          // Token management
+          document
+            .getElementById("saveToken")
+            .addEventListener("click", () => this.saveToken());
+          document
+            .getElementById("clearToken")
+            .addEventListener("click", () => this.clearToken());
+          document
+            .getElementById("validateToken")
+            .addEventListener("click", () => this.validateToken());
+
+          // Initialize theme
+          this.initTheme();
+
+          // Initialize
+          this.addLog(
+            "info",
+            "Deployment monitor initialized - supports both local development and production environments",
+          );
+          this.setConnectionMode("Detecting...");
+          this.updateLastUpdated();
+        }
+
+        addLog(type, message) {
+          const timestamp = new Date().toLocaleTimeString();
+          const logEntry = document.createElement("div");
+          logEntry.className = "log-entry";
+          logEntry.innerHTML = `
                     <span class="log-timestamp">[${timestamp}]</span>
                     <span class="log-${type}">${message}</span>
                 `;
 
-                this.elements.logContainer.appendChild(logEntry);
+          this.elements.logContainer.appendChild(logEntry);
 
-                // Limit log entries
-                if (this.elements.logContainer.children.length > this.maxLogs) {
-                    this.elements.logContainer.firstChild.remove();
-                }
+          // Limit log entries
+          if (this.elements.logContainer.children.length > this.maxLogs) {
+            this.elements.logContainer.firstChild.remove();
+          }
 
-                // Auto-scroll to bottom
-                this.elements.logContainer.scrollTop = this.elements.logContainer.scrollHeight;
+          // Auto-scroll to bottom
+          this.elements.logContainer.scrollTop =
+            this.elements.logContainer.scrollHeight;
+        }
+
+        clearLogs() {
+          this.elements.logContainer.innerHTML = "";
+          this.addLog("info", "Logs cleared");
+        }
+
+        exportLogs() {
+          const logEntries = Array.from(this.elements.logContainer.children);
+          const logText = logEntries
+            .map((entry) => {
+              const timestamp =
+                entry.querySelector(".log-timestamp")?.textContent || "";
+              const level =
+                entry.querySelector(".log-level")?.textContent || "";
+              const suite =
+                entry.querySelector(".log-suite")?.textContent || "";
+              const message =
+                entry.querySelector(".log-message")?.textContent || "";
+              return `${timestamp} ${level} ${suite} ${message}`;
+            })
+            .join("\n");
+
+          const blob = new Blob([logText], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `deployment-logs-${new Date().toISOString().split("T")[0]}.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+          this.addLog("info", "Logs exported successfully");
+        }
+
+        filterLogs(level) {
+          const entries = this.elements.logContainer.children;
+          for (let entry of entries) {
+            const entryLevel = entry.className.match(
+              /log-(error|warn|info|debug|success)/,
+            )?.[1];
+            if (level === "all" || this.shouldShowLevel(entryLevel, level)) {
+              entry.style.display = "block";
+            } else {
+              entry.style.display = "none";
             }
+          }
+        }
 
-            clearLogs() {
-                this.elements.logContainer.innerHTML = '';
-                this.addLog('info', 'Logs cleared');
+        shouldShowLevel(entryLevel, filterLevel) {
+          const levels = ["debug", "info", "warn", "error"];
+          const entryIndex = levels.indexOf(entryLevel);
+          const filterIndex = levels.indexOf(filterLevel);
+          return entryIndex >= filterIndex;
+        }
+
+        searchLogs(query) {
+          const entries = this.elements.logContainer.children;
+          const lowerQuery = query.toLowerCase();
+          for (let entry of entries) {
+            const message =
+              entry.querySelector(".log-message")?.textContent?.toLowerCase() ||
+              "";
+            const suite =
+              entry.querySelector(".log-suite")?.textContent?.toLowerCase() ||
+              "";
+            if (message.includes(lowerQuery) || suite.includes(lowerQuery)) {
+              entry.style.display = "block";
+            } else {
+              entry.style.display = "none";
             }
+          }
+        }
 
-            exportLogs() {
-                const logEntries = Array.from(this.elements.logContainer.children);
-                const logText = logEntries.map(entry => {
-                    const timestamp = entry.querySelector('.log-timestamp')?.textContent || '';
-                    const level = entry.querySelector('.log-level')?.textContent || '';
-                    const suite = entry.querySelector('.log-suite')?.textContent || '';
-                    const message = entry.querySelector('.log-message')?.textContent || '';
-                    return `${timestamp} ${level} ${suite} ${message}`;
-                }).join('\n');
+        filterWorkflows(filter) {
+          // This will be implemented when we have workflow data
+          this.addLog("info", `Workflow filter changed to: ${filter}`);
+        }
 
-                const blob = new Blob([logText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `deployment-logs-${new Date().toISOString().split('T')[0]}.txt`;
-                a.click();
-                URL.revokeObjectURL(url);
-                this.addLog('info', 'Logs exported successfully');
-            }
+        initTheme() {
+          const savedTheme = localStorage.getItem("theme") || "light";
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          this.updateThemeToggle(savedTheme);
+        }
 
-            filterLogs(level) {
-                const entries = this.elements.logContainer.children;
-                for (let entry of entries) {
-                    const entryLevel = entry.className.match(/log-(error|warn|info|debug|success)/)?.[1];
-                    if (level === 'all' || this.shouldShowLevel(entryLevel, level)) {
-                        entry.style.display = 'block';
-                    } else {
-                        entry.style.display = 'none';
-                    }
-                }
-            }
+        toggleTheme() {
+          const currentTheme =
+            document.documentElement.getAttribute("data-theme");
+          const newTheme = currentTheme === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", newTheme);
+          localStorage.setItem("theme", newTheme);
+          this.updateThemeToggle(newTheme);
+          this.addLog("info", `Theme changed to ${newTheme} mode`);
+        }
 
-            shouldShowLevel(entryLevel, filterLevel) {
-                const levels = ['debug', 'info', 'warn', 'error'];
-                const entryIndex = levels.indexOf(entryLevel);
-                const filterIndex = levels.indexOf(filterLevel);
-                return entryIndex >= filterIndex;
-            }
+        updateThemeToggle(theme) {
+          const toggle = document.getElementById("themeToggle");
+          toggle.textContent = theme === "dark" ? "☀️" : "🌙";
+          toggle.title = `Switch to ${theme === "dark" ? "light" : "dark"} mode`;
+        }
 
-            searchLogs(query) {
-                const entries = this.elements.logContainer.children;
-                const lowerQuery = query.toLowerCase();
-                for (let entry of entries) {
-                    const message = entry.querySelector('.log-message')?.textContent?.toLowerCase() || '';
-                    const suite = entry.querySelector('.log-suite')?.textContent?.toLowerCase() || '';
-                    if (message.includes(lowerQuery) || suite.includes(lowerQuery)) {
-                        entry.style.display = 'block';
-                    } else {
-                        entry.style.display = 'none';
-                    }
-                }
-            }
+        updateLastUpdated() {
+          this.elements.lastUpdated.textContent = new Date().toLocaleString();
+        }
 
-            filterWorkflows(filter) {
-                // This will be implemented when we have workflow data
-                this.addLog('info', `Workflow filter changed to: ${filter}`);
-            }
+        setConnectionMode(mode) {
+          this.elements.connectionMode.textContent = mode;
+          if (mode === "Direct API") {
+            this.elements.connectionMode.style.color = "#ffc107"; // warning color
+          } else if (mode === "Proxy Server") {
+            this.elements.connectionMode.style.color = "#28a745"; // success color
+          } else {
+            this.elements.connectionMode.style.color = "#6c757d"; // muted color
+          }
+        }
 
-            initTheme() {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                this.updateThemeToggle(savedTheme);
-            }
+        formatDuration(ms) {
+          if (!ms || ms < 0) return "--";
+          const seconds = Math.floor(ms / 1000);
+          const minutes = Math.floor(seconds / 60);
+          const remainingSeconds = seconds % 60;
 
-            toggleTheme() {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                this.updateThemeToggle(newTheme);
-                this.addLog('info', `Theme changed to ${newTheme} mode`);
-            }
+          if (minutes > 0) {
+            return `${minutes}m ${remainingSeconds}s`;
+          }
+          return `${seconds}s`;
+        }
 
-            updateThemeToggle(theme) {
-                const toggle = document.getElementById('themeToggle');
-                toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-                toggle.title = `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`;
-            }
+        getPhaseIcon(phase) {
+          const icons = {
+            pending: "⏳",
+            running: "🔄",
+            completed: "✅",
+            failed: "❌",
+          };
+          return icons[phase] || "❓";
+        }
 
-            updateLastUpdated() {
-                this.elements.lastUpdated.textContent = new Date().toLocaleString();
-            }
+        createPhaseElement(phaseData) {
+          const li = document.createElement("li");
+          li.className = `phase-item ${phaseData.status}`;
 
-            setConnectionMode(mode) {
-                this.elements.connectionMode.textContent = mode;
-                if (mode === 'Direct API') {
-                    this.elements.connectionMode.style.color = '#ffc107'; // warning color
-                } else if (mode === 'Proxy Server') {
-                    this.elements.connectionMode.style.color = '#28a745'; // success color
-                } else {
-                    this.elements.connectionMode.style.color = '#6c757d'; // muted color
-                }
-            }
+          const startTime = phaseData.started_at
+            ? new Date(phaseData.started_at)
+            : null;
+          const endTime = phaseData.completed_at
+            ? new Date(phaseData.completed_at)
+            : null;
+          const duration = startTime && endTime ? endTime - startTime : null;
 
-            formatDuration(ms) {
-                if (!ms || ms < 0) return '--';
-                const seconds = Math.floor(ms / 1000);
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-
-                if (minutes > 0) {
-                    return `${minutes}m ${remainingSeconds}s`;
-                }
-                return `${seconds}s`;
-            }
-
-            getPhaseIcon(phase) {
-                const icons = {
-                    'pending': '⏳',
-                    'running': '🔄',
-                    'completed': '✅',
-                    'failed': '❌'
-                };
-                return icons[phase] || '❓';
-            }
-
-            createPhaseElement(phaseData) {
-                const li = document.createElement('li');
-                li.className = `phase-item ${phaseData.status}`;
-
-                const startTime = phaseData.started_at ? new Date(phaseData.started_at) : null;
-                const endTime = phaseData.completed_at ? new Date(phaseData.completed_at) : null;
-                const duration = startTime && endTime ? endTime - startTime : null;
-
-                li.innerHTML = `
+          li.innerHTML = `
                     <div class="phase-icon ${phaseData.status}">
                         ${this.getPhaseIcon(phaseData.status)}
                     </div>
                     <div class="phase-content">
                         <div class="phase-title">${phaseData.name}</div>
                         <div class="phase-details">
-                            ${startTime ? `Started: ${startTime.toLocaleTimeString()}` : 'Not started'}
-                            ${duration ? ` • Duration: ${this.formatDuration(duration)}` : ''}
-                            ${endTime && phaseData.status === 'completed' ? ` • Completed: ${endTime.toLocaleTimeString()}` : ''}
+                            ${startTime ? `Started: ${startTime.toLocaleTimeString()}` : "Not started"}
+                            ${duration ? ` • Duration: ${this.formatDuration(duration)}` : ""}
+                            ${endTime && phaseData.status === "completed" ? ` • Completed: ${endTime.toLocaleTimeString()}` : ""}
                         </div>
                     </div>
                     <div class="phase-time">
-                        ${phaseData.status === 'running' ? 'Now' :
-                        phaseData.status === 'completed' ? 'Done' :
-                            phaseData.status === 'failed' ? 'Failed' : 'Pending'}
+                        ${
+                          phaseData.status === "running"
+                            ? "Now"
+                            : phaseData.status === "completed"
+                              ? "Done"
+                              : phaseData.status === "failed"
+                                ? "Failed"
+                                : "Pending"
+                        }
                     </div>
                 `;
 
-                return li;
-            }
-
-            async fetchWorkflowData() {
-                console.log('fetchWorkflowData called');
-                try {
-                    // Try server-side proxy endpoints first (for local development)
-                    let workflows;
-                    try {
-                        workflows = await this.discoverWorkflows();
-                        this.setConnectionMode('Proxy Server');
-                        this.addLog('info', 'Using proxy server for API calls');
-                    } catch (proxyError) {
-                        this.addLog('info', 'Proxy endpoints not available, switching to direct GitHub API calls');
-                        this.setConnectionMode('Direct API');
-                        // Fall back to direct GitHub API calls for production
-                        workflows = await this.discoverWorkflowsDirect();
-                    }
-
-                    if (workflows.length === 0) {
-                        const hasToken = Boolean(this.getGitHubToken());
-                        if (!hasToken) {
-                            throw new Error('No workflows found. For private repositories, please provide a GitHub Personal Access Token with repo scope.');
-                        } else {
-                            throw new Error('No workflows found. Repository may be private or empty.');
-                        }
-                    }
-
-                    // Try to find the most recent workflow run
-                    const workflowRun = await this.findLatestWorkflowRun(workflows);
-
-                    if (!workflowRun) {
-                        throw new Error('No workflow runs found. No deployments have been triggered yet.');
-                    }
-
-                    // Fetch job details
-                    let jobs;
-                    try {
-                        // Try proxy endpoint first
-                        const jobsUrl = `/api/github/runs/${workflowRun.id}/jobs?owner=Themis128&repo=figma-cloud-portfolio`;
-                        const jobsResponse = await fetch(jobsUrl, { headers: this.getProxyHeaders() });
-                        if (jobsResponse.ok) {
-                            const jobsData = await jobsResponse.json();
-                            jobs = jobsData.jobs || [];
-                        } else {
-                            throw new Error('Proxy failed');
-                        }
-                    } catch (proxyError) {
-                        // Fall back to direct API call
-                        this.addLog('debug', `Proxy failed for jobs, trying direct API for run ${workflowRun.id}`);
-                        jobs = await this.fetchJobsDirect(workflowRun.id);
-                    }
-
-                    return {
-                        run: workflowRun,
-                        jobs: jobs
-                    };
-                } catch (error) {
-                    console.error('Error fetching workflow data:', error);
-                    throw error;
-                }
-            }
-
-            async discoverWorkflows() {
-                console.log('discoverWorkflows called');
-                try {
-                    const workflowsUrl = `/api/github/workflows?owner=Themis128&repo=figma-cloud-portfolio`;
-                    const response = await fetch(workflowsUrl, { headers: this.getProxyHeaders() });
-
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            // 404 from proxy endpoint means no backend server - throw error to trigger fallback
-                            throw new Error('Proxy server not available');
-                        } else if (response.status === 401) {
-                            this.addLog('warning', 'Authentication required for workflow access');
-                            return [];
-                        } else {
-                            this.addLog('error', `GitHub API error: ${response.status}`);
-                            return [];
-                        }
-                    }
-
-                    const data = await response.json();
-                    return data.workflows || [];
-                } catch (error) {
-                    // Re-throw network errors or proxy unavailability to trigger fallback
-                    if (error.message === 'Proxy server not available' || error.name === 'TypeError') {
-                        throw error;
-                    }
-                    this.addLog('error', `Failed to discover workflows: ${error.message}`);
-                    return [];
-                }
-            }
-
-            async discoverWorkflowsDirect() {
-                try {
-                    const workflowsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/workflows`;
-                    const response = await fetch(workflowsUrl, { headers: this.getDirectHeaders() });
-
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            this.addLog('warning', 'Repository not found or workflows endpoint unavailable');
-                            return [];
-                        } else if (response.status === 401) {
-                            this.addLog('warning', 'Authentication required for workflow access');
-                            return [];
-                        } else {
-                            this.addLog('error', `GitHub API error: ${response.status}`);
-                            return [];
-                        }
-                    }
-
-                    const data = await response.json();
-                    return data.workflows || [];
-                } catch (error) {
-                    this.addLog('error', `Failed to discover workflows directly: ${error.message}`);
-                    return [];
-                }
-            }
-
-            async findLatestWorkflowRun(workflows) {
-                // Try to find deployment-related workflows first
-                const deployWorkflows = workflows.filter(w =>
-                    w.name.toLowerCase().includes('deploy') ||
-                    w.name.toLowerCase().includes('production') ||
-                    w.name.toLowerCase().includes('amplify') ||
-                    w.name.toLowerCase().includes('ci') ||
-                    w.name.toLowerCase().includes('cd')
-                );
-
-                const workflowsToCheck = deployWorkflows.length > 0 ? deployWorkflows : workflows;
-
-                for (const workflow of workflowsToCheck) {
-                    try {
-                        // Use workflow ID when available — more reliable than the human-readable name
-                        const workflowIdentifier = workflow.id || workflow.path || workflow.name;
-
-                        let runsData;
-                        try {
-                            // Try proxy endpoint first
-                            const runsUrl = `/api/github/workflows/${workflowIdentifier}/runs?owner=Themis128&repo=figma-cloud-portfolio&per_page=1`;
-                            const response = await fetch(runsUrl, { headers: this.getProxyHeaders() });
-                            if (response.ok) {
-                                runsData = await response.json();
-                            } else {
-                                throw new Error('Proxy failed');
-                            }
-                        } catch (proxyError) {
-                            // Fall back to direct API call
-                            this.addLog('debug', `Proxy failed for workflow ${workflowIdentifier}, trying direct API`);
-                            const runsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/workflows/${workflowIdentifier}/runs?per_page=1`;
-                            const response = await fetch(runsUrl, { headers: this.getDirectHeaders() });
-                            if (response.ok) {
-                                runsData = await response.json();
-                            } else {
-                                this.addLog('debug', `Direct API also failed for workflow ${workflowIdentifier}: ${response.status}`);
-                                continue; // Try next workflow
-                            }
-                        }
-
-                        if (runsData.workflow_runs && runsData.workflow_runs.length > 0) {
-                            this.addLog('info', `Found workflow: ${workflow.name || workflow.path || workflow.id}`);
-                            return runsData.workflow_runs[0];
-                        }
-                    } catch (error) {
-                        this.addLog('warning', `Failed to check workflow ${workflow.name}: ${error.message}`);
-                    }
-                }
-
-                return null;
-            }
-
-            getGitHubToken() {
-                // Try to get token from localStorage
-                const token = localStorage.getItem('github_token');
-                if (token) {
-                    return token;
-                }
-
-                // Try to get from URL parameter
-                const urlParams = new URLSearchParams(window.location.search);
-                const urlToken = urlParams.get('token');
-                if (urlToken) {
-                    localStorage.setItem('github_token', urlToken);
-                    return urlToken;
-                }
-
-                return null;
-            }
-
-            getProxyHeaders() {
-                const headers = {};
-                const token = this.getGitHubToken();
-                if (token) {
-                    headers['Authorization'] = `token ${token}`;
-                }
-                return headers;
-            }
-
-            getDirectHeaders() {
-                const headers = {
-                    'Accept': 'application/vnd.github.v3+json',
-                    'User-Agent': 'Deployment-Monitor/1.0'
-                };
-                const token = this.getGitHubToken();
-                if (token) {
-                    headers['Authorization'] = `token ${token}`;
-                }
-                return headers;
-            }
-
-            setDeploymentStatus(status, message) {
-                this.elements.deploymentStatus.className = `status-badge status-${status}`;
-                this.elements.deploymentStatus.textContent = message;
-            }
-
-            async fetchJobsDirect(runId) {
-                try {
-                    const jobsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/runs/${runId}/jobs`;
-                    const response = await fetch(jobsUrl, { headers: this.getDirectHeaders() });
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch job details: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    return data.jobs || [];
-                } catch (error) {
-                    this.addLog('error', `Failed to fetch jobs directly: ${error.message}`);
-                    return [];
-                }
-            }
-
-            updateUI(workflowData) {
-                const { run, jobs } = workflowData;
-
-                // Update deployment status
-                const status = run.status;
-                const conclusion = run.conclusion;
-
-                if (status === 'completed') {
-                    if (conclusion === 'success') {
-                        this.setDeploymentStatus('success', '✅ Deployment Completed Successfully');
-                        this.addLog('success', 'Deployment completed successfully!');
-                    } else {
-                        this.setDeploymentStatus('failed', '❌ Deployment Failed');
-                        this.addLog('error', `Deployment failed: ${conclusion}`);
-                    }
-                } else if (status === 'in_progress') {
-                    this.setDeploymentStatus('running', '🔄 Deployment In Progress');
-                    this.addLog('info', 'Deployment is currently running...');
-                } else {
-                    this.setDeploymentStatus('running', '⏳ Deployment Pending');
-                }
-
-                // Update stats
-                const startTime = new Date(run.created_at);
-                const endTime = run.updated_at ? new Date(run.updated_at) : new Date();
-                const totalDuration = endTime - startTime;
-
-                this.elements.totalDuration.textContent = this.formatDuration(totalDuration);
-
-                // Find current phase
-                const runningJob = jobs.find(job => job.status === 'in_progress');
-                const currentPhaseName = runningJob ? runningJob.name :
-                    (status === 'completed' ? 'Completed' : 'Pending');
-                this.elements.currentPhase.textContent = currentPhaseName;
-
-                // Update phases list
-                this.elements.phaseList.innerHTML = '';
-
-                // Sort jobs by start time
-                const sortedJobs = jobs.sort((a, b) => {
-                    const aTime = a.started_at ? new Date(a.started_at) : new Date(0);
-                    const bTime = b.started_at ? new Date(b.started_at) : new Date(0);
-                    return aTime - bTime;
-                });
-
-                sortedJobs.forEach(job => {
-                    const phaseData = {
-                        name: job.name,
-                        status: job.status === 'completed' ? 'completed' :
-                            job.status === 'in_progress' ? 'running' :
-                                job.status === 'queued' ? 'pending' : 'pending',
-                        started_at: job.started_at,
-                        completed_at: job.completed_at
-                    };
-
-                    this.elements.phaseList.appendChild(this.createPhaseElement(phaseData));
-                });
-
-                // Add placeholder for deployment phase if not in jobs
-                if (!sortedJobs.some(job => job.name.includes('Deploy') || job.name.includes('Amplify'))) {
-                    const deployPhase = {
-                        name: 'AWS Amplify Deployment',
-                        status: status === 'completed' ? 'completed' :
-                            status === 'in_progress' ? 'running' : 'pending',
-                        started_at: run.created_at,
-                        completed_at: run.updated_at
-                    };
-                    this.elements.phaseList.appendChild(this.createPhaseElement(deployPhase));
-                }
-            }
-
-            async refreshData() {
-                try {
-                    this.elements.errorMessage.classList.add('hidden');
-                    const workflowData = await this.fetchWorkflowData();
-                    this.updateUI(workflowData);
-                    this.updateLastUpdated();
-                    this.addLog('info', 'Data refreshed');
-                } catch (error) {
-                    this.elements.errorMessage.textContent = `Error: ${error.message}`;
-                    this.elements.errorMessage.classList.remove('hidden');
-                    this.addLog('error', `Failed to fetch data: ${error.message}`);
-                }
-            }
-
-            startMonitoring() {
-                console.log('startMonitoring called');
-                if (this.isMonitoring) return;
-
-                this.isMonitoring = true;
-                this.elements.autoRefreshStatus.textContent = 'ON';
-                this.elements.autoRefreshStatus.style.color = '#28a745';
-
-                this.addLog('info', 'Starting real-time monitoring...');
-
-                // Initial fetch
-                this.refreshData();
-
-                // Set up interval
-                this.monitoringInterval = setInterval(() => {
-                    this.refreshData();
-                }, this.refreshInterval);
-            }
-
-            stopMonitoring() {
-                if (!this.isMonitoring) return;
-
-                this.isMonitoring = false;
-                this.elements.autoRefreshStatus.textContent = 'OFF';
-                this.elements.autoRefreshStatus.style.color = '#dc3545';
-
-                if (this.monitoringInterval) {
-                    clearInterval(this.monitoringInterval);
-                    this.monitoringInterval = null;
-                }
-
-                this.addLog('info', 'Monitoring stopped');
-            }
-
-            saveToken() {
-                const tokenInput = document.getElementById('githubToken');
-                const token = tokenInput.value.trim();
-
-                if (!token) {
-                    this.addLog('warning', 'Please enter a GitHub token');
-                    return;
-                }
-
-                if (token.length < 20) {
-                    this.addLog('error', 'Invalid token format');
-                    return;
-                }
-
-                localStorage.setItem('github_token', token);
-                tokenInput.value = '';
-                this.addLog('success', 'GitHub token saved successfully');
-
-                // Try to refresh data with the new token
-                this.refreshData();
-            }
-
-            clearToken() {
-                localStorage.removeItem('github_token');
-                document.getElementById('githubToken').value = '';
-                this.addLog('info', 'GitHub token cleared');
-
-                // Try to refresh data without token
-                this.refreshData();
-            }
-
-            async validateToken() {
-                const tokenInput = document.getElementById('githubToken');
-                const token = tokenInput.value.trim();
-
-                if (!token) {
-                    this.elements.tokenStatus.textContent = '❌ Please enter a token';
-                    this.elements.tokenStatus.style.color = '#dc3545';
-                    return;
-                }
-
-                try {
-                    // Try server proxy first, then fall back to direct API call
-                    let response;
-                    try {
-                        response = await fetch('/api/github/validate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ token })
-                        });
-                    } catch (proxyError) {
-                        // Fall back to direct GitHub API call
-                        this.addLog('debug', 'Proxy validation failed, trying direct API validation');
-                        response = await fetch('https://api.github.com/user', {
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Accept': 'application/vnd.github.v3+json',
-                                'User-Agent': 'Deployment-Monitor/1.0'
-                            }
-                        });
-                    }
-
-                    if (response.ok) {
-                        const userData = await response.json();
-                        const login = userData.login || (userData && userData.raw && userData.raw.login) || 'unknown';
-                        this.elements.tokenStatus.textContent = `✅ Valid token for ${login}`;
-                        this.elements.tokenStatus.style.color = '#28a745';
-                        this.addLog('success', `Token validated for user: ${login}`);
-                    } else if (response.status === 401) {
-                        this.elements.tokenStatus.textContent = '❌ Invalid token';
-                        this.elements.tokenStatus.style.color = '#dc3545';
-                        this.addLog('error', 'Token validation failed: Invalid token');
-                    } else {
-                        this.elements.tokenStatus.textContent = `❌ Validation failed (${response.status})`;
-                        this.elements.tokenStatus.style.color = '#dc3545';
-                        this.addLog('error', `Token validation failed: ${response.status}`);
-                    }
-                } catch (error) {
-                    this.elements.tokenStatus.textContent = '❌ Network error during validation';
-                    this.elements.tokenStatus.style.color = '#dc3545';
-                    this.addLog('error', `Token validation error: ${error.message}`);
-                }
-            }
+          return li;
         }
 
-        // Initialize the monitor when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded fired');
-            const monitor = new DeploymentMonitor();
+        async fetchWorkflowData() {
+          console.log("fetchWorkflowData called");
+          try {
+            // Try server-side proxy endpoints first (for local development)
+            let workflows;
+            try {
+              workflows = await this.discoverWorkflows();
+              this.setConnectionMode("Proxy Server");
+              this.addLog("info", "Using proxy server for API calls");
+            } catch (proxyError) {
+              this.addLog(
+                "info",
+                "Proxy endpoints not available, switching to direct GitHub API calls",
+              );
+              this.setConnectionMode("Direct API");
+              // Fall back to direct GitHub API calls for production
+              workflows = await this.discoverWorkflowsDirect();
+            }
 
-            // Auto-start monitoring
-            setTimeout(() => {
-                console.log('setTimeout fired, calling startMonitoring');
-                try {
-                    monitor.startMonitoring();
-                } catch (error) {
-                    console.error('Error in startMonitoring:', error);
+            if (workflows.length === 0) {
+              const hasToken = Boolean(this.getGitHubToken());
+              if (!hasToken) {
+                throw new Error(
+                  "No workflows found. For private repositories, please provide a GitHub Personal Access Token with repo scope.",
+                );
+              } else {
+                throw new Error(
+                  "No workflows found. Repository may be private or empty.",
+                );
+              }
+            }
+
+            // Try to find the most recent workflow run
+            const workflowRun = await this.findLatestWorkflowRun(workflows);
+
+            if (!workflowRun) {
+              throw new Error(
+                "No workflow runs found. No deployments have been triggered yet.",
+              );
+            }
+
+            // Fetch job details
+            let jobs;
+            try {
+              // Try proxy endpoint first
+              const jobsUrl = `/api/github/runs/${workflowRun.id}/jobs?owner=Themis128&repo=figma-cloud-portfolio`;
+              const jobsResponse = await fetch(jobsUrl, {
+                headers: this.getProxyHeaders(),
+              });
+              if (jobsResponse.ok) {
+                const jobsData = await jobsResponse.json();
+                jobs = jobsData.jobs || [];
+              } else {
+                throw new Error("Proxy failed");
+              }
+            } catch (proxyError) {
+              // Fall back to direct API call
+              this.addLog(
+                "debug",
+                `Proxy failed for jobs, trying direct API for run ${workflowRun.id}`,
+              );
+              jobs = await this.fetchJobsDirect(workflowRun.id);
+            }
+
+            return {
+              run: workflowRun,
+              jobs: jobs,
+            };
+          } catch (error) {
+            console.error("Error fetching workflow data:", error);
+            throw error;
+          }
+        }
+
+        async discoverWorkflows() {
+          console.log("discoverWorkflows called");
+          try {
+            const workflowsUrl = `/api/github/workflows?owner=Themis128&repo=figma-cloud-portfolio`;
+            const response = await fetch(workflowsUrl, {
+              headers: this.getProxyHeaders(),
+            });
+
+            if (!response.ok) {
+              if (response.status === 404) {
+                // 404 from proxy endpoint means no backend server - throw error to trigger fallback
+                throw new Error("Proxy server not available");
+              } else if (response.status === 401) {
+                this.addLog(
+                  "warning",
+                  "Authentication required for workflow access",
+                );
+                return [];
+              } else {
+                this.addLog("error", `GitHub API error: ${response.status}`);
+                return [];
+              }
+            }
+
+            const data = await response.json();
+            return data.workflows || [];
+          } catch (error) {
+            // Re-throw network errors or proxy unavailability to trigger fallback
+            if (
+              error.message === "Proxy server not available" ||
+              error.name === "TypeError"
+            ) {
+              throw error;
+            }
+            this.addLog(
+              "error",
+              `Failed to discover workflows: ${error.message}`,
+            );
+            return [];
+          }
+        }
+
+        async discoverWorkflowsDirect() {
+          try {
+            const workflowsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/workflows`;
+            const response = await fetch(workflowsUrl, {
+              headers: this.getDirectHeaders(),
+            });
+
+            if (!response.ok) {
+              if (response.status === 404) {
+                this.addLog(
+                  "warning",
+                  "Repository not found or workflows endpoint unavailable",
+                );
+                return [];
+              } else if (response.status === 401) {
+                this.addLog(
+                  "warning",
+                  "Authentication required for workflow access",
+                );
+                return [];
+              } else {
+                this.addLog("error", `GitHub API error: ${response.status}`);
+                return [];
+              }
+            }
+
+            const data = await response.json();
+            return data.workflows || [];
+          } catch (error) {
+            this.addLog(
+              "error",
+              `Failed to discover workflows directly: ${error.message}`,
+            );
+            return [];
+          }
+        }
+
+        async findLatestWorkflowRun(workflows) {
+          // Try to find deployment-related workflows first
+          const deployWorkflows = workflows.filter(
+            (w) =>
+              w.name.toLowerCase().includes("deploy") ||
+              w.name.toLowerCase().includes("production") ||
+              w.name.toLowerCase().includes("amplify") ||
+              w.name.toLowerCase().includes("ci") ||
+              w.name.toLowerCase().includes("cd"),
+          );
+
+          const workflowsToCheck =
+            deployWorkflows.length > 0 ? deployWorkflows : workflows;
+
+          for (const workflow of workflowsToCheck) {
+            try {
+              // Use workflow ID when available — more reliable than the human-readable name
+              const workflowIdentifier =
+                workflow.id || workflow.path || workflow.name;
+
+              let runsData;
+              try {
+                // Try proxy endpoint first
+                const runsUrl = `/api/github/workflows/${workflowIdentifier}/runs?owner=Themis128&repo=figma-cloud-portfolio&per_page=1`;
+                const response = await fetch(runsUrl, {
+                  headers: this.getProxyHeaders(),
+                });
+                if (response.ok) {
+                  runsData = await response.json();
+                } else {
+                  throw new Error("Proxy failed");
                 }
-            }, 100);
-        });
-    </script>
-</body>
+              } catch (proxyError) {
+                // Fall back to direct API call
+                this.addLog(
+                  "debug",
+                  `Proxy failed for workflow ${workflowIdentifier}, trying direct API`,
+                );
+                const runsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/workflows/${workflowIdentifier}/runs?per_page=1`;
+                const response = await fetch(runsUrl, {
+                  headers: this.getDirectHeaders(),
+                });
+                if (response.ok) {
+                  runsData = await response.json();
+                } else {
+                  this.addLog(
+                    "debug",
+                    `Direct API also failed for workflow ${workflowIdentifier}: ${response.status}`,
+                  );
+                  continue; // Try next workflow
+                }
+              }
 
+              if (runsData.workflow_runs && runsData.workflow_runs.length > 0) {
+                this.addLog(
+                  "info",
+                  `Found workflow: ${workflow.name || workflow.path || workflow.id}`,
+                );
+                return runsData.workflow_runs[0];
+              }
+            } catch (error) {
+              this.addLog(
+                "warning",
+                `Failed to check workflow ${workflow.name}: ${error.message}`,
+              );
+            }
+          }
+
+          return null;
+        }
+
+        getGitHubToken() {
+          // Try to get token from localStorage
+          const token = localStorage.getItem("github_token");
+          if (token) {
+            return token;
+          }
+
+          // Try to get from URL parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlToken = urlParams.get("token");
+          if (urlToken) {
+            localStorage.setItem("github_token", urlToken);
+            return urlToken;
+          }
+
+          return null;
+        }
+
+        getProxyHeaders() {
+          const headers = {};
+          const token = this.getGitHubToken();
+          if (token) {
+            headers["Authorization"] = `token ${token}`;
+          }
+          return headers;
+        }
+
+        getDirectHeaders() {
+          const headers = {
+            Accept: "application/vnd.github.v3+json",
+            "User-Agent": "Deployment-Monitor/1.0",
+          };
+          const token = this.getGitHubToken();
+          if (token) {
+            headers["Authorization"] = `token ${token}`;
+          }
+          return headers;
+        }
+
+        setDeploymentStatus(status, message) {
+          this.elements.deploymentStatus.className = `status-badge status-${status}`;
+          this.elements.deploymentStatus.textContent = message;
+        }
+
+        async fetchJobsDirect(runId) {
+          try {
+            const jobsUrl = `https://api.github.com/repos/Themis128/figma-cloud-portfolio/actions/runs/${runId}/jobs`;
+            const response = await fetch(jobsUrl, {
+              headers: this.getDirectHeaders(),
+            });
+
+            if (!response.ok) {
+              throw new Error(
+                `Failed to fetch job details: ${response.status}`,
+              );
+            }
+
+            const data = await response.json();
+            return data.jobs || [];
+          } catch (error) {
+            this.addLog(
+              "error",
+              `Failed to fetch jobs directly: ${error.message}`,
+            );
+            return [];
+          }
+        }
+
+        updateUI(workflowData) {
+          const { run, jobs } = workflowData;
+
+          // Update deployment status
+          const status = run.status;
+          const conclusion = run.conclusion;
+
+          if (status === "completed") {
+            if (conclusion === "success") {
+              this.setDeploymentStatus(
+                "success",
+                "✅ Deployment Completed Successfully",
+              );
+              this.addLog("success", "Deployment completed successfully!");
+            } else {
+              this.setDeploymentStatus("failed", "❌ Deployment Failed");
+              this.addLog("error", `Deployment failed: ${conclusion}`);
+            }
+          } else if (status === "in_progress") {
+            this.setDeploymentStatus("running", "🔄 Deployment In Progress");
+            this.addLog("info", "Deployment is currently running...");
+          } else {
+            this.setDeploymentStatus("running", "⏳ Deployment Pending");
+          }
+
+          // Update stats
+          const startTime = new Date(run.created_at);
+          const endTime = run.updated_at
+            ? new Date(run.updated_at)
+            : new Date();
+          const totalDuration = endTime - startTime;
+
+          this.elements.totalDuration.textContent =
+            this.formatDuration(totalDuration);
+
+          // Find current phase
+          const runningJob = jobs.find((job) => job.status === "in_progress");
+          const currentPhaseName = runningJob
+            ? runningJob.name
+            : status === "completed"
+              ? "Completed"
+              : "Pending";
+          this.elements.currentPhase.textContent = currentPhaseName;
+
+          // Update phases list
+          this.elements.phaseList.innerHTML = "";
+
+          // Sort jobs by start time
+          const sortedJobs = jobs.sort((a, b) => {
+            const aTime = a.started_at ? new Date(a.started_at) : new Date(0);
+            const bTime = b.started_at ? new Date(b.started_at) : new Date(0);
+            return aTime - bTime;
+          });
+
+          sortedJobs.forEach((job) => {
+            const phaseData = {
+              name: job.name,
+              status:
+                job.status === "completed"
+                  ? "completed"
+                  : job.status === "in_progress"
+                    ? "running"
+                    : job.status === "queued"
+                      ? "pending"
+                      : "pending",
+              started_at: job.started_at,
+              completed_at: job.completed_at,
+            };
+
+            this.elements.phaseList.appendChild(
+              this.createPhaseElement(phaseData),
+            );
+          });
+
+          // Add placeholder for deployment phase if not in jobs
+          if (
+            !sortedJobs.some(
+              (job) =>
+                job.name.includes("Deploy") || job.name.includes("Amplify"),
+            )
+          ) {
+            const deployPhase = {
+              name: "AWS Amplify Deployment",
+              status:
+                status === "completed"
+                  ? "completed"
+                  : status === "in_progress"
+                    ? "running"
+                    : "pending",
+              started_at: run.created_at,
+              completed_at: run.updated_at,
+            };
+            this.elements.phaseList.appendChild(
+              this.createPhaseElement(deployPhase),
+            );
+          }
+        }
+
+        async refreshData() {
+          try {
+            this.elements.errorMessage.classList.add("hidden");
+            const workflowData = await this.fetchWorkflowData();
+            this.updateUI(workflowData);
+            this.updateLastUpdated();
+            this.addLog("info", "Data refreshed");
+          } catch (error) {
+            this.elements.errorMessage.textContent = `Error: ${error.message}`;
+            this.elements.errorMessage.classList.remove("hidden");
+            this.addLog("error", `Failed to fetch data: ${error.message}`);
+          }
+        }
+
+        startMonitoring() {
+          console.log("startMonitoring called");
+          if (this.isMonitoring) return;
+
+          this.isMonitoring = true;
+          this.elements.autoRefreshStatus.textContent = "ON";
+          this.elements.autoRefreshStatus.style.color = "#28a745";
+
+          this.addLog("info", "Starting real-time monitoring...");
+
+          // Initial fetch
+          this.refreshData();
+
+          // Set up interval
+          this.monitoringInterval = setInterval(() => {
+            this.refreshData();
+          }, this.refreshInterval);
+        }
+
+        stopMonitoring() {
+          if (!this.isMonitoring) return;
+
+          this.isMonitoring = false;
+          this.elements.autoRefreshStatus.textContent = "OFF";
+          this.elements.autoRefreshStatus.style.color = "#dc3545";
+
+          if (this.monitoringInterval) {
+            clearInterval(this.monitoringInterval);
+            this.monitoringInterval = null;
+          }
+
+          this.addLog("info", "Monitoring stopped");
+        }
+
+        saveToken() {
+          const tokenInput = document.getElementById("githubToken");
+          const token = tokenInput.value.trim();
+
+          if (!token) {
+            this.addLog("warning", "Please enter a GitHub token");
+            return;
+          }
+
+          if (token.length < 20) {
+            this.addLog("error", "Invalid token format");
+            return;
+          }
+
+          localStorage.setItem("github_token", token);
+          tokenInput.value = "";
+          this.addLog("success", "GitHub token saved successfully");
+
+          // Try to refresh data with the new token
+          this.refreshData();
+        }
+
+        clearToken() {
+          localStorage.removeItem("github_token");
+          document.getElementById("githubToken").value = "";
+          this.addLog("info", "GitHub token cleared");
+
+          // Try to refresh data without token
+          this.refreshData();
+        }
+
+        async validateToken() {
+          const tokenInput = document.getElementById("githubToken");
+          const token = tokenInput.value.trim();
+
+          if (!token) {
+            this.elements.tokenStatus.textContent = "❌ Please enter a token";
+            this.elements.tokenStatus.style.color = "#dc3545";
+            return;
+          }
+
+          try {
+            // Try server proxy first, then fall back to direct API call
+            let response;
+            try {
+              response = await fetch("/api/github/validate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token }),
+              });
+            } catch (proxyError) {
+              // Fall back to direct GitHub API call
+              this.addLog(
+                "debug",
+                "Proxy validation failed, trying direct API validation",
+              );
+              response = await fetch("https://api.github.com/user", {
+                headers: {
+                  Authorization: `token ${token}`,
+                  Accept: "application/vnd.github.v3+json",
+                  "User-Agent": "Deployment-Monitor/1.0",
+                },
+              });
+            }
+
+            if (response.ok) {
+              const userData = await response.json();
+              const login =
+                userData.login ||
+                (userData && userData.raw && userData.raw.login) ||
+                "unknown";
+              this.elements.tokenStatus.textContent = `✅ Valid token for ${login}`;
+              this.elements.tokenStatus.style.color = "#28a745";
+              this.addLog("success", `Token validated for user: ${login}`);
+            } else if (response.status === 401) {
+              this.elements.tokenStatus.textContent = "❌ Invalid token";
+              this.elements.tokenStatus.style.color = "#dc3545";
+              this.addLog("error", "Token validation failed: Invalid token");
+            } else {
+              this.elements.tokenStatus.textContent = `❌ Validation failed (${response.status})`;
+              this.elements.tokenStatus.style.color = "#dc3545";
+              this.addLog(
+                "error",
+                `Token validation failed: ${response.status}`,
+              );
+            }
+          } catch (error) {
+            this.elements.tokenStatus.textContent =
+              "❌ Network error during validation";
+            this.elements.tokenStatus.style.color = "#dc3545";
+            this.addLog("error", `Token validation error: ${error.message}`);
+          }
+        }
+      }
+
+      // Initialize the monitor when the page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOMContentLoaded fired");
+        const monitor = new DeploymentMonitor();
+
+        // Auto-start monitoring
+        setTimeout(() => {
+          console.log("setTimeout fired, calling startMonitoring");
+          try {
+            monitor.startMonitoring();
+          } catch (error) {
+            console.error("Error in startMonitoring:", error);
+          }
+        }, 100);
+      });
+    </script>
+  </body>
 </html>

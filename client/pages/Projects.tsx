@@ -1,9 +1,16 @@
 import { Grid3X3, Zap } from 'lucide-react'
 import type React from 'react'
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { Helmet } from 'react-helmet-async'
 
-import Interactive3DDemo, { useSampleProjects } from '@/components/Interactive3DDemo'
+import { useSampleProjects } from '@/components/Interactive3DDemo'
+
+const Interactive3DDemo = lazy(() =>
+  import('@/components/Interactive3DDemo').then((module) => ({
+    default: module.Interactive3DDemo,
+  })),
+)
+
 import SearchableProjects from '@/components/SearchableProjects'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -133,10 +140,18 @@ const Projects: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Interactive3DDemo
-                    projects={sampleProjects}
-                    className='w-full h-96 rounded-lg overflow-hidden'
-                  />
+                  <Suspense
+                    fallback={
+                      <div className='w-full h-96 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400'>
+                        Loading 3D Demo...
+                      </div>
+                    }
+                  >
+                    <Interactive3DDemo
+                      projects={sampleProjects}
+                      className='w-full h-96 rounded-lg overflow-hidden'
+                    />
+                  </Suspense>
                 </CardContent>
               </Card>
             </TabsContent>

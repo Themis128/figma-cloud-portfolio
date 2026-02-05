@@ -51,14 +51,18 @@ describe('Navigation', () => {
   it('shows mobile menu button on small screens', () => {
     renderWithTheme(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: /toggle mobile menu/i })
+    const menuButton = screen.getByRole('button', {
+      name: /toggle mobile menu/i,
+    })
     expect(menuButton).toBeInTheDocument()
   })
 
   it('toggles mobile menu when button is clicked', () => {
     renderWithTheme(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: /toggle mobile menu/i })
+    const menuButton = screen.getByRole('button', {
+      name: /toggle mobile menu/i,
+    })
 
     // Menu should be closed initially
     expect(menuButton).toHaveAttribute('aria-expanded', 'false')
@@ -75,7 +79,9 @@ describe('Navigation', () => {
   it('closes mobile menu when navigation link is clicked', () => {
     renderWithTheme(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: /toggle mobile menu/i })
+    const menuButton = screen.getByRole('button', {
+      name: /toggle mobile menu/i,
+    })
     // Get all About links and click the first one (mobile version)
     const aboutLinks = screen.getAllByRole('link', { name: /about/i })
     const aboutLink = aboutLinks[1] // Mobile version
@@ -101,7 +107,9 @@ describe('Navigation', () => {
   it('closes mobile menu when CTA button is clicked', () => {
     renderWithTheme(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: /toggle mobile menu/i })
+    const menuButton = screen.getByRole('button', {
+      name: /toggle mobile menu/i,
+    })
     const ctaButton = screen.getByRole('link', { name: /get in touch/i })
 
     // Open menu
@@ -119,7 +127,9 @@ describe('Navigation', () => {
     const nav = screen.getByRole('navigation', { name: /main navigation/i })
     expect(nav).toHaveAttribute('aria-label', 'Main navigation')
 
-    const menuButton = screen.getByRole('button', { name: /toggle mobile menu/i })
+    const menuButton = screen.getByRole('button', {
+      name: /toggle mobile menu/i,
+    })
     expect(menuButton).toHaveAttribute('aria-expanded')
   })
 })

@@ -1,10 +1,61 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { ThemeProvider } from '@/components/ThemeProvider'
 import About from '@/pages/About'
 import Index from '@/pages/Index'
+
+// Mock lazy-loaded components
+vi.mock('@/components/Navigation', () => ({
+  default: () => (
+    <nav data-testid='navigation' aria-label='Main navigation'>
+      <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex items-center justify-between h-16 md:h-20'>
+          <a href='/' className='flex items-center' aria-label='Home'>
+            Logo
+          </a>
+          <div className='hidden md:flex items-center space-x-6 lg:space-x-8'>
+            <a
+              href='/about'
+              className='text-sm font-medium transition-colors duration-300 hover:text-cyan-400 text-white/80'
+            >
+              About
+            </a>
+            <a
+              href='/resume'
+              className='text-sm font-medium transition-colors duration-300 hover:text-cyan-400 text-white/80'
+            >
+              Resume
+            </a>
+            <a
+              href='/contact'
+              className='text-sm font-medium transition-colors duration-300 hover:text-cyan-400 text-white/80'
+            >
+              Contact
+            </a>
+            <a
+              href='/performance'
+              className='text-sm font-medium transition-colors duration-300 hover:text-cyan-400 text-white/80'
+            >
+              Performance
+            </a>
+            <a
+              href='/agents'
+              className='text-sm font-medium transition-colors duration-300 hover:text-cyan-400 text-white/80'
+            >
+              Agents
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  ),
+}))
+
+vi.mock('@/components/AIBrain', () => ({
+  default: () => <div data-testid='ai-brain'>AI Brain Component</div>,
+}))
 
 // Mock IntersectionObserver for components that use it
 global.IntersectionObserver = class IntersectionObserver {

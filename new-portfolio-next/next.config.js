@@ -4,11 +4,11 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['themis128.github.io'],
+    domains: ["themis128.github.io"],
   },
   eslint: {
-    dirs: ['src'],
+    dirs: ["src"],
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -110,7 +110,10 @@ describe('usePWA', () => {
   it('should install PWA when installPWA is called', async () => {
     // Mock the beforeinstallprompt event
     const mockPrompt = vi.fn().mockResolvedValue(undefined)
-    const mockUserChoice = Promise.resolve({ outcome: 'accepted' as const, platform: 'web' })
+    const mockUserChoice = Promise.resolve({
+      outcome: 'accepted' as const,
+      platform: 'web',
+    })
     const mockEvent = {
       platforms: ['web'],
       prompt: mockPrompt,

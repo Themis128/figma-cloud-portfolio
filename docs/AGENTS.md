@@ -169,7 +169,7 @@ npx tsx server/node-build.ts    # Production-style server (serves static files)
 Import consistent types in both client and server:
 
 ```typescript
-import { DemoResponse } from '@shared/api'
+import { DemoResponse } from "@shared/api";
 ```
 
 Path aliases:
@@ -203,7 +203,7 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 
    ```typescript
    export interface MyRouteResponse {
-     message: string
+     message: string;
      // Add other response properties here
    }
    ```
@@ -211,33 +211,33 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 2. Create a new route handler in `server/routes/my-route.ts`:
 
    ```typescript
-   import { RequestHandler } from 'express'
-   import { MyRouteResponse } from '@shared/api' // Optional: for type safety
+   import { RequestHandler } from "express";
+   import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
 
    export const handleMyRoute: RequestHandler = (req, res) => {
      const response: MyRouteResponse = {
-       message: 'Hello from my endpoint!',
-     }
-     res.json(response)
-   }
+       message: "Hello from my endpoint!",
+     };
+     res.json(response);
+   };
    ```
 
 3. Register the route in `server/index.ts`:
 
    ```typescript
-   import { handleMyRoute } from './routes/my-route'
+   import { handleMyRoute } from "./routes/my-route";
 
    // Add to the createServer function:
-   app.get('/api/my-endpoint', handleMyRoute)
+   app.get("/api/my-endpoint", handleMyRoute);
    ```
 
 4. Use in React components with type safety:
 
    ```typescript
-   import { MyRouteResponse } from '@shared/api' // Optional: for type safety
+   import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
 
-   const response = await fetch('/api/my-endpoint')
-   const data: MyRouteResponse = await response.json()
+   const response = await fetch("/api/my-endpoint");
+   const data: MyRouteResponse = await response.json();
    ```
 
 ### New Page Route

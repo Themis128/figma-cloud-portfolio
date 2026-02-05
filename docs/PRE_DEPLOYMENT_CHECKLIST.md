@@ -156,6 +156,7 @@ cat amplify.yml | grep load-secrets
 ### Step-by-Step:
 
 1. **Create Test Branch**
+
    ```bash
    # Make sure you're in repo directory
    cd d:\Nuxt Projects\new-portfolio
@@ -167,10 +168,11 @@ cat amplify.yml | grep load-secrets
    ```
 
 2. **Make Small Test Change**
+
    ```bash
    # Edit README or a config file
    echo "# Test deployment - $(date)" >> TEST_DEPLOYMENT.md
-   
+
    # Commit and push
    git add TEST_DEPLOYMENT.md
    git commit -m "ci: test deployment pipeline"
@@ -190,6 +192,7 @@ cat amplify.yml | grep load-secrets
      - ⏳ **Deploy** (only runs on `production` branch)
 
 4. **Expected Results for Test Branch**
+
    ```
    ✅ Quality Checks: PASS
    ✅ Security Audit: PASS
@@ -208,13 +211,14 @@ cat amplify.yml | grep load-secrets
 
 6. **Merge to Production**
    - Once test workflow passes quality checks:
+
    ```bash
    # Switch to production branch
    git checkout production
-   
+
    # Merge test branch
    git merge test/deployment-verification
-   
+
    # Push to production
    git push origin production
    ```
@@ -232,12 +236,13 @@ cat amplify.yml | grep load-secrets
      - ✅ Notify (Slack notification, if configured)
 
 8. **Verify Live Deployment**
+
    ```bash
    # Check your live app
    curl https://yourdomain.com
    # OR
    Open in browser: https://yourdomain.com
-   
+
    # Should return 200 OK with HTML content
    ```
 
@@ -249,14 +254,14 @@ cat amplify.yml | grep load-secrets
 
 ### Troubleshooting Test Deployment:
 
-| Issue | Solution |
-|-------|----------|
-| **GitHub Actions fails at Quality Checks** | Run `pnpm lint` locally, fix errors, re-push |
-| **Security Audit fails** | Run `pnpm audit`, check SAST results |
-| **Build fails** | Run `pnpm run build` locally, check errors |
-| **Deploy stage missing** | Make sure you pushed to `production` branch, not test branch |
-| **Amplify deployment fails** | Check AWS Amplify console logs, verify environment vars are set |
-| **Secrets not loaded** | Verify AWS_SECRETS_MANAGER_ID and AWS_REGION are in Amplify env vars |
+| Issue                                      | Solution                                                             |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| **GitHub Actions fails at Quality Checks** | Run `pnpm lint` locally, fix errors, re-push                         |
+| **Security Audit fails**                   | Run `pnpm audit`, check SAST results                                 |
+| **Build fails**                            | Run `pnpm run build` locally, check errors                           |
+| **Deploy stage missing**                   | Make sure you pushed to `production` branch, not test branch         |
+| **Amplify deployment fails**               | Check AWS Amplify console logs, verify environment vars are set      |
+| **Secrets not loaded**                     | Verify AWS_SECRETS_MANAGER_ID and AWS_REGION are in Amplify env vars |
 
 ---
 
@@ -284,22 +289,24 @@ cat amplify.yml | grep load-secrets
    - ✅ **IMPORTANT**: Copy token immediately (only shown once!)
 
 3. **Store New Token Locally (Temporary)**
+
    ```powershell
    # PowerShell - Store temporarily for AWS update
    $newToken = 'paste-your-new-token-here'
-   
+
    # Verify token is set
    Write-Host "Token set: $newToken"
    ```
 
 4. **Update AWS Secrets Manager**
+
    ```bash
    # Update the secret with new token
    aws secretsmanager update-secret \
      --secret-id portfolio/env \
      --secret-string "{\"CODACY_ACCOUNT_TOKEN\":\"$newToken\"}" \
      --region eu-central-1
-   
+
    # Verify update succeeded
    aws secretsmanager describe-secret --secret-id portfolio/env --region eu-central-1
    # Should show new VersionId in output
@@ -314,24 +321,26 @@ cat amplify.yml | grep load-secrets
    - ✅ Verify: Secret updated (note the timestamp)
 
 6. **Clear Local History**
+
    ```powershell
    # Remove token from PowerShell history
    Remove-Item -Path (Get-PSReadlineOption).HistorySavePath -Force -ErrorAction SilentlyContinue
-   
+
    # Clear environment variable
    $env:CODACY_ACCOUNT_TOKEN = ''
-   
+
    # Verify cleared
    Write-Host "Token cleared: $env:CODACY_ACCOUNT_TOKEN"
    ```
 
 7. **Test New Token**
+
    ```bash
    # Push test commit to verify token works in CI/CD
    git add .
    git commit -m "ci: test rotated Codacy token"
    git push origin production
-   
+
    # Monitor GitHub Actions:
    # Should complete security audit successfully
    ```
@@ -411,13 +420,14 @@ End Time: [WRITE YOUR END TIME]
 1. Click: Failed job
 2. Read: Error message and logs
 3. Common fixes:
+
    ```bash
    # Fix linting errors
    pnpm lint --fix
-   
+
    # Check TypeScript
    pnpm typecheck
-   
+
    # Rebuild locally
    pnpm run build
    ```
@@ -434,16 +444,19 @@ End Time: [WRITE YOUR END TIME]
 ### Token Still Causing Issues?
 
 1. Verify: AWS Secrets Manager has new token
+
    ```bash
    aws secretsmanager get-secret-value --secret-id portfolio/env
    ```
 
 2. Verify: GitHub Secrets has new token
+
    ```
    GitHub → Settings → Secrets → CODACY_ACCOUNT_TOKEN
    ```
 
 3. Clear: Local environment
+
    ```bash
    $env:CODACY_ACCOUNT_TOKEN = ''
    ```
@@ -465,15 +478,15 @@ End Time: [WRITE YOUR END TIME]
 
 ---
 
-**Next Step After This Checklist**: 
+**Next Step After This Checklist**:
 
 Once all 4 tasks pass ✅, your deployment is **live and secured**!
 
 Monitor it with:
+
 - GitHub Actions Dashboard → Watch for failures
 - AWS Amplify Console → Check deployment status
 - CloudWatch → Monitor errors and performance
 - Your app → https://yourdomain.com
 
 🎉 **Congratulations on going live!**
-

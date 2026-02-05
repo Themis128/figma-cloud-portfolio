@@ -82,10 +82,10 @@ TEST_GREP="@smoke" npx playwright test
 
 ```typescript
 // Environment-specific configuration
-const config = createPlaywrightConfig('development', {
+const config = createPlaywrightConfig("development", {
   // Custom overrides
   retries: 2,
-  timeout: 60000
+  timeout: 60000,
 });
 
 // Built-in validation
@@ -105,7 +105,7 @@ const issues = validateConfiguration(config);
 
 ```typescript
 // Automatically calculates optimal workers based on:
-workers: getOptimalWorkers(environment)
+workers: getOptimalWorkers(environment);
 
 // Development: 75% of CPU cores
 // CI: 50% of CPU cores (max 4)
@@ -118,7 +118,7 @@ workers: getOptimalWorkers(environment)
 ```typescript
 timeouts: {
   action: 15000,      // Per-action timeout
-  navigation: 45000,  // Navigation timeout  
+  navigation: 45000,  // Navigation timeout
   expect: 30000,      // Assertion timeout
   test: 120000,       // Overall test timeout
   webServer: 120000   // Server startup timeout
@@ -129,10 +129,10 @@ timeouts: {
 
 ```typescript
 // Consolidated, optimized arguments (no duplicates)
-const args = BROWSER_LAUNCH_ARGS.getArgs('stable');
+const args = BROWSER_LAUNCH_ARGS.getArgs("stable");
 
 // Performance: Background throttling, component extensions
-// Security: Web security, sandboxing  
+// Security: Web security, sandboxing
 // Resources: GPU, memory optimization
 ```
 
@@ -146,7 +146,7 @@ const report = healthCheckConfig(config);
 console.log(`Score: ${report.score}/10 (${report.grade})`);
 
 // Issue detection and recommendations
-report.issues.forEach(issue => {
+report.issues.forEach((issue) => {
   console.log(`${issue.severity}: ${issue.message}`);
   console.log(`Recommendation: ${issue.recommendation}`);
 });
@@ -164,16 +164,16 @@ report.issues.forEach(issue => {
 ### Creating Custom Configurations
 
 ```typescript
-import { createPlaywrightConfig } from './playwright.config.shared';
+import { createPlaywrightConfig } from "./playwright.config.shared";
 
 // Custom configuration
-const myConfig = createPlaywrightConfig('ci', {
+const myConfig = createPlaywrightConfig("ci", {
   retries: 5,
   timeout: 300000,
   projects: [
     // Only test Chrome for speed
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
-  ]
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+  ],
 });
 
 export default myConfig;
@@ -185,11 +185,15 @@ export default myConfig;
 // In playwright.config.shared.ts
 const environmentSettings = {
   // Add new environment
-  'staging': {
-    timeouts: { /* custom timeouts */ },
-    workers: { /* custom worker config */ },
+  staging: {
+    timeouts: {
+      /* custom timeouts */
+    },
+    workers: {
+      /* custom worker config */
+    },
     // ... other settings
-  }
+  },
 };
 ```
 
@@ -229,14 +233,14 @@ const environmentSettings = {
 
 ### Before vs After
 
-| Metric | Before | After | Improvement |
-| -------- | -------- | -------- | ------------- |
-| Configuration Score | 7-9/10 | **10/10** | ✅ Perfect |
-| Worker Allocation | Hardcoded | **Dynamic** | ✅ Scalable |
-| Browser Args | Duplicated | **Consolidated** | ✅ Clean |
-| Timeout Strategy | Inconsistent | **Environment-aware** | ✅ Reliable |
-| Global Setup | Missing | **Implemented** | ✅ Isolated |
-| Maintainability | Mixed | **Factory Pattern** | ✅ Maintainable |
+| Metric              | Before       | After                 | Improvement     |
+| ------------------- | ------------ | --------------------- | --------------- |
+| Configuration Score | 7-9/10       | **10/10**             | ✅ Perfect      |
+| Worker Allocation   | Hardcoded    | **Dynamic**           | ✅ Scalable     |
+| Browser Args        | Duplicated   | **Consolidated**      | ✅ Clean        |
+| Timeout Strategy    | Inconsistent | **Environment-aware** | ✅ Reliable     |
+| Global Setup        | Missing      | **Implemented**       | ✅ Isolated     |
+| Maintainability     | Mixed        | **Factory Pattern**   | ✅ Maintainable |
 
 ## 🔍 Troubleshooting
 

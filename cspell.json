@@ -54,12 +54,7 @@
     "AVIF",
     "mozjpeg"
   ],
-  "flagWords": [
-    "hte",
-    "teh",
-    "recieve",
-    "seperate"
-  ],
+  "flagWords": ["hte", "teh", "recieve", "seperate"],
   "ignorePaths": [
     "node_modules/**",
     "dist/**",
@@ -73,8 +68,5 @@
     "*.min.js",
     "*.bundle.js"
   ],
-  "ignoreRegExpList": [
-    "/#[0-9a-fA-F]{6}/g",
-    "/0x[0-9a-fA-F]+/g"
-  ]
+  "ignoreRegExpList": ["/#[0-9a-fA-F]{6}/g", "/0x[0-9a-fA-F]+/g"]
 }

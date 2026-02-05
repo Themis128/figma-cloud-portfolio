@@ -384,7 +384,7 @@ class PlaywrightMCPIntegration {
       }>
     }
 
-    if (!(testData && testData.suites)) return
+    if (!testData?.suites) return
 
     // Use efficient counting with early returns
     let totalTests = 0

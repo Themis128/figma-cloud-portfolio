@@ -8,8 +8,8 @@ This is a full-stack React SPA with Express backend, designed for AWS Amplify de
 
 **Multi-Server Development Setup:**
 
-- Frontend (Vite): `http://localhost:3001` - serves React SPA with hot reload (HMR port: 24681)
-- Backend (Express): `http://localhost:3000` - serves API endpoints with Socket.IO
+- Frontend (Vite): `http://localhost:8081` - serves React SPA with hot reload (HMR port: 24681)
+- Backend (Express): `http://localhost:3002` - serves API endpoints with Socket.IO
 - Vite proxies `/api/*` requests to Express server automatically
 - **Critical**: Always run both servers for full functionality (push notifications, contact forms, resume generation, real-time features)
 
@@ -24,7 +24,9 @@ This is a full-stack React SPA with Express backend, designed for AWS Amplify de
 pnpm run build:resume    # Generate PDF templates from markdown
 pnpm run build:client    # Build React SPA to dist/spa/
 pnpm run build:server    # Build Express server to dist/server/
-pnpm build              # Run all builds + copy static assets
+pnpm build              # Run all builds with secrets wrapper
+pnpm build:ci           # Run all builds for CI (no secrets)
+pnpm build:analyze      # Build with bundle analyzer
 ```
 
 ## Development Workflow
@@ -37,6 +39,9 @@ pnpm dev
 
 # Terminal 2: Backend (required for API features)
 npx tsx server/node-build.ts
+
+# Alternative: Start both servers concurrently
+pnpm dev:all
 ```
 
 **Never run only one server** - features like contact forms, push notifications, resume downloads, and real-time collaboration require both servers running.
@@ -66,17 +71,19 @@ npx tsx server/node-build.ts
 ### State Management
 
 **Zustand** (Lightweight global state):
+
 ```tsx
 // Minimal boilerplate, direct state access
-import { create } from 'zustand'
+import { create } from "zustand";
 
 const useStore = create((set) => ({
   count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 }))
-}))
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}));
 ```
 
 **React Context** (Theme, providers):
+
 - `ThemeProvider` - Manages light/dark/system themes with localStorage persistence
 - Access via `useTheme()` hook: `const { theme, setTheme, actualTheme } = useTheme()`
 
@@ -88,23 +95,36 @@ The codebase uses custom hooks extensively for reusable logic:
 
 ```tsx
 // Performance monitoring
-import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring'
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 // Tracks Core Web Vitals: LCP, CLS, FCP, INP, TTFB
 
 // Device detection
-import { useDeviceType } from '@/hooks/useDeviceType'
-const { isMobile, isTablet, isDesktop } = useDeviceType()
+import { useDeviceType } from "@/hooks/useDeviceType";
+const { isMobile, isTablet, isDesktop } = useDeviceType();
 
 // Push notifications
-import { usePushNotifications } from '@/hooks/usePushNotifications'
-const { isSupported, isSubscribed, subscribe, unsubscribe } = usePushNotifications()
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+const { isSupported, isSubscribed, subscribe, unsubscribe } =
+  usePushNotifications();
 
 // Real-time features
-import { useSocket } from '@/hooks/useSocket'
-import { useTypingIndicator } from '@/hooks/useTypingIndicator'
+import { useSocket } from "@/hooks/useSocket";
+import { useTypingIndicator } from "@/hooks/useTypingIndicator";
+
+// Enhanced notifications with PWA support
+import { useEnhancedNotifications } from "@/hooks/useEnhancedNotifications";
+
+// Voice commands and accessibility
+import { useVoiceCommands } from "@/hooks/useVoiceCommands";
+
+// PWA functionality
+import { usePWA } from "@/hooks/usePWA";
+
+// Scroll animations
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 // Image optimization
-import { useLazyImage } from '@/hooks/useLazyImage'
+import { useLazyImage } from "@/hooks/useLazyImage";
 ```
 
 **Convention**: All custom hooks follow `use{Feature}` naming and are in `client/hooks/`
@@ -113,15 +133,15 @@ import { useLazyImage } from '@/hooks/useLazyImage'
 
 ```tsx
 // client/components/Example.tsx
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils";
 
 interface ExampleProps {
-  className?: string
-  children: React.ReactNode
+  className?: string;
+  children: React.ReactNode;
 }
 
 export function Example({ className, children }: ExampleProps) {
-  return <div className={cn('base-styles', className)}>{children}</div>
+  return <div className={cn("base-styles", className)}>{children}</div>;
 }
 ```
 
@@ -129,15 +149,41 @@ export function Example({ className, children }: ExampleProps) {
 
 ```tsx
 // Use shared types for type safety
-import type { ContactFormRequest } from '@shared/api'
+import type { ContactFormRequest } from "@shared/api";
 
-// API calls go through centralized client
-import { submitContactForm } from '@/lib/api'
+// API calls go through centralized client with Lambda/production support
+import { submitContactForm } from "@/lib/api";
 
 const handleSubmit = async (data: ContactFormRequest) => {
-  const response = await submitContactForm(data)
+  const response = await submitContactForm(data);
   // Response includes success/error handling
-}
+};
+
+// Lambda URLs automatically switch between dev (/api/*) and production (Lambda URLs)
+const LAMBDA_URLS = {
+  contact: import.meta.env.VITE_LAMBDA_CONTACT_URL || `${API_BASE_URL}/contact`,
+  resume: import.meta.env.VITE_LAMBDA_RESUME_URL || `${API_BASE_URL}/resume`,
+  // ... other endpoints
+};
+```
+
+### AI Service Integration
+
+```tsx
+// AI service supports multiple providers (OpenAI, Together AI, Ollama)
+import { aiService } from "@/lib/aiService";
+
+// Configure provider via environment variables
+// VITE_AI_PROVIDER=ollama|openai|together
+// VITE_OPENAI_API_KEY=...
+// VITE_TOGETHER_API_KEY=...
+
+const response = await aiService.generate({
+  model: "claude-3-sonnet-20240229",
+  messages: [{ role: "user", content: "Hello" }],
+  temperature: 0.7,
+  maxTokens: 1000,
+});
 ```
 
 ### Error Handling
@@ -145,7 +191,7 @@ const handleSubmit = async (data: ContactFormRequest) => {
 ```tsx
 // API functions throw on error - handle in components
 try {
-  await apiCall()
+  await apiCall();
 } catch (error: unknown) {
   // Handle error - check error instanceof Error
 }
@@ -157,27 +203,34 @@ Socket.IO is used for real-time features with typed events:
 
 ```tsx
 // Client-side socket usage
-import { useSocket } from '@/hooks/useSocket'
+import { useSocket } from "@/hooks/useSocket";
 
-const { socket, isConnected } = useSocket()
+const { socket, isConnected } = useSocket();
 
 // Agent collaboration rooms
-socket.emit('join-agent-room', { roomId: 'agent-123' })
-socket.on('agent-status-update', (data) => {
+socket.emit("join-agent-room", { roomId: "agent-123" });
+socket.on("agent-status-update", (data) => {
   // Handle agent status changes
-})
+});
 
 // Typing indicators
-socket.emit('typing-start', { roomId, userId })
-socket.emit('typing-stop', { roomId, userId })
-socket.on('user-typing', ({ userId }) => { /* update UI */ })
+socket.emit("typing-start", { roomId, userId });
+socket.emit("typing-stop", { roomId, userId });
+socket.on("user-typing", ({ userId }) => {
+  /* update UI */
+});
 
 // Presence tracking
-socket.on('user-connected', ({ userId, userCount }) => { /* ... */ })
-socket.on('user-disconnected', ({ userId, userCount }) => { /* ... */ })
+socket.on("user-connected", ({ userId, userCount }) => {
+  /* ... */
+});
+socket.on("user-disconnected", ({ userId, userCount }) => {
+  /* ... */
+});
 ```
 
 **Socket Events**:
+
 - `join-agent-room` / `leave-agent-room` - Agent collaboration
 - `agent-status-update` - Broadcast agent state changes
 - `typing-start` / `typing-stop` - Typing indicators
@@ -197,9 +250,15 @@ socket.on('user-disconnected', ({ userId, userCount }) => { /* ... */ })
 # Unit tests (Vitest)
 pnpm test
 
-# E2E tests (Playwright)
+# E2E tests (Playwright) - Multiple configurations available
 pnpm test:e2e              # Run all browsers
 pnpm test:e2e:ui          # Interactive mode
+pnpm test:e2e:fast        # Fast configuration
+pnpm test:e2e:critical    # Critical/smoke tests only
+pnpm test:e2e:real        # Real API tests
+pnpm test:e2e:dashboard   # With test dashboard
+pnpm test:e2e:continuous  # Continuous testing
+pnpm test:e2e:debug       # Debug mode with browser
 ```
 
 **Test Configuration:**
@@ -208,6 +267,8 @@ pnpm test:e2e:ui          # Interactive mode
 - Playwright: Multi-browser E2E with custom timeouts and retry logic
 - Visual regression: 20% threshold for screenshot comparisons
 - Test globals enabled, setup in `./tests/vitest-setup.ts`
+- Multiple config modes: development, ci, fast, isolated
+- Web server auto-start for both frontend (port 8081) and backend (port 3002)
 
 ## Deployment & Infrastructure
 
@@ -219,6 +280,7 @@ pnpm test:e2e:ui          # Interactive mode
 - **Backend**: Lambda functions replace Express routes for serverless deployment
 
 **Lambda Functions** (`amplify.yml`):
+
 - `ping` - Health check (256MB, 10s timeout)
 - `demo` - Demo endpoint (512MB, 30s timeout)
 - `contact` - Contact form handler (512MB, 30s timeout)
@@ -226,6 +288,7 @@ pnpm test:e2e:ui          # Interactive mode
 - `pushnotifications` - Web push handler (512MB, 30s timeout)
 
 **Important**: Frontend URLs automatically switch between Express `/api/*` routes (dev) and Lambda URLs (production) via environment variables:
+
 ```bash
 VITE_LAMBDA_CONTACT_URL=https://your-contact-function.amazonaws.com
 VITE_LAMBDA_RESUME_URL=https://your-resume-function.amazonaws.com
@@ -233,6 +296,7 @@ VITE_LAMBDA_RESUME_URL=https://your-resume-function.amazonaws.com
 ```
 
 **Build Optimization**:
+
 - Secrets loaded via `scripts/load-secrets.sh --write-env .env.production`
 - Resume/server builds skipped in CI to prevent memory issues
 - Custom headers for MIME types and CORS
@@ -262,7 +326,7 @@ VITE_LAMBDA_RESUME_URL=https://your-resume-function.amazonaws.com
 ## Common Pitfalls
 
 1. **Single Server Development**: Never run only `pnpm dev` - Socket.IO, contact forms, resume PDFs, and push notifications require backend server (`npx tsx server/node-build.ts`)
-2. **Port Conflicts**: Frontend uses port 3001 (not 8081), backend uses 3000, HMR uses 24681
+2. **Port Conflicts**: Frontend uses port 8081, backend uses 3002, HMR uses 24681
 3. **Path Imports**: Always use `@/` and `@shared/` aliases, never relative paths like `../../`
 4. **Type Safety**: Define interfaces in `@shared/api.ts` before implementing client/server features
 5. **Build Order**: Always run `pnpm run build:resume` before `pnpm run build:client` (PDF templates needed)
@@ -291,12 +355,14 @@ client/
 ├── App.tsx              # Route definitions, providers setup
 ├── pages/               # Route components (lazy loaded)
 ├── components/ui/       # Radix UI component library
-├── lib/                 # Utilities (api.ts, utils.ts)
+├── lib/                 # Utilities (api.ts, aiService.ts, agentExecutor.ts, utils.ts)
+├── hooks/               # Custom React hooks (usePerformanceMonitoring, useSocket, etc.)
+├── data/                # Static data (agentTemplates.ts)
 └── global.css           # Theme variables, global styles
 
 server/
 ├── index.ts             # Express app setup, middleware, Socket.IO
-├── routes/              # API handlers
+├── routes/              # API handlers (ai.ts, analytics.ts, contact.ts, etc.)
 └── node-build.ts        # Production server
 
 shared/
@@ -325,6 +391,7 @@ pnpm format:fix   # Format and write
 ```
 
 **Key Rules** (`biome.json`):
+
 - `noUnusedVariables`: warn (clean up unused vars)
 - `noUnusedImports`: error (strict import hygiene)
 - `noExplicitAny`: warn (prefer typed code)
@@ -333,13 +400,16 @@ pnpm format:fix   # Format and write
 - `noMagicNumbers`: warn (use named constants)
 - **Security**: Enabled with `noDangerouslySetInnerHtml` off (sanitized elsewhere)
 - **A11y**: Accessibility rules enabled
+- **Performance**: Cognitive complexity limit (15), performance rules enabled
 
 **Special Overrides**:
+
 - Scripts: `noConsole` allowed
 - Tests: `noExplicitAny` allowed, `noMagicNumbers` allowed
 - Server: `noConsole` allowed
 
 **Formatting**:
+
 - Indent: 2 spaces
 - Line width: 100 characters
 - JSX quotes: Single quotes
@@ -359,11 +429,13 @@ pnpm format:fix   # Format and write
 ### Agent Architecture
 
 **AgentExecutor** (`client/lib/agentExecutor.ts`):
+
 - Node-based workflow execution engine
 - Supports sequential and parallel execution
 - Built-in retry logic and error handling
 
 **Node Types**:
+
 - `input` - User input collection
 - `llm` - LLM API calls (Claude, OpenAI, Together AI, Ollama)
 - `decision` - Conditional branching based on data
@@ -372,44 +444,65 @@ pnpm format:fix   # Format and write
 - `output` - Final result formatting
 
 **Agent Workflow Structure**:
+
 ```typescript
 interface AgentWorkflow {
   nodes: Array<{
-    id: string
-    type: 'input' | 'llm' | 'decision' | 'data-processor' | 'tool' | 'output'
-    config: Record<string, unknown>
-  }>
+    id: string;
+    type: "input" | "llm" | "decision" | "data-processor" | "tool" | "output";
+    config: Record<string, unknown>;
+  }>;
   connections: Array<{
-    from: string
-    to: string
-    condition?: string
-  }>
+    from: string;
+    to: string;
+    condition?: string;
+  }>;
 }
 ```
 
 **Template System** (`client/data/agentTemplates.ts`):
+
 - Browse 5 pre-built templates (Basic Chatbot, Code Reviewer, Data Analyzer, Content Writer, Task Automator)
 - Clone and customize existing templates- Create templates from scratch with workflow definitions
 - Categories: Basic, Advanced, Specialized
 - Features: Search, filtering, difficulty levels, visual template browser
 
 **API Integration**:
+
 ```tsx
-import { claudeApi } from '@/lib/api'
+import { claudeApi } from "@/lib/api";
 
 // Execute Claude API
 const response = await claudeApi.executeClaude({
-  prompt: 'Your prompt',
-  model: 'claude-3-sonnet-20240229',
-  maxTokens: 1000
-})
+  prompt: "Your prompt",
+  model: "claude-3-sonnet-20240229",
+  maxTokens: 1000,
+});
 
 // Execute agent workflow
 const result = await claudeApi.executeAgent({
-  agentId: 'agent-123',
+  agentId: "agent-123",
   workflow: agentWorkflow,
-  input: { /* ... */ }
-})
+  input: {
+    /* ... */
+  },
+});
+```
+
+**Agent Execution Engine** (`client/lib/agentExecutor.ts`):
+
+```typescript
+import { AgentExecutor } from "@/lib/agentExecutor";
+
+const executor = new AgentExecutor({
+  nodes: workflow.nodes,
+  connections: workflow.connections,
+});
+
+const result = await executor.execute({
+  input: "user query",
+  context: additionalData,
+});
 ```
 
 ## Security Patterns
@@ -421,23 +514,24 @@ const result = await claudeApi.executeAgent({
 const sanitizeInput = (input: string) => {
   // Remove script tags, SQL injection patterns, etc.
   // See server validation for patterns
-}
+};
 ```
 
 ### reCAPTCHA Integration
 
 ```tsx
 // Contact form with reCAPTCHA v3
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
-const { executeRecaptcha } = useGoogleReCaptcha()
-const token = await executeRecaptcha('contact_form')
+const { executeRecaptcha } = useGoogleReCaptcha();
+const token = await executeRecaptcha("contact_form");
 // Token sent with form submission for server validation
 ```
 
 ### Content Security Policy (CSP)
 
 Configured in `vite.config.ts` with strict policies:
+
 - `script-src`: Self, Google Analytics, reCAPTCHA
 - `style-src`: Self, Google Fonts
 - `connect-src`: API domains, WebSocket connections
@@ -454,6 +548,7 @@ Configured in `vite.config.ts` with strict policies:
 3. **CI/CD**: GitHub Secrets
 
 **Key Scripts**:
+
 - `scripts/run-with-secrets.js` - Automatic secret loading wrapper
 - `scripts/load-secrets.sh` / `.ps1` - Load from AWS Secrets Manager
 - `scripts/validate-secrets.js` / `.ps1` - Validate environment variables
@@ -470,39 +565,47 @@ Configured in `vite.config.ts` with strict policies:
 MCP servers are configured in VS Code user settings to extend AI agent capabilities with external tools and services.
 
 **Configuration Files**:
+
 1. **VS Code MCP Settings**: `%APPDATA%\Code - Insiders\User\mcp.json`
 2. **Cline MCP Settings**: `%APPDATA%\Code - Insiders\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json`
 
 ### Active MCP Servers in This Project
 
 **Development & Version Control**:
+
 - **GitHub MCP** - Repository operations, PR management, issue tracking (Docker-based: `ghcr.io/github/github-mcp-server`)
 - **Git MCP** - Git commands (status, diff, commit, branch, log, etc.) via `uvx mcp-server-git`
 
 **Browser Automation & Testing**:
+
 - **Playwright MCP** (Microsoft) - `@playwright/mcp` - Full browser automation with pnpm dlx
 - **Playwright MCP** (ExecuteAutomation) - `@executeautomation/playwright-mcp-server` - Extended tools for codegen, navigate, screenshot, click, fill, etc.
 - **Browser Tools MCP** (AgentDeskAI) - `@agentdeskai/browser-tools-mcp` - Performance/SEO/accessibility audits, console logs, network monitoring
 
 **File & Content Operations**:
+
 - **Filesystem MCP** - `@modelcontextprotocol/server-filesystem` - File operations scoped to project directory
   - Auto-approved: read, write, edit, create directories, search files, directory tree, move files
 - **Fetch MCP** - `mcp-fetch-server` - Web content fetching (HTML, markdown, txt, JSON)
 
 **Design & Documentation**:
+
 - **Figma MCP** - `figma-developer-mcp` - Figma API integration (requires `FIGMA_API_KEY`)
 - **Context7 MCP** - `@upstash/context7-mcp` - Library documentation querying
 - **AWS Frontend MCP** - `awslabs.frontend-mcp-server` - React documentation access
 
 **Cloud & Infrastructure**:
+
 - **Azure MCP** - `@azure/mcp` - Comprehensive Azure operations (AKS, Functions, Storage, Cosmos, Key Vault, etc.)
 
 **Productivity & Planning**:
+
 - **Software Planning MCP** - Todo management, project planning via local node server
 - **Sequential Thinking MCP** - `@modelcontextprotocol/server-sequential-thinking` - Structured reasoning
 - **Time MCP** - `mcp-server-time` - Current time and timezone conversions
 
 **Code Tools**:
+
 - **UTCP Code Mode** - `@utcp/code-mode-mcp` - Universal Tool Calling Protocol for code operations
 
 ### Security Best Practices
@@ -510,6 +613,7 @@ MCP servers are configured in VS Code user settings to extend AI agent capabilit
 **CRITICAL**: Never hardcode tokens in `mcp.json` - always use environment variable references.
 
 **Secure Configuration** (`mcp.json`):
+
 ```json
 {
   "mcpServers": {
@@ -533,11 +637,13 @@ MCP servers are configured in VS Code user settings to extend AI agent capabilit
 ```
 
 **Environment Variable Resolution**:
+
 1. **System Environment Variables** (Recommended) - Set via PowerShell or system settings
 2. **PowerShell Profile** - Add to `$PROFILE` for persistent variables
 3. **VS Code Settings** - Set in user or workspace settings (not committed)
 
 **Setup Commands**:
+
 ```powershell
 # PowerShell - Set user environment variable
 [System.Environment]::SetEnvironmentVariable('GITHUB_TOKEN', 'your_token', 'User')
@@ -546,6 +652,7 @@ MCP servers are configured in VS Code user settings to extend AI agent capabilit
 ```
 
 **Helper Script**:
+
 ```bash
 pnpm codacy:mcp  # Display correct Codacy MCP server configuration
 ```
@@ -555,6 +662,7 @@ pnpm codacy:mcp  # Display correct Codacy MCP server configuration
 The MCP ecosystem provides extensive capabilities:
 
 **Browser Automation**:
+
 - **Navigation**: Load URLs, go back/forward, refresh, switch tabs
 - **Element Interaction**: Click, fill forms, select options, drag, hover, upload files
 - **Screenshot**: Full page or element-specific captures, save as PDF
@@ -563,25 +671,30 @@ The MCP ecosystem provides extensive capabilities:
 - **Testing**: CodeGen sessions, resize viewport, handle dialogs, evaluate JavaScript
 
 **File Operations** (Auto-approved for project directory):
+
 - Read/write files, edit files, create directories
 - List directory contents with sizes, generate directory trees
 - Search files, get file info, move files
 
 **Git Operations** (Auto-approved):
+
 - Status, diff (staged/unstaged), log, show
 - Add, commit, reset, branch operations
 - Create branch, checkout, merge
 
 **Content Fetching**:
+
 - Fetch HTML, Markdown, TXT, JSON from URLs
 - React documentation lookup
 - Library documentation querying (Context7)
 
 **Design Integration**:
+
 - Fetch Figma design data
 - Download Figma images
 
 **Cloud Operations** (Azure):
+
 - Full Azure resource management
 - AKS, App Service, Functions, Storage, Key Vault
 - Monitoring, diagnostics, deployment operations
@@ -597,6 +710,7 @@ Many MCP servers have pre-configured auto-approve lists for common operations. T
 **Fetch**: `fetch_html`, `fetch_markdown`, `fetch_txt`, `fetch_json`
 
 **Usage in Agent Workflows**:
+
 ```typescript
 // Agent workflow node with browser tool
 {
@@ -620,22 +734,26 @@ Many MCP servers have pre-configured auto-approve lists for common operations. T
 ### Required Environment Variables for MCP
 
 Some MCP servers require environment variables to be set:
+
 - **GitHub MCP**: `GITHUB_TOKEN` or `GITHUB_PERSONAL_ACCESS_TOKEN`
 - **Figma MCP**: `FIGMA_API_KEY`
 - **Codacy MCP**: `CODACY_API_TOKEN`, `CODACY_PROJECT_TOKEN`
 
 Set via PowerShell:
+
 ```powershell
 [System.Environment]::SetEnvironmentVariable('GITHUB_TOKEN', 'your_token', 'User')
 [System.Environment]::SetEnvironmentVariable('FIGMA_API_KEY', 'your_key', 'User')
 ```
 
 **Never**:
+
 - ❌ Commit `mcp.json` with hardcoded tokens
 - ❌ Share MCP configuration files with actual token values
 - ❌ Use plain text tokens in VS Code settings
 
 **Always**:
+
 - ✅ Use `${VARIABLE_NAME}` syntax for environment variable references
 - ✅ Keep actual tokens in system environment variables or PowerShell profile
 - ✅ Restart VS Code after changing environment variables
@@ -675,6 +793,7 @@ This codebase emphasizes:
 8. **Documentation**: Inline examples, clear conventions, comprehensive README docs
 
 **Before Implementing Features**:
+
 - Check existing patterns in similar components/routes
 - Define shared types in `@shared/api.ts` first
 - Consider performance implications (lazy loading, code splitting)

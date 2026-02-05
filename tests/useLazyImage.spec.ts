@@ -16,13 +16,9 @@ describe('useLazyImage', () => {
     // Mock IntersectionObserver globally using a class
     mockIntersectionObserver = vi.fn(
       class MockIntersectionObserver {
-        constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {
-          return {
-            observe: observeMock,
-            disconnect: disconnectMock,
-            unobserve: vi.fn(),
-          }
-        }
+        observe = observeMock
+        disconnect = disconnectMock
+        unobserve = vi.fn()
       },
     )
 
@@ -44,7 +40,11 @@ describe('useLazyImage', () => {
   it('should create IntersectionObserver with default options', () => {
     const TestComponent = () => {
       const { imgRef } = useLazyImage()
-      return React.createElement('img', { ref: imgRef, src: 'test.jpg', alt: 'test' })
+      return React.createElement('img', {
+        ref: imgRef,
+        src: 'test.jpg',
+        alt: 'test',
+      })
     }
 
     render(React.createElement(TestComponent))
@@ -58,7 +58,11 @@ describe('useLazyImage', () => {
   it('should create IntersectionObserver with custom options', () => {
     const TestComponent = () => {
       const { imgRef } = useLazyImage({ rootMargin: '100px', threshold: 0.5 })
-      return React.createElement('img', { ref: imgRef, src: 'test.jpg', alt: 'test' })
+      return React.createElement('img', {
+        ref: imgRef,
+        src: 'test.jpg',
+        alt: 'test',
+      })
     }
 
     render(React.createElement(TestComponent))
@@ -116,7 +120,11 @@ describe('useLazyImage', () => {
   it('should disconnect observer on unmount', () => {
     const TestComponent = () => {
       const { imgRef } = useLazyImage()
-      return React.createElement('img', { ref: imgRef, src: 'test.jpg', alt: 'test' })
+      return React.createElement('img', {
+        ref: imgRef,
+        src: 'test.jpg',
+        alt: 'test',
+      })
     }
 
     const { unmount } = render(React.createElement(TestComponent))
@@ -129,7 +137,11 @@ describe('useLazyImage', () => {
   it('should observe img element when ref is set', () => {
     const TestComponent = () => {
       const { imgRef } = useLazyImage()
-      return React.createElement('img', { ref: imgRef, src: 'test.jpg', alt: 'test' })
+      return React.createElement('img', {
+        ref: imgRef,
+        src: 'test.jpg',
+        alt: 'test',
+      })
     }
 
     render(React.createElement(TestComponent))

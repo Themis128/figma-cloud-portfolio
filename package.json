@@ -13,7 +13,7 @@
     "build:server": "vite build --config vite.config.server.ts",
     "dev": "node scripts/run-with-secrets.js vite",
     "dev:ci": "node scripts/run-with-secrets.js vite",
-    "dev:all": "concurrently \"pnpm dev\" \"pnpm exec tsx server/node-build.ts\"",
+    "dev:all": "concurrently --names \"frontend,backend\" \"pnpm dev\" \"node --import tsx/esm server/node-build.ts\"",
     "format": "biome format .",
     "format:check": "biome format .",
     "format:fix": "biome format --write .",
@@ -90,7 +90,8 @@
     "web-push": "^3.6.7",
     "web-vitals": "^5.1.0",
     "zod": "^3.25.76",
-    "zustand": "^5.0.10"
+    "zustand": "^5.0.10",
+    "compression": "^1.7.4"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.20.0",

@@ -13,12 +13,12 @@ frontend:
   artifacts:
     baseDirectory: dist/spa
     files:
-      - '**/*'
+      - "**/*"
   cache:
     paths:
       - node_modules/**/*
   environment:
-    NODE_OPTIONS: '--max-old-space-size=2048'
+    NODE_OPTIONS: "--max-old-space-size=2048"
 buildComputeType: LARGE_16GB
 
 functions:
@@ -46,7 +46,7 @@ functions:
     memory: 2048
     timeout: 300
     environment:
-      NODE_OPTIONS: '--max-old-space-size=2048'
+      NODE_OPTIONS: "--max-old-space-size=2048"
 
   pushnotifications:
     handler: index.handler
@@ -54,27 +54,98 @@ functions:
     memory: 512
     timeout: 30
 
-# Custom headers to fix MIME type issues
+# Custom headers for performance and security
 customHeaders:
-  - pattern: '**/*.js'
+  # JavaScript files
+  - pattern: "**/*.js"
     headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-  - pattern: '**/*.mjs'
+      - key: "Content-Type"
+        value: "application/javascript"
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # ES Modules
+  - pattern: "**/*.mjs"
     headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-  - pattern: '**/sw.js'
+      - key: "Content-Type"
+        value: "application/javascript"
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # Service Worker
+  - pattern: "**/sw.js"
     headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-      - key: 'Service-Worker-Allowed'
-        value: '/'
-  - pattern: '**/api/**'
+      - key: "Content-Type"
+        value: "application/javascript"
+      - key: "Service-Worker-Allowed"
+        value: "/"
+      - key: "Cache-Control"
+        value: "public, max-age=0, must-revalidate"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # CSS files
+  - pattern: "**/*.css"
     headers:
-      - key: 'Access-Control-Allow-Origin'
-        value: '*'
-      - key: 'Access-Control-Allow-Headers'
-        value: 'Content-Type,Authorization'
-      - key: 'Access-Control-Allow-Methods'
-        value: 'GET,POST,PUT,DELETE,OPTIONS'
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # Images
+  - pattern: "**/*.{png,jpg,jpeg,gif,webp,avif,svg,ico}"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=2592000, immutable"  # 30 days
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # Fonts
+  - pattern: "**/*.{woff,woff2,ttf,eot}"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"  # 1 year
+      - key: "Access-Control-Allow-Origin"
+        value: "*"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # HTML files
+  - pattern: "**/*.html"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=0, must-revalidate"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # JSON and manifest files
+  - pattern: "**/*.{json,webmanifest}"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=86400, must-revalidate"  # 1 day
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # API endpoints
+  - pattern: "**/api/**"
+    headers:
+      - key: "Access-Control-Allow-Origin"
+        value: "*"
+      - key: "Access-Control-Allow-Headers"
+        value: "Content-Type,Authorization"
+      - key: "Access-Control-Allow-Methods"
+        value: "GET,POST,PUT,DELETE,OPTIONS"
+      - key: "Cache-Control"
+        value: "public, max-age=300, must-revalidate"  # 5 minutes
+
+  # Compression headers
+  - pattern: "**/*"
+    headers:
+      - key: "Accept-Encoding"
+        value: "gzip, deflate, br"
+      - key: "Vary"
+        value: "Accept-Encoding"

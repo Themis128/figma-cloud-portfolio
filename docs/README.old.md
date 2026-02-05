@@ -97,6 +97,7 @@ A modern, full-stack portfolio website built with React, TypeScript, Express, an
 4. **Set up environment variables**
 
    **Option A: Using AWS Secrets Manager** (Recommended for Production)
+
    ```bash
    # Set AWS credentials
    export AWS_SECRETS_MANAGER_ID=portfolio/env
@@ -107,6 +108,7 @@ A modern, full-stack portfolio website built with React, TypeScript, Express, an
    ```
 
    **Option B: Using Local .env File** (Development)
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
@@ -117,7 +119,8 @@ A modern, full-stack portfolio website built with React, TypeScript, Express, an
 
    **See**: `SECRETS_MANAGEMENT.md` for complete guide on secure secret handling
 
-4. **Start development servers**
+5. **Start development servers**
+
    ```bash
    # Start frontend + backend
    pnpm dev:all
@@ -138,6 +141,7 @@ This project uses a comprehensive secrets management system:
 **Important**: Never commit `.env` files or hardcode secrets in source code.
 
 **Documentation**:
+
 - `SECRETS_MANAGEMENT.md` - Complete secrets guide
 - `SECURITY_SUMMARY.md` - Security checklist
 - `TOKEN_ROTATION_CHECKLIST.md` - Token rotation procedures
@@ -146,6 +150,7 @@ This project uses a comprehensive secrets management system:
 ## 🧪 Testing
 
 ### Unit Tests (Vitest)
+
 ```bash
 # Run unit tests
 pnpm test:unit
@@ -158,6 +163,7 @@ pnpm test:unit --watch
 ```
 
 ### E2E Tests (Playwright)
+
 ```bash
 # Run all E2E tests
 pnpm test:e2e
@@ -182,6 +188,7 @@ pnpm test:e2e:debug
 ```
 
 ### Test Coverage
+
 - Playwright tests cover 20+ scenarios including:
   - Core application functionality
   - 3D graphics rendering
@@ -280,22 +287,26 @@ pnpm setup:playwright # Install Playwright browsers
 ## 🔗 Key Integrations
 
 ### AI & Machine Learning
+
 - **Anthropic Claude** - AI agent workflows and chat
 - **OpenAI GPT-4** - Alternative AI provider
 - **Together AI / Ollama** - Open-source and local LLMs
 - **MCP** - Model Context Protocol for browser automation
 
 ### Cloud Services
+
 - **Firebase** - Cloud Messaging and push notifications
 - **AWS Amplify** - Hosting and serverless functions
 - **AWS Secrets Manager** - Centralized secrets storage
 
 ### Analytics & Monitoring
+
 - **Google Analytics 4** - Web analytics with Core Web Vitals
 - **Sentry** - Error tracking and performance monitoring
 - **Codacy** - Code quality and security analysis
 
 ### Security & Performance
+
 - **Google reCAPTCHA v3** - Bot protection
 - **Vite PWA** - Progressive Web App features
 - **Socket.IO** - Real-time communication
@@ -317,11 +328,13 @@ The project is configured for AWS Amplify deployment with:
 ### Environment Variables
 
 #### Core Configuration
+
 ```env
 NODE_ENV=development
 ```
 
 #### Firebase (Cloud Messaging & Push Notifications)
+
 ```env
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
@@ -333,6 +346,7 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 ```
 
 #### Google Services
+
 ```env
 # reCAPTCHA v3
 VITE_RECAPTCHA_SITE_KEY=your_site_key
@@ -344,6 +358,7 @@ VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
 #### AI Services (Choose one or more)
+
 ```env
 # Anthropic Claude
 VITE_ANTHROPIC_API_KEY=sk-ant-your_key_here
@@ -362,6 +377,7 @@ VITE_AI_MODEL=llama2
 ```
 
 #### Error Tracking & Monitoring
+
 ```env
 # Sentry
 VITE_SENTRY_DSN=https://your_key@sentry.io/project_id
@@ -372,6 +388,7 @@ VITE_APP_VERSION=1.0.0
 ```
 
 #### Code Quality
+
 ```env
 CODACY_API_TOKEN=your_codacy_api_token
 CODACY_PROJECT_TOKEN=your_codacy_project_token
@@ -381,12 +398,14 @@ CODACY_PROJECT_NAME=figma-cloud-portfolio
 ```
 
 #### GitHub API
+
 ```env
 GITHUB_TOKEN=ghp_your_personal_access_token
 VITE_GITHUB_TOKEN=ghp_your_personal_access_token
 ```
 
 #### AWS Services (Production)
+
 ```env
 # Amplify
 AWS_ACCESS_KEY_ID=your_access_key
@@ -413,13 +432,16 @@ VITE_LAMBDA_DEMO_URL=https://your-demo-function.amazonaws.com
 Comprehensive documentation is available for all aspects of the project:
 
 ### Getting Started
+
 - **README.md** (this file) - Project overview and quick start
 - **.env.example** - Environment variables template
 
 ### Integrations
+
 - **INTEGRATIONS.md** - Complete guide for all external services and APIs
 
 ### Security
+
 - **SECURITY_SUMMARY.md** - Security overview and quick reference
 - **SECURITY_REMEDIATION.md** - Security incident response guide
 - **SECRETS_MANAGEMENT.md** - Comprehensive secrets management
@@ -428,15 +450,18 @@ Comprehensive documentation is available for all aspects of the project:
 - **GITHUB_SECRETS_SETUP.md** - GitHub Actions secrets
 
 ### Deployment
+
 - **DEPLOYMENT_CHECKLIST.md** - Pre-deployment checklist
 - **DEPLOYMENT_ISSUES_GUIDE.md** - Troubleshooting guide
 - **DEPLOYMENT_MONITOR_README.md** - Monitoring setup
 - **POST_DEPLOYMENT_VERIFICATION.md** - Verification steps
 
 ### Testing
+
 - **PLAYWRIGHT_CONFIG_README.md** - E2E testing configuration
 
 ### Development
+
 - **SOFTWARE_PLANNING_PROPOSAL.md** - Project planning
 
 ## 🤝 Contributing

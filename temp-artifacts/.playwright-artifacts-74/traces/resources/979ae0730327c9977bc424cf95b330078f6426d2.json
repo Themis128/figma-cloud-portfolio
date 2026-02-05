@@ -1,1 +1,7 @@
-{"event":"page_view","data":{"page_path":"/projects"},"timestamp":"2026-01-26T19:57:29.085Z","url":"http://localhost:9000/projects","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"}
+{
+  "event": "page_view",
+  "data": { "page_path": "/projects" },
+  "timestamp": "2026-01-26T19:57:29.085Z",
+  "url": "http://localhost:9000/projects",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
+}

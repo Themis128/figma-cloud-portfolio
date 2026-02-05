@@ -1,46 +1,46 @@
 // @ts-ignore
-import chromium from '@sparticuz/chromium'
-import type { Handler } from 'aws-lambda'
-import puppeteer from 'puppeteer-core'
+import chromium from "@sparticuz/chromium";
+import type { Handler } from "aws-lambda";
+import puppeteer from "puppeteer-core";
 
 interface ResumeData {
-  name: string
-  title: string
+  name: string;
+  title: string;
   contact: {
-    email?: string
-    linkedin?: string
-    website?: string
-  }
-  summary: string
-  competencies: Record<string, string[]>
+    email?: string;
+    linkedin?: string;
+    website?: string;
+  };
+  summary: string;
+  competencies: Record<string, string[]>;
   experience: Array<{
-    title: string
-    company: string
-    date: string
-    achievements: string[]
-  }>
+    title: string;
+    company: string;
+    date: string;
+    achievements: string[];
+  }>;
   education: Array<{
-    degree: string
-    institution: string
-    date: string
-  }>
+    degree: string;
+    institution: string;
+    date: string;
+  }>;
   certifications: Array<{
-    name: string
-    issuer: string
-    year: string
-  }>
-  projects: string[]
-  memberships: string[]
-  languages: string[]
+    name: string;
+    issuer: string;
+    year: string;
+  }>;
+  projects: string[];
+  memberships: string[];
+  languages: string[];
 }
 
 function parseResumeMarkdown(markdownContent: string): ResumeData {
-  const lines = markdownContent.split('\n')
+  const lines = markdownContent.split("\n");
   const resume: ResumeData = {
-    name: '',
-    title: '',
+    name: "",
+    title: "",
     contact: {},
-    summary: '',
+    summary: "",
     competencies: {},
     experience: [],
     education: [],
@@ -48,162 +48,162 @@ function parseResumeMarkdown(markdownContent: string): ResumeData {
     projects: [],
     memberships: [],
     languages: [],
-  }
+  };
 
-  let currentSection = ''
-  let currentCompetencyCategory = ''
+  let currentSection = "";
+  let currentCompetencyCategory = "";
   let currentExperienceItem: {
-    title: string
-    company: string
-    date: string
-    achievements: string[]
-  } | null = null
+    title: string;
+    company: string;
+    date: string;
+    achievements: string[];
+  } | null = null;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim()
+    const line = lines[i].trim();
 
     // Parse header
-    if (line.startsWith('# ')) {
-      resume.name = line.replace('# ', '')
-    } else if (line.startsWith('## ')) {
-      const section = line.replace('## ', '').toLowerCase()
-      if (section.includes('professional summary')) {
-        currentSection = 'summary'
+    if (line.startsWith("# ")) {
+      resume.name = line.replace("# ", "");
+    } else if (line.startsWith("## ")) {
+      const section = line.replace("## ", "").toLowerCase();
+      if (section.includes("professional summary")) {
+        currentSection = "summary";
       } else if (
-        section.includes('core competencies') ||
-        section.includes('technical skills')
+        section.includes("core competencies") ||
+        section.includes("technical skills")
       ) {
-        currentSection = 'competencies'
-      } else if (section.includes('professional experience')) {
-        currentSection = 'experience'
-      } else if (section.includes('education')) {
-        currentSection = 'education'
-      } else if (section.includes('certifications')) {
-        currentSection = 'certifications'
-      } else if (section === 'cloud architect & cybersecurity specialist') {
-        resume.title = line.replace('## ', '')
+        currentSection = "competencies";
+      } else if (section.includes("professional experience")) {
+        currentSection = "experience";
+      } else if (section.includes("education")) {
+        currentSection = "education";
+      } else if (section.includes("certifications")) {
+        currentSection = "certifications";
+      } else if (section === "cloud architect & cybersecurity specialist") {
+        resume.title = line.replace("## ", "");
       }
     } else if (
-      line.includes('📧') ||
-      line.includes('📱') ||
-      line.includes('🌐')
+      line.includes("📧") ||
+      line.includes("📱") ||
+      line.includes("🌐")
     ) {
       // Contact info line
-      const emailMatch = line.match(/📧 ([^|]+)/)
-      const linkedinMatch = line.match(/📱 LinkedIn: \[([^\]]+)\]/)
-      const websiteMatch = line.match(/🌐 \[([^\]]+)\]/)
+      const emailMatch = line.match(/📧 ([^|]+)/);
+      const linkedinMatch = line.match(/📱 LinkedIn: \[([^\]]+)\]/);
+      const websiteMatch = line.match(/🌐 \[([^\]]+)\]/);
 
-      if (emailMatch) resume.contact.email = emailMatch[1].trim()
+      if (emailMatch) resume.contact.email = emailMatch[1].trim();
       if (linkedinMatch)
-        resume.contact.linkedin = `LinkedIn: ${linkedinMatch[1]}`
-      if (websiteMatch) resume.contact.website = websiteMatch[1].trim()
+        resume.contact.linkedin = `LinkedIn: ${linkedinMatch[1]}`;
+      if (websiteMatch) resume.contact.website = websiteMatch[1].trim();
     } else if (
-      currentSection === 'summary' &&
+      currentSection === "summary" &&
       line &&
-      !line.startsWith('-') &&
-      !line.startsWith('---')
+      !line.startsWith("-") &&
+      !line.startsWith("---")
     ) {
-      resume.summary += `${line} `
-    } else if (currentSection === 'competencies') {
-      if (line.startsWith('### ')) {
-        const category = line.replace('### ', '')
-        resume.competencies[category] = []
-        currentCompetencyCategory = category
-      } else if (line.startsWith('- **')) {
-        const skillLine = line.replace('- **', '').replace('**', '')
-        const [skill, _description] = skillLine.split(': ')
+      resume.summary += `${line} `;
+    } else if (currentSection === "competencies") {
+      if (line.startsWith("### ")) {
+        const category = line.replace("### ", "");
+        resume.competencies[category] = [];
+        currentCompetencyCategory = category;
+      } else if (line.startsWith("- **")) {
+        const skillLine = line.replace("- **", "").replace("**", "");
+        const [skill, _description] = skillLine.split(": ");
         if (
           currentCompetencyCategory &&
           resume.competencies[currentCompetencyCategory]
         ) {
-          resume.competencies[currentCompetencyCategory].push(skill.trim())
+          resume.competencies[currentCompetencyCategory].push(skill.trim());
         }
       }
-    } else if (currentSection === 'experience') {
-      if (line.startsWith('### ')) {
+    } else if (currentSection === "experience") {
+      if (line.startsWith("### ")) {
         currentExperienceItem = {
-          title: line.replace('### ', ''),
-          company: '',
-          date: '',
+          title: line.replace("### ", ""),
+          company: "",
+          date: "",
           achievements: [],
-        }
-        resume.experience.push(currentExperienceItem)
+        };
+        resume.experience.push(currentExperienceItem);
       } else if (
         currentExperienceItem &&
-        !line.startsWith('### ') &&
-        !line.startsWith('- ') &&
-        !line.startsWith('**') &&
-        line.includes('|')
+        !line.startsWith("### ") &&
+        !line.startsWith("- ") &&
+        !line.startsWith("**") &&
+        line.includes("|")
       ) {
         // Company and location line
-        const [company, location] = line.split(' | ')
-        currentExperienceItem.company = `${company.trim()} | ${location.trim()}`
+        const [company, location] = line.split(" | ");
+        currentExperienceItem.company = `${company.trim()} | ${location.trim()}`;
       } else if (
         currentExperienceItem &&
         line.match(/^[A-Z][a-z]+ \d{4} - (Present|[A-Z][a-z]+ \d{4})$/)
       ) {
         // Date line
-        currentExperienceItem.date = line
-      } else if (currentExperienceItem && line.startsWith('- ')) {
-        currentExperienceItem.achievements.push(line.replace('- ', ''))
+        currentExperienceItem.date = line;
+      } else if (currentExperienceItem && line.startsWith("- ")) {
+        currentExperienceItem.achievements.push(line.replace("- ", ""));
       }
-    } else if (currentSection === 'education') {
-      if (line.startsWith('**')) {
-        const degree = line.replace(/\*\*/g, '')
+    } else if (currentSection === "education") {
+      if (line.startsWith("**")) {
+        const degree = line.replace(/\*\*/g, "");
         const institution = lines[i + 1]
-          ? lines[i + 1].replace(/\*\*/g, '')
-          : ''
-        const date = lines[i + 2] ? lines[i + 2].replace(/\*\*/g, '') : ''
-        resume.education.push({ degree, institution, date })
-        i += 2 // Skip next lines
+          ? lines[i + 1].replace(/\*\*/g, "")
+          : "";
+        const date = lines[i + 2] ? lines[i + 2].replace(/\*\*/g, "") : "";
+        resume.education.push({ degree, institution, date });
+        i += 2; // Skip next lines
       }
-    } else if (currentSection === 'certifications') {
-      if (line.startsWith('- **')) {
-        const certLine = line.replace('- **', '').replace('**', '')
-        const [cert, year] = certLine.split(' (')
-        const issuer = lines[i + 1] ? lines[i + 1].replace('- ', '') : ''
+    } else if (currentSection === "certifications") {
+      if (line.startsWith("- **")) {
+        const certLine = line.replace("- **", "").replace("**", "");
+        const [cert, year] = certLine.split(" (");
+        const issuer = lines[i + 1] ? lines[i + 1].replace("- ", "") : "";
         resume.certifications.push({
           name: cert.trim(),
-          issuer: issuer.replace(/^\*\*/, '').replace(/\*\*$/, ''),
-          year: year ? year.replace(')', '') : '',
-        })
-        i += 1 // Skip next line
+          issuer: issuer.replace(/^\*\*/, "").replace(/\*\*$/, ""),
+          year: year ? year.replace(")", "") : "",
+        });
+        i += 1; // Skip next line
       }
     }
   }
 
-  return resume
+  return resume;
 }
 
 function generateHTML(resume: ResumeData): string {
   const skillLevels: Record<string, number> = {
-    'Microsoft Azure': 95,
-    'Azure AD & Identity': 98,
-    'Microsoft 365': 92,
+    "Microsoft Azure": 95,
+    "Azure AD & Identity": 98,
+    "Microsoft 365": 92,
     AWS: 85,
-    'Azure AD Premium, Microsoft Defender Suite': 95,
-    'Azure Sentinel & SIEM': 90,
-    'Zero Trust Architecture': 93,
-    'Compliance (GDPR, ISO 27001)': 88,
-    'Active Directory': 90,
-    'Windows Server': 85,
-    'PowerShell & Automation': 88,
-    'VMware & Virtualization': 82,
-  }
+    "Azure AD Premium, Microsoft Defender Suite": 95,
+    "Azure Sentinel & SIEM": 90,
+    "Zero Trust Architecture": 93,
+    "Compliance (GDPR, ISO 27001)": 88,
+    "Active Directory": 90,
+    "Windows Server": 85,
+    "PowerShell & Automation": 88,
+    "VMware & Virtualization": 82,
+  };
 
   // Modern color palette with accessibility
   const colors = {
-    primary: '#1e293b', // Slate-800
-    secondary: '#0f172a', // Slate-900
-    accent: '#06b6d4', // Cyan-500
-    accentLight: '#67e8f9', // Cyan-300
-    text: '#334155', // Slate-600
-    textLight: '#64748b', // Slate-500
-    success: '#10b981', // Emerald-500
-    warning: '#f59e0b', // Amber-500
-    background: '#f8fafc', // Slate-50
-    card: '#ffffff',
-  }
+    primary: "#1e293b", // Slate-800
+    secondary: "#0f172a", // Slate-900
+    accent: "#06b6d4", // Cyan-500
+    accentLight: "#67e8f9", // Cyan-300
+    text: "#334155", // Slate-600
+    textLight: "#64748b", // Slate-500
+    success: "#10b981", // Emerald-500
+    warning: "#f59e0b", // Amber-500
+    background: "#f8fafc", // Slate-50
+    card: "#ffffff",
+  };
 
   return `<!doctype html>
 <html lang="en">
@@ -641,9 +641,9 @@ function generateHTML(resume: ResumeData): string {
           <h1>${resume.name}</h1>
           <h2>${resume.title}</h2>
           <div class="contact-info">
-            ${resume.contact.email ? `<div class="contact-item">📧 ${resume.contact.email}</div>` : ''}
-            ${resume.contact.linkedin ? `<div class="contact-item">💼 ${resume.contact.linkedin.replace('LinkedIn: ', '')}</div>` : ''}
-            ${resume.contact.website ? `<div class="contact-item">🌐 ${resume.contact.website}</div>` : ''}
+            ${resume.contact.email ? `<div class="contact-item">📧 ${resume.contact.email}</div>` : ""}
+            ${resume.contact.linkedin ? `<div class="contact-item">💼 ${resume.contact.linkedin.replace("LinkedIn: ", "")}</div>` : ""}
+            ${resume.contact.website ? `<div class="contact-item">🌐 ${resume.contact.website}</div>` : ""}
           </div>
         </div>
       </header>
@@ -660,7 +660,7 @@ function generateHTML(resume: ResumeData): string {
               <h4>${category}</h4>
               ${skills
                 .map((skill) => {
-                  const level = skillLevels[skill] || 85
+                  const level = skillLevels[skill] || 85;
                   return `
                 <div class="skill-item">
                   <div class="skill-header">
@@ -671,13 +671,13 @@ function generateHTML(resume: ResumeData): string {
                     <div class="skill-fill" style="width: ${level}%"></div>
                   </div>
                 </div>
-                `
+                `;
                 })
-                .join('')}
+                .join("")}
             </div>
             `,
               )
-              .join('')}
+              .join("")}
 
             ${
               resume.certifications.length > 0
@@ -690,14 +690,14 @@ function generateHTML(resume: ResumeData): string {
             <div class="certification-item">
               <strong>${cert.name}</strong>
               <span class="issuer">${cert.issuer}</span>
-              ${cert.year ? `<span class="year">${cert.year}</span>` : ''}
+              ${cert.year ? `<span class="year">${cert.year}</span>` : ""}
             </div>
             `,
               )
-              .join('')}
+              .join("")}
           </div>
             `
-                : ''
+                : ""
             }
 
           ${
@@ -715,10 +715,10 @@ function generateHTML(resume: ResumeData): string {
             </div>
             `,
               )
-              .join('')}
+              .join("")}
           </div>
             `
-              : ''
+              : ""
           }
         </div>
 
@@ -730,7 +730,7 @@ function generateHTML(resume: ResumeData): string {
             <p>${resume.summary.trim()}</p>
           </div>
             `
-              : ''
+              : ""
           }
 
           ${
@@ -755,15 +755,15 @@ function generateHTML(resume: ResumeData): string {
                 <div class="achievement-item">${achievement}</div>
                 `,
                   )
-                  .join('')}
+                  .join("")}
               </div>
             </div>
             `,
               )
-              .join('')}
+              .join("")}
           </div>
             `
-              : ''
+              : ""
           }
 
           <!-- Key Metrics Section -->
@@ -792,41 +792,41 @@ function generateHTML(resume: ResumeData): string {
       </div>
     </div>
   </body>
-</html>`
+</html>`;
 }
 
 export const handler: Handler = async (event) => {
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       },
-      body: '',
-    }
+      body: "",
+    };
   }
 
-  let browser = null
+  let browser = null;
 
   try {
-    console.log('🚀 Generating dynamic resume PDF...')
+    console.log("🚀 Generating dynamic resume PDF...");
 
-    let resume: ResumeData
+    let resume: ResumeData;
 
-    if (event.httpMethod === 'POST' && event.body) {
+    if (event.httpMethod === "POST" && event.body) {
       // Use data from request body
-      resume = JSON.parse(event.body)
-      console.log('📝 Using resume data from app...')
+      resume = JSON.parse(event.body);
+      console.log("📝 Using resume data from app...");
     } else {
       // Fallback to reading from markdown file
-      console.log('📄 Reading resume content from markdown file...')
+      console.log("📄 Reading resume content from markdown file...");
       // In Lambda, we need to fetch the markdown content
       // For now, we'll use a simple fallback or fetch from a URL
-      const fs = await import('fs')
-      const path = await import('path')
+      const fs = await import("fs");
+      const path = await import("path");
 
       try {
         // Try to read from a public URL or embedded content
@@ -913,121 +913,121 @@ Experienced Cloud Architect and Cybersecurity Specialist with 15+ years in enter
 - **Certified Ethical Hacker (CEH)** (2020)
   - EC-Council
 - **AWS Certified Solutions Architect** (2019)
-  - Amazon Web Services`
+  - Amazon Web Services`;
 
-        resume = parseResumeMarkdown(markdownContent)
-        console.log('✅ Resume data parsed from embedded markdown')
+        resume = parseResumeMarkdown(markdownContent);
+        console.log("✅ Resume data parsed from embedded markdown");
       } catch (fileError) {
-        console.error('❌ Error reading resume markdown:', fileError)
+        console.error("❌ Error reading resume markdown:", fileError);
         return {
           statusCode: 500,
           headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            error: 'Failed to read resume content',
-            message: 'Resume markdown file not accessible',
+            error: "Failed to read resume content",
+            message: "Resume markdown file not accessible",
           }),
-        }
+        };
       }
     }
 
-    console.log('🎨 Generating HTML template...')
-    const htmlContent = generateHTML(resume)
+    console.log("🎨 Generating HTML template...");
+    const htmlContent = generateHTML(resume);
 
-    console.log('🌐 Launching browser for PDF generation...')
+    console.log("🌐 Launching browser for PDF generation...");
     browser = await puppeteer.launch({
       args: [
         ...chromium.args,
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process', // <- this one doesn't work in Windows
-        '--disable-gpu',
-        '--memory-pressure-off',
-        '--max_old_space_size=2048'
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process", // <- this one doesn't work in Windows
+        "--disable-gpu",
+        "--memory-pressure-off",
+        "--max_old_space_size=2048",
       ],
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
       timeout: 60000, // 60 second timeout for launch
-    })
+    });
 
-    const page = await browser.newPage()
+    const page = await browser.newPage();
 
     // Set viewport for better PDF rendering
     await page.setViewport({
       width: 794, // A4 width in pixels at 96 DPI
       height: 1123, // A4 height in pixels at 96 DPI
       deviceScaleFactor: 1,
-    })
+    });
 
-    console.log('📝 Setting page content...')
+    console.log("📝 Setting page content...");
     await page.setContent(htmlContent, {
-      waitUntil: 'networkidle0',
+      waitUntil: "networkidle0",
       timeout: 30000,
-    })
+    });
 
     // Wait a bit for any animations or fonts to load
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log('📋 Generating PDF...')
+    console.log("📋 Generating PDF...");
     const pdfBuffer = await page.pdf({
-      format: 'A4',
+      format: "A4",
       printBackground: true,
       margin: {
-        top: '20px',
-        right: '20px',
-        bottom: '20px',
-        left: '20px',
+        top: "20px",
+        right: "20px",
+        bottom: "20px",
+        left: "20px",
       },
       preferCSSPageSize: true,
       displayHeaderFooter: false,
-    })
+    });
 
-    console.log('✅ PDF generated successfully!')
+    console.log("✅ PDF generated successfully!");
     console.log(
       `📄 PDF size: ${(pdfBuffer.length / 1024 / 1024).toFixed(2)} MB`,
-    )
+    );
 
     // Return PDF as base64 encoded string
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${resume.name.replace(/\s+/g, '_')}_Resume.pdf"`,
-        'Access-Control-Allow-Origin': '*',
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${resume.name.replace(/\s+/g, "_")}_Resume.pdf"`,
+        "Access-Control-Allow-Origin": "*",
       },
-      body: (pdfBuffer as Buffer).toString('base64'),
+      body: (pdfBuffer as Buffer).toString("base64"),
       isBase64Encoded: true,
-    }
+    };
   } catch (error) {
-    console.error('❌ Error generating resume PDF:', error)
+    console.error("❌ Error generating resume PDF:", error);
     return {
       statusCode: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        error: 'Failed to generate resume PDF',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to generate resume PDF",
+        message: error instanceof Error ? error.message : "Unknown error",
       }),
-    }
+    };
   } finally {
     if (browser) {
       try {
-        await browser.close()
+        await browser.close();
       } catch (closeError) {
         console.warn(
-          '⚠️  Warning: Could not close browser cleanly:',
+          "⚠️  Warning: Could not close browser cleanly:",
           closeError,
-        )
+        );
       }
     }
   }
-}
+};

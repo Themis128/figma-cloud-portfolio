@@ -27,33 +27,34 @@ The client-side implementation uses the `react-ga4` library for seamless React i
 
 ```typescript
 // GoogleAnalytics.tsx
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import ReactGA from 'react-ga4'
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import ReactGA from "react-ga4";
 
 const GoogleAnalytics = () => {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
-    const measurementId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID ||
-                         import.meta.env.GOOGLE_ANALYTICS_ID
+    const measurementId =
+      import.meta.env.VITE_GOOGLE_ANALYTICS_ID ||
+      import.meta.env.GOOGLE_ANALYTICS_ID;
 
     if (measurementId && !ReactGA.isInitialized) {
-      ReactGA.initialize(measurementId)
+      ReactGA.initialize(measurementId);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (ReactGA.isInitialized) {
       ReactGA.send({
-        hitType: 'pageview',
-        page: location.pathname + location.search
-      })
+        hitType: "pageview",
+        page: location.pathname + location.search,
+      });
     }
-  }, [location])
+  }, [location]);
 
-  return null
-}
+  return null;
+};
 ```
 
 ### Configuration
@@ -105,10 +106,10 @@ The foundation is in place for custom event tracking:
 ```typescript
 // Example custom event tracking
 ReactGA.event({
-  category: 'engagement',
-  action: 'contact_form_submit',
-  label: 'contact_page'
-})
+  category: "engagement",
+  action: "contact_form_submit",
+  label: "contact_page",
+});
 ```
 
 ### SPA Route Tracking
@@ -268,14 +269,16 @@ If migrating from Universal Analytics (UA):
 ### Enhanced E-commerce Tracking
 
 ```typescript
-ReactGA.gtag('event', 'view_item', {
-  currency: 'USD',
+ReactGA.gtag("event", "view_item", {
+  currency: "USD",
   value: 9.99,
-  items: [{
-    item_id: 'portfolio_download',
-    item_name: 'Resume Download'
-  }]
-})
+  items: [
+    {
+      item_id: "portfolio_download",
+      item_name: "Resume Download",
+    },
+  ],
+});
 ```
 
 ### Custom Dimensions and Metrics
@@ -283,12 +286,12 @@ ReactGA.gtag('event', 'view_item', {
 Configure custom parameters for enhanced tracking:
 
 ```typescript
-ReactGA.gtag('config', 'GA_MEASUREMENT_ID', {
+ReactGA.gtag("config", "GA_MEASUREMENT_ID", {
   custom_map: {
-    dimension1: 'user_type',
-    metric1: 'form_submissions'
-  }
-})
+    dimension1: "user_type",
+    metric1: "form_submissions",
+  },
+});
 ```
 
 ### A/B Testing Integration
@@ -296,12 +299,12 @@ ReactGA.gtag('config', 'GA_MEASUREMENT_ID', {
 Integrate with Google Optimize for A/B testing:
 
 ```typescript
-ReactGA.gtag('event', 'optimize.callback', {
-  name: 'experiment_id',
+ReactGA.gtag("event", "optimize.callback", {
+  name: "experiment_id",
   callback: (value) => {
-    console.log('Experiment variation:', value)
-  }
-})
+    console.log("Experiment variation:", value);
+  },
+});
 ```
 
 ## Related Documentation

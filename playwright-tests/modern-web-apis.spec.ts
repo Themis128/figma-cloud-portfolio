@@ -91,7 +91,9 @@ test.describe('Modern Web APIs', () => {
       // Test storage event handling
       const storageEventFired = await page.evaluate(() => {
         return new Promise<boolean>((resolve) => {
-          window.addEventListener('storage', () => resolve(true), { once: true })
+          window.addEventListener('storage', () => resolve(true), {
+            once: true,
+          })
           localStorage.setItem('test', 'value')
           // Fallback timeout in case event doesn't fire
           setTimeout(() => resolve(false), 100)

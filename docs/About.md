@@ -7,11 +7,13 @@ The About page provides detailed professional information about Themistoklis Bal
 ## Features
 
 ### Hero Section
+
 - **Page Title**: "About Me" with animated styling
 - **Professional Title**: Cloud Architect & Cybersecurity Specialist
 - **Brief Description**: Overview of 15+ years of IT expertise
 
 ### Professional Summary
+
 - **Background**: Computer Science degree and industry certifications
 - **Expertise Areas**: Azure AD, Microsoft 365, multi-cloud environments
 - **Approach**: Technical precision combined with strategic thinking
@@ -19,25 +21,32 @@ The About page provides detailed professional information about Themistoklis Bal
 - **Current Research**: Master's research in data-driven agricultural innovations
 
 ### Key Focus Areas
+
 Three main areas presented in interactive cards:
+
 - **Cloud Architecture**: Azure, AWS, multi-cloud migration, infrastructure automation
 - **Cybersecurity**: Zero-trust security, identity management, threat protection
 - **AI/ML Integration**: Data analytics, smart automation, digital transformation
 
 ### Skills & Certifications
+
 Two-column layout displaying:
+
 - **Top Skills**: Microsoft Azure Solutions Architect Expert, CISSP, CEH, ITIL, Azure AD
 - **Certifications**: Zero Trust Security, Multi-Cloud Migration, Microsoft 365 Security, Compliance & Risk Management
 
 ### Languages
+
 - **English**: Full Professional proficiency
 - **Greek**: Native/Bilingual proficiency
 
 ### Honors & Awards
+
 - **Cisco Incubator 12.0**: 3rd Place in Customer Experience Track
 - **Scholarship Recipient**: Academic Excellence
 
 ### Call to Action
+
 - **Get In Touch**: Link to contact page
 
 ## Components Used

@@ -1,14 +1,16 @@
 import { Activity, ArrowLeft, BarChart3, Cpu, HardDrive, Network, Zap } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-
+import { LoadingSpinner } from '@/components/LoadingAnimations'
 import Navigation from '@/components/Navigation'
 import { PerformanceDashboard } from '@/components/PerformanceDashboard'
-import { PerformanceTester } from '@/components/PerformanceTester'
-import { PushNotificationTester } from '@/components/PushNotificationTester'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+
+// Lazy load heavy testing components
+const PerformanceTester = lazy(() => import('@/components/PerformanceTester'))
+const PushNotificationTester = lazy(() => import('@/components/PushNotificationTester'))
 
 // Performance simulation constants
 const MEMORY_SIMULATION_BASE_MB = 20
@@ -257,7 +259,7 @@ export default function Performance() {
                   <span>{memory.used} MB</span>
                   <span>{memory.limit} MB</span>
                 </div>
-                <Progress value={memoryPercentage} className='h-2' />
+                <Progress value={memoryPercentage} className='h-2' data-testid='progress' />
                 <p className='text-xs text-muted-foreground'>
                   {memoryPercentage.toFixed(DECIMAL_PLACES_DISPLAY)}% of available memory
                 </p>
@@ -274,7 +276,7 @@ export default function Performance() {
                   <span>{metrics.cpuUsage.toFixed(DECIMAL_PLACES_DISPLAY)}%</span>
                   <span>Active</span>
                 </div>
-                <Progress value={metrics.cpuUsage} className='h-2' />
+                <Progress value={metrics.cpuUsage} className='h-2' data-testid='progress' />
                 <p className='text-xs text-muted-foreground'>Real-time CPU utilization</p>
               </div>
             </Card>
@@ -373,9 +375,13 @@ export default function Performance() {
 
         {/* Testing Tools Section */}
         <div className='space-y-6'>
-          <PerformanceTester />
+          <Suspense fallback={<LoadingSpinner />}>
+            <PerformanceTester />
+          </Suspense>
 
-          <PushNotificationTester />
+          <Suspense fallback={<LoadingSpinner />}>
+            <PushNotificationTester />
+          </Suspense>
 
           <Card className='p-6'>
             <h3 className='text-lg font-semibold mb-4'>Performance Testing Tools</h3>
@@ -424,6 +430,7 @@ export default function Performance() {
               <Progress
                 value={(metrics.bundleSize / BUNDLE_SIZE_TARGET_MB) * PERCENTAGE_MULTIPLIER}
                 className='h-2'
+                data-testid='progress'
               />
               <p className='text-xs text-muted-foreground'>
                 Target: &lt; {BUNDLE_SIZE_OPTIMAL_MB} MB for optimal performance
@@ -470,7 +477,7 @@ export default function Performance() {
             <div className='flex items-center gap-4'>
               <div className='text-4xl font-bold text-cyan-400'>{metrics.lighthouseScore}</div>
               <div className='flex-1'>
-                <Progress value={metrics.lighthouseScore} className='h-3' />
+                <Progress value={metrics.lighthouseScore} className='h-3' data-testid='progress' />
                 <p className='text-xs text-muted-foreground mt-1'>Performance score out of 100</p>
               </div>
             </div>

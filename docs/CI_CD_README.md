@@ -39,11 +39,13 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 **Triggers**: Push/PR to `main` or `develop` branches
 
 **Jobs**:
+
 - **Test**: Linting, type checking, unit tests, E2E tests
 - **Build**: Application build verification
 - **Security**: Vulnerability scanning with Trivy
 
 **Features**:
+
 - Matrix testing across Node.js versions
 - Test artifact uploads for debugging
 - Security scan results uploaded to GitHub Security tab
@@ -53,6 +55,7 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 **Triggers**: Push to `develop` branch or manual dispatch
 
 **Features**:
+
 - Automatic deployment on `develop` branch pushes
 - Concurrency control to prevent multiple simultaneous deployments
 - Deployment notifications via GitHub issues
@@ -63,6 +66,7 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 **Triggers**: Push to `main` branch or manual dispatch
 
 **Features**:
+
 - Protected environment with required approvals
 - Automatic rollback on deployment failure
 - Comprehensive deployment notifications
@@ -73,6 +77,7 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 **Triggers**: Manual dispatch with environment selection
 
 **Features**:
+
 - Environment-specific rollback (staging/production)
 - Optional target commit specification
 - Automated rollback notifications
@@ -83,6 +88,7 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 **Triggers**: Completion of deployment/rollback workflows
 
 **Features**:
+
 - Dynamic status badge generation
 - Deployment status JSON files for external monitoring
 - Automated deployment summary issues
@@ -114,12 +120,14 @@ VITE_APP_ENV=staging|production
 ### Branch Protection Rules
 
 **Main Branch**:
+
 - Require PR reviews
 - Require status checks (CI, security)
 - Require branches to be up to date
 - Restrict pushes to maintainers
 
 **Develop Branch**:
+
 - Require status checks (CI)
 - Allow direct pushes for hotfixes
 
@@ -170,12 +178,14 @@ Add these badges to your README:
 ### Status Files
 
 Deployment status is tracked in JSON files:
+
 - `public/deployment-status-staging.json`
 - `public/deployment-status-production.json`
 
 ### External Monitoring
 
 Status files can be consumed by:
+
 - Status dashboards
 - Monitoring systems
 - External notification services
@@ -219,16 +229,19 @@ Status files can be consumed by:
 ### Common Issues
 
 **Deployment Failures**:
+
 - Check AWS credentials and permissions
 - Verify Amplify app configuration
 - Review build logs for errors
 
 **Test Failures**:
+
 - Check test environment setup
 - Verify Playwright browser installation
 - Review test artifacts
 
 **Security Scan Failures**:
+
 - Update vulnerable dependencies
 - Review security advisories
 - Implement security patches
@@ -236,12 +249,14 @@ Status files can be consumed by:
 ### Debugging
 
 **Workflow Logs**:
+
 ```bash
 gh run list --workflow=ci.yml
 gh run view <run-id> --log
 ```
 
 **Deployment Status**:
+
 ```bash
 curl https://yourdomain.com/deployment-status-production.json
 ```

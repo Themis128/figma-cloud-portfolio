@@ -56,7 +56,9 @@ describe('Navigation', () => {
 
   it('should show mobile menu button on small screens', () => {
     renderWithProviders(<Navigation />)
-    const menuButton = screen.getByRole('button', { name: 'Toggle mobile menu' })
+    const menuButton = screen.getByRole('button', {
+      name: 'Toggle mobile menu',
+    })
     expect(menuButton).toBeInTheDocument()
   })
 
@@ -64,7 +66,9 @@ describe('Navigation', () => {
     const user = userEvent.setup()
     renderWithProviders(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: 'Toggle mobile menu' })
+    const menuButton = screen.getByRole('button', {
+      name: 'Toggle mobile menu',
+    })
 
     // Menu should be closed initially
     expect(menuButton).toHaveAttribute('aria-expanded', 'false')
@@ -85,7 +89,9 @@ describe('Navigation', () => {
     const user = userEvent.setup()
     renderWithProviders(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: 'Toggle mobile menu' })
+    const menuButton = screen.getByRole('button', {
+      name: 'Toggle mobile menu',
+    })
 
     // Open menu
     await user.click(menuButton)
@@ -109,7 +115,9 @@ describe('Navigation', () => {
     const user = userEvent.setup()
     renderWithProviders(<Navigation />)
 
-    const menuButton = screen.getByRole('button', { name: 'Toggle mobile menu' })
+    const menuButton = screen.getByRole('button', {
+      name: 'Toggle mobile menu',
+    })
     await user.click(menuButton)
 
     const ctaButton = screen.getByRole('link', { name: /get in touch/i })
@@ -126,7 +134,9 @@ describe('Navigation', () => {
     const logo = screen.getByRole('link', { name: /home/i })
     expect(logo).toHaveAttribute('aria-label', 'Home')
 
-    const menuButton = screen.getByRole('button', { name: 'Toggle mobile menu' })
+    const menuButton = screen.getByRole('button', {
+      name: 'Toggle mobile menu',
+    })
     expect(menuButton).toHaveAttribute('aria-expanded', 'false')
   })
 })

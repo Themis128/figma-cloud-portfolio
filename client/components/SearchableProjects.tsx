@@ -219,7 +219,8 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
       <div className='space-y-4'>
         <div className='flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>
-            {filteredProjects.length} Project{filteredProjects.length !== 1 ? 's' : ''} Found
+            {filteredProjects.length} Project
+            {filteredProjects.length !== 1 ? 's' : ''} Found
           </h2>
           {deferredSearchQuery && (
             <p className='text-sm text-gray-600'>Showing results for "{deferredSearchQuery}"</p>

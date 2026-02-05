@@ -44,7 +44,9 @@ export function RealtimeTest() {
   }
 
   const testAgentStatus = () => {
-    updateAgentStatus('test-agent', 'running', { progress: Math.random() * PROGRESS_MAX_VALUE })
+    updateAgentStatus('test-agent', 'running', {
+      progress: Math.random() * PROGRESS_MAX_VALUE,
+    })
   }
 
   return (

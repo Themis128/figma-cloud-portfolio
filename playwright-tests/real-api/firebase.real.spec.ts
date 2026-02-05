@@ -65,7 +65,9 @@ test.describe('Firebase - Real Integration', () => {
             projectId: hasFirebase
               ? (
                   window as typeof window & {
-                    firebase?: { app?: () => { options: { projectId: string } } }
+                    firebase?: {
+                      app?: () => { options: { projectId: string } }
+                    }
                   }
                 ).firebase?.app?.()?.options?.projectId
               : null,
@@ -198,7 +200,7 @@ test.describe('Firebase - Real Integration', () => {
       'Firebase SDK Load Time',
       async () => {
         return await page.evaluate(() => {
-          if (!(performance && performance.getEntriesByType)) {
+          if (!performance?.getEntriesByType) {
             return { loadTime: 0, resources: [] }
           }
 

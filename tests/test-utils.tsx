@@ -9,8 +9,8 @@
  * - Enhanced Suspense support
  */
 
-import React, { ReactElement } from 'react'
-import { render, RenderOptions } from '@testing-library/react'
+import { type RenderOptions, render } from '@testing-library/react'
+import React, { type ReactElement } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from '@/components/ThemeProvider'
 

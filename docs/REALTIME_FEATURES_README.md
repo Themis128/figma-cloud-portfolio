@@ -23,20 +23,21 @@ The WebSocket server is integrated with the Express application using Socket.IO:
 export function initializeSocketIO(server: any) {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL || false
-        : ['http://localhost:8081', 'http://localhost:3000'],
-      methods: ['GET', 'POST'],
+      origin:
+        process.env.NODE_ENV === "production"
+          ? process.env.FRONTEND_URL || false
+          : ["http://localhost:8081", "http://localhost:3000"],
+      methods: ["GET", "POST"],
       credentials: true,
     },
-  })
+  });
 
   // Event handlers for real-time features
-  io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
     // Handle user presence, typing, agent collaboration, etc.
-  })
+  });
 
-  return io
+  return io;
 }
 ```
 
@@ -47,7 +48,7 @@ The client uses a singleton SocketManager for connection management:
 ```typescript
 // client/lib/socket.ts
 class SocketManager {
-  private socket: Socket | null = null
+  private socket: Socket | null = null;
   // Connection management with auto-reconnection
 }
 ```
@@ -67,9 +68,9 @@ Tracks online users in real-time:
 
 ```typescript
 interface User {
-  id: string
-  name?: string
-  lastSeen: Date
+  id: string;
+  name?: string;
+  lastSeen: Date;
 }
 ```
 
@@ -83,10 +84,10 @@ Real-time typing status for collaborative features:
 
 ```typescript
 const { typingUsers, startTyping, stopTyping } = useTypingIndicator({
-  roomId: 'agent-room-123',
-  userId: 'user-456',
-  userName: 'John Doe',
-})
+  roomId: "agent-room-123",
+  userId: "user-456",
+  userName: "John Doe",
+});
 ```
 
 - **Room-Based**: Typing indicators scoped to specific rooms
@@ -99,9 +100,9 @@ Live agent execution status broadcasting:
 
 ```typescript
 const { agentStatuses, updateAgentStatus } = useAgentRealtime({
-  roomId: 'workflow-789',
-  userId: 'user-456',
-})
+  roomId: "workflow-789",
+  userId: "user-456",
+});
 ```
 
 - **Status Types**: idle, running, processing, error, completed
@@ -125,9 +126,9 @@ Main hook for WebSocket connection management:
 
 ```typescript
 const { isConnected, connectionError, presence, emit } = useSocket({
-  userId: 'user-123',
-  userName: 'John Doe',
-})
+  userId: "user-123",
+  userName: "John Doe",
+});
 ```
 
 ### useTypingIndicator
@@ -136,10 +137,10 @@ Manages typing indicators in collaborative contexts:
 
 ```typescript
 const { typingUsers, startTyping, stopTyping } = useTypingIndicator({
-  roomId: 'room-123',
-  userId: 'user-456',
-  userName: 'John Doe',
-})
+  roomId: "room-123",
+  userId: "user-456",
+  userName: "John Doe",
+});
 ```
 
 ### useAgentRealtime
@@ -148,9 +149,9 @@ Handles agent-related real-time features:
 
 ```typescript
 const { agentStatuses, updateAgentStatus, joinRoom } = useAgentRealtime({
-  roomId: 'agent-room-123',
-  userId: 'user-456',
-})
+  roomId: "agent-room-123",
+  userId: "user-456",
+});
 ```
 
 ## API Events
@@ -265,10 +266,10 @@ WEBSOCKET_URL=ws://localhost:3000
 
 ```typescript
 const socketOptions = {
-  transports: ['websocket', 'polling'],
+  transports: ["websocket", "polling"],
   timeout: 20000,
   forceNew: true,
-}
+};
 ```
 
 ## Security Considerations
@@ -328,7 +329,7 @@ The real-time features include a test component (`RealtimeTest`) that can be acc
 Enable debug logging:
 
 ```typescript
-localStorage.setItem('socket.io-debug', '*')
+localStorage.setItem("socket.io-debug", "*");
 ```
 
 ---

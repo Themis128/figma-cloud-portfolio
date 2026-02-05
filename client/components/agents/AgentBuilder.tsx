@@ -1,5 +1,5 @@
 import { ArrowLeft, Play, Save, Settings } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,23 +15,26 @@ interface AgentBuilderProps {
 }
 
 export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
-  const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` })
+  const [agent, setAgent] = useState<AgentTemplate>({
+    ...template,
+    id: `agent-${Date.now()}`,
+  })
   const [isRunning, setIsRunning] = useState(false)
   const [executionResult, setExecutionResult] = useState<Record<string, unknown> | null>(null)
   const [executionError, setExecutionError] = useState<string | null>(null)
 
-  const handleWorkflowUpdate = (nodes: AgentNode[], connections: AgentConnection[]) => {
+  const handleWorkflowUpdate = useCallback((nodes: AgentNode[], connections: AgentConnection[]) => {
     setAgent((prev) => ({
       ...prev,
       workflow: { nodes, connections },
     }))
-  }
+  }, [])
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     onSave(agent)
-  }
+  }, [agent, onSave])
 
-  const handleRunAgent = async () => {
+  const handleRunAgent = useCallback(async () => {
     setIsRunning(true)
     setExecutionResult(null)
     setExecutionError(null)
@@ -44,7 +47,7 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
     } finally {
       setIsRunning(false)
     }
-  }
+  }, [agent])
 
   return (
     <div className='max-w-7xl mx-auto space-y-8'>
@@ -139,7 +142,12 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 <Textarea
                   id='agent-description'
                   value={agent.description}
-                  onChange={(e) => setAgent((prev) => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setAgent((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   className='bg-white/10 border-white/20 text-white'
                   rows={3}
                 />

@@ -3,7 +3,7 @@ param (
   [string]$Region = $env:AWS_REGION,
   [string]$OutputEnvFile = "",
   [string]$Command = "",
-  [string[]]$CommandArgs = @()
+  [string[]]$CommandArgs
 )
 
 # Add logging functionality
@@ -33,8 +33,8 @@ function Test-SafeCommand {
   param(
     [Parameter(Mandatory=$true)]
     [string]$Command,
-    [Parameter(Mandatory=$true)]
-    [string[]]$Args
+    [Parameter(Mandatory=$false)]
+    [string[]]$Args = @()
   )
   
   # Dangerous patterns that could indicate injection
@@ -78,6 +78,11 @@ function Test-SafeCommand {
 
 $ErrorActionPreference = "Stop"
 
+# Ensure CommandArgs is initialized
+if (-not $CommandArgs) {
+  $CommandArgs = @()
+}
+
 # Check if AWS Secrets Manager should be used
 $useAWS = $SecretId -and (Get-Command aws -ErrorAction SilentlyContinue)
 
@@ -100,7 +105,20 @@ if ($useAWS) {
   }
 
   try {
-    $secretJson = & aws @awsArgs 2>$null
+    # Add timeout to prevent hanging
+    $job = Start-Job -ScriptBlock {
+      param($args)
+      & aws @args 2>$null
+    } -ArgumentList $awsArgs
+    
+    $result = Wait-Job $job -Timeout 10  # 10 second timeout
+    if ($result.State -eq 'Completed') {
+      $secretJson = Receive-Job $job
+    } else {
+      Write-Host "AWS CLI command timed out or failed" -ForegroundColor Yellow
+      $secretJson = $null
+    }
+    Remove-Job $job -Force
 
     if ($secretJson) {
       Write-Host "Secrets loaded from AWS Secrets Manager" -ForegroundColor Green

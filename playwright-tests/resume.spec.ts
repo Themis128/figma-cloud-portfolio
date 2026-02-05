@@ -105,13 +105,17 @@ test.describe('Resume Generation', () => {
     await page.locator('button:has-text("Show Preview")').click()
 
     // Preview should now be visible
-    await expect(page.locator('text="Resume Preview"')).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('text="Resume Preview"')).toBeVisible({
+      timeout: 5000,
+    })
 
     // Click hide preview button
     await page.locator('button:has-text("Hide Preview")').click()
 
     // Preview should be hidden again
-    await expect(page.locator('text="Resume Preview"')).not.toBeVisible({ timeout: 5000 })
+    await expect(page.locator('text="Resume Preview"')).not.toBeVisible({
+      timeout: 5000,
+    })
   })
 
   test('should save draft to localStorage', async ({ page }) => {

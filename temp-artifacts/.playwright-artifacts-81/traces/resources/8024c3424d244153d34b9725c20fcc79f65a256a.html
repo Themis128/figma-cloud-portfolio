@@ -1,90 +1,119 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <script type="module">
+      import { injectIntoGlobalHook } from "/@react-refresh";
+      injectIntoGlobalHook(window);
+      window.$RefreshReg$ = () => {};
+      window.$RefreshSig$ = () => (type) => type;
+    </script>
 
-<head>
-  <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
-injectIntoGlobalHook(window);
-window.$RefreshReg$ = () => {};
-window.$RefreshSig$ = () => (type) => type;</script>
+    <script type="module" src="/@vite/client"></script>
 
-  <script type="module" src="/@vite/client"></script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/logo.jpg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Primary Meta Tags -->
+    <title>
+      Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist
+    </title>
+    <meta
+      name="title"
+      content="Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist"
+    />
+    <meta
+      name="description"
+      content="Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments."
+    />
+    <meta
+      name="keywords"
+      content="Themistoklis Baltzakis, Cloud Architect, Cybersecurity, Azure AD, Microsoft 365, IT Leadership"
+    />
+    <meta name="author" content="Themistoklis Baltzakis" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
 
-  <!-- Primary Meta Tags -->
-  <title>
-    Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist
-  </title>
-  <meta name="title" content="Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist" />
-  <meta name="description"
-    content="Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments." />
-  <meta name="keywords"
-    content="Themistoklis Baltzakis, Cloud Architect, Cybersecurity, Azure AD, Microsoft 365, IT Leadership" />
-  <meta name="author" content="Themistoklis Baltzakis" />
-  <meta name="robots" content="index, follow" />
-  <meta name="language" content="English" />
+    <!-- Theme and UI -->
+    <meta name="theme-color" content="#1e293b" />
+    <meta name="color-scheme" content="light dark" />
 
-  <!-- Theme and UI -->
-  <meta name="theme-color" content="#1e293b" />
-  <meta name="color-scheme" content="light dark" />
+    <!-- Performance and Security -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta
+      http-equiv="Referrer-Policy"
+      content="strict-origin-when-cross-origin"
+    />
 
-  <!-- Performance and Security -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
-  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <!-- Mobile Optimization -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Fusion Starter" />
+    <meta name="application-name" content="Fusion Starter" />
 
-  <!-- Mobile Optimization -->
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Fusion Starter" />
-  <meta name="application-name" content="Fusion Starter" />
+    <!-- Touch and Gesture Optimization -->
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="format-detection" content="telephone=no" />
 
-  <!-- Touch and Gesture Optimization -->
-  <meta name="msapplication-tap-highlight" content="no" />
-  <meta name="format-detection" content="telephone=no" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.baltzakisthemis.com/" />
+    <meta
+      property="og:title"
+      content="Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist"
+    />
+    <meta
+      property="og:description"
+      content="Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments."
+    />
+    <meta
+      property="og:image"
+      content="https://www.baltzakisthemis.com/logo.jpg"
+    />
+    <meta property="og:site_name" content="Themistoklis Baltzakis" />
+    <meta property="og:locale" content="en_US" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.baltzakisthemis.com/" />
-  <meta property="og:title" content="Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist" />
-  <meta property="og:description"
-    content="Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments." />
-  <meta property="og:image" content="https://www.baltzakisthemis.com/logo.jpg" />
-  <meta property="og:site_name" content="Themistoklis Baltzakis" />
-  <meta property="og:locale" content="en_US" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.baltzakisthemis.com/" />
+    <meta
+      property="twitter:title"
+      content="Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist"
+    />
+    <meta
+      property="twitter:description"
+      content="Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments."
+    />
+    <meta
+      property="twitter:image"
+      content="https://www.baltzakisthemis.com/logo.jpg"
+    />
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://www.baltzakisthemis.com/" />
-  <meta property="twitter:title" content="Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist" />
-  <meta property="twitter:description"
-    content="Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments." />
-  <meta property="twitter:image" content="https://www.baltzakisthemis.com/logo.jpg" />
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Preconnect to external domains for performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- DNS prefetch for common resources -->
+    <link rel="dns-prefetch" href="//www.google-analytics.com" />
+    <link rel="dns-prefetch" href="//www.googletagmanager.com" />
 
-  <!-- DNS prefetch for common resources -->
-  <link rel="dns-prefetch" href="//www.google-analytics.com" />
-  <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+    <!-- Resource hints for critical resources -->
+    <link rel="modulepreload" href="/main.tsx" />
+    <link rel="prefetch" href="/logo.jpg" as="image" type="image/jpeg" />
 
-  <!-- Resource hints for critical resources -->
-  <link rel="modulepreload" href="/main.tsx" />
-  <link rel="prefetch" href="/logo.jpg" as="image" type="image/jpeg" />
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.baltzakisthemis.com/" />
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+  </head>
 
-  <!-- Canonical URL -->
-  <link rel="canonical" href="https://www.baltzakisthemis.com/" />
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.webmanifest" />
-</head>
-
-<body>
-  <div id="root"></div>
-  <script type="module" src="/main.tsx"></script>
-</body>
-
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
 </html>

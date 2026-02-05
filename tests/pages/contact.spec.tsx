@@ -107,7 +107,9 @@ describe('Contact Page', () => {
     fireEvent.change(nameInput, { target: { value: 'John Doe' } })
     fireEvent.change(emailInput, { target: { value: 'john@example.com' } })
     fireEvent.change(subjectInput, { target: { value: 'Project Inquiry' } })
-    fireEvent.change(messageInput, { target: { value: 'Hello, I need help with a project.' } })
+    fireEvent.change(messageInput, {
+      target: { value: 'Hello, I need help with a project.' },
+    })
 
     expect(nameInput).toHaveValue('John Doe')
     expect(emailInput).toHaveValue('john@example.com')
@@ -125,11 +127,15 @@ describe('Contact Page', () => {
     renderWithProviders(<Contact />)
 
     // Fill out the form
-    fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'John Doe' } })
+    fireEvent.change(screen.getByLabelText(/full name/i), {
+      target: { value: 'John Doe' },
+    })
     fireEvent.change(screen.getByLabelText(/email address/i), {
       target: { value: 'john@example.com' },
     })
-    fireEvent.change(screen.getByLabelText(/subject/i), { target: { value: 'Project Inquiry' } })
+    fireEvent.change(screen.getByLabelText(/subject/i), {
+      target: { value: 'Project Inquiry' },
+    })
     fireEvent.change(screen.getByLabelText(/message/i), {
       target: { value: 'Hello, I need help with a project.' },
     })
@@ -162,11 +168,15 @@ describe('Contact Page', () => {
     renderWithProviders(<Contact />)
 
     // Fill out the form
-    fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'John Doe' } })
+    fireEvent.change(screen.getByLabelText(/full name/i), {
+      target: { value: 'John Doe' },
+    })
     fireEvent.change(screen.getByLabelText(/email address/i), {
       target: { value: 'john@example.com' },
     })
-    fireEvent.change(screen.getByLabelText(/subject/i), { target: { value: 'Project Inquiry' } })
+    fireEvent.change(screen.getByLabelText(/subject/i), {
+      target: { value: 'Project Inquiry' },
+    })
     fireEvent.change(screen.getByLabelText(/message/i), {
       target: { value: 'Hello, I need help with a project.' },
     })
@@ -182,7 +192,10 @@ describe('Contact Page', () => {
 
   it('shows validation errors for empty required fields', async () => {
     const mockSubmitContactForm = vi.mocked(submitContactForm)
-    mockSubmitContactForm.mockResolvedValue({ success: false, message: 'Validation failed' })
+    mockSubmitContactForm.mockResolvedValue({
+      success: false,
+      message: 'Validation failed',
+    })
 
     renderWithProviders(<Contact />)
 

@@ -7,18 +7,21 @@ The Visual Progress Dashboard provides real-time monitoring and visualization of
 ## Features
 
 ### 📊 Real-time Test Monitoring
+
 - **Live Progress Bar**: Visual representation of test completion percentage
 - **Statistics Display**: Real-time counters for passed, failed, running, and skipped tests
 - **Current Test Status**: Shows which test is currently executing
 - **Performance Metrics**: Test execution times and duration tracking
 
 ### 📈 Interactive Dashboard
+
 - **Test Suite Visualization**: Individual progress for each test suite
 - **Status Indicators**: Color-coded status for each test (pass/fail/running)
 - **Log Console**: Real-time execution logs with filtering and search
 - **Artifact Access**: Direct links to test reports, videos, and screenshots
 
 ### 🎯 Enhanced Test Execution
+
 - **Automatic Dashboard Opening**: Opens when tests start via MCP server
 - **Cross-platform Support**: Works on Windows, macOS, and Linux
 - **Multiple Test Modes**: Support for regular, watch, and UI modes
@@ -29,6 +32,7 @@ The Visual Progress Dashboard provides real-time monitoring and visualization of
 ### Quick Start
 
 #### 1. Run Tests with Dashboard (Recommended)
+
 ```bash
 # Run all tests with automatic dashboard opening
 pnpm test:e2e:dashboard
@@ -41,12 +45,14 @@ pnpm test:e2e:dashboard:ui
 ```
 
 #### 2. Manual Dashboard Access
+
 ```bash
 # Open dashboard manually
 start "" "file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progress.html"
 ```
 
 #### 3. Using the Dashboard Script
+
 ```bash
 # Run with custom script
 node scripts/run-playwright-with-dashboard.js
@@ -61,22 +67,26 @@ node scripts/run-playwright-with-dashboard.js test playwright-tests/api.spec.ts
 ### Dashboard Components
 
 #### Progress Visualization
+
 - **Progress Bar**: Shows overall test completion percentage
 - **Statistics**: Live counters for different test states
 - **Current Test**: Displays the currently executing test
 
 #### Test Suite Grid
+
 - **Suite Status**: Individual progress for each test suite
 - **Test Items**: Detailed status for each test within suites
 - **Performance Data**: Execution times and duration metrics
 
 #### Log Console
+
 - **Real-time Logs**: Live streaming of test execution logs
 - **Filtering**: Filter logs by level (error, warn, info, debug)
 - **Search**: Search through log entries
 - **Export**: Download logs as text files
 
 #### Artifacts Section
+
 - **HTML Report**: Link to Playwright HTML test report
 - **JSON Results**: Link to structured test results
 - **Videos**: Link to failed test video recordings
@@ -91,7 +101,8 @@ The dashboard is automatically opened during Playwright's global setup phase thr
 ```typescript
 // Automatically opens dashboard when tests start
 console.log("📊 Opening Visual Progress Dashboard...");
-const dashboardUrl = "file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progress.html";
+const dashboardUrl =
+  "file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progress.html";
 // Cross-platform browser opening logic
 ```
 
@@ -112,6 +123,7 @@ Added convenient npm scripts for dashboard integration:
 ### Dashboard Self-Testing
 
 The dashboard includes its own test suite that validates:
+
 - Dashboard loading and functionality
 - Real-time progress updates
 - Log console operation
@@ -123,6 +135,7 @@ The dashboard includes its own test suite that validates:
 The dashboard includes 12 comprehensive tests covering:
 
 ### Core Functionality (9 tests)
+
 1. **Progress Display**: Validates dashboard loads with proper branding
 2. **Real-time Updates**: Tests dynamic progress bar and statistics
 3. **Test Execution Logs**: Validates log console with timestamped entries
@@ -134,10 +147,12 @@ The dashboard includes 12 comprehensive tests covering:
 9. **Comprehensive Information**: Validates footer and documentation
 
 ### Performance Tests (2 tests)
+
 1. **Load Performance**: Ensures dashboard loads within 3 seconds
 2. **Memory Efficiency**: Validates efficient real-time updates
 
 ### Accessibility Tests (1 test)
+
 1. **Screen Reader Support**: Tests proper heading structure and ARIA labels
 2. **Keyboard Navigation**: Confirms tab navigation through interactive elements
 
@@ -146,13 +161,17 @@ The dashboard includes 12 comprehensive tests covering:
 ### Dashboard Not Opening
 
 #### 1. Check File Path
+
 Ensure the dashboard file exists:
+
 ```bash
 ls -la playwright-tests/visual-progress.html
 ```
 
 #### 2. Manual Browser Opening
+
 Try opening manually:
+
 ```bash
 # Windows
 start "" "file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progress.html"
@@ -165,7 +184,9 @@ xdg-open "file:///D:/Nuxt%20Projects/new-portfolio/playwright-tests/visual-progr
 ```
 
 #### 3. Check Permissions
+
 Ensure the script has execution permissions:
+
 ```bash
 chmod +x scripts/run-playwright-with-dashboard.js
 ```
@@ -173,31 +194,39 @@ chmod +x scripts/run-playwright-with-dashboard.js
 ### Dashboard Not Updating
 
 #### 1. Check Test Execution
+
 Ensure tests are running and generating results:
+
 ```bash
 pnpm test:e2e:dashboard
 ```
 
 #### 2. Check File Permissions
+
 Ensure the dashboard can read test results:
+
 ```bash
 ls -la test-results/
 ```
 
 #### 3. Manual Refresh
+
 Use the refresh button in the dashboard or reload the page.
 
 ### Performance Issues
 
 #### 1. Memory Usage
+
 The dashboard is optimized for efficient memory usage during long test runs.
 
 #### 2. Network Issues
+
 For file:// URLs, ensure the browser allows local file access.
 
 ## Integration with CI/CD
 
 ### GitHub Actions
+
 The dashboard can be integrated into CI/CD pipelines:
 
 ```yaml
@@ -206,6 +235,7 @@ The dashboard can be integrated into CI/CD pipelines:
 ```
 
 ### Docker Support
+
 For containerized environments, the dashboard can be served via a simple HTTP server:
 
 ```bash
@@ -218,6 +248,7 @@ python -m http.server 8000
 ### Customizing the Dashboard
 
 The dashboard is built with:
+
 - **HTML/CSS**: Modern styling with CSS Grid and Flexbox
 - **JavaScript**: Vanilla JS for performance and compatibility
 - **Real-time Updates**: Fetch API for reading test results
@@ -232,6 +263,7 @@ The dashboard is built with:
 ### Performance Optimization
 
 The dashboard includes several performance optimizations:
+
 - **Efficient DOM Updates**: Minimal re-renders
 - **Memory Management**: Automatic cleanup of old log entries
 - **Lazy Loading**: Only loads necessary components

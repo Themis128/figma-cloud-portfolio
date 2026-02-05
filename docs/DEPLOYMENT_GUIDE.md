@@ -5,12 +5,14 @@ This guide provides step-by-step instructions for deploying your portfolio from 
 ## 📋 Prerequisites
 
 ### Local Environment
+
 - **Node.js**: Version 20.x or higher
 - **PNPM**: Package manager (`npm install -g pnpm`)
 - **Git**: Version control system
 - **AWS CLI**: Configured with your AWS credentials
 
 ### AWS Account
+
 - **AWS Account**: Active AWS account with billing enabled
 - **IAM Permissions**: Amplify, CloudFormation, and related service permissions
 - **GitHub Account**: Repository access for CI/CD integration
@@ -18,12 +20,14 @@ This guide provides step-by-step instructions for deploying your portfolio from 
 ## 🏗️ Local Build Process
 
 ### 1. Install Dependencies
+
 ```bash
 # Install all project dependencies
 pnpm install
 ```
 
 ### 2. Run Tests Locally
+
 ```bash
 # Run unit tests
 pnpm test
@@ -36,6 +40,7 @@ pnpm lint
 ```
 
 ### 3. Build for Production
+
 ```bash
 # Build the entire application
 pnpm build
@@ -47,6 +52,7 @@ pnpm build
 ```
 
 ### 4. Test Production Build Locally
+
 ```bash
 # Start production server
 pnpm start
@@ -57,6 +63,7 @@ pnpm start
 ## ☁️ AWS Setup
 
 ### 1. Configure AWS CLI
+
 ```bash
 # Configure AWS credentials
 aws configure
@@ -69,6 +76,7 @@ aws configure
 ```
 
 ### 2. Verify AWS Configuration
+
 ```bash
 # Check your AWS configuration
 aws configure list
@@ -84,7 +92,9 @@ aws sts get-caller-identity
 This is the **recommended approach** for continuous deployment and development workflow.
 
 #### Step 1: Prepare Your Repository
+
 Ensure your code is committed and pushed to GitHub:
+
 ```bash
 # Commit your changes
 git add .
@@ -93,6 +103,7 @@ git push origin main
 ```
 
 #### Step 2: Create Amplify App with GitHub Integration
+
 1. **Open AWS Amplify Console**:
    - Go to: https://console.aws.amazon.com/amplify/home
    - Click **"Create app"** → **"Host web app"**
@@ -116,7 +127,9 @@ git push origin main
    - AWS Amplify will clone your repository and start building
 
 #### Step 3: Enable Automatic Deployments
+
 Once connected, future commits will automatically trigger deployments:
+
 - **Push to main**: Production deployment
 - **Create PR**: CI testing without deployment
 - **Push to develop**: Staging deployment (if configured)
@@ -126,6 +139,7 @@ Once connected, future commits will automatically trigger deployments:
 For one-time deployments or testing without GitHub integration:
 
 #### Step 1: Build Locally
+
 ```bash
 # Build the application
 pnpm build
@@ -135,6 +149,7 @@ ls -la dist/
 ```
 
 #### Step 2: Create Deployment Archive
+
 ```bash
 # Create ZIP file from build output
 cd dist
@@ -143,6 +158,7 @@ cd ..
 ```
 
 #### Step 3: Deploy via AWS Console
+
 1. **AWS Amplify Console** → **"Create app"** → **"Host web app"**
 2. **Choose "Deploy without Git provider"**
 3. **Upload ZIP file**: Select `portfolio-deployment.zip`
@@ -153,6 +169,7 @@ cd ..
 ## 🔧 Configuration Files
 
 ### amplify.yml (Build Configuration)
+
 ```yaml
 version: 1
 frontend:
@@ -168,27 +185,27 @@ frontend:
   artifacts:
     baseDirectory: dist/spa
     files:
-      - '**/*'
+      - "**/*"
   cache:
     paths:
       - node_modules/**
 
 # Custom headers to fix MIME type issues
 customHeaders:
-  - pattern: '**/*.js'
+  - pattern: "**/*.js"
     headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-  - pattern: '**/*.mjs'
+      - key: "Content-Type"
+        value: "application/javascript"
+  - pattern: "**/*.mjs"
     headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-  - pattern: '**/sw.js'
+      - key: "Content-Type"
+        value: "application/javascript"
+  - pattern: "**/sw.js"
     headers:
-      - key: 'Content-Type'
-        value: 'application/javascript'
-      - key: 'Service-Worker-Allowed'
-        value: '/'
+      - key: "Content-Type"
+        value: "application/javascript"
+      - key: "Service-Worker-Allowed"
+        value: "/"
 
 backend:
   phases:
@@ -198,6 +215,7 @@ backend:
 ```
 
 ### Environment Variables
+
 Set these in AWS Amplify Console → App → Environment variables:
 
 ```bash
@@ -209,6 +227,7 @@ VITE_APP_ENV=production
 ## 🔄 CI/CD Pipeline
 
 ### Automatic Deployments
+
 Once connected to GitHub, deployments happen automatically:
 
 - **Push to `main`**: Production deployment
@@ -216,6 +235,7 @@ Once connected to GitHub, deployments happen automatically:
 - **Pull Requests**: CI testing without deployment
 
 ### Manual Deployments
+
 ```bash
 # Trigger production deployment
 gh workflow run "Deploy to Production"
@@ -225,6 +245,7 @@ gh workflow run "Deploy to Staging"
 ```
 
 ### Rollback Deployments
+
 ```bash
 # Rollback to previous version
 gh workflow run rollback.yml -f environment=production
@@ -236,10 +257,12 @@ gh workflow run rollback.yml -f environment=production -f target_commit=abc123
 ## 🧪 Testing Deployment
 
 ### 1. Check Build Logs
+
 - AWS Amplify Console → Your App → Build runs
 - Check for any build errors or warnings
 
 ### 2. Test Application
+
 - Visit your Amplify domain (e.g., `https://abc123.amplifyapp.com`)
 - Test all functionality:
   - ✅ Page navigation
@@ -248,6 +271,7 @@ gh workflow run rollback.yml -f environment=production -f target_commit=abc123
   - ✅ No JavaScript errors
 
 ### 3. Performance Testing
+
 ```bash
 # Test Lighthouse scores
 # Check Core Web Vitals in Chrome DevTools
@@ -257,6 +281,7 @@ gh workflow run rollback.yml -f environment=production -f target_commit=abc123
 ## 🔍 Troubleshooting
 
 ### Build Failures
+
 ```bash
 # Check build logs in Amplify Console
 # Common issues:
@@ -266,6 +291,7 @@ gh workflow run rollback.yml -f environment=production -f target_commit=abc123
 ```
 
 ### Runtime Errors
+
 ```bash
 # Check browser console for JavaScript errors
 # Verify environment variables are set correctly
@@ -273,6 +299,7 @@ gh workflow run rollback.yml -f environment=production -f target_commit=abc123
 ```
 
 ### Deployment Issues
+
 ```bash
 # Verify AWS credentials have correct permissions
 # Check GitHub repository access
@@ -280,7 +307,9 @@ gh workflow run rollback.yml -f environment=production -f target_commit=abc123
 ```
 
 ### MIME Type Issues
+
 If you see JavaScript loading errors:
+
 - ✅ Custom headers are configured in `amplify.yml`
 - ✅ Rebuild and redeploy to apply headers
 - ✅ Clear browser cache after deployment
@@ -288,11 +317,13 @@ If you see JavaScript loading errors:
 ## 📊 Monitoring & Maintenance
 
 ### Health Checks
+
 - Set up uptime monitoring (e.g., Pingdom, UptimeRobot)
 - Monitor AWS Amplify metrics in CloudWatch
 - Check error rates and performance metrics
 
 ### Updates
+
 ```bash
 # Update dependencies
 pnpm update
@@ -307,6 +338,7 @@ git push origin main
 ```
 
 ### Backup Strategy
+
 - Code is safely stored in GitHub
 - AWS Amplify provides deployment history
 - Consider AWS Backup for additional data protection
@@ -314,15 +346,18 @@ git push origin main
 ## 🚀 Advanced Configuration
 
 ### Custom Domain
+
 1. **Purchase domain** (Route 53 or external provider)
 2. **AWS Amplify Console** → Your App → Domain management
 3. **Add custom domain** and configure DNS
 
 ### SSL Certificate
+
 - AWS Amplify provides free SSL certificates
 - Automatic renewal and management
 
 ### Environment Branches
+
 ```bash
 # Create staging branch
 git checkout -b develop
@@ -335,11 +370,13 @@ git push origin develop
 ## 📞 Support
 
 ### AWS Amplify Resources
+
 - **Documentation**: https://docs.amplify.aws/
 - **Console**: https://console.aws.amazon.com/amplify/
 - **Support**: AWS Support Center
 
 ### Common Issues
+
 - **Build timeouts**: Increase build timeout in amplify.yml
 - **Large builds**: Use build cache and optimize bundle size
 - **Environment variables**: Ensure all required vars are set

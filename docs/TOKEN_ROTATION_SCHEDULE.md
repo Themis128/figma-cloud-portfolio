@@ -6,14 +6,14 @@ This document outlines the security token rotation schedule and procedures to ma
 
 ## Token Rotation Matrix
 
-| Token/Secret | Type | Rotation Interval | Last Rotated | Next Due | Owner |
-|--------------|------|-------------------|--------------|----------|-------|
-| CODACY_ACCOUNT_TOKEN | API Token | 90 days | [DATE] | [DATE] | DevOps |
-| GITHUB_TOKEN | Personal Access Token | 180 days | [DATE] | [DATE] | DevOps |
-| FIGMA_API_KEY | API Key | 180 days | [DATE] | [DATE] | Design |
-| FIGMA_CLIENT_SECRET | OAuth Secret | 180 days | [DATE] | [DATE] | Design |
-| AWS_ACCESS_KEY_ID | AWS Credential | 90 days | [DATE] | [DATE] | DevOps |
-| AWS_SECRET_ACCESS_KEY | AWS Credential | 90 days | [DATE] | [DATE] | DevOps |
+| Token/Secret          | Type                  | Rotation Interval | Last Rotated | Next Due | Owner  |
+| --------------------- | --------------------- | ----------------- | ------------ | -------- | ------ |
+| CODACY_ACCOUNT_TOKEN  | API Token             | 90 days           | [DATE]       | [DATE]   | DevOps |
+| GITHUB_TOKEN          | Personal Access Token | 180 days          | [DATE]       | [DATE]   | DevOps |
+| FIGMA_API_KEY         | API Key               | 180 days          | [DATE]       | [DATE]   | Design |
+| FIGMA_CLIENT_SECRET   | OAuth Secret          | 180 days          | [DATE]       | [DATE]   | Design |
+| AWS_ACCESS_KEY_ID     | AWS Credential        | 90 days           | [DATE]       | [DATE]   | DevOps |
+| AWS_SECRET_ACCESS_KEY | AWS Credential        | 90 days           | [DATE]       | [DATE]   | DevOps |
 
 ---
 
@@ -81,6 +81,7 @@ echo "📦 Backup saved to token-rotation-backup-$(date +%Y%m%d).json"
 ```
 
 Usage:
+
 ```bash
 chmod +x rotate-codacy-token.sh
 ./rotate-codacy-token.sh "your-new-token-here"
@@ -119,6 +120,7 @@ git push origin test/token-rotation
 ```
 
 Then:
+
 1. Open Pull Request
 2. Monitor GitHub Actions workflow execution
 3. Verify build passes and uses new token
@@ -350,26 +352,26 @@ name: Token Rotation Reminders
 on:
   schedule:
     # Every 1st of month at 9 AM UTC
-    - cron: '0 9 1 * *'
+    - cron: "0 9 1 * *"
 
 jobs:
   check-rotation-dates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Check Codacy token (due Feb, Apr, Jun, Aug, Oct, Dec)
         if: |
           contains('02,04,06,08,10,12', format('{0:00}', github.run_number % 12))
         run: |
           echo "🔔 REMINDER: Codacy token rotation due this month"
           echo "See: TOKEN_ROTATION_SCHEDULE.md for procedures"
-      
+
       - name: Check GitHub token (due June, December)
         if: contains('06,12', format('{0:00}', github.run_number % 12))
         run: |
           echo "🔔 REMINDER: GitHub token rotation due this month"
-      
+
       - name: Create issue for rotation
         uses: actions/github-script@v7
         with:
@@ -396,6 +398,7 @@ Create `SECURITY_AUDIT_LOG.md`:
 ## Rotation History
 
 ### 2026-02-01: Codacy Token Rotation
+
 - **Status**: ✅ Completed
 - **Time**: 14:30 UTC
 - **Old Token Revoked**: Yes
@@ -403,6 +406,7 @@ Create `SECURITY_AUDIT_LOG.md`:
 - **Verified By**: DevOps Team
 
 ### 2026-03-15: AWS Credentials Rotation
+
 - **Status**: ✅ Completed
 - **Time**: 10:15 UTC
 - **Old Credentials Deactivated**: Yes
@@ -412,6 +416,7 @@ Create `SECURITY_AUDIT_LOG.md`:
 ## Incidents
 
 ### 2026-02-01: Token Exposure in PR
+
 - **Severity**: High
 - **Token**: CODACY_ACCOUNT_TOKEN
 - **Discovered**: In PR comments

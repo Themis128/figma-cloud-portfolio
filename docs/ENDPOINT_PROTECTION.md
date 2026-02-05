@@ -24,6 +24,7 @@ Comprehensive guide for protecting your API endpoints and application infrastruc
 ### AWS Amplify (Automatic)
 
 AWS Amplify provides free SSL/TLS through AWS Certificate Manager:
+
 - ✅ Automatic certificate provisioning
 - ✅ Auto-renewal
 - ✅ HTTPS by default
@@ -34,8 +35,8 @@ AWS Amplify provides free SSL/TLS through AWS Certificate Manager:
 
 ```yaml
 redirects:
-  - source: 'http://<yourdomain.com>/<*>'
-    target: 'https://<yourdomain.com>/<*>'
+  - source: "http://<yourdomain.com>/<*>"
+    target: "https://<yourdomain.com>/<*>"
     status: 301
 ```
 
@@ -44,8 +45,11 @@ redirects:
 ```typescript
 // Redirect HTTP to HTTPS
 app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && req.header('x-forwarded-proto') !== 'https') {
-    return res.redirect(301, `https://${req.header('host')}${req.url}`);
+  if (
+    process.env.NODE_ENV === "production" &&
+    req.header("x-forwarded-proto") !== "https"
+  ) {
+    return res.redirect(301, `https://${req.header("host")}${req.url}`);
   }
   next();
 });
@@ -53,8 +57,8 @@ app.use((req, res, next) => {
 // Strict Transport Security Header
 app.use((req, res, next) => {
   res.setHeader(
-    'Strict-Transport-Security',
-    'max-age=31536000; includeSubDomains; preload'
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload",
   );
   next();
 });
@@ -69,37 +73,37 @@ app.use((req, res, next) => {
 **server/index.ts:**
 
 ```typescript
-import cors from 'cors';
-import { parse } from 'url';
+import cors from "cors";
+import { parse } from "url";
 
 const getAllowedOrigins = () => {
-  const isDev = process.env.NODE_ENV === 'development';
-  
+  const isDev = process.env.NODE_ENV === "development";
+
   if (isDev) {
     return [
-      'http://localhost:3001',
-      'http://localhost:8081',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:8081',
+      "http://localhost:3001",
+      "http://localhost:8081",
+      "http://127.0.0.1:3001",
+      "http://127.0.0.1:8081",
     ];
   }
 
   const production = [
-    'https://yourdomain.com',
-    'https://www.yourdomain.com',
-    'https://api.yourdomain.com',
+    "https://yourdomain.com",
+    "https://www.yourdomain.com",
+    "https://api.yourdomain.com",
   ];
 
   // Allow additional origins from environment
-  const customOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
-  
+  const customOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
   return [...production, ...customOrigins];
 };
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     const allowed = getAllowedOrigins();
-    
+
     if (!origin || allowed.includes(origin)) {
       callback(null, true);
     } else {
@@ -107,14 +111,14 @@ const corsOptions: cors.CorsOptions = {
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'X-Codacy-Account',
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "X-Codacy-Account",
   ],
-  exposedHeaders: ['X-Total-Count', 'X-Page-Number'],
+  exposedHeaders: ["X-Total-Count", "X-Page-Number"],
   maxAge: 86400, // 24 hours
   optionsSuccessStatus: 200,
 };
@@ -143,38 +147,38 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 **server/middleware/rateLimiter.ts:**
 
 ```typescript
-import rateLimit from 'express-rate-limit';
-import RedisStore from 'rate-limit-redis';
-import redis from 'redis';
+import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
+import redis from "redis";
 
 // Create Redis client for persistent rate limiting
 const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+  host: process.env.REDIS_HOST || "localhost",
+  port: parseInt(process.env.REDIS_PORT || "6379"),
 });
 
 // Global rate limiter: 100 requests per 15 minutes
 export const globalLimiter = rateLimit({
   store: new RedisStore({
     client: redisClient,
-    prefix: 'rl:global:',
+    prefix: "rl:global:",
   }),
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
-  message: 'Too many requests from this IP',
+  message: "Too many requests from this IP",
   standardHeaders: true, // Return rate limit info in headers
   legacyHeaders: false,
   skip: (req) => {
     // Don't rate limit health checks
-    return req.path === '/health';
+    return req.path === "/health";
   },
   keyGenerator: (req) => {
     // Use X-Forwarded-For if behind proxy (AWS Amplify)
-    return req.get('x-forwarded-for') || req.ip;
+    return req.get("x-forwarded-for") || req.ip;
   },
   handler: (req, res) => {
     res.status(429).json({
-      error: 'Too many requests',
+      error: "Too many requests",
       retryAfter: req.rateLimit?.resetTime,
     });
   },
@@ -184,12 +188,12 @@ export const globalLimiter = rateLimit({
 export const authLimiter = rateLimit({
   store: new RedisStore({
     client: redisClient,
-    prefix: 'rl:auth:',
+    prefix: "rl:auth:",
   }),
   windowMs: 15 * 60 * 1000,
   max: 5,
   skipSuccessfulRequests: true, // Don't count successful attempts
-  message: 'Too many login attempts',
+  message: "Too many login attempts",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -198,11 +202,11 @@ export const authLimiter = rateLimit({
 export const apiLimiter = rateLimit({
   store: new RedisStore({
     client: redisClient,
-    prefix: 'rl:api:',
+    prefix: "rl:api:",
   }),
   windowMs: 60 * 1000, // 1 minute
   max: 10,
-  message: 'API rate limit exceeded',
+  message: "API rate limit exceeded",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -211,11 +215,11 @@ export const apiLimiter = rateLimit({
 export const contactFormLimiter = rateLimit({
   store: new RedisStore({
     client: redisClient,
-    prefix: 'rl:contact:',
+    prefix: "rl:contact:",
   }),
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 1,
-  message: 'Please wait before sending another message',
+  message: "Please wait before sending another message",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -224,18 +228,23 @@ export const contactFormLimiter = rateLimit({
 **server/index.ts (apply limiters):**
 
 ```typescript
-import { globalLimiter, authLimiter, apiLimiter, contactFormLimiter } from './middleware/rateLimiter';
+import {
+  globalLimiter,
+  authLimiter,
+  apiLimiter,
+  contactFormLimiter,
+} from "./middleware/rateLimiter";
 
 // Apply global limiter to all routes
 app.use(globalLimiter);
 
 // Apply auth limiter to auth routes
-app.post('/api/auth/login', authLimiter, handleLogin);
-app.post('/api/auth/register', authLimiter, handleRegister);
+app.post("/api/auth/login", authLimiter, handleLogin);
+app.post("/api/auth/register", authLimiter, handleRegister);
 
 // Apply API limiter to endpoints
-app.get('/api/projects', apiLimiter, getProjects);
-app.post('/api/contact', contactFormLimiter, submitContactForm);
+app.get("/api/projects", apiLimiter, getProjects);
+app.post("/api/contact", contactFormLimiter, submitContactForm);
 ```
 
 ---
@@ -245,7 +254,7 @@ app.post('/api/contact', contactFormLimiter, submitContactForm);
 **server/middleware/validation.ts:**
 
 ```typescript
-import { z, ZodError } from 'zod';
+import { z, ZodError } from "zod";
 
 // Reusable schemas
 export const emailSchema = z.string().email().toLowerCase();
@@ -258,9 +267,12 @@ export const contactFormSchema = z.object({
   email: emailSchema,
   subject: z.string().min(3).max(200).trim(),
   message: messageSchema,
-  phone: z.string().optional().refine((val) => !val || /^\+?[1-9]\d{1,14}$/.test(val), {
-    message: 'Invalid phone number',
-  }),
+  phone: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\+?[1-9]\d{1,14}$/.test(val), {
+      message: "Invalid phone number",
+    }),
 });
 
 export type ContactForm = z.infer<typeof contactFormSchema>;
@@ -275,9 +287,9 @@ export const validateRequest = (schema: z.ZodSchema) => {
     } catch (error) {
       if (error instanceof ZodError) {
         return res.status(400).json({
-          error: 'Validation failed',
+          error: "Validation failed",
           details: error.errors.map((e) => ({
-            field: e.path.join('.'),
+            field: e.path.join("."),
             message: e.message,
           })),
         });
@@ -288,28 +300,32 @@ export const validateRequest = (schema: z.ZodSchema) => {
 };
 
 // Sanitization middleware
-export const sanitizeInputs = (req: Request, res: Response, next: NextFunction) => {
+export const sanitizeInputs = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const sanitize = (obj: any): any => {
-    if (typeof obj === 'string') {
+    if (typeof obj === "string") {
       // Remove HTML/script tags
       return obj
-        .replace(/<script[^>]*>.*?<\/script>/gi, '')
-        .replace(/<[^>]+>/g, '')
-        .replace(/javascript:/gi, '')
+        .replace(/<script[^>]*>.*?<\/script>/gi, "")
+        .replace(/<[^>]+>/g, "")
+        .replace(/javascript:/gi, "")
         .trim();
     }
-    
+
     if (Array.isArray(obj)) {
       return obj.map(sanitize);
     }
-    
-    if (obj !== null && typeof obj === 'object') {
+
+    if (obj !== null && typeof obj === "object") {
       return Object.keys(obj).reduce((acc, key) => {
         acc[key] = sanitize(obj[key]);
         return acc;
       }, {} as any);
     }
-    
+
     return obj;
   };
 
@@ -321,10 +337,14 @@ export const sanitizeInputs = (req: Request, res: Response, next: NextFunction) 
 **Usage in routes:**
 
 ```typescript
-import { validateRequest, contactFormSchema, sanitizeInputs } from './middleware/validation';
+import {
+  validateRequest,
+  contactFormSchema,
+  sanitizeInputs,
+} from "./middleware/validation";
 
 app.post(
-  '/api/contact',
+  "/api/contact",
   sanitizeInputs,
   validateRequest(contactFormSchema),
   contactFormLimiter,
@@ -332,7 +352,7 @@ app.post(
     // req.body is validated and sanitized
     const { name, email, message } = req.body;
     // Process safely...
-  }
+  },
 );
 ```
 
@@ -343,18 +363,22 @@ app.post(
 **server/middleware/securityHeaders.ts:**
 
 ```typescript
-import { Response, NextFunction, Request } from 'express';
+import { Response, NextFunction, Request } from "express";
 
-export const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+export const securityHeaders = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   // Strict Transport Security
   res.setHeader(
-    'Strict-Transport-Security',
-    'max-age=31536000; includeSubDomains; preload'
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload",
   );
 
   // Content Security Policy
   res.setHeader(
-    'Content-Security-Policy',
+    "Content-Security-Policy",
     [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
@@ -366,35 +390,30 @@ export const securityHeaders = (req: Request, res: Response, next: NextFunction)
       "base-uri 'self'",
       "form-action 'self'",
       "upgrade-insecure-requests",
-    ].join('; ')
+    ].join("; "),
   );
 
   // Prevent MIME type sniffing
-  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader("X-Content-Type-Options", "nosniff");
 
   // Clickjacking protection
-  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader("X-Frame-Options", "DENY");
 
   // XSS protection
-  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader("X-XSS-Protection", "1; mode=block");
 
   // Referrer Policy
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 
   // Permissions Policy (formerly Feature Policy)
   res.setHeader(
-    'Permissions-Policy',
-    [
-      'geolocation=()',
-      'microphone=()',
-      'camera=()',
-      'payment=()',
-    ].join(', ')
+    "Permissions-Policy",
+    ["geolocation=()", "microphone=()", "camera=()", "payment=()"].join(", "),
   );
 
   // Remove server header
-  res.removeHeader('Server');
-  res.removeHeader('X-Powered-By');
+  res.removeHeader("Server");
+  res.removeHeader("X-Powered-By");
 
   next();
 };
@@ -403,7 +422,7 @@ export const securityHeaders = (req: Request, res: Response, next: NextFunction)
 **Apply in server/index.ts:**
 
 ```typescript
-import { securityHeaders } from './middleware/securityHeaders';
+import { securityHeaders } from "./middleware/securityHeaders";
 
 app.use(securityHeaders);
 ```
@@ -500,13 +519,13 @@ aws wafv2 create-web-acl \
 **server/middleware/logging.ts:**
 
 ```typescript
-import { Request, Response, NextFunction } from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
+import { Request, Response, NextFunction } from "express";
+import * as fs from "fs";
+import * as path from "path";
 
 interface LogEntry {
   timestamp: string;
-  level: 'INFO' | 'WARN' | 'ERROR';
+  level: "INFO" | "WARN" | "ERROR";
   path: string;
   method: string;
   statusCode: number;
@@ -516,22 +535,30 @@ interface LogEntry {
   error?: string;
 }
 
-const logFile = path.join(process.cwd(), 'logs', `${new Date().toISOString().split('T')[0]}.log`);
+const logFile = path.join(
+  process.cwd(),
+  "logs",
+  `${new Date().toISOString().split("T")[0]}.log`,
+);
 
 // Ensure logs directory exists
 fs.mkdirSync(path.dirname(logFile), { recursive: true });
 
 const writeLog = (entry: LogEntry) => {
-  const line = JSON.stringify(entry) + '\n';
+  const line = JSON.stringify(entry) + "\n";
   fs.appendFileSync(logFile, line);
 };
 
-export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+export const requestLogger = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const start = Date.now();
-  
-  res.on('finish', () => {
+
+  res.on("finish", () => {
     const duration = Date.now() - start;
-    const level = res.statusCode >= 400 ? 'WARN' : 'INFO';
+    const level = res.statusCode >= 400 ? "WARN" : "INFO";
 
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
@@ -540,8 +567,8 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
       method: req.method,
       statusCode: res.statusCode,
       duration,
-      ip: req.get('x-forwarded-for') || req.ip || 'unknown',
-      userAgent: req.get('user-agent') || 'unknown',
+      ip: req.get("x-forwarded-for") || req.ip || "unknown",
+      userAgent: req.get("user-agent") || "unknown",
     };
 
     writeLog(entry);
@@ -550,16 +577,21 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
-export const errorLogger = (error: Error, req: Request, res: Response, next: NextFunction) => {
+export const errorLogger = (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const entry: LogEntry = {
     timestamp: new Date().toISOString(),
-    level: 'ERROR',
+    level: "ERROR",
     path: req.path,
     method: req.method,
     statusCode: res.statusCode,
     duration: 0,
-    ip: req.get('x-forwarded-for') || req.ip || 'unknown',
-    userAgent: req.get('user-agent') || 'unknown',
+    ip: req.get("x-forwarded-for") || req.ip || "unknown",
+    userAgent: req.get("user-agent") || "unknown",
     error: error.message,
   };
 
@@ -571,7 +603,7 @@ export const errorLogger = (error: Error, req: Request, res: Response, next: Nex
 **CloudWatch Integration:**
 
 ```typescript
-import CloudWatch from 'aws-sdk/clients/cloudwatch';
+import CloudWatch from "aws-sdk/clients/cloudwatch";
 
 const cloudwatch = new CloudWatch({ region: process.env.AWS_REGION });
 
@@ -579,32 +611,32 @@ export const sendMetricsToCloudWatch = async (entry: LogEntry) => {
   try {
     await cloudwatch
       .putMetricData({
-        Namespace: 'Portfolio/API',
+        Namespace: "Portfolio/API",
         MetricData: [
           {
-            MetricName: 'RequestDuration',
+            MetricName: "RequestDuration",
             Value: entry.duration,
-            Unit: 'Milliseconds',
+            Unit: "Milliseconds",
             Timestamp: new Date(),
             Dimensions: [
-              { Name: 'Endpoint', Value: entry.path },
-              { Name: 'Method', Value: entry.method },
+              { Name: "Endpoint", Value: entry.path },
+              { Name: "Method", Value: entry.method },
             ],
           },
           {
-            MetricName: 'StatusCode',
+            MetricName: "StatusCode",
             Value: entry.statusCode,
-            Unit: 'Count',
+            Unit: "Count",
             Timestamp: new Date(),
             Dimensions: [
-              { Name: 'StatusCode', Value: String(entry.statusCode) },
+              { Name: "StatusCode", Value: String(entry.statusCode) },
             ],
           },
         ],
       })
       .promise();
   } catch (error) {
-    console.error('CloudWatch error:', error);
+    console.error("CloudWatch error:", error);
   }
 };
 ```
@@ -614,12 +646,14 @@ export const sendMetricsToCloudWatch = async (entry: LogEntry) => {
 ## Part 8: DDoS Protection
 
 AWS Amplify includes:
+
 - ✅ CloudFront DDoS protection (Layer 3/4)
 - ✅ AWS WAF (Layer 7)
 
 ### Additional Protection
 
 1. **Enable Shield Advanced** (optional):
+
    ```bash
    aws shield subscribe --subscription
    ```
@@ -639,18 +673,22 @@ AWS Amplify includes:
 **server/middleware/auth.ts:**
 
 ```typescript
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
 interface AuthRequest extends Request {
   user?: { id: string; role: string };
 }
 
-export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+export const verifyToken = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
+    return res.status(401).json({ error: "No token provided" });
   }
 
   try {
@@ -658,14 +696,14 @@ export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction)
     req.user = decoded as any;
     next();
   } catch (error) {
-    return res.status(403).json({ error: 'Invalid token' });
+    return res.status(403).json({ error: "Invalid token" });
   }
 };
 
 export const requireRole = (allowedRoles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'Insufficient permissions' });
+      return res.status(403).json({ error: "Insufficient permissions" });
     }
     next();
   };

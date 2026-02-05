@@ -11,7 +11,10 @@ export class AgentExecutor {
   private connections: AgentConnection[]
   private context: Record<string, unknown> = {}
 
-  constructor(workflow: { nodes: AgentNode[]; connections: AgentConnection[] }) {
+  constructor(workflow: {
+    nodes: AgentNode[]
+    connections: AgentConnection[]
+  }) {
     this.nodes = workflow.nodes
     this.connections = workflow.connections
   }

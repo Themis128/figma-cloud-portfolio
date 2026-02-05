@@ -1,20 +1,30 @@
 // Real-time Dashboard with React 19 integration
-import React, { startTransition, useCallback, useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
-import { useEnhancedSocket, usePresence, useRealtimeEvents } from "../../hooks/useEnhancedRealtime";
-import type { ConnectionQuality, RealTimeEvent, RealtimeMetrics } from "../../types/realtime";
-import { CollaborationPanel, ConnectionStatus, PresenceIndicator } from "./CollaborationComponents";
+import { startTransition, useCallback, useMemo, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { useEnhancedSocket, usePresence, useRealtimeEvents } from '../../hooks/useEnhancedRealtime'
+import type { ConnectionQuality, RealTimeEvent, RealtimeMetrics } from '../../types/realtime'
+import { CollaborationPanel, ConnectionStatus, PresenceIndicator } from './CollaborationComponents'
+
+// Constants for connection quality thresholds and calculations
+const MILLISECONDS_PER_SECOND = 1000
+const EXCELLENT_LATENCY_THRESHOLD = 50
+const GOOD_LATENCY_THRESHOLD = 100
+const FAIR_LATENCY_THRESHOLD = 200
+const MIN_STABILITY = 0
+const MAX_STABILITY = 100
+const STABILITY_PENALTY_PER_RECONNECT = 20
+const MIN_THROUGHPUT_DENOMINATOR = 1
 
 // =============================================================================
 // REAL-TIME DASHBOARD COMPONENT
 // =============================================================================
 
 interface RealtimeDashboardProps {
-  className?: string;
-  showMetrics?: boolean;
-  showActivityFeed?: boolean;
-  showRoomsList?: boolean;
-  compact?: boolean;
+  className?: string
+  showMetrics?: boolean
+  showActivityFeed?: boolean
+  showRoomsList?: boolean
+  compact?: boolean
 }
 
 export function RealtimeDashboard({
@@ -24,19 +34,21 @@ export function RealtimeDashboard({
   showRoomsList = true,
   compact = false,
 }: RealtimeDashboardProps) {
-  const { connection, isConnected } = useEnhancedSocket();
-  const { presence, onlineCount } = usePresence("global");
-  const { events } = useRealtimeEvents("global_activity");
+  const { connection, isConnected } = useEnhancedSocket()
+  const { presence, onlineCount } = usePresence('global')
+  const { events } = useRealtimeEvents('global_activity')
 
-  const [selectedTab, setSelectedTab] = useState<"overview" | "activity" | "rooms" | "metrics">(
-    "overview",
-  );
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'activity' | 'rooms' | 'metrics'>(
+    'overview',
+  )
+  const [autoRefresh, setAutoRefresh] = useState(true)
 
   // Calculate real-time metrics
   const metrics = useMemo<RealtimeMetrics>(
     () => ({
-      connectionUptime: connection.socket ? Date.now() - connection.socket.connected * 1000 : 0,
+      connectionUptime: connection.socket
+        ? Date.now() - connection.socket.connected * MILLISECONDS_PER_SECOND
+        : 0,
       messagesReceived: events.length,
       messagesSent: 0, // Would track this from socket manager
       averageLatency: connection.latency || 0,
@@ -46,39 +58,44 @@ export function RealtimeDashboard({
       lastPingPong: Date.now(),
     }),
     [connection, events.length],
-  );
+  )
 
   // Calculate connection quality
   const connectionQuality = useMemo<ConnectionQuality>(() => {
-    const latency = connection.latency || 0;
-    let status: ConnectionQuality["status"] = "disconnected";
-    let stability = 0;
+    const latency = connection.latency || 0
+    let status: ConnectionQuality['status'] = 'disconnected'
+    let stability = 0
 
     if (isConnected) {
-      if (latency < 50) status = "excellent";
-      else if (latency < 100) status = "good";
-      else if (latency < 200) status = "fair";
-      else status = "poor";
+      if (latency < EXCELLENT_LATENCY_THRESHOLD) status = 'excellent'
+      else if (latency < GOOD_LATENCY_THRESHOLD) status = 'good'
+      else if (latency < FAIR_LATENCY_THRESHOLD) status = 'fair'
+      else status = 'poor'
 
-      stability = Math.max(0, 100 - connection.reconnectAttempts * 20);
+      stability = Math.max(
+        MIN_STABILITY,
+        MAX_STABILITY - connection.reconnectAttempts * STABILITY_PENALTY_PER_RECONNECT,
+      )
     }
 
     return {
       status,
       latency,
       stability,
-      throughput: events.length / Math.max(1, metrics.connectionUptime / 1000),
+      throughput:
+        events.length /
+        Math.max(MIN_THROUGHPUT_DENOMINATOR, metrics.connectionUptime / MILLISECONDS_PER_SECOND),
       errorRate: 0,
-    };
-  }, [connection, isConnected, events.length, metrics.connectionUptime]);
+    }
+  }, [connection, isConnected, events.length, metrics.connectionUptime])
 
-  const recentActivity = useMemo(() => events.slice(-10).reverse(), [events]);
+  const recentActivity = useMemo(() => events.slice(-10).reverse(), [events])
 
   const handleTabChange = useCallback((tab: typeof selectedTab) => {
     startTransition(() => {
-      setSelectedTab(tab);
-    });
-  }, []);
+      setSelectedTab(tab)
+    })
+  }, [])
 
   if (compact) {
     return (
@@ -87,13 +104,13 @@ export function RealtimeDashboard({
         onlineCount={onlineCount}
         className={className}
       />
-    );
+    )
   }
 
   return (
     <div
       className={cn(
-        "bg-white dark:bg-navy-800 rounded-lg shadow-sm border border-gray-200 dark:border-navy-700",
+        'bg-white dark:bg-navy-800 rounded-lg shadow-sm border border-gray-200 dark:border-navy-700',
         className,
       )}
     >
@@ -106,15 +123,16 @@ export function RealtimeDashboard({
           <div className='flex items-center space-x-3'>
             <ConnectionStatus showDetails />
             <button
+              type='button'
               onClick={() => setAutoRefresh(!autoRefresh)}
               className={cn(
-                "px-3 py-1 rounded-md text-sm font-medium transition-colors",
+                'px-3 py-1 rounded-md text-sm font-medium transition-colors',
                 autoRefresh
-                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                  : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
               )}
             >
-              Auto-refresh {autoRefresh ? "ON" : "OFF"}
+              Auto-refresh {autoRefresh ? 'ON' : 'OFF'}
             </button>
           </div>
         </div>
@@ -122,19 +140,20 @@ export function RealtimeDashboard({
         {/* Tab Navigation */}
         <div className='flex space-x-1 mt-4'>
           {[
-            { key: "overview", label: "Overview" },
-            { key: "activity", label: "Activity" },
-            { key: "rooms", label: "Rooms" },
-            { key: "metrics", label: "Metrics" },
+            { key: 'overview', label: 'Overview' },
+            { key: 'activity', label: 'Activity' },
+            { key: 'rooms', label: 'Rooms' },
+            { key: 'metrics', label: 'Metrics' },
           ].map((tab) => (
             <button
+              type='button'
               key={tab.key}
               onClick={() => handleTabChange(tab.key as typeof selectedTab)}
               className={cn(
-                "px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                'px-3 py-2 text-sm font-medium rounded-md transition-colors',
                 selectedTab === tab.key
-                  ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300"
-                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
+                  ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300'
+                  : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200',
               )}
             >
               {tab.label}
@@ -145,7 +164,7 @@ export function RealtimeDashboard({
 
       {/* Content */}
       <div className='p-4'>
-        {selectedTab === "overview" && (
+        {selectedTab === 'overview' && (
           <OverviewTab
             connectionQuality={connectionQuality}
             onlineCount={onlineCount}
@@ -154,16 +173,16 @@ export function RealtimeDashboard({
           />
         )}
 
-        {selectedTab === "activity" && showActivityFeed && <ActivityTab events={recentActivity} />}
+        {selectedTab === 'activity' && showActivityFeed && <ActivityTab events={recentActivity} />}
 
-        {selectedTab === "rooms" && showRoomsList && <RoomsTab rooms={connection.rooms} />}
+        {selectedTab === 'rooms' && showRoomsList && <RoomsTab rooms={connection.rooms} />}
 
-        {selectedTab === "metrics" && showMetrics && (
+        {selectedTab === 'metrics' && showMetrics && (
           <MetricsTab metrics={metrics} connectionQuality={connectionQuality} />
         )}
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -171,16 +190,16 @@ export function RealtimeDashboard({
 // =============================================================================
 
 interface CompactDashboardProps {
-  connectionQuality: ConnectionQuality;
-  onlineCount: number;
-  className?: string;
+  connectionQuality: ConnectionQuality
+  onlineCount: number
+  className?: string
 }
 
 function CompactDashboard({ connectionQuality, onlineCount, className }: CompactDashboardProps) {
   return (
     <div
       className={cn(
-        "bg-white dark:bg-navy-800 rounded-lg p-3 border border-gray-200 dark:border-navy-700 shadow-sm",
+        'bg-white dark:bg-navy-800 rounded-lg p-3 border border-gray-200 dark:border-navy-700 shadow-sm',
         className,
       )}
     >
@@ -198,11 +217,11 @@ function CompactDashboard({ connectionQuality, onlineCount, className }: Compact
             <div className='text-xs text-gray-500 dark:text-gray-400'>Quality</div>
             <div
               className={cn(
-                "text-sm font-medium",
-                connectionQuality.status === "excellent" && "text-green-600",
-                connectionQuality.status === "good" && "text-blue-600",
-                connectionQuality.status === "fair" && "text-yellow-600",
-                connectionQuality.status === "poor" && "text-red-600",
+                'text-sm font-medium',
+                connectionQuality.status === 'excellent' && 'text-green-600',
+                connectionQuality.status === 'good' && 'text-blue-600',
+                connectionQuality.status === 'fair' && 'text-yellow-600',
+                connectionQuality.status === 'poor' && 'text-red-600',
               )}
             >
               {connectionQuality.status}
@@ -220,7 +239,7 @@ function CompactDashboard({ connectionQuality, onlineCount, className }: Compact
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -228,20 +247,20 @@ function CompactDashboard({ connectionQuality, onlineCount, className }: Compact
 // =============================================================================
 
 interface OverviewTabProps {
-  connectionQuality: ConnectionQuality;
-  onlineCount: number;
-  presence: any[];
-  roomsCount: number;
+  connectionQuality: ConnectionQuality
+  onlineCount: number
+  presence: UserPresence[]
+  roomsCount: number
 }
 
 function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: OverviewTabProps) {
   const qualityColor = {
-    excellent: "text-green-600 bg-green-50 border-green-200",
-    good: "text-blue-600 bg-blue-50 border-blue-200",
-    fair: "text-yellow-600 bg-yellow-50 border-yellow-200",
-    poor: "text-red-600 bg-red-50 border-red-200",
-    disconnected: "text-gray-600 bg-gray-50 border-gray-200",
-  };
+    excellent: 'text-green-600 bg-green-50 border-green-200',
+    good: 'text-blue-600 bg-blue-50 border-blue-200',
+    fair: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+    poor: 'text-red-600 bg-red-50 border-red-200',
+    disconnected: 'text-gray-600 bg-gray-50 border-gray-200',
+  }
 
   return (
     <div className='space-y-6'>
@@ -267,7 +286,7 @@ function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: O
         <div className='bg-gray-50 dark:bg-navy-750 rounded-lg p-4'>
           <div
             className={cn(
-              "inline-flex px-2 py-1 rounded-full text-sm font-medium border",
+              'inline-flex px-2 py-1 rounded-full text-sm font-medium border',
               qualityColor[connectionQuality.status],
             )}
           >
@@ -317,7 +336,7 @@ function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: O
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -325,7 +344,7 @@ function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: O
 // =============================================================================
 
 interface ActivityTabProps {
-  events: RealTimeEvent[];
+  events: RealTimeEvent[]
 }
 
 function ActivityTab({ events }: ActivityTabProps) {
@@ -344,7 +363,7 @@ function ActivityTab({ events }: ActivityTabProps) {
             <div className='w-2 h-2 bg-cyan-500 rounded-full mt-2 flex-shrink-0' />
             <div className='flex-1 min-w-0'>
               <p className='text-sm text-gray-900 dark:text-white'>
-                {event.type.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                {event.type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
               </p>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
                 {new Date(event.timestamp).toLocaleTimeString()}
@@ -368,7 +387,7 @@ function ActivityTab({ events }: ActivityTabProps) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -376,7 +395,7 @@ function ActivityTab({ events }: ActivityTabProps) {
 // =============================================================================
 
 interface RoomsTabProps {
-  rooms: string[];
+  rooms: string[]
 }
 
 function RoomsTab({ rooms }: RoomsTabProps) {
@@ -401,7 +420,7 @@ function RoomsTab({ rooms }: RoomsTabProps) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -409,20 +428,20 @@ function RoomsTab({ rooms }: RoomsTabProps) {
 // =============================================================================
 
 interface MetricsTabProps {
-  metrics: RealtimeMetrics;
-  connectionQuality: ConnectionQuality;
+  metrics: RealtimeMetrics
+  connectionQuality: ConnectionQuality
 }
 
 function MetricsTab({ metrics, connectionQuality }: MetricsTabProps) {
   const formatUptime = (ms: number) => {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
+    const seconds = Math.floor(ms / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
 
-    if (hours > 0) return `${hours}h ${minutes % 60}m`;
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
-    return `${seconds}s`;
-  };
+    if (hours > 0) return `${hours}h ${minutes % 60}m`
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`
+    return `${seconds}s`
+  }
 
   return (
     <div className='space-y-6'>
@@ -492,7 +511,7 @@ function MetricsTab({ metrics, connectionQuality }: MetricsTabProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default RealtimeDashboard;
+export default RealtimeDashboard

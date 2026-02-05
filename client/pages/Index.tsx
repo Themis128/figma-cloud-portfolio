@@ -11,11 +11,14 @@ import {
   Shield,
   User,
 } from 'lucide-react'
-import AIBrain from '@/components/AIBrain'
+import { lazy, Suspense } from 'react'
+
+const AIBrain = lazy(() => import('@/components/AIBrain'))
+const Navigation = lazy(() => import('@/components/Navigation'))
+
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverButton, HoverIcon } from '@/components/HoverAnimations'
-import Navigation from '@/components/Navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -29,7 +32,9 @@ export default function Index() {
     >
       <CircuitBackground />
 
-      <Navigation />
+      <Suspense fallback={<div className='h-16 md:h-20 bg-slate-900/80 backdrop-blur-sm'></div>}>
+        <Navigation />
+      </Suspense>
 
       {/* Skip to main content link */}
       <a
@@ -173,7 +178,15 @@ export default function Index() {
             {/* AI Brain Visualization */}
             <AnimatedSection delay={0.2} className='flex justify-center lg:justify-end'>
               <div className='w-full max-w-md lg:max-w-lg'>
-                <AIBrain />
+                <Suspense
+                  fallback={
+                    <div className='w-full h-64 bg-slate-800/30 rounded-lg animate-pulse flex items-center justify-center text-slate-400'>
+                      Loading AI Brain...
+                    </div>
+                  }
+                >
+                  <AIBrain />
+                </Suspense>
               </div>
             </AnimatedSection>
           </div>

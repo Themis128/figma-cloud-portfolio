@@ -166,7 +166,11 @@ export function PushNotificationTester() {
       case 'denied':
         return { icon: XCircle, color: 'text-red-500', text: 'Denied' }
       default:
-        return { icon: AlertCircle, color: 'text-yellow-500', text: 'Not Requested' }
+        return {
+          icon: AlertCircle,
+          color: 'text-yellow-500',
+          text: 'Not Requested',
+        }
     }
   }
 

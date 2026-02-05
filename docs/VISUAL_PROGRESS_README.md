@@ -275,7 +275,7 @@ When opening the dashboard directly in a browser (file:// protocol), you may enc
   background: rgba(2, 6, 23, 0.9);
   border-radius: 8px;
   padding: 10px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.85em;
   line-height: 1.4;
 }
@@ -336,11 +336,11 @@ When opening the dashboard directly in a browser (file:// protocol), you may enc
   word-wrap: break-word;
 }
 
-.log-entry[data-level='error'] {
+.log-entry[data-level="error"] {
   border-left: 3px solid #dc2626;
 }
 
-.log-entry[data-level='warn'] {
+.log-entry[data-level="warn"] {
   border-left: 3px solid #d97706;
 }
 ```
@@ -350,60 +350,60 @@ When opening the dashboard directly in a browser (file:// protocol), you may enc
 ```javascript
 class LogsConsole {
   constructor(containerId) {
-    this.container = document.getElementById(containerId)
-    this.logs = []
-    this.filteredLogs = []
-    this.autoScroll = true
-    this.init()
+    this.container = document.getElementById(containerId);
+    this.logs = [];
+    this.filteredLogs = [];
+    this.autoScroll = true;
+    this.init();
   }
 
   init() {
-    this.setupEventListeners()
-    this.startLogStreaming()
+    this.setupEventListeners();
+    this.startLogStreaming();
   }
 
   setupEventListeners() {
     // Log level filter
     document
-      .getElementById('logLevelFilter')
-      .addEventListener('change', (e) => {
-        this.filterLogs(e.target.value)
-      })
+      .getElementById("logLevelFilter")
+      .addEventListener("change", (e) => {
+        this.filterLogs(e.target.value);
+      });
 
     // Search functionality
-    document.getElementById('logSearch').addEventListener('input', (e) => {
-      this.searchLogs(e.target.value)
-    })
+    document.getElementById("logSearch").addEventListener("input", (e) => {
+      this.searchLogs(e.target.value);
+    });
 
     // Clear logs
-    document.getElementById('clearLogs').addEventListener('click', () => {
-      this.clearLogs()
-    })
+    document.getElementById("clearLogs").addEventListener("click", () => {
+      this.clearLogs();
+    });
 
     // Export logs
-    document.getElementById('exportLogs').addEventListener('click', () => {
-      this.exportLogs()
-    })
+    document.getElementById("exportLogs").addEventListener("click", () => {
+      this.exportLogs();
+    });
 
     // Auto-scroll toggle
     document
-      .getElementById('autoScrollToggle')
-      .addEventListener('click', (e) => {
-        this.autoScroll = !this.autoScroll
-        e.target.textContent = `Auto-scroll: ${this.autoScroll ? 'ON' : 'OFF'}`
-      })
+      .getElementById("autoScrollToggle")
+      .addEventListener("click", (e) => {
+        this.autoScroll = !this.autoScroll;
+        e.target.textContent = `Auto-scroll: ${this.autoScroll ? "ON" : "OFF"}`;
+      });
 
     // Manual scroll lock detection
-    this.container.addEventListener('scroll', () => {
+    this.container.addEventListener("scroll", () => {
       const isAtBottom =
         this.container.scrollTop + this.container.clientHeight >=
-        this.container.scrollHeight - 10
+        this.container.scrollHeight - 10;
       if (!isAtBottom && this.autoScroll) {
-        this.autoScroll = false
-        document.getElementById('autoScrollToggle').textContent =
-          'Auto-scroll: OFF'
+        this.autoScroll = false;
+        document.getElementById("autoScrollToggle").textContent =
+          "Auto-scroll: OFF";
       }
-    })
+    });
   }
 
   addLog(level, suite, message, timestamp = new Date()) {
@@ -413,77 +413,77 @@ class LogsConsole {
       suite,
       message,
       timestamp,
-    }
+    };
 
-    this.logs.push(logEntry)
-    this.renderLog(logEntry)
+    this.logs.push(logEntry);
+    this.renderLog(logEntry);
 
     if (this.autoScroll) {
-      this.scrollToBottom()
+      this.scrollToBottom();
     }
   }
 
   renderLog(logEntry) {
-    const logElement = document.createElement('div')
-    logElement.className = 'log-entry'
-    logElement.dataset.level = logEntry.level
+    const logElement = document.createElement("div");
+    logElement.className = "log-entry";
+    logElement.dataset.level = logEntry.level;
 
     const timestamp = logEntry.timestamp
       .toISOString()
-      .replace('T', ' ')
-      .substring(0, 19)
+      .replace("T", " ")
+      .substring(0, 19);
 
     logElement.innerHTML = `
       <span class="log-timestamp">${timestamp}</span>
       <span class="log-level ${logEntry.level}">${logEntry.level.toUpperCase()}</span>
       <span class="log-suite">[${logEntry.suite}]</span>
       <span class="log-message">${this.escapeHtml(logEntry.message)}</span>
-    `
+    `;
 
-    this.container.appendChild(logElement)
+    this.container.appendChild(logElement);
   }
 
   filterLogs(level) {
-    const entries = this.container.querySelectorAll('.log-entry')
+    const entries = this.container.querySelectorAll(".log-entry");
 
     entries.forEach((entry) => {
-      const entryLevel = entry.dataset.level
-      if (level === 'all' || this.shouldShowLevel(entryLevel, level)) {
-        entry.style.display = 'flex'
+      const entryLevel = entry.dataset.level;
+      if (level === "all" || this.shouldShowLevel(entryLevel, level)) {
+        entry.style.display = "flex";
       } else {
-        entry.style.display = 'none'
+        entry.style.display = "none";
       }
-    })
+    });
   }
 
   shouldShowLevel(entryLevel, filterLevel) {
-    const levels = ['debug', 'info', 'warn', 'error']
-    const entryIndex = levels.indexOf(entryLevel)
-    const filterIndex = levels.indexOf(filterLevel)
-    return entryIndex >= filterIndex
+    const levels = ["debug", "info", "warn", "error"];
+    const entryIndex = levels.indexOf(entryLevel);
+    const filterIndex = levels.indexOf(filterLevel);
+    return entryIndex >= filterIndex;
   }
 
   searchLogs(query) {
-    const entries = this.container.querySelectorAll('.log-entry')
-    const lowerQuery = query.toLowerCase()
+    const entries = this.container.querySelectorAll(".log-entry");
+    const lowerQuery = query.toLowerCase();
 
     entries.forEach((entry) => {
       const message = entry
-        .querySelector('.log-message')
-        .textContent.toLowerCase()
-      const suite = entry.querySelector('.log-suite').textContent.toLowerCase()
+        .querySelector(".log-message")
+        .textContent.toLowerCase();
+      const suite = entry.querySelector(".log-suite").textContent.toLowerCase();
 
       if (message.includes(lowerQuery) || suite.includes(lowerQuery)) {
-        entry.style.display = 'flex'
+        entry.style.display = "flex";
       } else {
-        entry.style.display = 'none'
+        entry.style.display = "none";
       }
-    })
+    });
   }
 
   clearLogs() {
-    this.logs = []
-    this.container.innerHTML = ''
+    this.logs = [];
+    this.container.innerHTML = "";
   }
 
   exportLogs() {
@@ -491,29 +491,29 @@ class LogsConsole {
       .map((log) => {
         const timestamp = log.timestamp
           .toISOString()
-          .replace('T', ' ')
-          .substring(0, 19)
-        return `${timestamp} [${log.level.toUpperCase()}] [${log.suite}] ${log.message}`
+          .replace("T", " ")
+          .substring(0, 19);
+        return `${timestamp} [${log.level.toUpperCase()}] [${log.suite}] ${log.message}`;
       })
-      .join('\n')
+      .join("\n");
 
-    const blob = new Blob([logText], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `test-logs-${new Date().toISOString().split('T')[0]}.txt`
-    a.click()
-    URL.revokeObjectURL(url)
+    const blob = new Blob([logText], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `test-logs-${new Date().toISOString().split("T")[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   scrollToBottom() {
-    this.container.scrollTop = this.container.scrollHeight
+    this.container.scrollTop = this.container.scrollHeight;
   }
 
   escapeHtml(text) {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   startLogStreaming() {
@@ -521,65 +521,65 @@ class LogsConsole {
     // In a real implementation, this would connect to a WebSocket or poll an API
     setInterval(() => {
       // This is just for demonstration - replace with actual log streaming
-      this.addLog('info', 'Test Suite', 'Test execution in progress...')
-    }, 5000)
+      this.addLog("info", "Test Suite", "Test execution in progress...");
+    }, 5000);
   }
 }
 
 // Initialize logs console
-document.addEventListener('DOMContentLoaded', () => {
-  new LogsConsole('logsContainer')
-})
+document.addEventListener("DOMContentLoaded", () => {
+  new LogsConsole("logsContainer");
+});
 ```
 
 #### **Integration with Playwright**
 
 ```javascript
 // In your test files, you can send logs to the dashboard
-import { test } from '@playwright/test'
+import { test } from "@playwright/test";
 
-test('example test', async ({ page }) => {
-  console.log('Starting test execution...')
+test("example test", async ({ page }) => {
+  console.log("Starting test execution...");
   // Test code here
-  console.warn('Warning: Element not found')
+  console.warn("Warning: Element not found");
   // More test code
-  console.error('Test failed: Assertion error')
-})
+  console.error("Test failed: Assertion error");
+});
 ```
 
 #### **Server-Side Log Collection**
 
 ```javascript
 // server/logs-collector.js
-const express = require('express')
-const router = express.Router()
-const logs = []
+const express = require("express");
+const router = express.Router();
+const logs = [];
 
-router.post('/log', (req, res) => {
-  const { level, suite, message, timestamp } = req.body
+router.post("/log", (req, res) => {
+  const { level, suite, message, timestamp } = req.body;
   const logEntry = {
     level,
     suite,
     message,
     timestamp: timestamp || new Date(),
     id: Date.now(),
-  }
+  };
 
-  logs.push(logEntry)
+  logs.push(logEntry);
 
   // Broadcast to connected dashboard clients
   if (global.io) {
-    global.io.emit('new-log', logEntry)
+    global.io.emit("new-log", logEntry);
   }
 
-  res.json({ success: true })
-})
+  res.json({ success: true });
+});
 
-router.get('/logs', (req, res) => {
-  res.json(logs)
-})
+router.get("/logs", (req, res) => {
+  res.json(logs);
+});
 
-module.exports = router
+module.exports = router;
 ```
 
 ### **CSS Features**

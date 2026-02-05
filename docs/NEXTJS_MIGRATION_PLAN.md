@@ -1,11 +1,13 @@
 # Next.js Migration Plan
 
 ## Overview
+
 This document outlines the complete migration plan from the current React/Vite application to Next.js with App Router.
 
 ## Current State Analysis
 
 ### Application Structure
+
 - **Framework**: React 19 with TypeScript
 - **Build System**: Vite with custom configuration
 - **Routing**: React Router v7
@@ -15,6 +17,7 @@ This document outlines the complete migration plan from the current React/Vite a
 - **Features**: PWA, Accessibility, Performance Monitoring, SEO
 
 ### Key Components to Migrate
+
 1. **Client Application** (`client/` directory)
 2. **Server API** (`server/` directory)
 3. **Shared Code** (`shared/` directory)
@@ -26,6 +29,7 @@ This document outlines the complete migration plan from the current React/Vite a
 ### Phase 1: Next.js Project Setup
 
 #### 1.1 Initialize Next.js Project
+
 ```bash
 # Create new Next.js project
 npx create-next-app@latest new-portfolio --typescript --tailwind --eslint --app --src-dir
@@ -33,12 +37,14 @@ cd new-portfolio
 ```
 
 #### 1.2 Update Package.json Dependencies
+
 - Remove Vite-specific dependencies
 - Add Next.js dependencies
 - Update React dependencies to Next.js-compatible versions
 - Keep existing utility libraries
 
 #### 1.3 Configure Next.js
+
 - Create `next.config.js` with performance optimizations
 - Configure TypeScript for Next.js
 - Set up ESLint and Prettier
@@ -47,6 +53,7 @@ cd new-portfolio
 ### Phase 2: Component Migration
 
 #### 2.1 App Directory Structure
+
 ```
 app/
 ├── layout.tsx              # Root layout
@@ -72,12 +79,14 @@ app/
 ```
 
 #### 2.2 Convert Main App Component
+
 - Remove React Router dependencies
 - Convert to Next.js App Router
 - Update navigation components
 - Migrate context providers
 
 #### 2.3 Migrate Individual Pages
+
 - Convert each page component
 - Update routing logic
 - Migrate page-specific styles
@@ -86,24 +95,28 @@ app/
 ### Phase 3: Feature Migration
 
 #### 3.1 API Routes Migration
+
 - Convert Express routes to Next.js API routes
 - Update route handlers
 - Migrate middleware
 - Update client API calls
 
 #### 3.2 PWA Configuration
+
 - Configure Next.js PWA plugin
 - Update manifest settings
 - Migrate service worker logic
 - Update PWA components
 
 #### 3.3 Image Optimization
+
 - Replace custom image components with Next.js Image
 - Update image imports
 - Configure image optimization settings
 - Update responsive image logic
 
 #### 3.4 Performance Monitoring
+
 - Migrate performance monitoring to Next.js
 - Update analytics integration
 - Configure Next.js telemetry
@@ -112,12 +125,14 @@ app/
 ### Phase 4: Build and Deployment
 
 #### 4.1 Build Configuration
+
 - Update build scripts
 - Configure production optimizations
 - Set up environment variables
 - Update deployment configuration
 
 #### 4.2 Testing and Validation
+
 - Run comprehensive tests
 - Validate all functionality
 - Test performance improvements
@@ -177,24 +192,28 @@ app/
 ## Benefits of Next.js Migration
 
 ### Performance Improvements
+
 - **Server-Side Rendering (SSR)**: Better initial load performance
 - **Static Site Generation (SSG)**: Faster subsequent page loads
 - **Automatic Code Splitting**: Reduced bundle sizes
 - **Built-in Image Optimization**: Faster image loading
 
 ### Developer Experience
+
 - **File-based Routing**: Simplified routing logic
 - **Hot Module Replacement**: Faster development cycles
 - **Built-in TypeScript Support**: Better type safety
 - **Integrated Development Tools**: Enhanced debugging
 
 ### SEO and Accessibility
+
 - **SSR for SEO**: Better search engine indexing
 - **Built-in Accessibility**: Improved a11y features
 - **Structured Data**: Better semantic markup
 - **Performance Metrics**: Core Web Vitals optimization
 
 ### Security and Scalability
+
 - **Built-in Security**: XSS and CSRF protection
 - **Edge Runtime**: Global content delivery
 - **Scalable Architecture**: Easy horizontal scaling
@@ -203,18 +222,21 @@ app/
 ## Post-Migration Validation
 
 ### Performance Testing
+
 - **Core Web Vitals**: Lighthouse scores
 - **Bundle Analysis**: Size optimization
 - **Load Testing**: Performance under load
 - **Mobile Performance**: Mobile-first optimization
 
 ### Functionality Testing
+
 - **Feature Parity**: All features working
 - **User Experience**: Smooth interactions
 - **Error Handling**: Proper error states
 - **Cross-browser Support**: Browser compatibility
 
 ### SEO and Accessibility
+
 - **Search Engine Indexing**: Proper crawling
 - **Accessibility Compliance**: WCAG standards
 - **Structured Data**: Rich snippets
@@ -223,21 +245,25 @@ app/
 ## Timeline and Milestones
 
 ### Week 1: Foundation
+
 - [ ] Project setup and configuration
 - [ ] Core component migration
 - [ ] Basic routing implementation
 
 ### Week 2: Page Migration
+
 - [ ] Complete page-by-page migration
 - [ ] API route conversion
 - [ ] Feature migration
 
 ### Week 3: Optimization
+
 - [ ] Performance optimization
 - [ ] SEO improvements
 - [ ] Accessibility enhancements
 
 ### Week 4: Testing and Deployment
+
 - [ ] Comprehensive testing
 - [ ] Performance validation
 - [ ] Deployment preparation
@@ -245,12 +271,14 @@ app/
 ## Risk Mitigation
 
 ### Potential Challenges
+
 1. **State Management Migration**: Careful handling of existing state
 2. **API Integration**: Ensuring API compatibility
 3. **Performance Regression**: Monitoring performance metrics
 4. **Feature Parity**: Maintaining all existing functionality
 
 ### Mitigation Strategies
+
 1. **Incremental Migration**: Migrate components one at a time
 2. **Comprehensive Testing**: Automated and manual testing
 3. **Performance Monitoring**: Continuous performance tracking
@@ -259,18 +287,21 @@ app/
 ## Success Criteria
 
 ### Technical Metrics
+
 - [ ] All pages load successfully
 - [ ] Performance scores improve
 - [ ] SEO metrics enhance
 - [ ] Accessibility compliance achieved
 
 ### User Experience
+
 - [ ] No functionality loss
 - [ ] Improved page load times
 - [ ] Better mobile experience
 - [ ] Enhanced accessibility
 
 ### Development Experience
+
 - [ ] Simplified codebase
 - [ ] Better developer tools
 - [ ] Improved maintainability

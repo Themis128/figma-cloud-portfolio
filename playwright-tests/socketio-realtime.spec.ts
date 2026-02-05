@@ -198,9 +198,18 @@ test.describe('Socket.IO Real time Features', () => {
 
       const presenceTest = await page.evaluate(() => {
         if (window.presenceTracker) {
-          window.presenceTracker.addUser('user1', { name: 'Alice', status: 'online' })
-          window.presenceTracker.addUser('user2', { name: 'Bob', status: 'online' })
-          window.presenceTracker.addUser('user3', { name: 'Charlie', status: 'online' })
+          window.presenceTracker.addUser('user1', {
+            name: 'Alice',
+            status: 'online',
+          })
+          window.presenceTracker.addUser('user2', {
+            name: 'Bob',
+            status: 'online',
+          })
+          window.presenceTracker.addUser('user3', {
+            name: 'Charlie',
+            status: 'online',
+          })
 
           return {
             count: window.presenceTracker.getUserCount(),
@@ -221,7 +230,11 @@ test.describe('Socket.IO Real time Features', () => {
       // Mock status broadcasting
       await page.evaluate(() => {
         window.statusBroadcast = {
-          events: [] as Array<{ userId: string; status: string; timestamp: number }>,
+          events: [] as Array<{
+            userId: string
+            status: string
+            timestamp: number
+          }>,
           broadcast: function (userId: string, status: string) {
             const event = {
               userId,
@@ -500,7 +513,11 @@ test.describe('Socket.IO Real time Features', () => {
       // Mock message broadcasting
       await page.evaluate(() => {
         window.messageBroadcast = {
-          messages: [] as Array<{ room: string; message: string; sender: string }>,
+          messages: [] as Array<{
+            room: string
+            message: string
+            sender: string
+          }>,
           broadcast: function (room: string, message: string, sender: string) {
             this.messages.push({ room, message, sender })
           },
@@ -582,7 +599,11 @@ test.describe('Socket.IO Real time Features', () => {
 
       // Test message ordering
       const orderTest = await page.evaluate(() => {
-        const messages: Array<{ id: number; timestamp: number; content: string }> = []
+        const messages: Array<{
+          id: number
+          timestamp: number
+          content: string
+        }> = []
 
         // Add messages out of order
         messages.push({ id: 3, timestamp: 1000, content: 'Third' })

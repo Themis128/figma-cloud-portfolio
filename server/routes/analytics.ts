@@ -10,20 +10,34 @@ const HTTP_STATUS = {
 export const handleAnalytics = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log('[Analytics] Received request body:', JSON.stringify(req.body, null, 2))
-    const { event, timestamp, url, userAgent } = req.body
+    const { event, timestamp, url, userAgent, metrics } = req.body
 
-    // Basic validation
-    if (!(event && timestamp && url && userAgent)) {
-      console.log('[Analytics] Validation failed:', { event, timestamp, url, userAgent })
-      res
-        .status(HTTP_STATUS.BAD_REQUEST)
-        .json({ success: false, message: 'Missing required fields' })
+    // Handle metrics/performance data requests
+    if (metrics && Array.isArray(metrics)) {
+      console.log('[Analytics] Metrics data received:', metrics.length, 'metrics')
+      // For metrics, we don't need to validate event/userAgent fields
+      // Just acknowledge receipt
+      res.status(HTTP_STATUS.OK).json({ success: true, type: 'metrics' })
       return
     }
 
-    console.log('[Analytics] Event tracked:', event)
-    // Respond with success
-    res.status(HTTP_STATUS.OK).json({ success: true })
+    // Handle event tracking requests
+    if (event && timestamp && url && userAgent) {
+      console.log('[Analytics] Event tracked:', event)
+      res.status(HTTP_STATUS.OK).json({ success: true, type: 'event' })
+      return
+    }
+
+    // If neither metrics nor complete event data, validation fails
+    console.log('[Analytics] Validation failed:', {
+      hasEvent: !!event,
+      hasTimestamp: !!timestamp,
+      hasUrl: !!url,
+      hasUserAgent: !!userAgent,
+      hasMetrics: !!metrics,
+    })
+    res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: 'Invalid request format' })
+    return
   } catch (error) {
     console.error('[Analytics] Error:', error)
     res

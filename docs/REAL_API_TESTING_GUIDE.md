@@ -22,6 +22,7 @@
 ### What Changed?
 
 **Mock-based Tests (`playwright-tests/*.spec.ts`)**
+
 - Fast execution (milliseconds)
 - No API costs
 - Always available
@@ -29,6 +30,7 @@
 - ✅ Keep these for regular development
 
 **Real API Tests (`playwright-tests/real-api/*.real.spec.ts`)**
+
 - Slower execution (seconds/minutes)
 - May incur API costs
 - Network-dependent
@@ -37,13 +39,13 @@
 
 ### Why Both Approaches?
 
-| Aspect | Mock Tests | Real API Tests |
-|--------|-----------|----------------|
-| **Speed** | ⚡ Fast (ms) | 🐢 Slow (sec/min) |
-| **Cost** | 💚 Free | 💰 May cost $ |
-| **Reliability** | ✅ Always pass | ⚠️ Network-dependent |
-| **Coverage** | 📦 Feature logic | 🌐 End-to-end integration |
-| **When to use** | Every commit | Before deployment |
+| Aspect          | Mock Tests       | Real API Tests            |
+| --------------- | ---------------- | ------------------------- |
+| **Speed**       | ⚡ Fast (ms)     | 🐢 Slow (sec/min)         |
+| **Cost**        | 💚 Free          | 💰 May cost $             |
+| **Reliability** | ✅ Always pass   | ⚠️ Network-dependent      |
+| **Coverage**    | 📦 Feature logic | 🌐 End-to-end integration |
+| **When to use** | Every commit     | Before deployment         |
 
 ---
 
@@ -224,6 +226,7 @@ cat test-results/real-api-results.json
 ### GitHub API Tests
 
 **What's tested:**
+
 - Real workflow fetching
 - Workflow run status
 - Job details
@@ -231,6 +234,7 @@ cat test-results/real-api-results.json
 - LRU cache effectiveness
 
 **Environment variables:**
+
 ```env
 GITHUB_TOKEN=ghp_your_token
 TEST_GITHUB_API=true
@@ -238,11 +242,13 @@ RATE_LIMIT_DELAY_MS=1000
 ```
 
 **Run:**
+
 ```bash
 pnpm test:e2e:real playwright-tests/real-api/github-api.real.spec.ts
 ```
 
 **Expected output:**
+
 ```
 📋 Found 3 workflows:
   - CI/CD Pipeline (active)
@@ -260,6 +266,7 @@ pnpm test:e2e:real playwright-tests/real-api/github-api.real.spec.ts
 ### Firebase Tests
 
 **What's tested:**
+
 - Firebase SDK initialization
 - FCM availability
 - VAPID key retrieval
@@ -267,6 +274,7 @@ pnpm test:e2e:real playwright-tests/real-api/github-api.real.spec.ts
 - SDK load performance
 
 **Environment variables:**
+
 ```env
 VITE_FIREBASE_API_KEY=your_key
 VITE_FIREBASE_PROJECT_ID=your_project
@@ -274,11 +282,13 @@ TEST_FIREBASE=true
 ```
 
 **Run:**
+
 ```bash
 pnpm test:e2e:real playwright-tests/real-api/firebase.real.spec.ts
 ```
 
 **Expected output:**
+
 ```
 📱 Firebase Status:
   SDK Loaded: ✅
@@ -296,6 +306,7 @@ pnpm test:e2e:real playwright-tests/real-api/firebase.real.spec.ts
 ### Socket.IO Tests (Coming Soon)
 
 **What's tested:**
+
 - Real WebSocket connections
 - Room joining/leaving
 - Message broadcasting
@@ -304,6 +315,7 @@ pnpm test:e2e:real playwright-tests/real-api/firebase.real.spec.ts
 ### Anthropic Claude Tests (⚠️ Costs Money)
 
 **What's tested:**
+
 - Real Claude API calls
 - Streaming responses
 - Token usage tracking
@@ -324,23 +336,23 @@ TEST_ANTHROPIC=true  # WARNING: This will cost money
 
 These are safe to test extensively:
 
-| API | Free Tier | Notes |
-|-----|-----------|-------|
-| **GitHub** | 5000 req/hr | Per authenticated user |
-| **Firebase** | Generous quota | FCM, auth, database |
-| **Socket.IO** | Local | No external costs |
-| **Google Analytics** | Unlimited | Creates test data |
-| **reCAPTCHA** | 1M requests/month | Free |
+| API                  | Free Tier         | Notes                  |
+| -------------------- | ----------------- | ---------------------- |
+| **GitHub**           | 5000 req/hr       | Per authenticated user |
+| **Firebase**         | Generous quota    | FCM, auth, database    |
+| **Socket.IO**        | Local             | No external costs      |
+| **Google Analytics** | Unlimited         | Creates test data      |
+| **reCAPTCHA**        | 1M requests/month | Free                   |
 
 ### Paid APIs
 
 These cost money per API call:
 
-| API | Pricing | Recommended Limit |
-|-----|---------|-------------------|
-| **Anthropic Claude** | $0.25-$1.25/MTok | Max 100 tests/day |
-| **OpenAI GPT-4** | $0.03-$0.12/1K tokens | Max 50 tests/day |
-| **Sentry** | 5K events/month free | Stay under quota |
+| API                  | Pricing               | Recommended Limit |
+| -------------------- | --------------------- | ----------------- |
+| **Anthropic Claude** | $0.25-$1.25/MTok      | Max 100 tests/day |
+| **OpenAI GPT-4**     | $0.03-$0.12/1K tokens | Max 50 tests/day  |
+| **Sentry**           | 5K events/month free  | Stay under quota  |
 
 ### Cost Tracking
 
@@ -380,11 +392,13 @@ MAX_DAILY_COST_USD=5.00
 ### Tests are skipped
 
 **Problem:**
+
 ```
 ⏭️  Skipping GitHub API tests (missing credentials)
 ```
 
 **Solution:**
+
 1. Check `.env.test` exists
 2. Verify credentials are set
 3. Confirm `TEST_<API>=true`
@@ -398,11 +412,13 @@ cat .env.test | grep TEST_GITHUB_API
 ### Rate limit exceeded
 
 **Problem:**
+
 ```
 ❌ GitHub API: 403 - API rate limit exceeded
 ```
 
 **Solution:**
+
 1. Wait for rate limit reset
 2. Increase `RATE_LIMIT_DELAY_MS`
 3. Reduce `MAX_CONCURRENT_REQUESTS`
@@ -415,11 +431,13 @@ MAX_CONCURRENT_REQUESTS=1  # One at a time
 ### Network timeouts
 
 **Problem:**
+
 ```
 ❌ API Request timeout after 30000ms
 ```
 
 **Solution:**
+
 1. Check internet connection
 2. Verify API service status
 3. Increase timeout in config
@@ -432,11 +450,13 @@ timeout: 90000, // 90 seconds
 ### API credentials invalid
 
 **Problem:**
+
 ```
 ❌ Authentication error: 401 Unauthorized
 ```
 
 **Solution:**
+
 1. Regenerate API token
 2. Check token scopes/permissions
 3. Verify token hasn't expired
@@ -450,11 +470,13 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 ### Firebase not initializing
 
 **Problem:**
+
 ```
 📱 Firebase Status: SDK Loaded: ❌
 ```
 
 **Solution:**
+
 1. Verify all Firebase config variables
 2. Check Firebase console for project status
 3. Ensure project supports web applications
@@ -462,11 +484,13 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 ### High API costs
 
 **Problem:**
+
 ```
 ⚠️  Daily cost limit reached: $5.23
 ```
 
 **Solution:**
+
 1. Disable expensive APIs: `TEST_ANTHROPIC=false`
 2. Reduce test frequency
 3. Use cheaper models (haiku instead of opus)

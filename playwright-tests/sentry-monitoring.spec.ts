@@ -127,7 +127,11 @@ test.describe('Sentry Error Tracking', () => {
       // Mock error capture
       await page.evaluate(() => {
         window.sentryErrorCapture = {
-          errors: [] as Array<{ message: string; level: string; timestamp: number }>,
+          errors: [] as Array<{
+            message: string
+            level: string
+            timestamp: number
+          }>,
           captureException: function (error: Error) {
             this.errors.push({
               message: error.message,
@@ -223,7 +227,9 @@ test.describe('Sentry Error Tracking', () => {
 
         return {
           shouldSendNormal: errorFilter.beforeSend({ message: 'Normal error' }),
-          shouldFilterECONNRESET: errorFilter.beforeSend({ message: 'Error: ECONNRESET' }),
+          shouldFilterECONNRESET: errorFilter.beforeSend({
+            message: 'Error: ECONNRESET',
+          }),
           shouldFilterResizeObserver: errorFilter.beforeSend({
             message: 'ResizeObserver loop limit exceeded',
           }),

@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -113,7 +113,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -126,7 +126,7 @@ jobs:
           npx tsx server/node-build.ts > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
-          
+
           # Wait for backend to be ready (max 30 seconds)
           for i in {1..30}; do
             if curl -s http://localhost:3002/api/ping > /dev/null 2>&1; then
@@ -148,7 +148,7 @@ jobs:
           pnpm exec vite --port 3001 --host 0.0.0.0 > frontend.log 2>&1 &
           FRONTEND_PID=$!
           echo "Frontend PID: $FRONTEND_PID"
-          
+
           # Wait for frontend to be ready (max 30 seconds)
           for i in {1..30}; do
             if curl -s http://localhost:3001 > /dev/null 2>&1; then
@@ -195,7 +195,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -297,5 +297,3 @@ jobs:
   #       uses: github/codeql-action/upload-sarif@v4
   #       with:
   #         sarif_file: 'trivy-results.sarif'
-
-

@@ -22,11 +22,13 @@
 ### 1. GitHub Personal Access Token (HIGHEST PRIORITY)
 
 **Locations Found**:
+
 - `mcp.json` (Lines 251, 262)
 - `.env` - Variable: `GITHUB_PORTFOLIO_TOKEN`
 - Git history (commit: 331a86e3...)
 
 **Action Items**:
+
 - [ ] Go to https://github.com/settings/tokens
 - [ ] Find existing token(s) - look for:
   - Tokens created before Jan 24, 2026
@@ -49,6 +51,7 @@
 - [ ] Test MCP functionality
 
 **Verification**:
+
 ```bash
 # Test GitHub API access with new token
 curl -H "Authorization: token YOUR_NEW_TOKEN" https://api.github.com/user
@@ -59,6 +62,7 @@ curl -H "Authorization: token YOUR_NEW_TOKEN" https://api.github.com/user
 ### 2. Sentry Access Token
 
 **Action Items**:
+
 - [ ] Go to https://sentry.io/settings/account/api/auth-tokens/
 - [ ] Find and revoke existing token
 - [ ] Generate new token:
@@ -77,6 +81,7 @@ curl -H "Authorization: token YOUR_NEW_TOKEN" https://api.github.com/user
 ### 3. reCAPTCHA Keys
 
 **Action Items**:
+
 - [ ] Go to https://www.google.com/recaptcha/admin
 - [ ] Delete current site registration
 - [ ] Create new site:
@@ -100,6 +105,7 @@ curl -H "Authorization: token YOUR_NEW_TOKEN" https://api.github.com/user
 ### 4. Figma API Credentials
 
 **Action Items**:
+
 - [ ] Go to https://www.figma.com/developers/api
 - [ ] Settings → Personal Access Tokens
 - [ ] Revoke existing token
@@ -119,6 +125,7 @@ curl -H "Authorization: token YOUR_NEW_TOKEN" https://api.github.com/user
 ### 5. Codacy API Tokens
 
 **Action Items**:
+
 - [ ] Go to https://app.codacy.com/account/apiTokens
 - [ ] Revoke existing tokens:
   - API Token
@@ -182,6 +189,7 @@ Since repository is PRIVATE, this is optional but recommended:
   - Unix/Git Bash: `scripts/cleanup-git-history.sh`
 - [ ] Backup current state
 - [ ] Run cleanup script:
+
   ```bash
   # Git Bash
   ./scripts/cleanup-git-history.sh
@@ -189,6 +197,7 @@ Since repository is PRIVATE, this is optional but recommended:
   # PowerShell
   .\scripts\cleanup-git-history.ps1
   ```
+
 - [ ] Verify .env removed from history:
   ```bash
   git log --all --full-history -- .env
@@ -224,6 +233,7 @@ Since repository is PRIVATE, this is optional but recommended:
 Install and configure these tools to prevent future leaks:
 
 ### 1. Git Secrets Scanner
+
 ```bash
 # Install gitleaks
 winget install gitleaks
@@ -236,7 +246,9 @@ gitleaks detect --source . --verbose
 ```
 
 ### 2. Pre-commit Hook
+
 - [ ] Install pre-commit hooks:
+
   ```bash
   # Create pre-commit hook
   cat > .git/hooks/pre-commit << 'EOF'
@@ -253,12 +265,14 @@ gitleaks detect --source . --verbose
   ```
 
 ### 3. GitHub Secret Scanning
+
 - [ ] Enable secret scanning (if not already):
   - Go to: https://github.com/Themis128/figma-cloud-portfolio/settings/security_analysis
   - Enable "Secret scanning"
   - Enable "Push protection"
 
 ### 4. Regular Security Audits
+
 - [ ] Schedule quarterly token rotation
 - [ ] Review .gitignore monthly
 - [ ] Audit git history for leaks quarterly

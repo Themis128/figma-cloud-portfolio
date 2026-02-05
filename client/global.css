@@ -1,5 +1,7 @@
 /** @import must precede all other statements */
 @import "tailwindcss";
+
+/* Optimized font loading with fallbacks */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap");
 
@@ -8,7 +10,11 @@
    * Global font application
    */
   html {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      sans-serif;
     scroll-behavior: smooth;
   }
 
@@ -171,7 +177,7 @@
     font-size: 0.75rem; /* text-xs */
     line-height: 1rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-xs {
       font-size: 0.875rem; /* text-sm */
@@ -183,7 +189,7 @@
     font-size: 0.875rem; /* text-sm */
     line-height: 1.25rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-sm {
       font-size: 1rem; /* text-base */
@@ -195,7 +201,7 @@
     font-size: 1rem; /* text-base */
     line-height: 1.5rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-base {
       font-size: 1.125rem; /* text-lg */
@@ -207,7 +213,7 @@
     font-size: 1.125rem; /* text-lg */
     line-height: 1.75rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-lg {
       font-size: 1.25rem; /* text-xl */
@@ -219,14 +225,14 @@
     font-size: 1.25rem; /* text-xl */
     line-height: 1.75rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-xl {
       font-size: 1.5rem; /* text-2xl */
       line-height: 2rem;
     }
   }
-  
+
   @media (min-width: 768px) {
     .text-responsive-xl {
       font-size: 1.875rem; /* text-3xl */
@@ -238,14 +244,14 @@
     font-size: 1.5rem; /* text-2xl */
     line-height: 2rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-2xl {
       font-size: 1.875rem; /* text-3xl */
       line-height: 2.25rem;
     }
   }
-  
+
   @media (min-width: 768px) {
     .text-responsive-2xl {
       font-size: 2.25rem; /* text-4xl */
@@ -257,21 +263,21 @@
     font-size: 1.875rem; /* text-3xl */
     line-height: 2.25rem;
   }
-  
+
   @media (min-width: 640px) {
     .text-responsive-3xl {
       font-size: 2.25rem; /* text-4xl */
       line-height: 2.5rem;
     }
   }
-  
+
   @media (min-width: 768px) {
     .text-responsive-3xl {
       font-size: 3rem; /* text-5xl */
       line-height: 1;
     }
   }
-  
+
   @media (min-width: 1024px) {
     .text-responsive-3xl {
       font-size: 3.75rem; /* text-6xl */
@@ -283,13 +289,13 @@
   .space-responsive > * + * {
     margin-top: 1rem; /* space-y-4 */
   }
-  
+
   @media (min-width: 640px) {
     .space-responsive > * + * {
       margin-top: 1.5rem; /* space-y-6 */
     }
   }
-  
+
   @media (min-width: 768px) {
     .space-responsive > * + * {
       margin-top: 2rem; /* space-y-8 */
@@ -301,28 +307,28 @@
     padding-left: 1rem; /* px-4 */
     padding-right: 1rem;
   }
-  
+
   @media (min-width: 640px) {
     .container-mobile {
       padding-left: 1.5rem; /* px-6 */
       padding-right: 1.5rem;
     }
   }
-  
+
   @media (min-width: 768px) {
     .container-mobile {
       padding-left: 2rem; /* px-8 */
       padding-right: 2rem;
     }
   }
-  
+
   @media (min-width: 1024px) {
     .container-mobile {
       padding-left: 3rem; /* px-12 */
       padding-right: 3rem;
     }
   }
-  
+
   @media (min-width: 1280px) {
     .container-mobile {
       padding-left: 5rem; /* px-20 */
@@ -340,7 +346,7 @@
     align-items: center;
     justify-content: center;
   }
-  
+
   @media (min-width: 640px) {
     .btn-mobile {
       padding: 0.75rem 1.5rem; /* px-6 py-3 */
@@ -348,7 +354,7 @@
       line-height: 1.5rem;
     }
   }
-  
+
   @media (min-width: 768px) {
     .btn-mobile {
       padding: 0.75rem 2rem; /* px-8 py-3 */
@@ -360,14 +366,14 @@
     padding: 1rem; /* p-4 */
     border-radius: 0.5rem; /* rounded-lg */
   }
-  
+
   @media (min-width: 640px) {
     .card-mobile {
       padding: 1.5rem; /* p-6 */
       border-radius: 0.75rem; /* rounded-xl */
     }
   }
-  
+
   @media (min-width: 768px) {
     .card-mobile {
       padding: 2rem; /* p-8 */
@@ -389,5 +395,98 @@
 
   .enhanced-loading-dot-duration {
     animation-duration: 0.6s;
+  }
+}
+
+/* Critical CSS for above-the-fold content - inlined for performance */
+.critical-above-fold {
+  /* Hero section critical styles */
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: hsl(210 40% 98%);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 640px) {
+  .critical-above-fold {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .critical-above-fold {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .critical-above-fold {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+}
+
+/* Critical button styles */
+.critical-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  min-height: 44px;
+  background-color: hsl(210 40% 98%);
+  color: hsl(222.2 47.4% 11.2%);
+}
+
+.critical-btn:hover {
+  background-color: hsl(210 40% 90%);
+}
+
+@media (min-width: 640px) {
+  .critical-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+
+/* Critical navigation styles */
+.critical-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: hsl(222.2 84% 4.9% / 0.8);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid hsl(217.2 32.6% 17.5%);
+}
+
+/* Critical loading states */
+.critical-loading {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid hsl(217.2 32.6% 17.5%);
+  border-radius: 50%;
+  border-top-color: hsl(210 40% 98%);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

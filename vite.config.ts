@@ -12,7 +12,85 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const IMAGE_QUALITY_LOW = 70
 const IMAGE_QUALITY_MEDIUM = 75
 
-// https://vitejs.dev/config/
+// Time constants for caching
+const SECONDS_PER_MINUTE = 60
+const MINUTES_PER_HOUR = 60
+const HOURS_PER_DAY = 24
+const DAYS_PER_YEAR = 365
+const DAYS_PER_MONTH = 30
+const MINUTES_PER_CACHE_DURATION = 5
+const CACHE_DURATION_5_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_CACHE_DURATION
+const CACHE_DURATION_1_YEAR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR
+const CACHE_DURATION_30_DAYS =
+  SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_MONTH
+
+// Helper functions for chunk and asset naming
+const getChunkNameFromFacade = (facadeModuleId: string, chunkName?: string): string | null => {
+  // Page-level chunks
+  if (facadeModuleId.includes('pages/')) {
+    const pageName = chunkName || 'page'
+    return `pages/${pageName.toLowerCase()}.[hash].js`
+  }
+
+  // Component-level chunks
+  if (facadeModuleId.includes('components/')) {
+    const componentName = chunkName || 'component'
+    return `components/${componentName.toLowerCase()}.[hash].js`
+  }
+
+  // Feature-level chunks
+  if (facadeModuleId.includes('features/')) {
+    const featureName = chunkName || 'feature'
+    return `features/${featureName.toLowerCase()}.[hash].js`
+  }
+
+  // Library chunks
+  if (facadeModuleId.includes('lib/')) {
+    const libName = chunkName || 'lib'
+    return `lib/${libName.toLowerCase()}.[hash].js`
+  }
+
+  // Hook chunks
+  if (facadeModuleId.includes('hooks/')) {
+    const hookName = chunkName || 'hook'
+    return `hooks/${hookName.toLowerCase()}.[hash].js`
+  }
+
+  return null
+}
+
+const isVendorChunk = (chunkName?: string): boolean => {
+  return !!(chunkName && ['react-core', 'ui', 'charts', 'three'].includes(chunkName))
+}
+
+const getAssetFileName = (name: string): string => {
+  // CSS files
+  if (name.endsWith('.css')) {
+    return 'css/[name].[hash].[ext]'
+  }
+
+  // Images with type-based organization
+  if (name.match(/\.(png|jpe?g|svg|gif|webp|avif)$/i)) {
+    return 'images/[name].[hash].[ext]'
+  }
+
+  // Fonts
+  if (name.match(/\.(woff2?|eot|ttf|otf)$/i)) {
+    return 'fonts/[name].[hash].[ext]'
+  }
+
+  // Audio/Video
+  if (name.match(/\.(mp3|mp4|webm|ogg|wav)$/i)) {
+    return 'media/[name].[hash].[ext]'
+  }
+
+  // Documents
+  if (name.match(/\.(pdf|doc|docx|txt)$/i)) {
+    return 'documents/[name].[hash].[ext]'
+  }
+
+  return 'assets/[name].[hash].[ext]'
+}
 export default defineConfig(({ mode }) => {
   // Detect CI/CD environment
   const isCI = process.env.CI || process.env.AMPLIFY_BUILD_CONFIG
@@ -47,13 +125,16 @@ export default defineConfig(({ mode }) => {
       // (proxy is configured above based on mode)
       // Security headers for development
       headers: {
-        "X-Frame-Options": "DENY",
-        "X-Content-Type-Options": "nosniff",
-        "X-XSS-Protection": "1; mode=block",
-        "Referrer-Policy": "strict-origin-when-cross-origin",
-        "Content-Security-Policy":
+        'X-Frame-Options': 'DENY',
+        'X-Content-Type-Options': 'nosniff',
+        'X-XSS-Protection': '1; mode=block',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Content-Security-Policy':
           "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
-        "X-DNS-Prefetch-Control": "off",
+        'X-DNS-Prefetch-Control': 'off',
+        // Network performance headers
+        'X-Accel-Buffering': 'no', // Disable buffering for better TTFB
+        'Accept-Encoding': 'gzip, deflate, br', // Explicit compression support
       },
     },
     build: {
@@ -64,10 +145,10 @@ export default defineConfig(({ mode }) => {
             ? undefined
             : {
                 // Core React chunk - highest priority
-                "react-core": ["react", "react-dom"],
+                'react-core': ['react', 'react-dom'],
 
                 // Router chunk - navigation critical
-                router: ["react-router-dom"],
+                router: ['react-router-dom'],
 
                 // UI library - design system components
                 ui: [
@@ -85,162 +166,106 @@ export default defineConfig(({ mode }) => {
                 ],
 
                 // 3D graphics - heavy chunk, lazy load
-                three: ["three", "@react-three/fiber", "@react-three/drei"],
+                three: ['three', '@react-three/fiber', '@react-three/drei'],
 
                 // Utilities - shared across components
-                utils: ["clsx", "tailwind-merge", "date-fns", "zod"],
+                utils: ['clsx', 'tailwind-merge', 'date-fns', 'zod'],
 
                 // Forms - feature-specific
-                forms: ["react-hook-form", "@hookform/resolvers"],
+                forms: ['react-hook-form', '@hookform/resolvers'],
 
                 // State management
-                state: ["@tanstack/react-query"],
+                state: ['@tanstack/react-query'],
 
                 // Performance monitoring
-                performance: ["web-vitals"],
+                performance: ['web-vitals'],
 
                 // Animation libraries - split for lazy loading
-                animations: ["framer-motion", "lottie-web"],
+                animations: ['framer-motion', 'lottie-web'],
 
                 // Chart libraries - heavy, component-specific
-                charts: ["recharts"],
+                charts: ['recharts'],
 
                 // PDF and document processing
-                "pdf-utils": ["jspdf", "html2canvas"],
+                // 'pdf-utils': ['jspdf', 'html2canvas'], // Temporarily disabled - dependencies not installed
 
                 // Real-time features (Socket.IO)
-                realtime: ["socket.io-client"],
+                realtime: ['socket.io-client'],
 
                 // Development utilities
-                ...(mode === "development" && {
-                  devtools: ["@redux-devtools/extension", "react-error-boundary"],
+                ...(mode === 'development' && {
+                  devtools: ['@redux-devtools/extension', 'react-error-boundary'],
                 }),
               },
 
           // Enhanced chunk naming with better organization
           chunkFileNames: (chunkInfo) => {
-            const facadeModuleId = chunkInfo.facadeModuleId;
+            const facadeModuleId = chunkInfo.facadeModuleId
 
             if (facadeModuleId) {
-              // Page-level chunks
-              if (facadeModuleId.includes("pages/")) {
-                const pageName = chunkInfo.name || "page";
-                return `pages/${pageName.toLowerCase()}.[hash].js`;
-              }
-
-              // Component-level chunks
-              if (facadeModuleId.includes("components/")) {
-                const componentName = chunkInfo.name || "component";
-                return `components/${componentName.toLowerCase()}.[hash].js`;
-              }
-
-              // Feature-level chunks
-              if (facadeModuleId.includes("features/")) {
-                const featureName = chunkInfo.name || "feature";
-                return `features/${featureName.toLowerCase()}.[hash].js`;
-              }
-
-              // Library chunks
-              if (facadeModuleId.includes("lib/")) {
-                const libName = chunkInfo.name || "lib";
-                return `lib/${libName.toLowerCase()}.[hash].js`;
-              }
-
-              // Hook chunks
-              if (facadeModuleId.includes("hooks/")) {
-                const hookName = chunkInfo.name || "hook";
-                return `hooks/${hookName.toLowerCase()}.[hash].js`;
-              }
+              const chunkName = getChunkNameFromFacade(facadeModuleId, chunkInfo.name)
+              if (chunkName) return chunkName
             }
 
             // Vendor chunks get special naming
-            if (
-              chunkInfo.name &&
-              ["react-core", "ui", "charts", "three"].includes(chunkInfo.name)
-            ) {
-              return `vendor/${chunkInfo.name}.[hash].js`;
+            if (isVendorChunk(chunkInfo.name)) {
+              return `vendor/${chunkInfo.name}.[hash].js`
             }
 
             // Default chunks
-            return "chunks/[name].[hash].js";
+            return 'chunks/[name].[hash].js'
           },
 
           // Enhanced asset naming
           assetFileNames: (assetInfo) => {
-            const name = assetInfo.name || "asset";
-
-            // CSS files
-            if (name.endsWith(".css")) {
-              return "css/[name].[hash].[ext]";
-            }
-
-            // Images with type-based organization
-            if (name.match(/\.(png|jpe?g|svg|gif|webp|avif)$/i)) {
-              return "images/[name].[hash].[ext]";
-            }
-
-            // Fonts
-            if (name.match(/\.(woff2?|eot|ttf|otf)$/i)) {
-              return "fonts/[name].[hash].[ext]";
-            }
-
-            // Audio/Video
-            if (name.match(/\.(mp3|mp4|webm|ogg|wav)$/i)) {
-              return "media/[name].[hash].[ext]";
-            }
-
-            // Documents
-            if (name.match(/\.(pdf|doc|docx|txt)$/i)) {
-              return "documents/[name].[hash].[ext]";
-            }
-
-            return "assets/[name].[hash].[ext]";
+            const name = assetInfo.name || 'asset'
+            return getAssetFileName(name)
           },
         },
 
         // Advanced tree shaking for React 19
         treeshake: {
-          moduleSideEffects: (id, external) => {
+          moduleSideEffects: (id, _external) => {
             // Preserve CSS imports
-            if (id.includes(".css") || id.includes(".scss") || id.includes(".less")) {
-              return true;
+            if (id.includes('.css') || id.includes('.scss') || id.includes('.less')) {
+              return true
             }
 
             // Preserve polyfills
-            if (id.includes("polyfill") || id.includes("core-js")) {
-              return true;
+            if (id.includes('polyfill') || id.includes('core-js')) {
+              return true
             }
 
             // Preserve service worker registration
-            if (id.includes("sw.js") || id.includes("workbox")) {
-              return true;
+            if (id.includes('sw.js') || id.includes('workbox')) {
+              return true
             }
 
             // Remove side effects from utility libraries
-            if (id.includes("lodash") || id.includes("ramda") || id.includes("date-fns")) {
-              return false;
+            if (id.includes('lodash') || id.includes('ramda') || id.includes('date-fns')) {
+              return false
             }
 
             // React 19 specific optimizations
-            if (id.includes("react-dom/client") || id.includes("react/jsx-runtime")) {
-              return true;
+            if (id.includes('react-dom/client') || id.includes('react/jsx-runtime')) {
+              return true
             }
 
-            return true;
+            return true
           },
 
           // Functions that can be safely removed if unused
           /** @ts-expect-error */
-          pure: ["console.log", "console.info", "console.warn", "console.debug", "console.trace"],
+          pure: ['console.log', 'console.info', 'console.warn', 'console.debug', 'console.trace'],
 
           // Enable aggressive unused export removal
           unusedExports: true,
         },
 
         // External dependencies (for library builds)
-        external: (id) => {
+        external: (_id) => {
           // Don't externalize anything in application builds
-          return false;
+          return false
         },
       },
       // Performance budgets with React 19 considerations
@@ -248,14 +273,17 @@ export default defineConfig(({ mode }) => {
       reportCompressedSize: !isCI, // Skip in CI to save memory
 
       // Advanced optimizations
-      minify: "esbuild", // Faster than terser, good quality
+      minify: 'esbuild', // Faster than terser, good quality
       sourcemap: false, // Disable for production performance
       cssCodeSplit: true, // Better caching with split CSS
-      target: "esnext", // Modern JS for React 19 features
+      target: 'esnext', // Modern JS for React 19 features
+
+      // Network optimizations
+      compress: true, // Enable compression
 
       // Asset handling
       assetsInlineLimit: 4096, // Inline smaller assets
-      cssTarget: ["chrome91", "firefox89", "safari14", "edge91"], // Modern CSS
+      cssTarget: ['chrome91', 'firefox89', 'safari14', 'edge91'], // Modern CSS
 
       // Advanced terser options for production
       terserOptions: isCI
@@ -265,7 +293,7 @@ export default defineConfig(({ mode }) => {
               drop_console: false, // Keep console in development
               drop_debugger: true,
               pure_funcs:
-                mode === "production" ? ["console.log", "console.info", "console.debug"] : [],
+                mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
               passes: 2, // Multiple passes for better compression
             },
             mangle: {
@@ -279,15 +307,15 @@ export default defineConfig(({ mode }) => {
           },
 
       // Enhanced CSS minimization
-      cssMinify: "esbuild",
+      cssMinify: 'esbuild',
 
       // Improve build performance
       emptyOutDir: true,
       copyPublicDir: true,
       watch:
-        mode === "development"
+        mode === 'development'
           ? {
-              exclude: ["node_modules/**", "dist/**", "coverage/**"],
+              exclude: ['node_modules/**', 'dist/**', 'coverage/**'],
             }
           : null,
     },
@@ -340,97 +368,97 @@ export default defineConfig(({ mode }) => {
           })
         : undefined,
       VitePWA({
-        registerType: "autoUpdate",
-        includeAssets: ["favicon.ico", "logo.jpg", "logo.jpeg", "robots.txt", "*.woff2"],
-        srcDir: "../public",
-        filename: "sw.js",
-        strategies: "injectManifest",
+        registerType: 'autoUpdate',
+        includeAssets: ['favicon.ico', 'logo.jpg', 'logo.jpeg', 'robots.txt', '*.woff2'],
+        srcDir: '../public',
+        filename: 'sw.js',
+        strategies: 'injectManifest',
         devOptions: {
           enabled: true,
-          type: "module",
+          type: 'module',
         },
         manifest: {
-          name: "Themistoklis Baltzakis Portfolio",
-          short_name: "TB Portfolio",
-          description: "Cloud Architect & Cybersecurity Specialist Portfolio with AI Agents",
-          theme_color: "#0f172a",
-          background_color: "#0f172a",
-          display: "standalone",
-          orientation: "portrait-primary",
-          scope: "/",
-          start_url: "/",
-          categories: ["productivity", "business", "technology"],
-          lang: "en-US",
+          name: 'Themistoklis Baltzakis Portfolio',
+          short_name: 'TB Portfolio',
+          description: 'Cloud Architect & Cybersecurity Specialist Portfolio with AI Agents',
+          theme_color: '#0f172a',
+          background_color: '#0f172a',
+          display: 'standalone',
+          orientation: 'portrait-primary',
+          scope: '/',
+          start_url: '/',
+          categories: ['productivity', 'business', 'technology'],
+          lang: 'en-US',
           icons: [
             {
-              src: "/logo.jpg",
-              sizes: "192x192",
-              type: "image/jpeg",
-              purpose: "maskable",
+              src: '/logo.jpg',
+              sizes: '192x192',
+              type: 'image/jpeg',
+              purpose: 'maskable',
             },
             {
-              src: "/logo.jpg",
-              sizes: "512x512",
-              type: "image/jpeg",
-              purpose: "any",
+              src: '/logo.jpg',
+              sizes: '512x512',
+              type: 'image/jpeg',
+              purpose: 'any',
             },
           ],
         },
         workbox: {
-          globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,svg,woff2,woff}"],
+          globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,woff2,woff}'],
           // Advanced caching strategies
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-              handler: "CacheFirst",
+              handler: 'CacheFirst',
               options: {
-                cacheName: "google-fonts-cache",
+                cacheName: 'google-fonts-cache',
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                  maxAgeSeconds: CACHE_DURATION_1_YEAR, // 1 year
                 },
                 cacheKeyWillBeUsed: async ({ request }) => `${request.url}`,
               },
             },
             {
               urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-              handler: "CacheFirst",
+              handler: 'CacheFirst',
               options: {
-                cacheName: "gstatic-fonts-cache",
+                cacheName: 'gstatic-fonts-cache',
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365,
+                  maxAgeSeconds: CACHE_DURATION_1_YEAR,
                 },
               },
             },
             {
               urlPattern: /\/api\/.*\.(json)$/,
-              handler: "NetworkFirst",
+              handler: 'NetworkFirst',
               options: {
-                cacheName: "api-cache",
+                cacheName: 'api-cache',
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 60 * 5, // 5 minutes
+                  maxAgeSeconds: CACHE_DURATION_5_MINUTES, // 5 minutes
                 },
                 networkTimeoutSeconds: 10,
               },
             },
             {
               urlPattern: /.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-              handler: "CacheFirst",
+              handler: 'CacheFirst',
               options: {
-                cacheName: "images-cache",
+                cacheName: 'images-cache',
                 expiration: {
                   maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                  maxAgeSeconds: CACHE_DURATION_30_DAYS, // 30 days
                 },
               },
             },
             {
               urlPattern: /.*\.(js|css)$/,
-              handler: "StaleWhileRevalidate",
+              handler: 'StaleWhileRevalidate',
               options: {
-                cacheName: "static-resources",
+                cacheName: 'static-resources',
               },
             },
           ],

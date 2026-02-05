@@ -189,7 +189,9 @@ test.describe('Performance Monitoring', () => {
     await page.goto('http://localhost:3001/performance')
 
     // Wait for the page to load and main content to be visible
-    await page.waitForSelector('h1:has-text("Performance Dashboard")', { timeout: 10000 })
+    await page.waitForSelector('h1:has-text("Performance Dashboard")', {
+      timeout: 10000,
+    })
 
     // Page should still load and function normally
     await expect(page.locator('body')).toBeVisible()
@@ -222,7 +224,9 @@ test.describe('Performance Monitoring', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for the main heading to be visible (indicating the page has loaded)
-    await page.waitForSelector('h1:has-text("Performance Dashboard")', { timeout: 10000 })
+    await page.waitForSelector('h1:has-text("Performance Dashboard")', {
+      timeout: 10000,
+    })
 
     // Check that the page loaded and body is visible
     await expect(page.locator('body')).toBeVisible()
@@ -298,7 +302,9 @@ test.describe('Performance Monitoring', () => {
     await page.goto('http://localhost:3001/performance')
 
     // Wait for the page to load
-    await page.waitForSelector('h1:has-text("Performance Dashboard")', { timeout: 10000 })
+    await page.waitForSelector('h1:has-text("Performance Dashboard")', {
+      timeout: 10000,
+    })
 
     // Wait for the button to be available (it might be lazy loaded)
     const button = page.locator('button:has-text("Start Real-time Monitoring")')

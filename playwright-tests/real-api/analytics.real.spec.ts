@@ -208,8 +208,11 @@ test.describe('Google Analytics 4 - Real Integration', () => {
       await page.waitForTimeout(3000)
 
       return await page.evaluate(() => {
-        const dataLayer = (window as typeof window & { dataLayer?: Array<Record<string, unknown>> })
-          .dataLayer
+        const dataLayer = (
+          window as typeof window & {
+            dataLayer?: Array<Record<string, unknown>>
+          }
+        ).dataLayer
 
         if (!dataLayer) {
           return { tracked: false }
@@ -299,7 +302,7 @@ test.describe('Google Analytics 4 - Real Integration', () => {
         await waitForAppReady(page)
 
         return await page.evaluate(() => {
-          if (!(performance && performance.getEntriesByType)) {
+          if (!performance?.getEntriesByType) {
             return { impact: 0 }
           }
 

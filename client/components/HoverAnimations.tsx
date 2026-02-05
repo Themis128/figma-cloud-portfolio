@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { memo } from 'react'
 
 interface HoverCardProps {
   children: ReactNode
@@ -8,7 +9,7 @@ interface HoverCardProps {
   duration?: number
 }
 
-export function HoverCard({
+export const HoverCard = memo(function HoverCard({
   children,
   className = '',
   scale = 1.02,
@@ -23,7 +24,7 @@ export function HoverCard({
       {children}
     </motion.div>
   )
-}
+})
 
 interface HoverButtonProps {
   children: ReactNode
@@ -33,7 +34,7 @@ interface HoverButtonProps {
   duration?: number
 }
 
-export function HoverButton({
+export const HoverButton = memo(function HoverButton({
   children,
   className = '',
   scale = 1.05,
@@ -50,7 +51,7 @@ export function HoverButton({
       {children}
     </motion.div>
   )
-}
+})
 
 interface HoverIconProps {
   children: ReactNode
@@ -60,12 +61,12 @@ interface HoverIconProps {
   duration?: number
 }
 
-export function HoverIcon({
+export const HoverIcon = memo(function HoverIcon({
   children,
   className = '',
   scale = 1.1,
   rotate = 0,
-  duration = 0.3,
+  duration = 0.2,
 }: HoverIconProps) {
   return (
     <motion.div
@@ -76,4 +77,4 @@ export function HoverIcon({
       {children}
     </motion.div>
   )
-}
+})

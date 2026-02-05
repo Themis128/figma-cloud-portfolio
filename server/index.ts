@@ -1,3 +1,4 @@
+import compression from 'compression'
 import cors from 'cors'
 import 'dotenv/config'
 import type { Server as HttpServer } from 'node:http'
@@ -36,8 +37,51 @@ const logger = {
   error: (..._args: unknown[]) => {},
 }
 
+// Cache control helper function
+function getCacheControl(path: string): string | null {
+  // Health endpoints - short cache
+  if (path.startsWith('/api/health')) {
+    return 'public, max-age=30, s-maxage=60' // 30s browser, 60s CDN
+  }
+
+  // Static data endpoints - longer cache
+  if (path === '/api/ping' || path === '/api/demo') {
+    return 'public, max-age=300, s-maxage=600' // 5min browser, 10min CDN
+  }
+
+  // Analytics and contact - no cache (sensitive operations)
+  if (path.startsWith('/api/analytics') || path.startsWith('/api/contact')) {
+    return 'no-cache, no-store, must-revalidate'
+  }
+
+  // GitHub proxy endpoints - short cache to avoid stale data
+  if (path.startsWith('/api/github')) {
+    return 'public, max-age=60, s-maxage=120' // 1min browser, 2min CDN
+  }
+
+  // Push notifications - no cache
+  if (path.startsWith('/api/push-notifications')) {
+    return 'no-cache, no-store, must-revalidate'
+  }
+
+  // AI endpoints - no cache (dynamic responses)
+  if (path.startsWith('/api/ai')) {
+    return 'no-cache, no-store, must-revalidate'
+  }
+
+  // Resume downloads - longer cache for static content
+  if (path.startsWith('/api/resume')) {
+    return 'public, max-age=3600, s-maxage=7200' // 1hr browser, 2hr CDN
+  }
+
+  // Default for other API endpoints
+  return 'public, max-age=60, s-maxage=120' // Conservative default
+}
+
 export function createServer() {
   const app = express()
+  // Enable gzip compression for all responses
+  app.use(compression())
 
   // Local constants to avoid magic numbers and direct console usage
   const HTTP_BAD_REQUEST = 400
@@ -59,23 +103,19 @@ export function createServer() {
     res.setHeader('X-XSS-Protection', '1; mode=block')
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
 
+    // Performance headers
+    res.setHeader('X-Accel-Buffering', 'no') // Disable buffering for better TTFB
+    res.setHeader('Accept-Encoding', 'gzip, deflate, br') // Explicit compression support
+
     // Content Security Policy
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-<<<<<<< HEAD
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; " +
         "font-src 'self' https://fonts.gstatic.com https://use.typekit.net; " +
         "img-src 'self' data: https: blob:; " +
         "connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
-=======
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; " +
-        "font-src 'self' https://fonts.gstatic.com https://use.typekit.net; " +
-        "img-src 'self' data: https: blob:; " +
-        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
->>>>>>> 9d02b63 (Fix loading component issues and implement performance optimizations)
         "frame-src 'self' https://www.recaptcha.net; " +
         "object-src 'none'; " +
         "base-uri 'self'; " +
@@ -103,6 +143,22 @@ export function createServer() {
   // Serve static files from root directory (for deployment-monitor.html)
   app.use(express.static('.'))
 
+  // Caching middleware for API responses
+  app.use('/api', (req, res, next) => {
+    // Skip caching for POST/PUT/DELETE requests
+    if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+      return next()
+    }
+
+    // Set appropriate cache headers based on endpoint
+    const cacheControl = getCacheControl(req.path)
+    if (cacheControl) {
+      res.setHeader('Cache-Control', cacheControl)
+    }
+
+    next()
+  })
+
   // Middleware to handle JSON parsing errors
   app.use(((err: Error, _req: Request, res: Response, next: NextFunction) => {
     if (err instanceof SyntaxError && err.message.includes('JSON')) {
@@ -127,6 +183,7 @@ export function createServer() {
 
   // Analytics route
   app.post('/api/analytics', handleAnalytics)
+  app.post('/api/analytics/performance', handleAnalytics)
 
   // Resume download route
   app.get('/api/resume/download', handleResumeDownload)
@@ -218,129 +275,54 @@ export function initializeSocketIO(server: HttpServer) {
       methods: ['GET', 'POST'],
       credentials: true,
     },
-<<<<<<< HEAD
-  })
-
-  // Store connected users for presence
-  const connectedUsers = new Map<string, { id: string; name?: string; lastSeen: Date }>()
-
-  io.on('connection', (socket) => {
-    logger.info(`User connected: ${socket.id}`)
-
-    // Handle user joining
-    socket.on('user:join', (userData: { id: string; name?: string }) => {
-      connectedUsers.set(socket.id, {
-        id: userData.id,
-        name: userData.name,
-        lastSeen: new Date(),
-      })
-
-      // Broadcast presence update
-      io.emit('presence:update', Array.from(connectedUsers.values()))
-
-      // Join user-specific room for direct messages
-      socket.join(`user:${userData.id}`)
-    })
-
-    // Handle typing indicators
-    socket.on('typing:start', (data: { roomId?: string; userId: string; userName?: string }) => {
-      if (data.roomId) {
-        socket.to(data.roomId).emit('typing:start', {
-          userId: data.userId,
-          userName: data.userName,
-        })
-      }
-    })
-
-    socket.on('typing:stop', (data: { roomId?: string; userId: string }) => {
-      if (data.roomId) {
-        socket.to(data.roomId).emit('typing:stop', {
-          userId: data.userId,
-        })
-      }
-    })
-
-    // Handle agent collaboration
-    socket.on('agent:join-room', (roomId: string) => {
-      socket.join(`agent:${roomId}`)
-      socket.emit('agent:room-joined', roomId)
-    })
-
-    socket.on('agent:leave-room', (roomId: string) => {
-      socket.leave(`agent:${roomId}`)
-    })
-
-    socket.on('agent:update', (data: { roomId: string; updates: Record<string, unknown> }) => {
-      socket.to(`agent:${data.roomId}`).emit('agent:update', {
-        ...data.updates,
-        from: socket.id,
-      })
-    })
-
-    // Handle agent status updates
-    socket.on(
-      'agent:status-update',
-      (data: { agentId: string; status: string; details?: Record<string, unknown> }) => {
-        io.emit('agent:status-changed', {
-          agentId: data.agentId,
-          status: data.status,
-          details: data.details,
-          timestamp: new Date(),
-        })
-=======
     // Enhanced configuration for React 19 integration
-    transports: ["websocket", "polling"],
-    upgrade: true,
+    transports: ['websocket', 'polling'],
     pingTimeout: 60000,
     pingInterval: 25000,
     maxHttpBufferSize: 1e6, // 1MB
     allowEIO3: true,
-  });
+  })
 
   // Enhanced user presence management
   interface UserPresence {
-    userId: string;
-    socketId: string;
-    username?: string;
-    status: "online" | "away" | "busy" | "offline";
-    activity?: "viewing" | "editing" | "idle" | "typing";
-    currentSection?: string;
-    isEditing?: boolean;
-    rooms: Set<string>;
-    joinedAt: number;
-    lastSeen: number;
-    metadata?: Record<string, any>;
+    userId: string
+    socketId: string
+    username?: string
+    status: 'online' | 'away' | 'busy' | 'offline'
+    activity?: 'viewing' | 'editing' | 'idle' | 'typing'
+    currentSection?: string
+    isEditing?: boolean
+    rooms: Set<string>
+    joinedAt: number
+    lastSeen: number
+    metadata?: Record<string, unknown>
   }
 
   interface Room {
-    id: string;
-    participants: Set<string>;
-    createdAt: number;
-    metadata?: Record<string, any>;
+    id: string
+    participants: Set<string>
+    createdAt: number
+    metadata?: Record<string, unknown>
   }
 
-  const connectedUsers = new Map<string, UserPresence>();
-  const rooms = new Map<string, Room>();
-  const typingUsers = new Map<
-    string,
-    { userId: string; roomId: string; timeout: NodeJS.Timeout }
-  >();
+  const connectedUsers = new Map<string, UserPresence>()
+  const rooms = new Map<string, Room>()
+  const typingUsers = new Map<string, { userId: string; roomId: string; timeout: NodeJS.Timeout }>()
 
   // Enhanced connection handling
-  io.on("connection", (socket) => {
-    logger.info(`Enhanced Socket.IO connection established: ${socket.id}`);
+  io.on('connection', (socket) => {
+    logger.info(`Enhanced Socket.IO connection established: ${socket.id}`)
 
     // Enhanced authentication and presence setup
     socket.on(
-      "authenticate",
+      'authenticate',
       (authData: { userId?: string; username?: string; userAgent?: string }) => {
-        const userId = authData.userId || `anonymous-${Date.now()}`;
+        const userId = authData.userId || `anonymous-${Date.now()}`
         const userPresence: UserPresence = {
           userId,
           socketId: socket.id,
-          username: authData.username,
-          status: "online",
-          activity: "viewing",
+          status: 'online',
+          activity: 'viewing',
           rooms: new Set(),
           joinedAt: Date.now(),
           lastSeen: Date.now(),
@@ -348,312 +330,305 @@ export function initializeSocketIO(server: HttpServer) {
             userAgent: authData.userAgent,
             connectedAt: new Date().toISOString(),
           },
-        };
+          ...(authData.username && { username: authData.username }),
+        }
 
-        connectedUsers.set(socket.id, userPresence);
+        connectedUsers.set(socket.id, userPresence)
 
         // Join global presence room
-        socket.join("global");
-        userPresence.rooms.add("global");
+        socket.join('global')
+        userPresence.rooms.add('global')
 
         // Send initial presence data
-        socket.emit("presence_initial", {
+        socket.emit('presence_initial', {
           userId: userPresence.userId,
           presence: Array.from(connectedUsers.values()).map(formatPresenceForClient),
-        });
+        })
 
         // Broadcast user joined to all clients
-        socket.to("global").emit("user_joined", formatPresenceForClient(userPresence));
+        socket.to('global').emit('user_joined', formatPresenceForClient(userPresence))
 
-        logger.info(`User authenticated: ${userId} (${socket.id})`);
+        logger.info(`User authenticated: ${userId} (${socket.id})`)
       },
-    );
+    )
 
     // Enhanced room management
-    socket.on("join_room", (data: { roomId: string; data?: any }) => {
-      const user = connectedUsers.get(socket.id);
-      if (!user) return;
+    socket.on('join_room', (data: { roomId: string; data?: unknown }) => {
+      const user = connectedUsers.get(socket.id)
+      if (!user) return
 
-      const { roomId } = data;
-      socket.join(roomId);
-      user.rooms.add(roomId);
+      const { roomId } = data
+      socket.join(roomId)
+      user.rooms.add(roomId)
 
       // Create or update room
-      if (!rooms.has(roomId)) {
-        rooms.set(roomId, {
+      if (rooms.has(roomId)) {
+        const room = rooms.get(roomId)
+        if (room) {
+          room.participants.add(socket.id)
+        }
+      } else {
+        const room: Room = {
           id: roomId,
           participants: new Set([socket.id]),
           createdAt: Date.now(),
-          metadata: data.data,
-        });
-      } else {
-        const room = rooms.get(roomId)!;
-        room.participants.add(socket.id);
+        }
+        if (data.data && typeof data.data === 'object' && data.data !== null) {
+          room.metadata = data.data as Record<string, unknown>
+        }
+        rooms.set(roomId, room)
       }
 
       // Notify room participants
-      socket.to(roomId).emit("user_joined_room", {
+      socket.to(roomId).emit('user_joined_room', {
         roomId,
         user: formatPresenceForClient(user),
-      });
+      })
 
       // Send room info to joining user
-      socket.emit("room_joined", {
+      socket.emit('room_joined', {
         roomId,
         participants: getRoomParticipants(roomId),
-      });
+      })
 
-      logger.info(`User ${user.userId} joined room: ${roomId}`);
-    });
+      logger.info(`User ${user.userId} joined room: ${roomId}`)
+    })
 
-    socket.on("leave_room", (data: { roomId: string }) => {
-      const user = connectedUsers.get(socket.id);
-      if (!user) return;
+    socket.on('leave_room', (data: { roomId: string }) => {
+      const user = connectedUsers.get(socket.id)
+      if (!user) return
 
-      const { roomId } = data;
-      socket.leave(roomId);
-      user.rooms.delete(roomId);
+      const { roomId } = data
+      socket.leave(roomId)
+      user.rooms.delete(roomId)
 
       // Update room
-      const room = rooms.get(roomId);
+      const room = rooms.get(roomId)
       if (room) {
-        room.participants.delete(socket.id);
+        room.participants.delete(socket.id)
         if (room.participants.size === 0) {
-          rooms.delete(roomId);
+          rooms.delete(roomId)
         }
       }
 
       // Notify room participants
-      socket.to(roomId).emit("user_left_room", {
+      socket.to(roomId).emit('user_left_room', {
         roomId,
         userId: user.userId,
-      });
+      })
 
-      logger.info(`User ${user.userId} left room: ${roomId}`);
-    });
+      logger.info(`User ${user.userId} left room: ${roomId}`)
+    })
 
     // Enhanced presence updates with React 19 optimization
     socket.on(
-      "presence_update",
+      'presence_update',
       (
         updates: Partial<
-          Pick<UserPresence, "status" | "activity" | "currentSection" | "isEditing" | "metadata">
+          Pick<UserPresence, 'status' | 'activity' | 'currentSection' | 'isEditing' | 'metadata'>
         >,
       ) => {
-        const user = connectedUsers.get(socket.id);
-        if (!user) return;
+        const user = connectedUsers.get(socket.id)
+        if (!user) return
 
         // Update user presence
-        Object.assign(user, updates, { lastSeen: Date.now() });
+        Object.assign(user, updates, { lastSeen: Date.now() })
 
         // Broadcast to all rooms user is in
         user.rooms.forEach((roomId) => {
-          socket.to(roomId).emit("presence_update", formatPresenceForClient(user));
-        });
->>>>>>> 9d02b63 (Fix loading component issues and implement performance optimizations)
+          socket.to(roomId).emit('presence_update', formatPresenceForClient(user))
+        })
       },
     )
 
-<<<<<<< HEAD
-    // Handle disconnection
-    socket.on('disconnect', () => {
-      logger.info(`User disconnected: ${socket.id}`)
-      connectedUsers.delete(socket.id)
-
-      // Broadcast updated presence
-      io.emit('presence:update', Array.from(connectedUsers.values()))
-    })
-
-    // Handle ping for connection health
-    socket.on('ping', () => {
-      socket.emit('pong')
-    })
-  })
-
-  return io
-=======
     // Enhanced typing indicators
-    socket.on("typing_start", (data: { roomId: string; userId?: string }) => {
-      const user = connectedUsers.get(socket.id);
-      if (!user) return;
+    socket.on('typing_start', (data: { roomId: string; userId?: string }) => {
+      const user = connectedUsers.get(socket.id)
+      if (!user) return
 
-      const typingKey = `${socket.id}:${data.roomId}`;
+      const typingKey = `${socket.id}:${data.roomId}`
 
       // Clear existing timeout
       if (typingUsers.has(typingKey)) {
-        clearTimeout(typingUsers.get(typingKey)!.timeout);
+        const typing = typingUsers.get(typingKey)
+        if (typing) {
+          clearTimeout(typing.timeout)
+        }
       }
 
       // Set new timeout
       const timeout = setTimeout(() => {
-        typingUsers.delete(typingKey);
-        socket.to(data.roomId).emit("typing_stop", {
+        typingUsers.delete(typingKey)
+        socket.to(data.roomId).emit('typing_stop', {
           userId: user.userId,
           roomId: data.roomId,
-        });
-      }, 5000); // 5 second timeout
+        })
+      }, 5000) // 5 second timeout
 
       typingUsers.set(typingKey, {
         userId: user.userId,
         roomId: data.roomId,
         timeout,
-      });
+      })
 
       // Broadcast typing start
-      socket.to(data.roomId).emit("typing_start", {
+      socket.to(data.roomId).emit('typing_start', {
         userId: user.userId,
         username: user.username,
         roomId: data.roomId,
         timestamp: Date.now(),
-      });
-    });
+      })
+    })
 
-    socket.on("typing_stop", (data: { roomId: string }) => {
-      const user = connectedUsers.get(socket.id);
-      if (!user) return;
+    socket.on('typing_stop', (data: { roomId: string }) => {
+      const user = connectedUsers.get(socket.id)
+      if (!user) return
 
-      const typingKey = `${socket.id}:${data.roomId}`;
+      const typingKey = `${socket.id}:${data.roomId}`
 
       if (typingUsers.has(typingKey)) {
-        clearTimeout(typingUsers.get(typingKey)!.timeout);
-        typingUsers.delete(typingKey);
+        const typing = typingUsers.get(typingKey)
+        if (typing) {
+          clearTimeout(typing.timeout)
+        }
+        typingUsers.delete(typingKey)
       }
 
-      socket.to(data.roomId).emit("typing_stop", {
+      socket.to(data.roomId).emit('typing_stop', {
         userId: user.userId,
         roomId: data.roomId,
-      });
-    });
+      })
+    })
 
     // Enhanced agent collaboration
     socket.on(
-      "agent_collaboration",
+      'agent_collaboration',
       (data: {
-        agentId: string;
-        userId?: string;
-        changeType: "create" | "update" | "delete" | "move" | "rename";
-        section: string;
-        changes: Record<string, any>;
-        version?: string;
+        agentId: string
+        userId?: string
+        changeType: 'create' | 'update' | 'delete' | 'move' | 'rename'
+        section: string
+        changes: Record<string, unknown>
+        version?: string
       }) => {
-        const user = connectedUsers.get(socket.id);
-        const roomId = `agent:${data.agentId}`;
+        const user = connectedUsers.get(socket.id)
+        const roomId = `agent:${data.agentId}`
 
         const collaborationEvent = {
           ...data,
-          userId: user?.userId || data.userId || "anonymous",
+          userId: user?.userId || data.userId || 'anonymous',
           timestamp: Date.now(),
           socketId: socket.id,
-        };
+        }
 
         // Broadcast to agent room participants
-        socket.to(roomId).emit("agent_collaboration", collaborationEvent);
+        socket.to(roomId).emit('agent_collaboration', collaborationEvent)
 
         // Also broadcast to global activity feed
-        io.to("global").emit("global_activity", {
+        io.to('global').emit('global_activity', {
           id: `agent-${Date.now()}-${Math.random()}`,
-          type: "agent_collaboration",
+          type: 'agent_collaboration',
           data: collaborationEvent,
           timestamp: Date.now(),
           metadata: { roomId },
-        });
+        })
 
-        logger.info(`Agent collaboration event: ${data.changeType} on ${data.agentId}`);
+        logger.info(`Agent collaboration event: ${data.changeType} on ${data.agentId}`)
       },
-    );
+    )
 
     // Real-time notifications
     socket.on(
-      "send_notification",
+      'send_notification',
       (notification: {
-        title: string;
-        options?: any;
-        roomId?: string;
-        userId?: string;
-        category: string;
-        priority: string;
+        title: string
+        options?: unknown
+        roomId?: string
+        userId?: string
+        category: string
+        priority: string
       }) => {
-        const user = connectedUsers.get(socket.id);
-        if (!user) return;
+        const user = connectedUsers.get(socket.id)
+        if (!user) return
 
         if (notification.roomId) {
           // Send to specific room
-          socket.to(notification.roomId).emit("realtime_notification", {
+          socket.to(notification.roomId).emit('realtime_notification', {
             ...notification,
             from: user.userId,
             timestamp: Date.now(),
-          });
+          })
         } else if (notification.userId) {
           // Send to specific user
-          io.to(`user:${notification.userId}`).emit("realtime_notification", {
+          io.to(`user:${notification.userId}`).emit('realtime_notification', {
             ...notification,
             from: user.userId,
             timestamp: Date.now(),
-          });
+          })
         } else {
           // Broadcast to all connected users
-          socket.broadcast.emit("realtime_notification", {
+          socket.broadcast.emit('realtime_notification', {
             ...notification,
             from: user.userId,
             timestamp: Date.now(),
-          });
+          })
         }
       },
-    );
+    )
 
     // Connection health monitoring
-    socket.on("ping", () => {
-      const user = connectedUsers.get(socket.id);
+    socket.on('ping', () => {
+      const user = connectedUsers.get(socket.id)
       if (user) {
-        user.lastSeen = Date.now();
+        user.lastSeen = Date.now()
       }
-      socket.emit("pong", Date.now());
-    });
+      socket.emit('pong', Date.now())
+    })
 
     // Handle disconnect with enhanced cleanup
-    socket.on("disconnect", (reason) => {
-      logger.info(`Enhanced Socket.IO disconnection: ${socket.id} (${reason})`);
+    socket.on('disconnect', (reason) => {
+      logger.info(`Enhanced Socket.IO disconnection: ${socket.id} (${reason})`)
 
-      const user = connectedUsers.get(socket.id);
+      const user = connectedUsers.get(socket.id)
       if (user) {
         // Clean up typing indicators
         typingUsers.forEach((typing, key) => {
           if (key.startsWith(socket.id)) {
-            clearTimeout(typing.timeout);
-            typingUsers.delete(key);
+            clearTimeout(typing.timeout)
+            typingUsers.delete(key)
           }
-        });
+        })
 
         // Update room memberships
         user.rooms.forEach((roomId) => {
-          const room = rooms.get(roomId);
+          const room = rooms.get(roomId)
           if (room) {
-            room.participants.delete(socket.id);
-            if (room.participants.size === 0 && roomId !== "global") {
-              rooms.delete(roomId);
+            room.participants.delete(socket.id)
+            if (room.participants.size === 0 && roomId !== 'global') {
+              rooms.delete(roomId)
             }
           }
 
           // Notify room participants of user leaving
-          socket.to(roomId).emit("user_left", user.userId);
-        });
+          socket.to(roomId).emit('user_left', user.userId)
+        })
 
         // Remove from connected users
-        connectedUsers.delete(socket.id);
+        connectedUsers.delete(socket.id)
 
         // Broadcast presence update to global room
-        io.to("global").emit("user_left", user.userId);
+        io.to('global').emit('user_left', user.userId)
 
-        logger.info(`User ${user.userId} cleanup completed`);
+        logger.info(`User ${user.userId} cleanup completed`)
       }
-    });
+    })
 
     // Emergency disconnect
-    socket.on("force_disconnect", () => {
-      logger.warn(`Force disconnect requested: ${socket.id}`);
-      socket.disconnect(true);
-    });
-  });
+    socket.on('force_disconnect', () => {
+      logger.warn(`Force disconnect requested: ${socket.id}`)
+      socket.disconnect(true)
+    })
+  })
 
   // Helper functions
   function formatPresenceForClient(user: UserPresence) {
@@ -668,49 +643,48 @@ export function initializeSocketIO(server: HttpServer) {
       joinedAt: user.joinedAt,
       lastSeen: user.lastSeen,
       metadata: user.metadata,
-    };
+    }
   }
 
   function getRoomParticipants(roomId: string) {
-    const room = rooms.get(roomId);
-    if (!room) return [];
+    const room = rooms.get(roomId)
+    if (!room) return []
 
     return Array.from(room.participants)
       .map((socketId) => connectedUsers.get(socketId))
-      .filter(Boolean)
-      .map(formatPresenceForClient);
+      .filter((user): user is UserPresence => user !== undefined)
+      .map(formatPresenceForClient)
   }
 
   // Periodic cleanup of inactive users
   setInterval(() => {
-    const now = Date.now();
-    const timeout = 5 * 60 * 1000; // 5 minutes
+    const now = Date.now()
+    const timeout = 5 * 60 * 1000 // 5 minutes
 
     connectedUsers.forEach((user, socketId) => {
       if (now - user.lastSeen > timeout) {
-        logger.warn(`Cleaning up inactive user: ${user.userId} (${socketId})`);
-        const socket = io.sockets.sockets.get(socketId);
+        logger.warn(`Cleaning up inactive user: ${user.userId} (${socketId})`)
+        const socket = io.sockets.sockets.get(socketId)
         if (socket) {
-          socket.disconnect(true);
+          socket.disconnect(true)
         } else {
-          connectedUsers.delete(socketId);
+          connectedUsers.delete(socketId)
         }
       }
-    });
-  }, 60000); // Check every minute
+    })
+  }, 60000) // Check every minute
 
   // Periodic room cleanup
   setInterval(() => {
     rooms.forEach((room, roomId) => {
-      if (room.participants.size === 0 && roomId !== "global") {
-        logger.info(`Cleaning up empty room: ${roomId}`);
-        rooms.delete(roomId);
+      if (room.participants.size === 0 && roomId !== 'global') {
+        logger.info(`Cleaning up empty room: ${roomId}`)
+        rooms.delete(roomId)
       }
-    });
-  }, 300000); // Check every 5 minutes
+    })
+  }, 300000) // Check every 5 minutes
 
-  logger.info("Enhanced Socket.IO server initialized with React 19 integration");
+  logger.info('Enhanced Socket.IO server initialized with React 19 integration')
 
-  return io;
->>>>>>> 9d02b63 (Fix loading component issues and implement performance optimizations)
+  return io
 }

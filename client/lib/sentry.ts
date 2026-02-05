@@ -61,7 +61,11 @@ export const measurePerformance = (name: string, fn: () => void | Promise<void>)
 
 export const setUser = (user: { id: string; email?: string; username?: string }) => {
   if (!SentryLib) return
-  SentryLib.setUser({ id: user.id, email: user.email, username: user.username })
+  SentryLib.setUser({
+    id: user.id,
+    email: user.email,
+    username: user.username,
+  })
 }
 
 export const setTag = (key: string, value: string) => {
@@ -94,7 +98,11 @@ export const reportError = (error: Error, context?: Record<string, unknown>) => 
 
 export const trackPageView = (page: string) => {
   if (!SentryLib) return
-  SentryLib.addBreadcrumb({ category: 'navigation', message: `Page view: ${page}`, level: 'info' })
+  SentryLib.addBreadcrumb({
+    category: 'navigation',
+    message: `Page view: ${page}`,
+    level: 'info',
+  })
 }
 
 export const trackInteraction = (action: string, details?: Record<string, unknown>) => {

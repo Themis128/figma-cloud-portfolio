@@ -840,14 +840,14 @@ function generateHTML(resume: ResumeData): string {
 function validateResumeData(data: any): ResumeData {
   // Sanitize and validate all string inputs
   const sanitizeString = (str: any): string => {
-    if (typeof str !== "string") return "";
-    return str.replace(/[<>"'&]/g, "").substring(0, 1000); // Remove potential XSS chars and limit length
-  };
+    if (typeof str !== 'string') return ''
+    return str.replace(/[<>"'&]/g, '').substring(0, 1000) // Remove potential XSS chars and limit length
+  }
 
   const sanitizeArray = (arr: any): string[] => {
-    if (!Array.isArray(arr)) return [];
-    return arr.slice(0, 50).map((item) => sanitizeString(item)); // Limit array size
-  };
+    if (!Array.isArray(arr)) return []
+    return arr.slice(0, 50).map((item) => sanitizeString(item)) // Limit array size
+  }
 
   return {
     name: sanitizeString(data?.name),
@@ -889,7 +889,7 @@ function validateResumeData(data: any): ResumeData {
     projects: sanitizeArray(data?.projects),
     memberships: sanitizeArray(data?.memberships),
     languages: sanitizeArray(data?.languages),
-  };
+  }
 }
 
 export async function handleResumeDownload(req: Request, res: Response) {
@@ -898,9 +898,9 @@ export async function handleResumeDownload(req: Request, res: Response) {
   try {
     let resume: ResumeData
 
-    if (req.method === "POST" && req.body) {
+    if (req.method === 'POST' && req.body) {
       // Validate and sanitize user input to prevent SSRF
-      resume = validateResumeData(req.body);
+      resume = validateResumeData(req.body)
     } else {
       const markdownPath = path.join(process.cwd(), 'public', 'resume-content.md')
       const markdownContent = await fs.readFile(markdownPath, 'utf8')

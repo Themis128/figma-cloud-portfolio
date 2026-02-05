@@ -1,4 +1,4 @@
-# íº¨ Deployment Issue Prevention & Resolution Guide
+# ï¿½ï¿½ï¿½ Deployment Issue Prevention & Resolution Guide
 
 ## Critical Issues to Address Before/After Deployment
 
@@ -6,16 +6,19 @@
 
 **Status**: Must be configured in GitHub repository settings
 **Required Secrets**:
+
 - `AWS_ACCESS_KEY_ID` - Your AWS access key
-- `AWS_SECRET_ACCESS_KEY` - Your AWS secret key  
+- `AWS_SECRET_ACCESS_KEY` - Your AWS secret key
 - `AWS_REGION` - AWS region (e.g., us-east-1)
 - `AMPLIFY_PRODUCTION_APP_ID` - Your Amplify app ID
 
 **How to Check**:
+
 1. Go to GitHub â†’ Your Repository â†’ Settings â†’ Secrets and variables â†’ Actions
 2. Verify all 4 secrets are present and not expired
 
 **How to Fix**:
+
 ```bash
 # Use the setup script (requires GitHub token)
 chmod +x setup-github-secrets.sh
@@ -26,17 +29,20 @@ chmod +x setup-github-secrets.sh
 
 **Status**: Must be verified in AWS Amplify Console
 **Required Configuration**:
+
 - Repository: `Themis128/figma-cloud-portfolio`
 - Branch: `production`
 - Build settings: Auto-detected from `amplify.yml`
 
 **How to Check**:
+
 1. Go to [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
 2. Find your app (should show connected repository)
 3. Verify production branch is connected
 4. Check if auto-deployment is enabled
 
 **How to Fix**:
+
 - If not connected: Click "New app" â†’ "Host web app" â†’ Connect GitHub repository
 - If wrong branch: Update branch settings to use `production`
 
@@ -45,6 +51,7 @@ chmod +x setup-github-secrets.sh
 **Status**: Must be set in AWS Amplify Console (NOT GitHub secrets)
 
 **Required Variables** (based on actual code usage):
+
 ```
 VITE_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
 RECAPTCHA_SECRET_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
@@ -52,6 +59,7 @@ VITE_GOOGLE_ANALYTICS_ID=G-FT79QM66D3
 ```
 
 **Optional Variables** (for additional features):
+
 ```
 VITE_AI_PROVIDER=ollama
 VITE_AI_MODEL=llama2
@@ -67,11 +75,13 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 ```
 
 **How to Check**:
+
 1. AWS Amplify Console â†’ Your App â†’ Environment variables
 2. Verify required variables are set
 3. Mark `RECAPTCHA_SECRET_KEY` as "Secret"
 
 **How to Fix**:
+
 - Add missing variables in Amplify Console
 - Test contact form and analytics after deployment
 
@@ -79,23 +89,27 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 
 **Status**: Resume function has 300s timeout (5 minutes)
 **Configuration**:
+
 - Resume function: 300s timeout, 2048MB memory
 - Other functions: 30s timeout, 512MB memory
 
 **Potential Issues**:
+
 - PDF generation may timeout if Puppeteer hangs
 - Large resume data may cause memory issues
 
 **How to Monitor**:
+
 - Check CloudWatch logs after deployment
 - Monitor Lambda function duration metrics
 
 **How to Fix**:
+
 - Increase timeout if needed (max 900s for Lambda)
 - Optimize PDF generation code
 - Add error handling for timeouts
 
-## í´ Deployment Verification Steps
+## ï¿½ï¿½ï¿½ Deployment Verification Steps
 
 ### Immediate Post-Deployment Checks
 
@@ -107,6 +121,7 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 ### Functional Testing
 
 1. **API Endpoints** (use verification script):
+
    ```bash
    ./scripts/verify-deployment.sh
    ```
@@ -122,43 +137,51 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
    - Lighthouse audit >90 scores
    - Core Web Vitals within limits
 
-## íº¨ Common Failure Scenarios & Solutions
+## ï¿½ï¿½ï¿½ Common Failure Scenarios & Solutions
 
 ### Scenario 1: Build Fails with "Access Denied"
+
 **Cause**: Missing AWS credentials or insufficient permissions
 **Solution**: Verify GitHub secrets are correct and AWS user has Amplify permissions
 
 ### Scenario 2: Lambda Functions Not Deployed
+
 **Cause**: amplify.yml syntax error or missing function files
 **Solution**: Check Amplify build logs and verify function directories exist
 
 ### Scenario 3: Environment Variables Not Working
+
 **Cause**: Variables set in GitHub secrets instead of Amplify Console
-**Solution**: Move VITE_ variables to Amplify Console environment variables
+**Solution**: Move VITE\_ variables to Amplify Console environment variables
 
 ### Scenario 4: Contact Form reCAPTCHA Fails
+
 **Cause**: Wrong reCAPTCHA keys or missing RECAPTCHA_SECRET_KEY
 **Solution**: Verify keys match and secret key is marked as "Secret"
 
 ### Scenario 5: Resume PDF Times Out
+
 **Cause**: Puppeteer hangs or Lambda timeout too short
 **Solution**: Check CloudWatch logs, increase timeout if needed
 
-## í³Š Monitoring & Alerts
+## ï¿½ï¿½ï¿½ Monitoring & Alerts
 
 ### Set Up Monitoring
+
 1. **CloudWatch**: Auto-enabled with Amplify
 2. **Lambda Metrics**: Monitor duration, errors, throttles
 3. **Custom Dashboards**: Create for key metrics
 
 ### Alert Configuration
+
 - Lambda errors > 5%
 - Function duration > 80% of timeout
 - 5xx errors > 1%
 
-## í¾¯ Success Criteria
+## ï¿½ï¿½ï¿½ Success Criteria
 
 âœ… **Deployment Success**:
+
 - Build completes without errors
 - All Lambda functions deployed
 - Frontend loads correctly
@@ -168,7 +191,7 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 - PWA features functional
 - Performance scores >90
 
-## í³ž Emergency Contacts & Support
+## ï¿½ï¿½ï¿½ Emergency Contacts & Support
 
 - **AWS Amplify Docs**: https://docs.amplify.aws/
 - **GitHub Actions**: Check repository Actions tab

@@ -10,7 +10,7 @@ import {
   SkeletonText,
 } from '../client/components/Skeleton'
 
-const SKELETON_LINE_COUNT = 3
+const _SKELETON_LINE_COUNT = 3
 const MIN_SKELETON_ELEMENTS = 1
 const MIN_PAGE_SKELETON_ELEMENTS = 5
 
@@ -19,7 +19,9 @@ describe('Skeleton Components', () => {
     it('should render with default props', () => {
       render(<Skeleton />)
       const skeletons = screen.getAllByTestId('skeleton')
-      const skeleton = skeletons.find(s => s.classList.contains('animate-pulse') && !s.classList.contains('h-4'))
+      const skeleton = skeletons.find(
+        (s) => s.classList.contains('animate-pulse') && !s.classList.contains('h-4'),
+      )
       expect(skeleton).toBeInTheDocument()
       expect(skeleton).toHaveClass('animate-pulse')
     })
@@ -27,7 +29,7 @@ describe('Skeleton Components', () => {
     it('should apply custom className', () => {
       render(<Skeleton className='custom-class' />)
       const skeletons = screen.getAllByTestId('skeleton')
-      const skeleton = skeletons.find(s => s.classList.contains('custom-class'))
+      const skeleton = skeletons.find((s) => s.classList.contains('custom-class'))
       expect(skeleton).toBeInTheDocument()
       expect(skeleton).toHaveClass('custom-class')
     })

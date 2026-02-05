@@ -211,7 +211,11 @@ test.describe('3D Interactive Demos', () => {
 
       // Check for performance optimizations
       const performanceMetrics = await page.evaluate(
-        (): Promise<{ fps: number; memoryUsage: number | null; memoryLimit: number | null }> => {
+        (): Promise<{
+          fps: number
+          memoryUsage: number | null
+          memoryLimit: number | null
+        }> => {
           const observers: PerformanceObserver[] = []
 
           return new Promise((resolve) => {
@@ -230,7 +234,10 @@ test.describe('3D Interactive Demos', () => {
                 if ('memory' in performance) {
                   const memory = (performance as Performance & { memory?: unknown }).memory
                   if (memory) {
-                    const mem = memory as { usedJSHeapSize: number; jsHeapSizeLimit: number }
+                    const mem = memory as {
+                      usedJSHeapSize: number
+                      jsHeapSizeLimit: number
+                    }
                     resolve({
                       fps,
                       memoryUsage: mem.usedJSHeapSize,
@@ -279,7 +286,9 @@ test.describe('3D Interactive Demos', () => {
 
     test('should lazy load 3D content', async ({ page }) => {
       // Check initial page load without 3D content
-      await page.goto('http://localhost:3001/', { waitUntil: 'domcontentloaded' })
+      await page.goto('http://localhost:3001/', {
+        waitUntil: 'domcontentloaded',
+      })
 
       const initialCanvasCount = await page.locator('canvas').count()
 

@@ -69,8 +69,8 @@ describe('SitemapGenerator', () => {
 
     it('should fallback to default URL when window is undefined', () => {
       // Temporarily remove window
-      const originalWindow = global.window
-      delete (global as { window?: typeof window }).window
+      const originalWindow = (global.window(global as { window?: typeof window }).window =
+        undefined)
 
       const fallbackGenerator = new SitemapGenerator()
       expect(fallbackGenerator.baseUrl).toBe('https://www.baltzakisthemis.com')

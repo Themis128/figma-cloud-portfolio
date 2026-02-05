@@ -1,0 +1,324 @@
+
+> baltzakis-portfolio@1.0.0 lint D:\Nuxt Projects\new-portfolio
+> biome check .
+
+client\components\LinkPreview.tsx:185:34 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━━━
+
+  ! Excessive complexity of 20 detected (max: 15).
+  
+    183 │     let isMounted = true
+    184 │ 
+  > 185 │     const loadPreview = async () => {
+        │                                  ^^^
+    186 │       if (!isMounted) return
+    187 │ 
+  
+  i Please refactor this function to reduce its complexity score from 20 to the max allowed complexity 15.
+  
+
+client\components\PushNotificationTester.tsx:24:17 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━
+
+  ! Excessive complexity of 23 detected (max: 15).
+  
+    22 │ }
+    23 │ 
+  > 24 │ export function PushNotificationTester() {
+       │                 ^^^^^^^^^^^^^^^^^^^^^^
+    25 │   const [isLoading, setIsLoading] = useState(false)
+    26 │   const [result, setResult] = useState<NotificationResult | null>(null)
+  
+  i Please refactor this function to reduce its complexity score from 23 to the max allowed complexity 15.
+  
+
+client\components\realtime\CollaborationComponents.tsx:128:26 lint/correctness/useExhaustiveDependencies  FIXABLE  ━━━━━━━━━━
+
+  ! This hook does not specify its dependency on setIsExpanded.
+  
+    126 │   )
+    127 │ 
+  > 128 │   const toggleExpanded = useCallback(() => {
+        │                          ^^^^^^^^^^^
+    129 │     startTransition(() => {
+    130 │       setIsExpanded((prev) => !prev)
+  
+  i This dependency is being used here, but is not specified in the hook dependency list.
+  
+    128 │   const toggleExpanded = useCallback(() => {
+    129 │     startTransition(() => {
+  > 130 │       setIsExpanded((prev) => !prev)
+        │       ^^^^^^^^^^^^^
+    131 │     })
+    132 │   }, [])
+  
+  i React relies on hook dependencies to determine when to re-compute Effects.
+    Failing to specify dependencies can result in Effects not updating correctly when state changes.
+    These "stale closures" are a common source of surprising bugs.
+  
+  i Either include it or remove the dependency array.
+  
+  i Unsafe fix: Add the missing dependency to the list.
+  
+    132 │ ··},·[setIsExpanded])
+        │       +++++++++++++  
+
+client\components\realtime\RealtimeDashboard.tsx:305:30 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    303 │         </h3>
+    304 │         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
+  > 305 │           {presence.slice(0, 9).map((user) => (
+        │                              ^
+    306 │             <div
+    307 │               key={user.userId}
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:331:30 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    329 │           ))}
+    330 │ 
+  > 331 │           {presence.length > 9 && (
+        │                              ^
+    332 │             <div className='flex items-center justify-center p-3 bg-gray-50 dark:bg-navy-750 rounded-lg text-gray-600 dark:text-gray-400'>
+    333 │               +{presence.length - 9} more
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:333:35 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    331 │           {presence.length > 9 && (
+    332 │             <div className='flex items-center justify-center p-3 bg-gray-50 dark:bg-navy-750 rounded-lg text-gray-600 dark:text-gray-400'>
+  > 333 │               +{presence.length - 9} more
+        │                                   ^
+    334 │             </div>
+    335 │           )}
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:437:37 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    435 │ function MetricsTab({ metrics, connectionQuality }: MetricsTabProps) {
+    436 │   const formatUptime = (ms: number) => {
+  > 437 │     const seconds = Math.floor(ms / 1000)
+        │                                     ^^^^
+    438 │     const minutes = Math.floor(seconds / 60)
+    439 │     const hours = Math.floor(minutes / 60)
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\ui\accessibility.tsx:140:43 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    138 │ }: AccessibleInputProps) {
+    139 │   const inputId =
+  > 140 │     id || `input-${Math.random().toString(36).substr(RANDOM_ID_START_INDEX, RANDOM_ID_LENGTH)}`
+        │                                           ^^
+    141 │   const errorId = error ? `${inputId}-error` : undefined
+    142 │   const helperId = helperText ? `${inputId}-helper` : undefined
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\ui\chart.tsx:170:38 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━━━━━━
+
+  ! Excessive complexity of 19 detected (max: 15).
+  
+    168 │         {nestLabel ? null : tooltipLabel}
+    169 │         <div className='grid gap-1.5'>
+  > 170 │           {payload.map((item, index) => {
+        │                                      ^^^
+    171 │             const key = `${nameKey || item.name || item.dataKey || 'value'}`
+    172 │             const itemConfig = getPayloadConfigFromPayload(config, item, key)
+  
+  i Please refactor this function to reduce its complexity score from 19 to the max allowed complexity 15.
+  
+
+client\examples\RealtimeExamples.tsx:168:65 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Unexpected any. Specify a different type.
+  
+    166 │   const [isDeploying, setIsDeploying] = useState(false)
+    167 │ 
+  > 168 │   const handleConfigChange = useCallback((field: string, value: any) => {
+        │                                                                 ^^^
+    169 │     setAgentConfig((prev) => ({ ...prev, [field]: value }))
+    170 │ 
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+client\examples\RealtimeExamples.tsx:180:58 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    178 │     try {
+    179 │       // Simulate deployment
+  > 180 │       await new Promise((resolve) => setTimeout(resolve, 2000))
+        │                                                          ^^^^
+    181 │       console.log('Agent deployed:', agentId, agentConfig)
+    182 │     } catch (error) {
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\LinkPreview.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     70  70 │     const renderErrorState = () => (
+     71  71 │       <Card
+     72     │ - ······className={cn(
+     73     │ - ········'w-full·max-w-md·cursor-pointer·hover:shadow-md·transition-shadow',
+     74     │ - ········className,
+     75     │ - ······)}
+         72 │ + ······className={cn('w-full·max-w-md·cursor-pointer·hover:shadow-md·transition-shadow',·className)}
+     76  73 │         onClick={handleClick}
+     77  74 │       >
+  
+
+client\components\realtime\CollaborationComponents.tsx:522:3 lint/a11y/noSvgWithoutTitle ━━━━━━━━━━━
+
+  × Alternative text title element cannot be empty
+  
+    521 │ const MoveIcon = ({ className }: { className?: string }) => (
+  > 522 │   <svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+        │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    523 │     <path
+    524 │       strokeLinecap='round'
+  
+  i For accessibility purposes, SVGs should have an alternative text, provided via title element. If the svg element has role="img", you should add the aria-label or aria-labelledby attribute.
+  
+
+client\components\realtime\CollaborationComponents.tsx:533:3 lint/a11y/noSvgWithoutTitle ━━━━━━━━━━━
+
+  × Alternative text title element cannot be empty
+  
+    532 │ const RenameIcon = ({ className }: { className?: string }) => (
+  > 533 │   <svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+        │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    534 │     <path
+    535 │       strokeLinecap='round'
+  
+  i For accessibility purposes, SVGs should have an alternative text, provided via title element. If the svg element has role="img", you should add the aria-label or aria-labelledby attribute.
+  
+
+client\components\realtime\CollaborationComponents.tsx:544:3 lint/a11y/noSvgWithoutTitle ━━━━━━━━━━━
+
+  × Alternative text title element cannot be empty
+  
+    543 │ const ActivityIcon = ({ className }: { className?: string }) => (
+  > 544 │   <svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+        │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    545 │     <path
+    546 │       strokeLinecap='round'
+  
+  i For accessibility purposes, SVGs should have an alternative text, provided via title element. If the svg element has role="img", you should add the aria-label or aria-labelledby attribute.
+  
+
+client\components\realtime\CollaborationComponents.tsx:2:8 lint/correctness/noUnusedImports  FIXABLE  ━━━━━━━━━━
+
+  × These imports are unused.
+  
+    1 │ // Enhanced collaboration components with React 19 integration
+  > 2 │ import React, { useCallback } from 'react'
+      │        ^^^^^
+    3 │ import { cn } from '@/lib/utils'
+    4 │ import { useEnhancedSocket, usePresence, useRealtimeEvents } from '../hooks/useEnhancedRealtime'
+  
+  i Unused imports might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: Remove the unused imports.
+  
+    2 │ import·React,·{·useCallback·}·from·'react'
+      │        -------                            
+
+client\components\realtime\RealtimeDashboard.tsx:2:8 lint/correctness/noUnusedImports  FIXABLE  ━━━━━━━━━━
+
+  × These imports are unused.
+  
+    1 │ // Real-time Dashboard with React 19 integration
+  > 2 │ import React, { startTransition, useCallback, useMemo, useState } from 'react'
+      │        ^^^^^
+    3 │ import { cn } from '@/lib/utils'
+    4 │ import { useEnhancedSocket, usePresence, useRealtimeEvents } from '../../hooks/useEnhancedRealtime'
+  
+  i Unused imports might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: Remove the unused imports.
+  
+    2 │ import·React,·{·startTransition,·useCallback,·useMemo,·useState·}·from·'react'
+      │        -------                                                                
+
+client\examples\RealtimeExamples.tsx:229:13 lint/a11y/noLabelWithoutControl ━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × A form label must be associated with an input.
+  
+    228 │           <div>
+  > 229 │             <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+        │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 230 │               Description
+  > 231 │             </label>
+        │             ^^^^^^^^
+    232 │             <textarea
+    233 │               value={agentConfig.description}
+  
+  i Consider adding a `for` or `htmlFor` attribute to the label element or moving the input element to inside the label element.
+  
+
+client\examples\RealtimeExamples.tsx:244:15 lint/a11y/noLabelWithoutControl ━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × A form label must be associated with an input.
+  
+    242 │           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+    243 │             <div>
+  > 244 │               <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+        │               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 245 │                 Model
+  > 246 │               </label>
+        │               ^^^^^^^^
+    247 │               <select
+    248 │                 value={agentConfig.model}
+  
+  i Consider adding a `for` or `htmlFor` attribute to the label element or moving the input element to inside the label element.
+  
+
+client\examples\RealtimeExamples.tsx:259:15 lint/a11y/noLabelWithoutControl ━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × A form label must be associated with an input.
+  
+    258 │             <div>
+  > 259 │               <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+        │               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 260 │                 Temperature: {agentConfig.temperature}
+  > 261 │               </label>
+        │               ^^^^^^^^
+    262 │               <input
+    263 │                 type='range'
+  
+  i Consider adding a `for` or `htmlFor` attribute to the label element or moving the input element to inside the label element.
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 238.
+Checked 406 files in 593ms. No fixes applied.
+Found 20 errors.
+Found 229 warnings.
+Found 9 infos.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+ ELIFECYCLE  Command failed with exit code 1.

@@ -1,32 +1,32 @@
-import React from "react";
-import { cn } from "@/lib/utils";
+import React from 'react'
+import { cn } from '@/lib/utils'
 
 // Enhanced loading component leveraging React 19 optimizations
 interface LoadingProps {
-  size?: "sm" | "md" | "lg" | "xl";
-  variant?: "spinner" | "dots" | "pulse" | "skeleton";
-  className?: string;
-  message?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  variant?: 'spinner' | 'dots' | 'pulse' | 'skeleton'
+  className?: string
+  message?: string
 }
 
 export function EnhancedLoading({
-  size = "md",
-  variant = "spinner",
-  className = "",
+  size = 'md',
+  variant = 'spinner',
+  className = '',
   message,
 }: LoadingProps) {
   const sizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-8 h-8",
-    lg: "w-12 h-12",
-    xl: "w-16 h-16",
-  };
+    sm: 'w-4 h-4',
+    md: 'w-8 h-8',
+    lg: 'w-12 h-12',
+    xl: 'w-16 h-16',
+  }
 
   const SpinnerLoading = () => (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
+    <div className={cn('flex flex-col items-center gap-2', className)}>
       <output
         className={cn(
-          "animate-spin rounded-full border-2 border-gray-300 border-t-blue-600",
+          'animate-spin rounded-full border-2 border-gray-300 border-t-blue-600',
           sizeClasses[size],
         )}
         aria-label='Loading'
@@ -37,24 +37,24 @@ export function EnhancedLoading({
         </p>
       )}
     </div>
-  );
+  )
 
   const DotsLoading = () => (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div className={cn('flex items-center gap-1', className)}>
       {[0, 1, 2].map((i) => (
         <div
           key={i}
           className={cn(
-            "rounded-full bg-blue-600 animate-pulse",
-            size === "sm"
-              ? "w-1 h-1"
-              : size === "md"
-                ? "w-2 h-2"
-                : size === "lg"
-                  ? "w-3 h-3"
-                  : "w-4 h-4",
+            'rounded-full bg-blue-600 animate-pulse',
+            size === 'sm'
+              ? 'w-1 h-1'
+              : size === 'md'
+                ? 'w-2 h-2'
+                : size === 'lg'
+                  ? 'w-3 h-3'
+                  : 'w-4 h-4',
             `enhanced-loading-dot-delay-${i}`,
-            "enhanced-loading-dot-duration"
+            'enhanced-loading-dot-duration',
           )}
           aria-hidden='true'
         />
@@ -65,13 +65,13 @@ export function EnhancedLoading({
         </span>
       )}
     </div>
-  );
+  )
 
   const PulseLoading = () => (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn('flex flex-col gap-2', className)}>
       <output
         className={cn(
-          "rounded-full bg-linear-to-r from-blue-400 to-blue-600 animate-pulse",
+          'rounded-full bg-linear-to-r from-blue-400 to-blue-600 animate-pulse',
           sizeClasses[size],
         )}
         aria-label='Loading'
@@ -82,10 +82,10 @@ export function EnhancedLoading({
         </p>
       )}
     </div>
-  );
+  )
 
   const SkeletonLoading = () => (
-    <output className={cn("space-y-2", className)} aria-label='Loading content'>
+    <output className={cn('space-y-2', className)} aria-label='Loading content'>
       <div className='h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse' />
       <div className='h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse w-3/4' />
       <div className='h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse w-1/2' />
@@ -95,31 +95,29 @@ export function EnhancedLoading({
         </p>
       )}
     </output>
-  );
+  )
 
   switch (variant) {
-    case "dots":
-      return <DotsLoading />;
-    case "pulse":
-      return <PulseLoading />;
-    case "skeleton":
-      return <SkeletonLoading />;
+    case 'dots':
+      return <DotsLoading />
+    case 'pulse':
+      return <PulseLoading />
+    case 'skeleton':
+      return <SkeletonLoading />
     default:
-      return <SpinnerLoading />;
+      return <SpinnerLoading />
   }
 }
 
 // Page-level loading boundary component
 interface PageLoadingProps {
-  title?: string;
-  description?: string;
+  title?: string
+  description?: string
 }
 
-export function PageLoading({ title = "Loading", description }: PageLoadingProps) {
+export function PageLoading({ title = 'Loading', description }: PageLoadingProps) {
   return (
-    <output
-      className='min-h-screen flex items-center justify-center bg-background'
-    >
+    <output className='min-h-screen flex items-center justify-center bg-background'>
       <div className='text-center space-y-4'>
         <EnhancedLoading size='lg' variant='spinner' />
         <div className='space-y-2'>
@@ -132,45 +130,46 @@ export function PageLoading({ title = "Loading", description }: PageLoadingProps
         </div>
       </div>
     </output>
-  );
+  )
 }
 
 // Component-level loading boundary
 interface ComponentLoadingProps {
-  className?: string;
-  children?: React.ReactNode;
+  className?: string
+  children?: React.ReactNode
 }
 
 export function ComponentLoading({ className, children }: ComponentLoadingProps) {
   return (
-    <output
-      className={cn("flex items-center justify-center p-4", className)}
-    >
+    <output className={cn('flex items-center justify-center p-4', className)}>
       {children || <EnhancedLoading size='md' variant='spinner' />}
     </output>
-  );
+  )
 }
 
 // Error boundary with loading recovery
 interface LoadingErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-  onRetry?: () => void;
+  children: React.ReactNode
+  fallback?: React.ReactNode
+  onRetry?: () => void
 }
 
 interface LoadingErrorBoundaryState {
-  hasError: boolean;
-  isRetrying: boolean;
+  hasError: boolean
+  isRetrying: boolean
 }
 
-export class LoadingErrorBoundary extends React.Component<LoadingErrorBoundaryProps, LoadingErrorBoundaryState> {
+export class LoadingErrorBoundary extends React.Component<
+  LoadingErrorBoundaryProps,
+  LoadingErrorBoundaryState
+> {
   constructor(props: LoadingErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, isRetrying: false };
+    super(props)
+    this.state = { hasError: false, isRetrying: false }
   }
 
   static getDerivedStateFromError(): LoadingErrorBoundaryState {
-    return { hasError: true, isRetrying: false };
+    return { hasError: true, isRetrying: false }
   }
 
   override componentDidCatch(_error: Error, _errorInfo: React.ErrorInfo) {
@@ -178,18 +177,18 @@ export class LoadingErrorBoundary extends React.Component<LoadingErrorBoundaryPr
   }
 
   handleRetry = async () => {
-    if (!this.props.onRetry) return;
+    if (!this.props.onRetry) return
 
-    this.setState({ isRetrying: true });
+    this.setState({ isRetrying: true })
     try {
-      await this.props.onRetry();
-      this.setState({ hasError: false });
+      await this.props.onRetry()
+      this.setState({ hasError: false })
     } catch (_error) {
       // Retry failed, keep error state
     } finally {
-      this.setState({ isRetrying: false });
+      this.setState({ isRetrying: false })
     }
-  };
+  }
 
   override render() {
     if (this.state.hasError) {
@@ -203,7 +202,7 @@ export class LoadingErrorBoundary extends React.Component<LoadingErrorBoundaryPr
               </div>
               {this.props.onRetry && (
                 <button
-                  type="button"
+                  type='button'
                   onClick={this.handleRetry}
                   disabled={this.state.isRetrying}
                   className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50'
@@ -215,16 +214,16 @@ export class LoadingErrorBoundary extends React.Component<LoadingErrorBoundaryPr
                       Retrying...
                     </div>
                   ) : (
-                    "Try Again"
+                    'Try Again'
                   )}
                 </button>
               )}
             </>
           )}
         </div>
-      );
+      )
     }
 
-    return <>{this.props.children}</>;
+    return <>{this.props.children}</>
   }
 }

@@ -16,7 +16,10 @@ interface AgentBuilderProps {
 }
 
 export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
-  const [agent, setAgent] = useState<AgentTemplate>({ ...template, id: `agent-${Date.now()}` })
+  const [agent, setAgent] = useState<AgentTemplate>({
+    ...template,
+    id: `agent-${Date.now()}`,
+  })
   const [isRunning, setIsRunning] = useState(false)
 
   const handleWorkflowUpdate = (nodes: AgentNode[], connections: AgentConnection[]) => {
@@ -130,7 +133,12 @@ export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) 
                 <Textarea
                   id='agent-description'
                   value={agent.description}
-                  onChange={(e) => setAgent((prev) => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setAgent((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   className='bg-white/10 border-white/20 text-white'
                   rows={3}
                 />

@@ -1,7 +1,22 @@
-import { describe, it, expect } from 'vitest'
 import { screen } from '@testing-library/react'
-import { renderWithProviders } from '../test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import Index from '@/pages/Index'
+import { renderWithProviders } from '../test-utils'
+
+// Mock Navigation component since it's lazy-loaded
+vi.mock('@/components/Navigation', () => ({
+  default: () => (
+    <nav>
+      <a href='/about'>About</a>
+      <a href='/contact'>Contact</a>
+    </nav>
+  ),
+}))
+
+// Mock AIBrain component since it's lazy-loaded
+vi.mock('@/components/AIBrain', () => ({
+  default: () => <div data-testid='ai-brain'>AI Brain Component</div>,
+}))
 
 describe('Index Page', () => {
   it('renders the main page content', () => {
@@ -41,9 +56,15 @@ describe('Index Page', () => {
     renderWithProviders(<Index />)
 
     // Check for CTA buttons (may have multiple instances)
-    const learnMoreButtons = screen.getAllByRole('button', { name: /learn more/i })
-    const buildResumeButtons = screen.getAllByRole('button', { name: /build resume/i })
-    const getInTouchButtons = screen.getAllByRole('button', { name: /get in touch/i })
+    const learnMoreButtons = screen.getAllByRole('button', {
+      name: /learn more/i,
+    })
+    const buildResumeButtons = screen.getAllByRole('button', {
+      name: /build resume/i,
+    })
+    const getInTouchButtons = screen.getAllByRole('button', {
+      name: /get in touch/i,
+    })
 
     expect(learnMoreButtons.length).toBeGreaterThan(0)
     expect(buildResumeButtons.length).toBeGreaterThan(0)

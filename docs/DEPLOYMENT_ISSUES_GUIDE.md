@@ -152,7 +152,7 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 ### Scenario 3: Environment Variables Not Working
 
 **Cause**: Variables set in GitHub secrets instead of Amplify Console
-**Solution**: Move VITE_ variables to Amplify Console environment variables
+**Solution**: Move VITE\_ variables to Amplify Console environment variables
 
 ### Scenario 4: Contact Form reCAPTCHA Fails
 

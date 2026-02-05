@@ -29,32 +29,32 @@ The client-side implementation uses the `react-google-recaptcha-v3` library to i
 #### Code Example
 
 ```typescript
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export default function Contact() {
-  const { executeRecaptcha } = useGoogleReCaptcha()
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!executeRecaptcha) {
-      setSubmitStatus('error')
-      return
+      setSubmitStatus("error");
+      return;
     }
 
     // Execute reCAPTCHA
-    const recaptchaToken = await executeRecaptcha('contact_form_submit')
+    const recaptchaToken = await executeRecaptcha("contact_form_submit");
 
     // Include token in form submission
-    const response = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formData,
         recaptchaToken,
       }),
-    })
-  }
+    });
+  };
 }
 ```
 
@@ -79,32 +79,32 @@ The server validates reCAPTCHA tokens by calling Google's verification API.
 ```typescript
 // Verify reCAPTCHA token
 const recaptchaResponse = await fetch(
-  'https://www.google.com/recaptcha/api/siteverify',
+  "https://www.google.com/recaptcha/api/siteverify",
   {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       secret: process.env.RECAPTCHA_SECRET_KEY,
       response: recaptchaToken,
     }),
   },
-)
+);
 
-const recaptchaData = await recaptchaResponse.json()
+const recaptchaData = await recaptchaResponse.json();
 
 if (!recaptchaData.success) {
   return res.status(400).json({
     success: false,
-    message: 'reCAPTCHA verification failed. Please try again.',
-  })
+    message: "reCAPTCHA verification failed. Please try again.",
+  });
 }
 
 // Check score threshold
 if (recaptchaData.score < 0.5) {
   return res.status(400).json({
     success: false,
-    message: 'Suspicious activity detected. Please try again.',
-  })
+    message: "Suspicious activity detected. Please try again.",
+  });
 }
 ```
 

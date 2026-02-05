@@ -6,7 +6,8 @@ permissions:
 
 on:
   workflow_run:
-    workflows: ["Deploy to Staging", "Deploy to Production", "Rollback Deployment"]
+    workflows:
+      ["Deploy to Staging", "Deploy to Production", "Rollback Deployment"]
     types:
       - completed
 

@@ -63,7 +63,12 @@ export const executeClaude: RequestHandler<
       id: 'error',
       type: 'error',
       role: 'assistant',
-      content: [{ type: 'text', text: 'An error occurred while processing your request.' }],
+      content: [
+        {
+          type: 'text',
+          text: 'An error occurred while processing your request.',
+        },
+      ],
       model: req.body.model,
       stop_reason: 'error',
       stop_sequence: null,

@@ -435,66 +435,186 @@ class TestProgressServer {
 
   private generateRealisticLogs() {
     const logMessages = [
-      { level: 'info', suite: 'API Tests', message: 'Starting test execution...' },
-      { level: 'info', suite: 'Portfolio Tests', message: 'Loading main page...' },
-      { level: 'info', suite: 'API Tests', message: 'Testing /api/ping endpoint' },
-      { level: 'info', suite: 'API Tests', message: '✓ /api/ping responded with status 200' },
-      { level: 'info', suite: 'API Tests', message: 'Testing /api/demo endpoint' },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: 'Starting test execution...',
+      },
+      {
+        level: 'info',
+        suite: 'Portfolio Tests',
+        message: 'Loading main page...',
+      },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: 'Testing /api/ping endpoint',
+      },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: '✓ /api/ping responded with status 200',
+      },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: 'Testing /api/demo endpoint',
+      },
       {
         level: 'info',
         suite: 'API Tests',
         message: '✓ /api/demo returned expected data structure',
       },
-      { level: 'info', suite: 'Portfolio Tests', message: 'Checking navigation links...' },
-      { level: 'info', suite: 'Portfolio Tests', message: '✓ All navigation links are present' },
-      { level: 'info', suite: 'PWA Tests', message: 'Testing service worker registration...' },
+      {
+        level: 'info',
+        suite: 'Portfolio Tests',
+        message: 'Checking navigation links...',
+      },
+      {
+        level: 'info',
+        suite: 'Portfolio Tests',
+        message: '✓ All navigation links are present',
+      },
+      {
+        level: 'info',
+        suite: 'PWA Tests',
+        message: 'Testing service worker registration...',
+      },
       {
         level: 'warn',
         suite: 'PWA Tests',
         message: 'Service worker registration delayed - retrying...',
       },
-      { level: 'info', suite: 'PWA Tests', message: '✓ Service worker registered successfully' },
-      { level: 'info', suite: 'Form Tests', message: 'Testing contact form validation...' },
-      { level: 'info', suite: 'Form Tests', message: '✓ Form validation working correctly' },
-      { level: 'info', suite: 'Performance Tests', message: 'Measuring page load time...' },
+      {
+        level: 'info',
+        suite: 'PWA Tests',
+        message: '✓ Service worker registered successfully',
+      },
+      {
+        level: 'info',
+        suite: 'Form Tests',
+        message: 'Testing contact form validation...',
+      },
+      {
+        level: 'info',
+        suite: 'Form Tests',
+        message: '✓ Form validation working correctly',
+      },
+      {
+        level: 'info',
+        suite: 'Performance Tests',
+        message: 'Measuring page load time...',
+      },
       {
         level: 'info',
         suite: 'Performance Tests',
         message: 'Page load time: 2.3s (within acceptable range)',
       },
-      { level: 'debug', suite: 'Accessibility Tests', message: 'Checking ARIA labels...' },
+      {
+        level: 'debug',
+        suite: 'Accessibility Tests',
+        message: 'Checking ARIA labels...',
+      },
       {
         level: 'info',
         suite: 'Accessibility Tests',
         message: '✓ All ARIA labels are properly set',
       },
-      { level: 'info', suite: 'API Tests', message: '✓ All endpoints responding correctly' },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: '✓ All endpoints responding correctly',
+      },
       {
         level: 'warn',
         suite: 'Image Tests',
         message: 'Large image detected, optimization recommended',
       },
-      { level: 'info', suite: 'Resume Tests', message: 'Testing PDF generation...' },
-      { level: 'info', suite: 'Resume Tests', message: '✓ PDF generation completed successfully' },
-      { level: 'info', suite: 'API Tests', message: 'Running API endpoint validation...' },
-      { level: 'info', suite: 'Portfolio Tests', message: 'Testing responsive breakpoints...' },
-      { level: 'info', suite: 'PWA Tests', message: 'Validating offline functionality...' },
-      { level: 'info', suite: 'Form Tests', message: 'Checking form submission flow...' },
-      { level: 'info', suite: 'Performance Tests', message: 'Collecting Core Web Vitals...' },
-      { level: 'debug', suite: 'Accessibility Tests', message: 'Auditing keyboard navigation...' },
-      { level: 'info', suite: 'Image Tests', message: 'Verifying lazy loading behavior...' },
-      { level: 'info', suite: 'Resume Tests', message: 'Validating PDF content structure...' },
-      { level: 'info', suite: 'API Tests', message: 'Testing rate limiting...' },
-      { level: 'info', suite: 'Portfolio Tests', message: 'Checking theme switching...' },
-      { level: 'info', suite: 'PWA Tests', message: 'Testing push notification setup...' },
-      { level: 'info', suite: 'Form Tests', message: 'Validating input sanitization...' },
-      { level: 'info', suite: 'Performance Tests', message: 'Measuring Time to Interactive...' },
+      {
+        level: 'info',
+        suite: 'Resume Tests',
+        message: 'Testing PDF generation...',
+      },
+      {
+        level: 'info',
+        suite: 'Resume Tests',
+        message: '✓ PDF generation completed successfully',
+      },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: 'Running API endpoint validation...',
+      },
+      {
+        level: 'info',
+        suite: 'Portfolio Tests',
+        message: 'Testing responsive breakpoints...',
+      },
+      {
+        level: 'info',
+        suite: 'PWA Tests',
+        message: 'Validating offline functionality...',
+      },
+      {
+        level: 'info',
+        suite: 'Form Tests',
+        message: 'Checking form submission flow...',
+      },
+      {
+        level: 'info',
+        suite: 'Performance Tests',
+        message: 'Collecting Core Web Vitals...',
+      },
+      {
+        level: 'debug',
+        suite: 'Accessibility Tests',
+        message: 'Auditing keyboard navigation...',
+      },
+      {
+        level: 'info',
+        suite: 'Image Tests',
+        message: 'Verifying lazy loading behavior...',
+      },
+      {
+        level: 'info',
+        suite: 'Resume Tests',
+        message: 'Validating PDF content structure...',
+      },
+      {
+        level: 'info',
+        suite: 'API Tests',
+        message: 'Testing rate limiting...',
+      },
+      {
+        level: 'info',
+        suite: 'Portfolio Tests',
+        message: 'Checking theme switching...',
+      },
+      {
+        level: 'info',
+        suite: 'PWA Tests',
+        message: 'Testing push notification setup...',
+      },
+      {
+        level: 'info',
+        suite: 'Form Tests',
+        message: 'Validating input sanitization...',
+      },
+      {
+        level: 'info',
+        suite: 'Performance Tests',
+        message: 'Measuring Time to Interactive...',
+      },
       {
         level: 'debug',
         suite: 'Accessibility Tests',
         message: 'Checking color contrast ratios...',
       },
-      { level: 'info', suite: 'Image Tests', message: 'Testing WebP format support...' },
+      {
+        level: 'info',
+        suite: 'Image Tests',
+        message: 'Testing WebP format support...',
+      },
     ]
 
     const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)]

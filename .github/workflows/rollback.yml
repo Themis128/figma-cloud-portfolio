@@ -4,15 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to rollback'
+        description: "Environment to rollback"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
-        - staging
-        - production
+          - staging
+          - production
       target_commit:
-        description: 'Target commit hash to rollback to (optional - defaults to previous deployment)'
+        description: "Target commit hash to rollback to (optional - defaults to previous deployment)"
         required: false
         type: string
 

@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -9,8 +9,9 @@ export default function Home() {
             Modern Portfolio
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Built with Next.js 15, TypeScript, and Tailwind CSS. A complete migration 
-            from Nuxt.js with improved performance and modern features.
+            Built with Next.js 15, TypeScript, and Tailwind CSS. A complete
+            migration from Nuxt.js with improved performance and modern
+            features.
           </p>
           <div className="flex flex-wrap gap-4">
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
@@ -45,5 +46,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }

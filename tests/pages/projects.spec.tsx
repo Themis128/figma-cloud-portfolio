@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Projects from '@/pages/Projects'
 
 // Constants
-const EXPECTED_CARD_COUNT = 4 // 3 stat cards + 1 for 3D demo
+const _EXPECTED_CARD_COUNT = 4 // 3 stat cards + 1 for 3D demo
 
 // Mock react-helmet-async
 vi.mock('react-helmet-async', () => ({
@@ -57,7 +57,7 @@ vi.mock('@/components/Interactive3DDemo', () => ({
       image: '/project3.jpg',
     },
   ],
-  default: ({ projects, className }: { projects: any[]; className?: string }) => (
+  Interactive3DDemo: ({ projects, className }: { projects: any[]; className?: string }) => (
     <div data-testid='interactive-3d-demo' className={className}>
       3D Demo with {projects.length} projects
     </div>

@@ -24,6 +24,7 @@ This will prompt you to enter sensitive values that won't be stored in version c
 ## Security Best Practices
 
 ### ✅ DO
+
 - Store secrets in environment variables
 - Use Windows Credential Manager for local development
 - Use Azure Key Vault for deployed applications
@@ -32,6 +33,7 @@ This will prompt you to enter sensitive values that won't be stored in version c
 - Keep `.env.example` with placeholder values only
 
 ### ❌ DON'T
+
 - Commit `.env` files to Git
 - Store secrets in source code
 - Use the same token across environments
@@ -148,17 +150,20 @@ Reference in workflows:
 ## Required Secrets by Feature
 
 ### GitHub Integration
+
 - **GITHUB_TOKEN**: Personal Access Token
   - Scopes: `repo`, `gist`, `read:user`
   - Get: https://github.com/settings/tokens
   - Status: ⚠️ EXPOSED - Rotate immediately
 
 ### Figma API
+
 - **FIGMA_API_KEY**: Figma access token
   - Get: https://www.figma.com/developers/api#authentication
   - Status: ⚠️ EXPOSED - Rotate immediately
 
 ### Firebase (Client-side)
+
 - **VITE_FIREBASE_API_KEY**: Public API key
 - **VITE_FIREBASE_PROJECT_ID**: Project identifier
 - **VITE_FIREBASE_AUTH_DOMAIN**: Auth domain
@@ -167,17 +172,20 @@ Reference in workflows:
 - Get: Firebase Console → Project Settings
 
 ### Firebase (Server-side - DO NOT EXPOSE)
+
 - **FIREBASE_PROJECT_ID**: Private
 - **FIREBASE_PRIVATE_KEY**: Private - Never in `.env`
 - **FIREBASE_CLIENT_EMAIL**: Private
 
 ### AWS Services
+
 - **AWS_ACCESS_KEY_ID**: AWS credential
 - **AWS_SECRET_ACCESS_KEY**: AWS credential
 - **AWS_REGION**: Region (us-east-1)
-- **VITE_LAMBDA_*_URL**: Function URLs after deployment
+- **VITE*LAMBDA*\*\_URL**: Function URLs after deployment
 
 ### AI Services (Choose one or more)
+
 - **VITE_OPENAI_API_KEY**: OpenAI (sk-...)
   - Get: https://platform.openai.com/api-keys
 - **VITE_ANTHROPIC_API_KEY**: Claude (sk-ant-...)
@@ -186,11 +194,13 @@ Reference in workflows:
   - Get: https://api.together.xyz/settings/api-keys
 
 ### Google reCAPTCHA
+
 - **VITE_RECAPTCHA_SITE_KEY**: Public key
 - **RECAPTCHA_SECRET_KEY**: Private key (server-only)
 - Get: https://www.google.com/recaptcha/admin
 
 ### Sentry (Error Tracking)
+
 - **VITE_SENTRY_DSN**: Client DSN
 - **SENTRY_DSN**: Server DSN
 - **SENTRY_ACCESS_TOKEN**: API token
@@ -199,6 +209,7 @@ Reference in workflows:
 ## Development Workflow
 
 ### 1. Initial Setup
+
 ```powershell
 # Clone repository
 git clone https://github.com/Themis128/figma-cloud-portfolio.git
@@ -212,6 +223,7 @@ cp .env.example .env
 ```
 
 ### 2. Local Development
+
 ```powershell
 # Environment variables are loaded from PowerShell profile on startup
 pnpm install
@@ -219,6 +231,7 @@ pnpm dev
 ```
 
 ### 3. Before Committing
+
 ```powershell
 # Verify no secrets in staged files
 git diff --cached | grep -i "token\|key\|secret"
@@ -232,21 +245,25 @@ git status
 If a secret is ever exposed (like in our case), follow this process:
 
 ### Step 1: Revoke Immediately
+
 - GitHub PAT: https://github.com/settings/tokens → Delete
 - Figma Key: https://www.figma.com/developers/api → Regenerate
 - AWS: https://console.aws.amazon.com/iam/ → Deactivate
 
 ### Step 2: Generate New Secret
+
 - Get from respective service
 - Store in PowerShell profile or vault
 - **DO NOT** commit
 
 ### Step 3: Update Application
+
 - Update environment variables
 - Restart application
 - Run tests to verify
 
 ### Step 4: Audit
+
 ```powershell
 # Search git history for the exposed secret
 git log -S "ghp_old_token_here" --all
@@ -258,7 +275,9 @@ git log --all --oneline -- ".env*"
 ## Monitoring & Alerts
 
 ### GitHub Secret Scanning
+
 Enable in repository settings:
+
 1. Settings → Security & analysis
 2. Enable "Secret scanning"
 3. Enable "Push protection"
@@ -266,7 +285,9 @@ Enable in repository settings:
 This will block commits containing common secret patterns.
 
 ### Codacy Secret Detection
+
 Our quality checks now include Trivy for secret scanning:
+
 ```bash
 pnpm run lint  # Includes secret detection
 ```
@@ -274,6 +295,7 @@ pnpm run lint  # Includes secret detection
 ## Troubleshooting
 
 ### Environment Variable Not Found
+
 ```powershell
 # Check if variable is set
 $env:GITHUB_TOKEN
@@ -283,6 +305,7 @@ Get-ChildItem env: | grep -i github
 ```
 
 ### Configuration Not Loading
+
 ```powershell
 # Reload PowerShell profile
 & $PROFILE
@@ -295,6 +318,7 @@ echo $PROFILE
 ```
 
 ### Secrets Leaked in History
+
 ```powershell
 # Rewrite history (dangerous!)
 git filter-branch --force --index-filter \

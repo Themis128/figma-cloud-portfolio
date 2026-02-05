@@ -253,7 +253,11 @@ test.describe('AI Integrations', () => {
           },
           send: async function (message: string) {
             return {
-              choices: [{ message: { role: 'assistant', content: `OpenAI: ${message}` } }],
+              choices: [
+                {
+                  message: { role: 'assistant', content: `OpenAI: ${message}` },
+                },
+              ],
               model: this.model,
               usage: { prompt_tokens: 10, completion_tokens: 20 },
             }
@@ -460,7 +464,10 @@ test.describe('AI Integrations', () => {
       // Mock agent workflow
       await page.evaluate(() => {
         window.agentWorkflow = {
-          steps: [] as Array<{ step: string; status: 'pending' | 'running' | 'completed' }>,
+          steps: [] as Array<{
+            step: string
+            status: 'pending' | 'running' | 'completed'
+          }>,
           execute: async function () {
             const workflow = [
               { step: 'Initialize', status: 'pending' as const },
@@ -592,7 +599,10 @@ test.describe('AI Integrations', () => {
         }
 
         return {
-          valid: validateResponse({ content: 'Test response', role: 'assistant' }),
+          valid: validateResponse({
+            content: 'Test response',
+            role: 'assistant',
+          }),
           invalid: validateResponse({ content: '', role: 'assistant' }),
           malformed: validateResponse(null),
         }

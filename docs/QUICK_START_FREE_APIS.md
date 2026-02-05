@@ -6,15 +6,15 @@
 
 ## ✅ What's Included (All Free!)
 
-| API | Free Tier | Cost | Status |
-|-----|-----------|------|--------|
-| **GitHub** | 5,000 req/hour | $0 | ✅ Ready |
-| **Firebase FCM** | Generous quota | $0 | ✅ Ready |
-| **Socket.IO** | Local server | $0 | ✅ Ready |
-| **Google Analytics** | Unlimited* | $0 | ✅ Ready |
-| **reCAPTCHA v3** | 1M req/month | $0 | ✅ Ready |
+| API                  | Free Tier      | Cost | Status   |
+| -------------------- | -------------- | ---- | -------- |
+| **GitHub**           | 5,000 req/hour | $0   | ✅ Ready |
+| **Firebase FCM**     | Generous quota | $0   | ✅ Ready |
+| **Socket.IO**        | Local server   | $0   | ✅ Ready |
+| **Google Analytics** | Unlimited\*    | $0   | ✅ Ready |
+| **reCAPTCHA v3**     | 1M req/month   | $0   | ✅ Ready |
 
-*Creates test data in your analytics
+\*Creates test data in your analytics
 
 ---
 
@@ -196,6 +196,7 @@ pnpm test:e2e:real:headed
 ### "Skipping tests (missing credentials)"
 
 **Fix**: Check `.env.test` has the API key:
+
 ```bash
 cat .env.test | grep GITHUB_TOKEN
 ```
@@ -203,6 +204,7 @@ cat .env.test | grep GITHUB_TOKEN
 ### "Backend server not available"
 
 **Fix**: Start backend in Terminal 2:
+
 ```bash
 npx tsx server/node-build.ts
 ```
@@ -212,6 +214,7 @@ npx tsx server/node-build.ts
 **You're fine!** GitHub gives 5000 requests/hour. The tests use < 10.
 
 Just wait a few minutes or increase delay:
+
 ```env
 RATE_LIMIT_DELAY_MS=2000
 ```
@@ -221,6 +224,7 @@ RATE_LIMIT_DELAY_MS=2000
 ## 💡 Tips
 
 ### Start Small
+
 ```env
 # Week 1: Just GitHub
 TEST_GITHUB_API=true
@@ -229,6 +233,7 @@ TEST_FIREBASE=false
 ```
 
 ### Add Gradually
+
 ```env
 # Week 2: Add Socket.IO
 TEST_GITHUB_API=true
@@ -237,6 +242,7 @@ TEST_FIREBASE=false
 ```
 
 ### Never Enable These (Without Budget!)
+
 ```env
 # ⚠️ COSTS MONEY - Keep disabled
 TEST_ANTHROPIC=false
@@ -248,6 +254,7 @@ TEST_OPENAI=false
 ## 📈 What's Being Tested
 
 ### GitHub API ✅
+
 - ✅ Real workflow fetching
 - ✅ Run status tracking
 - ✅ Rate limit handling
@@ -255,6 +262,7 @@ TEST_OPENAI=false
 - ✅ Authentication
 
 ### Socket.IO ✅
+
 - ✅ WebSocket connections
 - ✅ Message exchange
 - ✅ Room management
@@ -262,6 +270,7 @@ TEST_OPENAI=false
 - ✅ Performance metrics
 
 ### Firebase ✅
+
 - ✅ SDK initialization
 - ✅ FCM availability
 - ✅ Token generation
@@ -269,6 +278,7 @@ TEST_OPENAI=false
 - ✅ Performance impact
 
 ### Google Analytics ✅
+
 - ✅ GA4 script loading
 - ✅ Page view tracking
 - ✅ Custom events
@@ -276,6 +286,7 @@ TEST_OPENAI=false
 - ✅ Configuration
 
 ### reCAPTCHA ✅
+
 - ✅ Script loading
 - ✅ Token generation
 - ✅ Server verification
@@ -297,16 +308,19 @@ TEST_OPENAI=false
 ## 🆘 Need Help?
 
 **GitHub Token Issues**
+
 - Make sure it starts with `ghp_`
 - Check it has `repo`, `workflow`, `read:user` scopes
 - Try regenerating if expired
 
 **Backend Not Running**
+
 - Terminal 2: `npx tsx server/node-build.ts`
 - Check port 3000 is available
 - Look for "Server running" message
 
 **Tests Still Failing**
+
 - Check `.env.test` is in project root
 - Verify servers are running in both terminals
 - Try running one test at a time

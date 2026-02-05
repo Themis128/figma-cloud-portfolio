@@ -93,73 +93,64 @@ const GoogleAnalytics = () => {
       const trackResourcePerformance = () => {
         try {
           if (typeof window !== 'undefined' && 'performance' in window) {
-            // Track script loading performance
-            const scripts = document.querySelectorAll('script')
-            scripts.forEach((script) => {
-              if (script.src) {
-                const entries = performance.getEntriesByName(script.src)
-                if (entries.length > 0) {
-                  const entry = entries[0]
-                  if (entry && window.gtag) {
-                    try {
-                      window.gtag('event', 'bundle_load', {
-                        event_category: 'Performance',
-                        event_label: script.src,
-                        value: Math.round(entry.duration),
-                        transfer_size: (entry as PerformanceResourceTiming)?.transferSize || 0,
-                      })
-                    } catch {}
-                  }
-
-                  // For testing
-                  if (entry) {
-                    window.gaEvents = window.gaEvents || []
-                    window.gaEvents.push({
-                      command: 'event',
-                      eventName: 'bundle_load',
-                      params: {
-                        event_category: 'Performance',
-                        event_label: script.src,
-                        value: Math.round(entry.duration),
-                        transfer_size: (entry as PerformanceResourceTiming)?.transferSize || 0,
-                      },
-                    })
-                  }
-                }
-              }
-            })
-
-            // Track resource loading performance
-            const resources = performance.getEntriesByType('resource')
-            resources.forEach((resource) => {
-              if (resource.name.includes('.js') || resource.name.includes('.css')) {
-                if (window.gtag) {
-                  try {
-                    window.gtag('event', 'resource_load', {
-                      event_category: 'Performance',
-                      event_label: resource.name,
-                      value: Math.round(resource.duration),
-                      transfer_size: resource.transferSize || 0,
-                    })
-                  } catch {}
-                }
-
-                // For testing
-                window.gaEvents = window.gaEvents || []
-                window.gaEvents.push({
-                  command: 'event',
-                  eventName: 'resource_load',
-                  params: {
-                    event_category: 'Performance',
-                    event_label: resource.name,
-                    value: Math.round(resource.duration),
-                    transfer_size: resource.transferSize || 0,
-                  },
-                })
-              }
-            })
+            trackScriptPerformance()
+            trackResourcePerformanceData()
           }
         } catch {}
+      }
+
+      const trackScriptPerformance = () => {
+        const scripts = document.querySelectorAll('script')
+        scripts.forEach((script) => {
+          if (script.src) {
+            const entries = performance.getEntriesByName(script.src)
+            if (entries.length > 0) {
+              const entry = entries[0]
+              trackPerformanceEvent('bundle_load', script.src, entry)
+            }
+          }
+        })
+      }
+
+      const trackResourcePerformanceData = () => {
+        const resources = performance.getEntriesByType('resource')
+        resources.forEach((resource) => {
+          if (isTrackableResource(resource.name)) {
+            trackPerformanceEvent('resource_load', resource.name, resource)
+          }
+        })
+      }
+
+      const isTrackableResource = (name: string) => {
+        return name.includes('.js') || name.includes('.css')
+      }
+
+      const trackPerformanceEvent = (eventName: string, label: string, entry: PerformanceEntry) => {
+        if (window.gtag) {
+          try {
+            window.gtag('event', eventName, {
+              event_category: 'Performance',
+              event_label: label,
+              value: Math.round(entry.duration),
+              transfer_size: (entry as PerformanceResourceTiming)?.transferSize || 0,
+            })
+          } catch {}
+        }
+
+        // For testing
+        if (entry) {
+          window.gaEvents = window.gaEvents || []
+          window.gaEvents.push({
+            command: 'event',
+            eventName,
+            params: {
+              event_category: 'Performance',
+              event_label: label,
+              value: Math.round(entry.duration),
+              transfer_size: (entry as PerformanceResourceTiming)?.transferSize || 0,
+            },
+          })
+        }
       }
 
       // Track performance immediately and after page load
@@ -181,7 +172,10 @@ const GoogleAnalytics = () => {
         page_path: location.pathname + location.search,
       })
     } else if (ReactGA.isInitialized) {
-      ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
+      ReactGA.send({
+        hitType: 'pageview',
+        page: location.pathname + location.search,
+      })
     }
 
     // Send page view to backend analytics

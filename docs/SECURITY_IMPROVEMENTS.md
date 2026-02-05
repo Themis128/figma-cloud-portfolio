@@ -19,6 +19,7 @@ This document outlines the comprehensive security improvements implemented to ad
 ### 2. Input Validation
 
 **Validation Rules**:
+
 - Commands must be non-empty strings
 - Commands must match safe character patterns: `^[a-zA-Z0-9/_\-\.]+$`
 - Arguments are validated individually
@@ -31,6 +32,7 @@ This document outlines the comprehensive security improvements implemented to ad
 **Before**: Limited error handling with basic try-catch blocks.
 
 **After**: Comprehensive error handling with:
+
 - Structured error logging with timestamps
 - Specific error messages for different failure scenarios
 - Graceful fallback mechanisms
@@ -39,14 +41,16 @@ This document outlines the comprehensive security improvements implemented to ad
 ### 4. Logging and Auditing
 
 **Added Logging Functions**:
+
 - `log_info()`: Informational messages
-- `log_warn()`: Warning messages  
+- `log_warn()`: Warning messages
 - `log_error()`: Error messages
 - `log_debug()`: Debug messages
 
 **Log Format**: `[timestamp] [level] message`
 
 **Benefits**:
+
 - Security auditing trail
 - Debugging capabilities
 - Operational monitoring
@@ -55,7 +59,8 @@ This document outlines the comprehensive security improvements implemented to ad
 
 **Before**: String interpolation and concatenation for command construction.
 
-**After**: 
+**After**:
+
 - Use of proper argument arrays
 - No string interpolation for command construction
 - Direct parameter passing to scripts
@@ -68,19 +73,19 @@ This document outlines the comprehensive security improvements implemented to ad
 // Input validation function
 function validateCommand(command, args) {
   const dangerousPatterns = [
-    /[;&|`$(){}[\]\\]/,  // Shell metacharacters
-    /^\s*rm\s+/,        // Dangerous commands
+    /[;&|`$(){}[\]\\]/, // Shell metacharacters
+    /^\s*rm\s+/, // Dangerous commands
     // ... more patterns
   ];
-  
+
   // Validate command and arguments
   // Return true only if safe
 }
 
 // Secure execution
-const result = spawnSync("powershell", psArgs, { 
+const result = spawnSync("powershell", psArgs, {
   stdio: "inherit",
-  shell: false  // Disable shell to prevent injection
+  shell: false, // Disable shell to prevent injection
 });
 ```
 
@@ -94,7 +99,7 @@ function Test-SafeCommand {
     [Parameter(Mandatory=$true)]
     [string[]]$Args
   )
-  
+
   # Validation logic
   # Return $true only if safe
 }
@@ -113,7 +118,7 @@ validate_command() {
   local command="$1"
   shift
   local args=("$@")
-  
+
   # Validation logic
   # Return 0 only if safe
 }
@@ -156,12 +161,12 @@ const testCases = [
   {
     name: "Safe command",
     args: ["echo", "Hello World"],
-    expected: "success"
+    expected: "success",
   },
   {
     name: "Command injection attempt 1",
     args: ["echo", "test; rm -rf /"],
-    expected: "blocked"
+    expected: "blocked",
   },
   // ... more test cases
 ];

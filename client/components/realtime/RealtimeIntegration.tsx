@@ -1,36 +1,41 @@
-// Enhanced Real-time Integration Component for React 19
-import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
-import { useEnhancedNotifications } from "../../hooks/useEnhancedNotifications";
+import type { RealTimeConnection, RealTimeEvent, UserPresence } from '../../types/realtime'
+
+// Constants
+const MAX_RECENT_EVENTS = 5
+const MAX_COLLABORATORS_DISPLAY = 3
+
+import React, { useCallback, useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { useEnhancedNotifications } from '../../hooks/useEnhancedNotifications'
 import {
   useAgentCollaboration,
   useEnhancedSocket,
   usePresence,
   useRealtimeEvents,
   useRealtimeNotifications,
-} from "../../hooks/useEnhancedRealtime";
+} from '../../hooks/useEnhancedRealtime'
 import {
   CollaborationPanel,
   ConnectionStatus,
   PresenceIndicator,
   TypingIndicator,
-} from "./CollaborationComponents";
+} from './CollaborationComponents'
 
 // Lazy load dashboard for better performance
-const RealtimeDashboard = React.lazy(() => import("./RealtimeDashboard"));
+const RealtimeDashboard = React.lazy(() => import('./RealtimeDashboard'))
 
 // =============================================================================
 // MAIN INTEGRATION COMPONENT
 // =============================================================================
 
 interface RealtimeIntegrationProps {
-  userId?: string;
-  username?: string;
-  showDashboard?: boolean;
-  showCollaboration?: boolean;
-  showNotifications?: boolean;
-  enableAutoConnect?: boolean;
-  className?: string;
+  userId?: string
+  username?: string
+  showDashboard?: boolean
+  showCollaboration?: boolean
+  showNotifications?: boolean
+  enableAutoConnect?: boolean
+  className?: string
 }
 
 export function RealtimeIntegration({
@@ -42,102 +47,110 @@ export function RealtimeIntegration({
   enableAutoConnect = true,
   className,
 }: RealtimeIntegrationProps) {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState<string>("global");
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [selectedRoom, setSelectedRoom] = useState<string>('global')
 
   // Initialize Socket.IO connection
-  const { connection, emit, on, isConnected, isConnecting } = useEnhancedSocket({
+  const { connection, emit, isConnected, isConnecting } = useEnhancedSocket({
     userId,
     autoConnect: enableAutoConnect,
     autoReconnect: true,
     heartbeat: true,
-  });
+  })
 
   // Initialize presence tracking
-  const { presence, onlineCount, updatePresence } = usePresence(selectedRoom);
+  const { presence, onlineCount, updatePresence } = usePresence(selectedRoom)
 
   // Initialize real-time events
-  const { events, sendEvent, clearEvents } = useRealtimeEvents("global_activity");
+  const { events, sendEvent, clearEvents } = useRealtimeEvents('global_activity')
 
   // Initialize notifications
   const { permission, requestPermission, isGranted } = useEnhancedNotifications(
     process.env.VITE_VAPID_PUBLIC_KEY,
-  );
+  )
 
   // Initialize real-time notifications
-  useRealtimeNotifications();
+  useRealtimeNotifications()
 
   // Authenticate user when connected
   useEffect(() => {
     if (isConnected && !isInitialized) {
-      emit("authenticate", {
+      emit('authenticate', {
         userId,
         username,
         userAgent: navigator.userAgent,
       })
         .then(() => {
-          setIsInitialized(true);
+          setIsInitialized(true)
 
           // Update initial presence
           updatePresence({
-            status: "online",
-            activity: "viewing",
-          });
+            status: 'online',
+            activity: 'viewing',
+          })
         })
-        .catch(console.error);
+        .catch(() => {
+          // Authentication failed silently
+        })
     }
-  }, [isConnected, isInitialized, emit, userId, username, updatePresence]);
+  }, [isConnected, isInitialized, emit, userId, username, updatePresence])
 
   // Handle connection state changes
   useEffect(() => {
     if (isConnected) {
-      console.log("🟢 Real-time connection established");
+      // Connection established
     } else if (isConnecting) {
-      console.log("🟡 Connecting to real-time server...");
+      // Connecting to real-time server...
     } else {
-      console.log("🔴 Real-time connection lost");
+      // Real-time connection lost
     }
-  }, [isConnected, isConnecting]);
+  }, [isConnected, isConnecting])
 
   // Request notification permission on mount
   useEffect(() => {
-    if (showNotifications && permission === "default") {
-      requestPermission().catch(console.error);
+    if (showNotifications && permission === 'default') {
+      requestPermission().catch(() => {
+        // Permission request failed silently
+      })
     }
-  }, [showNotifications, permission, requestPermission]);
+  }, [showNotifications, permission, requestPermission])
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (isConnected) {
-        emit("disconnect").catch(console.error);
+        emit('disconnect').catch(() => {
+          // Disconnect failed silently
+        })
       }
-    };
-  }, [isConnected, emit]);
+    }
+  }, [isConnected, emit])
 
   const handleRoomChange = useCallback((roomId: string) => {
-    setSelectedRoom(roomId);
-  }, []);
+    setSelectedRoom(roomId)
+  }, [])
 
   const handleSendTestEvent = useCallback(() => {
     sendEvent({
-      type: "test_event",
-      message: "This is a test real-time event",
+      type: 'test_event',
+      message: 'This is a test real-time event',
       userId,
       timestamp: Date.now(),
-    }).catch(console.error);
-  }, [sendEvent, userId]);
+    }).catch(() => {
+      // Event send failed silently
+    })
+  }, [sendEvent, userId])
 
   if (!enableAutoConnect) {
     return (
-      <div className={cn("p-4 text-center", className)}>
+      <div className={cn('p-4 text-center', className)}>
         <p className='text-gray-600 dark:text-gray-400'>Real-time features disabled</p>
       </div>
-    );
+    )
   }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className)}>
       {/* Connection Status Bar */}
       <div className='flex items-center justify-between p-4 bg-gray-50 dark:bg-navy-750 rounded-lg'>
         <div className='flex items-center space-x-4'>
@@ -159,13 +172,14 @@ export function RealtimeIntegration({
           )}
 
           <button
+            type='button'
             onClick={handleSendTestEvent}
             disabled={!isConnected}
             className={cn(
-              "px-3 py-1 rounded-md text-sm font-medium transition-colors",
+              'px-3 py-1 rounded-md text-sm font-medium transition-colors',
               isConnected
-                ? "bg-cyan-100 hover:bg-cyan-200 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200"
-                : "bg-gray-100 text-gray-400 cursor-not-allowed",
+                ? 'bg-cyan-100 hover:bg-cyan-200 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed',
             )}
           >
             Test Event
@@ -197,20 +211,21 @@ export function RealtimeIntegration({
             <div className='bg-white dark:bg-navy-800 rounded-lg p-4 border border-gray-200 dark:border-navy-700'>
               <h4 className='font-medium text-gray-900 dark:text-white mb-3'>Switch Room</h4>
               <div className='space-y-2'>
-                {["global", "agents", "projects", "chat"].map((room) => (
+                {['global', 'agents', 'projects', 'chat'].map((room) => (
                   <button
+                    type='button'
                     key={room}
                     onClick={() => handleRoomChange(room)}
                     className={cn(
-                      "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
+                      'w-full text-left px-3 py-2 rounded-md text-sm transition-colors',
                       selectedRoom === room
-                        ? "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200"
-                        : "hover:bg-gray-100 dark:hover:bg-navy-750 text-gray-700 dark:text-gray-300",
+                        ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
+                        : 'hover:bg-gray-100 dark:hover:bg-navy-750 text-gray-700 dark:text-gray-300',
                     )}
                   >
                     #{room}
                     <span className='float-right text-xs opacity-75'>
-                      {presence.filter((p) => p.rooms?.includes(room) || room === "global").length}{" "}
+                      {presence.filter((p) => p.rooms?.includes(room) || room === 'global').length}{' '}
                       online
                     </span>
                   </button>
@@ -231,6 +246,7 @@ export function RealtimeIntegration({
             Live Event Feed ({events.length})
           </h3>
           <button
+            type='button'
             onClick={clearEvents}
             disabled={events.length === 0}
             className='text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50'
@@ -241,7 +257,7 @@ export function RealtimeIntegration({
 
         <div className='space-y-2 max-h-32 overflow-y-auto'>
           {events
-            .slice(-5)
+            .slice(-MAX_RECENT_EVENTS)
             .reverse()
             .map((event) => (
               <div key={event.id} className='text-sm p-2 bg-gray-50 dark:bg-navy-750 rounded'>
@@ -266,11 +282,11 @@ export function RealtimeIntegration({
       </div>
 
       {/* Debug Information (Development Only) */}
-      {process.env.NODE_ENV === "development" && (
+      {process.env.NODE_ENV === 'development' && (
         <DebugPanel connection={connection} presence={presence} events={events} />
       )}
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -278,9 +294,9 @@ export function RealtimeIntegration({
 // =============================================================================
 
 interface AgentCollaborationWrapperProps {
-  agentId: string;
-  children: React.ReactNode;
-  className?: string;
+  agentId: string
+  children: React.ReactNode
+  className?: string
 }
 
 export function AgentCollaborationWrapper({
@@ -296,35 +312,39 @@ export function AgentCollaborationWrapper({
     startEditing,
     stopEditing,
     broadcastChange,
-  } = useAgentCollaboration(agentId);
+  } = useAgentCollaboration(agentId)
 
   const handleStartEditing = useCallback(() => {
     if (startEditing()) {
       broadcastChange({
         agentId,
-        userId: "current-user", // Replace with actual user ID
-        changeType: "update",
-        section: "general",
+        userId: 'current-user', // Replace with actual user ID
+        changeType: 'update',
+        section: 'general',
         changes: { editing: true },
         timestamp: Date.now(),
-      }).catch(console.error);
+      }).catch(() => {
+        // Change broadcast failed silently
+      })
     }
-  }, [startEditing, broadcastChange, agentId]);
+  }, [startEditing, broadcastChange, agentId])
 
   const handleStopEditing = useCallback(() => {
-    stopEditing();
+    stopEditing()
     broadcastChange({
       agentId,
-      userId: "current-user", // Replace with actual user ID
-      changeType: "update",
-      section: "general",
+      userId: 'current-user', // Replace with actual user ID
+      changeType: 'update',
+      section: 'general',
       changes: { editing: false },
       timestamp: Date.now(),
-    }).catch(console.error);
-  }, [stopEditing, broadcastChange, agentId]);
+    }).catch(() => {
+      // Stop editing broadcast failed silently
+    })
+  }, [stopEditing, broadcastChange, agentId])
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       {/* Collaboration Status Bar */}
       <div className='flex items-center justify-between p-2 bg-gray-50 dark:bg-navy-750 rounded-t-lg border-b border-gray-200 dark:border-navy-700'>
         <div className='flex items-center space-x-2'>
@@ -333,7 +353,7 @@ export function AgentCollaborationWrapper({
           </span>
           {collaborators.length > 0 && (
             <div className='flex -space-x-1'>
-              {collaborators.slice(0, 3).map((user) => (
+              {collaborators.slice(0, MAX_COLLABORATORS_DISPLAY).map((user) => (
                 <PresenceIndicator key={user.userId} userId={user.userId} size='sm' showTooltip />
               ))}
             </div>
@@ -341,7 +361,7 @@ export function AgentCollaborationWrapper({
         </div>
 
         <div className='flex items-center space-x-2'>
-          {currentEditor && currentEditor !== "current-user" && (
+          {currentEditor && currentEditor !== 'current-user' && (
             <span className='text-xs text-yellow-600 dark:text-yellow-400'>
               {currentEditor} is editing
             </span>
@@ -349,22 +369,23 @@ export function AgentCollaborationWrapper({
 
           {canEdit && (
             <button
+              type='button'
               onClick={isEditing ? handleStopEditing : handleStartEditing}
               className={cn(
-                "px-2 py-1 text-xs rounded transition-colors",
+                'px-2 py-1 text-xs rounded transition-colors',
                 isEditing
-                  ? "bg-red-100 text-red-800 hover:bg-red-200"
-                  : "bg-green-100 text-green-800 hover:bg-green-200",
+                  ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                  : 'bg-green-100 text-green-800 hover:bg-green-200',
               )}
             >
-              {isEditing ? "Stop Editing" : "Start Editing"}
+              {isEditing ? 'Stop Editing' : 'Start Editing'}
             </button>
           )}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className={cn("relative", !canEdit && "pointer-events-none opacity-75")}>
+      <div className={cn('relative', !canEdit && 'pointer-events-none opacity-75')}>
         {children}
 
         {!canEdit && (
@@ -378,7 +399,7 @@ export function AgentCollaborationWrapper({
         )}
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -397,42 +418,43 @@ function DashboardSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface DebugPanelProps {
-  connection: any;
-  presence: any[];
-  events: any[];
+  connection: RealTimeConnection
+  presence: UserPresence[]
+  events: RealTimeEvent[]
 }
 
 function DebugPanel({ connection, presence, events }: DebugPanelProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <div className='bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm'>
       <button
+        type='button'
         onClick={() => setIsExpanded(!isExpanded)}
         className='w-full text-left font-bold mb-2'
       >
-        🐛 Debug Information {isExpanded ? "▼" : "▶"}
+        🐛 Debug Information {isExpanded ? '▼' : '▶'}
       </button>
 
       {isExpanded && (
         <div className='space-y-2'>
           <div>Connection: {connection.status}</div>
-          <div>Socket ID: {connection.socket?.id || "N/A"}</div>
-          <div>Latency: {connection.latency || "N/A"}ms</div>
+          <div>Socket ID: {connection.socket?.id || 'N/A'}</div>
+          <div>Latency: {connection.latency || 'N/A'}ms</div>
           <div>Online Users: {presence.length}</div>
           <div>Events: {events.length}</div>
-          <div>Rooms: {connection.rooms?.join(", ") || "None"}</div>
+          <div>Rooms: {connection.rooms?.join(', ') || 'None'}</div>
         </div>
       )}
     </div>
-  );
+  )
 }
 
 export default {
   RealtimeIntegration,
   AgentCollaborationWrapper,
-};
+}

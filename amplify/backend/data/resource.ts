@@ -1,4 +1,4 @@
-import { a, defineData, type ClientSchema } from '@aws-amplify/backend'
+import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({
   // Define your data models here
@@ -8,13 +8,13 @@ const schema = a.schema({
   //     content: a.string(),
   //   })
   //   .authorization((allow) => [allow.owner()]),
-})
+});
 
-export type Schema = ClientSchema<typeof schema>
+export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'userPool',
+    defaultAuthorizationMode: "userPool",
   },
-})
+});

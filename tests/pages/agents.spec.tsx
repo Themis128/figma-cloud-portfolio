@@ -116,7 +116,7 @@ vi.mock('@/components/agents/TemplateSelector', () => ({
 }))
 
 vi.mock('@/components/agents/WorkflowBuilder', () => ({
-  WorkflowBuilder: ({ nodes, connections, readonly }: any) => (
+  default: ({ nodes, connections, readonly }: any) => (
     <div data-testid='workflow-builder'>
       Workflow with {nodes?.length || 0} nodes and {connections?.length || 0} connections
       {readonly ? ' (readonly)' : ''}

@@ -1,0 +1,418 @@
+
+> baltzakis-portfolio@1.0.0 lint D:\Nuxt Projects\new-portfolio
+> biome check .
+
+client\components\LinkPreview.tsx:23:17 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━━━━
+
+  ! Excessive complexity of 17 detected (max: 15).
+  
+    21 │  * Displays rich previews of URLs with metadata, images, and social media tags
+    22 │  */
+  > 23 │ export function LinkPreview({
+       │                 ^^^^^^^^^^^
+    24 │   url,
+    25 │   className,
+  
+  i Please refactor this function to reduce its complexity score from 17 to the max allowed complexity 15.
+  
+
+client\components\LinkPreview.tsx:59:34 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━━━━
+
+  ! Excessive complexity of 20 detected (max: 15).
+  
+    57 │     let isMounted = true
+    58 │ 
+  > 59 │     const loadPreview = async () => {
+       │                                  ^^^
+    60 │       if (!isMounted) return
+    61 │ 
+  
+  i Please refactor this function to reduce its complexity score from 20 to the max allowed complexity 15.
+  
+
+client\components\PushNotificationTester.tsx:24:17 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━
+
+  ! Excessive complexity of 23 detected (max: 15).
+  
+    22 │ }
+    23 │ 
+  > 24 │ export function PushNotificationTester() {
+       │                 ^^^^^^^^^^^^^^^^^^^^^^
+    25 │   const [isLoading, setIsLoading] = useState(false)
+    26 │   const [result, setResult] = useState<NotificationResult | null>(null)
+  
+  i Please refactor this function to reduce its complexity score from 23 to the max allowed complexity 15.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:39:88 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    37 │   const metrics = useMemo<RealtimeMetrics>(
+    38 │     () => ({
+  > 39 │       connectionUptime: connection.socket ? Date.now() - connection.socket.connected * 1000 : 0,
+       │                                                                                        ^^^^
+    40 │       messagesReceived: events.length,
+    41 │       messagesSent: 0, // Would track this from socket manager
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:58:21 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    57 │     if (isConnected) {
+  > 58 │       if (latency < 50) status = 'excellent'
+       │                     ^^
+    59 │       else if (latency < 100) status = 'good'
+    60 │       else if (latency < 200) status = 'fair'
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:59:26 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    57 │     if (isConnected) {
+    58 │       if (latency < 50) status = 'excellent'
+  > 59 │       else if (latency < 100) status = 'good'
+       │                          ^^^
+    60 │       else if (latency < 200) status = 'fair'
+    61 │       else status = 'poor'
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:60:26 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    58 │       if (latency < 50) status = 'excellent'
+    59 │       else if (latency < 100) status = 'good'
+  > 60 │       else if (latency < 200) status = 'fair'
+       │                          ^^^
+    61 │       else status = 'poor'
+    62 │ 
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:63:31 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    61 │       else status = 'poor'
+    62 │ 
+  > 63 │       stability = Math.max(0, 100 - connection.reconnectAttempts * 20)
+       │                               ^^^
+    64 │     }
+    65 │ 
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:63:68 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    61 │       else status = 'poor'
+    62 │ 
+  > 63 │       stability = Math.max(0, 100 - connection.reconnectAttempts * 20)
+       │                                                                    ^^
+    64 │     }
+    65 │ 
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:70:74 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    68 │       latency,
+    69 │       stability,
+  > 70 │       throughput: events.length / Math.max(1, metrics.connectionUptime / 1000),
+       │                                                                          ^^^^
+    71 │       errorRate: 0,
+    72 │     }
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\realtime\RealtimeDashboard.tsx:235:13 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━
+
+  ! Unexpected any. Specify a different type.
+  
+    233 │   connectionQuality: ConnectionQuality
+    234 │   onlineCount: number
+  > 235 │   presence: any[]
+        │             ^^^
+    236 │   roomsCount: number
+    237 │ }
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+client\components\ui\accessibility.tsx:139:57 lint/style/noMagicNumbers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Magic number detected. Extract it to a constant with a meaningful name.
+  
+    137 │   ...props
+    138 │ }: AccessibleInputProps) {
+  > 139 │   const inputId = id || `input-${Math.random().toString(36).substr(RANDOM_ID_START_INDEX, RANDOM_ID_LENGTH)}`
+        │                                                         ^^
+    140 │   const errorId = error ? `${inputId}-error` : undefined
+    141 │   const helperId = helperText ? `${inputId}-helper` : undefined
+  
+  i Code is more readable and refactoring easier when special numbers are declared as constants as it makes their meaning explicit.
+  
+
+client\components\Activity.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     44  44 │     }, [])
+     45  45 │   
+     46     │ - ··const·setupHoverTrigger·=·useCallback((handleTrigger:·()·=>·void)·=>·{
+     47     │ - ····if·(!elementRef)·return·()·=>·{}
+     48     │ - ····elementRef.addEventListener('mouseenter',·handleTrigger)
+     49     │ - ····elementRef.addEventListener('click',·()·=>·setIsPreRendered(true))
+     50     │ - ····return·()·=>·{
+     51     │ - ······elementRef?.removeEventListener('mouseenter',·handleTrigger)
+     52     │ - ······elementRef?.removeEventListener('click',·()·=>·setIsPreRendered(true))
+     53     │ - ····}
+     54     │ - ··},·[elementRef])
+         46 │ + ··const·setupHoverTrigger·=·useCallback(
+         47 │ + ····(handleTrigger:·()·=>·void)·=>·{
+         48 │ + ······if·(!elementRef)·return·()·=>·{}
+         49 │ + ······elementRef.addEventListener('mouseenter',·handleTrigger)
+         50 │ + ······elementRef.addEventListener('click',·()·=>·setIsPreRendered(true))
+         51 │ + ······return·()·=>·{
+         52 │ + ········elementRef?.removeEventListener('mouseenter',·handleTrigger)
+         53 │ + ········elementRef?.removeEventListener('click',·()·=>·setIsPreRendered(true))
+         54 │ + ······}
+         55 │ + ····},
+         56 │ + ····[elementRef],
+         57 │ + ··)
+     55  58 │   
+     56     │ - ··const·setupViewportTrigger·=·useCallback((handleTrigger:·()·=>·void)·=>·{
+     57     │ - ····if·(!(isIntersectionObserverValid()·&&·elementRef))·{
+     58     │ - ······setIsPreRendered(true)
+     59     │ - ······return·()·=>·{}
+     60     │ - ····}
+         59 │ + ··const·setupViewportTrigger·=·useCallback(
+         60 │ + ····(handleTrigger:·()·=>·void)·=>·{
+         61 │ + ······if·(!(isIntersectionObserverValid()·&&·elementRef))·{
+         62 │ + ········setIsPreRendered(true)
+         63 │ + ········return·()·=>·{}
+         64 │ + ······}
+     61  65 │   
+     62     │ - ····const·observer·=·new·IntersectionObserver(
+     63     │ - ······(entries)·=>·{
+     64     │ - ········for·(const·entry·of·entries)·{
+     65     │ - ··········if·(entry.isIntersecting)·{
+     66     │ - ············handleTrigger()
+         66 │ + ······const·observer·=·new·IntersectionObserver(
+         67 │ + ········(entries)·=>·{
+         68 │ + ··········for·(const·entry·of·entries)·{
+         69 │ + ············if·(entry.isIntersecting)·{
+         70 │ + ··············handleTrigger()
+         71 │ + ············}
+     67  72 │             }
+     68     │ - ········}
+     69     │ - ······},
+     70     │ - ······{·threshold:·0.1,·rootMargin:·'50px'·},
+     71     │ - ····)
+         73 │ + ········},
+         74 │ + ········{·threshold:·0.1,·rootMargin:·'50px'·},
+         75 │ + ······)
+     72  76 │   
+     73     │ - ····observer.observe(elementRef)
+     74     │ - ····return·()·=>·observer.unobserve(elementRef)
+     75     │ - ··},·[elementRef,·isIntersectionObserverValid])
+         77 │ + ······observer.observe(elementRef)
+         78 │ + ······return·()·=>·observer.unobserve(elementRef)
+         79 │ + ····},
+         80 │ + ····[elementRef,·isIntersectionObserverValid],
+         81 │ + ··)
+     76  82 │   
+     77  83 │     const setupTriggerHandler = useCallback(() => {
+  
+
+client\components\NotificationButton.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    115 115 │         },
+    116 116 │       )
+    117     │ - ····showNotification(
+    118     │ - ······'Notifications·enabled',
+    119     │ - ······'However,·push·notifications·may·not·work·properly.',
+    120     │ - ····)
+        117 │ + ····showNotification('Notifications·enabled',·'However,·push·notifications·may·not·work·properly.')
+    121 118 │     }
+    122 119 │   
+  
+
+client\components\PerformanceDashboard.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     89  89 │     const getLCPStatus = useCallback((value: number) => {
+     90  90 │       if (value <= LCP_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
+     91     │ - ····if·(value·<=·LCP_NEEDS_IMPROVEMENT_THRESHOLD)·return·{·status:·'needs-improvement',·color:·'text-yellow-400'·}
+         91 │ + ····if·(value·<=·LCP_NEEDS_IMPROVEMENT_THRESHOLD)
+         92 │ + ······return·{·status:·'needs-improvement',·color:·'text-yellow-400'·}
+     92  93 │       return { status: 'poor', color: 'text-red-400' }
+     93  94 │     }, [])
+    ······· │ 
+     95  96 │     const getCLSStatus = useCallback((value: number) => {
+     96  97 │       if (value <= CLS_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
+     97     │ - ····if·(value·<=·CLS_NEEDS_IMPROVEMENT_THRESHOLD)·return·{·status:·'needs-improvement',·color:·'text-yellow-400'·}
+         98 │ + ····if·(value·<=·CLS_NEEDS_IMPROVEMENT_THRESHOLD)
+         99 │ + ······return·{·status:·'needs-improvement',·color:·'text-yellow-400'·}
+     98 100 │       return { status: 'poor', color: 'text-red-400' }
+     99 101 │     }, [])
+    ······· │ 
+    101 103 │     const getFCPTTFBStatus = useCallback((value: number) => {
+    102 104 │       if (value <= FCP_TTFB_GOOD_THRESHOLD) return { status: 'good', color: 'text-green-400' }
+    103     │ - ····if·(value·<=·FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)·return·{·status:·'needs-improvement',·color:·'text-yellow-400'·}
+        105 │ + ····if·(value·<=·FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD)
+        106 │ + ······return·{·status:·'needs-improvement',·color:·'text-yellow-400'·}
+    104 107 │       return { status: 'poor', color: 'text-red-400' }
+    105 108 │     }, [])
+  
+
+client\components\PerformanceMonitor.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    223 223 │       }
+    224 224 │   
+    225     │ - ····const·handleNavigationEntry·=·(_navigation:·PerformanceEntry·&·{
+    226     │ - ······domContentLoadedEventEnd:·number
+    227     │ - ······domContentLoadedEventStart:·number
+    228     │ - ······loadEventEnd:·number
+    229     │ - ······loadEventStart:·number
+    230     │ - ······fetchStart:·number
+    231     │ - ····})·=>·{
+        225 │ + ····const·handleNavigationEntry·=·(
+        226 │ + ······_navigation:·PerformanceEntry·&·{
+        227 │ + ········domContentLoadedEventEnd:·number
+        228 │ + ········domContentLoadedEventStart:·number
+        229 │ + ········loadEventEnd:·number
+        230 │ + ········loadEventStart:·number
+        231 │ + ········fetchStart:·number
+        232 │ + ······},
+        233 │ + ····)·=>·{
+    232 234 │         if (process.env.NODE_ENV === 'production') {
+    233 235 │           // Send to analytics service
+  
+
+client\components\PushNotificationTester.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     86  86 │         setResult({
+     87  87 │           success: false,
+     88     │ - ········message:·'API·server·may·not·be·running.·Please·ensure·both·frontend·and·backend·servers·are·started.',
+         88 │ + ········message:
+         89 │ + ··········'API·server·may·not·be·running.·Please·ensure·both·frontend·and·backend·servers·are·started.',
+     89  90 │         })
+     90  91 │       } else {
+  
+
+client\components\realtime\RealtimeIntegration.tsx:1:1 assist/source/organizeImports  FIXABLE  ━━━━━━━━━━
+
+  × The imports and exports are not sorted.
+  
+  > 1 │ import type { RealTimeConnection, UserPresence, RealTimeEvent } from '../../types/realtime'
+      │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 │ 
+    3 │ // Constants
+  
+  i Safe fix: Organize Imports (Biome)
+  
+      1     │ - import·type·{·RealTimeConnection,·UserPresence,·RealTimeEvent·}·from·'../../types/realtime'
+          1 │ + import·type·{·RealTimeConnection,·RealTimeEvent,·UserPresence·}·from·'../../types/realtime'
+      2   2 │   
+      3   3 │   // Constants
+      4   4 │   const MAX_RECENT_EVENTS = 5
+      5   5 │   const MAX_COLLABORATORS_DISPLAY = 3
+          6 │ + 
+      6   7 │   import React, { useCallback, useEffect, useState } from 'react'
+      7   8 │   import { cn } from '@/lib/utils'
+  
+
+client\components\ui\accessibility.tsx format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    137 137 │     ...props
+    138 138 │   }: AccessibleInputProps) {
+    139     │ - ··const·inputId·=·id·||·`input-${Math.random().toString(36).substr(RANDOM_ID_START_INDEX,·RANDOM_ID_LENGTH)}`
+        139 │ + ··const·inputId·=
+        140 │ + ····id·||·`input-${Math.random().toString(36).substr(RANDOM_ID_START_INDEX,·RANDOM_ID_LENGTH)}`
+    140 141 │     const errorId = error ? `${inputId}-error` : undefined
+    141 142 │     const helperId = helperText ? `${inputId}-helper` : undefined
+    ······· │ 
+    151 152 │         >
+    152 153 │           {label}
+    153     │ - ········{props.required·&&·(
+    154     │ - ··········<span·className='text-red-500·ml-1'>
+    155     │ - ············*
+    156     │ - ··········</span>
+    157     │ - ········)}
+        154 │ + ········{props.required·&&·<span·className='text-red-500·ml-1'>*</span>}
+    158 155 │         </label>
+    159 156 │   
+    ······· │ 
+    264 261 │       }
+    265 262 │   
+    266     │ - ····const·handleTabNavigation·=·(e:·KeyboardEvent,·first:·HTMLElement·|·undefined,·last:·HTMLElement·|·undefined)·=>·{
+        263 │ + ····const·handleTabNavigation·=·(
+        264 │ + ······e:·KeyboardEvent,
+        265 │ + ······first:·HTMLElement·|·undefined,
+        266 │ + ······last:·HTMLElement·|·undefined,
+        267 │ + ····)·=>·{
+    267 268 │         const activeElement = document.activeElement as HTMLElement
+    268 269 │   
+  
+
+vite.config.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     22  22 │   const CACHE_DURATION_5_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_CACHE_DURATION
+     23  23 │   const CACHE_DURATION_1_YEAR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR
+     24     │ - const·CACHE_DURATION_30_DAYS·=·SECONDS_PER_MINUTE·*·MINUTES_PER_HOUR·*·HOURS_PER_DAY·*·DAYS_PER_MONTH
+         24 │ + const·CACHE_DURATION_30_DAYS·=
+         25 │ + ··SECONDS_PER_MINUTE·*·MINUTES_PER_HOUR·*·HOURS_PER_DAY·*·DAYS_PER_MONTH
+     25  26 │   
+     26  27 │   // Helper functions for chunk and asset naming
+    ······· │ 
+     60  61 │   
+     61  62 │   const isVendorChunk = (chunkName?: string): boolean => {
+     62     │ - ··return·!!(
+     63     │ - ····chunkName·&&
+     64     │ - ····['react-core',·'ui',·'charts',·'three'].includes(chunkName)
+     65     │ - ··)
+         63 │ + ··return·!!(chunkName·&&·['react-core',·'ui',·'charts',·'three'].includes(chunkName))
+     66  64 │   }
+     67  65 │   
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 264.
+Checked 406 files in 488ms. No fixes applied.
+Found 31 errors.
+Found 244 warnings.
+Found 9 infos.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+ ELIFECYCLE  Command failed with exit code 1.

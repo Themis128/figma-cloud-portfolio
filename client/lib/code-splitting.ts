@@ -1,7 +1,7 @@
 // Advanced code-splitting configuration for React 19 optimization
 
-import type { ComponentType } from "react";
-import { lazy } from "react";
+import type { ComponentType } from 'react'
+import { lazy } from 'react'
 
 // =============================================================================
 // ROUTE-LEVEL CODE SPLITTING
@@ -9,41 +9,41 @@ import { lazy } from "react";
 
 // Core pages - Critical for first load
 export const HomePage = lazy(() =>
-  import("../pages/HomePage").then((module) => ({
+  import('../pages/HomePage').then((module) => ({
     default: module.HomePage,
   })),
-);
+)
 
 // Feature pages - Lazy loaded
 export const AboutPage = lazy(() =>
-  import("../pages/AboutPage").then((module) => ({
+  import('../pages/AboutPage').then((module) => ({
     default: module.AboutPage,
   })),
-);
+)
 
 export const ProjectsPage = lazy(() =>
-  import("../pages/ProjectsPage").then((module) => ({
+  import('../pages/ProjectsPage').then((module) => ({
     default: module.ProjectsPage,
   })),
-);
+)
 
 export const ContactPage = lazy(() =>
-  import("../pages/ContactPage").then((module) => ({
+  import('../pages/ContactPage').then((module) => ({
     default: module.ContactPage,
   })),
-);
+)
 
 export const AgentsPage = lazy(() =>
-  import("../pages/AgentsPage").then((module) => ({
+  import('../pages/AgentsPage').then((module) => ({
     default: module.AgentsPage,
   })),
-);
+)
 
 export const ResumePage = lazy(() =>
-  import("../pages/ResumePage").then((module) => ({
+  import('../pages/ResumePage').then((module) => ({
     default: module.ResumePage,
   })),
-);
+)
 
 // =============================================================================
 // COMPONENT-LEVEL CODE SPLITTING
@@ -51,47 +51,47 @@ export const ResumePage = lazy(() =>
 
 // Complex interactive components
 export const ContactForm = lazy(() =>
-  import("../components/forms/ContactForm").then((module) => ({
+  import('../components/forms/ContactForm').then((module) => ({
     default: module.ContactForm,
   })),
-);
+)
 
 export const ProjectShowcase = lazy(() =>
-  import("../components/projects/ProjectShowcase").then((module) => ({
+  import('../components/projects/ProjectShowcase').then((module) => ({
     default: module.ProjectShowcase,
   })),
-);
+)
 
 export const SkillsMatrix = lazy(() =>
-  import("../components/about/SkillsMatrix").then((module) => ({
+  import('../components/about/SkillsMatrix').then((module) => ({
     default: module.SkillsMatrix,
   })),
-);
+)
 
 export const TimelineComponent = lazy(() =>
-  import("../components/about/Timeline").then((module) => ({
+  import('../components/about/Timeline').then((module) => ({
     default: module.Timeline,
   })),
-);
+)
 
 // Agent-related components (heavy dependencies)
 export const AgentBuilder = lazy(() =>
-  import("../components/agents/AgentBuilder").then((module) => ({
+  import('../components/agents/AgentBuilder').then((module) => ({
     default: module.AgentBuilder,
   })),
-);
+)
 
 export const AgentTemplates = lazy(() =>
-  import("../components/agents/AgentTemplates").then((module) => ({
+  import('../components/agents/AgentTemplates').then((module) => ({
     default: module.AgentTemplates,
   })),
-);
+)
 
 export const AgentWorkflow = lazy(() =>
-  import("../components/agents/AgentWorkflow").then((module) => ({
+  import('../components/agents/AgentWorkflow').then((module) => ({
     default: module.AgentWorkflow,
   })),
-);
+)
 
 // =============================================================================
 // FEATURE-BASED CODE SPLITTING
@@ -99,24 +99,24 @@ export const AgentWorkflow = lazy(() =>
 
 // Authentication & User Management
 export const useAuth = lazy(() =>
-  import("../hooks/useAuth").then((module) => ({
+  import('../hooks/useAuth').then((module) => ({
     default: module.useAuth,
   })),
-);
+)
 
 // Real-time features (Socket.IO heavy)
 export const useRealtime = lazy(() =>
-  import("../hooks/useRealtime").then((module) => ({
+  import('../hooks/useRealtime').then((module) => ({
     default: module.useRealtime,
   })),
-);
+)
 
 // Advanced analytics
 export const AdvancedAnalytics = lazy(() =>
-  import("../components/analytics/AdvancedAnalytics").then((module) => ({
+  import('../components/analytics/AdvancedAnalytics').then((module) => ({
     default: module.AdvancedAnalytics,
   })),
-);
+)
 
 // =============================================================================
 // VENDOR LIBRARY CODE SPLITTING
@@ -124,34 +124,34 @@ export const AdvancedAnalytics = lazy(() =>
 
 // PDF generation (Puppeteer alternative - client-side)
 export const PDFGenerator = lazy(() =>
-  import("../lib/pdf-generator").then((module) => ({
+  import('../lib/pdf-generator').then((module) => ({
     default: module.PDFGenerator,
   })),
-);
+)
 
 // Chart libraries
 export const ChartsBundle = lazy(() =>
-  import("../components/charts/ChartsBundle").then((module) => ({
+  import('../components/charts/ChartsBundle').then((module) => ({
     default: module.ChartsBundle,
   })),
-);
+)
 
 // Animation libraries (Framer Motion, Lottie)
 export const AnimationsBundle = lazy(() =>
-  import("../lib/animations").then((module) => ({
+  import('../lib/animations').then((module) => ({
     default: module.AnimationsBundle,
   })),
-);
+)
 
 // =============================================================================
 // SMART LOADING UTILITIES
 // =============================================================================
 
 interface LazyComponentOptions {
-  fallback?: ComponentType;
-  retryCount?: number;
-  retryDelay?: number;
-  preload?: boolean;
+  fallback?: ComponentType
+  retryCount?: number
+  retryDelay?: number
+  preload?: boolean
 }
 
 /**
@@ -161,82 +161,80 @@ export function createLazyComponent<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   options: LazyComponentOptions = {},
 ): T {
-  const { retryCount = 3, retryDelay = 1000, preload = false } = options;
+  const { retryCount = 3, retryDelay = 1000, preload = false } = options
 
-  let retryPromise: Promise<{ default: T }> | null = null;
+  let retryPromise: Promise<{ default: T }> | null = null
 
   const importWithRetry = async (): Promise<{ default: T }> => {
-    let lastError: Error | null = null;
+    let lastError: Error | null = null
 
     for (let attempt = 0; attempt <= retryCount; attempt++) {
       try {
-        const module = await importFn();
-        retryPromise = null;
-        return module;
+        const module = await importFn()
+        retryPromise = null
+        return module
       } catch (error) {
-        lastError = error as Error;
-        console.warn(`Failed to load component (attempt ${attempt + 1}/${retryCount + 1}):`, error);
+        lastError = error as Error
 
         if (attempt < retryCount) {
-          await new Promise((resolve) => setTimeout(resolve, retryDelay));
+          await new Promise((resolve) => setTimeout(resolve, retryDelay))
         }
       }
     }
 
-    throw lastError || new Error("Failed to load component after multiple attempts");
-  };
+    throw lastError || new Error('Failed to load component after multiple attempts')
+  }
 
   const LazyComponent = lazy(() => {
-    if (retryPromise) return retryPromise;
-    retryPromise = importWithRetry();
-    return retryPromise;
-  });
+    if (retryPromise) return retryPromise
+    retryPromise = importWithRetry()
+    return retryPromise
+  })
 
   // Preload if requested
   if (preload) {
     // Use React 19's built-in preloading capabilities
     setTimeout(() => {
-      importWithRetry().catch(console.error);
-    }, 100);
+      importWithRetry().catch(console.error)
+    }, 100)
   }
 
-  return LazyComponent as T;
+  return LazyComponent as T
 }
 
 /**
  * Preload routes based on user behavior
  */
 export class RoutePreloader {
-  private static preloadedRoutes = new Set<string>();
-  private static preloadPromises = new Map<string, Promise<any>>();
+  private static preloadedRoutes = new Set<string>()
+  private static preloadPromises = new Map<string, Promise<any>>()
 
   static preloadRoute(routeName: string, importFn: () => Promise<any>): void {
-    if (RoutePreloader.preloadedRoutes.has(routeName)) return;
+    if (RoutePreloader.preloadedRoutes.has(routeName)) return
 
-    RoutePreloader.preloadedRoutes.add(routeName);
-    const promise = importFn().catch((error) => {
-      console.warn(`Failed to preload route ${routeName}:`, error);
-      RoutePreloader.preloadedRoutes.delete(routeName);
-    });
+    RoutePreloader.preloadedRoutes.add(routeName)
+    const promise = importFn().catch((_error) => {
+      RoutePreloader.preloadedRoutes.delete(routeName)
+    })
 
-    RoutePreloader.preloadPromises.set(routeName, promise);
+    RoutePreloader.preloadPromises.set(routeName, promise)
   }
 
   static async getPreloadedRoute(routeName: string): Promise<any> {
-    return RoutePreloader.preloadPromises.get(routeName);
+    return RoutePreloader.preloadPromises.get(routeName)
   }
 
   static preloadCriticalRoutes(): void {
     // Preload most likely next routes
-    RoutePreloader.preloadRoute("about", () => import("../pages/AboutPage"));
-    RoutePreloader.preloadRoute("projects", () => import("../pages/ProjectsPage"));
+    RoutePreloader.preloadRoute('about', () => import('../pages/AboutPage'))
+    RoutePreloader.preloadRoute('projects', () => import('../pages/ProjectsPage'))
   }
 
   static preloadOnHover(routeName: string, importFn: () => Promise<any>): void {
     // Preload on link hover for instant navigation
     requestIdleCallback(() => {
-      RoutePreloader.preloadRoute(routeName, importFn);
-    });
+      RoutePreloader.preloadRoute(routeName, importFn)
+    })
   }
 }
 
@@ -244,42 +242,42 @@ export class RoutePreloader {
  * Intelligent component loading based on viewport
  */
 export class ViewportLoader {
-  private static observer: IntersectionObserver | null = null;
-  private static pendingLoads = new Map<Element, () => void>();
+  private static observer: IntersectionObserver | null = null
+  private static pendingLoads = new Map<Element, () => void>()
 
   static initialize(): void {
-    if (ViewportLoader.observer || typeof IntersectionObserver === "undefined") return;
+    if (ViewportLoader.observer || typeof IntersectionObserver === 'undefined') return
 
     ViewportLoader.observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const loadFn = ViewportLoader.pendingLoads.get(entry.target);
+            const loadFn = ViewportLoader.pendingLoads.get(entry.target)
             if (loadFn) {
-              loadFn();
-              ViewportLoader.pendingLoads.delete(entry.target);
-              ViewportLoader.observer?.unobserve(entry.target);
+              loadFn()
+              ViewportLoader.pendingLoads.delete(entry.target)
+              ViewportLoader.observer?.unobserve(entry.target)
             }
           }
-        });
+        })
       },
       {
-        rootMargin: "50px",
+        rootMargin: '50px',
       },
-    );
+    )
   }
 
   static loadOnVisible(element: Element, loadFn: () => void): void {
-    if (!ViewportLoader.observer) ViewportLoader.initialize();
+    if (!ViewportLoader.observer) ViewportLoader.initialize()
 
-    ViewportLoader.pendingLoads.set(element, loadFn);
-    ViewportLoader.observer?.observe(element);
+    ViewportLoader.pendingLoads.set(element, loadFn)
+    ViewportLoader.observer?.observe(element)
   }
 
   static cleanup(): void {
-    ViewportLoader.observer?.disconnect();
-    ViewportLoader.observer = null;
-    ViewportLoader.pendingLoads.clear();
+    ViewportLoader.observer?.disconnect()
+    ViewportLoader.observer = null
+    ViewportLoader.pendingLoads.clear()
   }
 }
 
@@ -288,36 +286,35 @@ export class ViewportLoader {
  */
 export class BundleAnalyzer {
   static analyzeChunkSizes(): void {
-    if (process.env.NODE_ENV !== "development") return;
+    if (process.env.NODE_ENV !== 'development') return
 
     // Measure and log chunk sizes
-    performance.mark("bundle-analysis-start");
+    performance.mark('bundle-analysis-start')
 
     const observer = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
+      const entries = list.getEntries()
       entries.forEach((entry) => {
-        if (entry.name.includes("chunk")) {
-          console.log(`📦 Chunk loaded: ${entry.name} (${entry.duration.toFixed(2)}ms)`);
+        if (entry.name.includes('chunk')) {
         }
-      });
-    });
+      })
+    })
 
-    observer.observe({ entryTypes: ["measure"] });
+    observer.observe({ entryTypes: ['measure'] })
   }
 
   static measureComponentLoad(componentName: string): void {
-    if (process.env.NODE_ENV !== "development") return;
+    if (process.env.NODE_ENV !== 'development') return
 
-    performance.mark(`component-${componentName}-start`);
+    performance.mark(`component-${componentName}-start`)
 
     requestIdleCallback(() => {
-      performance.mark(`component-${componentName}-end`);
+      performance.mark(`component-${componentName}-end`)
       performance.measure(
         `component-${componentName}`,
         `component-${componentName}-start`,
         `component-${componentName}-end`,
-      );
-    });
+      )
+    })
   }
 }
 
@@ -327,29 +324,29 @@ export class BundleAnalyzer {
 
 export const codeSpittingConfig = {
   // Critical routes that should be preloaded
-  criticalRoutes: ["HomePage"],
+  criticalRoutes: ['HomePage'],
 
   // Routes to preload on idle
-  preloadOnIdle: ["AboutPage", "ProjectsPage"],
+  preloadOnIdle: ['AboutPage', 'ProjectsPage'],
 
   // Components to load on viewport intersection
-  viewportComponents: ["ContactForm", "ProjectShowcase"],
+  viewportComponents: ['ContactForm', 'ProjectShowcase'],
 
   // Heavy components that should be split aggressively
-  heavyComponents: ["AgentBuilder", "ChartsBundle", "AnimationsBundle"],
+  heavyComponents: ['AgentBuilder', 'ChartsBundle', 'AnimationsBundle'],
 
   // Retry configuration for failed loads
   retryConfig: {
     maxRetries: 3,
     retryDelay: 1000,
   },
-};
+}
 
 // Initialize viewport loader
-ViewportLoader.initialize();
+ViewportLoader.initialize()
 
 // Initialize bundle analyzer in development
-BundleAnalyzer.analyzeChunkSizes();
+BundleAnalyzer.analyzeChunkSizes()
 
 export default {
   // Page components
@@ -375,4 +372,4 @@ export default {
   ViewportLoader,
   BundleAnalyzer,
   codeSpittingConfig,
-};
+}

@@ -67,7 +67,7 @@ VITE_SOCKET_RECONNECT_DELAY=1000
 VITE_SOCKET_DEBUG=true
 VITE_REALTIME_DEBUG=true
 
-# Server Configuration  
+# Server Configuration
 PORT=3000
 NODE_ENV=development
 CORS_ORIGINS=http://localhost:8081
@@ -98,7 +98,7 @@ VITE_SOCKET_MAX_LISTENERS=100
 SOCKET_PRESENCE_CLEANUP_INTERVAL=60000
 SOCKET_MAX_CONNECTIONS=10000
 
-# AWS Lambda Configuration (if deploying to Amplify)  
+# AWS Lambda Configuration (if deploying to Amplify)
 VITE_LAMBDA_REALTIME_URL=https://your-api-gateway-url/realtime
 ```
 
@@ -109,9 +109,9 @@ VITE_LAMBDA_REALTIME_URL=https://your-api-gateway-url/realtime
 Update `server/index.ts`:
 
 ```typescript
-import { Server } from 'socket.io';
-import express from 'express';
-import { createServer } from 'http';
+import { Server } from "socket.io";
+import express from "express";
+import { createServer } from "http";
 
 const app = express();
 const server = createServer(app);
@@ -119,15 +119,15 @@ const server = createServer(app);
 // Socket.IO configuration
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',') || ["http://localhost:8081"],
+    origin: process.env.CORS_ORIGINS?.split(",") || ["http://localhost:8081"],
     methods: ["GET", "POST"],
-    credentials: true
+    credentials: true,
   },
-  transports: ['websocket', 'polling'],
+  transports: ["websocket", "polling"],
   pingTimeout: 30000,
   pingInterval: 25000,
   maxHttpBufferSize: 1e6, // 1MB
-  allowEIO3: true
+  allowEIO3: true,
 });
 
 // Initialize real-time features
@@ -171,54 +171,54 @@ root.render(
 Update `vite.config.ts`:
 
 ```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   plugins: [
     react({
       // Enable React 19 features
       include: "**/*.{jsx,tsx}",
-    })
+    }),
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './client'),
-      '@shared': path.resolve(__dirname, './shared')
-    }
+      "@": path.resolve(__dirname, "./client"),
+      "@shared": path.resolve(__dirname, "./shared"),
+    },
   },
   server: {
     port: 8081,
     proxy: {
       // Proxy API requests to backend
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      },
-      // Proxy Socket.IO requests
-      '/socket.io': {
-        target: 'http://localhost:3000',
+      "/api": {
+        target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,
-        ws: true
-      }
-    }
+      },
+      // Proxy Socket.IO requests
+      "/socket.io": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
+    },
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          'socket-io': ['socket.io-client'],
-          'realtime': [
-            './client/hooks/useEnhancedRealtime.ts',
-            './client/components/realtime/RealtimeIntegration.tsx'
-          ]
-        }
-      }
-    }
-  }
+          "socket-io": ["socket.io-client"],
+          realtime: [
+            "./client/hooks/useEnhancedRealtime.ts",
+            "./client/components/realtime/RealtimeIntegration.tsx",
+          ],
+        },
+      },
+    },
+  },
 });
 ```
 
@@ -279,7 +279,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
+
         # Socket.IO timeouts
         proxy_connect_timeout 30s;
         proxy_send_timeout 30s;
@@ -298,11 +298,11 @@ pnpm add @socket.io/redis-adapter redis
 
 ```typescript
 // server/index.ts
-import { createAdapter } from '@socket.io/redis-adapter';
-import Redis from 'redis';
+import { createAdapter } from "@socket.io/redis-adapter";
+import Redis from "redis";
 
-const pubClient = Redis.createClient({ 
-  url: process.env.REDIS_URL || 'redis://localhost:6379' 
+const pubClient = Redis.createClient({
+  url: process.env.REDIS_URL || "redis://localhost:6379",
 });
 const subClient = pubClient.duplicate();
 
@@ -318,9 +318,9 @@ io.adapter(createAdapter(pubClient, subClient));
 Create `amplify/functions/realtime/index.ts`:
 
 ```typescript
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { Server } from 'socket.io';
-import { createServer } from 'http';
+import { APIGatewayProxyHandler } from "aws-lambda";
+import { Server } from "socket.io";
+import { createServer } from "http";
 
 // For serverless Socket.IO, consider Socket.IO with Redis
 // or use AWS IoT Core for real-time features
@@ -328,40 +328,40 @@ import { createServer } from 'http';
 export const handler: APIGatewayProxyHandler = async (event, context) => {
   // Handle real-time events via API Gateway WebSocket
   const { requestContext } = event;
-  
+
   switch (requestContext.eventType) {
-    case 'CONNECT':
+    case "CONNECT":
       return handleConnect(event);
-    case 'DISCONNECT':  
+    case "DISCONNECT":
       return handleDisconnect(event);
-    case 'MESSAGE':
+    case "MESSAGE":
       return handleMessage(event);
     default:
-      return { statusCode: 400, body: 'Invalid event type' };
+      return { statusCode: 400, body: "Invalid event type" };
   }
 };
 
 async function handleConnect(event: any) {
   // Store connection in DynamoDB
-  console.log('WebSocket connected:', event.requestContext.connectionId);
-  return { statusCode: 200, body: 'Connected' };
+  console.log("WebSocket connected:", event.requestContext.connectionId);
+  return { statusCode: 200, body: "Connected" };
 }
 
 async function handleDisconnect(event: any) {
   // Clean up connection
-  console.log('WebSocket disconnected:', event.requestContext.connectionId);
-  return { statusCode: 200, body: 'Disconnected' };
+  console.log("WebSocket disconnected:", event.requestContext.connectionId);
+  return { statusCode: 200, body: "Disconnected" };
 }
 
 async function handleMessage(event: any) {
   // Process real-time messages
   const { body } = event;
   const message = JSON.parse(body);
-  
+
   // Broadcast to other connections
   // Implementation depends on AWS API Gateway management API
-  
-  return { statusCode: 200, body: 'Message processed' };
+
+  return { statusCode: 200, body: "Message processed" };
 }
 ```
 
@@ -386,12 +386,12 @@ applications:
             - pnpm run build:client
         postBuild:
           commands:
-            # Copy real-time assets  
+            # Copy real-time assets
             - cp -r dist/spa/* $AWS_DEFAULT_REGION
       artifacts:
         baseDirectory: dist/spa
         files:
-          - '**/*'
+          - "**/*"
       cache:
         paths:
           - node_modules/**/*
@@ -413,8 +413,8 @@ For true serverless real-time:
 
 ```typescript
 // client/lib/aws-realtime.ts
-import { IoT } from 'aws-sdk';
-import { CognitoIdentityCredentials } from 'aws-sdk';
+import { IoT } from "aws-sdk";
+import { CognitoIdentityCredentials } from "aws-sdk";
 
 export class AWSRealtimeClient {
   private iot: IoT;
@@ -425,15 +425,17 @@ export class AWSRealtimeClient {
     this.iot = new IoT({
       region: process.env.VITE_AWS_REGION,
       credentials: new CognitoIdentityCredentials({
-        IdentityPoolId: process.env.VITE_AWS_IDENTITY_POOL_ID!
-      })
+        IdentityPoolId: process.env.VITE_AWS_IDENTITY_POOL_ID!,
+      }),
     });
   }
 
   async connect() {
     // Connect to AWS IoT Core MQTT
-    const endpoint = await this.iot.describeEndpoint({ endpointType: 'iot:Data-ATS' }).promise();
-    
+    const endpoint = await this.iot
+      .describeEndpoint({ endpointType: "iot:Data-ATS" })
+      .promise();
+
     // Initialize MQTT connection
     // Implementation with AWS IoT Device SDK
   }
@@ -454,20 +456,20 @@ export class AWSRealtimeClient {
 
 ```typescript
 // server/middleware/metrics.ts
-import { Server } from 'socket.io';
+import { Server } from "socket.io";
 
 export function setupMetrics(io: Server) {
   const metrics = {
     connections: 0,
     messagesPerMinute: 0,
     roomCounts: new Map(),
-    errors: 0
+    errors: 0,
   };
 
-  io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
     metrics.connections++;
-    
-    socket.on('disconnect', () => {
+
+    socket.on("disconnect", () => {
       metrics.connections--;
     });
 
@@ -475,20 +477,20 @@ export function setupMetrics(io: Server) {
       metrics.messagesPerMinute++;
     });
 
-    socket.on('error', (error) => {
+    socket.on("error", (error) => {
       metrics.errors++;
-      console.error('Socket error:', error);
+      console.error("Socket error:", error);
     });
   });
 
   // Expose metrics endpoint
   setInterval(() => {
-    console.log('Real-time Metrics:', {
+    console.log("Real-time Metrics:", {
       activeConnections: metrics.connections,
       rooms: io.sockets.adapter.rooms.size,
-      messagesPerMinute: metrics.messagesPerMinute
+      messagesPerMinute: metrics.messagesPerMinute,
     });
-    
+
     // Reset minute counter
     metrics.messagesPerMinute = 0;
   }, 60000);
@@ -501,8 +503,8 @@ export function setupMetrics(io: Server) {
 
 ```typescript
 // client/hooks/useRealtimeAnalytics.ts
-import { useEffect, useState } from 'react';
-import { useEnhancedSocket } from './useEnhancedRealtime';
+import { useEffect, useState } from "react";
+import { useEnhancedSocket } from "./useEnhancedRealtime";
 
 export function useRealtimeAnalytics() {
   const { socket, connectionState } = useEnhancedSocket();
@@ -510,7 +512,7 @@ export function useRealtimeAnalytics() {
     connectionTime: 0,
     messagesReceived: 0,
     latency: 0,
-    reconnections: 0
+    reconnections: 0,
   });
 
   useEffect(() => {
@@ -522,23 +524,26 @@ export function useRealtimeAnalytics() {
     // Track messages
     socket.onAny(() => {
       messageCount++;
-      setMetrics(prev => ({ ...prev, messagesReceived: messageCount }));
+      setMetrics((prev) => ({ ...prev, messagesReceived: messageCount }));
     });
 
     // Measure latency
     const pingInterval = setInterval(() => {
       const pingStart = Date.now();
-      socket.emit('ping', pingStart);
-      
-      socket.once('pong', (timestamp: number) => {
+      socket.emit("ping", pingStart);
+
+      socket.once("pong", (timestamp: number) => {
         const latency = Date.now() - timestamp;
-        setMetrics(prev => ({ ...prev, latency }));
+        setMetrics((prev) => ({ ...prev, latency }));
       });
     }, 10000);
 
     // Track connection time
-    if (connectionState === 'connected') {
-      setMetrics(prev => ({ ...prev, connectionTime: Date.now() - startTime }));
+    if (connectionState === "connected") {
+      setMetrics((prev) => ({
+        ...prev,
+        connectionTime: Date.now() - startTime,
+      }));
     }
 
     return () => {
@@ -558,16 +563,16 @@ export class RealtimePerformanceMonitor {
   private observer: PerformanceObserver;
 
   constructor() {
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       this.observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (entry.name.includes('socket.io')) {
-            console.log('Socket.IO Performance:', entry);
+          if (entry.name.includes("socket.io")) {
+            console.log("Socket.IO Performance:", entry);
           }
         }
       });
-      
-      this.observer.observe({ entryTypes: ['measure', 'navigation'] });
+
+      this.observer.observe({ entryTypes: ["measure", "navigation"] });
     }
   }
 
@@ -580,7 +585,7 @@ export class RealtimePerformanceMonitor {
     performance.measure(
       `socket-${eventName}`,
       `socket-${eventName}-start`,
-      `socket-${eventName}-end`
+      `socket-${eventName}-end`,
     );
   }
 }
@@ -592,24 +597,24 @@ export class RealtimePerformanceMonitor {
 
 ```typescript
 // server/middleware/auth.ts
-import { Server, Socket } from 'socket.io';
-import jwt from 'jsonwebtoken';
+import { Server, Socket } from "socket.io";
+import jwt from "jsonwebtoken";
 
 export function setupAuth(io: Server) {
   io.use(async (socket: Socket, next) => {
     try {
       const token = socket.handshake.auth.token;
-      
+
       if (!token) {
-        return next(new Error('Authentication token required'));
+        return next(new Error("Authentication token required"));
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!);
       socket.data.user = decoded;
-      
+
       next();
     } catch (error) {
-      next(new Error('Invalid authentication token'));
+      next(new Error("Invalid authentication token"));
     }
   });
 }
@@ -631,8 +636,9 @@ export function rateLimitMiddleware(socket: Socket, next: Function) {
     limit.reset = now + 60000;
   }
 
-  if (limit.count >= 100) { // 100 events per minute
-    return next(new Error('Rate limit exceeded'));
+  if (limit.count >= 100) {
+    // 100 events per minute
+    return next(new Error("Rate limit exceeded"));
   }
 
   limit.count++;
@@ -645,16 +651,17 @@ export function rateLimitMiddleware(socket: Socket, next: Function) {
 
 ```typescript
 // server/index.ts
-const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? ['https://your-domain.com', 'https://www.your-domain.com']
-  : ['http://localhost:8081', 'http://localhost:3000'];
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://your-domain.com", "https://www.your-domain.com"]
+    : ["http://localhost:8081", "http://localhost:3000"];
 
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 ```
 
@@ -663,21 +670,24 @@ const io = new Server(server, {
 ### Common Issues
 
 1. **Connection Refused**
+
    ```bash
    # Check if backend server is running
    curl http://localhost:3000/health
-   
+
    # Check Socket.IO endpoint
    curl http://localhost:3000/socket.io/
    ```
 
 2. **CORS Errors**
+
    ```typescript
    // Verify CORS configuration in server/index.ts
    // Check allowed origins match client URL
    ```
 
 3. **Memory Leaks**
+
    ```typescript
    // Ensure proper cleanup in useEffect
    useEffect(() => {
@@ -688,10 +698,11 @@ const io = new Server(server, {
    ```
 
 4. **React 19 Issues**
+
    ```bash
    # Verify React 19 installation
    pnpm list react react-dom
-   
+
    # Check for concurrent features
    # Ensure useSyncExternalStore is used for external state
    ```
@@ -704,7 +715,7 @@ Enable comprehensive debugging:
 # Client-side
 localStorage.debug = 'socket.io-client:*';
 
-# Server-side  
+# Server-side
 DEBUG=socket.io:* node server/index.js
 ```
 
@@ -712,21 +723,21 @@ DEBUG=socket.io:* node server/index.js
 
 ```typescript
 // server/routes/health.ts
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.json({
-    status: 'healthy',
+    status: "healthy",
     socketConnections: io.sockets.sockets.size,
     uptime: process.uptime(),
-    memory: process.memoryUsage()
+    memory: process.memoryUsage(),
   });
 });
 
-app.get('/health/realtime', (req, res) => {
+app.get("/health/realtime", (req, res) => {
   res.json({
-    status: 'healthy',
+    status: "healthy",
     activeConnections: io.sockets.sockets.size,
     rooms: io.sockets.adapter.rooms.size,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 ```
@@ -735,7 +746,7 @@ app.get('/health/realtime', (req, res) => {
 
 1. **Run Test Suite**: Execute comprehensive testing guide
 2. **Configure Monitoring**: Set up metrics collection
-3. **Deploy to Staging**: Test in production-like environment  
+3. **Deploy to Staging**: Test in production-like environment
 4. **Performance Optimization**: Monitor and optimize real-time features
 5. **Scale Horizontally**: Configure Redis adapter for multiple servers
 6. **Security Audit**: Review authentication and rate limiting
@@ -754,6 +765,6 @@ app.get('/health/realtime', (req, res) => {
 ✅ **Rate limiting** implemented  
 ✅ **Monitoring** and metrics collection set up  
 ✅ **Error handling** and reconnection logic working  
-✅ **Performance** optimized for production loads  
+✅ **Performance** optimized for production loads
 
 **Phase 3 Real-time Enhancement is now complete and ready for production deployment! 🚀**
