@@ -272,7 +272,7 @@ function resolveUrl(url: string, baseUrl: URL): string {
 function getProxyUrl(url: string): string {
   // For development, we'll use a CORS proxy
   // In production, implement a backend proxy or use a service like cors-anywhere
-  if (import.meta.env.DEV) {
+  if (import.meta.env['DEV']) {
     return `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
   }
   return url

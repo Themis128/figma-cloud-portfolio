@@ -122,7 +122,7 @@ test.describe('Google reCAPTCHA v3 - Real Integration', () => {
             }
 
             grecaptcha.ready(() => {
-              const siteKey = process.env.VITE_RECAPTCHA_SITE_KEY || ''
+              const siteKey = process.env['VITE_RECAPTCHA_SITE_KEY'] || ''
 
               if (!siteKey) {
                 resolve({
@@ -203,7 +203,7 @@ test.describe('Google reCAPTCHA v3 - Real Integration', () => {
         }
 
         grecaptcha.ready(() => {
-          const siteKey = process.env.VITE_RECAPTCHA_SITE_KEY || ''
+          const siteKey = process.env['VITE_RECAPTCHA_SITE_KEY'] || ''
           grecaptcha
             .execute(siteKey, { action: 'submit' })
             .then((token) => resolve(token))

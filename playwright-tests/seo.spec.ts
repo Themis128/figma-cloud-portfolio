@@ -201,7 +201,7 @@ test.describe('SEO & Metadata', () => {
       expect(url).not.toContain('#')
 
       // Should use HTTPS in production
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env['NODE_ENV'] === 'production') {
         expect(url).toMatch(/^https:\/\//)
       }
     })

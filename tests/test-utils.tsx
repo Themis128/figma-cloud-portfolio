@@ -12,6 +12,7 @@
 import { type RenderOptions, render } from '@testing-library/react'
 import React, { type ReactElement } from 'react'
 import { BrowserRouter } from 'react-router-dom'
+import { vi } from 'vitest'
 import { ThemeProvider } from '@/components/ThemeProvider'
 
 /**

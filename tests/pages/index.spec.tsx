@@ -1,12 +1,12 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import Index from '@/pages/Index'
 import { renderWithProviders } from '../test-utils'
 
-// Mock Navigation component since it's lazy-loaded
+// Mock Navigation component since it's lazy-loaded - provide proper nav role
 vi.mock('@/components/Navigation', () => ({
   default: () => (
-    <nav>
+    <nav aria-label='Main navigation'>
       <a href='/about'>About</a>
       <a href='/contact'>Contact</a>
     </nav>
@@ -19,8 +19,10 @@ vi.mock('@/components/AIBrain', () => ({
 }))
 
 describe('Index Page', () => {
-  it('renders the main page content', () => {
-    renderWithProviders(<Index />)
+  it('renders the main page content', async () => {
+    await act(async () => {
+      renderWithProviders(<Index />)
+    })
 
     // Check for main content elements
     expect(screen.getByRole('main')).toBeInTheDocument()
@@ -31,17 +33,21 @@ describe('Index Page', () => {
     expect(heroHeading).toHaveTextContent('Baltzakis')
   })
 
-  it('displays hero section', () => {
-    renderWithProviders(<Index />)
+  it('displays hero section', async () => {
+    await act(async () => {
+      renderWithProviders(<Index />)
+    })
 
     // Check for hero content
     expect(screen.getByText('Cloud Architect & Cybersecurity Specialist')).toBeInTheDocument()
   })
 
-  it('renders navigation links', () => {
-    renderWithProviders(<Index />)
+  it('renders navigation links', async () => {
+    await act(async () => {
+      renderWithProviders(<Index />)
+    })
 
-    // Check for navigation
+    // Check for navigation - the lazy loaded component should render with nav role
     const nav = screen.getByRole('navigation')
     expect(nav).toBeInTheDocument()
 
@@ -52,8 +58,10 @@ describe('Index Page', () => {
     expect(contactLinks.length).toBeGreaterThan(0)
   })
 
-  it('includes call-to-action buttons', () => {
-    renderWithProviders(<Index />)
+  it('includes call-to-action buttons', async () => {
+    await act(async () => {
+      renderWithProviders(<Index />)
+    })
 
     // Check for CTA buttons (may have multiple instances)
     const learnMoreButtons = screen.getAllByRole('button', {

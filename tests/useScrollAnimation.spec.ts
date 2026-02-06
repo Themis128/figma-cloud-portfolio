@@ -20,11 +20,9 @@ describe('useScrollAnimation', () => {
       env: { ...global.process.env, NODE_ENV: 'development' },
     })
 
-    // Hide the 'vi' global to avoid test environment detection
-    vi.spyOn(global, 'vi', 'get').mockReturnValue(undefined)
-
     // Properly mock IntersectionObserver as a constructor with valid prototype
     function MockIntersectionObserver(
+      this: any,
       callback: IntersectionObserverCallback,
       options?: IntersectionObserverInit,
     ) {

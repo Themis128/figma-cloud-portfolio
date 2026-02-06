@@ -9,7 +9,7 @@ test.describe('Security & Privacy', () => {
   test.describe('HTTPS and Secure Connections', () => {
     test('should use HTTPS in production', { tag: '@fast' }, async ({ page }) => {
       // Skip this test in development
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         test.skip()
       }
 
@@ -247,7 +247,7 @@ test.describe('Security & Privacy', () => {
       await page.waitForLoadState('networkidle')
 
       // Should not make insecure requests in production
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env['NODE_ENV'] === 'production') {
         expect(insecureRequests.length).toBe(0)
       }
     })

@@ -131,7 +131,7 @@ function parseResumeMarkdown(markdownContent: string): ResumeData {
         const skillLine = trimmedLine.replace('- **', '').replace('**', '')
         const [skill, _description] = skillLine.split(': ')
         if (currentCompetencyCategory && skill && resume.competencies[currentCompetencyCategory]) {
-          resume.competencies[currentCompetencyCategory].push(skill.trim())
+          resume.competencies[currentCompetencyCategory]?.push(skill.trim())
         }
       }
     } else if (currentSection === 'skills') {
@@ -148,7 +148,7 @@ function parseResumeMarkdown(markdownContent: string): ResumeData {
             skill &&
             resume.competencies[currentCompetencyCategory]
           ) {
-            resume.competencies[currentCompetencyCategory].push(skill.trim())
+            resume.competencies[currentCompetencyCategory]?.push(skill.trim())
           }
         }
       }

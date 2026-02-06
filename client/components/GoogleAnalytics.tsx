@@ -16,7 +16,7 @@ const GoogleAnalytics = () => {
       const PERFORMANCE_TRACK_TEST_DELAY_MS = 2000
 
       const measurementId =
-        import.meta.env.VITE_GOOGLE_ANALYTICS_ID || import.meta.env.GOOGLE_ANALYTICS_ID || 'GA-TEST'
+        import.meta.env['VITE_GOOGLE_ANALYTICS_ID'] || import.meta.env['GOOGLE_ANALYTICS_ID'] || 'GA-TEST'
 
       // For testing, use window.gtag if available, otherwise use ReactGA
       if (typeof window !== 'undefined' && window.gtag) {
@@ -299,7 +299,7 @@ const GoogleAnalytics = () => {
     }
   }, [])
 
-  return null
+  return <div data-testid='google-analytics' style={{ display: 'none' }} />
 }
 
 export default GoogleAnalytics

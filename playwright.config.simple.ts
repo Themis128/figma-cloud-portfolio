@@ -28,8 +28,8 @@ const DEVELOPMENT_RETRIES = 1
 // Create simple configuration using the shared factory
 const config = createPlaywrightConfig('development', {
   // Simple-specific overrides for basic testing
-  retries: process.env.CI ? CI_RETRIES : DEVELOPMENT_RETRIES, // Basic retry strategy
-  workers: process.env.CI ? CI_WORKERS : DEVELOPMENT_WORKERS, // Limited workers for simplicity
+  retries: process.env['CI'] ? CI_RETRIES : DEVELOPMENT_RETRIES, // Basic retry strategy
+  workers: process.env['CI'] ? CI_WORKERS : DEVELOPMENT_WORKERS, // Limited workers for simplicity
 
   // Basic reporting setup
   reporter: [
@@ -48,7 +48,7 @@ const config = createPlaywrightConfig('development', {
 
   // Simple metadata
   metadata: {
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env['NODE_ENV'] || 'development',
     testType: 'e2e-simple',
     framework: 'playwright',
     simplified: true,

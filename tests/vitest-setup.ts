@@ -1,9 +1,6 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
-// Constants for mock implementations
-const _MOCK_TIME_REMAINING_MS = 50
-
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -54,27 +51,47 @@ global.IntersectionObserver = vi.fn().mockImplementation((callback, options) => 
     observe: vi.fn(),
     unobserve: vi.fn(),
     disconnect: vi.fn(),
-  }
-  // Store callback for potential manual triggering in tests
-  mockObserver.callback = callback
-  mockObserver.options = options
+    callback,
+    options,
+  } as any
   return mockObserver
 })
 
-// Mock Blob
-global.Blob = vi.fn().mockImplementation((content, options) => {
-  const blobContent = Array.isArray(content) ? content.join('') : content || ''
-  return {
-    content: blobContent,
-    options: options || {},
-    size: blobContent.length,
-    type: options?.type || '',
-    arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(blobContent.length)),
-    slice: vi.fn(),
-    stream: vi.fn(),
-    text: vi.fn().mockResolvedValue(blobContent),
+// Mock Blob as a proper class constructor
+global.Blob = class MockBlob {
+  content: string
+  options: BlobPropertyBag
+  size: number
+  type: string
+
+  constructor(content?: BlobPart[] | BlobPart, options?: BlobPropertyBag) {
+    const blobContent = Array.isArray(content) ? content.join('') : (content as string) || ''
+    this.content = blobContent
+    this.options = options || {}
+    this.size = blobContent.length
+    this.type = options?.type || ''
   }
-})
+
+  arrayBuffer(): Promise<ArrayBuffer> {
+    return Promise.resolve(new ArrayBuffer(this.content.length))
+  }
+
+  slice(): Blob {
+    return new MockBlob(this.content, this.options) as Blob
+  }
+
+  stream(): ReadableStream {
+    return new ReadableStream()
+  }
+
+  text(): Promise<string> {
+    return Promise.resolve(this.content)
+  }
+
+  bytes(): Promise<Uint8Array> {
+    return Promise.resolve(new Uint8Array(this.content.length))
+  }
+} as typeof Blob
 
 // Mock performance API
 global.performance = {
@@ -89,11 +106,11 @@ global.performance = {
     navigationStart: Date.now(),
     loadEventEnd: Date.now() + 1000,
     domContentLoadedEventEnd: Date.now() + 500,
-  },
+  } as any,
   navigation: {
     type: 0,
     redirectCount: 0,
-  },
+  } as any,
 }
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
@@ -102,12 +119,12 @@ global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
 
 // React 19 new features support
 // Mock for React 19's new useTransition hook
-global.startTransition = vi.fn((callback) => {
+;(global as any).startTransition = vi.fn((callback) => {
   callback()
 })
 
 // Mock for React 19's new use hook for promises
-global.use = vi.fn((promise) => {
+;(global as any).use = vi.fn((promise) => {
   if (promise instanceof Promise) {
     return undefined
   }

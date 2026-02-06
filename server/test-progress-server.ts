@@ -198,8 +198,8 @@ class TestProgressServer {
 
     // API endpoint for logs
     this.app.get('/api/logs', (req, res) => {
-      const level = req.query.level as string
-      const search = req.query.search as string
+      const level = req.query['level'] as string
+      const search = req.query['search'] as string
 
       let filteredLogs = [...this.logs]
 
@@ -383,7 +383,9 @@ class TestProgressServer {
       const test = suite.tests.find((t) => t.name === testName)
       if (test) {
         test.status = status as 'pass' | 'fail' | 'skip' | 'running'
-        test.duration = duration
+        if (duration !== undefined) {
+          test.duration = duration
+        }
 
         // Update suite statistics
         if (status === 'pass') {

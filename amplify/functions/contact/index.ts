@@ -164,7 +164,7 @@ export const handler: Handler = async (event) => {
     }
 
     // Verify reCAPTCHA
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    const recaptchaSecret = process.env['RECAPTCHA_SECRET_KEY'];
     if (!recaptchaSecret) {
       console.error("RECAPTCHA_SECRET_KEY not configured");
       const response: ContactFormResponse = {

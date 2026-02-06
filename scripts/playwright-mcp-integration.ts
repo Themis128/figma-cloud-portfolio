@@ -42,7 +42,7 @@ class PlaywrightMCPIntegration {
   private connectionTimeout = 5000
 
   constructor() {
-    this.progressServerUrl = process.env.PROGRESS_SERVER_URL || 'http://localhost:3002'
+    this.progressServerUrl = process.env['PROGRESS_SERVER_URL'] || 'http://localhost:3002'
 
     // Start periodic log flushing
     this.startLogFlushing()

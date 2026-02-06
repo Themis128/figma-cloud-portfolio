@@ -256,14 +256,24 @@ export function ResourceHints({
         } catch (_error) {}
       }
 
-      const createIntersectionLink = (target: HTMLElement, resourceUrl: string): HTMLLinkElement => {
+      const createIntersectionLink = (
+        target: HTMLElement,
+        resourceUrl: string,
+      ): HTMLLinkElement => {
         const link = document.createElement('link')
         link.rel = target.dataset['preload'] ? 'preload' : 'prefetch'
         link.href = resourceUrl
 
         // Set as attribute if valid
         const asValue = target.dataset['as']
-        const validAs = new Set<ResourceHint['as']>(['font', 'script', 'style', 'image', 'fetch', 'document'])
+        const validAs = new Set<ResourceHint['as']>([
+          'font',
+          'script',
+          'style',
+          'image',
+          'fetch',
+          'document',
+        ])
         if (asValue && validAs.has(asValue as ResourceHint['as'])) {
           link.as = asValue
         }

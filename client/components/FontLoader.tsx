@@ -98,7 +98,7 @@ function loadViaCSS(
 /**
  * Load font with FontFace API for better detection
  */
-type FontDisplay = 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
+type FontDisplay = 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
 
 function loadFontWithFontFace(
   family: string,
@@ -130,7 +130,7 @@ function loadFontWithFontFace(
           // Fallback to CSS loading if FontFace fails
           return loadViaCSS(family, [weight], display, subsets)
         })
-    })
+    }),
   ).then(() => {})
 }
 

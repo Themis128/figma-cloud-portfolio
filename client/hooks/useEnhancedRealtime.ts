@@ -75,7 +75,7 @@ class EnhancedSocketManager {
       this.notifySubscribers()
 
       const serverUrl =
-        process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3000'
+        process.env['NODE_ENV'] === 'production' ? window.location.origin : 'http://localhost:3000'
 
       this.socket = io(serverUrl, {
         transports: ['websocket', 'polling'],

@@ -409,7 +409,7 @@ export interface RoomConfig {
 
 export const DEFAULT_REALTIME_CONFIG: RealtimeConfig = {
   serverUrl:
-    process.env.NODE_ENV === 'production'
+    process.env['NODE_ENV'] === 'production'
       ? window?.location?.origin || 'https://localhost:3000'
       : 'http://localhost:3000',
   autoConnect: true,

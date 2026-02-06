@@ -165,13 +165,12 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
           const longTaskObserver = new PerformanceObserver((list) => {
             const entries = list.getEntries()
             entries.forEach((entry) => {
-              const isDevelopment = process.env.NODE_ENV === 'development'
+              const isDevelopment = process.env['NODE_ENV'] === 'development'
               const threshold = isDevelopment ? 100 : 50 // Higher threshold in dev
 
               if (entry.duration > threshold) {
                 // Only report to console in development, not analytics
                 if (isDevelopment) {
-                  console.debug(`Long task detected: ${entry.duration.toFixed(0)}ms`)
                 } else {
                   // Report to analytics in production
                   if (typeof gtag !== 'undefined') {
@@ -195,7 +194,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
       return () => clearInterval(memoryInterval)
     }
-  }, [enabled, enableAdvancedMetrics, batchReporting, onMetricsUpdate])
+  }, [enabled, enableAdvancedMetrics, batchReporting, onMetricsUpdate, flushReports])
 
   // Component performance tracking functions
   const trackCustomMetric = useCallback((name: string, value: number) => {
@@ -285,7 +284,7 @@ export function useComponentPerformance(componentName: string) {
     trackCustomMetric(`${componentName}_render_time`, renderTime)
 
     // Warn about slow renders in development
-    if (process.env.NODE_ENV === 'development' && renderTime > 100) {
+    if (process.env['NODE_ENV'] === 'development' && renderTime > 100) {
     }
   }, [componentName, trackCustomMetric])
 

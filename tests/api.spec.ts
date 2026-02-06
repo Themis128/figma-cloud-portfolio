@@ -12,7 +12,7 @@ const EXPECTED_SUBSCRIPTION_COUNT = 5
 const mockFetch = vi.fn()
 global.fetch = mockFetch
 
-describe.skip('API Client', () => {
+describe('API Client', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockFetch.mockReset()

@@ -1,7 +1,7 @@
 import type { Handler } from "aws-lambda";
 
 export const handler: Handler = async (event) => {
-  const ping = process.env.PING_MESSAGE ?? "ping";
+  const ping = process.env['PING_MESSAGE'] ?? "ping";
 
   return {
     statusCode: 200,

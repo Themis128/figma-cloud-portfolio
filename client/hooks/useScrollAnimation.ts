@@ -5,17 +5,6 @@ export function useScrollAnimation(threshold = 0.2) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Check if we're in a test environment by looking for vitest or jest globals
-    const isTestEnvironment =
-      typeof process !== 'undefined' &&
-      (process.env.NODE_ENV === 'test' || typeof vi !== 'undefined' || typeof jest !== 'undefined')
-
-    if (isTestEnvironment) {
-      // In test environments, immediately mark as visible (or whatever behavior we want)
-      setIsVisible(true)
-      return
-    }
-
     // Check if IntersectionObserver is available
     if (typeof IntersectionObserver === 'undefined') {
       setIsVisible(true)

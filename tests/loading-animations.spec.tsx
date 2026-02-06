@@ -128,7 +128,8 @@ describe('LoadingAnimations', () => {
       render(<PageLoader />)
       const loadingTexts = screen.getAllByText('Loading...')
       const overlay = loadingTexts[0].closest('.fixed')
-      expect(overlay).toHaveClass(
+      expect(overlay).not.toBeNull()
+      expect(overlay!).toHaveClass(
         'fixed',
         'inset-0',
         'z-50',
@@ -144,7 +145,8 @@ describe('LoadingAnimations', () => {
       render(<PageLoader />)
       const loadingTexts = screen.getAllByText('Loading...')
       const content = loadingTexts[0].parentElement
-      expect(content).toHaveClass('text-center', 'space-y-4')
+      expect(content).not.toBeNull()
+      expect(content!).toHaveClass('text-center', 'space-y-4')
     })
   })
 })

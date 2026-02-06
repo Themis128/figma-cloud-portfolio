@@ -91,6 +91,7 @@ export const BROWSER_LAUNCH_ARGS = {
     '--max_old_space_size=4096',
     '--disable-accelerated-2d-canvas',
     '--disable-software-rasterizer',
+    '--disable-features=IsolateOrigins,site-per-process', // Added for better isolation
   ],
 
   // Security and isolation arguments (enhanced for modern browsers, no conflicts)
@@ -283,7 +284,7 @@ export const TEST_HEADERS = {
   'X-Test-Session': 'playwright-e2e',
   'X-Test-Framework': 'playwright',
   'X-Test-Environment': (env: string) => env,
-  'X-Test-Run-ID': process.env.GITHUB_RUN_ID || process.env.CI_RUN_ID || 'local',
+  'X-Test-Run-ID': process.env['GITHUB_RUN_ID'] || process.env['CI_RUN_ID'] || 'local',
 } as const
 
 /**
@@ -495,8 +496,8 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 export function getOptimalWorkers(environment: ConfigEnvironment): number {
   const settings = getEnvironmentSettings(environment)
   const cpuCount = os.cpus().length || 2 // Fallback to 2 if detection fails
-  const isCI = !!process.env.CI
-  const isGitHubActions = !!process.env.GITHUB_ACTIONS
+  const isCI = !!process.env['CI']
+  const isGitHubActions = !!process.env['GITHUB_ACTIONS']
 
   // Special handling for known CI environments
   if (isGitHubActions) {
@@ -664,13 +665,14 @@ export function createPlaywrightConfig(
   const settings = getEnvironmentSettings(environment)
   const workers = getOptimalWorkers(environment)
   const projects = getBrowserProjects(environment)
+  const scenario = environment === 'fast' ? 'fast' : environment === 'ci' ? 'ci' : 'stable'
 
   const baseConfig: PlaywrightTestConfig = {
     testDir: './playwright-tests',
 
     // Execution settings
     fullyParallel: true,
-    forbidOnly: !!process.env.CI,
+    forbidOnly: !!process.env['CI'],
     retries: settings.retries,
     timeout: settings.timeouts.test,
     workers,
@@ -726,7 +728,7 @@ export function createPlaywrightConfig(
 
     // Use configuration with modern browser settings
     use: {
-      baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001',
+      baseURL: process.env['PLAYWRIGHT_BASE_URL'] || 'http://localhost:8081',
 
       // Enhanced timeouts
       actionTimeout: settings.timeouts.action,
@@ -742,15 +744,15 @@ export function createPlaywrightConfig(
       ignoreHTTPSErrors: true,
       locale: 'en-US',
       timezoneId: 'America/New_York',
-
-      // Enhanced context options
-      bypassCSP: environment === 'development',
+      colorScheme: 'light',
+      reducedMotion: 'reduce',
+      strictSelectors: true,
       acceptDownloads: true,
+      bypassCSP: environment === 'development', // Allow CSP bypass in development
+      permissions: ['geolocation', 'notifications'],
+      serviceWorkers: 'block',
       hasTouch: false,
       isMobile: false,
-      colorScheme: 'light',
-      serviceWorkers: 'block',
-      permissions: [],
       geolocation: undefined,
       extraHTTPHeaders: {
         ...TEST_HEADERS,
@@ -763,6 +765,8 @@ export function createPlaywrightConfig(
       launchOptions: {
         slowMo: environment === 'development' ? VALIDATION_CONSTANTS.DEV_SLOW_MO_MS : 0, // Slight delay in development for debugging
         headless: environment !== 'isolated', // Headless except for isolated debugging
+        ignoreDefaultArgs: ['--enable-automation'], // Remove automation indicators
+        args: BROWSER_LAUNCH_ARGS.getArgs(scenario), // Use optimized args
       },
     },
 
@@ -770,12 +774,13 @@ export function createPlaywrightConfig(
 
     // Web server configuration (environment-aware)
     ...(settings.features.enableWebServer &&
-      !process.env.CI &&
-      !process.env.PLAYWRIGHT_SKIP_WEBSERVER && {
+      !process.env['CI'] &&
+      !process.env['PLAYWRIGHT_SKIP_WEBSERVER'] &&
+      process.env['PLAYWRIGHT_START_SERVERS'] === 'true' && {
         webServer: [
           {
             command: 'npx tsx server/node-build.ts',
-            url: 'http://localhost:3000/api/health',
+            url: 'http://localhost:3002/api/health',
             reuseExistingServer: true, // Reverted to true for manual server management
             timeout: settings.timeouts.webServer,
             cwd: process.cwd(),
@@ -792,9 +797,9 @@ export function createPlaywrightConfig(
 
     // Test sharding for CI (environment-aware)
     ...(settings.features.enableSharding &&
-      process.env.SHARD && {
+      process.env['SHARD'] && {
         shard: (() => {
-          const shardParts = process.env.SHARD?.split('/')
+          const shardParts = process.env['SHARD']?.split('/')
           if (shardParts && shardParts.length === 2) {
             return {
               current: parseInt(shardParts[0] || '1', 10),
@@ -806,7 +811,7 @@ export function createPlaywrightConfig(
       }),
 
     // Enhanced snapshot handling
-    updateSnapshots: process.env.UPDATE_SNAPSHOTS === 'true' ? 'all' : 'missing',
+    updateSnapshots: process.env['UPDATE_SNAPSHOTS'] === 'true' ? 'all' : 'missing',
 
     // Metadata for debugging and reporting
     metadata: {
@@ -814,13 +819,13 @@ export function createPlaywrightConfig(
       testType: 'e2e',
       framework: 'playwright',
       timestamp: new Date().toISOString(),
-      commit: process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || 'local',
-      branch: process.env.GITHUB_REF_NAME || process.env.CI_BRANCH || 'unknown',
+      commit: process.env['GITHUB_SHA'] || process.env['CI_COMMIT_SHA'] || 'local',
+      branch: process.env['GITHUB_REF_NAME'] || process.env['CI_BRANCH'] || 'unknown',
       workers,
-      ci: !!process.env.CI,
-      ...(process.env.CI && {
-        pr: process.env.GITHUB_PR_NUMBER,
-        run: process.env.GITHUB_RUN_ID,
+      ci: !!process.env['CI'],
+      ...(process.env['CI'] && {
+        pr: process.env['GITHUB_PR_NUMBER'],
+        run: process.env['GITHUB_RUN_ID'],
       }),
     },
   }

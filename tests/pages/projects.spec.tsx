@@ -1,9 +1,6 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Projects from '@/pages/Projects'
-
-// Constants
-const _EXPECTED_CARD_COUNT = 4 // 3 stat cards + 1 for 3D demo
 
 // Mock react-helmet-async
 vi.mock('react-helmet-async', () => ({
@@ -11,16 +8,6 @@ vi.mock('react-helmet-async', () => ({
     <div data-testid='helmet'>{children}</div>
   ),
 }))
-
-// Mock React hooks
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react')
-  return {
-    ...actual,
-    useState: vi.fn(),
-    useMemo: vi.fn(),
-  }
-})
 
 // Mock the components
 vi.mock('@/components/Interactive3DDemo', () => ({
@@ -63,15 +50,6 @@ vi.mock('@/components/Interactive3DDemo', () => ({
     </div>
   ),
 }))
-
-// Mock React hooks - DON'T mock core React hooks as they break rendering
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react')
-  return {
-    ...actual,
-    // Don't mock useState, useMemo, useEffect, or useContext
-  }
-})
 
 vi.mock('@/components/SearchableProjects', () => ({
   default: ({ projects }: { projects: any[] }) => (
@@ -141,15 +119,19 @@ describe('Projects Page', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the projects page header', () => {
-    render(<Projects />)
+  it('renders the projects page header', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     expect(screen.getByText('Projects & Portfolio')).toBeInTheDocument()
     expect(screen.getByText('Explore my latest work and technical projects')).toBeInTheDocument()
   })
 
-  it('displays project statistics correctly', () => {
-    render(<Projects />)
+  it('displays project statistics correctly', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     // Check total projects (3)
     const totals = screen.getAllByText('3')
@@ -174,8 +156,10 @@ describe('Projects Page', () => {
     expect(mobileAppLabels.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('renders tabs with correct structure', () => {
-    render(<Projects />)
+  it('renders tabs with correct structure', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     const tabsElements = screen.getAllByTestId('tabs')
     expect(tabsElements[0]).toBeInTheDocument()
@@ -190,8 +174,10 @@ describe('Projects Page', () => {
     expect(tabTrigger3DElements[0]).toBeInTheDocument()
   })
 
-  it('displays tab labels with icons', () => {
-    render(<Projects />)
+  it('displays tab labels with icons', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     const gridViews = screen.getAllByText('Grid View')
     expect(gridViews[0]).toBeInTheDocument()
@@ -206,8 +192,10 @@ describe('Projects Page', () => {
     expect(zapIcons.length).toBeGreaterThanOrEqual(2) // One in tab trigger, one in card title
   })
 
-  it('renders grid view content', () => {
-    render(<Projects />)
+  it('renders grid view content', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     const gridContents = screen.getAllByTestId('tab-content-grid')
     const gridContent = gridContents[0]
@@ -220,8 +208,10 @@ describe('Projects Page', () => {
     expect(texts[0]).toBeInTheDocument()
   })
 
-  it('renders 3D demo content', () => {
-    render(<Projects />)
+  it('renders 3D demo content', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     const demoContents = screen.getAllByTestId('tab-content-3d')
     const demoContent = demoContents[0]
@@ -234,8 +224,10 @@ describe('Projects Page', () => {
     expect(texts[0]).toBeInTheDocument()
   })
 
-  it('renders statistics cards', () => {
-    render(<Projects />)
+  it('renders statistics cards', async () => {
+    await act(async () => {
+      render(<Projects />)
+    })
 
     const cards = screen.getAllByTestId('card')
     expect(cards.length).toBeGreaterThanOrEqual(3) // At least 3 stat cards

@@ -103,7 +103,7 @@ test.describe('Sentry Error Tracking', () => {
           },
         }
 
-        const env = process.env.NODE_ENV || 'development'
+        const env = process.env['NODE_ENV'] || 'development'
         const rates = config[env as keyof typeof config] || config.development
 
         return {

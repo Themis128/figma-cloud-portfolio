@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig, type PluginOption } from 'vite'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
@@ -98,6 +98,10 @@ export default defineConfig(({ mode }) => {
   return {
     root: 'client',
     publicDir: '../public',
+    define: {
+      'process.env': {},
+      process: { env: {} },
+    },
     server: {
       host: true,
       port: 8081, // Frontend port as per architecture
@@ -115,7 +119,7 @@ export default defineConfig(({ mode }) => {
                 secure: false,
               },
             }
-          : undefined,
+          : {},
       fs: {
         allow: ['.', '../client', '../shared'],
         deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '../server/**'],
@@ -130,7 +134,7 @@ export default defineConfig(({ mode }) => {
         'X-XSS-Protection': '1; mode=block',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Content-Security-Policy':
-          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
         'X-DNS-Prefetch-Control': 'off',
         // Network performance headers
         'X-Accel-Buffering': 'no', // Disable buffering for better TTFB
@@ -255,7 +259,6 @@ export default defineConfig(({ mode }) => {
           },
 
           // Functions that can be safely removed if unused
-          /** @ts-expect-error */
           pure: ['console.log', 'console.info', 'console.warn', 'console.debug', 'console.trace'],
 
           // Enable aggressive unused export removal
@@ -286,25 +289,22 @@ export default defineConfig(({ mode }) => {
       cssTarget: ['chrome91', 'firefox89', 'safari14', 'edge91'], // Modern CSS
 
       // Advanced terser options for production
-      terserOptions: isCI
-        ? undefined
-        : {
-            compress: {
-              drop_console: false, // Keep console in development
-              drop_debugger: true,
-              pure_funcs:
-                mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
-              passes: 2, // Multiple passes for better compression
-            },
-            mangle: {
-              properties: {
-                regex: /^_[a-zA-Z]/, // Mangle private properties
-              },
-            },
-            format: {
-              comments: false, // Remove comments
-            },
+      terserOptions: {
+        compress: {
+          drop_console: false, // Keep console in development
+          drop_debugger: true,
+          pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
+          passes: 2, // Multiple passes for better compression
+        },
+        mangle: {
+          properties: {
+            regex: /^_[a-zA-Z]/, // Mangle private properties
           },
+        },
+        format: {
+          comments: false, // Remove comments
+        },
+      },
 
       // Enhanced CSS minimization
       cssMinify: 'esbuild',
@@ -374,7 +374,7 @@ export default defineConfig(({ mode }) => {
         filename: 'sw.js',
         strategies: 'injectManifest',
         devOptions: {
-          enabled: true,
+          enabled: false, // Disabled in dev to avoid ServiceWorker errors
           type: 'module',
         },
         manifest: {
@@ -417,7 +417,6 @@ export default defineConfig(({ mode }) => {
                   maxEntries: 10,
                   maxAgeSeconds: CACHE_DURATION_1_YEAR, // 1 year
                 },
-                cacheKeyWillBeUsed: async ({ request }) => `${request.url}`,
               },
             },
             {

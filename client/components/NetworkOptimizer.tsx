@@ -84,9 +84,7 @@ const registerServiceWorker = (isSlowConnection: boolean): void => {
     const registerSW = async () => {
       try {
         await navigator.serviceWorker.register('/sw.js')
-      } catch (error) {
-        console.warn('ServiceWorker registration failed:', error)
-      }
+      } catch (_error) {}
     }
 
     if (isSlowConnection) {
@@ -280,8 +278,9 @@ export function NetworkOptimizer({
   return (
     <>
       {/* Network-aware CSS */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         /* Network-aware loading strategies */
         .slow-connection {
           /* Reduce animations and effects on slow connections */
@@ -326,14 +325,13 @@ export function NetworkOptimizer({
           background: #ef4444;
           color: white;
         }
-      `}} />
+      `,
+        }}
+      />
 
       {/* Network status indicator (development only) */}
       {process.env['NODE_ENV'] === 'development' && (
-        <div
-          className={`network-status ${getNetworkStatusClass}`}
-          aria-live='polite'
-        >
+        <div className={`network-status ${getNetworkStatusClass}`} aria-live='polite'>
           {getNetworkStatusText}
         </div>
       )}

@@ -303,8 +303,18 @@ describe('Resume', () => {
 
   describe('PDF Download', () => {
     it('downloads PDF successfully', async () => {
-      // Mock the generateResumePDF function to resolve immediately
-      mockGenerateResumePDF.mockResolvedValue(new Blob(['test'], { type: 'application/pdf' }))
+      // Create a mock Blob-like object
+      const mockBlob = {
+        size: 4,
+        type: 'application/pdf',
+        slice: vi.fn(),
+        stream: vi.fn(),
+        text: vi.fn().mockResolvedValue('test'),
+        arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(4)),
+      }
+
+      // Mock the generateResumePDF function to resolve with mock blob
+      mockGenerateResumePDF.mockResolvedValue(mockBlob as unknown as Blob)
 
       renderWithProviders(<Resume />)
 
@@ -554,7 +564,7 @@ describe('Resume', () => {
       if (plusButtons.length > 0) {
         const firstButton = plusButtons[0].closest('button')
         if (firstButton) {
-          fireEvent.click(firstButton)
+          fireEvent.click(firstButton!)
           expect(mockPrompt).toHaveBeenCalledWith('Enter skill:')
         }
       } else {
@@ -588,7 +598,7 @@ describe('Resume', () => {
       // Find any skill badge and click it to remove
       const skillBadges = screen.queryAllByText(/\(.+\)/) // Find text with parentheses like "(Expert)"
       if (skillBadges.length > 0) {
-        fireEvent.click(skillBadges[0])
+        fireEvent.click(skillBadges[0]!)
         // Skill should be removed - we can't easily test this without more specific assertions
       }
     })

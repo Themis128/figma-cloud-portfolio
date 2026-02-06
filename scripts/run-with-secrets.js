@@ -96,27 +96,20 @@ if (isWindows) {
   }
 
   try {
-    // Use proper argument passing - only include -CommandArgs if there are arguments
-    const psArgs = [
-      '-NoProfile',
-      '-ExecutionPolicy',
-      'Bypass',
-      '-File',
-      'scripts/load-secrets.ps1',
-      '-Command',
-      command,
-    ]
+    // Build the PowerShell command string with proper argument passing
+    // Use absolute path instead of $PSScriptRoot which doesn't work with -Command
+    const absoluteScriptPath = join(process.cwd(), 'scripts', 'load-secrets.ps1')
+    let psCommand = `& "${absoluteScriptPath.replace(/\\/g, '\\\\')}" -Command '${command}'`
 
-    // Add CommandArgs parameter if there are command arguments
-    // Encode as Base64 JSON to avoid PowerShell parameter binding issues
     if (commandArgs.length > 0) {
-      const argsJson = JSON.stringify(commandArgs)
-      const argsBase64 = Buffer.from(argsJson).toString('base64')
-      psArgs.push('-CommandArgsEncoded')
-      psArgs.push(argsBase64)
+      // Escape and quote each argument
+      const escapedArgs = commandArgs.map((arg) => `'${arg.replace(/'/g, "''")}'`).join(', ')
+      psCommand += ` -CommandArgs ${escapedArgs}`
     }
 
-    logger.info(`PowerShell args: ${psArgs.join(' ')}`)
+    const psArgs = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', psCommand]
+
+    logger.info(`PowerShell command: ${psCommand}`)
 
     const result = spawnSync('powershell', psArgs, {
       stdio: 'inherit',

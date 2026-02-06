@@ -146,10 +146,10 @@ export const handleContactForm = async (req: Request, res: Response) => {
     }
 
     // Verify reCAPTCHA
-    let recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY
+    let recaptchaSecret = process.env['RECAPTCHA_SECRET_KEY']
 
     // Use test keys in development/test environment
-    if (process.env.NODE_ENV !== 'production' || !recaptchaSecret) {
+    if (process.env['NODE_ENV'] !== 'production' || !recaptchaSecret) {
       // Google's test reCAPTCHA secret key - always validates successfully
       recaptchaSecret = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     }
@@ -198,7 +198,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
 
     // For test reCAPTCHA keys, score might be undefined - allow in development
     const isTestKey = recaptchaSecret === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-    if (!isTestKey && process.env.NODE_ENV === 'production' && recaptchaData.score === undefined) {
+    if (!isTestKey && process.env['NODE_ENV'] === 'production' && recaptchaData.score === undefined) {
       const response: ContactFormResponse = {
         success: false,
         message: 'reCAPTCHA verification failed. Please try again.',

@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test'
 
+const API_PORT = process.env['API_PORT'] || '3002'
+
 test.describe('API Endpoints', () => {
   test('should respond to /api/ping with pong and proper headers', async ({ request }) => {
     const startTime = Date.now()
-    const response = await request.get('http://localhost:3000/api/ping')
+    const response = await request.get(`http://localhost:${API_PORT}/api/ping`)
     const responseTime = Date.now() - startTime
 
     // Performance check - API should respond within 500ms
@@ -22,7 +24,7 @@ test.describe('API Endpoints', () => {
   })
 
   test('should respond to /api/demo with demo data and validation', async ({ request }) => {
-    const response = await request.get('http://localhost:3000/api/demo')
+    const response = await request.get(`http://localhost:${API_PORT}/api/demo`)
     expect(response.status()).toBe(200)
 
     // Check CORS headers - may not be present in development
@@ -36,7 +38,7 @@ test.describe('API Endpoints', () => {
 
   test('should handle push notifications VAPID key endpoint with security', async ({ request }) => {
     const response = await request.get(
-      'http://localhost:3000/api/push-notifications?action=vapid-public-key',
+      `http://localhost:${API_PORT}/api/push-notifications?action=vapid-public-key`,
     )
     expect(response.status()).toBe(200)
 
@@ -56,7 +58,7 @@ test.describe('API Endpoints', () => {
   test('should handle 404 for non-existent API endpoints with proper error response', async ({
     request,
   }) => {
-    const response = await request.get('http://localhost:3000/api/non-existent')
+    const response = await request.get(`http://localhost:${API_PORT}/api/non-existent`)
     expect(response.status()).toBe(404)
 
     const data = await response.json()
@@ -66,12 +68,12 @@ test.describe('API Endpoints', () => {
   })
 
   test('should handle invalid HTTP methods', async ({ request }) => {
-    const response = await request.put('http://localhost:3000/api/ping')
+    const response = await request.put(`http://localhost:${API_PORT}/api/ping`)
     expect([404, 405]).toContain(response.status()) // Method not allowed or not found
   })
 
   test('should handle malformed JSON requests', async ({ request }) => {
-    const response = await request.post('http://localhost:3000/api/demo', {
+    const response = await request.post(`http://localhost:${API_PORT}/api/demo`, {
       data: '{invalid json',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -82,7 +84,7 @@ test.describe('API Endpoints', () => {
     // Make multiple rapid requests to test rate limiting
     const requests = []
     for (let i = 0; i < 10; i++) {
-      requests.push(request.get('http://localhost:3000/api/ping'))
+      requests.push(request.get(`http://localhost:${API_PORT}/api/ping`))
     }
 
     const responses = await Promise.all(requests)
@@ -98,7 +100,7 @@ test.describe('API Endpoints', () => {
   test('should handle API endpoint with query parameters', async ({ request }) => {
     // Test that API accepts query parameters without breaking
     const response = await request.get(
-      'http://localhost:3000/api/demo?test=value&format=json&debug=true',
+      `http://localhost:${API_PORT}/api/demo?test=value&format=json&debug=true`,
     )
     expect(response.status()).toBe(200) // API should accept query parameters
 
@@ -109,7 +111,7 @@ test.describe('API Endpoints', () => {
   })
 
   test('should validate API response schema', async ({ request }) => {
-    const response = await request.get('http://localhost:3000/api/ping')
+    const response = await request.get(`http://localhost:${API_PORT}/api/ping`)
     expect(response.status()).toBe(200)
 
     const data = await response.json()
@@ -126,7 +128,7 @@ test.describe('API Endpoints', () => {
   test('should handle API timeout gracefully', async ({ request }) => {
     // Test with a very short timeout - should either succeed or timeout gracefully
     try {
-      const response = await request.get('http://localhost:3000/api/demo', {
+      const response = await request.get(`http://localhost:${API_PORT}/api/demo`, {
         timeout: 1,
       })
       // If we get here, the request succeeded despite short timeout

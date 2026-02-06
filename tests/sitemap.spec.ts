@@ -34,19 +34,19 @@ global.URL = {
   revokeObjectURL: vi.fn(),
 } as unknown as typeof URL
 
-global.Blob = vi.fn(
-  class MockBlob {
-    constructor(
-      content: string | Blob | ArrayBufferLike | ArrayLike<number> | null,
-      options?: BlobPropertyBag,
-    ) {
-      return {
-        content,
-        options,
-      }
-    }
-  },
-) as typeof Blob
+// Proper Blob mock that works with 'new' operator
+global.Blob = class MockBlob {
+  content: string | Blob | ArrayBufferLike | ArrayLike<number> | null
+  options?: BlobPropertyBag
+
+  constructor(
+    content: string | Blob | ArrayBufferLike | ArrayLike<number> | null,
+    options?: BlobPropertyBag,
+  ) {
+    this.content = content
+    this.options = options || {}
+  }
+} as unknown as typeof Blob
 
 describe('SitemapGenerator', () => {
   let generator: SitemapGenerator
@@ -69,8 +69,9 @@ describe('SitemapGenerator', () => {
 
     it('should fallback to default URL when window is undefined', () => {
       // Temporarily remove window
-      const originalWindow = (global.window(global as { window?: typeof window }).window =
-        undefined)
+      const originalWindow = global.window
+      // @ts-expect-error - intentionally setting window to undefined for test
+      global.window = undefined
 
       const fallbackGenerator = new SitemapGenerator()
       expect(fallbackGenerator.baseUrl).toBe('https://www.baltzakisthemis.com')

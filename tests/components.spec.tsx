@@ -10,7 +10,6 @@ import {
   SkeletonText,
 } from '../client/components/Skeleton'
 
-const _SKELETON_LINE_COUNT = 3
 const MIN_SKELETON_ELEMENTS = 1
 const MIN_PAGE_SKELETON_ELEMENTS = 5
 
