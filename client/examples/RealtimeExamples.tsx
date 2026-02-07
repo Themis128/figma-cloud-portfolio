@@ -35,6 +35,7 @@ export function EnhancedAgentsPage() {
               AI Agents Dashboard
             </h1>
             <button
+              type='button'
               onClick={() => setShowRealtimePanel(!showRealtimePanel)}
               className={cn(
                 'px-4 py-2 rounded-lg font-medium transition-colors',
@@ -60,6 +61,7 @@ export function EnhancedAgentsPage() {
               <div className='p-4 space-y-2'>
                 {agents.map((agent) => (
                   <button
+                    type='button'
                     key={agent.id}
                     onClick={() => handleAgentSelect(agent.id)}
                     className={cn(
@@ -152,7 +154,7 @@ interface AgentBuilderProps {
   agentId: string
 }
 
-function AgentBuilder({ agentId }: AgentBuilderProps) {
+function AgentBuilder({ agentId: _agentId }: AgentBuilderProps) {
   const [agentConfig, setAgentConfig] = useState({
     name: '',
     description: '',
@@ -165,7 +167,7 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
 
   const [isDeploying, setIsDeploying] = useState(false)
 
-  const handleConfigChange = useCallback((field: string, value: any) => {
+  const handleConfigChange = useCallback((field: string, value: unknown) => {
     setAgentConfig((prev) => ({ ...prev, [field]: value }))
 
     // Broadcast change to collaborators would happen here
@@ -177,7 +179,8 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
 
     try {
       // Simulate deployment
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const DEPLOYMENT_DELAY = 2000
+      await new Promise((resolve) => setTimeout(resolve, DEPLOYMENT_DELAY))
     } catch (_error) {
     } finally {
       setIsDeploying(false)
@@ -224,10 +227,14 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+            <label
+              htmlFor='agent-description'
+              className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+            >
               Description
             </label>
             <textarea
+              id='agent-description'
               value={agentConfig.description}
               onChange={(e) => handleConfigChange('description', e.target.value)}
               rows={3}
@@ -239,10 +246,14 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
           {/* Model Configuration */}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+              <label
+                htmlFor='agent-model'
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+              >
                 Model
               </label>
               <select
+                id='agent-model'
                 value={agentConfig.model}
                 onChange={(e) => handleConfigChange('model', e.target.value)}
                 className='w-full px-3 py-2 border border-gray-300 dark:border-navy-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-navy-700 dark:text-white'
@@ -254,10 +265,14 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+              <label
+                htmlFor='agent-temperature'
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+              >
                 Temperature: {agentConfig.temperature}
               </label>
               <input
+                id='agent-temperature'
                 type='range'
                 min='0'
                 max='1'
@@ -271,10 +286,14 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
 
           {/* System Prompt */}
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+            <label
+              htmlFor='agent-system-prompt'
+              className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+            >
               System Prompt
             </label>
             <textarea
+              id='agent-system-prompt'
               value={agentConfig.systemPrompt}
               onChange={(e) => handleConfigChange('systemPrompt', e.target.value)}
               rows={6}
@@ -285,10 +304,13 @@ function AgentBuilder({ agentId }: AgentBuilderProps) {
 
           {/* Tools Selection */}
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+            <label
+              htmlFor='agent-tools'
+              className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+            >
               Available Tools
             </label>
-            <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+            <div id='agent-tools' className='grid grid-cols-2 md:grid-cols-3 gap-2'>
               {[
                 'web_search',
                 'code_execution',

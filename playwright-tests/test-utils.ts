@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import { type BrowserContext, expect, type Locator, type Page } from '@playwright/test'
+import type { APIRequestContext, BrowserContext, Page } from '@playwright/test'
 
 /**
  * Enhanced test utilities for automatic issue resolution and test stability
@@ -17,7 +17,7 @@ export async function setupTestEnvironment(page?: Page, context?: BrowserContext
   await page.addInitScript(() => {
     // Mock console methods to reduce noise
     const originalWarn = console.warn
-    console.warn = (...args) => {
+    console.warn = (...args: unknown[]) => {
       if (!args[0]?.includes?.('Download the React DevTools')) {
         originalWarn.apply(console, args)
       }
@@ -181,9 +181,9 @@ export async function waitForElement(
       const element = page.locator(selector).first()
 
       if (visible) {
-        await expect(element).toBeVisible({ timeout })
+        await element.waitFor({ state: 'visible', timeout })
       } else {
-        await expect(element).toBeAttached({ timeout })
+        await element.waitFor({ state: 'attached', timeout })
       }
 
       if (stable) {
@@ -270,6 +270,15 @@ export async function measurePerformance(page: Page, action: () => Promise<void>
 }
 
 /**
+ * Types for test utilities
+ */
+export type TestEnvironment = {
+  page: Page
+  context: BrowserContext
+  request: APIRequestContext
+}
+
+/**
  * Accessibility audit helper
  */
 export async function runAccessibilityAudit(page: Page) {
@@ -316,14 +325,14 @@ export async function findElementWithFallbacks(
   // Try primary selector first
   try {
     const element = page.locator(primarySelector).first()
-    await expect(element).toBeVisible({ timeout: 2000 })
+    await element.waitFor({ state: 'visible', timeout: 2000 })
     return element
   } catch (_error) {
     // Try fallbacks
     for (const fallback of fallbacks) {
       try {
         const element = page.locator(fallback).first()
-        await expect(element).toBeVisible({ timeout: 2000 })
+        await element.waitFor({ state: 'visible', timeout: 2000 })
         console.log(`🔄 Used fallback selector: ${fallback} instead of ${primarySelector}`)
         return element
       } catch (_error) {
@@ -340,7 +349,7 @@ export async function findElementWithFallbacks(
     for (const fallback of textFallbacks) {
       try {
         const element = page.locator(fallback).first()
-        await expect(element).toBeVisible({ timeout: 2000 })
+        await element.waitFor({ state: 'visible', timeout: 2000 })
         console.log(`🔄 Used text-based fallback: ${fallback}`)
         return element
       } catch (_error) {
@@ -401,7 +410,7 @@ export async function navigateWithMobileSupport(page: Page, href: string) {
   } else {
     // On desktop, click directly
     const desktopLink = page.locator(`nav a[href="${href}"]`).first()
-    await expect(desktopLink).toBeVisible({ timeout: 5000 })
+    await desktopLink.waitFor({ state: 'visible', timeout: 5000 })
     await desktopLink.click()
   }
 }
@@ -432,40 +441,4 @@ export function generateTestRecommendations(results: {
   }
 
   return recommendations
-}
-
-/**
- * Custom matchers for better test assertions
- */
-export const customMatchers = {
-  /**
-   * Check if element is accessible
-   */
-  toBeAccessible: async (locator: Locator) => {
-    const isVisible = await locator.isVisible()
-    const isEnabled = await locator.isEnabled()
-
-    return {
-      pass: isVisible && isEnabled,
-      message: () => 'Expected element to be accessible (visible and enabled)',
-    }
-  },
-
-  /**
-   * Check if page loaded within performance budget
-   */
-  toLoadWithinBudget: async (page: Page, budgetMs: number) => {
-    const metrics = await page.evaluate(() => ({
-      domContentLoaded:
-        performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
-      loadComplete: performance.timing.loadEventEnd - performance.timing.navigationStart,
-    }))
-
-    const maxTime = Math.max(metrics.domContentLoaded || 0, metrics.loadComplete || 0)
-
-    return {
-      pass: maxTime <= budgetMs,
-      message: (): string => `Expected page to load within ${budgetMs}ms, but took ${maxTime}ms`,
-    }
-  },
 }

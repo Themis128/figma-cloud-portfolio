@@ -8,7 +8,7 @@ import Navigation from '@/components/Navigation'
 
 export default function About() {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden'>
+    <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
       <CircuitBackground />
       <Navigation />
 
@@ -21,7 +21,7 @@ export default function About() {
                 <h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wider'>
                   About Me
                 </h1>
-                <div className='w-16 sm:w-24 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mx-auto' />
+                <div className='w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto' />
               </AnimatedSection>
             </div>
             <AnimatedSection delay={0.2}>
@@ -75,7 +75,7 @@ export default function About() {
             <AnimatedSection delay={0.2}>
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
                 <HoverCard>
-                  <div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-white/10 text-center hover:border-cyan-400/50 hover:bg-white/10 transition-all duration-300 group min-h-[200px] flex flex-col justify-center'>
+                  <div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-white/10 text-center hover:border-cyan-400/50 hover:bg-white/10 transition-all duration-300 group min-h-50 flex flex-col justify-center'>
                     <div className='inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto'>
                       <Cloud className='w-6 h-6 md:w-8 md:h-8 text-cyan-400' />
                     </div>
@@ -88,7 +88,7 @@ export default function About() {
                   </div>
                 </HoverCard>
                 <HoverCard>
-                  <div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-white/10 text-center hover:border-cyan-400/50 hover:bg-white/10 transition-all duration-300 group min-h-[200px] flex flex-col justify-center'>
+                  <div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-white/10 text-center hover:border-cyan-400/50 hover:bg-white/10 transition-all duration-300 group min-h-50 flex flex-col justify-center'>
                     <div className='inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto'>
                       <Shield className='w-6 h-6 md:w-8 md:h-8 text-cyan-400' />
                     </div>
@@ -101,7 +101,7 @@ export default function About() {
                   </div>
                 </HoverCard>
                 <HoverCard>
-                  <div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-white/10 text-center hover:border-cyan-400/50 hover:bg-white/10 transition-all duration-300 group min-h-[200px] flex flex-col justify-center sm:col-span-2 lg:col-span-1'>
+                  <div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-white/10 text-center hover:border-cyan-400/50 hover:bg-white/10 transition-all duration-300 group min-h-50 flex flex-col justify-center sm:col-span-2 lg:col-span-1'>
                     <div className='inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto'>
                       <Cpu className='w-6 h-6 md:w-8 md:h-8 text-cyan-400' />
                     </div>
@@ -128,31 +128,31 @@ export default function About() {
                   </div>
                   <ul className='space-y-4'>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Microsoft Azure Solutions Architect Expert
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Certified Information Systems Security Professional (CISSP)
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Certified Ethical Hacker (CEH)
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         ITIL Foundation Certification
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Azure AD & Identity Management
                       </span>
@@ -169,31 +169,31 @@ export default function About() {
                   </div>
                   <ul className='space-y-4'>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Zero Trust Security Architecture
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Multi-Cloud Migration & Management
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Microsoft 365 Security Implementation
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Compliance & Risk Management
                       </span>
                     </li>
                     <li className='flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'>
-                      <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                      <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                       <span className='text-white/90 font-medium'>
                         Enterprise Infrastructure Design
                       </span>

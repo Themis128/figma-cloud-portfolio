@@ -1,27 +1,20 @@
 # Codacy Configuration
-# This file configures Codacy analysis for your portfolio project
-
 engines:
-  # Temporarily disable ESLint due to configuration issues
   eslint:
-    enabled: false
-  # Enable duplication detection
+    enabled: true
   duplication:
     enabled: true
-  # Enable complexity analysis
-  complexity:
-    enabled: true
-  # Enable security analysis
-  bandit:
-    enabled: false # Disable Python security (not needed for JS/TS)
-  # Enable markdown linting
-  markdownlint:
+  metrics:
     enabled: true
 
-# Coverage configuration
+exclude_paths:
+  - 'dist/**'
+  - 'node_modules/**'
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - 'coverage/**'
+  - 'playwright-report/**'
+  - 'test-results/**'
+
 coverage:
   disabled: false
-  # Add coverage reporters if you have test coverage
-  # reporters:
-  #   - lcov
-  #   - cobertura

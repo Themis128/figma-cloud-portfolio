@@ -3,33 +3,11 @@
 // Extend JSX for @react-three/fiber
 import '@react-three/fiber'
 
+// Properly extend JSX for React Three Fiber
 declare global {
   namespace JSX {
-    interface IntrinsicElements {
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      group: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
+    interface IntrinsicElements extends import('@react-three/fiber').JSXIntrinsicElements {
       mesh: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      meshStandardMaterial: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      meshBasicMaterial: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      ambientLight: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      directionalLight: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      pointLight: any
-      // @ts-expect-error - React Three Fiber JSX elements
-      // biome-ignore lint/suspicious/noExplicitAny: React Three Fiber JSX elements
-      planeGeometry: any
     }
   }
 
@@ -49,5 +27,6 @@ declare global {
     trackContactFormSubmit?: () => void
     trackResumeDownload?: () => void
     trackError?: (error: string) => void
+    clients?: Clients
   }
 }

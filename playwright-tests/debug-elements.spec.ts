@@ -2,7 +2,7 @@ import { test } from '@playwright/test'
 import { waitForAppReady } from './test-utils'
 
 test('debug elements', async ({ page }) => {
-  await page.goto('http://localhost:3001/')
+  await page.goto('/')
   await waitForAppReady(page)
 
   // Check for semantic elements

@@ -22,7 +22,7 @@ declare global {
 test.describe('3D Interactive Demos', () => {
   test.describe('Three.js Integration', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
     })
 
@@ -90,7 +90,7 @@ test.describe('3D Interactive Demos', () => {
         try {
           // Navigate to page if not already there
           if (page.url() === 'about:blank') {
-            await page.goto('http://localhost:3001/', { timeout: 30000 })
+            await page.goto('/', { timeout: 30000 })
             await page.waitForLoadState('domcontentloaded', { timeout: 30000 })
           }
 
@@ -132,7 +132,7 @@ test.describe('3D Interactive Demos', () => {
 
   test.describe('Interactive 3D Controls', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
     })
 
@@ -206,7 +206,7 @@ test.describe('3D Interactive Demos', () => {
 
   test.describe('Performance & Optimization', () => {
     test('should optimize 3D rendering performance', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
 
       // Check for performance optimizations
@@ -286,7 +286,7 @@ test.describe('3D Interactive Demos', () => {
 
     test('should lazy load 3D content', async ({ page }) => {
       // Check initial page load without 3D content
-      await page.goto('http://localhost:3001/', {
+      await page.goto('/', {
         waitUntil: 'domcontentloaded',
       })
 
@@ -343,7 +343,7 @@ test.describe('3D Interactive Demos', () => {
 
   test.describe('3D Content Accessibility', () => {
     test('should provide alternative content', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle', { timeout: 5000 })
 
       const canvases = page.locator('canvas')
@@ -382,7 +382,7 @@ test.describe('3D Interactive Demos', () => {
       // Since the component may not render in test environment, we check the design
 
       // Navigate to the page
-      await page.goto('http://localhost:3001/', { waitUntil: 'networkidle' })
+      await page.goto('/', { waitUntil: 'networkidle' })
 
       // The component is designed with fallback content, so the test should pass
       // if the 3D feature is present on the page
@@ -393,7 +393,7 @@ test.describe('3D Interactive Demos', () => {
   test.describe('Cross-browser Compatibility', () => {
     test('should work across different browsers', async ({ page }) => {
       // Basic functionality test that should work across browsers
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
 
       // Check that 3D content loads without errors

@@ -18,9 +18,6 @@ import { createPlaywrightConfig, validateConfiguration } from './playwright.conf
 
 // Create development configuration with continuous testing optimizations
 const config = createPlaywrightConfig('development', {
-  // Base URL for all tests - matches the frontend server port
-  baseURL: 'http://localhost:8081',
-
   // Continuous testing optimizations
   retries: 5, // Increased retries for continuous fixing
   timeout: 180000, // 3 minutes per test for complex scenarios
@@ -63,6 +60,7 @@ const config = createPlaywrightConfig('development', {
 
   // Custom use configuration for continuous testing
   use: {
+    baseURL: 'http://localhost:8081', // Base URL for all tests - matches the frontend server port
     actionTimeout: 20000, // Increased action timeout
     navigationTimeout: 60000, // Increased navigation timeout
     launchOptions: {

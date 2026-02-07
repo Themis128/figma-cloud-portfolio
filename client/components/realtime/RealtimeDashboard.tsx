@@ -2,7 +2,12 @@
 import { startTransition, useCallback, useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useEnhancedSocket, usePresence, useRealtimeEvents } from '../../hooks/useEnhancedRealtime'
-import type { ConnectionQuality, RealTimeEvent, RealtimeMetrics } from '../../types/realtime'
+import type {
+  ConnectionQuality,
+  RealTimeEvent,
+  RealtimeMetrics,
+  UserPresence,
+} from '../../types/realtime'
 import { CollaborationPanel, ConnectionStatus, PresenceIndicator } from './CollaborationComponents'
 
 // Constants for connection quality thresholds and calculations
@@ -254,6 +259,8 @@ interface OverviewTabProps {
 }
 
 function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: OverviewTabProps) {
+  const MAX_PRESENCE_DISPLAY = 9
+
   const qualityColor = {
     excellent: 'text-green-600 bg-green-50 border-green-200',
     good: 'text-blue-600 bg-blue-50 border-blue-200',
@@ -302,7 +309,7 @@ function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: O
           Online Users ({onlineCount})
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
-          {presence.slice(0, 9).map((user) => (
+          {presence.slice(0, MAX_PRESENCE_DISPLAY).map((user) => (
             <div
               key={user.userId}
               className='flex items-center space-x-3 p-3 bg-gray-50 dark:bg-navy-750 rounded-lg'
@@ -328,9 +335,9 @@ function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: O
             </div>
           ))}
 
-          {presence.length > 9 && (
+          {presence.length > MAX_PRESENCE_DISPLAY && (
             <div className='flex items-center justify-center p-3 bg-gray-50 dark:bg-navy-750 rounded-lg text-gray-600 dark:text-gray-400'>
-              +{presence.length - 9} more
+              +{presence.length - MAX_PRESENCE_DISPLAY} more
             </div>
           )}
         </div>
@@ -433,8 +440,10 @@ interface MetricsTabProps {
 }
 
 function MetricsTab({ metrics, connectionQuality }: MetricsTabProps) {
+  const MS_PER_SECOND = 1000
+
   const formatUptime = (ms: number) => {
-    const seconds = Math.floor(ms / 1000)
+    const seconds = Math.floor(ms / MS_PER_SECOND)
     const minutes = Math.floor(seconds / 60)
     const hours = Math.floor(minutes / 60)
 

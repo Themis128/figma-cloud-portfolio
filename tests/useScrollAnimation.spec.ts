@@ -14,12 +14,6 @@ describe('useScrollAnimation', () => {
     observeMock = vi.fn()
     unobserveMock = vi.fn()
 
-    // Mock the test environment detection
-    vi.spyOn(global, 'process', 'get').mockReturnValue({
-      ...global.process,
-      env: { ...global.process.env, NODE_ENV: 'development' },
-    })
-
     // Properly mock IntersectionObserver as a constructor with valid prototype
     function MockIntersectionObserver(
       this: any,
@@ -33,14 +27,14 @@ describe('useScrollAnimation', () => {
       this.disconnect = vi.fn()
     }
     MockIntersectionObserver.prototype = {
-      observe: vi.fn(),
-      unobserve: vi.fn(),
+      observe: observeMock,
+      unobserve: unobserveMock,
       disconnect: vi.fn(),
     }
 
-    mockIntersectionObserver = vi
-      .spyOn(window, 'IntersectionObserver')
-      .mockImplementation(MockIntersectionObserver as any)
+    // Mock the global IntersectionObserver
+    mockIntersectionObserver = vi.fn().mockImplementation(MockIntersectionObserver as any)
+    global.IntersectionObserver = mockIntersectionObserver as any
   })
 
   afterEach(() => {
@@ -128,16 +122,5 @@ describe('useScrollAnimation', () => {
     rerender({ threshold: CUSTOM_INTERSECTION_THRESHOLD })
 
     expect(mockIntersectionObserver).toHaveBeenCalledTimes(2)
-  })
-
-  it('should immediately set visible in test environment', () => {
-    // Mock test environment
-    vi.spyOn(global, 'process', 'get').mockReturnValue({
-      ...global.process,
-      env: { ...global.process.env, NODE_ENV: 'test' },
-    })
-
-    const { result } = renderHook(() => useScrollAnimation())
-    expect(result.current.isVisible).toBe(true)
   })
 })

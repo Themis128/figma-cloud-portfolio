@@ -106,6 +106,11 @@ interface Interactive3DDemoProps {
   onProjectClick?: (projectId: string) => void
 }
 
+interface SceneProps {
+  projects: Project3D[]
+  onProjectClick?: (projectId: string) => void
+}
+
 /**
  * Individual 3D project sphere with hover effects
  */
@@ -266,7 +271,7 @@ function TechOrb({
 /**
  * Scene setup with lighting and camera controls
  */
-function Scene({ projects, onProjectClick }: Omit<Interactive3DDemoProps, 'className'>) {
+function Scene({ projects, onProjectClick }: SceneProps) {
   const { camera } = useThree()
   const [hoveredProject, setHoveredProject] = useState<string | null>(null)
 

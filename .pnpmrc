@@ -1,15 +1,10 @@
+# pnpm configuration
 auto-install-peers=false
-cache-dir=node_modules/.pnpm-cache
-child-concurrency=8
-hoist-pattern=["**"]
-network-concurrency=32
-prefer-frozen-lockfile=true
-public-hoist-pattern=["**"]
-state-dir=node_modules/.pnpm-state
-store-dir=~/.pnpm-store
-verify-deps-before-run=false
 resolution-mode=highest
 strict-peer-dependencies=false
 only-built-dependencies=["@swc/core","esbuild","puppeteer","sharp"]
 enable-pre-post-scripts=true
 ignore-scripts=false
+
+# Suppress npm warnings
+npm-config-ignore-workspace-root-check=true

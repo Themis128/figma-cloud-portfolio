@@ -18,7 +18,7 @@ test.describe('AI Integrations', () => {
 
   test.describe('Anthropic Claude Integration', () => {
     test('should initialize Claude API client', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock Anthropic client initialization
@@ -53,7 +53,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should send message to Claude', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock Claude API message
@@ -94,7 +94,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should handle streaming responses', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock streaming response
@@ -133,7 +133,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should track Claude token usage', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock token tracking
@@ -175,7 +175,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should handle Claude API errors', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock API error
@@ -206,7 +206,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should validate Claude model selection', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       const modelTest = await page.evaluate(() => {
@@ -235,7 +235,7 @@ test.describe('AI Integrations', () => {
 
   test.describe('Multi-Provider AI Service', () => {
     test('should initialize OpenAI provider', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock OpenAI provider
@@ -284,7 +284,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should initialize Together AI provider', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock Together AI provider
@@ -325,7 +325,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should initialize Ollama provider', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock Ollama provider
@@ -367,7 +367,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should switch between AI providers', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock provider switching
@@ -417,7 +417,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should handle provider fallback', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock fallback logic
@@ -458,7 +458,7 @@ test.describe('AI Integrations', () => {
 
   test.describe('AI Agent Workflows', () => {
     test('should execute agent workflow', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock agent workflow
@@ -504,7 +504,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should handle agent context management', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock context management
@@ -547,7 +547,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should implement agent memory', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock agent memory
@@ -587,7 +587,7 @@ test.describe('AI Integrations', () => {
 
   test.describe('AI Response Quality and Safety', () => {
     test('should validate AI response format', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       const validationTest = await page.evaluate(() => {
@@ -614,7 +614,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should filter inappropriate content', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       const filterTest = await page.evaluate(() => {
@@ -638,7 +638,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should implement rate limiting', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       const rateLimitTest = await page.evaluate(() => {
@@ -680,7 +680,7 @@ test.describe('AI Integrations', () => {
 
   test.describe('Performance and Optimization', () => {
     test('should cache AI responses', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       const cacheTest = await page.evaluate(() => {
@@ -717,7 +717,7 @@ test.describe('AI Integrations', () => {
     })
 
     test('should batch multiple requests', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       const batchTest = await page.evaluate(() => {

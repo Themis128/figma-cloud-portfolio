@@ -8,7 +8,7 @@ const NotFound = () => {
   useEffect(() => {}, [])
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden'>
+    <div className='min-h-screen bg-linear-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden'>
       <CircuitBackground />
       <Navigation />
 

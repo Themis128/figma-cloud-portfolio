@@ -83,7 +83,7 @@ export default function Contact() {
     }
   }
   return (
-    <div className='min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden'>
+    <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
       <CircuitBackground />
       <Navigation />
 
@@ -95,7 +95,7 @@ export default function Contact() {
               <h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wider'>
                 Contact Me
               </h1>
-              <div className='w-16 sm:w-24 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full' />
+              <div className='w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full' />
               <p className='text-white/70 text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-4'>
                 Let's connect and discuss how we can work together on your next cloud,
                 cybersecurity, or digital transformation project.
@@ -224,7 +224,7 @@ export default function Contact() {
                     aria-required='true'
                     aria-describedby='message-error'
                     rows={5}
-                    className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base min-h-[120px] ${
+                    className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base min-h-30 ${
                       submitStatus === 'error' && !formData.message
                         ? 'border-red-400/50'
                         : 'border-white/20'
@@ -307,7 +307,7 @@ export default function Contact() {
                 <div className='space-y-3 md:space-y-4'>
                   <HoverCard>
                     <div className='flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group'>
-                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors flex-shrink-0'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors shrink-0'>
                         <MapPin className='w-4 h-4 md:w-5 md:h-5 text-cyan-400' />
                       </div>
                       <div className='min-w-0 flex-1'>
@@ -326,7 +326,7 @@ export default function Contact() {
 
                   <HoverCard>
                     <div className='flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group'>
-                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors flex-shrink-0'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors shrink-0'>
                         <Phone className='w-4 h-4 md:w-5 md:h-5 text-cyan-400' />
                       </div>
                       <div className='min-w-0 flex-1'>
@@ -340,7 +340,7 @@ export default function Contact() {
 
                   <HoverCard>
                     <div className='flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group'>
-                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors flex-shrink-0'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors shrink-0'>
                         <Mail className='w-4 h-4 md:w-5 md:h-5 text-cyan-400' />
                       </div>
                       <div className='min-w-0 flex-1'>
@@ -359,7 +359,7 @@ export default function Contact() {
 
                   <HoverCard>
                     <div className='flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group'>
-                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors flex-shrink-0'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors shrink-0'>
                         <Linkedin className='w-4 h-4 md:w-5 md:h-5 text-cyan-400' />
                       </div>
                       <div className='min-w-0 flex-1'>
@@ -380,7 +380,7 @@ export default function Contact() {
 
                   <HoverCard>
                     <div className='flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group'>
-                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors flex-shrink-0'>
+                      <div className='inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-cyan-400/10 rounded-lg group-hover:bg-cyan-400/20 transition-colors shrink-0'>
                         <Globe className='w-4 h-4 md:w-5 md:h-5 text-cyan-400' />
                       </div>
                       <div className='min-w-0 flex-1'>
@@ -413,7 +413,7 @@ export default function Contact() {
                       href='mailto:baltzakis.themis@gmail.com?subject=Project Inquiry'
                       className='flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group'
                     >
-                      <Send className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 flex-shrink-0' />
+                      <Send className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 shrink-0' />
                       <div className='min-w-0 flex-1'>
                         <div className='text-white font-medium text-sm md:text-base'>
                           Send Project Inquiry
@@ -432,7 +432,7 @@ export default function Contact() {
                       rel='noopener noreferrer'
                       className='flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group'
                     >
-                      <Linkedin className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 flex-shrink-0' />
+                      <Linkedin className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 shrink-0' />
                       <div className='min-w-0 flex-1'>
                         <div className='text-white font-medium text-sm md:text-base'>
                           Connect on LinkedIn
@@ -451,7 +451,7 @@ export default function Contact() {
                       rel='noopener noreferrer'
                       className='flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group'
                     >
-                      <Globe className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 flex-shrink-0' />
+                      <Globe className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 shrink-0' />
                       <div className='min-w-0 flex-1'>
                         <div className='text-white font-medium text-sm md:text-base'>
                           View Portfolio

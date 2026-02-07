@@ -363,6 +363,14 @@ Documentation created with:
 
 ## 📝 Change Log
 
+### 2026-02-07
+
+- ✨ Created MCP_SERVERS.md (new - comprehensive MCP documentation)
+- 📚 Documented Context7 MCP server implementation
+- 📚 Documented Codacy MCP integration
+- 📚 Documented Browser Tools MCP
+- 🔗 Added cross-references between MCP docs and security docs
+
 ### 2026-02-01
 
 - ✨ Created INTEGRATIONS.md (15,000+ words)
@@ -434,6 +442,6 @@ All documentation has been updated to reflect the latest integrations. The proje
 ---
 
 **Created**: 2026-02-01
-**Last Updated**: 2026-02-01
-**Version**: 1.0.0
+**Last Updated**: 2026-02-07
+**Version**: 1.1.0
 **Maintainer**: Themistoklis Baltzakis

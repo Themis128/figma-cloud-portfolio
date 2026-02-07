@@ -45,17 +45,22 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }))
 
-// Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation((callback, options) => {
-  const mockObserver = {
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-    callback,
-    options,
-  } as any
-  return mockObserver
-})
+// Mock IntersectionObserver as a proper constructor
+class MockIntersectionObserver {
+  callback: IntersectionObserverCallback
+  options: IntersectionObserverInit
+
+  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+    this.callback = callback
+    this.options = options || {}
+  }
+
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+}
+
+global.IntersectionObserver = MockIntersectionObserver as any
 
 // Mock Blob as a proper class constructor
 global.Blob = class MockBlob {
@@ -93,6 +98,10 @@ global.Blob = class MockBlob {
   }
 } as typeof Blob
 
+// Performance timing constants
+const LOAD_EVENT_DELAY_MS = 1000
+const DOM_CONTENT_LOADED_DELAY_MS = 500
+
 // Mock performance API
 global.performance = {
   now: vi.fn(() => Date.now()),
@@ -104,14 +113,14 @@ global.performance = {
   clearMeasures: vi.fn(),
   timing: {
     navigationStart: Date.now(),
-    loadEventEnd: Date.now() + 1000,
-    domContentLoadedEventEnd: Date.now() + 500,
+    loadEventEnd: Date.now() + LOAD_EVENT_DELAY_MS,
+    domContentLoadedEventEnd: Date.now() + DOM_CONTENT_LOADED_DELAY_MS,
   } as any,
   navigation: {
     type: 0,
     redirectCount: 0,
   } as any,
-}
+} as any
 
 global.cancelIdleCallback = vi.fn().mockImplementation((id) => {
   clearTimeout(id)

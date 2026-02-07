@@ -562,7 +562,7 @@ describe('Resume', () => {
       // Find the plus button by looking for the plus icon
       const plusButtons = screen.getAllByTestId('plus-icon')
       if (plusButtons.length > 0) {
-        const firstButton = plusButtons[0].closest('button')
+        const firstButton = plusButtons[0]?.closest('button')
         if (firstButton) {
           fireEvent.click(firstButton!)
           expect(mockPrompt).toHaveBeenCalledWith('Enter skill:')

@@ -1,7 +1,8 @@
 // Enhanced collaboration components with React 19 integration
-import { useCallback } from 'react'
+import { startTransition, useCallback, useMemo, useState } from 'react'
+import { useEnhancedSocket, usePresence, useRealtimeEvents } from '@/hooks/useEnhancedRealtime'
 import { cn } from '@/lib/utils'
-import { useEnhancedSocket, usePresence, useRealtimeEvents } from '../hooks/useEnhancedRealtime'
+import type { AgentCollaborationData, RealTimeEvent } from '@/types/realtime'
 
 // Constants
 const MAX_RECENT_ACTIVITY = 5
@@ -129,7 +130,7 @@ export function CollaborationPanel({
     startTransition(() => {
       setIsExpanded((prev) => !prev)
     })
-  }, [setIsExpanded])
+  }, [])
 
   return (
     <div
@@ -519,7 +520,15 @@ const TrashIcon = ({ className }: { className?: string }) => (
 )
 
 const MoveIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+  <svg
+    className={className}
+    fill='none'
+    viewBox='0 0 24 24'
+    stroke='currentColor'
+    role='img'
+    aria-label='Move'
+  >
+    <title>Move</title>
     <path
       strokeLinecap='round'
       strokeLinejoin='round'
@@ -530,7 +539,15 @@ const MoveIcon = ({ className }: { className?: string }) => (
 )
 
 const RenameIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+  <svg
+    className={className}
+    fill='none'
+    viewBox='0 0 24 24'
+    stroke='currentColor'
+    role='img'
+    aria-label='Rename'
+  >
+    <title>Rename</title>
     <path
       strokeLinecap='round'
       strokeLinejoin='round'
@@ -541,7 +558,15 @@ const RenameIcon = ({ className }: { className?: string }) => (
 )
 
 const ActivityIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+  <svg
+    className={className}
+    fill='none'
+    viewBox='0 0 24 24'
+    stroke='currentColor'
+    role='img'
+    aria-label='Activity'
+  >
+    <title>Activity</title>
     <path
       strokeLinecap='round'
       strokeLinejoin='round'

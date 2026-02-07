@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import type { AgentConnection, AgentNode, AgentTemplate } from '@/data/agentTemplates'
 import { executeAgent } from '@/lib/agentExecutor'
-import { WorkflowBuilder } from './WorkflowBuilder'
+import WorkflowBuilder from './WorkflowBuilder'
 
 interface AgentBuilderProps {
   template: AgentTemplate
@@ -14,7 +14,7 @@ interface AgentBuilderProps {
   onCancel: () => void
 }
 
-export function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
+export default function AgentBuilder({ template, onSave, onCancel }: AgentBuilderProps) {
   const [agent, setAgent] = useState<AgentTemplate>({
     ...template,
     id: `agent-${Date.now()}`,

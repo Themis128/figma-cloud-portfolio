@@ -30,9 +30,9 @@ export default defineConfig({
 
   // Real APIs are less predictable
   fullyParallel: false, // Run sequentially to avoid rate limits
-  forbidOnly: !!process.env['CI'],
-  retries: process.env['CI'] ? 2 : 1, // Retry on network failures
-  workers: process.env['CI'] ? 1 : 2, // Limit parallel workers
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 1, // Retry on network failures
+  workers: process.env.CI ? 1 : 2, // Limit parallel workers
 
   // Reporters
   reporter: [
@@ -46,7 +46,7 @@ export default defineConfig({
 
   use: {
     // Base URL for testing
-    baseURL: process.env['BASE_URL'] || 'http://localhost:3001',
+    baseURL: process.env.BASE_URL || 'http://localhost:3001',
 
     // Longer timeouts for real API calls
     actionTimeout: 15000,
@@ -79,7 +79,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3001',
-    reuseExistingServer: !process.env['CI'],
+    reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
 })

@@ -57,7 +57,7 @@ export function useNotificationPermission() {
             result.addEventListener('change', handlePermissionChange)
             return () => result.removeEventListener('change', handlePermissionChange)
           })
-          .catch(console.warn)
+          .catch(() => {})
       }
     }
   }, [])
@@ -130,41 +130,9 @@ export function usePushSubscription(vapidPublicKey?: string) {
     setIsLoading(true)
     setError(null)
 
-    try {
-      const registration = await navigator.serviceWorker.ready
-
-      // Check if already subscribed
-      const existingSubscription = await registration.pushManager.getSubscription()
-      if (existingSubscription) {
-        setSubscription(existingSubscription)
-        setIsLoading(false)
-        return existingSubscription
-      }
-
-      // Create new subscription
-      const newSubscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-      })
-
-      setSubscription(newSubscription)
-
-      // Send subscription to server
-      const response = await fetch('/api/push-notifications/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          subscription: newSubscription.toJSON(),
-          userAgent: navigator.userAgent,
-          timestamp: Date.now(),
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to save subscription on server')
-      }
-
-      // Track successful subscription
+    const handleSuccess = (subscription: PushSubscription) => {
+      setSubscription(subscription)
+      setIsLoading(false)
       if ('gtag' in window) {
         // @ts-expect-error
         gtag('event', 'push_subscription', {
@@ -172,14 +140,12 @@ export function usePushSubscription(vapidPublicKey?: string) {
           event_label: 'success',
         })
       }
+      return subscription
+    }
 
-      setIsLoading(false)
-      return newSubscription
-    } catch (error) {
+    const handleError = (error: unknown) => {
       setError(error instanceof Error ? error.message : 'Subscription failed')
       setIsLoading(false)
-
-      // Track failed subscription
       if ('gtag' in window) {
         // @ts-expect-error
         gtag('event', 'push_subscription', {
@@ -188,8 +154,38 @@ export function usePushSubscription(vapidPublicKey?: string) {
           custom_parameter_1: error instanceof Error ? error.message : 'unknown',
         })
       }
-
       return null
+    }
+
+    const sendSubscriptionToServer = async (subscription: PushSubscription) => {
+      const response = await fetch('/api/push-notifications/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subscription: subscription.toJSON(),
+          userAgent: navigator.userAgent,
+          timestamp: Date.now(),
+        }),
+      })
+      if (!response.ok) {
+        throw new Error('Failed to save subscription on server')
+      }
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready
+      const existingSubscription = await registration.pushManager.getSubscription()
+      if (existingSubscription) {
+        return handleSuccess(existingSubscription)
+      }
+      const newSubscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+      })
+      await sendSubscriptionToServer(newSubscription)
+      return handleSuccess(newSubscription)
+    } catch (error) {
+      return handleError(error)
     }
   }, [vapidPublicKey])
 
@@ -210,7 +206,7 @@ export function usePushSubscription(vapidPublicKey?: string) {
         body: JSON.stringify({
           subscription: subscription.toJSON(),
         }),
-      }).catch(console.warn) // Don't fail if server removal fails
+      }).catch(() => {}) // Don't fail if server removal fails
 
       setSubscription(null)
       setIsLoading(false)
@@ -243,11 +239,59 @@ export function usePushSubscription(vapidPublicKey?: string) {
 }
 
 // =============================================================================
-// LOCAL NOTIFICATION SYSTEM
-// =============================================================================
+// Vibration pattern constants
+const VIBRATE_SHORT = 125
+const VIBRATE_PAUSE = 75
+const VIBRATE_MEDIUM = 275
+const VIBRATE_LONG = 200
+const VIBRATE_EXTRA_LONG = 600
+const LOCAL_NOTIFICATION_VIBRATE_PATTERN = [
+  VIBRATE_SHORT, VIBRATE_PAUSE, VIBRATE_SHORT, VIBRATE_MEDIUM,
+  VIBRATE_LONG, VIBRATE_MEDIUM, VIBRATE_SHORT, VIBRATE_PAUSE,
+  VIBRATE_SHORT, VIBRATE_MEDIUM, VIBRATE_LONG, VIBRATE_EXTRA_LONG
+]
+
+// Resume notification vibration pattern constant
+const RESUME_READY_VIBRATE_PATTERN = [VIBRATE_LONG, VIBRATE_PAUSE, VIBRATE_LONG]
 
 export function useLocalNotifications() {
-  const { permission, isGranted } = useNotificationPermission()
+  const { isGranted } = useNotificationPermission()
+
+  const createNotification = useCallback(
+    (title: string, options: PushNotificationOptions = {}): Notification => {
+      return new Notification(title, {
+        badge: '/logo.jpg',
+        icon: '/logo.jpg',
+        dir: 'ltr',
+        lang: 'en-US',
+        renotify: false,
+        requireInteraction: false,
+        silent: false,
+        tag: 'portfolio-local',
+        timestamp: Date.now(),
+        vibrate: LOCAL_NOTIFICATION_VIBRATE_PATTERN,
+        ...options,
+        data: {
+          source: 'local',
+          timestamp: Date.now(),
+          ...options.data,
+        },
+      })
+    },
+    []
+  )
+
+  // Helper for navigation logic
+  const handleNotificationNavigation = useCallback((url?: string) => {
+    if ('clients' in window && 'openWindow' in (window as Window & { clients: { openWindow: (url: string) => void } })) {
+      (window as Window & { clients: { openWindow: (url: string) => void } }).clients.openWindow(url || '/')
+    } else {
+      window.focus()
+      if (url && url !== window.location.pathname) {
+        window.location.href = url
+      }
+    }
+  }, [])
 
   const showNotification = useCallback(
     (title: string, options: PushNotificationOptions = {}): Promise<Notification | null> => {
@@ -257,88 +301,55 @@ export function useLocalNotifications() {
           return
         }
 
+        let notification: Notification
         try {
-          const notification = new Notification(title, {
-            badge: '/logo.jpg',
-            icon: '/logo.jpg',
-            dir: 'ltr',
-            lang: 'en-US',
-            renotify: false,
-            requireInteraction: false,
-            silent: false,
-            tag: 'portfolio-local',
-            timestamp: Date.now(),
-            vibrate: [125, 75, 125, 275, 200, 275, 125, 75, 125, 275, 200, 600],
-            ...options,
-            data: {
-              source: 'local',
-              timestamp: Date.now(),
-              ...options.data,
-            },
-          })
-
-          // Handle notification events
-          notification.onclick = (event) => {
-            event.preventDefault()
-
-            // Focus or open window
-            if ('clients' in window && 'openWindow' in window.clients) {
-              // Service worker context
-              window.clients.openWindow(options.data?.url || '/')
-            } else {
-              // Main thread context
-              window.focus()
-              if (options.data?.url && options.data.url !== window.location.pathname) {
-                window.location.href = options.data.url
-              }
-            }
-
-            notification.close()
-
-            // Track click
-            if ('gtag' in window) {
-              // @ts-expect-error
-              gtag('event', 'notification_click', {
-                event_category: 'engagement',
-                event_label: 'local',
-                custom_parameter_1: options.data?.url,
-              })
-            }
-          }
-
-          notification.onerror = (error) => {
-            reject(error)
-          }
-
-          notification.onshow = () => {
-            resolve(notification)
-
-            // Track show
-            if ('gtag' in window) {
-              // @ts-expect-error
-              gtag('event', 'notification_show', {
-                event_category: 'engagement',
-                event_label: 'local',
-              })
-            }
-          }
-
-          notification.onclose = () => {
-            // Track close if relevant
-          }
-
-          // Auto-close after specified time
-          if (options.autoClose) {
-            setTimeout(() => {
-              notification.close()
-            }, options.autoClose)
-          }
+          notification = createNotification(title, options)
         } catch (error) {
           reject(error)
+          return
+        }
+
+        notification.onclick = (event) => {
+          event.preventDefault()
+          handleNotificationNavigation(options.data?.url)
+          notification.close()
+          if ('gtag' in window) {
+            // @ts-expect-error
+            gtag('event', 'notification_click', {
+              event_category: 'engagement',
+              event_label: 'local',
+              custom_parameter_1: options.data?.url,
+            })
+          }
+        }
+
+        notification.onerror = (error) => {
+          reject(error)
+        }
+
+        notification.onshow = () => {
+          resolve(notification)
+          if ('gtag' in window) {
+            // @ts-expect-error
+            gtag('event', 'notification_show', {
+              event_category: 'engagement',
+              event_label: 'local',
+            })
+          }
+        }
+
+        notification.onclose = () => {
+          // Track close if relevant
+        }
+
+        if (options.autoClose) {
+          setTimeout(() => {
+            notification.close()
+          }, options.autoClose)
         }
       })
     },
-    [isGranted],
+    [isGranted, handleNotificationNavigation, createNotification],
   )
 
   return {
@@ -407,7 +418,7 @@ export const NotificationTemplates = {
     tag: 'resume-ready',
     requireInteraction: false,
     autoClose: 8000,
-    vibrate: [200, 100, 200],
+    vibrate: RESUME_READY_VIBRATE_PATTERN,
     data: { url: '/resume' },
   }),
 }
@@ -419,6 +430,7 @@ export const NotificationTemplates = {
 export class NotificationManager {
   private static instance: NotificationManager | null = null
   private subscription: PushSubscription | null = null
+  // Removed unused vapidPublicKey member
 
   static getInstance(): NotificationManager {
     if (!NotificationManager.instance) {
@@ -427,9 +439,7 @@ export class NotificationManager {
     return NotificationManager.instance
   }
 
-  async initialize(vapidPublicKey: string): Promise<void> {
-    this.vapidPublicKey = vapidPublicKey
-
+  async initialize(): Promise<void> {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.ready
@@ -507,7 +517,7 @@ export class NotificationManager {
   }
 
   getSubscriptionInfo(): PushSubscriptionJSON | null {
-    return this.subscription?.toJSON() || null
+    return this.subscription?.toJSON() as PushSubscriptionJSON | null
   }
 }
 
@@ -516,7 +526,8 @@ export class NotificationManager {
 // =============================================================================
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const BASE64_PAD_LENGTH = 4
+  const padding = '='.repeat((BASE64_PAD_LENGTH - (base64String.length % BASE64_PAD_LENGTH)) % BASE64_PAD_LENGTH)
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
 
   const rawData = window.atob(base64)
@@ -543,7 +554,7 @@ export function useEnhancedNotifications(vapidPublicKey?: string) {
   // Initialize notification manager
   useEffect(() => {
     if (vapidPublicKey) {
-      notificationManager.initialize(vapidPublicKey)
+      notificationManager.initialize()
     }
   }, [vapidPublicKey])
 

@@ -231,7 +231,7 @@ export function PerformanceMonitor() {
         fetchStart: number
       },
     ) => {
-      if (process.env['NODE_ENV'] === 'production') {
+      if (process.env.NODE_ENV === 'production') {
         // Send to analytics service
         // const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
         // const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
@@ -243,7 +243,7 @@ export function PerformanceMonitor() {
     trackNavigation()
 
     // Track route changes
-    if (process.env['NODE_ENV'] === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       // Send to analytics service
       // analytics.track('route_change', { path: location.pathname })
     } else {

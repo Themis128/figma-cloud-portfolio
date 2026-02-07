@@ -3,7 +3,7 @@ import { waitForAppReady } from './test-utils'
 
 test.describe('Resume Generation', () => {
   test('should load resume page and display UI elements', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
     await waitForAppReady(page)
 
     await page.waitForLoadState('domcontentloaded')
@@ -25,7 +25,7 @@ test.describe('Resume Generation', () => {
   })
 
   test('should generate and download PDF resume', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
 
     await page.waitForLoadState('domcontentloaded')
 
@@ -41,7 +41,7 @@ test.describe('Resume Generation', () => {
   })
 
   test('should handle resume generation errors gracefully', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
 
     await page.waitForLoadState('domcontentloaded')
 
@@ -57,7 +57,7 @@ test.describe('Resume Generation', () => {
   })
 
   test('should have proper resume metadata in generated PDF', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
 
     await page.waitForLoadState('domcontentloaded')
 
@@ -73,7 +73,7 @@ test.describe('Resume Generation', () => {
   })
 
   test('should allow editing resume data', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
 
     await page.waitForLoadState('domcontentloaded')
 
@@ -94,7 +94,7 @@ test.describe('Resume Generation', () => {
   })
 
   test('should show and hide preview correctly', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
 
     await page.waitForLoadState('domcontentloaded')
 
@@ -119,7 +119,7 @@ test.describe('Resume Generation', () => {
   })
 
   test('should save draft to localStorage', async ({ page }) => {
-    await page.goto('http://localhost:3001/resume')
+    await page.goto('/resume')
 
     await page.waitForLoadState('domcontentloaded')
 

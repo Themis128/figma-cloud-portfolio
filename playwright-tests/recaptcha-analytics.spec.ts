@@ -4,7 +4,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
   test.describe('reCAPTCHA v3 Integration', () => {
     test('should initialize reCAPTCHA context on contact page', async ({ page }) => {
       // Test that the contact page loads (basic functionality test)
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Wait for basic page load
       await page.waitForLoadState('networkidle')
@@ -18,7 +18,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should execute reCAPTCHA on form submission', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Fill out the form
       await page.fill('#name', 'Test User')
@@ -52,7 +52,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should handle reCAPTCHA loading errors gracefully', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock reCAPTCHA script failure
       await page.route('**/recaptcha/api.js**', (route) => route.abort())
@@ -77,7 +77,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should validate reCAPTCHA token on server side', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock successful reCAPTCHA execution
       await page.addScriptTag({
@@ -107,7 +107,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should handle reCAPTCHA score validation', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock reCAPTCHA with low score
       await page.route('**/recaptcha/api/siteverify**', (route) =>
@@ -147,7 +147,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should work with different form field combinations', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock reCAPTCHA
       await page.addScriptTag({
@@ -173,7 +173,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should handle network errors during reCAPTCHA verification', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock network failure during reCAPTCHA verification
       await page.route('**/recaptcha/api/siteverify**', (route) => route.abort())
@@ -205,7 +205,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
 
   test.describe('Google Analytics Integration', () => {
     test('should load Google Analytics script', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // GA script may not be loaded in test environment
       // Just check that the page loads normally
@@ -224,13 +224,13 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
         `,
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Wait for GA to initialize (reduced timeout)
       await page.waitForTimeout(500)
 
       // Navigate to contact page
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
       await page.waitForTimeout(500)
 
       // Check that page navigation worked (GA tracking may not work in test environment)
@@ -241,7 +241,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       // Mock GA script failure
       await page.route('**/googletagmanager.com/gtag/js**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should still load normally
       await expect(page.locator('h1')).toBeVisible()
@@ -259,7 +259,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
         `,
       })
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Fill and submit form (this should trigger GA events if implemented)
       await page.addScriptTag({
@@ -295,7 +295,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
         `,
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should load regardless of GA configuration
       await expect(page.locator('body')).toBeVisible()
@@ -307,14 +307,14 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await page.route('**/googletagmanager.com/**', (route) => route.abort())
       await page.route('**/google-analytics.com/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should still function normally
       await expect(page.locator('h1')).toBeVisible()
       await expect(page.locator('nav')).toBeVisible()
 
       // Navigation should work
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
       await expect(page.locator('form')).toBeVisible()
     })
 
@@ -328,7 +328,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
         `,
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Click navigation links (SPA routing)
       const contactLink = page.getByRole('link', { name: 'Contact' })
@@ -355,7 +355,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
         `,
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       await page.waitForTimeout(1000)
 
@@ -379,7 +379,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
         `,
       })
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Fill and submit form
       await page.fill('#name', 'Test User')
@@ -401,7 +401,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
       await page.route('**/googletagmanager.com/**', (route) => route.abort())
       await page.route('**/recaptcha/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Fill form
       await page.fill('#name', 'Test User')
@@ -424,7 +424,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
 
     test('should work with different browser configurations', async ({ page }) => {
       // Test with JavaScript disabled simulation (partial)
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock minimal functionality
       await page.addScriptTag({
@@ -451,7 +451,7 @@ test.describe('reCAPTCHA and Google Analytics Integration', () => {
     })
 
     test('should maintain functionality across page reloads', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Mock the required functions
       await page.addScriptTag({

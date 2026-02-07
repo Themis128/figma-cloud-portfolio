@@ -32,6 +32,11 @@ class EnhancedSocketManager {
   private rooms: Set<string> = new Set()
   private heartbeatInterval: NodeJS.Timeout | null = null
 
+  // Constants
+  private CONNECTION_TIMEOUT = 20000
+  private HEARTBEAT_INTERVAL = 30000
+  private MAX_EVENTS = 49
+
   private constructor() {}
 
   static getInstance(): EnhancedSocketManager {
@@ -55,15 +60,17 @@ class EnhancedSocketManager {
       rooms: Array.from(this.rooms),
       reconnectAttempts: this.reconnectAttempts,
       isOnline: this.connectionState === 'connected',
-      latency: this.socket?.ping || null,
+      latency: null, // TODO: Implement proper latency measurement
     }
   }
 
   private notifySubscribers(): void {
-    this.subscribers.forEach((callback) => callback())
+    this.subscribers.forEach((callback) => {
+      callback()
+    })
   }
 
-  async connect(
+  connect(
     options: { userId?: string; autoReconnect?: boolean; heartbeat?: boolean } = {},
   ): Promise<Socket | null> {
     if (this.socket?.connected) {
@@ -75,7 +82,7 @@ class EnhancedSocketManager {
       this.notifySubscribers()
 
       const serverUrl =
-        process.env['NODE_ENV'] === 'production' ? window.location.origin : 'http://localhost:3000'
+        process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3000'
 
       this.socket = io(serverUrl, {
         transports: ['websocket', 'polling'],
@@ -84,7 +91,7 @@ class EnhancedSocketManager {
         reconnection: options.autoReconnect !== false,
         reconnectionDelay: this.reconnectDelay,
         reconnectionAttempts: this.maxReconnectAttempts,
-        timeout: 20000,
+        timeout: this.CONNECTION_TIMEOUT,
         forceNew: false,
         auth: {
           userId: options.userId,
@@ -106,7 +113,11 @@ class EnhancedSocketManager {
           this.connectionState = 'connected'
           this.reconnectAttempts = 0
           this.notifySubscribers()
-          resolve(this.socket!)
+          if (this.socket) {
+            resolve(this.socket)
+          } else {
+            reject(new Error('Socket not created'))
+          }
         })
 
         this.socket?.on('connect_error', (error) => {
@@ -120,7 +131,7 @@ class EnhancedSocketManager {
           if (this.connectionState !== 'connected') {
             reject(new Error('Connection timeout'))
           }
-        }, 20000)
+        }, this.CONNECTION_TIMEOUT)
       })
     } catch (_error) {
       this.connectionState = 'error'
@@ -194,7 +205,7 @@ class EnhancedSocketManager {
       if (this.socket?.connected) {
         this.socket.emit('ping')
       }
-    }, 30000) // Ping every 30 seconds
+    }, this.HEARTBEAT_INTERVAL) // Ping every 30 seconds
   }
 
   private stopHeartbeat(): void {
@@ -241,7 +252,7 @@ class EnhancedSocketManager {
   }
 
   // Room management
-  joinRoom(roomId: string, data?: any): void {
+  joinRoom(roomId: string, data?: unknown): void {
     if (this.socket?.connected) {
       this.socket.emit('join_room', { roomId, data })
       this.rooms.add(roomId)
@@ -258,7 +269,7 @@ class EnhancedSocketManager {
   }
 
   // Event emission with error handling
-  emit(event: string, data?: any): Promise<any> {
+  emit(event: string, data?: unknown): Promise<unknown> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
         reject(new Error('Socket not connected'))
@@ -316,13 +327,7 @@ export function useEnhancedSocket(
   // Auto-connect effect
   useEffect(() => {
     if (options.autoConnect !== false) {
-      socketManager
-        .connect({
-          userId: options.userId,
-          autoReconnect: options.autoReconnect,
-          heartbeat: options.heartbeat,
-        })
-        .catch(console.error)
+      socketManager.connect(options).catch(console.error)
     }
 
     return () => {
@@ -330,7 +335,7 @@ export function useEnhancedSocket(
         socketManager.disconnect()
       }
     }
-  }, [options.userId, options.autoConnect, options.autoReconnect, options.heartbeat])
+  }, [options.userId, options.autoConnect, options.autoReconnect, options.heartbeat, options])
 
   const emit = useCallback((event: string, data?: any) => {
     return socketManager.emit(event, data)
@@ -384,6 +389,7 @@ export function usePresence(roomId?: string) {
 
       return () => leaveRoom(currentRoom)
     }
+    return undefined
   }, [connection.isOnline, currentRoom, joinRoom, leaveRoom, localPresence])
 
   // Update presence data with React 19 startTransition
@@ -452,7 +458,7 @@ export function useRealtimeEvents<T = any>(eventName: string) {
           metadata,
         }
 
-        setEvents((prev) => [...prev.slice(-49), event]) // Keep last 50 events
+        setEvents((prev) => [...prev.slice(-this.MAX_EVENTS), event]) // Keep last 50 events
       })
     })
 

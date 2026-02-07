@@ -259,7 +259,7 @@ export default function Resume() {
           Resume Preview
         </CardTitle>
       </CardHeader>
-      <CardContent className='space-y-6 max-h-[600px] overflow-y-auto'>
+      <CardContent className='space-y-6 max-h-150 overflow-y-auto'>
         {/* Header */}
         <div className='text-center space-y-2'>
           <h2 className='text-2xl font-bold text-cyan-400'>{resume.name}</h2>
@@ -342,7 +342,7 @@ export default function Resume() {
                     <ul className='text-sm text-muted-foreground space-y-1'>
                       {exp.achievements.map((achievement, _i) => (
                         <li key={achievement} className='flex items-start gap-2'>
-                          <ChevronRight className='w-3 h-3 mt-0.5 text-cyan-400 flex-shrink-0' />
+                          <ChevronRight className='w-3 h-3 mt-0.5 text-cyan-400 shrink-0' />
                           {achievement}
                         </li>
                       ))}
@@ -398,7 +398,7 @@ export default function Resume() {
   )
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden'>
+    <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
       {/* Circuit background */}
       <CircuitBackground />
 

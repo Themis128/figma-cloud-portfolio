@@ -170,7 +170,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
 
   test.describe('Google Analytics Integration Verification', () => {
     test('should load homepage with GA configuration', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Wait for page to load and stabilize
       await page.waitForLoadState('networkidle')
@@ -190,7 +190,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     })
 
     test('should load contact page with GA configuration', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Wait for page to load and stabilize
       await page.waitForLoadState('networkidle')
@@ -214,7 +214,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       await page.route('**/googletagmanager.com/**', (route) => route.abort())
       await page.route('**/google-analytics.com/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should still load normally
       await expect(page.locator('body')).toBeVisible()
@@ -229,10 +229,10 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       await page.route('**/googletagmanager.com/**', (route) => route.abort())
       await page.route('**/google-analytics.com/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Should be able to navigate
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Page should still load
       await expect(page.locator('body')).toBeVisible()
@@ -245,7 +245,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
         await route.continue()
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Should still load eventually
       await expect(page.locator('body')).toBeVisible()
@@ -254,7 +254,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     test('should work with JavaScript disabled simulation', async ({ page }) => {
       // This test simulates basic functionality without JavaScript
       // by checking that the HTML structure is correct
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Check for basic HTML structure
       await expect(page.locator('html')).toBeAttached()
@@ -269,7 +269,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
 
   test.describe('Combined Integration Scenarios', () => {
     test('should handle contact form submission with both services available', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Wait for page to load
       await page.waitForLoadState('networkidle')
@@ -288,7 +288,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       await page.route('**/googletagmanager.com/**', (route) => route.abort())
       await page.route('**/google-analytics.com/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Page should still load
       await page.waitForLoadState('networkidle')
@@ -303,7 +303,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       // Block reCAPTCHA but allow other functionality
       await page.route('**/recaptcha/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Page should still load
       await page.waitForLoadState('networkidle')
@@ -320,7 +320,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       await page.route('**/google-analytics.com/**', (route) => route.abort())
       await page.route('**/recaptcha/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Page should still load
       await page.waitForLoadState('networkidle')
@@ -333,16 +333,16 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
 
     test('should handle rapid page navigation', async ({ page }) => {
       // Test rapid navigation between pages
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
       await page.waitForLoadState('networkidle')
 
-      await page.goto('http://localhost:3001/about')
+      await page.goto('/about')
       await page.waitForLoadState('networkidle')
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
 
       // All pages should load successfully
@@ -404,11 +404,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       const pages = await Promise.all(contexts.map((context) => context.newPage()))
 
       // Load different pages concurrently
-      await Promise.all([
-        pages[0].goto('http://localhost:3001/'),
-        pages[1].goto('http://localhost:3001/contact'),
-        pages[2].goto('http://localhost:3001/about'),
-      ])
+      await Promise.all([pages[0].goto('/'), pages[1].goto('/contact'), pages[2].goto('/about')])
 
       // All should load successfully
       await Promise.all(pages.map((page) => expect(page.locator('body')).toBeVisible()))
@@ -418,7 +414,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     })
 
     test('should handle page reloads gracefully', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Reload multiple times
       for (let i = 0; i < 3; i++) {
@@ -429,10 +425,10 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     })
 
     test('should handle navigation with browser back/forward', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
       await page.waitForLoadState('networkidle')
 
       await page.goBack()
@@ -654,7 +650,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       // Test that the application works with different GA configurations
       // This is more of a configuration test than a functional test
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should load regardless of GA configuration
       await expect(page.locator('body')).toBeVisible()

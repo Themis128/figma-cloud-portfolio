@@ -204,7 +204,7 @@ const nextConfig: NextConfig = {
 
   // Environment variables exposed to client
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env['NEXT_PUBLIC_SITE_URL'] || 'https://baltzakis.dev',
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://baltzakis.dev',
     NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || '1.0.0',
   },
 
@@ -212,7 +212,7 @@ const nextConfig: NextConfig = {
   compiler: {
     // Remove console.log in production
     removeConsole:
-      process.env['NODE_ENV'] === 'production'
+      process.env.NODE_ENV === 'production'
         ? {
             exclude: ['error', 'warn'],
           }
@@ -286,7 +286,7 @@ const nextConfig: NextConfig = {
 }
 
 // Conditionally add bundle analyzer
-if (process.env['ANALYZE'] === 'true') {
+if (process.env.ANALYZE === 'true') {
   nextConfig.experimental = {
     ...nextConfig.experimental,
     bundleAnalyzer: {
@@ -297,13 +297,13 @@ if (process.env['ANALYZE'] === 'true') {
 }
 
 // Conditionally add development settings
-if (process.env['NODE_ENV'] !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   nextConfig.fastRefresh = true
   nextConfig.telemetry = false
 }
 
 // Conditionally add production settings
-if (process.env['NODE_ENV'] === 'production') {
+if (process.env.NODE_ENV === 'production') {
   nextConfig.productionBrowserSourceMaps = true
   nextConfig.images = {
     ...nextConfig.images,

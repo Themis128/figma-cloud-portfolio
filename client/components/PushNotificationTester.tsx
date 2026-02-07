@@ -21,7 +21,7 @@ interface NotificationResult {
   }>
 }
 
-export function PushNotificationTester() {
+export default function PushNotificationTester() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<NotificationResult | null>(null)
   const [subscriptionCount, setSubscriptionCount] = useState<number | null>(null)
@@ -38,7 +38,7 @@ export function PushNotificationTester() {
   const [serviceWorkerStatus, setServiceWorkerStatus] = useState<{
     registered: boolean
     active: boolean
-    state?: string
+    state?: string | undefined
   }>({ registered: false, active: false })
 
   // Extract helper functions to reduce complexity

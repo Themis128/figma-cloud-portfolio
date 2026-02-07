@@ -111,7 +111,7 @@ export function healthCheckConfig(config: PlaywrightTestConfig): ConfigHealthRep
   if (
     typeof config.workers === 'number' &&
     config.workers <= VALIDATION_CONSTANTS.MIN_WORKER_COUNT &&
-    !process.env['CI'] &&
+    !process.env.CI &&
     !config.metadata?.environment?.includes('isolated') // Allow single worker for isolated mode
   ) {
     issues.push({

@@ -97,7 +97,7 @@ export interface AgentCollaborationData {
   agentId: string
   userId: string
   changeType: 'create' | 'update' | 'delete' | 'move' | 'rename'
-  section: 'workflow' | 'config' | 'template' | 'description' | 'variables'
+  section: 'workflow' | 'config' | 'template' | 'description' | 'variables' | 'general'
   changes: Record<string, any>
   timestamp: number
   version?: string
@@ -409,7 +409,7 @@ export interface RoomConfig {
 
 export const DEFAULT_REALTIME_CONFIG: RealtimeConfig = {
   serverUrl:
-    process.env['NODE_ENV'] === 'production'
+    process.env.NODE_ENV === 'production'
       ? window?.location?.origin || 'https://localhost:3000'
       : 'http://localhost:3000',
   autoConnect: true,

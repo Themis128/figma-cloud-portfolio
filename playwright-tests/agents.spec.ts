@@ -4,7 +4,7 @@ import { waitForAppReady } from './test-utils'
 test.describe('AI Agent Templates System', () => {
   test.describe('Template Selection & Browsing', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
       await page.waitForLoadState('domcontentloaded')
       await page.waitForSelector('h1', { timeout: 10000 })
@@ -180,7 +180,7 @@ test.describe('AI Agent Templates System', () => {
 
   test.describe('Template Management', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
       await page.waitForLoadState('domcontentloaded')
       await page.waitForSelector('h1', { timeout: 10000 })
@@ -205,7 +205,7 @@ test.describe('AI Agent Templates System', () => {
 
   test.describe('Accessibility & Responsiveness', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
       await page.waitForLoadState('domcontentloaded')
       await page.waitForSelector('h1', { timeout: 10000 })

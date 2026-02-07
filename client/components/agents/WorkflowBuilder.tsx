@@ -22,7 +22,7 @@ interface NodePosition {
   y: number
 }
 
-export function WorkflowBuilder({
+export default function WorkflowBuilder({
   nodes,
   connections,
   onUpdate,

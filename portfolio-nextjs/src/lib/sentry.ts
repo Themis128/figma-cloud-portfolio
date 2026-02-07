@@ -13,8 +13,8 @@ const SENTRY_CONFIG = {
 
 // Initialize Sentry for the client
 Sentry.init({
-  dsn: import.meta.env['VITE_SENTRY_DSN'],
-  environment: import.meta.env['MODE'],
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  environment: import.meta.env.MODE,
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration({
@@ -23,16 +23,16 @@ Sentry.init({
     }),
   ],
   // Performance Monitoring
-  tracesSampleRate: import.meta.env['PROD']
+  tracesSampleRate: import.meta.env.PROD
     ? SENTRY_CONFIG.SAMPLING_RATES.PRODUCTION_TRACE
     : SENTRY_CONFIG.SAMPLING_RATES.DEVELOPMENT_TRACE, // Capture 10% of transactions in production
   // Session Replay
-  replaysSessionSampleRate: import.meta.env['PROD']
+  replaysSessionSampleRate: import.meta.env.PROD
     ? SENTRY_CONFIG.SAMPLING_RATES.PRODUCTION_REPLAY
     : SENTRY_CONFIG.SAMPLING_RATES.DEVELOPMENT_TRACE, // Capture 10% of sessions
   replaysOnErrorSampleRate: SENTRY_CONFIG.SAMPLING_RATES.ERROR_REPLAY, // Capture 100% of sessions with errors
   // Release tracking
-  release: import.meta.env['VITE_APP_VERSION'] || SENTRY_CONFIG.DEFAULT_VERSION,
+  release: import.meta.env.VITE_APP_VERSION || SENTRY_CONFIG.DEFAULT_VERSION,
   // Error filtering
   beforeSend(event, hint) {
     // Filter out common non-actionable errors

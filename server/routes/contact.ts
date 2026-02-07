@@ -1,3 +1,4 @@
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 import type { ContactFormRequest, ContactFormResponse } from '@shared/api'
 import type { Request, Response } from 'express'
 
@@ -146,10 +147,10 @@ export const handleContactForm = async (req: Request, res: Response) => {
     }
 
     // Verify reCAPTCHA
-    let recaptchaSecret = process.env['RECAPTCHA_SECRET_KEY']
+    let recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY
 
     // Use test keys in development/test environment
-    if (process.env['NODE_ENV'] !== 'production' || !recaptchaSecret) {
+    if (process.env.NODE_ENV !== 'production' || !recaptchaSecret) {
       // Google's test reCAPTCHA secret key - always validates successfully
       recaptchaSecret = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     }
@@ -198,7 +199,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
 
     // For test reCAPTCHA keys, score might be undefined - allow in development
     const isTestKey = recaptchaSecret === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-    if (!isTestKey && process.env['NODE_ENV'] === 'production' && recaptchaData.score === undefined) {
+    if (!isTestKey && process.env.NODE_ENV === 'production' && recaptchaData.score === undefined) {
       const response: ContactFormResponse = {
         success: false,
         message: 'reCAPTCHA verification failed. Please try again.',
@@ -206,7 +207,113 @@ export const handleContactForm = async (req: Request, res: Response) => {
       return res.status(CONTACT_CONSTANTS.HTTP_STATUS.BAD_REQUEST).json(response)
     }
 
-    // Simulate processing delay (like sending email)
+    // Send confirmation email via AWS SES (with graceful failure handling)
+    const sendEmailGracefully = async (): Promise<void> => {
+      // Check if SES is configured
+      const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID
+      const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+      const sesVerifiedEmail = process.env.SES_VERIFIED_EMAIL
+
+      // Skip email if SES is not properly configured
+      if (!awsAccessKeyId || !awsSecretAccessKey || !sesVerifiedEmail) {
+        console.warn('AWS SES not configured - skipping confirmation email')
+        return
+      }
+
+      try {
+        const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-1' })
+        await sesClient.send(
+          new SendEmailCommand({
+            Source: sesVerifiedEmail,
+            Destination: { ToAddresses: [sanitizedEmail] },
+            Message: {
+              Subject: { Data: 'Thank you for contacting me!' },
+              Body: {
+                Html: {
+                  Data: `
+                    <html>
+                      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                        <h2>Thank you for reaching out!</h2>
+                        <p>Hi ${sanitizedName},</p>
+                        <p>I've received your message and will get back to you within 24 hours.</p>
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                          <p><strong>Your message:</strong></p>
+                          <p><strong>Subject:</strong> ${sanitizedSubject}</p>
+                          <p>${sanitizedMessage}</p>
+                        </div>
+                        <p>Best regards,<br>Themistoklis Baltzakis</p>
+                      </body>
+                    </html>
+                  `,
+                },
+              },
+            },
+          }),
+        )
+        console.log(`Confirmation email sent to ${sanitizedEmail}`)
+      } catch (emailError) {
+        // Graceful failure - email errors should not affect the contact form response
+        console.warn('SES email notification failed (non-critical):', emailError instanceof Error ? emailError.message : 'Unknown error')
+      }
+    }
+
+    // Send email asynchronously (don't await - continue with response)
+    void sendEmailGracefully()
+
+    // Send Slack notification
+    const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
+
+    if (slackWebhookUrl) {
+      try {
+        await fetch(slackWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: '📬 New Contact Form Submission',
+            blocks: [
+              {
+                type: 'header',
+                text: {
+                  type: 'plain_text',
+                  text: '📬 New Contact Form Submission',
+                },
+              },
+              {
+                type: 'section',
+                fields: [
+                  { type: 'mrkdwn', text: `*Name:*\n${sanitizedName}` },
+                  { type: 'mrkdwn', text: `*Email:*\n${sanitizedEmail}` },
+                ],
+              },
+              {
+                type: 'section',
+                fields: [{ type: 'mrkdwn', text: `*Subject:*\n${sanitizedSubject}` }],
+              },
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Message:*\n${sanitizedMessage}`,
+                },
+              },
+              {
+                type: 'context',
+                elements: [
+                  {
+                    type: 'mrkdwn',
+                    text: `Submitted at: <!date^${Math.floor(Date.now() / 1000)}^{date_short_pretty} at {time}|${new Date().toISOString()}>`,
+                  },
+                ],
+              },
+            ],
+          }),
+        })
+      } catch (slackError) {
+        console.error('Failed to send Slack notification:', slackError)
+      }
+    }
+
+    // Simulate processing delay
     await new Promise((resolve) => setTimeout(resolve, CONTACT_CONSTANTS.PROCESSING_DELAY_MS))
 
     const response: ContactFormResponse = {

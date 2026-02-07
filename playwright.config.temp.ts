@@ -29,8 +29,8 @@ const EXPERIMENTAL_WORKERS_LOCAL = VALIDATION_CONSTANTS.MAX_LOCAL_WORKERS
 // Create temporary configuration using the shared factory
 const config = createPlaywrightConfig('development', {
   // Experimental overrides for testing new approaches
-  retries: process.env['CI'] ? EXPERIMENTAL_RETRIES_CI : EXPERIMENTAL_RETRIES_LOCAL, // Higher retries for experimentation
-  workers: process.env['CI'] ? EXPERIMENTAL_WORKERS_CI : EXPERIMENTAL_WORKERS_LOCAL, // Flexible worker count
+  retries: process.env.CI ? EXPERIMENTAL_RETRIES_CI : EXPERIMENTAL_RETRIES_LOCAL, // Higher retries for experimentation
+  workers: process.env.CI ? EXPERIMENTAL_WORKERS_CI : EXPERIMENTAL_WORKERS_LOCAL, // Flexible worker count
 
   // Enhanced debugging for experimental testing
   use: {
@@ -56,7 +56,7 @@ const config = createPlaywrightConfig('development', {
 
   // Experimental metadata
   metadata: {
-    environment: process.env['NODE_ENV'] || 'experimental',
+    environment: process.env.NODE_ENV || 'experimental',
     testType: 'e2e-experimental',
     framework: 'playwright',
     temporary: true,

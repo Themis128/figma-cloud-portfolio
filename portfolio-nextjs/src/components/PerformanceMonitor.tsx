@@ -133,7 +133,7 @@ export function PerformanceMonitor() {
             const _loadComplete = navigation.loadEventEnd - navigation.loadEventStart
             const _totalTime = navigation.loadEventEnd - navigation.fetchStart
 
-            if (process.env['NODE_ENV'] === 'production') {
+            if (process.env.NODE_ENV === 'production') {
               // Send to analytics service
               // analytics.track('navigation_timing', {
               //   domContentLoaded,
@@ -154,7 +154,7 @@ export function PerformanceMonitor() {
     trackNavigation()
 
     // Track route changes
-    if (process.env['NODE_ENV'] === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       // Send to analytics service
       // analytics.track('route_change', { path: location.pathname })
     } else {

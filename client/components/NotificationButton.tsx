@@ -44,7 +44,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
   // Show prompt after user has been on the site for a bit
   useEffect(() => {
     const isTestEnvironment =
-      import.meta.env['MODE'] === 'test' ||
+      import.meta.env.MODE === 'test' ||
       window.location.href.includes('test') ||
       document.title.includes('test')
 
@@ -152,7 +152,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
 
   // Always show button in test mode (detect various test environments)
   const isTestEnvironment =
-    import.meta.env['MODE'] === 'test' ||
+    import.meta.env.MODE === 'test' ||
     window.location.href.includes('test') ||
     document.title.includes('test') ||
     window.navigator.webdriver || // Playwright sets this
@@ -209,7 +209,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
     >
       <div className='bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-4 shadow-2xl'>
         <div className='flex items-start gap-3'>
-          <div className='flex-shrink-0'>
+          <div className='shrink-0'>
             <div className='w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center'>
               <Bell className='w-5 h-5 text-cyan-400' />
             </div>
@@ -243,7 +243,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
           <button
             type='button'
             onClick={handleDismiss}
-            className='flex-shrink-0 text-slate-400 hover:text-slate-300 p-1'
+            className='shrink-0 text-slate-400 hover:text-slate-300 p-1'
             aria-label='Dismiss'
           >
             <X className='w-4 h-4' />

@@ -59,7 +59,7 @@ describe('NotFound Page', () => {
 
     // Find the outermost container with the background gradient
     const containers = screen.getAllByText('404')
-    const container = containers[0].closest('.min-h-screen')
+    const container = containers[0]?.closest('.min-h-screen')
     expect(container).not.toBeNull()
     expect(container!).toBeInTheDocument()
     expect(container!).toHaveClass(

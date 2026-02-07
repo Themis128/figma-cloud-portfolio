@@ -8,8 +8,8 @@ const HTTP_STATUS_ERROR_THRESHOLD = 400
 
 // Initialize Sentry for the server
 Sentry.init({
-  dsn: process.env['SENTRY_DSN'],
-  environment: process.env['NODE_ENV'],
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
   integrations: [
     // HTTP integration for tracking HTTP requests
     Sentry.httpIntegration(),
@@ -19,7 +19,7 @@ Sentry.init({
   ],
   // Performance Monitoring
   tracesSampleRate:
-    process.env['NODE_ENV'] === 'production'
+    process.env.NODE_ENV === 'production'
       ? SENTRY_TRACES_SAMPLE_RATE_PRODUCTION
       : SENTRY_TRACES_SAMPLE_RATE_DEVELOPMENT,
   // Release tracking

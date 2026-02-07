@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "diagnose": "powershell -ExecutionPolicy Bypass -File diagnose-issues.ps1",
+    "fix:deps": "pnpm install --force",
+    "fix:cache": "pnpm store prune && pnpm install",
+    "fix:build": "rimraf dist && pnpm build:no-secrets",
+    "fix:all": "run-s fix:cache fix:build",
+    "check:quick": "run-p typecheck lint:check",
+    "dev:safe": "pnpm install && pnpm dev"
+  }
+}

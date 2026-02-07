@@ -86,7 +86,7 @@ export default function Product() {
   ]
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden'>
+    <div className='min-h-screen bg-linear-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden'>
       <CircuitBackground />
       <Navigation />
 
@@ -97,7 +97,7 @@ export default function Product() {
             <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wider'>
               Professional Experience
             </h1>
-            <div className='w-24 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full' />
+            <div className='w-24 h-1 bg-linear-to-r from-cyan-400 to-cyan-600 mx-auto rounded-full' />
             <p className='text-white/70 text-lg leading-relaxed'>
               15+ years of IT expertise across cloud architecture, cybersecurity, and enterprise
               solutions.
@@ -147,7 +147,7 @@ export default function Product() {
                         key={`${exp.company}-${respIndex}`}
                         className='flex items-start gap-3 text-white/80 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors'
                       >
-                        <div className='w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0' />
+                        <div className='w-2 h-2 bg-cyan-400 rounded-full mt-2 shrink-0' />
                         <span className='leading-relaxed'>{resp}</span>
                       </li>
                     ))}
@@ -188,23 +188,23 @@ export default function Product() {
                 <h3 className='text-xl font-bold text-cyan-400 mb-6'>Additional Certifications</h3>
                 <div className='grid md:grid-cols-2 gap-4'>
                   <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
-                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                     <span className='text-white/80 font-medium'>Cisco CCNA (2021-2022)</span>
                   </div>
                   <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
-                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                     <span className='text-white/80 font-medium'>
                       Cisco DevNet Associate (2023-2024)
                     </span>
                   </div>
                   <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
-                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                     <span className='text-white/80 font-medium'>
                       AWS Certified Solutions Architect
                     </span>
                   </div>
                   <div className='flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors'>
-                    <div className='w-2 h-2 bg-cyan-400 rounded-full flex-shrink-0' />
+                    <div className='w-2 h-2 bg-cyan-400 rounded-full shrink-0' />
                     <span className='text-white/80 font-medium'>Android App Development</span>
                   </div>
                 </div>

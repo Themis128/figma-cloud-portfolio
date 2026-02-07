@@ -85,96 +85,99 @@ export function LinkPreview({
     </Card>
   )
 
-  const renderSuccessState = () => (
-    <Card
-      className={cn(
-        'w-full max-w-md cursor-pointer hover:shadow-md transition-shadow overflow-hidden',
-        className,
-      )}
-      onClick={handleClick}
-    >
-      {showImage && preview.image && (
-        <div className='relative h-32 bg-gray-100 overflow-hidden'>
-          {/* biome-ignore lint/performance/noImgElement: External preview images need <img> for proper loading and error handling */}
-          <img
-            src={preview.image}
-            alt={preview.title}
-            className='w-full h-full object-cover'
-            loading='lazy'
-            onError={(e) => {
-              // Hide broken images
-              e.currentTarget.style.display = 'none'
-              e.currentTarget.nextElementSibling?.classList.remove('hidden')
-            }}
-          />
-          <div className='absolute inset-0 flex items-center justify-center bg-gray-100'>
-            <ImageIcon className='w-8 h-8 text-gray-400' />
+  const renderSuccessState = () => {
+    if (!preview) return null
+    return (
+      <Card
+        className={cn(
+          'w-full max-w-md cursor-pointer hover:shadow-md transition-shadow overflow-hidden',
+          className,
+        )}
+        onClick={handleClick}
+      >
+        {showImage && preview.image && (
+          <div className='relative h-32 bg-gray-100 overflow-hidden'>
+            {/* biome-ignore lint/performance/noImgElement: External preview images need <img> for proper loading and error handling */}
+            <img
+              src={preview.image}
+              alt={preview.title}
+              className='w-full h-full object-cover'
+              loading='lazy'
+              onError={(e) => {
+                // Hide broken images
+                e.currentTarget.style.display = 'none'
+                e.currentTarget.nextElementSibling?.classList.remove('hidden')
+              }}
+            />
+            <div className='absolute inset-0 flex items-center justify-center bg-gray-100'>
+              <ImageIcon className='w-8 h-8 text-gray-400' />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <CardContent className={cn('p-4', compact && 'p-3')}>
-        <div className='space-y-2'>
-          {/* Title and favicon */}
-          <div className='flex items-start gap-2'>
-            {preview.favicon && (
-              // biome-ignore lint/performance/noImgElement: External favicon images need <img> for proper loading
-              <img
-                src={preview.favicon}
-                alt=''
-                className='w-4 h-4 shrink-0 mt-0.5'
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
-              />
+        <CardContent className={cn('p-4', compact && 'p-3')}>
+          <div className='space-y-2'>
+            {/* Title and favicon */}
+            <div className='flex items-start gap-2'>
+              {preview.favicon && (
+                // biome-ignore lint/performance/noImgElement: External favicon images need <img> for proper loading
+                <img
+                  src={preview.favicon}
+                  alt=''
+                  className='w-4 h-4 shrink-0 mt-0.5'
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              )}
+              <h3
+                className={cn(
+                  'font-medium text-gray-900 leading-tight',
+                  compact ? 'text-sm' : 'text-base',
+                )}
+              >
+                {preview.title}
+              </h3>
+            </div>
+
+            {/* Description */}
+            {preview.description && !compact && (
+              <p className='text-sm text-gray-600 line-clamp-2'>{preview.description}</p>
             )}
-            <h3
-              className={cn(
-                'font-medium text-gray-900 leading-tight',
-                compact ? 'text-sm' : 'text-base',
-              )}
-            >
-              {preview.title}
-            </h3>
-          </div>
 
-          {/* Description */}
-          {preview.description && !compact && (
-            <p className='text-sm text-gray-600 line-clamp-2'>{preview.description}</p>
-          )}
-
-          {/* Site name and type */}
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <span className='text-xs text-gray-500'>{preview.siteName}</span>
-              {preview.type && preview.type !== 'website' && (
-                <Badge variant='secondary' className='text-xs px-1.5 py-0.5'>
-                  {preview.type}
-                </Badge>
-              )}
+            {/* Site name and type */}
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-2'>
+                <span className='text-xs text-gray-500'>{preview.siteName}</span>
+                {preview.type && preview.type !== 'website' && (
+                  <Badge variant='secondary' className='text-xs px-1.5 py-0.5'>
+                    {preview.type}
+                  </Badge>
+                )}
+              </div>
+              <ExternalLink className='w-3 h-3 text-gray-400' />
             </div>
-            <ExternalLink className='w-3 h-3 text-gray-400' />
-          </div>
 
-          {/* Social media indicators */}
-          {(preview.openGraph || preview.twitter) && (
-            <div className='flex gap-1'>
-              {preview.openGraph && (
-                <Badge variant='outline' className='text-xs px-1.5 py-0.5'>
-                  Open Graph
-                </Badge>
-              )}
-              {preview.twitter && (
-                <Badge variant='outline' className='text-xs px-1.5 py-0.5'>
-                  Twitter Card
-                </Badge>
-              )}
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  )
+            {/* Social media indicators */}
+            {(preview.openGraph || preview.twitter) && (
+              <div className='flex gap-1'>
+                {preview.openGraph && (
+                  <Badge variant='outline' className='text-xs px-1.5 py-0.5'>
+                    Open Graph
+                  </Badge>
+                )}
+                {preview.twitter && (
+                  <Badge variant='outline' className='text-xs px-1.5 py-0.5'>
+                    Twitter Card
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const loadPreviewData = useCallback(async () => {
     try {

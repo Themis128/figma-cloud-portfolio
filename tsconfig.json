@@ -22,9 +22,11 @@
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["react", "react-dom", "vite/client"],
     "paths": {
       "@/*": ["./client/*"],
       "@shared/*": ["./shared/*"]

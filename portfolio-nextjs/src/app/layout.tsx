@@ -29,7 +29,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env['NEXT_PUBLIC_SITE_URL'] || 'https://baltzakis.dev'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://baltzakis.dev'),
   title: {
     default: 'Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer',
     template: '%s | Themistoklis Baltzakis',
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: process.env['NEXT_PUBLIC_GOOGLE_VERIFICATION'],
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
   },
   alternates: {
     canonical: 'https://baltzakis.dev',

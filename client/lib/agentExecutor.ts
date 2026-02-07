@@ -1,9 +1,9 @@
 import type { AgentConnection, AgentNode, AgentTemplate } from '@/data/agentTemplates'
 
 // Constants for agent execution
-const LLM_SIMULATION_DELAY_MS = 1000
-const TOOL_SIMULATION_DELAY_MS = 500
-const DECISION_THRESHOLD = 0.5
+const _LLM_SIMULATION_DELAY_MS = 1000
+const _TOOL_SIMULATION_DELAY_MS = 500
+const _DECISION_THRESHOLD = 0.5
 
 // Simple agent execution engine
 export class AgentExecutor {
@@ -129,45 +129,54 @@ export class AgentExecutor {
       .filter((node): node is AgentNode => node !== undefined)
   }
 
-  private async callLLM(prompt: unknown, _config: Record<string, unknown>): Promise<string> {
-    // Mock LLM call - in real implementation, call actual AI API
+  private async callLLM(prompt: unknown, config: Record<string, unknown>): Promise<string> {
+    const { aiService } = await import('./aiService')
+    const model = (config.model as string) || undefined
+    const response = await aiService.generateResponse(String(prompt), model)
+    return response.content
+  }
 
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, LLM_SIMULATION_DELAY_MS))
+  private evaluateDecision(input: unknown, config: Record<string, unknown>): boolean {
+    const condition = config.condition as string
+    if (!condition) return false
 
-    // Mock response based on template
-    if (typeof prompt === 'string' && prompt.includes('hello')) {
-      return 'Hello! How can I help you today?'
+    // Simple condition evaluation
+    const inputStr = String(input).toLowerCase()
+    return inputStr.includes(condition.toLowerCase())
+  }
+
+  private processData(input: unknown, config: Record<string, unknown>): unknown {
+    const operation = config.operation as string
+
+    if (operation === 'uppercase' && typeof input === 'string') {
+      return input.toUpperCase()
+    }
+    if (operation === 'lowercase' && typeof input === 'string') {
+      return input.toLowerCase()
+    }
+    if (operation === 'trim' && typeof input === 'string') {
+      return input.trim()
     }
 
-    return `AI Response to: ${prompt}`
+    return input
   }
 
-  private evaluateDecision(_input: unknown, _config: Record<string, unknown>): boolean {
-    // Simple decision logic - in real implementation, evaluate conditions
+  private async callTool(input: unknown, config: Record<string, unknown>): Promise<unknown> {
+    const toolName = config.tool as string
 
-    // Mock decision
-    return Math.random() > DECISION_THRESHOLD
-  }
+    // Call actual tools based on configuration
+    if (toolName === 'fetch') {
+      const url = config.url as string
+      const response = await fetch(url)
+      return response.json()
+    }
 
-  private processData(input: unknown, _config: Record<string, unknown>): unknown {
-    // Simple data processing - in real implementation, apply operations
-
-    return input // Pass through for now
-  }
-
-  private async callTool(input: unknown, _config: Record<string, unknown>): Promise<unknown> {
-    // Mock tool call - in real implementation, call actual tools
-
-    // Simulate tool execution
-    await new Promise((resolve) => setTimeout(resolve, TOOL_SIMULATION_DELAY_MS))
-
-    return `Tool result for: ${input}`
+    return `Tool ${toolName} executed with: ${input}`
   }
 }
 
 // Execute an agent template
-export async function executeAgent(
+export function executeAgent(
   template: AgentTemplate,
   input?: Record<string, unknown>,
 ): Promise<Record<string, unknown>> {

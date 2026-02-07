@@ -186,24 +186,30 @@ export function useVoiceCommands(commands: VoiceCommand[] = []) {
     }
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let finalTranscript = ''
-      let interimTranscript = ''
-      let confidence = 0
+      const processSpeechResults = (event: SpeechRecognitionEvent) => {
+        let finalTranscript = ''
+        let interimTranscript = ''
+        let confidence = 0
 
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i]
-        if (!result) continue
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i]
+          if (!result) continue
 
-        const transcript = result[0]
-        if (!transcript) continue
+          const transcript = result[0]
+          if (!transcript) continue
 
-        if (result.isFinal) {
-          finalTranscript += transcript.transcript
-          confidence = Math.max(confidence, transcript.confidence)
-        } else {
-          interimTranscript += transcript.transcript
+          if (result.isFinal) {
+            finalTranscript += transcript.transcript
+            confidence = Math.max(confidence, transcript.confidence)
+          } else {
+            interimTranscript += transcript.transcript
+          }
         }
+
+        return { finalTranscript, interimTranscript, confidence }
       }
+
+      const { finalTranscript, interimTranscript, confidence } = processSpeechResults(event)
 
       setState((prev) => ({
         ...prev,

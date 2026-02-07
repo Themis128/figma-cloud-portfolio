@@ -22,15 +22,15 @@ export interface RealAPITestConfig {
  */
 export function loadRealAPIConfig(): RealAPITestConfig {
   return {
-    enableGitHub: process.env['TEST_GITHUB_API'] === 'true',
-    enableFirebase: process.env['TEST_FIREBASE'] === 'true',
-    enableAnalytics: process.env['TEST_ANALYTICS'] === 'true',
-    enableSentry: process.env['TEST_SENTRY'] === 'true',
-    enableSocketIO: process.env['TEST_SOCKETIO'] === 'true',
-    enableAnthropic: process.env['TEST_ANTHROPIC'] === 'true',
-    enableOpenAI: process.env['TEST_OPENAI'] === 'true',
-    rateLimitDelay: parseInt(process.env['RATE_LIMIT_DELAY_MS'] || '1000', 10),
-    maxConcurrentRequests: parseInt(process.env['MAX_CONCURRENT_REQUESTS'] || '2', 10),
+    enableGitHub: process.env.TEST_GITHUB_API === 'true',
+    enableFirebase: process.env.TEST_FIREBASE === 'true',
+    enableAnalytics: process.env.TEST_ANALYTICS === 'true',
+    enableSentry: process.env.TEST_SENTRY === 'true',
+    enableSocketIO: process.env.TEST_SOCKETIO === 'true',
+    enableAnthropic: process.env.TEST_ANTHROPIC === 'true',
+    enableOpenAI: process.env.TEST_OPENAI === 'true',
+    rateLimitDelay: parseInt(process.env.RATE_LIMIT_DELAY_MS || '1000', 10),
+    maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || '2', 10),
   }
 }
 
@@ -155,7 +155,7 @@ export async function cleanupTestData(
   apiName: string,
   cleanupFn: () => Promise<void>,
 ): Promise<void> {
-  if (process.env['CLEANUP_TEST_DATA'] !== 'true') {
+  if (process.env.CLEANUP_TEST_DATA !== 'true') {
     console.log(`⏭️  Skipping cleanup for ${apiName} (CLEANUP_TEST_DATA=false)`)
     return
   }

@@ -32,40 +32,45 @@ class AIService {
   private provider: AIProvider | null = null
 
   constructor() {
-    const provider = (import.meta.env['VITE_AI_PROVIDER'] || 'ollama') as
+    const provider = (import.meta.env.VITE_AI_PROVIDER || 'ollama') as
       | 'openai'
       | 'together'
       | 'ollama'
-    let apiKey: string | undefined
 
-    if (provider === 'openai') {
-      apiKey = import.meta.env['VITE_OPENAI_API_KEY']
-    } else if (provider === 'together') {
-      apiKey = import.meta.env['VITE_TOGETHER_API_KEY']
+    const getApiKey = (provider: string) => {
+      if (provider === 'openai') return import.meta.env.VITE_OPENAI_API_KEY
+      if (provider === 'together') return import.meta.env.VITE_TOGETHER_API_KEY
+      return undefined // Ollama doesn't require an API key
     }
-    // Ollama doesn't require an API key
 
-    if (
-      (apiKey && apiKey !== 'test_openai_key' && apiKey !== 'test_together_key') ||
-      provider === 'ollama'
-    ) {
-      this.provider = {
+    const getProviderConfig = (provider: string, apiKey: string | undefined) => {
+      if (!apiKey && provider !== 'ollama') return null
+      if (apiKey && (apiKey === 'test_openai_key' || apiKey === 'test_together_key')) return null
+
+      const baseURL =
+        provider === 'openai'
+          ? 'https://api.openai.com/v1'
+          : provider === 'together'
+            ? 'https://api.together.xyz/v1'
+            : 'http://localhost:11434/v1'
+
+      const models =
+        provider === 'openai'
+          ? ['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4']
+          : provider === 'together'
+            ? ['meta-llama/Llama-2-70b-chat-hf', 'mistralai/Mistral-7B-Instruct-v0.1']
+            : ['llama2', 'codellama', 'mistral', 'llama2:13b', 'codellama:13b']
+
+      return {
         name: provider,
         apiKey,
-        baseURL:
-          provider === 'openai'
-            ? 'https://api.openai.com/v1'
-            : provider === 'together'
-              ? 'https://api.together.xyz/v1'
-              : 'http://localhost:11434/v1', // Ollama default
-        models:
-          provider === 'openai'
-            ? ['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4']
-            : provider === 'together'
-              ? ['meta-llama/Llama-2-70b-chat-hf', 'mistralai/Mistral-7B-Instruct-v0.1']
-              : ['llama2', 'codellama', 'mistral', 'llama2:13b', 'codellama:13b'], // Common Ollama models
+        baseURL,
+        models,
       }
     }
+
+    const apiKey = getApiKey(provider)
+    this.provider = getProviderConfig(provider, apiKey)
   }
 
   async generateResponse(message: string, context?: string): Promise<AIResponse> {
@@ -76,7 +81,7 @@ class AIService {
       }
     }
 
-    const model = import.meta.env['VITE_AI_MODEL'] || this.provider.models[0]
+    const model = import.meta.env.VITE_AI_MODEL || this.provider.models[0]
 
     const systemPrompt = `You are an AI assistant for Themistoklis Baltzakis' portfolio website. You help visitors learn about his work, experience, and projects.
 
@@ -163,7 +168,6 @@ Be helpful, professional, and engaging. Keep responses concise but informative. 
         model: responseModel,
       }
     } catch (_error) {
-      // Fallback to mock response if API fails
       return {
         content: this.getFallbackResponse(message),
         model: 'fallback',
@@ -203,6 +207,7 @@ Be helpful, professional, and engaging. Keep responses concise but informative. 
   }
 }
 
-// Export singleton instance
+// Export class and singleton instance
+export { AIService }
 export const aiService = new AIService()
 export type { AIResponse }

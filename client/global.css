@@ -1,21 +1,36 @@
 /** @import must precede all other statements */
 @import "tailwindcss";
 
-/* Optimized font loading with fallbacks */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap");
-
+/* System fonts for optimal performance - no network requests required */
+/* Inter-like system font stack */
 @layer base {
   /**
    * Global font application
    */
   html {
     font-family:
-      "Inter",
-      system-ui,
       -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
       sans-serif;
     scroll-behavior: smooth;
+  }
+
+  /* Code font stack - similar to Fira Code */
+  code, pre, kbd {
+    font-family:
+      "SF Mono",
+      "Cascadia Code",
+      "Roboto Mono",
+      Menlo,
+      Monaco,
+      "Consolas",
+      "Liberation Mono",
+      "Courier New",
+      monospace;
   }
 
   body {
@@ -401,7 +416,7 @@
 /* Critical CSS for above-the-fold content - inlined for performance */
 .critical-above-fold {
   /* Hero section critical styles */
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;

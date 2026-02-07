@@ -119,7 +119,7 @@ export default defineConfig(({ mode }) => {
                 secure: false,
               },
             }
-          : {},
+          : undefined,
       fs: {
         allow: ['.', '../client', '../shared'],
         deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '../server/**'],

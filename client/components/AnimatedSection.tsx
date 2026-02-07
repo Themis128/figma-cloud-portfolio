@@ -60,7 +60,7 @@ export function AnimatedSection({
     () => ({
       duration: finalDuration,
       delay,
-      type: 'spring',
+      type: 'spring' as const,
       stiffness,
       damping,
     }),

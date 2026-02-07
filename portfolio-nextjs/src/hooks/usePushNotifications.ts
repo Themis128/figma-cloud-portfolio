@@ -28,7 +28,7 @@ export function usePushNotifications() {
       setVapidPublicKey(data.publicKey)
     } catch (_error) {
       // Silently fail in development if API server isn't running
-      if (import.meta.env['DEV']) {
+      if (import.meta.env.DEV) {
       } else {
       }
     }

@@ -18,7 +18,7 @@ test.describe('GitHub API Integration', () => {
 
   test.describe('GitHub Workflows API', () => {
     test('should fetch GitHub workflows', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock GitHub API response
@@ -69,7 +69,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should fetch workflow runs', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock GitHub API response for workflow runs
@@ -117,7 +117,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should fetch job details', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock GitHub API response for job details
@@ -172,7 +172,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should handle GitHub API authentication', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Test with invalid token
@@ -205,7 +205,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should handle GitHub API rate limiting', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock rate limit response
@@ -248,7 +248,7 @@ test.describe('GitHub API Integration', () => {
 
   test.describe('LRU Cache Implementation', () => {
     test('should cache GitHub API responses', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       let requestCount = 0
@@ -280,7 +280,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should respect cache TTL', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Test cache expiration (simulated)
@@ -327,7 +327,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should track cache hit/miss metrics', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const metrics = await page.evaluate(() => {
@@ -373,7 +373,7 @@ test.describe('GitHub API Integration', () => {
 
   test.describe('Deployment Monitoring', () => {
     test('should display deployment status', async ({ page }) => {
-      await page.goto('http://localhost:3001/performance')
+      await page.goto('/performance')
       await waitForAppReady(page)
 
       // Check if deployment monitor exists
@@ -388,7 +388,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should show workflow status badges', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock GitHub status data
@@ -413,7 +413,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should handle deployment failures', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock failed deployment
@@ -452,7 +452,7 @@ test.describe('GitHub API Integration', () => {
 
   test.describe('GitHub Token Validation', () => {
     test('should validate token format', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const tokenValidation = await page.evaluate(() => {
@@ -482,7 +482,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should handle missing token gracefully', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock API call without token
@@ -515,7 +515,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should verify token scopes', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock scope validation
@@ -541,7 +541,7 @@ test.describe('GitHub API Integration', () => {
 
   test.describe('Error Handling and Resilience', () => {
     test('should handle network errors', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock network error
@@ -562,7 +562,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should handle GitHub API timeouts', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock timeout
@@ -595,7 +595,7 @@ test.describe('GitHub API Integration', () => {
     })
 
     test('should provide fallback data on API failure', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const fallbackTest = await page.evaluate(() => {

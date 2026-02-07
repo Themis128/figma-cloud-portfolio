@@ -110,8 +110,8 @@ export default {
         blink: 'blink 1s infinite',
       },
       fontFamily: {
-        sans: ["'Inter'", 'system-ui', 'sans-serif'],
-        mono: ["'Fira Code'", "'Consolas'", "'Monaco'", 'monospace'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        mono: ['"SF Mono"', '"Cascadia Code"', '"Roboto Mono"', 'Menlo', 'Monaco', '"Consolas"', '"Liberation Mono"', '"Courier New"', 'monospace'],
       },
     },
   },

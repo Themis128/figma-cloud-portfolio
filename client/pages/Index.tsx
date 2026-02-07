@@ -28,7 +28,7 @@ export default function Index() {
   return (
     <div
       data-testid='index-page'
-      className='min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden'
+      className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden'
     >
       <CircuitBackground />
 
@@ -53,7 +53,7 @@ export default function Index() {
               <div className='space-y-4'>
                 <h1
                   id='hero-heading'
-                  className='text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent'
+                  className='text-4xl md:text-6xl lg:text-7xl font-bold bg-linear-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent'
                 >
                   Themistoklis
                   <br />
@@ -61,7 +61,7 @@ export default function Index() {
                 </h1>
 
                 <div
-                  className='w-24 h-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full'
+                  className='w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-400 rounded-full'
                   aria-hidden='true'
                 />
 
@@ -81,7 +81,7 @@ export default function Index() {
                 <HoverButton>
                   <Button
                     size='lg'
-                    className='bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl'
+                    className='bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl'
                     aria-describedby='learn-more-desc'
                   >
                     <User className='w-5 h-5 mr-2' aria-hidden='true' />
@@ -433,7 +433,7 @@ export default function Index() {
 
                     <Button
                       type='submit'
-                      className='w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-3 rounded-lg transition-all duration-300'
+                      className='w-full bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-3 rounded-lg transition-all duration-300'
                     >
                       Send Message
                     </Button>

@@ -15,7 +15,7 @@ interface TestResult {
 // Constants for progress calculation
 const PROGRESS_PERCENTAGE_MULTIPLIER = 100
 
-export function PerformanceTester() {
+export default function PerformanceTester() {
   const [isRunning, setIsRunning] = useState(false)
   const [progress, setProgress] = useState(0)
   const [results, setResults] = useState<TestResult[]>([])

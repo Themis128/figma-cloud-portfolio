@@ -28,10 +28,11 @@ export function Activity({
   const isTestEnvironment = useCallback(() => {
     return (
       typeof process !== 'undefined' &&
-      (process.env['NODE_ENV'] === 'test' ||
-        process.env['NODE_ENV'] === 'testing' ||
-        (typeof window !== 'undefined' && (window as any).vi) ||
-        (typeof window !== 'undefined' && (window as any).jest))
+      (process.env.NODE_ENV === 'test' ||
+        process.env.NODE_ENV === 'testing' ||
+        (typeof window !== 'undefined' &&
+          ((window as Window & { vi?: unknown }).vi ||
+            (window as Window & { jest?: unknown }).jest)))
     )
   }, [])
 

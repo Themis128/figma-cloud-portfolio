@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test'
 test.describe('Modern Web APIs', () => {
   test.describe('Intersection Observer', () => {
     test('should support Intersection Observer API', { tag: '@fast' }, async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const isSupported = await page.evaluate(() => {
         return 'IntersectionObserver' in window
@@ -18,7 +18,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should handle lazy loading with Intersection Observer', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Test that lazy loading is supported (loading attribute)
       const lazyLoadingSupported = await page.evaluate(() => {
@@ -37,7 +37,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Web Animations API', () => {
     test('should support Web Animations API', { tag: '@fast' }, async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const isSupported = await page.evaluate(() => {
         return 'animate' in document.createElement('div')
@@ -47,7 +47,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should handle CSS animations and transitions', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Check for animated elements (may not be present or may be lazy-loaded)
       const animatedElements = await page.$$eval(
@@ -60,7 +60,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Web Share API', () => {
     test('should detect Web Share API support', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const shareSupport = await page.evaluate(() => ({
         supported: 'share' in navigator,
@@ -74,7 +74,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Storage APIs', () => {
     test('should support localStorage and sessionStorage', { tag: '@fast' }, async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const storageSupport = await page.evaluate(() => ({
         localStorage: !!window.localStorage,
@@ -86,7 +86,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should handle storage events', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Test storage event handling
       const storageEventFired = await page.evaluate(() => {
@@ -107,7 +107,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Web Workers', () => {
     test('should support Web Workers', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const workerSupport = await page.evaluate(() => {
         return 'Worker' in window
@@ -119,7 +119,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Service Workers', () => {
     test('should register service worker', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Check if service worker is supported
       const swSupported = await page.evaluate(() => {
@@ -169,7 +169,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('WebGL and Canvas', () => {
     test('should support Canvas 2D', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const canvasSupport = await page.evaluate(() => {
         const canvas = document.createElement('canvas')
@@ -180,7 +180,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should support WebGL', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const webglSupport = await page.evaluate(() => {
         const canvas = document.createElement('canvas')
@@ -194,7 +194,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Modern CSS Features', () => {
     test('should support CSS Grid', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const gridSupport = await page.evaluate(() => {
         const element = document.createElement('div')
@@ -206,7 +206,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should support CSS Flexbox', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const flexSupport = await page.evaluate(() => {
         const element = document.createElement('div')
@@ -218,7 +218,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should support CSS Custom Properties', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const cssVarsSupport = await page.evaluate(() => {
         const element = document.documentElement
@@ -232,7 +232,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Network APIs', () => {
     test('should support Fetch API', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const fetchSupport = await page.evaluate(() => {
         return 'fetch' in window
@@ -242,7 +242,7 @@ test.describe('Modern Web APIs', () => {
     })
 
     test('should support WebSocket', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const wsSupport = await page.evaluate(() => {
         return 'WebSocket' in window
@@ -254,7 +254,7 @@ test.describe('Modern Web APIs', () => {
 
   test.describe('Device APIs', () => {
     test('should detect device capabilities', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       const deviceCapabilities = await page.evaluate(() => ({
         touch: 'ontouchstart' in window,

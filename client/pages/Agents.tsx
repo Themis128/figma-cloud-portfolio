@@ -51,7 +51,7 @@ export default function Agents() {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden'>
+    <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
       {/* Circuit background */}
       <CircuitBackground />
 

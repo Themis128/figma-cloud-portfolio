@@ -12,6 +12,12 @@ interface PerformanceMetrics {
   memoryUsage?: number
 }
 
+interface MemoryInfo {
+  usedJSHeapSize: number
+  jsHeapSizeLimit: number
+  totalJSHeapSize: number
+}
+
 interface UsePerformanceMonitoringOptions {
   enabled?: boolean
   enableAdvancedMetrics?: boolean
@@ -25,6 +31,17 @@ const CLS_GOOD_THRESHOLD = 0.1 // 0.1 cumulative layout shift
 const PERFECT_SCORE_COUNT = 2 // All metrics good
 const MINIMUM_GOOD_COUNT = 1 // At least one metric good
 const CLS_DECIMAL_PLACES = 4 // Decimal places for CLS display
+
+// Magic numbers for calculations
+const CLS_MULTIPLIER = 1000
+const RANDOM_ID_BASE = 36
+const RANDOM_ID_LENGTH = 9
+const BATCH_SIZE = 3
+const DEV_LONG_TASK_THRESHOLD = 100
+const PROD_LONG_TASK_THRESHOLD = 50
+const MEMORY_CHECK_INTERVAL = 30000
+const SLOW_RENDER_THRESHOLD = 100
+const MEMORY_PERCENTAGE_MULTIPLIER = 100
 
 export function usePerformanceMonitoring(options: UsePerformanceMonitoringOptions = {}) {
   const {
@@ -48,7 +65,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
       reports.forEach((metric) => {
         gtag('event', metric.name.toLowerCase(), {
           event_category: 'Web Vitals',
-          value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+          value: Math.round(metric.name === 'CLS' ? metric.value * CLS_MULTIPLIER : metric.value),
           non_interaction: true,
         })
       })
@@ -100,16 +117,16 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
         // Batch reporting for React 19 automatic batching
         if (batchReporting) {
           const metricEntry = {
-            name: Object.keys(newMetrics)[0].toUpperCase() as any,
+            name: Object.keys(newMetrics)[0].toUpperCase(),
             value: Object.values(newMetrics)[0] as number,
             delta: 0,
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            id: `${Date.now()}-${Math.random().toString(RANDOM_ID_BASE).substr(2, RANDOM_ID_LENGTH)}`,
           } as Metric
 
           reportQueueRef.current.push(metricEntry)
 
           // Flush reports in batches (React 19 will automatically batch these updates)
-          if (reportQueueRef.current.length >= 3) {
+          if (reportQueueRef.current.length >= BATCH_SIZE) {
             flushReports()
           }
         }
@@ -151,7 +168,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
       // Monitor memory usage
       const monitorMemory = () => {
         if ('memory' in performance) {
-          const memory = (performance as any).memory
+          const memory = (performance as { memory: MemoryInfo }).memory
           if (memory) {
             const usage = memory.usedJSHeapSize / memory.jsHeapSizeLimit
             updateMetrics({ memoryUsage: usage })
@@ -162,34 +179,36 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
       // Monitor long tasks (less aggressive in development)
       if ('PerformanceObserver' in window) {
         try {
-          const longTaskObserver = new PerformanceObserver((list) => {
-            const entries = list.getEntries()
-            entries.forEach((entry) => {
-              const isDevelopment = process.env['NODE_ENV'] === 'development'
-              const threshold = isDevelopment ? 100 : 50 // Higher threshold in dev
+          const handleLongTask = (entry: PerformanceEntry) => {
+            const isDevelopment = process.env.NODE_ENV === 'development'
+            const threshold = isDevelopment ? DEV_LONG_TASK_THRESHOLD : PROD_LONG_TASK_THRESHOLD
 
-              if (entry.duration > threshold) {
-                // Only report to console in development, not analytics
-                if (isDevelopment) {
-                } else {
-                  // Report to analytics in production
-                  if (typeof gtag !== 'undefined') {
-                    gtag('event', 'long_task', {
-                      event_category: 'Performance',
-                      value: Math.round(entry.duration),
-                      non_interaction: true,
-                    })
-                  }
+            if (entry.duration > threshold) {
+              // Only report to console in development, not analytics
+              if (isDevelopment) {
+              } else {
+                // Report to analytics in production
+                if (typeof gtag !== 'undefined') {
+                  gtag('event', 'long_task', {
+                    event_category: 'Performance',
+                    value: Math.round(entry.duration),
+                    non_interaction: true,
+                  })
                 }
               }
-            })
+            }
+          }
+
+          const longTaskObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries()
+            entries.forEach(handleLongTask)
           })
           longTaskObserver.observe({ entryTypes: ['longtask'] })
         } catch (_error) {}
       }
 
       // Check memory every 30 seconds
-      const memoryInterval = setInterval(monitorMemory, 30000)
+      const memoryInterval = setInterval(monitorMemory, MEMORY_CHECK_INTERVAL)
       monitorMemory() // Initial check
 
       return () => clearInterval(memoryInterval)
@@ -231,7 +250,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
   // Get formatted metrics for display
   const formattedMetrics = useMemo(() => {
-    const base = {
+    const getBaseMetrics = () => ({
       'Largest Contentful Paint (LCP)': metrics.lcp
         ? `${metrics.lcp.toFixed(0)}ms`
         : 'Not measured',
@@ -243,7 +262,9 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
         ? `${metrics.inp.toFixed(0)}ms`
         : 'Not measured',
       'Time to First Byte (TTFB)': metrics.ttfb ? `${metrics.ttfb.toFixed(0)}ms` : 'Not measured',
-    }
+    })
+
+    const base = getBaseMetrics()
 
     if (enableAdvancedMetrics) {
       return {
@@ -253,7 +274,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
           : 'Not measured',
         'Component Mounts': metrics.componentMounts?.toString() || '0',
         'Memory Usage': metrics.memoryUsage
-          ? `${(metrics.memoryUsage * 100).toFixed(1)}%`
+          ? `${(metrics.memoryUsage * MEMORY_PERCENTAGE_MULTIPLIER).toFixed(1)}%`
           : 'Not available',
       }
     }
@@ -284,7 +305,7 @@ export function useComponentPerformance(componentName: string) {
     trackCustomMetric(`${componentName}_render_time`, renderTime)
 
     // Warn about slow renders in development
-    if (process.env['NODE_ENV'] === 'development' && renderTime > 100) {
+    if (process.env.NODE_ENV === 'development' && renderTime > SLOW_RENDER_THRESHOLD) {
     }
   }, [componentName, trackCustomMetric])
 

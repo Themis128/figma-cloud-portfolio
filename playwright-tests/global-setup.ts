@@ -18,7 +18,7 @@ export default async function globalSetup(config: FullConfig) {
   console.log('═'.repeat(60))
 
   const startTime = Date.now()
-  const environment = process.env['NODE_ENV'] || 'development'
+  const environment = process.env.NODE_ENV || 'development'
   const baseURL = config.projects[0]?.use?.baseURL || 'http://localhost:8081'
 
   try {
@@ -55,8 +55,8 @@ export default async function globalSetup(config: FullConfig) {
     console.log('═'.repeat(60))
 
     // Store setup metadata for teardown
-    process.env['PLAYWRIGHT_SETUP_TIME'] = setupTime.toString()
-    process.env['PLAYWRIGHT_SETUP_TIMESTAMP'] = new Date().toISOString()
+    process.env.PLAYWRIGHT_SETUP_TIME = setupTime.toString()
+    process.env.PLAYWRIGHT_SETUP_TIMESTAMP = new Date().toISOString()
   } catch (error) {
     console.error('❌ Global setup failed:', error)
     console.error('═'.repeat(60))
@@ -106,7 +106,7 @@ async function validateEnvironment(config: FullConfig): Promise<void> {
   }
 
   console.log(`   ✓ Node.js ${nodeVersion}`)
-  console.log(`   ✓ Environment: ${process.env['NODE_ENV'] || 'development'}`)
+  console.log(`   ✓ Environment: ${process.env.NODE_ENV || 'development'}`)
   console.log(`   ✓ Configuration valid`)
 }
 
@@ -248,8 +248,8 @@ async function setupPerformanceMonitoring(): Promise<void> {
     const cpuUsage = process.cpuUsage()
 
     // Store in environment for access during tests
-    process.env['PLAYWRIGHT_BASELINE_MEMORY'] = JSON.stringify(memoryUsage)
-    process.env['PLAYWRIGHT_BASELINE_CPU'] = JSON.stringify(cpuUsage)
+    process.env.PLAYWRIGHT_BASELINE_MEMORY = JSON.stringify(memoryUsage)
+    process.env.PLAYWRIGHT_BASELINE_CPU = JSON.stringify(cpuUsage)
 
     console.log(`   ✓ Memory baseline: ${Math.round(memoryUsage.heapUsed / 1024 / 1024)}MB`)
     console.log(`   ✓ CPU baseline recorded`)

@@ -18,7 +18,7 @@ test.describe('Socket.IO Real time Features', () => {
 
   test.describe('WebSocket Connection Management', () => {
     test('should establish Socket.IO connection', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock Socket.IO client
@@ -61,7 +61,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should handle connection errors', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock connection error
@@ -94,7 +94,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should reconnect after disconnection', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock reconnection logic
@@ -142,7 +142,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should handle connection timeout', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock connection timeout
@@ -174,7 +174,7 @@ test.describe('Socket.IO Real time Features', () => {
 
   test.describe('Presence Tracking', () => {
     test('should track connected users', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock presence tracking
@@ -224,7 +224,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should broadcast user status changes', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock status broadcasting
@@ -269,7 +269,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should handle user disconnect', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock disconnect handling
@@ -310,7 +310,7 @@ test.describe('Socket.IO Real time Features', () => {
 
   test.describe('Typing Indicators', () => {
     test('should show typing indicator', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock typing indicator
@@ -354,7 +354,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should auto-clear typing indicator after timeout', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock typing timeout
@@ -379,7 +379,7 @@ test.describe('Socket.IO Real time Features', () => {
 
   test.describe('Agent Collaboration Rooms', () => {
     test('should create and join agent room', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock room management
@@ -431,7 +431,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should broadcast agent status updates', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Mock agent status broadcasting
@@ -466,7 +466,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should handle concurrent room operations', async ({ page }) => {
-      await page.goto('http://localhost:3001/agents')
+      await page.goto('/agents')
       await waitForAppReady(page)
 
       // Test concurrent operations
@@ -507,7 +507,7 @@ test.describe('Socket.IO Real time Features', () => {
 
   test.describe('Real-time Message Broadcasting', () => {
     test('should broadcast messages to room', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock message broadcasting
@@ -548,7 +548,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should handle message delivery acknowledgments', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock message acknowledgment
@@ -594,7 +594,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should implement message ordering', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Test message ordering
@@ -628,7 +628,7 @@ test.describe('Socket.IO Real time Features', () => {
 
   test.describe('Performance and Scalability', () => {
     test('should handle high message throughput', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const throughputTest = await page.evaluate(() => {
@@ -659,7 +659,7 @@ test.describe('Socket.IO Real time Features', () => {
     })
 
     test('should implement connection pooling', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const poolTest = await page.evaluate(() => {

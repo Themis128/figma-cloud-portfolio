@@ -12,7 +12,7 @@ const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
-  apiKey: process.env['ANTHROPIC_API_KEY'],
+  apiKey: process.env.ANTHROPIC_API_KEY,
 })
 
 /**
@@ -32,9 +32,9 @@ export const executeClaude: RequestHandler<
       max_tokens,
       messages,
       system: system || '',
-      temperature,
-      top_p,
-      top_k,
+      temperature: temperature ?? 0.7,
+      top_p: top_p ?? 0.9,
+      top_k: top_k ?? 40,
       stop_sequences: stop_sequences || [],
     })
 
@@ -69,7 +69,7 @@ export const executeClaude: RequestHandler<
           text: 'An error occurred while processing your request.',
         },
       ],
-      model: req.body['model'],
+      model: req.body.model,
       stop_reason: 'error',
       stop_sequence: null,
       usage: { input_tokens: 0, output_tokens: 0 },

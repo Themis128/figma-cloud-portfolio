@@ -545,7 +545,7 @@ test.describe('Push Notifications API', () => {
         })
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Open mobile menu to access notification button
       const mobileMenuButton = page.locator('button[aria-label="Toggle mobile menu"]')
@@ -600,10 +600,10 @@ test.describe('Push Notifications API', () => {
         })
       })
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Navigate to a test URL to trigger component test mode detection
-      await page.goto('http://localhost:3001/?test=true')
+      await page.goto('/?test=true')
 
       // The NotificationButton component detects test mode and shows a simple button
       // In test mode, it uses the provided testId

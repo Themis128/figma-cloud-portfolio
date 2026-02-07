@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-const API_PORT = process.env['API_PORT'] || '3002'
+const API_PORT = process.env.API_PORT || '3002'
 
 test.describe('API Endpoints', () => {
   test('should respond to /api/ping with pong and proper headers', async ({ request }) => {

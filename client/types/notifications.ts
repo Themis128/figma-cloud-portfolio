@@ -28,6 +28,7 @@ export interface PushNotificationOptions extends NotificationOptions {
   renotify?: boolean
   timestamp?: number
   data?: NotificationData
+  actions?: NotificationAction[]
 }
 
 export interface PushSubscriptionJSON {

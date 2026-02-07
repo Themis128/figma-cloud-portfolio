@@ -18,7 +18,7 @@ test.describe('Sentry Error Tracking', () => {
 
   test.describe('Sentry Initialization', () => {
     test('should initialize Sentry with correct configuration', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock Sentry initialization
@@ -61,7 +61,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should validate DSN format', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const dsnValidation = await page.evaluate(() => {
@@ -86,7 +86,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should set correct sample rates', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const sampleRateTest = await page.evaluate(() => {
@@ -103,7 +103,7 @@ test.describe('Sentry Error Tracking', () => {
           },
         }
 
-        const env = process.env['NODE_ENV'] || 'development'
+        const env = process.env.NODE_ENV || 'development'
         const rates = config[env as keyof typeof config] || config.development
 
         return {
@@ -121,7 +121,7 @@ test.describe('Sentry Error Tracking', () => {
 
   test.describe('Error Capture and Reporting', () => {
     test('should capture JavaScript errors', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock error capture
@@ -175,7 +175,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should capture unhandled promise rejections', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock promise rejection handling
@@ -207,7 +207,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should filter non-actionable errors', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const filterTest = await page.evaluate(() => {
@@ -242,7 +242,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should add contextual breadcrumbs', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock breadcrumb tracking
@@ -293,7 +293,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should capture user context', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock user context
@@ -341,7 +341,7 @@ test.describe('Sentry Error Tracking', () => {
 
   test.describe('Performance Monitoring', () => {
     test('should track HTTP request performance', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock performance tracking
@@ -395,7 +395,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should track database operations', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock database operation tracking
@@ -427,7 +427,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should calculate transaction metrics', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const metricsTest = await page.evaluate(() => {
@@ -460,7 +460,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should track custom performance metrics', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const customMetricsTest = await page.evaluate(() => {
@@ -483,7 +483,7 @@ test.describe('Sentry Error Tracking', () => {
 
   test.describe('Error Grouping and Fingerprinting', () => {
     test('should group similar errors', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const groupingTest = await page.evaluate(() => {
@@ -512,7 +512,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should implement custom fingerprinting', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const fingerprintTest = await page.evaluate(() => {
@@ -559,7 +559,7 @@ test.describe('Sentry Error Tracking', () => {
 
   test.describe('Release Tracking', () => {
     test('should track release version', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const releaseTest = await page.evaluate(() => {
@@ -581,7 +581,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should associate errors with releases', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       // Mock release association
@@ -618,7 +618,7 @@ test.describe('Sentry Error Tracking', () => {
 
   test.describe('Integration and API', () => {
     test('should handle Sentry API authentication', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const authTest = await page.evaluate(() => {
@@ -638,7 +638,7 @@ test.describe('Sentry Error Tracking', () => {
     })
 
     test('should batch error submissions', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await waitForAppReady(page)
 
       const batchTest = await page.evaluate(() => {

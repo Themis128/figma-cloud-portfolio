@@ -127,7 +127,7 @@ describe('LoadingAnimations', () => {
     it('should have proper overlay styling', () => {
       render(<PageLoader />)
       const loadingTexts = screen.getAllByText('Loading...')
-      const overlay = loadingTexts[0].closest('.fixed')
+      const overlay = loadingTexts[0]?.closest('.fixed')
       expect(overlay).not.toBeNull()
       expect(overlay!).toHaveClass(
         'fixed',
@@ -144,7 +144,7 @@ describe('LoadingAnimations', () => {
     it('should center content properly', () => {
       render(<PageLoader />)
       const loadingTexts = screen.getAllByText('Loading...')
-      const content = loadingTexts[0].parentElement
+      const content = loadingTexts[0]?.parentElement
       expect(content).not.toBeNull()
       expect(content!).toHaveClass('text-center', 'space-y-4')
     })

@@ -8,140 +8,124 @@ import { lazy } from 'react'
 // =============================================================================
 
 // Core pages - Critical for first load
-export const HomePage = lazy(() =>
-  import('../pages/HomePage').then((module) => ({
-    default: module.HomePage,
-  })),
-)
+export const HomePage = lazy(() => import('../pages/Index'))
 
 // Feature pages - Lazy loaded
-export const AboutPage = lazy(() =>
-  import('../pages/AboutPage').then((module) => ({
-    default: module.AboutPage,
-  })),
-)
+export const AboutPage = lazy(() => import('../pages/About'))
 
-export const ProjectsPage = lazy(() =>
-  import('../pages/ProjectsPage').then((module) => ({
-    default: module.ProjectsPage,
-  })),
-)
+export const ProjectsPage = lazy(() => import('../pages/Projects'))
 
-export const ContactPage = lazy(() =>
-  import('../pages/ContactPage').then((module) => ({
-    default: module.ContactPage,
-  })),
-)
+export const ContactPage = lazy(() => import('../pages/Contact'))
 
-export const AgentsPage = lazy(() =>
-  import('../pages/AgentsPage').then((module) => ({
-    default: module.AgentsPage,
-  })),
-)
+export const AgentsPage = lazy(() => import('../pages/Agents'))
 
-export const ResumePage = lazy(() =>
-  import('../pages/ResumePage').then((module) => ({
-    default: module.ResumePage,
-  })),
-)
+export const ResumePage = lazy(() => import('../pages/Resume'))
 
 // =============================================================================
 // COMPONENT-LEVEL CODE SPLITTING
 // =============================================================================
 
 // Complex interactive components
-export const ContactForm = lazy(() =>
-  import('../components/forms/ContactForm').then((module) => ({
-    default: module.ContactForm,
-  })),
-)
+// Note: ContactForm component not found - commented out
+// export const ContactForm = lazy(() =>
+//   import('../components/forms/ContactForm').then((module) => ({
+//     default: module.ContactForm,
+//   })),
+// )
 
-export const ProjectShowcase = lazy(() =>
-  import('../components/projects/ProjectShowcase').then((module) => ({
-    default: module.ProjectShowcase,
-  })),
-)
+// Note: ProjectShowcase component not found - commented out
+// export const ProjectShowcase = lazy(() =>
+//   import('../components/projects/ProjectShowcase').then((module) => ({
+//     default: module.ProjectShowcase,
+//   })),
+// )
 
-export const SkillsMatrix = lazy(() =>
-  import('../components/about/SkillsMatrix').then((module) => ({
-    default: module.SkillsMatrix,
-  })),
-)
+// Note: SkillsMatrix component not found - commented out
+// export const SkillsMatrix = lazy(() =>
+//   import('../components/about/SkillsMatrix').then((module) => ({
+//     default: module.SkillsMatrix,
+//   })),
+// )
 
-export const TimelineComponent = lazy(() =>
-  import('../components/about/Timeline').then((module) => ({
-    default: module.Timeline,
-  })),
-)
+// Note: Timeline component not found - commented out
+// export const TimelineComponent = lazy(() =>
+//   import('../components/about/Timeline').then((module) => ({
+//     default: module.Timeline,
+//   })),
+// )
 
 // Agent-related components (heavy dependencies)
-export const AgentBuilder = lazy(() =>
-  import('../components/agents/AgentBuilder').then((module) => ({
-    default: module.AgentBuilder,
-  })),
-)
+export const AgentBuilder = lazy(() => import('../components/agents/AgentBuilder'))
 
-export const AgentTemplates = lazy(() =>
-  import('../components/agents/AgentTemplates').then((module) => ({
-    default: module.AgentTemplates,
-  })),
-)
+// Note: AgentTemplates component not found - commented out
+// export const AgentTemplates = lazy(() =>
+//   import('../components/agents/AgentTemplates').then((module) => ({
+//     default: module.AgentTemplates,
+//   })),
+// )
 
-export const AgentWorkflow = lazy(() =>
-  import('../components/agents/AgentWorkflow').then((module) => ({
-    default: module.AgentWorkflow,
-  })),
-)
+// Note: AgentWorkflow component not found - commented out
+// export const AgentWorkflow = lazy(() =>
+//   import('../components/agents/AgentWorkflow').then((module) => ({
+//     default: module.AgentWorkflow,
+//   })),
+// )
 
 // =============================================================================
 // FEATURE-BASED CODE SPLITTING
 // =============================================================================
 
 // Authentication & User Management
-export const useAuth = lazy(() =>
-  import('../hooks/useAuth').then((module) => ({
-    default: module.useAuth,
-  })),
-)
+// Note: useAuth hook not found - commented out
+// export const useAuth = lazy(() =>
+//   import('../hooks/useAuth').then((module) => ({
+//     default: module.useAuth,
+//   })),
+// )
 
 // Real-time features (Socket.IO heavy)
-export const useRealtime = lazy(() =>
-  import('../hooks/useRealtime').then((module) => ({
-    default: module.useRealtime,
-  })),
-)
+// Note: useRealtime hook not found - commented out
+// export const useRealtime = lazy(() =>
+//   import('../hooks/useRealtime').then((module) => ({
+//     default: module.useRealtime,
+//   })),
+// )
 
 // Advanced analytics
-export const AdvancedAnalytics = lazy(() =>
-  import('../components/analytics/AdvancedAnalytics').then((module) => ({
-    default: module.AdvancedAnalytics,
-  })),
-)
+// Note: AdvancedAnalytics component not found - commented out
+// export const AdvancedAnalytics = lazy(() =>
+//   import('../components/analytics/AdvancedAnalytics').then((module) => ({
+//     default: module.AdvancedAnalytics,
+//   })),
+// )
 
 // =============================================================================
 // VENDOR LIBRARY CODE SPLITTING
 // =============================================================================
 
 // PDF generation (Puppeteer alternative - client-side)
-export const PDFGenerator = lazy(() =>
-  import('../lib/pdf-generator').then((module) => ({
-    default: module.PDFGenerator,
-  })),
-)
+// Note: pdf-generator not found - commented out
+// export const PDFGenerator = lazy(() =>
+//   import('../lib/pdf-generator').then((module) => ({
+//     default: module.PDFGenerator,
+//   })),
+// )
 
 // Chart libraries
-export const ChartsBundle = lazy(() =>
-  import('../components/charts/ChartsBundle').then((module) => ({
-    default: module.ChartsBundle,
-  })),
-)
+// Note: ChartsBundle component not found - commented out
+// export const ChartsBundle = lazy(() =>
+//   import('../components/charts/ChartsBundle').then((module) => ({
+//     default: module.ChartsBundle,
+//   })),
+// )
 
 // Animation libraries (Framer Motion, Lottie)
-export const AnimationsBundle = lazy(() =>
-  import('../lib/animations').then((module) => ({
-    default: module.AnimationsBundle,
-  })),
-)
+// Note: animations not found - commented out
+// export const AnimationsBundle = lazy(() =>
+//   import('../lib/animations').then((module) => ({
+//     default: module.AnimationsBundle,
+//   })),
+// )
 
 // =============================================================================
 // SMART LOADING UTILITIES
@@ -199,7 +183,7 @@ export function createLazyComponent<T extends ComponentType<any>>(
     }, 100)
   }
 
-  return LazyComponent as T
+  return LazyComponent as unknown as T
 }
 
 /**
@@ -226,8 +210,8 @@ export class RoutePreloader {
 
   static preloadCriticalRoutes(): void {
     // Preload most likely next routes
-    RoutePreloader.preloadRoute('about', () => import('../pages/AboutPage'))
-    RoutePreloader.preloadRoute('projects', () => import('../pages/ProjectsPage'))
+    RoutePreloader.preloadRoute('about', () => import('../pages/About'))
+    RoutePreloader.preloadRoute('projects', () => import('../pages/Projects'))
   }
 
   static preloadOnHover(routeName: string, importFn: () => Promise<any>): void {
@@ -286,7 +270,7 @@ export class ViewportLoader {
  */
 export class BundleAnalyzer {
   static analyzeChunkSizes(): void {
-    if (process.env['NODE_ENV'] !== 'development') return
+    if (process.env.NODE_ENV !== 'development') return
 
     // Measure and log chunk sizes
     performance.mark('bundle-analysis-start')
@@ -303,7 +287,7 @@ export class BundleAnalyzer {
   }
 
   static measureComponentLoad(componentName: string): void {
-    if (process.env['NODE_ENV'] !== 'development') return
+    if (process.env.NODE_ENV !== 'development') return
 
     performance.mark(`component-${componentName}-start`)
 
@@ -358,13 +342,13 @@ export default {
   ResumePage,
 
   // Feature components
-  ContactForm,
-  ProjectShowcase,
-  SkillsMatrix,
-  TimelineComponent,
+  // ContactForm, // Not found
+  // ProjectShowcase, // Not found
+  // SkillsMatrix, // Not found
+  // TimelineComponent, // Not found
   AgentBuilder,
-  AgentTemplates,
-  AgentWorkflow,
+  // AgentTemplates, // Not found
+  // AgentWorkflow, // Not found
 
   // Utilities
   createLazyComponent,

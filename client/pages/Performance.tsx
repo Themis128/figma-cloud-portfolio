@@ -224,7 +224,7 @@ export default function Performance() {
 
   return (
     <div
-      className='min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900'
+      className='min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900'
       data-testid='performance-dashboard'
     >
       <Navigation />

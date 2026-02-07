@@ -142,7 +142,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
 
   test.describe('Google Analytics Integration Verification', () => {
     test('should load homepage with GA script references', async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Check that the page loads
       await expect(page.locator('body')).toBeVisible()
@@ -155,7 +155,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
     })
 
     test('should load contact page with GA script references', async ({ page }) => {
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
 
       // Check that the page loads
       await expect(page.locator('body')).toBeVisible()
@@ -172,7 +172,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       await page.route('**/googletagmanager.com/**', (route) => route.abort())
       await page.route('**/google-analytics.com/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should still load normally
       await expect(page.locator('body')).toBeVisible()
@@ -188,14 +188,14 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       await page.route('**/google-analytics.com/**', (route) => route.abort())
 
       try {
-        await page.goto('http://localhost:3001/contact', { timeout: 10000 })
+        await page.goto('/contact', { timeout: 10000 })
 
         // Page should still load and be functional
         await expect(page.locator('html')).toBeAttached()
         await expect(page.locator('body')).toBeAttached()
 
         // Should be able to navigate
-        await page.goto('http://localhost:3001/', { timeout: 10000 })
+        await page.goto('/', { timeout: 10000 })
         await expect(page.locator('html')).toBeAttached()
         await expect(page.locator('body')).toBeAttached()
       } catch (_error) {
@@ -214,7 +214,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       await page.route('**/recaptcha/**', (route) => route.abort())
 
       try {
-        await page.goto('http://localhost:3001/contact', { timeout: 10000 })
+        await page.goto('/contact', { timeout: 10000 })
 
         // Page should still load
         await expect(page.locator('html')).toBeAttached()
@@ -238,7 +238,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       })
 
       try {
-        await page.goto('http://localhost:3001/', { timeout: 15000 })
+        await page.goto('/', { timeout: 15000 })
 
         // Should still load eventually
         await expect(page.locator('html')).toBeAttached()
@@ -256,14 +256,14 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       await page.route('**/google-analytics.com/**', (route) => route.abort())
       await page.route('**/recaptcha/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Should be able to navigate to contact page
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
       await expect(page.locator('body')).toBeVisible()
 
       // Should be able to navigate back
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await expect(page.locator('body')).toBeVisible()
     })
 
@@ -277,7 +277,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       await page.route('**/fonts.googleapis.com/**', (route) => route.abort())
       await page.route('**/fonts.gstatic.com/**', (route) => route.abort())
 
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Core functionality should still work
       await expect(page.locator('body')).toBeVisible()
@@ -291,7 +291,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
   test.describe('Environment Configuration Tests', () => {
     test('should handle missing environment variables gracefully', async ({ page }) => {
       // Test with current environment (should have variables set)
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
 
       // Page should load normally
       await expect(page.locator('body')).toBeVisible()
@@ -299,13 +299,13 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
 
     test('should work with different base URLs', async ({ page }) => {
       // Test navigation to different pages
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await expect(page.locator('body')).toBeVisible()
 
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/contact')
       await expect(page.locator('body')).toBeVisible()
 
-      await page.goto('http://localhost:3001/about')
+      await page.goto('/about')
       await expect(page.locator('body')).toBeVisible()
     })
 
@@ -328,11 +328,11 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
   test.describe('Performance and Reliability Tests', () => {
     test('should handle rapid page navigation', async ({ page }) => {
       // Rapidly navigate between pages
-      await page.goto('http://localhost:3001/')
-      await page.goto('http://localhost:3001/contact')
-      await page.goto('http://localhost:3001/about')
-      await page.goto('http://localhost:3001/')
-      await page.goto('http://localhost:3001/contact')
+      await page.goto('/')
+      await page.goto('/contact')
+      await page.goto('/about')
+      await page.goto('/')
+      await page.goto('/contact')
 
       // Should handle all navigation without issues
       await expect(page.locator('body')).toBeVisible()

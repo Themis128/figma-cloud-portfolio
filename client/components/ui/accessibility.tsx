@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 // Constants
 const RANDOM_ID_LENGTH = 9
 const RANDOM_ID_START_INDEX = 2
+const RANDOM_ID_BASE = 36
 const ANNOUNCEMENT_DURATION_MS = 1000
 
 // Accessibility enhancement hook leveraging React 19 features
@@ -137,7 +138,8 @@ export function AccessibleInput({
   ...props
 }: AccessibleInputProps) {
   const inputId =
-    id || `input-${Math.random().toString(36).substr(RANDOM_ID_START_INDEX, RANDOM_ID_LENGTH)}`
+    id ||
+    `input-${Math.random().toString(RANDOM_ID_BASE).substr(RANDOM_ID_START_INDEX, RANDOM_ID_LENGTH)}`
   const errorId = error ? `${inputId}-error` : undefined
   const helperId = helperText ? `${inputId}-helper` : undefined
 

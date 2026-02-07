@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test.describe('Resource Preloading & Performance', () => {
   test.describe('DNS Prefetching', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('http://localhost:3001/')
+      await page.goto('/')
       await page.waitForLoadState('networkidle')
     })
 

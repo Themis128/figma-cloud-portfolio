@@ -4,7 +4,7 @@ import type { RealTimeConnection, RealTimeEvent, UserPresence } from '../../type
 const MAX_RECENT_EVENTS = 5
 const MAX_COLLABORATORS_DISPLAY = 3
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useEnhancedNotifications } from '../../hooks/useEnhancedNotifications'
 import {
@@ -35,6 +35,7 @@ interface RealtimeIntegrationProps {
   showCollaboration?: boolean
   showNotifications?: boolean
   enableAutoConnect?: boolean
+  compact?: boolean
   className?: string
 }
 
@@ -45,6 +46,7 @@ export function RealtimeIntegration({
   showCollaboration = true,
   showNotifications = true,
   enableAutoConnect = true,
+  compact = false,
   className,
 }: RealtimeIntegrationProps) {
   const [isInitialized, setIsInitialized] = useState(false)
@@ -66,7 +68,7 @@ export function RealtimeIntegration({
 
   // Initialize notifications
   const { permission, requestPermission, isGranted } = useEnhancedNotifications(
-    process.env['VITE_VAPID_PUBLIC_KEY'],
+    process.env.VITE_VAPID_PUBLIC_KEY,
   )
 
   // Initialize real-time notifications
@@ -193,7 +195,7 @@ export function RealtimeIntegration({
         {showDashboard && (
           <div className='lg:col-span-2'>
             <Suspense fallback={<DashboardSkeleton />}>
-              <RealtimeDashboard showMetrics showActivityFeed showRoomsList />
+              <RealtimeDashboard showMetrics showActivityFeed showRoomsList compact={compact} />
             </Suspense>
           </div>
         )}
@@ -282,7 +284,7 @@ export function RealtimeIntegration({
       </div>
 
       {/* Debug Information (Development Only) */}
-      {process.env['NODE_ENV'] === 'development' && (
+      {process.env.NODE_ENV === 'development' && (
         <DebugPanel connection={connection} presence={presence} events={events} />
       )}
     </div>

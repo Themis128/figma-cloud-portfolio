@@ -94,7 +94,12 @@ if (-not $useAWS) {
 if ($Command) {
   Write-Host "Executing command: $Command" -ForegroundColor Green
   try {
-    & $Command @CommandArgs
+    # For vite command, use npx to ensure proper execution
+    if ($Command -eq "vite") {
+      & npx vite @CommandArgs
+    } else {
+      & $Command @CommandArgs
+    }
     exit $LASTEXITCODE
   }
   catch {
