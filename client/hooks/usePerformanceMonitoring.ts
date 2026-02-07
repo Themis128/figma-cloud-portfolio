@@ -60,7 +60,8 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
     const reports = reportQueueRef.current.splice(0)
     if (reports.length === 0) return
 
-    // Send to Google Analytics in batches
+    // Send to Google Analytics - web vitals are tracked via PerformanceMonitor component
+    // This hook only stores metrics locally, not sent to backend to avoid duplicates
     if (typeof gtag !== 'undefined') {
       reports.forEach((metric) => {
         gtag('event', metric.name.toLowerCase(), {
@@ -69,20 +70,6 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
           non_interaction: true,
         })
       })
-    }
-
-    // Custom analytics endpoint (if available)
-    if (enabled && typeof fetch !== 'undefined') {
-      fetch('/api/analytics/performance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          metrics: reports,
-          timestamp: Date.now(),
-          url: window.location.pathname,
-        }),
-        keepalive: true,
-      }).catch((_error) => {})
     }
   }, [enabled])
 
