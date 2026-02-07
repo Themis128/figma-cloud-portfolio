@@ -39,48 +39,10 @@ const GoogleAnalytics = () => {
       }
 
       // Track Core Web Vitals
-      const trackWebVital = (metric: Metric) => {
-        try {
-          if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', metric.name, {
-              value: Math.round(metric.value),
-              custom_map: { metric_value: Math.round(metric.value).toString() },
-            })
-          } else if (ReactGA.isInitialized) {
-            ReactGA.event({
-              category: 'Web Vitals',
-              action: metric.name,
-              value: Math.round(metric.value),
-              nonInteraction: true,
-            })
-          }
-
-          // Send to backend analytics
-          sendAnalyticsEvent({
-            event: `web_vitals_${metric.name.toLowerCase()}`,
-            data: { value: metric.value },
-            timestamp: new Date().toISOString(),
-            url: window.location.href,
-            userAgent: navigator.userAgent,
-          }).catch(() => {}) // Ignore errors to prevent blocking
-
-          // For testing purposes, also populate window.gaEvents
-          if (typeof window !== 'undefined') {
-            window.gaEvents = window.gaEvents || []
-            window.gaEvents.push({
-              command: 'event',
-              eventName: 'web_vitals',
-              params: {
-                event_category: 'Performance',
-                event_label: metric.name,
-                value: Math.round(metric.value),
-                custom_parameter_metric_id: Math.round(metric.value).toString(),
-              },
-            })
-          }
-        } catch {
-          // Silently handle analytics errors to prevent breaking the app
-        }
+      // Track web vitals only via PerformanceMonitor component to avoid duplicates
+      // The PerformanceMonitor component handles all web vitals tracking
+      const trackWebVital = (_metric: Metric) => {
+        // Handled by PerformanceMonitor component
       }
 
       onCLS(trackWebVital)
