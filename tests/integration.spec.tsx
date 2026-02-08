@@ -60,7 +60,7 @@ vi.mock('@/components/AIBrain', () => ({
 // Mock ThemeToggle since it uses theme context
 vi.mock('@/components/ThemeToggle', () => ({
   ThemeToggle: () => (
-    <button data-testid='theme-toggle' aria-label='Toggle theme'>
+    <button type='button' data-testid='theme-toggle' aria-label='Toggle theme'>
       Toggle
     </button>
   ),
@@ -68,7 +68,11 @@ vi.mock('@/components/ThemeToggle', () => ({
 
 // Mock NotificationButton
 vi.mock('@/components/NotificationButton', () => ({
-  NotificationButton: () => <button data-testid='notification-button'>Notifications</button>,
+  NotificationButton: () => (
+    <button type='button' data-testid='notification-button'>
+      Notifications
+    </button>
+  ),
 }))
 
 // Mock IntersectionObserver for components that use it
@@ -91,7 +95,7 @@ global.IntersectionObserver = class IntersectionObserver {
 } as any
 
 const renderWithProviders = async (component: React.ReactElement, initialRoute = '/') => {
-  let rendered
+  let rendered: RenderResult
   await act(async () => {
     rendered = render(
       <MemoryRouter initialEntries={[initialRoute]}>

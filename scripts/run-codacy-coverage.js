@@ -7,7 +7,7 @@
 import { execSync, spawnSync } from 'node:child_process'
 import { platform } from 'node:os'
 
-const process = require('process')
+const process = require('node:process')
 
 console.log('🚀 Running Codacy Coverage Reporter')
 console.log('=====================================')

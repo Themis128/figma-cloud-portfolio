@@ -32,40 +32,57 @@ class AIService {
   private provider: AIProvider | null = null
 
   constructor() {
-    const provider = (import.meta.env['VITE_AI_PROVIDER'] || 'ollama') as
+    const provider = (import.meta.env.VITE_AI_PROVIDER || 'ollama') as
       | 'openai'
       | 'together'
       | 'ollama'
 
     const getApiKey = (provider: string) => {
-      if (provider === 'openai') return import.meta.env['VITE_OPENAI_API_KEY']
-      if (provider === 'together') return import.meta.env['VITE_TOGETHER_API_KEY']
+      if (provider === 'openai') return import.meta.env.VITE_OPENAI_API_KEY
+      if (provider === 'together') return import.meta.env.VITE_TOGETHER_API_KEY
       return undefined // Ollama doesn't require an API key
     }
 
     const getProviderConfig = (provider: string, apiKey: string | undefined): AIProvider | null => {
-      if (!apiKey && provider !== 'ollama') return null
-      if (apiKey && (apiKey === 'test_openai_key' || apiKey === 'test_together_key')) return null
-
-      const baseURL =
-        provider === 'openai'
-          ? 'https://api.openai.com/v1'
-          : provider === 'together'
-            ? 'https://api.together.xyz/v1'
-            : 'http://localhost:11434/v1'
-
-      const models =
-        provider === 'openai'
-          ? ['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4']
-          : provider === 'together'
-            ? ['meta-llama/Llama-2-70b-chat-hf', 'mistralai/Mistral-7B-Instruct-v0.1']
-            : ['llama2', 'codellama', 'mistral', 'llama2:13b', 'codellama:13b']
+      if (!isValidApiKey(provider, apiKey)) return null
 
       return {
         name: provider as 'openai' | 'together' | 'ollama',
         apiKey,
-        baseURL,
-        models,
+        baseURL: getBaseUrl(provider),
+        models: getModels(provider),
+      }
+    }
+
+    const isValidApiKey = (provider: string, apiKey: string | undefined): boolean => {
+      if (!apiKey && provider !== 'ollama') return false
+      if (apiKey && (apiKey === 'test_openai_key' || apiKey === 'test_together_key')) return false
+      return true
+    }
+
+    const getBaseUrl = (provider: string): string => {
+      switch (provider) {
+        case 'openai':
+          return 'https://api.openai.com/v1'
+        case 'together':
+          return 'https://api.together.xyz/v1'
+        case 'ollama':
+          return 'http://localhost:11434/v1'
+        default:
+          return 'http://localhost:11434/v1'
+      }
+    }
+
+    const getModels = (provider: string): string[] => {
+      switch (provider) {
+        case 'openai':
+          return ['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4']
+        case 'together':
+          return ['meta-llama/Llama-2-70b-chat-hf', 'mistralai/Mistral-7B-Instruct-v0.1']
+        case 'ollama':
+          return ['llama2', 'codellama', 'mistral', 'llama2:13b', 'codellama:13b']
+        default:
+          return ['llama2']
       }
     }
 
@@ -81,7 +98,7 @@ class AIService {
       }
     }
 
-    const model = import.meta.env['VITE_AI_MODEL'] || this.provider.models[0]
+    const model = import.meta.env.VITE_AI_MODEL || this.provider.models[0]
 
     const systemPrompt = `You are an AI assistant for Themistoklis Baltzakis' portfolio website. You help visitors learn about his work, experience, and projects.
 

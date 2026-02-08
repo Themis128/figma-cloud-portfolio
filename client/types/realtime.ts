@@ -6,7 +6,7 @@
 
 export interface RealTimeConnection {
   status: 'disconnected' | 'connecting' | 'connected' | 'reconnecting' | 'error'
-  socket: any | null // Socket.IO Socket instance
+  socket: unknown | null // Socket.IO Socket instance
   userId: string | null
   rooms: string[]
   reconnectAttempts: number
@@ -37,7 +37,7 @@ export interface UserPresence {
   rooms?: string[]
   joinedAt: number
   lastSeen: number
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface PresenceData {
@@ -46,7 +46,7 @@ export interface PresenceData {
   activity?: UserPresence['activity']
   currentSection?: string
   isEditing?: boolean
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   lastSeen: number
 }
 
@@ -61,17 +61,17 @@ export interface PresenceUpdate {
 // REAL-TIME EVENT TYPES
 // =============================================================================
 
-export interface RealTimeEvent<T = any> {
+export interface RealTimeEvent<T = unknown> {
   id: string
   type: string
   data: T
   timestamp: number
   userId?: string
   roomId?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
-export type EventHandler<T = any> = (data: T, metadata?: any) => void
+export type EventHandler<T = unknown> = (data: T, metadata?: unknown) => void
 
 export interface EventSubscription {
   eventName: string
@@ -90,7 +90,7 @@ export interface CollaborationRoom {
   participants: UserPresence[]
   createdAt: number
   updatedAt: number
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface AgentCollaborationData {
@@ -98,7 +98,7 @@ export interface AgentCollaborationData {
   userId: string
   changeType: 'create' | 'update' | 'delete' | 'move' | 'rename'
   section: 'workflow' | 'config' | 'template' | 'description' | 'variables' | 'general'
-  changes: Record<string, any>
+  changes: Record<string, unknown>
   timestamp: number
   version?: string
 }
@@ -200,7 +200,7 @@ export interface RealtimeMessage {
   edited?: boolean
   editedAt?: number
   reactions?: MessageReaction[]
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface MessageReaction {
@@ -212,7 +212,7 @@ export interface MessageReaction {
 export interface SystemMessage {
   type: 'user_joined' | 'user_left' | 'room_created' | 'settings_changed' | 'collaboration_started'
   userId?: string
-  data?: Record<string, any>
+  data?: Record<string, unknown>
   timestamp: number
 }
 
@@ -225,7 +225,7 @@ export interface RealtimeError {
   message: string
   type: 'connection' | 'permission' | 'validation' | 'timeout' | 'server' | 'client'
   timestamp: number
-  details?: Record<string, any>
+  details?: Record<string, unknown>
 }
 
 export type ErrorHandler = (error: RealtimeError) => void
@@ -241,7 +241,7 @@ export interface RealtimeNotification {
     icon?: string
     badge?: string
     tag?: string
-    data?: Record<string, any>
+    data?: Record<string, unknown>
     actions?: Array<{
       action: string
       title: string
@@ -274,14 +274,14 @@ export interface AgentLogEntry {
   timestamp: number
   level: 'info' | 'warn' | 'error' | 'debug'
   message: string
-  data?: Record<string, any>
+  data?: Record<string, unknown>
   userId?: string
 }
 
 export interface AgentExecutionUpdate {
   agentId: string
   type: 'status_change' | 'progress_update' | 'log_entry' | 'error' | 'completed'
-  data: Record<string, any>
+  data: Record<string, unknown>
   timestamp: number
 }
 
@@ -293,7 +293,7 @@ export interface WebhookEvent {
   id: string
   source: string
   type: string
-  data: Record<string, any>
+  data: Record<string, unknown>
   timestamp: number
   verified?: boolean
 }
@@ -332,9 +332,9 @@ export interface ConnectionQuality {
 
 export interface UseEnhancedSocketReturn {
   connection: RealTimeConnection
-  emit: (event: string, data?: any) => Promise<any>
+  emit: (event: string, data?: unknown) => Promise<unknown>
   on: (event: string, handler: EventHandler) => () => void
-  joinRoom: (roomId: string, data?: any) => void
+  joinRoom: (roomId: string, data?: unknown) => void
   leaveRoom: (roomId: string) => void
   isConnected: boolean
   isConnecting: boolean
@@ -352,9 +352,9 @@ export interface UsePresenceReturn {
   roomId: string
 }
 
-export interface UseRealtimeEventsReturn<T = any> {
+export interface UseRealtimeEventsReturn<T = unknown> {
   events: RealTimeEvent<T>[]
-  sendEvent: (data: T, metadata?: any) => Promise<any>
+  sendEvent: (data: T, metadata?: unknown) => Promise<unknown>
   clearEvents: () => void
   isListening: boolean
   lastEvent: RealTimeEvent<T> | null
@@ -367,7 +367,7 @@ export interface UseAgentCollaborationReturn {
   canEdit: boolean
   startEditing: () => boolean
   stopEditing: () => void
-  broadcastChange: (change: AgentCollaborationData) => Promise<any>
+  broadcastChange: (change: AgentCollaborationData) => Promise<unknown>
   recentChanges: RealTimeEvent<AgentCollaborationData>[]
 }
 
@@ -409,7 +409,7 @@ export interface RoomConfig {
 
 export const DEFAULT_REALTIME_CONFIG: RealtimeConfig = {
   serverUrl:
-    process.env['NODE_ENV'] === 'production'
+    process.env.NODE_ENV === 'production'
       ? window?.location?.origin || 'https://localhost:3000'
       : 'http://localhost:3000',
   autoConnect: true,
@@ -460,21 +460,29 @@ export function isValidRoomType(type: string): type is RoomType {
   return ['public', 'private', 'collaboration', 'agent', 'project'].includes(type)
 }
 
-export function isRealtimeError(error: any): error is RealtimeError {
+export function isRealtimeError(error: unknown): error is RealtimeError {
   return (
     error &&
-    typeof error.code === 'string' &&
-    typeof error.message === 'string' &&
-    typeof error.timestamp === 'number'
+    typeof error === 'object' &&
+    'code' in error &&
+    typeof (error as Record<string, unknown>).code === 'string' &&
+    'message' in error &&
+    typeof (error as Record<string, unknown>).message === 'string' &&
+    'timestamp' in error &&
+    typeof (error as Record<string, unknown>).timestamp === 'number'
   )
 }
 
-export function isUserPresence(obj: any): obj is UserPresence {
+export function isUserPresence(obj: unknown): obj is UserPresence {
   return (
     obj &&
-    typeof obj.userId === 'string' &&
-    typeof obj.status === 'string' &&
-    typeof obj.lastSeen === 'number'
+    typeof obj === 'object' &&
+    'userId' in obj &&
+    typeof (obj as Record<string, unknown>).userId === 'string' &&
+    'status' in obj &&
+    typeof (obj as Record<string, unknown>).status === 'string' &&
+    'lastSeen' in obj &&
+    typeof (obj as Record<string, unknown>).lastSeen === 'number'
   )
 }
 

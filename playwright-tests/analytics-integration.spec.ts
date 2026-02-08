@@ -32,9 +32,12 @@ test.describe('Analytics Integration', () => {
     await page.waitForSelector('body', { timeout: 10000 })
 
     // Wait for GA initialization by checking for events in window.gaEvents
-    await page.waitForFunction(() => {
-      return (window as any).gaEvents && (window as any).gaEvents.length > 0
-    }, { timeout: 10000 })
+    await page.waitForFunction(
+      () => {
+        return (window as any).gaEvents && (window as any).gaEvents.length > 0
+      },
+      { timeout: 10000 },
+    )
 
     // Check that GA was initialized
     const gaEvents = await page.evaluate(() => window.gaEvents || [])
@@ -430,11 +433,16 @@ test.describe('Analytics Integration', () => {
       }
       // Mock web-vitals callbacks to fire
       setTimeout(() => {
-        if (window.onCLS) window.onCLS({ name: 'CLS', value: 0.1, id: 'test', delta: 0.1, entries: [] })
-        if (window.onFCP) window.onFCP({ name: 'FCP', value: 1200, id: 'test', delta: 1200, entries: [] })
-        if (window.onLCP) window.onLCP({ name: 'LCP', value: 2500, id: 'test', delta: 2500, entries: [] })
-        if (window.onTTFB) window.onTTFB({ name: 'TTFB', value: 400, id: 'test', delta: 400, entries: [] })
-        if (window.onINP) window.onINP({ name: 'INP', value: 150, id: 'test', delta: 150, entries: [] })
+        if (window.onCLS)
+          window.onCLS({ name: 'CLS', value: 0.1, id: 'test', delta: 0.1, entries: [] })
+        if (window.onFCP)
+          window.onFCP({ name: 'FCP', value: 1200, id: 'test', delta: 1200, entries: [] })
+        if (window.onLCP)
+          window.onLCP({ name: 'LCP', value: 2500, id: 'test', delta: 2500, entries: [] })
+        if (window.onTTFB)
+          window.onTTFB({ name: 'TTFB', value: 400, id: 'test', delta: 400, entries: [] })
+        if (window.onINP)
+          window.onINP({ name: 'INP', value: 150, id: 'test', delta: 150, entries: [] })
       }, 100)
     })
 

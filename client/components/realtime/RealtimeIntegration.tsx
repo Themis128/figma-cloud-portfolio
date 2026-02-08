@@ -68,7 +68,7 @@ export function RealtimeIntegration({
 
   // Initialize notifications
   const { permission, requestPermission, isGranted } = useEnhancedNotifications(
-    process.env.VITE_VAPID_PUBLIC_KEY,
+    import.meta.env.VITE_VAPID_PUBLIC_KEY,
   )
 
   // Initialize real-time notifications
@@ -284,7 +284,7 @@ export function RealtimeIntegration({
       </div>
 
       {/* Debug Information (Development Only) */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.NODE_ENV === 'development' && (
         <DebugPanel connection={connection} presence={presence} events={events} />
       )}
     </div>

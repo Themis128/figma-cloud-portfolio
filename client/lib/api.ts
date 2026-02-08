@@ -13,19 +13,19 @@ import type {
   ResumeData,
 } from '@shared/api'
 
-const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] || '/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 /**
  * Lambda function URLs - these will be set as environment variables in Amplify
  */
 const LAMBDA_URLS = {
-  contact: import.meta.env['VITE_LAMBDA_CONTACT_URL'] || `${API_BASE_URL}/contact`,
-  resume: import.meta.env['VITE_LAMBDA_RESUME_URL'] || `${API_BASE_URL}/resume`,
+  contact: import.meta.env.VITE_LAMBDA_CONTACT_URL || `${API_BASE_URL}/contact`,
+  resume: import.meta.env.VITE_LAMBDA_RESUME_URL || `${API_BASE_URL}/resume`,
   'push-notifications':
-    import.meta.env['VITE_LAMBDA_PUSH_NOTIFICATIONS_URL'] || `${API_BASE_URL}/push-notifications`,
-  analytics: import.meta.env['VITE_LAMBDA_ANALYTICS_URL'] || `${API_BASE_URL}/analytics`,
-  ping: import.meta.env['VITE_LAMBDA_PING_URL'] || `${API_BASE_URL}/ping`,
-  demo: import.meta.env['VITE_LAMBDA_DEMO_URL'] || `${API_BASE_URL}/demo`,
+    import.meta.env.VITE_LAMBDA_PUSH_NOTIFICATIONS_URL || `${API_BASE_URL}/push-notifications`,
+  analytics: import.meta.env.VITE_LAMBDA_ANALYTICS_URL || `${API_BASE_URL}/analytics`,
+  ping: import.meta.env.VITE_LAMBDA_PING_URL || `${API_BASE_URL}/ping`,
+  demo: import.meta.env.VITE_LAMBDA_DEMO_URL || `${API_BASE_URL}/demo`,
 }
 
 /**

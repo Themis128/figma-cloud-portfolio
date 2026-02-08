@@ -2,31 +2,20 @@
 
 // Extend JSX for @react-three/fiber
 import '@react-three/fiber'
+import type { JSXIntrinsicElements } from '@react-three/fiber'
 
-// Properly extend JSX for React Three Fiber
+// Properly extend JSX for React Three Fiber with all required elements
 declare global {
   namespace JSX {
-    interface IntrinsicElements extends import('@react-three/fiber').JSXIntrinsicElements {
-      mesh: any
+    interface IntrinsicElements extends JSXIntrinsicElements {
+      mesh: unknown
+      group: unknown
+      ambientLight: unknown
+      directionalLight: unknown
+      pointLight: unknown
+      planeGeometry: unknown
+      meshStandardMaterial: unknown
+      meshBasicMaterial: unknown
     }
-  }
-
-  interface Window {
-    webVitals?: boolean
-    webVitalsMetrics?: Array<{
-      name: string
-      value: number
-      timestamp: number
-    }>
-    gaEvents?: Array<{
-      command: string
-      eventName: string
-      params?: Record<string, unknown>
-    }>
-    gtag?: (command: string, eventName: string, params?: Record<string, unknown>) => void
-    trackContactFormSubmit?: () => void
-    trackResumeDownload?: () => void
-    trackError?: (error: string) => void
-    clients?: Clients
   }
 }

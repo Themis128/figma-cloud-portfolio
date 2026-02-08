@@ -1,11 +1,7 @@
 // @ts-check
 /// <reference types="node" />
 
-import {
-  createPlaywrightConfig,
-  VALIDATION_CONSTANTS,
-  validateConfiguration,
-} from './playwright.config.shared'
+import { createPlaywrightConfig, validateConfiguration } from './playwright.config.shared'
 
 /**
  * Temporary/Experimental Playwright Configuration

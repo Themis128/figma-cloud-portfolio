@@ -12,7 +12,7 @@ const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
-  apiKey: process.env['ANTHROPIC_API_KEY'],
+  apiKey: process.env.ANTHROPIC_API_KEY,
 })
 
 /**

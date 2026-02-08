@@ -1,13 +1,15 @@
 import { expect, test } from '@playwright/test'
-import { createHealingLocator, SmartWaiter, SelectorOptimizer, PerformanceMonitor } from './autofix-helpers'
+import { createHealingLocator, PerformanceMonitor, SelectorOptimizer } from './autofix-helpers'
 
 test.describe('Autofix Healing Demonstration', () => {
   test('should demonstrate successful locator healing', async ({ page }) => {
-    await page.goto('data:text/html,<html><body><button id="dynamic-btn">Initial</button></body></html>')
+    await page.goto(
+      'data:text/html,<html><body><button id="dynamic-btn">Initial</button></body></html>',
+    )
 
     const healingBtn = createHealingLocator(page, '#dynamic-btn', {
       maxRetries: 2,
-      retryDelay: 100
+      retryDelay: 100,
     })
 
     await healingBtn.click()
@@ -26,7 +28,7 @@ test.describe('Autofix Healing Demonstration', () => {
 
   test('should demonstrate network recovery', async ({ page }) => {
     await page.route('https://mock-api.example.com/health', (route) =>
-      route.fulfill({ status: 200, json: { success: true, healed: true } })
+      route.fulfill({ status: 200, json: { success: true, healed: true } }),
     )
 
     await page.goto('data:text/html,<html><body><div id="result"></div></body></html>')
@@ -47,7 +49,7 @@ test.describe('Autofix Healing Demonstration', () => {
             }
           }
         }
-      `
+      `,
     })
 
     await page.evaluate(() => window.testApiWithRetry('https://mock-api.example.com/health'))
@@ -65,14 +67,11 @@ test.describe('Autofix Healing Demonstration', () => {
   })
 
   test('should demonstrate selector optimization in action', async ({ page }) => {
-    await page.goto('data:text/html,<html><body><button class="btn btn-primary" data-testid="submit-btn">Submit</button></body></html>')
+    await page.goto(
+      'data:text/html,<html><body><button class="btn btn-primary" data-testid="submit-btn">Submit</button></body></html>',
+    )
 
-    const selectors = [
-      '.btn.btn-primary',
-      '[data-testid="submit-btn"]',
-      'button',
-      'text=Submit'
-    ]
+    const selectors = ['.btn.btn-primary', '[data-testid="submit-btn"]', 'button', 'text=Submit']
 
     const bestSelector = SelectorOptimizer.findBest(selectors)
     expect(bestSelector).toBe('[data-testid="submit-btn"]')

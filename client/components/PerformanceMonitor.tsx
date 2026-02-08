@@ -19,12 +19,17 @@ const NAVIGATION_CHECK_DELAY_MS = 100
 const SECONDS_PER_INTERVAL = 30
 const MILLISECONDS_PER_SECOND = 1000
 const MEMORY_TRACKING_INTERVAL_MS = SECONDS_PER_INTERVAL * MILLISECONDS_PER_SECOND // 30 seconds
+const SESSION_DURATION_MINUTES = 30
+const SESSION_DURATION_MS = SESSION_DURATION_MINUTES * 60 * MILLISECONDS_PER_SECOND // 30 minutes
+const BYTES_PER_KILOBYTE = 1024
+const BYTES_PER_MEGABYTE = BYTES_PER_KILOBYTE * BYTES_PER_KILOBYTE
+const PERCENTAGE_MULTIPLIER = 100
 
 // Type definitions for gtag.js - extending existing GoogleAnalytics declarations
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ExtendedWindow extends Window {
   gtag?: (
-    command: 'config' | 'event' | 'set',
+    command: 'config' | 'event' | 'set' | 'consent',
     targetId: string | Record<string, unknown>,
     config?: Record<string, unknown> | string,
   ) => void
@@ -59,7 +64,7 @@ const WEB_VITALS_THRESHOLDS = {
 const getSessionInfo = (): { sessionId: number; engagementTime: number } => {
   if (typeof window === 'undefined') return { sessionId: 0, engagementTime: 0 }
   const now = Date.now()
-  const sessionDuration = 30 * 60 * 1000 // 30 minutes
+  const sessionDuration = SESSION_DURATION_MS // 30 minutes
 
   const existing = window.gtagSession
 
@@ -68,7 +73,7 @@ const getSessionInfo = (): { sessionId: number; engagementTime: number } => {
   }
 
   const newSession = {
-    sessionId: Math.floor(now / 1000),
+    sessionId: Math.floor(now / MILLISECONDS_PER_SECOND),
     engagementTime: now,
   }
   window.gtagSession = newSession
@@ -179,35 +184,43 @@ export function PerformanceMonitor() {
 
     // Navigation timing
     const trackNavigation = () => {
-      const checkNavigationTiming = () => {
-        if ('performance' in window && 'getEntriesByType' in window.performance) {
-          const navigationEntries = window.performance.getEntriesByType('navigation')
-          if (navigationEntries.length > 0) {
-            const navigation = navigationEntries[0] as PerformanceNavigationTiming
+      const isPerformanceAvailable = (): boolean => {
+        return 'performance' in window && 'getEntriesByType' in window.performance
+      }
 
-            // Track navigation timing as custom event
-            if (typeof window !== 'undefined' && window.gtag) {
-              const { sessionId, engagementTime } = getSessionInfo()
+      const getNavigationEntry = (): PerformanceNavigationTiming | null => {
+        const navigationEntries = window.performance.getEntriesByType('navigation')
+        return navigationEntries.length > 0
+          ? (navigationEntries[0] as PerformanceNavigationTiming)
+          : null
+      }
 
-              window.gtag('event', 'navigation_timing', {
-                event_category: 'Performance',
-                event_label: 'navigation',
-                value: Math.round(navigation.duration),
-                session_id: sessionId,
-                engagement_time_msec: engagementTime,
+      const sendNavigationTimingEvent = (navigation: PerformanceNavigationTiming): void => {
+        if (typeof window === 'undefined' || !window.gtag) return
 
-                // Navigation timing breakdown
-                dom_content_loaded: Math.round(
-                  navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
-                ),
-                dom_complete: Math.round(
-                  navigation.domComplete - navigation.domContentLoadedEventEnd,
-                ),
-                load_complete: Math.round(navigation.loadEventEnd - navigation.loadEventStart),
-                total_time: Math.round(navigation.duration),
-              })
-            }
-          }
+        const { sessionId, engagementTime } = getSessionInfo()
+
+        window.gtag('event', 'navigation_timing', {
+          event_category: 'Performance',
+          event_label: 'navigation',
+          value: Math.round(navigation.duration),
+          session_id: sessionId,
+          engagement_time_msec: engagementTime,
+          dom_content_loaded: Math.round(
+            navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          ),
+          dom_complete: Math.round(navigation.domComplete - navigation.domContentLoadedEventEnd),
+          load_complete: Math.round(navigation.loadEventEnd - navigation.loadEventStart),
+          total_time: Math.round(navigation.duration),
+        })
+      }
+
+      const checkNavigationTiming = (): void => {
+        if (!isPerformanceAvailable()) return
+
+        const navigation = getNavigationEntry()
+        if (navigation) {
+          sendNavigationTimingEvent(navigation)
         }
       }
 
@@ -237,7 +250,7 @@ export function PerformanceMonitor() {
 
       if (perfWithMemory.memory) {
         const { usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit } = perfWithMemory.memory
-        const usagePercent = (usedJSHeapSize / jsHeapSizeLimit) * 100
+        const usagePercent = (usedJSHeapSize / jsHeapSizeLimit) * PERCENTAGE_MULTIPLIER
 
         // Track memory as custom metric in GA4
         if (typeof window !== 'undefined' && window.gtag) {
@@ -247,8 +260,8 @@ export function PerformanceMonitor() {
             event_category: 'Performance',
             event_label: 'memory',
             value: Math.round(usagePercent),
-            memory_used_mb: Math.round(usedJSHeapSize / 1024 / 1024),
-            memory_total_mb: Math.round(totalJSHeapSize / 1024 / 1024),
+            memory_used_mb: Math.round(usedJSHeapSize / BYTES_PER_MEGABYTE),
+            memory_total_mb: Math.round(totalJSHeapSize / BYTES_PER_MEGABYTE),
             session_id: sessionId,
             engagement_time_msec: engagementTime,
           })

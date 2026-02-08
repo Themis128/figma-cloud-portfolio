@@ -9,7 +9,12 @@
  */
 
 import { expect, test } from '@playwright/test'
-import { createHealingLocator, SmartWaiter, SelectorOptimizer, PerformanceMonitor } from './autofix-helpers'
+import {
+  createHealingLocator,
+  PerformanceMonitor,
+  SelectorOptimizer,
+  SmartWaiter,
+} from './autofix-helpers'
 
 // Declare globals for TypeScript
 declare global {
@@ -21,7 +26,9 @@ declare global {
 
 test.describe('Autofix Feature Demonstration', () => {
   test('should demonstrate locator healing on stale elements', async ({ page }) => {
-    await page.goto('data:text/html,<html><body><button id="test-btn">Click me</button></body></html>')
+    await page.goto(
+      'data:text/html,<html><body><button id="test-btn">Click me</button></body></html>',
+    )
 
     // Create a healing locator
     const healingBtn = createHealingLocator(page, '#test-btn')
@@ -74,7 +81,9 @@ test.describe('Autofix Feature Demonstration', () => {
   })
 
   test('should demonstrate selector optimization suggestions', async ({ page }) => {
-    await page.goto('data:text/html,<html><body><button class="btn-primary">Test</button></body></html>')
+    await page.goto(
+      'data:text/html,<html><body><button class="btn-primary">Test</button></body></html>',
+    )
 
     // Get optimization suggestions
     const suggestions = SelectorOptimizer.suggest('.btn-primary')

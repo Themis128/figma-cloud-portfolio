@@ -10,7 +10,7 @@ import { createServer, initializeSocketIO } from './index'
 const DEFAULT_PORT = 3002 // Using 3002 to match CI configuration
 
 const app = createServer()
-const port = process.env['PORT'] || DEFAULT_PORT
+const port = process.env.PORT || DEFAULT_PORT
 
 // In production, serve the built SPA files
 const __dirname = import.meta.dirname

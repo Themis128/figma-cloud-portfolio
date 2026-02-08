@@ -194,29 +194,45 @@ function extractImageFromJsonLd(data: Record<string, unknown>): string | null {
 
   // Handle arrays of objects
   if (Array.isArray(data)) {
-    for (const item of data) {
-      const image = extractImageFromJsonLd(item)
-      if (image) return image
-    }
-    return null
+    return extractImageFromArray(data)
   }
 
   // Direct image property
-  if (typeof data['image'] === 'string') return data['image']
-  if (
-    data['image'] &&
-    typeof data['image'] === 'object' &&
-    'url' in data['image'] &&
-    typeof (data['image'] as Record<string, unknown>)['url'] === 'string'
-  ) {
-    return (data['image'] as Record<string, unknown>)['url'] as string
-  }
+  const directImage = extractDirectImage(data)
+  if (directImage) return directImage
 
   // Article or BlogPosting images
+  return extractArticleImage(data)
+}
+
+function extractImageFromArray(data: Record<string, unknown>[]): string | null {
+  for (const item of data) {
+    const image = extractImageFromJsonLd(item)
+    if (image) return image
+  }
+  return null
+}
+
+function extractDirectImage(data: Record<string, unknown>): string | null {
+  if (typeof data.image === 'string') return data.image
+
+  if (
+    data.image &&
+    typeof data.image === 'object' &&
+    'url' in data.image &&
+    typeof (data.image as Record<string, unknown>).url === 'string'
+  ) {
+    return (data.image as Record<string, unknown>).url as string
+  }
+
+  return null
+}
+
+function extractArticleImage(data: Record<string, unknown>): string | null {
   if (data['@type'] === 'Article' || data['@type'] === 'BlogPosting') {
     return (
-      (typeof data['image'] === 'string' ? data['image'] : null) ||
-      (typeof data['thumbnailUrl'] === 'string' ? data['thumbnailUrl'] : null) ||
+      (typeof data.image === 'string' ? data.image : null) ||
+      (typeof data.thumbnailUrl === 'string' ? data.thumbnailUrl : null) ||
       null
     )
   }

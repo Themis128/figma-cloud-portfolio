@@ -18,7 +18,7 @@ export interface NotificationData {
   userId?: string
   analytics?: boolean
   autoClose?: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface PushNotificationOptions extends NotificationOptions {
@@ -229,7 +229,7 @@ export interface NotificationErrorDetail {
   type: NotificationError
   message: string
   code?: string | number
-  details?: any
+  details?: unknown
   timestamp: number
 }
 
@@ -273,10 +273,17 @@ export interface UseEnhancedNotificationsReturn
     options?: PushNotificationOptions,
   ) => Promise<Notification | null>
   templates: Record<string, () => PushNotificationOptions>
-  manager: any // NotificationManager instance
+  manager: SubscriptionManager // NotificationManager instance
 }
 
 // Default configurations
+// Vibration pattern constants (in milliseconds)
+const VIBRATION_SHORT = 75
+const VIBRATION_MEDIUM = 125
+const VIBRATION_LONG = 200
+const VIBRATION_EXTRA_LONG = 275
+const VIBRATION_DOUBLE_LONG = 600
+
 export const DEFAULT_NOTIFICATION_OPTIONS: PushNotificationOptions = {
   badge: '/logo.jpg',
   icon: '/logo.jpg',
@@ -286,7 +293,20 @@ export const DEFAULT_NOTIFICATION_OPTIONS: PushNotificationOptions = {
   requireInteraction: false,
   silent: false,
   timestamp: Date.now(),
-  vibrate: [125, 75, 125, 275, 200, 275, 125, 75, 125, 275, 200, 600],
+  vibrate: [
+    VIBRATION_MEDIUM,
+    VIBRATION_SHORT,
+    VIBRATION_MEDIUM,
+    VIBRATION_EXTRA_LONG,
+    VIBRATION_LONG,
+    VIBRATION_EXTRA_LONG,
+    VIBRATION_MEDIUM,
+    VIBRATION_SHORT,
+    VIBRATION_MEDIUM,
+    VIBRATION_EXTRA_LONG,
+    VIBRATION_LONG,
+    VIBRATION_DOUBLE_LONG,
+  ],
   data: {
     source: 'system',
     analytics: true,
@@ -357,7 +377,7 @@ export function isValidPermissionState(value: string): value is NotificationPerm
   return NotificationPermissionValues.includes(value as NotificationPermissionState)
 }
 
-export function isPushSubscriptionJSON(obj: any): obj is PushSubscriptionJSON {
+export function isPushSubscriptionJSON(obj: unknown): obj is PushSubscriptionJSON {
   return (
     obj &&
     typeof obj.endpoint === 'string' &&

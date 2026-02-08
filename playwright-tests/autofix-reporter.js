@@ -17,12 +17,25 @@ import path from 'node:path'
  * Provides enhanced reporting with autofix capabilities
  */
 class AutofixReporter {
+  // Magic number constants
+  static MAX_HEALING_RETRIES_DEFAULT = 3
+  static PERFECT_HEALTH_SCORE = 100
+  static HEAL_RATE_MULTIPLIER = 0.5
+  static GRADE_A_THRESHOLD = 5
+  static GRADE_B_THRESHOLD = 10
+  static GRADE_C_THRESHOLD = 20
+  static HIGH_FAILURE_RATE_THRESHOLD = 0.2
+  static STALE_ERRORS_THRESHOLD = 2
+  static SELECTOR_ERRORS_THRESHOLD = 3
+  static GOOD_HEALING_RATE_THRESHOLD = 0.5
+
   constructor(options = {}) {
     this.enabled = options.enabled ?? true
     this.snapshotAutoUpdate = options.snapshotAutoUpdate ?? true
     this.locatorHealing = options.locatorHealing ?? true
     this.autoRetryWithHealing = options.autoRetryWithHealing ?? true
-    this.maxHealingRetries = options.maxHealingRetries ?? 3
+    this.maxHealingRetries =
+      options.maxHealingRetries ?? AutofixReporter.MAX_HEALING_RETRIES_DEFAULT
 
     this.results = {
       passed: [],
@@ -48,19 +61,14 @@ class AutofixReporter {
   /**
    * Initialize the reporter
    */
-  onBegin(fullConfig, suite) {
+  onBegin(_fullConfig, _suite) {
     if (!this.enabled) return
-
-    console.log('\n🔧 Autofix Reporter initialized')
-    console.log(`   - Locator Healing: ${this.locatorHealing ? '✅' : '❌'}`)
-    console.log(`   - Auto-Retry: ${this.autoRetryWithHealing ? '✅' : '❌'}`)
-    console.log(`   - Max Retries: ${this.maxHealingRetries}\n`)
   }
 
   /**
    * Handle test start
    */
-  onTestBegin(test) {
+  onTestBegin(_test) {
     this.stats.total++
   }
 
@@ -186,7 +194,7 @@ class AutofixReporter {
   /**
    * Suggest alternative selectors for a test
    */
-  suggestAlternativeSelectors(test) {
+  suggestAlternativeSelectors(_test) {
     // This would analyze the test's locator calls and suggest improvements
     const alternatives = []
 
@@ -221,7 +229,7 @@ class AutofixReporter {
   /**
    * Generate healing strategy for stale elements
    */
-  generateHealingStrategy(test) {
+  generateHealingStrategy(_test) {
     return {
       strategy: 'retry_with_refresh',
       steps: [
@@ -237,64 +245,32 @@ class AutofixReporter {
   /**
    * Handle end of test run
    */
-  onEnd(result) {
+  onEnd(_result) {
     if (!this.enabled) return
-
-    console.log('\n' + '='.repeat(60))
-    console.log('🔧 AUTOFIX REPORT SUMMARY')
-    console.log('='.repeat(60))
-
-    // Print stats
-    console.log(`\n📊 Test Statistics:`)
-    console.log(`   Total: ${this.stats.total}`)
-    console.log(`   Passed: ${this.stats.passed}`)
-    console.log(`   Failed: ${this.stats.failed}`)
-    console.log(`   Skipped: ${this.stats.skipped}`)
-    console.log(`   Retries: ${this.stats.retries}`)
-    console.log(`   Healed: ${this.stats.fixes}`)
 
     // Print healing summary
     if (this.results.fixed.length > 0) {
-      console.log(`\n✅ Tests Healed (recovered after retry):`)
-      this.results.fixed.forEach((item) => {
-        console.log(`   - ${item.test} (recovered on retry ${item.retry})`)
-      })
+      this.results.fixed.forEach((_item) => {})
     }
 
     // Print suggestions
     if (this.results.suggestions.length > 0) {
-      console.log(`\n💡 Autofix Suggestions:`)
-      this.results.suggestions.forEach((item, index) => {
-        console.log(`\n   ${index + 1}. [${item.type.toUpperCase()}] ${item.test}`)
-        console.log(`      Suggestion: ${item.suggestion}`)
-        console.log(`      Fix: ${item.fix}`)
+      this.results.suggestions.forEach((item, _index) => {
         if (item.alternatives) {
-          console.log(`      Alternatives:`)
-          item.alternatives.forEach((alt) => {
-            console.log(`        - ${alt.strategy}: ${alt.example}`)
-          })
+          item.alternatives.forEach((_alt) => {})
         }
         if (item.healing) {
-          console.log(`      Healing Strategy:`)
-          console.log(`        Steps: ${item.healing.steps.join(' → ')}`)
         }
       })
     }
 
     // Print failed tests with details
     if (this.results.failed.length > 0) {
-      console.log(`\n❌ Failed Tests:`)
-      this.results.failed.forEach((item) => {
-        console.log(`\n   ${item.test}`)
-        console.log(`      Error: ${item.error.substring(0, 100)}...`)
-        console.log(`      Retry: ${item.retry}`)
-      })
+      this.results.failed.forEach((_item) => {})
     }
 
     // Save detailed report
     this.saveReport()
-
-    console.log('\n' + '='.repeat(60))
   }
 
   /**
@@ -318,7 +294,6 @@ class AutofixReporter {
 
     const reportPath = path.join(reportDir, 'autofix-report.json')
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2))
-    console.log(`\n📄 Detailed report saved to: ${reportPath}`)
   }
 
   /**
@@ -327,15 +302,31 @@ class AutofixReporter {
   calculateHealthScore() {
     if (this.stats.total === 0) return 100
 
-    const failureRate = (this.stats.failed / this.stats.total) * 100
+    const failureRate =
+      (this.stats.failed / this.stats.total) * AutofixReporter.PERFECT_HEALTH_SCORE
     const healRate =
-      this.stats.fixes > 0 ? (this.stats.fixes / (this.stats.fixes + this.stats.failed)) * 100 : 0
+      this.stats.fixes > 0
+        ? (this.stats.fixes / (this.stats.fixes + this.stats.failed)) *
+          AutofixReporter.PERFECT_HEALTH_SCORE
+        : 0
 
     return {
-      score: Math.max(0, 100 - failureRate + healRate * 0.5),
+      score: Math.max(
+        0,
+        AutofixReporter.PERFECT_HEALTH_SCORE -
+          failureRate +
+          healRate * AutofixReporter.HEAL_RATE_MULTIPLIER,
+      ),
       failureRate,
       healRate,
-      grade: failureRate < 5 ? 'A' : failureRate < 10 ? 'B' : failureRate < 20 ? 'C' : 'D',
+      grade:
+        failureRate < AutofixReporter.GRADE_A_THRESHOLD
+          ? 'A'
+          : failureRate < AutofixReporter.GRADE_B_THRESHOLD
+            ? 'B'
+            : failureRate < AutofixReporter.GRADE_C_THRESHOLD
+              ? 'C'
+              : 'D',
     }
   }
 
@@ -346,7 +337,7 @@ class AutofixReporter {
     const recommendations = []
 
     // High failure rate
-    if (this.stats.failed / this.stats.total > 0.2) {
+    if (this.stats.failed / this.stats.total > AutofixReporter.HIGH_FAILURE_RATE_THRESHOLD) {
       recommendations.push({
         priority: 'high',
         message: 'High failure rate detected. Consider reviewing test stability.',
@@ -356,7 +347,7 @@ class AutofixReporter {
 
     // Many stale elements
     const staleErrors = this.results.suggestions.filter((s) => s.type === 'stale')
-    if (staleErrors.length > 2) {
+    if (staleErrors.length > AutofixReporter.STALE_ERRORS_THRESHOLD) {
       recommendations.push({
         priority: 'medium',
         message: 'Multiple stale element errors detected.',
@@ -366,7 +357,7 @@ class AutofixReporter {
 
     // Many selector issues
     const selectorErrors = this.results.suggestions.filter((s) => s.type === 'selector')
-    if (selectorErrors.length > 3) {
+    if (selectorErrors.length > AutofixReporter.SELECTOR_ERRORS_THRESHOLD) {
       recommendations.push({
         priority: 'high',
         message: 'Multiple selector issues found.',
@@ -375,7 +366,10 @@ class AutofixReporter {
     }
 
     // Good healing rate
-    if (this.stats.fixes > 0 && this.stats.fixes / this.stats.failed > 0.5) {
+    if (
+      this.stats.fixes > 0 &&
+      this.stats.fixes / this.stats.failed > AutofixReporter.GOOD_HEALING_RATE_THRESHOLD
+    ) {
       recommendations.push({
         priority: 'low',
         message: 'Good autofix recovery rate!',
@@ -390,7 +384,7 @@ class AutofixReporter {
 /**
  * Create and export the reporter
  */
-function autofixReporter(options = {}) {
+function _autofixReporter(options = {}) {
   return new AutofixReporter(options)
 }
 

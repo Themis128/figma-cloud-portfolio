@@ -58,13 +58,17 @@ const DEV_LONG_TASK_THRESHOLD = 100
 const PROD_LONG_TASK_THRESHOLD = 50
 const MEMORY_CHECK_INTERVAL = 30000
 const MEMORY_PERCENTAGE_MULTIPLIER = 100
+const SESSION_DURATION_MINUTES = 30
+// Move MILLISECONDS_PER_SECOND before any usage to avoid TDZ
+const MILLISECONDS_PER_SECOND = 1000
+const SESSION_DURATION_MS = SESSION_DURATION_MINUTES * 60 * MILLISECONDS_PER_SECOND
 
 // Get session info from window
 const getSessionInfo = (): { sessionId: number; engagementTime: number } => {
   if (typeof window === 'undefined') return { sessionId: 0, engagementTime: 0 }
 
   const now = Date.now()
-  const sessionDuration = 30 * 60 * 1000 // 30 minutes
+  const sessionDuration = SESSION_DURATION_MS
 
   const existing = window.gtagSession
 
@@ -73,7 +77,7 @@ const getSessionInfo = (): { sessionId: number; engagementTime: number } => {
   }
 
   const newSession = {
-    sessionId: Math.floor(now / 1000),
+    sessionId: Math.floor(now / MILLISECONDS_PER_SECOND),
     engagementTime: now,
   }
   window.gtagSession = newSession
@@ -135,56 +139,53 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
     }
   }, [])
 
-  // Update metrics function - defined outside useEffect for proper scoping
-  const updateMetrics = useCallback((newMetrics: Partial<PerformanceMetrics>) => {
-    setMetrics((prev) => {
-      const updated = { ...prev, ...newMetrics }
+  // Helper functions for long task monitoring
+  const getLongTaskThreshold = useCallback((): number => {
+    return import.meta.env.DEV ? DEV_LONG_TASK_THRESHOLD : PROD_LONG_TASK_THRESHOLD
+  }, [])
 
-      // Update global metrics for testing
-      if (typeof window !== 'undefined') {
-        window.webVitals = true
-        window.webVitalsMetrics = window.webVitalsMetrics || []
-        const metricKeys = Object.keys(newMetrics)
-        const metricValues = Object.values(newMetrics)
-        if (metricKeys.length > 0 && metricValues.length > 0 && metricKeys[0]) {
-          window.webVitalsMetrics.push({
-            name: metricKeys[0].toUpperCase(),
-            value: metricValues[0] as number,
-            timestamp: Date.now(),
-          })
-        }
-      }
+  const shouldReportLongTask = useCallback(
+    (duration: number): boolean => {
+      return duration > getLongTaskThreshold()
+    },
+    [getLongTaskThreshold],
+  )
 
-      onMetricsUpdate?.(updated)
+  const reportLongTaskToGA4 = useCallback((entry: PerformanceEntry): void => {
+    if (import.meta.env.DEV || typeof gtag === 'undefined') return
 
-      // Batch reporting for React 19 automatic batching
-      if (batchReporting) {
-        const metricKeys = Object.keys(newMetrics)
-        const metricValues = Object.values(newMetrics)
-        if (metricKeys.length > 0 && metricValues.length > 0 && metricKeys[0]) {
-          const metricEntry = {
-            name: metricKeys[0].toUpperCase(),
-            value: metricValues[0] as number,
-            id: `${Date.now()}-${Math.random().toString(RANDOM_ID_BASE).substr(2, RANDOM_ID_LENGTH)}`,
-          } as Metric
+    const { sessionId, engagementTime } = getSessionInfo()
 
-          reportQueueRef.current.push(metricEntry)
-
-          // Send immediately if gtag is available (for testing)
-          if (typeof gtag !== 'undefined') {
-            sendMetricImmediately(metricEntry)
-          }
-
-          // Flush reports in batches (React 19 will automatically batch these updates)
-          if (reportQueueRef.current.length >= BATCH_SIZE) {
-            flushReports()
-          }
-        }
-      }
-
-      return updated
+    gtag('event', 'long_task', {
+      event_category: 'Performance',
+      value: Math.round(entry.duration),
+      non_interaction: true,
+      session_id: sessionId,
+      engagement_time_msec: engagementTime,
     })
-  }, [batchReporting, onMetricsUpdate, flushReports])
+  }, [])
+
+  const handleLongTask = useCallback(
+    (entry: PerformanceEntry): void => {
+      if (shouldReportLongTask(entry.duration)) {
+        reportLongTaskToGA4(entry)
+      }
+    },
+    [shouldReportLongTask, reportLongTaskToGA4],
+  )
+
+  // Update metrics function - defined outside useEffect for proper scoping
+  const updateMetrics = useCallback(
+    (newMetrics: Partial<PerformanceMetrics>) => {
+      const updater = (prev: PerformanceMetrics) => {
+        const updated = { ...prev, ...newMetrics }
+        onMetricsUpdate?.(updated)
+        return updated
+      }
+      setMetrics(updater)
+    },
+    [onMetricsUpdate],
+  )
 
   useEffect(() => {
     if (!enabled || typeof window === 'undefined') return
@@ -259,26 +260,6 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
       // Monitor long tasks (less aggressive in development)
       if ('PerformanceObserver' in window) {
         try {
-          const handleLongTask = (entry: PerformanceEntry) => {
-            const isDevelopment = import.meta.env.DEV
-            const threshold = isDevelopment ? DEV_LONG_TASK_THRESHOLD : PROD_LONG_TASK_THRESHOLD
-
-            if (entry.duration > threshold) {
-              // Only report to GA4 in production
-              if (!isDevelopment && typeof gtag !== 'undefined') {
-                const { sessionId, engagementTime } = getSessionInfo()
-
-                gtag('event', 'long_task', {
-                  event_category: 'Performance',
-                  value: Math.round(entry.duration),
-                  non_interaction: true,
-                  session_id: sessionId,
-                  engagement_time_msec: engagementTime,
-                })
-              }
-            }
-          }
-
           const longTaskObserver = new PerformanceObserver((list) => {
             const entries = list.getEntries()
             entries.forEach(handleLongTask)
@@ -298,12 +279,15 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
     // Return undefined for non-advanced monitoring case
     return undefined
-  }, [enabled, enableAdvancedMetrics, updateMetrics])
+  }, [enabled, enableAdvancedMetrics, updateMetrics, sendMetricImmediately, handleLongTask])
 
   // Component performance tracking functions
-  const trackCustomMetric = useCallback((name: string, value: number) => {
-    updateMetrics({ [name]: value })
-  }, [])
+  const trackCustomMetric = useCallback(
+    (name: string, value: number) => {
+      updateMetrics({ [name]: value })
+    },
+    [updateMetrics],
+  )
 
   const trackInteraction = useCallback(
     (interactionName: string) => {

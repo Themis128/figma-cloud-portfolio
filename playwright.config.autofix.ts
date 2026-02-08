@@ -153,16 +153,5 @@ if (process.env.PLAYWRIGHT_START_SERVERS === 'true' && !process.env.CI) {
   ]
 }
 
-// Log configuration
-console.log('🔧 Autofix Configuration:')
-console.log(`   - Snapshot Auto-Update: ${autofixConfig.snapshotAutoUpdate ? '✅' : '❌'}`)
-console.log(`   - Locator Healing: ${autofixConfig.locatorHealing ? '✅' : '❌'}`)
-console.log(`   - Auto-Retry with Healing: ${autofixConfig.autoRetryWithHealing ? '✅' : '❌'}`)
-console.log(`   - Max Healing Retries: ${autofixConfig.maxHealingRetries}`)
-console.log(`   - Stale Selector Detection: ${autofixConfig.detectStaleSelectors ? '✅' : '❌'}`)
-console.log(`   - Performance Auto-Fix: ${autofixConfig.performanceAutoFix ? '✅' : '❌'}`)
-console.log(`   - Accessibility Auto-Fix: ${autofixConfig.accessibilityAutoFix ? '✅' : '❌'}`)
-console.log('')
-
 export { config, autofixConfig }
 export default config

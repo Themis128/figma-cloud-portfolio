@@ -43,7 +43,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     }
 
     // Wait for React to hydrate - using waitForFunction instead of deprecated waitForTimeout
-    await page.waitForFunction(() => new Promise(r => setTimeout(r, 5000)))
+    await page.waitForFunction(() => new Promise((r) => setTimeout(r, 5000)))
 
     // Basic checks - verify HTML structure is correct
     console.log('Checking basic HTML structure...')
@@ -321,7 +321,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     const skipLink = page.getByRole('link', { name: 'Skip to main content' })
 
     // Wait a bit for focus to settle
-    await page.waitForFunction(() => new Promise(r => setTimeout(r, 100)))
+    await page.waitForFunction(() => new Promise((r) => setTimeout(r, 100)))
 
     // On some browsers, we need to check if the element exists and is visible on focus
     await expect(skipLink).toBeAttached()
@@ -496,7 +496,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     await page.waitForLoadState('domcontentloaded', { timeout: 10000 })
 
     // Additional wait for JS to hydrate
-    await page.waitForFunction(() => new Promise(r => setTimeout(r, 2000)))
+    await page.waitForFunction(() => new Promise((r) => setTimeout(r, 2000)))
 
     // Check that no critical requests failed
     // Allow failures from external services (fonts, analytics, etc.)
@@ -640,7 +640,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.getByRole('button', { name: 'Send Message' }).click()
 
       // Wait for form submission to complete (reduced timeout)
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1500)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1500)))
 
       // Check that the form submission completed without crashing
       // The form may or may not show success messages or clear fields
@@ -664,7 +664,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await page.getByRole('button', { name: 'Send Message' }).click()
 
       // Wait for error message (reduced timeout)
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1500)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1500)))
       await expect(page.getByText('Failed to send message.')).toBeVisible()
     })
 
@@ -800,7 +800,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await submitButton.click()
 
       // Wait for potential state changes (React may update the button)
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1000)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1000)))
 
       // The form should either:
       // 1. Show a success/error message, or
@@ -847,7 +847,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await submitButton.click()
 
       // Wait for submission to complete - button should be disabled during submission and re-enabled after
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1000))) // Give time for submission to start
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1000))) // Give time for submission to start
 
       // Check that the form submission process completes (button becomes enabled again or stays disabled with feedback)
       // Since backend may not be running, we just verify the form attempted submission
@@ -1180,7 +1180,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
       // Test theme switching
       await page.getByLabel('Dark').check()
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 100)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 100)))
 
       // Check that dark theme is applied
       const htmlClasses = await page.locator('html').getAttribute('class')
@@ -1188,7 +1188,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
 
       // Switch back to light
       await page.getByLabel('Light').check()
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 100)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 100)))
 
       const lightClasses = await page.locator('html').getAttribute('class')
       expect(lightClasses).not.toContain('dark')
@@ -1404,7 +1404,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       await expect(page.getByRole('heading', { name: 'Top Skills' })).toBeVisible()
 
       // Wait for animations to complete
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1000)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1000)))
 
       // Sections should still be visible
       await expect(page.getByRole('heading', { name: 'Professional Summary' })).toBeVisible()
@@ -1418,7 +1418,7 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
         window.scrollTo(0, document.body.scrollHeight / 2)
       })
 
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 500)))
 
       // Check that content is still visible after scroll
       // Use role selector to avoid strict mode violation

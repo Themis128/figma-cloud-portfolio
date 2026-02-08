@@ -105,22 +105,27 @@ export async function waitForAppReady(page: Page) {
     await page.waitForFunction(
       () => {
         const root = document.querySelector('#root')
-        return root && root.textContent && root.textContent.trim().length > 10
+        return root?.textContent && root.textContent.trim().length > 10
       },
       { timeout: 20000 },
     )
 
     // Additional wait for any dynamic content to load
-    await page.waitForFunction(
-      () => {
-        // Check if the main content areas are populated
-        const mainContent = document.querySelector('main') || document.querySelector('[data-testid="main-content"]') || document.querySelector('#root')
-        return mainContent && mainContent.textContent && mainContent.textContent.trim().length > 5
-      },
-      { timeout: 10000 },
-    ).catch(() => {
-      console.log('Main content check failed, but continuing...')
-    })
+    await page
+      .waitForFunction(
+        () => {
+          // Check if the main content areas are populated
+          const mainContent =
+            document.querySelector('main') ||
+            document.querySelector('[data-testid="main-content"]') ||
+            document.querySelector('#root')
+          return mainContent?.textContent && mainContent.textContent.trim().length > 5
+        },
+        { timeout: 10000 },
+      )
+      .catch(() => {
+        console.log('Main content check failed, but continuing...')
+      })
 
     // Brief pause to ensure stability
     await page.waitForTimeout(500)
@@ -201,9 +206,9 @@ export async function waitForElement(
 
       if (stable) {
         // Wait for element to be stable (no layout shifts)
-        await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
+        await page.waitForFunction(() => new Promise((r) => setTimeout(r, 500)))
         const initialBox = await element.boundingBox()
-        await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
+        await page.waitForFunction(() => new Promise((r) => setTimeout(r, 500)))
         const finalBox = await element.boundingBox()
 
         if (initialBox && finalBox) {
@@ -390,12 +395,12 @@ export async function waitForDynamicContent(
     }
 
     // Wait a bit before checking again
-    await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
+    await page.waitForFunction(() => new Promise((r) => setTimeout(r, 500)))
 
     // Reload if content is taking too long (possible caching issue)
     if (Date.now() - startTime > timeout / 2) {
       await page.reload({ waitUntil: 'domcontentloaded' })
-      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1000)))
+      await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1000)))
     }
   }
 

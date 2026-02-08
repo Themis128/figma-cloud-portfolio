@@ -62,64 +62,66 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     // On desktop, check for main navigation links
     const viewportSize = page.viewportSize()
     if (viewportSize && viewportSize.width >= DESKTOP_BREAKPOINT) {
-      // Check navigation landmark
-      const nav = page.locator('nav')
-      await expect(nav).toBeVisible()
-
-      // Verify navigation links exist and are accessible
-      const homeLink = page.getByRole('link', { name: /home/i })
-      const aboutLink = page.getByRole('link', { name: /about/i })
-      const experienceLink = page.getByRole('link', {
-        name: /experience|work/i,
-      })
-      const contactLink = page.getByRole('link', { name: /contact/i })
-
-      // At least some navigation should be visible
-      const links = [homeLink, aboutLink, experienceLink, contactLink]
-      let visibleLinks = 0
-      for (const link of links) {
-        try {
-          await expect(link).toBeVisible()
-          visibleLinks++
-        } catch {
-          // Link might not be visible, continue
-        }
-      }
-      expect(visibleLinks).toBeGreaterThan(0)
+      await checkDesktopNavigation(page)
     } else {
-      // On mobile, navigation links are in the mobile menu
-      // Check for mobile menu button with more flexible selectors
-      const mobileSelectors = [
-        'button[aria-label*="menu"]',
-        'button[aria-label*="Menu"]',
-        'button:has-text("☰")',
-        'button:has-text("≡")',
-        '[data-testid="mobile-menu-button"]',
-      ]
-
-      let mobileMenuFound = false
-      for (const selector of mobileSelectors) {
-        try {
-          await expect(page.locator(selector)).toBeVisible()
-          mobileMenuFound = true
-          break
-        } catch {
-          // Continue to next selector
-        }
-      }
-
-      // Fallback: just check that navigation exists
-      if (!mobileMenuFound) {
-        await expect(page.locator('nav, header')).toBeVisible()
-      }
+      await checkMobileNavigation(page)
     }
   })
 
-  test('should display PWA install button with proper functionality', async ({ page }) => {
-    await page.goto('/')
+  async function checkDesktopNavigation(page: Page): Promise<void> {
+    // Check navigation landmark
+    const nav = page.locator('nav')
+    await expect(nav).toBeVisible()
 
-    // Check for PWA install button in navigation
-    // Even if install button isn't visible, page should still load properly
+    // Verify navigation links exist and are accessible
+    const homeLink = page.getByRole('link', { name: /home/i })
+    const aboutLink = page.getByRole('link', { name: /about/i })
+    const experienceLink = page.getByRole('link', {
+      name: /experience|work/i,
+    })
+    const contactLink = page.getByRole('link', { name: /contact/i })
+
+    // At least some navigation should be visible
+    const links = [homeLink, aboutLink, experienceLink, contactLink]
+    let visibleLinks = 0
+    for (const link of links) {
+      try {
+        await expect(link).toBeVisible()
+        visibleLinks++
+      } catch {
+        // Link might not be visible, continue
+      }
+    }
+    expect(visibleLinks).toBeGreaterThan(0)
+  }
+
+  async function checkMobileNavigation(page: Page): Promise<void> {
+    // On mobile, navigation links are in the mobile menu
+    // Check for mobile menu button with more flexible selectors
+    const mobileSelectors = [
+      'button[aria-label*="menu"]',
+      'button[aria-label*="Menu"]',
+      'button:has-text("☰")',
+      'button:has-text("≡")',
+      '[data-testid="mobile-menu-button"]',
+    ]
+
+    let mobileMenuFound = false
+    for (const selector of mobileSelectors) {
+      try {
+        await expect(page.locator(selector)).toBeVisible()
+        mobileMenuFound = true
+        break
+      } catch {
+        // Continue to next selector
+      }
+    }
+
+    // Fallback: just check that navigation exists
+    if (!mobileMenuFound) {
+      await expect(page.locator('nav, header')).toBeVisible()
+    }
+  }
     await expect(page.locator('body')).toBeVisible()
 
     // Check for PWA manifest link (only in production builds)
@@ -259,6 +261,16 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     await page.goto('/')
     await page.setViewportSize({ width: 375, height: 667 })
 
+    const menuResult = await tryOpenMobileMenu(page)
+    if (menuResult.opened && menuResult.button) {
+      await checkMobileMenuFunctionality(page, menuResult.button)
+    } else {
+      // If no mobile menu, just check that page works on mobile
+      await expect(page.locator('body')).toBeVisible()
+    }
+  })
+
+  async function tryOpenMobileMenu(page: Page): Promise<{ opened: boolean; button?: Locator }> {
     // Try to find and click mobile menu button with flexible selectors
     const mobileSelectors = [
       'button[aria-label*="menu"]',
@@ -268,59 +280,59 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       '[data-testid="mobile-menu-button"]',
     ]
 
-    let menuOpened = false
-    let menuButton: Locator | undefined
     for (const selector of mobileSelectors) {
       try {
-        menuButton = page.locator(selector)
-        const isVisible = await menuButton.isVisible()
+        const button = page.locator(selector)
+        const isVisible = await button.isVisible()
 
         if (isVisible) {
-          await menuButton.click()
-          menuOpened = true
-          break
+          await button.click()
+          return { opened: true, button }
         }
       } catch {
         // Continue to next selector
       }
     }
 
-    if (menuOpened && menuButton) {
-      // Wait a bit for the menu to open
-      await page.waitForTimeout(MOBILE_MENU_TIMEOUT)
+    return { opened: false }
+  }
 
-      // Check that mobile menu is open
-      const mobileMenu = page.locator('[role="dialog"], .mobile-menu, [data-testid="mobile-menu"]')
-      const menuVisible = await mobileMenu.isVisible()
+  async function checkMobileMenuFunctionality(page: Page, menuButton: Locator): Promise<void> {
+    // Wait a bit for the menu to open
+    await page.waitForTimeout(MOBILE_MENU_TIMEOUT)
 
-      if (menuVisible) {
-        await expect(mobileMenu).toBeVisible()
+    // Check that mobile menu is open
+    const mobileMenu = page.locator('[role="dialog"], .mobile-menu, [data-testid="mobile-menu"]')
+    const menuVisible = await mobileMenu.isVisible()
 
-        // Check that focus is managed (at least one focusable element exists)
-        const focusableElements = mobileMenu.locator('a, button')
-        const focusableCount = await focusableElements.count()
+    if (menuVisible) {
+      await expect(mobileMenu).toBeVisible()
 
-        if (focusableCount > 0) {
-          await expect(focusableElements.first()).toBeVisible()
-        }
+      // Check that focus is managed (at least one focusable element exists)
+      const focusableElements = mobileMenu.locator('a, button')
+      const focusableCount = await focusableElements.count()
 
-        // Try to close the menu
-        try {
-          // Try clicking the same button again to close
-          await menuButton.click()
-
-          // Wait for menu to close
-          await page.waitForTimeout(MOBILE_MENU_TIMEOUT)
-          await expect(mobileMenu).not.toBeVisible()
-        } catch {
-          // Menu close failed, but test still passes if menu opened
-        }
+      if (focusableCount > 0) {
+        await expect(focusableElements.first()).toBeVisible()
       }
-    } else {
-      // If no mobile menu, just check that page works on mobile
-      await expect(page.locator('body')).toBeVisible()
+
+      // Try to close the menu
+      await tryCloseMobileMenu(page, menuButton, mobileMenu)
     }
-  })
+  }
+
+  async function tryCloseMobileMenu(page: Page, menuButton: Locator, mobileMenu: Locator): Promise<void> {
+    try {
+      // Try clicking the same button again to close
+      await menuButton.click()
+
+      // Wait for menu to close
+      await page.waitForTimeout(MOBILE_MENU_TIMEOUT)
+      await expect(mobileMenu).not.toBeVisible()
+    } catch {
+      // Menu close failed, but test still passes if menu opened
+    }
+  }
 
   test('should close mobile menu on navigation with proper UX', async ({ page }) => {
     await page.goto('/')

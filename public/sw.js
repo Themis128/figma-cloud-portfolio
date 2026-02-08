@@ -12,22 +12,18 @@ if (workbox) {
   // Claim all clients immediately
   workbox.core.clientsClaim();
 
-  // Skip waiting for immediate updates
-  workbox.core.skipWaiting();
+  // Skip waiting for immediate updates (using self.skipWaiting instead of deprecated workbox.core.skipWaiting)
+  self.skipWaiting();
 
   // Clean up old caches
   workbox.precaching.cleanupOutdatedCaches();
 
-  // Enhanced SPA navigation routes with better error handling
-  workbox.routing.registerRoute(
-    new workbox.NavigationRoute(
-      workbox.createHandlerBoundToURL("/index.html"),
-      {
-        allowlist: [/^\/$/, /^\/\w+/], // Allow root and single-level paths
-        denylist: [/^\/api\//, /^\/_/, /^\/[^/?]+\.[^/]+$/, /\.json$/], // Better exclusions
-      },
-    ),
-  );
+  // Precache resources injected by Vite PWA plugin
+  workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
+
+  // Enhanced SPA navigation routes - using navigateFallback from Vite PWA config
+  // No need to manually register NavigationRoute when using injectManifest strategy
+  // The Vite PWA plugin handles this with navigateFallback: '/index.html'
 
   // Enhanced API caching with background sync
   const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
@@ -55,38 +51,38 @@ if (workbox) {
     }),
   );
 
-  // Enhanced Google Fonts caching (separate strategies for CSS and fonts)
-  workbox.routing.registerRoute(
-    /^https:\/\/fonts\.googleapis\.com/i,
-    new workbox.strategies.CacheFirst({
-      cacheName: "google-fonts-stylesheets",
-      plugins: [
-        new workbox.expiration.ExpirationPlugin({
-          maxEntries: 10,
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-        }),
-        new workbox.cacheableResponse.CacheableResponsePlugin({
-          statuses: [0, 200],
-        }),
-      ],
-    }),
-  );
+  // Enhanced Google Fonts caching (disabled - using system fonts)
+  // workbox.routing.registerRoute(
+  //   /^https:\/\/fonts\.googleapis\.com/i,
+  //   new workbox.strategies.CacheFirst({
+  //     cacheName: "google-fonts-stylesheets",
+  //     plugins: [
+  //       new workbox.expiration.ExpirationPlugin({
+  //         maxEntries: 10,
+  //         maxAgeSeconds: CACHE_DURATION_1_YEAR,
+  //       }),
+  //       new workbox.cacheableResponse.CacheableResponsePlugin({
+  //         statuses: [0, 200],
+  //       }),
+  //     ],
+  //   }),
+  // );
 
-  workbox.routing.registerRoute(
-    /^https:\/\/fonts\.gstatic\.com/i,
-    new workbox.strategies.CacheFirst({
-      cacheName: "google-fonts-webfonts",
-      plugins: [
-        new workbox.expiration.ExpirationPlugin({
-          maxEntries: 30,
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-        }),
-        new workbox.cacheableResponse.CacheableResponsePlugin({
-          statuses: [0, 200],
-        }),
-      ],
-    }),
-  );
+  // workbox.routing.registerRoute(
+  //   /^https:\/\/fonts\.gstatic\.com/i,
+  //   new workbox.strategies.CacheFirst({
+  //     cacheName: "google-fonts-webfonts",
+  //     plugins: [
+  //       new workbox.expiration.ExpirationPlugin({
+  //         maxEntries: 30,
+  //         maxAgeSeconds: CACHE_DURATION_1_YEAR,
+  //       }),
+  //       new workbox.cacheableResponse.CacheableResponsePlugin({
+  //         statuses: [0, 200],
+  //       }),
+  //     ],
+  //   }),
+  // );
 
   // Enhanced images caching with WebP/AVIF support
   workbox.routing.registerRoute(
@@ -365,17 +361,31 @@ self.addEventListener("message", (event) => {
         break;
       case "CACHE_STATS":
         reportCacheStats().then((stats) => {
-          if (event.ports[0]) {
+          if (event.ports && event.ports[0]) {
             event.ports[0].postMessage({ type: "CACHE_STATS_RESPONSE", stats });
+          }
+        }).catch((error) => {
+          console.error("Error getting cache stats:", error);
+          if (event.ports && event.ports[0]) {
+            event.ports[0].postMessage({ type: "CACHE_STATS_RESPONSE", error: error.message });
           }
         });
         break;
       case "CLEAR_CACHE":
         clearSpecificCache(event.data.cacheName).then((result) => {
-          if (event.ports[0]) {
+          if (event.ports && event.ports[0]) {
             event.ports[0].postMessage({
               type: "CACHE_CLEARED",
               success: result,
+            });
+          }
+        }).catch((error) => {
+          console.error("Error clearing cache:", error);
+          if (event.ports && event.ports[0]) {
+            event.ports[0].postMessage({
+              type: "CACHE_CLEARED",
+              success: false,
+              error: error.message,
             });
           }
         });
@@ -393,7 +403,8 @@ self.addEventListener("message", (event) => {
     }
   }
 
-  // Don't return anything - prevents "expecting async response" errors
+  // Don't return true - this prevents the "async response" error
+  // The message handling is now synchronous and doesn't indicate async responses
 });
 
 // Enhanced Background sync with intelligent queue management
@@ -710,8 +721,8 @@ async function cleanupOldCaches() {
     const cacheNames = await caches.keys();
     const currentCaches = [
       "enhanced-api-cache",
-      "google-fonts-stylesheets",
-      "google-fonts-webfonts",
+      "google-fonts-stylesheets", // Keep for backward compatibility
+      "google-fonts-webfonts", // Keep for backward compatibility
       "enhanced-images-cache",
       "enhanced-static-resources",
       "cdn-resources",
@@ -725,6 +736,15 @@ async function cleanupOldCaches() {
     for (const cacheName of oldCaches) {
       await caches.delete(cacheName);
       console.log("Cleaned up old cache:", cacheName);
+    }
+
+    // Also clean up Google Fonts caches since we no longer use them
+    const googleFontsCaches = ["google-fonts-stylesheets", "google-fonts-webfonts"];
+    for (const cacheName of googleFontsCaches) {
+      if (cacheNames.includes(cacheName)) {
+        await caches.delete(cacheName);
+        console.log("Cleaned up unused Google Fonts cache:", cacheName);
+      }
     }
   } catch (error) {
     console.error("Failed to cleanup old caches:", error);

@@ -186,7 +186,7 @@ export default function Performance() {
   }
 
   // Report generation handler
-  const handleGenerateReport = async () => {
+  const handleGenerateReport = () => {
     if (!testResults) {
       alert('Please run a performance test first.')
       return

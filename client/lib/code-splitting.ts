@@ -3,6 +3,9 @@
 import type { ComponentType } from 'react'
 import { lazy } from 'react'
 
+// Constants
+const RETRY_DELAY_MS = 100
+
 // =============================================================================
 // ROUTE-LEVEL CODE SPLITTING
 // =============================================================================
@@ -141,7 +144,7 @@ interface LazyComponentOptions {
 /**
  * Enhanced lazy loading with React 19 optimizations
  */
-export function createLazyComponent<T extends ComponentType<any>>(
+export function createLazyComponent<T extends ComponentType<unknown>>(
   importFn: () => Promise<{ default: T }>,
   options: LazyComponentOptions = {},
 ): T {
@@ -179,8 +182,10 @@ export function createLazyComponent<T extends ComponentType<any>>(
   if (preload) {
     // Use React 19's built-in preloading capabilities
     setTimeout(() => {
-      importWithRetry().catch(console.error)
-    }, 100)
+      importWithRetry().catch(() => {
+        // Ignore preload failures
+      })
+    }, RETRY_DELAY_MS)
   }
 
   return LazyComponent as unknown as T
@@ -189,117 +194,111 @@ export function createLazyComponent<T extends ComponentType<any>>(
 /**
  * Preload routes based on user behavior
  */
-export class RoutePreloader {
-  private static preloadedRoutes = new Set<string>()
-  private static preloadPromises = new Map<string, Promise<any>>()
+const preloadedRoutes = new Set<string>()
+const preloadPromises = new Map<string, Promise<unknown>>()
 
-  static preloadRoute(routeName: string, importFn: () => Promise<any>): void {
-    if (RoutePreloader.preloadedRoutes.has(routeName)) return
+export const preloadRoute = (routeName: string, importFn: () => Promise<unknown>): void => {
+  if (preloadedRoutes.has(routeName)) return
 
-    RoutePreloader.preloadedRoutes.add(routeName)
-    const promise = importFn().catch((_error) => {
-      RoutePreloader.preloadedRoutes.delete(routeName)
-    })
+  preloadedRoutes.add(routeName)
+  const promise = importFn().catch((_error) => {
+    preloadedRoutes.delete(routeName)
+  })
 
-    RoutePreloader.preloadPromises.set(routeName, promise)
-  }
+  preloadPromises.set(routeName, promise)
+}
 
-  static async getPreloadedRoute(routeName: string): Promise<any> {
-    return RoutePreloader.preloadPromises.get(routeName)
-  }
+export const getPreloadedRoute = (routeName: string): unknown => {
+  return preloadPromises.get(routeName)
+}
 
-  static preloadCriticalRoutes(): void {
-    // Preload most likely next routes
-    RoutePreloader.preloadRoute('about', () => import('../pages/About'))
-    RoutePreloader.preloadRoute('projects', () => import('../pages/Projects'))
-  }
+export const preloadCriticalRoutes = (): void => {
+  // Preload most likely next routes
+  preloadRoute('about', () => import('../pages/About'))
+  preloadRoute('projects', () => import('../pages/Projects'))
+}
 
-  static preloadOnHover(routeName: string, importFn: () => Promise<any>): void {
-    // Preload on link hover for instant navigation
-    requestIdleCallback(() => {
-      RoutePreloader.preloadRoute(routeName, importFn)
-    })
-  }
+export const preloadOnHover = (routeName: string, importFn: () => Promise<unknown>): void => {
+  // Preload on link hover for instant navigation
+  requestIdleCallback(() => {
+    preloadRoute(routeName, importFn)
+  })
 }
 
 /**
  * Intelligent component loading based on viewport
  */
-export class ViewportLoader {
-  private static observer: IntersectionObserver | null = null
-  private static pendingLoads = new Map<Element, () => void>()
+let viewportObserver: IntersectionObserver | null = null
+const pendingLoads = new Map<Element, () => void>()
 
-  static initialize(): void {
-    if (ViewportLoader.observer || typeof IntersectionObserver === 'undefined') return
+export function initializeViewportLoader(): void {
+  if (viewportObserver || typeof IntersectionObserver === 'undefined') return
 
-    ViewportLoader.observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const loadFn = ViewportLoader.pendingLoads.get(entry.target)
-            if (loadFn) {
-              loadFn()
-              ViewportLoader.pendingLoads.delete(entry.target)
-              ViewportLoader.observer?.unobserve(entry.target)
-            }
+  viewportObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const loadFn = pendingLoads.get(entry.target)
+          if (loadFn) {
+            loadFn()
+            pendingLoads.delete(entry.target)
+            viewportObserver?.unobserve(entry.target)
           }
-        })
-      },
-      {
-        rootMargin: '50px',
-      },
-    )
-  }
+        }
+      })
+    },
+    {
+      rootMargin: '50px',
+    },
+  )
+}
 
-  static loadOnVisible(element: Element, loadFn: () => void): void {
-    if (!ViewportLoader.observer) ViewportLoader.initialize()
+export function loadOnVisible(element: Element, loadFn: () => void): void {
+  if (!viewportObserver) initializeViewportLoader()
 
-    ViewportLoader.pendingLoads.set(element, loadFn)
-    ViewportLoader.observer?.observe(element)
-  }
+  pendingLoads.set(element, loadFn)
+  viewportObserver?.observe(element)
+}
 
-  static cleanup(): void {
-    ViewportLoader.observer?.disconnect()
-    ViewportLoader.observer = null
-    ViewportLoader.pendingLoads.clear()
-  }
+export function cleanupViewportLoader(): void {
+  viewportObserver?.disconnect()
+  viewportObserver = null
+  pendingLoads.clear()
 }
 
 /**
  * Bundle size analyzer for development
  */
-export class BundleAnalyzer {
-  static analyzeChunkSizes(): void {
-    if (process.env['NODE_ENV'] !== 'development') return
+export function analyzeChunkSizes(): void {
+  if (process.env.NODE_ENV !== 'development') return
 
-    // Measure and log chunk sizes
-    performance.mark('bundle-analysis-start')
+  // Measure and log chunk sizes
+  performance.mark('bundle-analysis-start')
 
-    const observer = new PerformanceObserver((list) => {
-      const entries = list.getEntries()
-      entries.forEach((entry) => {
-        if (entry.name.includes('chunk')) {
-        }
-      })
+  const observer = new PerformanceObserver((list) => {
+    const entries = list.getEntries()
+    entries.forEach((entry) => {
+      if (entry.name.includes('chunk')) {
+      }
     })
+  })
 
-    observer.observe({ entryTypes: ['measure'] })
-  }
+  observer.observe({ entryTypes: ['measure'] })
+}
 
-  static measureComponentLoad(componentName: string): void {
-    if (process.env['NODE_ENV'] !== 'development') return
+export function measureComponentLoad(componentName: string): void {
+  if (process.env.NODE_ENV !== 'development') return
 
-    performance.mark(`component-${componentName}-start`)
+  performance.mark(`component-${componentName}-start`)
 
-    requestIdleCallback(() => {
-      performance.mark(`component-${componentName}-end`)
-      performance.measure(
-        `component-${componentName}`,
-        `component-${componentName}-start`,
-        `component-${componentName}-end`,
-      )
-    })
-  }
+  requestIdleCallback(() => {
+    performance.mark(`component-${componentName}-end`)
+    performance.measure(
+      `component-${componentName}`,
+      `component-${componentName}-start`,
+      `component-${componentName}-end`,
+    )
+  })
 }
 
 // =============================================================================
@@ -327,10 +326,10 @@ export const codeSpittingConfig = {
 }
 
 // Initialize viewport loader
-ViewportLoader.initialize()
+initializeViewportLoader()
 
 // Initialize bundle analyzer in development
-BundleAnalyzer.analyzeChunkSizes()
+analyzeChunkSizes()
 
 export default {
   // Page components
@@ -352,8 +351,14 @@ export default {
 
   // Utilities
   createLazyComponent,
-  RoutePreloader,
-  ViewportLoader,
-  BundleAnalyzer,
+  preloadRoute,
+  getPreloadedRoute,
+  preloadCriticalRoutes,
+  preloadOnHover,
+  initializeViewportLoader,
+  loadOnVisible,
+  cleanupViewportLoader,
+  analyzeChunkSizes,
+  measureComponentLoad,
   codeSpittingConfig,
 }

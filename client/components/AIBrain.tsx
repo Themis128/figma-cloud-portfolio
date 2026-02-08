@@ -76,12 +76,52 @@ export default function AIBrain() {
             strokeWidth='1.5'
             className='opacity-70'
           />
-          <line x1='-25' y1='0' x2='-10' y2='10' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
-          <line x1='-20' y1='15' x2='-5' y2='20' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
+          <line
+            x1='-25'
+            y1='0'
+            x2='-10'
+            y2='10'
+            stroke='#00d4ff'
+            strokeWidth='1.5'
+            className='opacity-70'
+          />
+          <line
+            x1='-20'
+            y1='15'
+            x2='-5'
+            y2='20'
+            stroke='#00d4ff'
+            strokeWidth='1.5'
+            className='opacity-70'
+          />
 
-          <line x1='30' y1='-15' x2='15' y2='-5' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
-          <line x1='25' y1='0' x2='10' y2='10' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
-          <line x1='20' y1='15' x2='5' y2='20' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
+          <line
+            x1='30'
+            y1='-15'
+            x2='15'
+            y2='-5'
+            stroke='#00d4ff'
+            strokeWidth='1.5'
+            className='opacity-70'
+          />
+          <line
+            x1='25'
+            y1='0'
+            x2='10'
+            y2='10'
+            stroke='#00d4ff'
+            strokeWidth='1.5'
+            className='opacity-70'
+          />
+          <line
+            x1='20'
+            y1='15'
+            x2='5'
+            y2='20'
+            stroke='#00d4ff'
+            strokeWidth='1.5'
+            className='opacity-70'
+          />
 
           {/* Central processor */}
           <rect
@@ -95,10 +135,42 @@ export default function AIBrain() {
           <rect x='-6' y='-6' width='12' height='12' fill='#1a2849' />
 
           {/* Circuit lines from processor */}
-          <line x1='0' y1='8' x2='0' y2='40' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
-          <line x1='0' y1='-8' x2='0' y2='-40' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
-          <line x1='8' y1='0' x2='40' y2='0' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
-          <line x1='-8' y1='0' x2='-40' y2='0' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
+          <line
+            x1='0'
+            y1='8'
+            x2='0'
+            y2='40'
+            stroke='#00d4ff'
+            strokeWidth='2'
+            className='opacity-80'
+          />
+          <line
+            x1='0'
+            y1='-8'
+            x2='0'
+            y2='-40'
+            stroke='#00d4ff'
+            strokeWidth='2'
+            className='opacity-80'
+          />
+          <line
+            x1='8'
+            y1='0'
+            x2='40'
+            y2='0'
+            stroke='#00d4ff'
+            strokeWidth='2'
+            className='opacity-80'
+          />
+          <line
+            x1='-8'
+            y1='0'
+            x2='-40'
+            y2='0'
+            stroke='#00d4ff'
+            strokeWidth='2'
+            className='opacity-80'
+          />
 
           {/* Circuit nodes */}
           <circle cx='0' cy='40' r='3' fill='#00d4ff' className='[filter:url(#glow)]' />

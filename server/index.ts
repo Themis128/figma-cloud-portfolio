@@ -115,7 +115,7 @@ export function createServer() {
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; " +
         "font-src 'self' https://fonts.gstatic.com https://use.typekit.net; " +
         "img-src 'self' data: https: blob:; " +
-        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
+        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
         "frame-src 'self' https://www.recaptcha.net; " +
         "object-src 'none'; " +
         "base-uri 'self'; " +
@@ -127,7 +127,7 @@ export function createServer() {
     )
 
     // HTTPS Strict Transport Security (only in production)
-    if (process.env['NODE_ENV'] === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
     }
 
@@ -172,7 +172,7 @@ export function createServer() {
 
   // Example API routes
   app.get('/api/ping', (_req, res) => {
-    const ping = process.env['PING_MESSAGE'] ?? 'ping pong'
+    const ping = process.env.PING_MESSAGE ?? 'ping pong'
     res.json({ message: ping })
   })
 
@@ -213,8 +213,8 @@ export function createServer() {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      version: process.env['npm_package_version'] || '1.0.0',
-      environment: process.env['NODE_ENV'],
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV,
       responseTime: Date.now() - startTime,
     })
   })
@@ -227,8 +227,8 @@ export function createServer() {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      version: process.env['npm_package_version'] || '1.0.0',
-      environment: process.env['NODE_ENV'],
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV,
       memory: {
         rss: `${Math.round(memUsage.rss / BYTES_PER_MB)} MB`,
         heapTotal: `${Math.round(memUsage.heapTotal / BYTES_PER_MB)} MB`,
@@ -269,8 +269,8 @@ export function initializeSocketIO(server: HttpServer) {
   const io = new SocketIOServer(server, {
     cors: {
       origin:
-        process.env['NODE_ENV'] === 'production'
-          ? (process.env['FRONTEND_URL'] ?? false)
+        process.env.NODE_ENV === 'production'
+          ? (process.env.FRONTEND_URL ?? false)
           : ['http://localhost:8081', 'http://localhost:3000'],
       methods: ['GET', 'POST'],
       credentials: true,

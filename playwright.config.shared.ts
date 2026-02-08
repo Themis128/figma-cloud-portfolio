@@ -284,7 +284,7 @@ export const TEST_HEADERS = {
   'X-Test-Session': 'playwright-e2e',
   'X-Test-Framework': 'playwright',
   'X-Test-Environment': (env: string) => env,
-  'X-Test-Run-ID': process.env['GITHUB_RUN_ID'] || process.env['CI_RUN_ID'] || 'local',
+  'X-Test-Run-ID': process.env.GITHUB_RUN_ID || process.env.CI_RUN_ID || 'local',
 } as const
 
 /**
@@ -496,8 +496,8 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 export function getOptimalWorkers(environment: ConfigEnvironment): number {
   const settings = getEnvironmentSettings(environment)
   const cpuCount = os.cpus().length || 2 // Fallback to 2 if detection fails
-  const isCI = !!process.env['CI']
-  const isGitHubActions = !!process.env['GITHUB_ACTIONS']
+  const isCI = !!process.env.CI
+  const isGitHubActions = !!process.env.GITHUB_ACTIONS
 
   // Special handling for known CI environments
   if (isGitHubActions) {
@@ -672,7 +672,7 @@ export function createPlaywrightConfig(
 
     // Execution settings
     fullyParallel: true,
-    forbidOnly: !!process.env['CI'],
+    forbidOnly: !!process.env.CI,
     retries: settings.retries,
     timeout: settings.timeouts.test,
     workers,

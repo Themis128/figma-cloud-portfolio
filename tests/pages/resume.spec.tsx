@@ -564,7 +564,7 @@ describe('Resume', () => {
       if (plusButtons.length > 0) {
         const firstButton = plusButtons[0]?.closest('button')
         if (firstButton) {
-          fireEvent.click(firstButton!)
+          fireEvent.click(firstButton)
           expect(mockPrompt).toHaveBeenCalledWith('Enter skill:')
         }
       } else {
@@ -598,7 +598,7 @@ describe('Resume', () => {
       // Find any skill badge and click it to remove
       const skillBadges = screen.queryAllByText(/\(.+\)/) // Find text with parentheses like "(Expert)"
       if (skillBadges.length > 0) {
-        fireEvent.click(skillBadges[0]!)
+        fireEvent.click(skillBadges[0])
         // Skill should be removed - we can't easily test this without more specific assertions
       }
     })

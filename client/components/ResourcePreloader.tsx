@@ -9,10 +9,8 @@ const ResourcePreloader: React.FC<ResourcePreloaderProps> = ({ children }) => {
     // Resource Preloading using React 19 APIs
     // Note: These are conceptual implementations as React 19 APIs are still emerging
 
-    // 1. Prefetch DNS for external resources
+    // 1. Prefetch DNS for external resources (excluding Google Fonts since we use system fonts)
     const dnsResources = [
-      'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com',
       'https://www.googletagmanager.com',
       'https://www.google-analytics.com',
       'https://www.google.com',
@@ -29,10 +27,8 @@ const ResourcePreloader: React.FC<ResourcePreloaderProps> = ({ children }) => {
       document.head.appendChild(link)
     })
 
-    // 2. Preconnect to important origins
+    // 2. Preconnect to important origins (excluding Google Fonts since we use system fonts)
     const preconnectResources = [
-      'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com',
       'https://www.googletagmanager.com',
       'https://www.google-analytics.com',
       'https://api.context7.com',
@@ -46,7 +42,7 @@ const ResourcePreloader: React.FC<ResourcePreloaderProps> = ({ children }) => {
       document.head.appendChild(link)
     })
 
-    // 3. Fonts are loaded via CSS @import in global.css - no preload needed
+    // 3. Fonts are system fonts - no external font loading needed
 
     // 4. Preload only essential images that are used immediately
     const criticalImages: string[] = [

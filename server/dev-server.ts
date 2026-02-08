@@ -2,7 +2,7 @@ import { createServer, initializeSocketIO } from './index'
 
 const DEFAULT_PORT = 3002 // Match Vite proxy configuration
 const app = createServer()
-const port = process.env['PORT'] ? Number(process.env['PORT']) : DEFAULT_PORT
+const port = process.env.PORT ? Number(process.env.PORT) : DEFAULT_PORT
 
 const logger = {
   info: (...args: unknown[]) => console.log(...args),

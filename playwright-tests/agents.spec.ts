@@ -155,7 +155,7 @@ test.describe('AI Agent Templates System', () => {
   })
 
   test.describe('Custom Template Creation', () => {
-    test.skip('Custom template creation not yet implemented in UI', async () => {
+    test.skip('Custom template creation not yet implemented in UI', () => {
       // This functionality is not yet available in the current UI
       // The TemplateCreator component exists but is not accessible from the main interface
       console.log('Custom template creation UI not implemented yet')
@@ -192,12 +192,12 @@ test.describe('AI Agent Templates System', () => {
       await expect(templateCountText).toBeVisible()
     })
 
-    test.skip('should handle template sorting', async () => {
+    test.skip('should handle template sorting', () => {
       // Sorting functionality not implemented yet
       console.log('Template sorting not implemented yet')
     })
 
-    test.skip('should handle template favoriting', async () => {
+    test.skip('should handle template favoriting', () => {
       // Favoriting functionality not implemented yet
       console.log('Template favoriting not implemented yet')
     })
@@ -267,17 +267,17 @@ test.describe('AI Agent Templates System', () => {
   })
 
   test.describe('Error Handling', () => {
-    test.skip('should handle network errors gracefully', async () => {
+    test.skip('should handle network errors gracefully', () => {
       // API endpoints may not be implemented yet - page works with static data
       console.log('API error handling not implemented yet - using static data')
     })
 
-    test.skip('should handle invalid template data', async () => {
+    test.skip('should handle invalid template data', () => {
       // API endpoints may not be implemented yet
       console.log('API error handling not implemented yet')
     })
 
-    test.skip('should handle template creation errors', async () => {
+    test.skip('should handle template creation errors', () => {
       // Template creation UI not implemented yet - no button to click
       console.log('Template creation UI not implemented yet')
     })

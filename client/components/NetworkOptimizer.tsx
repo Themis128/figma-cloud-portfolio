@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { FontLoaderComponent } from './FontLoader'
 import { ResourceHints } from './ResourceHints'
 
 interface ResourceHint {
@@ -76,7 +75,7 @@ const DEFAULT_CONFIG: NetworkOptimizationConfig = {
 // Service worker registration utility
 const registerServiceWorker = (isSlowConnection: boolean): void => {
   // Skip manual registration if VitePWA is handling it (development mode)
-  if (process.env['NODE_ENV'] === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     return
   }
 
@@ -105,7 +104,7 @@ const registerServiceWorker = (isSlowConnection: boolean): void => {
 export function NetworkOptimizer({
   children,
   enableCriticalResourceHints = true,
-  enableFontOptimization = true,
+  enableFontOptimization: _enableFontOptimization = false, // Disabled - using system fonts
   enableImagePreloading = true,
   enableRoutePrefetching = true,
   config = DEFAULT_CONFIG,
@@ -195,9 +194,7 @@ export function NetworkOptimizer({
   // Memoized critical resource hints based on network conditions
   const getCriticalHints = useMemo((): ResourceHint[] => {
     const baseHints: ResourceHint[] = [
-      // Essential third-party connections
-      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-      { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
+      // Essential third-party connections (excluding Google Fonts since we use system fonts)
       { rel: 'preconnect', href: 'https://www.google-analytics.com', crossorigin: true },
     ]
 
@@ -330,33 +327,14 @@ export function NetworkOptimizer({
       />
 
       {/* Network status indicator (development only) */}
-      {process.env['NODE_ENV'] === 'development' && (
+      {process.env.NODE_ENV === 'development' && (
         <div className={`network-status ${getNetworkStatusClass}`} aria-live='polite'>
           {getNetworkStatusText}
         </div>
       )}
 
-      {/* Font optimization */}
-      {enableFontOptimization ? (
-        <FontLoaderComponent
-          fonts={[
-            {
-              family: 'Inter',
-              weights: networkConfig.interFontWeights,
-              display: isSlowConnection ? 'optional' : 'swap',
-            },
-            {
-              family: 'Fira Code',
-              weights: networkConfig.firaCodeFontWeights,
-              display: 'optional', // Code fonts can be optional
-            },
-          ]}
-        >
-          {children}
-        </FontLoaderComponent>
-      ) : (
-        children
-      )}
+      {/* Font optimization - disabled since we use system fonts */}
+      {children}
 
       {/* Resource hints */}
       {enableCriticalResourceHints && (

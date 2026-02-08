@@ -27,7 +27,6 @@ export function useNotificationPermission() {
 
       // Track permission request result
       if ('gtag' in window) {
-        // @ts-expect-error
         gtag('event', 'notification_permission_request', {
           event_category: 'engagement',
           event_label: result,
@@ -36,7 +35,7 @@ export function useNotificationPermission() {
       }
 
       return result
-    } catch (_error) {
+    } catch {
       setPermission('denied')
       return 'denied'
     }
@@ -52,7 +51,7 @@ export function useNotificationPermission() {
       // Some browsers support this event
       if ('permissions' in navigator) {
         navigator.permissions
-          .query({ name: 'notifications' })
+          .query({ name: 'notifications' as PermissionName })
           .then((result) => {
             result.addEventListener('change', handlePermissionChange)
             return () => result.removeEventListener('change', handlePermissionChange)
@@ -108,7 +107,7 @@ export function usePushSubscription(vapidPublicKey?: string) {
             setSubscription(null)
           }
         }
-      } catch (_error) {
+      } catch {
         setError('Failed to check existing subscription')
       }
     }
@@ -130,39 +129,37 @@ export function usePushSubscription(vapidPublicKey?: string) {
     setIsLoading(true)
     setError(null)
 
-    const handleSuccess = (subscription: PushSubscription) => {
-      setSubscription(subscription)
+    const handleSuccess = (sub: PushSubscription) => {
+      setSubscription(sub)
       setIsLoading(false)
       if ('gtag' in window) {
-        // @ts-expect-error
         gtag('event', 'push_subscription', {
           event_category: 'engagement',
           event_label: 'success',
         })
       }
-      return subscription
+      return sub
     }
 
-    const handleError = (error: unknown) => {
-      setError(error instanceof Error ? error.message : 'Subscription failed')
+    const handleError = (err: unknown) => {
+      setError(err instanceof Error ? err.message : 'Subscription failed')
       setIsLoading(false)
       if ('gtag' in window) {
-        // @ts-expect-error
         gtag('event', 'push_subscription', {
           event_category: 'engagement',
           event_label: 'failed',
-          custom_parameter_1: error instanceof Error ? error.message : 'unknown',
+          custom_parameter_1: err instanceof Error ? err.message : 'unknown',
         })
       }
       return null
     }
 
-    const sendSubscriptionToServer = async (subscription: PushSubscription) => {
+    const sendSubscriptionToServer = async (sub: PushSubscription) => {
       const response = await fetch('/api/push-notifications/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          subscription: subscription.toJSON(),
+          subscription: sub.toJSON(),
           userAgent: navigator.userAgent,
           timestamp: Date.now(),
         }),
@@ -180,12 +177,12 @@ export function usePushSubscription(vapidPublicKey?: string) {
       }
       const newSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
       })
       await sendSubscriptionToServer(newSubscription)
       return handleSuccess(newSubscription)
-    } catch (error) {
-      return handleError(error)
+    } catch (err) {
+      return handleError(err)
     }
   }, [vapidPublicKey])
 
@@ -213,15 +210,14 @@ export function usePushSubscription(vapidPublicKey?: string) {
 
       // Track unsubscription
       if ('gtag' in window) {
-        // @ts-expect-error
         gtag('event', 'push_unsubscription', {
           event_category: 'engagement',
         })
       }
 
       return true
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Unsubscription failed')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unsubscription failed')
       setIsLoading(false)
       return false
     }
@@ -294,9 +290,9 @@ export function useLocalNotifications() {
   const handleNotificationNavigation = useCallback((url?: string) => {
     if (
       'clients' in window &&
-      'openWindow' in (window as Window & { clients: { openWindow: (url: string) => void } })
+      'openWindow' in (window as unknown as { clients: { openWindow: (url: string) => void } })
     ) {
-      ;(window as Window & { clients: { openWindow: (url: string) => void } }).clients.openWindow(
+      ;(window as unknown as { clients: { openWindow: (url: string) => void } }).clients.openWindow(
         url || '/',
       )
     } else {
@@ -318,8 +314,8 @@ export function useLocalNotifications() {
         let notification: Notification
         try {
           notification = createNotification(title, options)
-        } catch (error) {
-          reject(error)
+        } catch (err) {
+          reject(err)
           return
         }
 
@@ -328,7 +324,6 @@ export function useLocalNotifications() {
           handleNotificationNavigation(options.data?.url)
           notification.close()
           if ('gtag' in window) {
-            // @ts-expect-error
             gtag('event', 'notification_click', {
               event_category: 'engagement',
               event_label: 'local',
@@ -344,7 +339,6 @@ export function useLocalNotifications() {
         notification.onshow = () => {
           resolve(notification)
           if ('gtag' in window) {
-            // @ts-expect-error
             gtag('event', 'notification_show', {
               event_category: 'engagement',
               event_label: 'local',
@@ -464,7 +458,9 @@ export class NotificationManager {
           'message',
           this.handleServiceWorkerMessage.bind(this),
         )
-      } catch (_error) {}
+      } catch {
+        // Silently fail initialization
+      }
     }
   }
 
@@ -481,7 +477,6 @@ export class NotificationManager {
   private handleNotificationClick(data: NotificationData): void {
     // Track notification interaction
     if ('gtag' in window) {
-      // @ts-expect-error
       gtag('event', 'notification_interaction', {
         event_category: 'engagement',
         event_label: data.tag,
@@ -498,7 +493,6 @@ export class NotificationManager {
   private handleNotificationClose(data: NotificationData): void {
     // Track notification dismissal
     if ('gtag' in window) {
-      // @ts-expect-error
       gtag('event', 'notification_dismiss', {
         event_category: 'engagement',
         event_label: data.tag,
@@ -525,7 +519,7 @@ export class NotificationManager {
       })
 
       return response.ok
-    } catch (_error) {
+    } catch {
       return false
     }
   }

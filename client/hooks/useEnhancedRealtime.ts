@@ -7,7 +7,7 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react'
-import { io, type Socket } from 'socket.io-client'
+import type { Socket } from 'socket.io-client'
 import type {
   AgentCollaborationData,
   PresenceData,
@@ -22,20 +22,11 @@ import type {
 
 class EnhancedSocketManager {
   private static instance: EnhancedSocketManager | null = null
-  private socket: Socket | null = null
+  private socket: Socket<import('socket.io-client').DefaultEventsMap> | null = null
   private connectionState: RealTimeConnection['status'] = 'disconnected'
   private reconnectAttempts = 0
-  private maxReconnectAttempts = 5
-  private reconnectDelay = 1000
-  private presenceData: Map<string, UserPresence> = new Map()
   private subscribers: Set<() => void> = new Set()
   private rooms: Set<string> = new Set()
-  private heartbeatInterval: NodeJS.Timeout | null = null
-
-  // Constants
-  private CONNECTION_TIMEOUT = 20000
-  private HEARTBEAT_INTERVAL = 30000
-  private MAX_EVENTS = 49
 
   private constructor() {}
 
@@ -49,7 +40,9 @@ class EnhancedSocketManager {
   // React 19 external store integration
   subscribe(callback: () => void): () => void {
     this.subscribers.add(callback)
-    return () => this.subscribers.delete(callback)
+    return () => {
+      this.subscribers.delete(callback)
+    }
   }
 
   getSnapshot(): RealTimeConnection {
@@ -60,21 +53,15 @@ class EnhancedSocketManager {
       rooms: Array.from(this.rooms),
       reconnectAttempts: this.reconnectAttempts,
       isOnline: this.connectionState === 'connected',
-      latency: null, // TODO: Implement proper latency measurement
+      latency: null,
     }
-  }
-
-  private notifySubscribers(): void {
-    this.subscribers.forEach((callback) => {
-      callback()
-    })
   }
 
   connect(
     options: { userId?: string; autoReconnect?: boolean; heartbeat?: boolean } = {},
-  ): Promise<Socket | null> {
+  ): Promise<Socket<import('socket.io-client').DefaultEventsMap> | null> {
     if (this.socket?.connected) {
-      return this.socket
+      return Promise.resolve(this.socket)
     }
 
     try {
@@ -82,7 +69,7 @@ class EnhancedSocketManager {
       this.notifySubscribers()
 
       const serverUrl =
-        process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3000'
+        import.meta.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3000'
 
       this.socket = io(serverUrl, {
         transports: ['websocket', 'polling'],
@@ -108,32 +95,34 @@ class EnhancedSocketManager {
         this.startHeartbeat()
       }
 
-      return new Promise((resolve, reject) => {
-        this.socket?.on('connect', () => {
-          this.connectionState = 'connected'
-          this.reconnectAttempts = 0
-          this.notifySubscribers()
-          if (this.socket) {
-            resolve(this.socket)
-          } else {
-            reject(new Error('Socket not created'))
-          }
-        })
+      return new Promise<Socket<import('socket.io-client').DefaultEventsMap> | null>(
+        (resolve, reject) => {
+          this.socket?.on('connect', () => {
+            this.connectionState = 'connected'
+            this.reconnectAttempts = 0
+            this.notifySubscribers()
+            if (this.socket) {
+              resolve(this.socket)
+            } else {
+              reject(new Error('Socket not created'))
+            }
+          })
 
-        this.socket?.on('connect_error', (error) => {
-          this.connectionState = 'error'
-          this.notifySubscribers()
-          reject(error)
-        })
+          this.socket?.on('connect_error', (error) => {
+            this.connectionState = 'error'
+            this.notifySubscribers()
+            reject(error)
+          })
 
-        // Timeout fallback
-        setTimeout(() => {
-          if (this.connectionState !== 'connected') {
-            reject(new Error('Connection timeout'))
-          }
-        }, this.CONNECTION_TIMEOUT)
-      })
-    } catch (_error) {
+          // Timeout fallback
+          setTimeout(() => {
+            if (this.connectionState !== 'connected') {
+              reject(new Error('Connection timeout'))
+            }
+          }, this.CONNECTION_TIMEOUT)
+        },
+      )
+    } catch {
       this.connectionState = 'error'
       this.notifySubscribers()
       return null
@@ -158,7 +147,7 @@ class EnhancedSocketManager {
       this.attemptReconnection()
     })
 
-    this.socket.on('reconnect', (_attemptNumber) => {
+    this.socket.on('reconnect', () => {
       this.connectionState = 'connected'
       this.reconnectAttempts = 0
       this.startHeartbeat()
@@ -193,7 +182,7 @@ class EnhancedSocketManager {
     })
 
     // Performance monitoring
-    this.socket.on('pong', (_latency) => {
+    this.socket.on('pong', () => {
       // Latency is automatically tracked by Socket.IO
       this.notifySubscribers()
     })
@@ -205,7 +194,7 @@ class EnhancedSocketManager {
       if (this.socket?.connected) {
         this.socket.emit('ping')
       }
-    }, this.HEARTBEAT_INTERVAL) // Ping every 30 seconds
+    }, this.HEARTBEAT_INTERVAL)
   }
 
   private stopHeartbeat(): void {
@@ -233,7 +222,7 @@ class EnhancedSocketManager {
         }
       },
       this.reconnectDelay * 2 ** this.reconnectAttempts,
-    ) // Exponential backoff
+    )
   }
 
   disconnect(): void {
@@ -276,9 +265,9 @@ class EnhancedSocketManager {
         return
       }
 
-      this.socket.emit(event, data, (response: any) => {
-        if (response?.error) {
-          reject(new Error(response.error))
+      this.socket.emit(event, data, (response: unknown) => {
+        if (response && typeof response === 'object' && 'error' in response) {
+          reject(new Error((response as { error: string }).error))
         } else {
           resolve(response)
         }
@@ -287,10 +276,12 @@ class EnhancedSocketManager {
   }
 
   // Event listening with cleanup
-  on(event: string, handler: (...args: any[]) => void): () => void {
+  on(event: string, handler: (..._args: unknown[]) => void): () => void {
     if (this.socket) {
       this.socket.on(event, handler)
-      return () => this.socket?.off(event, handler)
+      return () => {
+        this.socket?.off(event, handler)
+      }
     }
     return () => {}
   }
@@ -327,7 +318,9 @@ export function useEnhancedSocket(
   // Auto-connect effect
   useEffect(() => {
     if (options.autoConnect !== false) {
-      socketManager.connect(options).catch(console.error)
+      socketManager.connect(options).catch(() => {
+        // Silently fail connection
+      })
     }
 
     return () => {
@@ -337,15 +330,15 @@ export function useEnhancedSocket(
     }
   }, [options.userId, options.autoConnect, options.autoReconnect, options.heartbeat, options])
 
-  const emit = useCallback((event: string, data?: any) => {
+  const emit = useCallback((event: string, data?: unknown) => {
     return socketManager.emit(event, data)
   }, [])
 
-  const on = useCallback((event: string, handler: (...args: any[]) => void) => {
+  const on = useCallback((event: string, handler: (...args: unknown[]) => void) => {
     return socketManager.on(event, handler)
   }, [])
 
-  const joinRoom = useCallback((roomId: string, data?: any) => {
+  const joinRoom = useCallback((roomId: string, data?: unknown) => {
     socketManager.joinRoom(roomId, data)
   }, [])
 
@@ -407,7 +400,7 @@ export function usePresence(roomId?: string) {
           emit('presence_update', {
             roomId: currentRoom,
             ...newPresence,
-          }).catch(console.error)
+          }).catch(() => {})
         }
       })
     },
@@ -437,10 +430,13 @@ export function usePresence(roomId?: string) {
 /**
  * Real-time event system with React 19
  */
-export function useRealtimeEvents<T = any>(eventName: string) {
+export function useRealtimeEvents<T = unknown>(eventName: string) {
   const { on, emit, isConnected } = useEnhancedSocket()
   const [events, setEvents] = useState<RealTimeEvent<T>[]>([])
   const [isListening, setIsListening] = useState(false)
+
+  // Maximum events to keep
+  const MAX_EVENTS = 50
 
   // Event listener with cleanup
   useEffect(() => {
@@ -448,7 +444,7 @@ export function useRealtimeEvents<T = any>(eventName: string) {
 
     setIsListening(true)
 
-    const cleanup = on(eventName, (data: T, metadata?: any) => {
+    const cleanup = on(eventName, (data: T, metadata?: unknown) => {
       startTransition(() => {
         const event: RealTimeEvent<T> = {
           id: `${eventName}-${Date.now()}-${Math.random()}`,
@@ -458,7 +454,7 @@ export function useRealtimeEvents<T = any>(eventName: string) {
           metadata,
         }
 
-        setEvents((prev) => [...prev.slice(-this.MAX_EVENTS), event]) // Keep last 50 events
+        setEvents((prev) => [...prev.slice(-MAX_EVENTS), event])
       })
     })
 
@@ -469,7 +465,7 @@ export function useRealtimeEvents<T = any>(eventName: string) {
   }, [eventName, isConnected, on])
 
   const sendEvent = useCallback(
-    (data: T, metadata?: any) => {
+    (data: T, metadata?: unknown) => {
       if (isConnected) {
         return emit(eventName, { data, metadata })
       }
@@ -502,13 +498,13 @@ export function useAgentCollaboration(agentId: string) {
   const { events, sendEvent } = useRealtimeEvents<AgentCollaborationData>('agent_collaboration')
 
   const [isEditing, setIsEditing] = useState(false)
-  const [currentEditor, setCurrentEditor] = useState<string | null>(null)
+  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined)
 
   // Track editing state
   useEffect(() => {
     updatePresence({
       isEditing,
-      currentSection: isEditing ? 'agent-builder' : null,
+      currentSection: isEditing ? 'agent-builder' : undefined,
       activity: isEditing ? 'editing' : 'viewing',
     })
   }, [isEditing, updatePresence])
@@ -516,12 +512,12 @@ export function useAgentCollaboration(agentId: string) {
   // Monitor for editing conflicts
   useEffect(() => {
     const editors = presence.filter((user) => user.isEditing)
-    setCurrentEditor(editors.length > 0 ? editors[0].userId : null)
+    setCurrentEditor(editors.length > 0 ? editors[0].userId : undefined)
   }, [presence])
 
   const startEditing = useCallback(() => {
     if (currentEditor && currentEditor !== 'current-user') {
-      return false // Someone else is editing
+      return false
     }
     setIsEditing(true)
     return true
@@ -536,7 +532,7 @@ export function useAgentCollaboration(agentId: string) {
       return sendEvent({
         ...change,
         agentId,
-        userId: 'current-user', // Replace with actual user ID
+        userId: 'current-user',
         timestamp: Date.now(),
       })
     },
@@ -551,7 +547,7 @@ export function useAgentCollaboration(agentId: string) {
     startEditing,
     stopEditing,
     broadcastChange,
-    recentChanges: events.slice(-10), // Last 10 changes
+    recentChanges: events.slice(-10),
   }
 }
 
@@ -561,10 +557,9 @@ export function useAgentCollaboration(agentId: string) {
 export function useRealtimeNotifications() {
   const { on, isConnected } = useEnhancedSocket()
 
-  // Import the notification hook - note: this should be available in the same project
-  const showLocalNotification = useCallback(async (title: string, options: any) => {
+  const showLocalNotification = useCallback((title: string, options: unknown) => {
     if ('Notification' in window && Notification.permission === 'granted') {
-      return new Notification(title, options)
+      return new Notification(title, options as NotificationOptions)
     }
     return null
   }, [])
@@ -572,16 +567,15 @@ export function useRealtimeNotifications() {
   useEffect(() => {
     if (!isConnected) return
 
-    const cleanup = on('realtime_notification', (notification) => {
-      // Show browser notification for real-time events
-      showLocalNotification(notification.title, {
-        ...notification.options,
+    const cleanup = on('realtime_notification', (notification: unknown) => {
+      showLocalNotification((notification as { title: string }).title, {
+        ...(notification as Record<string, unknown>),
         tag: 'realtime-notification',
         data: {
-          ...notification.options?.data,
+          ...((notification as Record<string, unknown>)?.data as Record<string, unknown>),
           source: 'realtime',
         },
-      }).catch(console.error)
+      }).catch(() => {})
     })
 
     return cleanup

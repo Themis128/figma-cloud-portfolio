@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('basic test', async ({ page }) => {
   await page.goto('http://localhost:8081')

@@ -24,7 +24,12 @@ function getShellConfigs(): ShellConfig[] {
   return [
     {
       name: 'PowerShell',
-      profilePath: path.join(homeDir, 'Documents', 'PowerShell', 'Microsoft.PowerShell_profile.ps1'),
+      profilePath: path.join(
+        homeDir,
+        'Documents',
+        'PowerShell',
+        'Microsoft.PowerShell_profile.ps1',
+      ),
       completionScript: `
 // PowerShell Tab Completion for pnpm
 Register-ArgumentCompleter -Native -CommandName pnpm -ScriptBlock {
@@ -158,8 +163,10 @@ function main(): void {
         appendToFile(config.profilePath, config.initScript)
         console.log(`✅ Added ${config.name} init script`)
       } else if (!isWindows) {
-        if ((shell.includes('bash') && config.name === 'Bash') ||
-            (shell.includes('zsh') && config.name === 'Zsh')) {
+        if (
+          (shell.includes('bash') && config.name === 'Bash') ||
+          (shell.includes('zsh') && config.name === 'Zsh')
+        ) {
           appendToFile(config.profilePath, config.initScript)
           console.log(`✅ Added ${config.name} init script`)
         }

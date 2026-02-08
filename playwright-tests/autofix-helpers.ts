@@ -325,69 +325,62 @@ export class SmartWaiter {
 }
 
 /**
- * Selector optimizer that suggests better selectors
+ * Suggest better selectors for an element
  */
-export class SelectorOptimizer {
-  /**
-   * Suggest better selectors for an element
-   */
-  static suggest(selector: string): string[] {
-    const suggestions: string[] = []
+export function suggestSelectors(selector: string): string[] {
+  const suggestions: string[] = []
 
-    // Suggest data-testid if not present
-    if (!selector.includes('data-testid')) {
-      suggestions.push(`[data-testid="${selector.replace(/[^a-zA-Z0-9-_]/g, '')}"]`)
-    }
-
-    // Suggest semantic alternatives
-    if (selector.startsWith('#') || selector.startsWith('.')) {
-      // It's an ID or class selector
-      const tagMatch = selector.match(/^[a-zA-Z]+/)
-      if (tagMatch) {
-        const tag = tagMatch[0]
-        // Suggest role-based selector
-        suggestions.push(`[role="${tag}"]`)
-      }
-    }
-
-    // Suggest text-based selector
-    const textMatch = selector.match(/text=([^]]+)/)
-    if (textMatch) {
-      const text = textMatch[1]
-      suggestions.push(`text="${text}"`)
-    }
-
-    // Suggest more specific selector
-    if (selector.includes('nth=')) {
-      const baseSelector = selector.replace(/,nth=\d+/, '')
-      suggestions.push(baseSelector)
-    }
-
-    return suggestions
+  // Suggest data-testid if not present
+  if (!selector.includes('data-testid')) {
+    suggestions.push(`[data-testid="${selector.replace(/[^a-zA-Z0-9-_]/g, '')}"]`)
   }
 
-  /**
-   * Get the best selector type priority
-   */
-  static getPriority(selector: string): number {
-    // Priority: data-testid > role > text > id > class > tag
-    if (selector.includes('data-testid')) return 1
-    if (selector.includes('role=')) return 2
-    if (selector.includes('text=')) return 3
-    if (selector.startsWith('#')) return 4
-    if (selector.startsWith('.')) return 5
-    if (/^[a-zA-Z]/.test(selector)) return 6
-    return 10
+  // Suggest semantic alternatives
+  if (selector.startsWith('#') || selector.startsWith('.')) {
+    // It's an ID or class selector
+    const tagMatch = selector.match(/^[a-zA-Z]+/)
+    if (tagMatch) {
+      const tag = tagMatch[0]
+      // Suggest role-based selector
+      suggestions.push(`[role="${tag}"]`)
+    }
   }
 
-  /**
-   * Find the best selector from multiple options
-   */
-  static findBest(selectors: string[]): string {
-    return selectors.sort(
-      (a, b) => SelectorOptimizer.getPriority(a) - SelectorOptimizer.getPriority(b),
-    )[0]
+  // Suggest text-based selector
+  const textMatch = selector.match(/text=\[([^\]]+)\]/)
+  if (textMatch) {
+    const text = textMatch[1]
+    suggestions.push(`text="${text}"`)
   }
+
+  // Suggest more specific selector
+  if (selector.includes('nth=')) {
+    const baseSelector = selector.replace(/,nth=\d+/, '')
+    suggestions.push(baseSelector)
+  }
+
+  return suggestions
+}
+
+/**
+ * Get the best selector type priority
+ */
+export function getSelectorPriority(selector: string): number {
+  // Priority: data-testid > role > text > id > class > tag
+  if (selector.includes('data-testid')) return 1
+  if (selector.includes('role=')) return 2
+  if (selector.includes('text=')) return 3
+  if (selector.startsWith('#')) return 4
+  if (selector.startsWith('.')) return 5
+  if (/^[a-zA-Z]/.test(selector)) return 6
+  return 10
+}
+
+/**
+ * Find the best selector from multiple options
+ */
+export function findBestSelector(selectors: string[]): string {
+  return selectors.sort((a, b) => getSelectorPriority(a) - getSelectorPriority(b))[0]
 }
 
 /**
@@ -473,7 +466,21 @@ export class PerformanceMonitor {
   }
 }
 
-// Export helper functions
-export const createHealingLocatorFn = createHealingLocator
-export const createSmartWaiter = (page: Page) => new SmartWaiter(page)
-export const createPerformanceMonitor = (page: Page) => new PerformanceMonitor(page)
+/**
+ * SelectorOptimizer class for optimizing and suggesting better selectors
+ */
+export class SelectorOptimizer {
+  /**
+   * Suggest better selectors for an element
+   */
+  static suggest(selector: string): string[] {
+    return suggestSelectors(selector)
+  }
+
+  /**
+   * Find the best selector from multiple options
+   */
+  static findBest(selectors: string[]): string {
+    return findBestSelector(selectors)
+  }
+}

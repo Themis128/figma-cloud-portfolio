@@ -1,8 +1,10 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Fixed Tests', () => {
   test('should demonstrate successful locator healing', async ({ page }) => {
-    await page.goto('data:text/html,<html><body><button id="dynamic-btn">Initial</button></body></html>')
+    await page.goto(
+      'data:text/html,<html><body><button id="dynamic-btn">Initial</button></body></html>',
+    )
 
     // First click should work
     await page.locator('#dynamic-btn').click()
@@ -43,7 +45,7 @@ test.describe('Fixed Tests', () => {
 
     // Use page.request to make API call (bypasses browser fetch limitations)
     const response = await request.get('http://localhost:3002/api/test', {
-      timeout: 5000
+      timeout: 5000,
     })
 
     // Since we can't reliably mock in data: URLs, test the concept with a simple success
@@ -54,7 +56,9 @@ test.describe('Fixed Tests', () => {
   })
 
   test('should demonstrate selector optimization', async ({ page }) => {
-    await page.goto('data:text/html,<html><body><button class="btn btn-primary" data-testid="submit-btn">Submit</button></body></html>')
+    await page.goto(
+      'data:text/html,<html><body><button class="btn btn-primary" data-testid="submit-btn">Submit</button></body></html>',
+    )
 
     // Test different selector strategies - best should be data-testid
     const bestSelector = '[data-testid="submit-btn"]'

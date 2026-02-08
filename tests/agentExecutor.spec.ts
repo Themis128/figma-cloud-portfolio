@@ -75,8 +75,8 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['input1']).toBe('Hello World')
-      expect(result['output1']).toBe('Hello World')
+      expect(result.input1).toBe('Hello World')
+      expect(result.output1).toBe('Hello World')
     })
 
     it('should execute LLM node', async () => {
@@ -103,8 +103,8 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['input1']).toBe('Test prompt')
-      expect(result['llm1']).toBe('Mock AI response')
+      expect(result.input1).toBe('Test prompt')
+      expect(result.llm1).toBe('Mock AI response')
     })
 
     it('should execute decision node', async () => {
@@ -131,8 +131,8 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['input1']).toBe('Hello World')
-      expect(result['decision1']).toBe(true) // 'Hello World' contains 'world'
+      expect(result.input1).toBe('Hello World')
+      expect(result.decision1).toBe(true) // 'Hello World' contains 'world'
     })
 
     it('should execute data-processor node', async () => {
@@ -159,8 +159,8 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['input1']).toBe('  hello world  ')
-      expect(result['processor1']).toBe('hello world')
+      expect(result.input1).toBe('  hello world  ')
+      expect(result.processor1).toBe('hello world')
     })
 
     it('should execute tool node', async () => {
@@ -187,8 +187,8 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['input1']).toBe('test input')
-      expect(result['tool1']).toEqual({ data: 'mock fetch result' })
+      expect(result.input1).toBe('test input')
+      expect(result.tool1).toEqual({ data: 'mock fetch result' })
       expect(fetchMock).toHaveBeenCalledWith('https://api.example.com')
     })
 
@@ -234,10 +234,10 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['input1']).toBe('HELLO')
-      expect(result['processor1']).toBe('hello')
-      expect(result['decision1']).toBe(true)
-      expect(result['output1']).toBe(true)
+      expect(result.input1).toBe('HELLO')
+      expect(result.processor1).toBe('hello')
+      expect(result.decision1).toBe(true)
+      expect(result.output1).toBe(true)
     })
 
     it('should handle input data passed to execute', async () => {
@@ -264,9 +264,9 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute({ customInput: 'custom value' })
 
-      expect(result['customInput']).toBe('custom value')
-      expect(result['input1']).toBe('default')
-      expect(result['output1']).toBe('default')
+      expect(result.customInput).toBe('custom value')
+      expect(result.input1).toBe('default')
+      expect(result.output1).toBe('default')
     })
   })
 
@@ -295,7 +295,7 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['processor1']).toBe('HELLO')
+      expect(result.processor1).toBe('HELLO')
     })
 
     it('should handle lowercase operation', async () => {
@@ -322,7 +322,7 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['processor1']).toBe('hello')
+      expect(result.processor1).toBe('hello')
     })
 
     it('should return input unchanged for unknown operations', async () => {
@@ -349,7 +349,7 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['processor1']).toBe('test')
+      expect(result.processor1).toBe('test')
     })
   })
 
@@ -378,7 +378,7 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['decision1']).toBe(true)
+      expect(result.decision1).toBe(true)
     })
 
     it('should return false when condition is not met', async () => {
@@ -405,7 +405,7 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['decision1']).toBe(false)
+      expect(result.decision1).toBe(false)
     })
 
     it('should return false when no condition is provided', async () => {
@@ -432,7 +432,7 @@ describe('AgentExecutor', () => {
       const executor = new AgentExecutor(mockWorkflow)
       const result = await executor.execute()
 
-      expect(result['decision1']).toBe(false)
+      expect(result.decision1).toBe(false)
     })
   })
 
@@ -474,9 +474,9 @@ describe('AgentExecutor', () => {
 
       const result = await executeAgent(template, { extra: 'data' })
 
-      expect(result['input1']).toBe('Test')
-      expect(result['output1']).toBe('Test')
-      expect(result['extra']).toBe('data')
+      expect(result.input1).toBe('Test')
+      expect(result.output1).toBe('Test')
+      expect(result.extra).toBe('data')
     })
   })
 })

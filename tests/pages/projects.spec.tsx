@@ -119,19 +119,15 @@ describe('Projects Page', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the projects page header', async () => {
-    await act(async () => {
-      render(<Projects />)
-    })
+  it('renders the projects page header', () => {
+    render(<Projects />)
 
     expect(screen.getByText('Projects & Portfolio')).toBeInTheDocument()
     expect(screen.getByText('Explore my latest work and technical projects')).toBeInTheDocument()
   })
 
-  it('displays project statistics correctly', async () => {
-    await act(async () => {
-      render(<Projects />)
-    })
+  it('displays project statistics correctly', () => {
+    render(<Projects />)
 
     // Check total projects (3)
     const totals = screen.getAllByText('3')

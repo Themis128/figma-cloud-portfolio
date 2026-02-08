@@ -44,7 +44,7 @@ interface PushSubscriptionData {
 let subscriptions: PushSubscriptionData[] = []
 
 export async function handlePushNotificationsGet(req: Request, res: Response) {
-  const action = req.query['action'] as string
+  const action = req.query.action as string
 
   if (action === 'vapid-public-key') {
     res.json({
@@ -247,7 +247,7 @@ export function handlePushNotificationsPut(req: Request, res: Response) {
 
 export function handlePushNotificationsDelete(req: Request, res: Response) {
   try {
-    const endpoint = req.query['endpoint'] as string
+    const endpoint = req.query.endpoint as string
 
     if (!endpoint) {
       res.status(HTTP_STATUS.BAD_REQUEST).json({

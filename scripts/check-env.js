@@ -28,12 +28,16 @@ if (missing.length === 0 && placeholder.length === 0) {
 } else {
   if (missing.length > 0) {
     console.log('❌ Missing variables:')
-    missing.forEach((k) => console.log(`   - ${k}`))
+    missing.forEach((k) => {
+      console.log(`   - ${k}`)
+    })
     console.log()
   }
   if (placeholder.length > 0) {
     console.log('⚠️  Placeholder values (need real values):')
-    placeholder.forEach((k) => console.log(`   - ${k}`))
+    placeholder.forEach((k) => {
+      console.log(`   - ${k}`)
+    })
     console.log()
   }
 }
