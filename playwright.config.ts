@@ -18,10 +18,10 @@ import { createPlaywrightConfig, validateConfiguration } from './playwright.conf
 
 // Create development configuration with continuous testing optimizations
 const config = createPlaywrightConfig('development', {
-  // Continuous testing optimizations
-  retries: 5, // Increased retries for continuous fixing
-  timeout: 180000, // 3 minutes per test for complex scenarios
-  workers: 4, // Reduced workers for stability during continuous runs
+  // Optimized for single test execution
+  retries: 2, // Balanced retries
+  timeout: 60000, // 1 minute per test
+  workers: 1, // Single worker for isolated test
 
   // Enhanced reporting for continuous monitoring
   reporter: [
@@ -42,9 +42,9 @@ const config = createPlaywrightConfig('development', {
     ],
   ],
 
-  // Enhanced expect configuration for continuous testing
+  // Optimized expect configuration
   expect: {
-    timeout: 30000, // Longer expect timeouts for stability
+    timeout: 15000, // Balanced expect timeout
   },
 
   // Additional metadata for continuous testing tracking
@@ -58,13 +58,13 @@ const config = createPlaywrightConfig('development', {
     timestamp: new Date().toISOString(),
   },
 
-  // Custom use configuration for continuous testing
+  // Optimized use configuration
   use: {
-    baseURL: 'http://localhost:8081', // Base URL for all tests - matches the frontend server port
-    actionTimeout: 20000, // Increased action timeout
-    navigationTimeout: 60000, // Increased navigation timeout
+    baseURL: 'http://localhost:8081',
+    actionTimeout: 10000, // Standard action timeout
+    navigationTimeout: 30000, // Standard navigation timeout
     launchOptions: {
-      slowMo: 50, // Slight delay to prevent race conditions
+      slowMo: 0, // No delay for faster execution
     },
   },
 })

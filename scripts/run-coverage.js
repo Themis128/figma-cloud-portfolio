@@ -18,8 +18,14 @@ console.log('===========================================')
 
 // Codacy environment variables must be provided by CI or local env
 console.log('📋 Using Codacy environment variables (do not hard-code tokens in scripts)')
-const envVars = ['CODACY_API_TOKEN', 'CODACY_PROJECT_TOKEN', 'CODACY_ORGANIZATION_PROVIDER', 'CODACY_USERNAME', 'CODACY_PROJECT_NAME']
-envVars.forEach(v => {
+const envVars = [
+  'CODACY_API_TOKEN',
+  'CODACY_PROJECT_TOKEN',
+  'CODACY_ORGANIZATION_PROVIDER',
+  'CODACY_USERNAME',
+  'CODACY_PROJECT_NAME',
+]
+envVars.forEach((v) => {
   if (process.env[v]) {
     console.log(`  ✅ ${v}: set`)
   } else {
@@ -29,7 +35,7 @@ envVars.forEach(v => {
 console.log('')
 
 // Verify environment variables are set
-if (!process.env.CODACY_API_TOKEN && !process.env.CODACY_PROJECT_TOKEN) {
+if (!(process.env.CODACY_API_TOKEN || process.env.CODACY_PROJECT_TOKEN)) {
   console.log('❌ Error: Neither CODACY_API_TOKEN nor CODACY_PROJECT_TOKEN is set!')
   process.exit(1)
 }
@@ -79,15 +85,15 @@ function runVitestCoverage() {
  * Upload coverage to Codacy
  */
 async function uploadToCodacy() {
-  console.log('🔄 Uploading coverage to Codacy...');
-  console.log('');
+  console.log('🔄 Uploading coverage to Codacy...')
+  console.log('')
 
   try {
     if (process.platform === 'win32') {
       // On Windows, create a temporary PowerShell script and execute it
-      console.log('📥 Setting up Codacy reporter...');
+      console.log('📥 Setting up Codacy reporter...')
 
-      const tempScript = path.join(PROJECT_ROOT, 'codacy-reporter-temp.ps1');
+      const tempScript = path.join(PROJECT_ROOT, 'codacy-reporter-temp.ps1')
       const psScript = [
         'try {',
         '  $url = "https://coverage.codacy.com/get.sh"',
@@ -109,44 +115,47 @@ async function uploadToCodacy() {
         '} finally {',
         '  if (Test-Path $bashScript) { Remove-Item $bashScript -Force -ErrorAction SilentlyContinue }',
         '}',
-      ].join('\n');
+      ].join('\n')
 
       // Write the PowerShell script to a temp file
-      fs.writeFileSync(tempScript, psScript);
+      fs.writeFileSync(tempScript, psScript)
 
       try {
         // Execute the PowerShell script
         execSync(`powershell -ExecutionPolicy Bypass -File "${tempScript}"`, {
           stdio: 'inherit',
-          cwd: PROJECT_ROOT
-        });
+          cwd: PROJECT_ROOT,
+        })
       } finally {
         // Clean up the PowerShell script
         if (fs.existsSync(tempScript)) {
-          fs.unlinkSync(tempScript);
+          fs.unlinkSync(tempScript)
         }
       }
     } else {
       // On Unix-like systems, use the original approach
-      execSync('bash <(curl -Ls https://coverage.codacy.com/get.sh)', { stdio: 'inherit', cwd: PROJECT_ROOT });
+      execSync('bash <(curl -Ls https://coverage.codacy.com/get.sh)', {
+        stdio: 'inherit',
+        cwd: PROJECT_ROOT,
+      })
     }
 
-    console.log('');
-    console.log('🎉 Coverage upload completed successfully!');
-    console.log('');
-    console.log('📈 View your coverage report at:');
-    console.log('   https://app.codacy.com/gh/Themis128/figma-cloud-portfolio/coverage');
-    return true;
+    console.log('')
+    console.log('🎉 Coverage upload completed successfully!')
+    console.log('')
+    console.log('📈 View your coverage report at:')
+    console.log('   https://app.codacy.com/gh/Themis128/figma-cloud-portfolio/coverage')
+    return true
   } catch (error) {
-    console.log(`❌ Coverage upload failed: ${error.message}`);
-    console.log('');
-    console.log('💡 Troubleshooting:');
-    console.log('1. Ensure you have the required Codacy environment variables set');
-    console.log('2. Check your internet connection');
-    console.log('3. On Windows, you have several options:');
-    console.log('4. The Codacy reporter script requires bash to run properly');
-    console.log('5. Verify your coverage files exist in the coverage/ directory');
-    return false;
+    console.log(`❌ Coverage upload failed: ${error.message}`)
+    console.log('')
+    console.log('💡 Troubleshooting:')
+    console.log('1. Ensure you have the required Codacy environment variables set')
+    console.log('2. Check your internet connection')
+    console.log('3. On Windows, you have several options:')
+    console.log('4. The Codacy reporter script requires bash to run properly')
+    console.log('5. Verify your coverage files exist in the coverage/ directory')
+    return false
   }
 }
 
@@ -154,9 +163,7 @@ async function uploadToCodacy() {
 console.log('📊 Generating coverage reports...')
 console.log('')
 
-
-
-const vitestResult = runVitestCoverage();
+const vitestResult = runVitestCoverage()
 
 console.log('')
 
@@ -167,7 +174,7 @@ const vitestCoveragePath = path.join(PROJECT_ROOT, 'coverage', 'lcov.info')
 if (fs.existsSync(vitestCoveragePath)) {
   // Check if the file was modified recently (within last 5 minutes)
   const stats = fs.statSync(vitestCoveragePath)
-  const fiveMinutesAgo = Date.now() - (5 * 60 * 1000)
+  const fiveMinutesAgo = Date.now() - 5 * 60 * 1000
   if (stats.mtime.getTime() > fiveMinutesAgo) {
     console.log('📁 Found recent Vitest coverage: coverage/lcov.info')
     coverageExists = true
@@ -182,10 +189,10 @@ if (vitestResult === true || vitestResult === 'partial') {
 }
 
 if (!coverageExists) {
-  console.log('❌ No recent coverage reports found to upload');
-  console.log('💡 Run tests with coverage first:');
-  console.log('   pnpm test:unit --coverage');
-  process.exit(1);
+  console.log('❌ No recent coverage reports found to upload')
+  console.log('💡 Run tests with coverage first:')
+  console.log('   pnpm test:unit --coverage')
+  process.exit(1)
 }
 
 console.log('')
@@ -193,12 +200,12 @@ console.log('')
 // Upload to Codacy
 ;(async () => {
   try {
-    const uploadSuccess = await uploadToCodacy();
+    const uploadSuccess = await uploadToCodacy()
     if (!uploadSuccess) {
-      process.exit(1);
+      process.exit(1)
     }
   } catch (error) {
-    console.error('Unexpected error:', error);
-    process.exit(1);
+    console.error('Unexpected error:', error)
+    process.exit(1)
   }
-})();
+})()

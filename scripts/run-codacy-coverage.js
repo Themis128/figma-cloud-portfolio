@@ -4,9 +4,9 @@
  * Cross-platform script to run Codacy coverage reporting
  */
 
-
 import { execSync, spawnSync } from 'node:child_process'
 import { platform } from 'node:os'
+
 const process = require('process')
 
 console.log('🚀 Running Codacy Coverage Reporter')
@@ -32,7 +32,7 @@ requiredEnvVars.forEach((envVar) => {
 console.log('')
 
 // Verify environment variables are set
-if (!process.env.CODACY_API_TOKEN && !process.env.CODACY_PROJECT_TOKEN) {
+if (!(process.env.CODACY_API_TOKEN || process.env.CODACY_PROJECT_TOKEN)) {
   console.log('❌ Error: Neither CODACY_API_TOKEN nor CODACY_PROJECT_TOKEN is set!')
   console.log('')
   console.log('💡 To fix this:')
@@ -65,7 +65,9 @@ try {
       console.log('')
       console.log('1. Install Git Bash (Recommended):')
       console.log('   - Download from: https://git-scm.com/downloads')
-      console.log('   - Run the installer and select "Use Git and optional Unix tools from the Command Prompt"')
+      console.log(
+        '   - Run the installer and select "Use Git and optional Unix tools from the Command Prompt"',
+      )
       console.log('   - Complete the installation and restart your terminal')
       console.log('   - Run: pnpm run coverage:upload')
       console.log('')
@@ -94,10 +96,14 @@ try {
 
     // Try to run bash directly
     console.log('✅ Bash found, running Codacy coverage reporter...')
-    const result = spawnSync('bash', ['-c', 'bash <(curl -Ls https://coverage.codacy.com/get.sh)'], {
-      stdio: 'inherit',
-      cwd: process.cwd()
-    })
+    const result = spawnSync(
+      'bash',
+      ['-c', 'bash <(curl -Ls https://coverage.codacy.com/get.sh)'],
+      {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      },
+    )
 
     if (result.status !== 0) {
       throw new Error(`Bash command failed with exit code ${result.status}`)
@@ -106,7 +112,7 @@ try {
     console.log('📥 Downloading Codacy reporter script...')
     execSync('bash <(curl -Ls https://coverage.codacy.com/get.sh)', {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     })
   }
 
@@ -115,7 +121,6 @@ try {
   console.log('')
   console.log('📈 View your coverage report at:')
   console.log('   https://app.codacy.com/gh/Themis128/figma-cloud-portfolio/coverage')
-
 } catch (error) {
   console.log(`❌ Error running Codacy coverage reporter: ${error.message}`)
   console.log('')

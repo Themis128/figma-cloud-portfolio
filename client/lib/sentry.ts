@@ -10,11 +10,11 @@ const SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE = 1.0
 
 export async function initSentry() {
   if (initialized) return
-  if (!import.meta.env.VITE_SENTRY_DSN) return
+  if (!import.meta.env['VITE_SENTRY_DSN']) return
   const Sentry = await import('@sentry/react')
 
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
+    dsn: import.meta.env['VITE_SENTRY_DSN'],
     environment: import.meta.env.MODE,
     integrations: [
       Sentry.browserTracingIntegration(),
@@ -30,7 +30,7 @@ export async function initSentry() {
       ? SENTRY_REPLAYS_SESSION_SAMPLE_RATE_PROD
       : SENTRY_REPLAYS_SESSION_SAMPLE_RATE_DEV,
     replaysOnErrorSampleRate: SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE,
-    release: import.meta.env.VITE_APP_VERSION || '1.0.0',
+    release: import.meta.env['VITE_APP_VERSION'] || '1.0.0',
     beforeSend(event, hint) {
       const error = hint && (hint as unknown as { originalException?: unknown }).originalException
       if (error && typeof error === 'object' && 'message' in error) {

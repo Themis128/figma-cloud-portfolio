@@ -8,3 +8,7 @@ ignore-scripts=false
 
 # Suppress npm warnings
 npm-config-ignore-workspace-root-check=true
+
+# Shell Integration for improved command detection
+# Enable shell tab completion
+enable-shell-completion=true

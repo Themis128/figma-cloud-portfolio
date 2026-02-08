@@ -94,9 +94,9 @@ if (-not $useAWS) {
 if ($Command) {
   Write-Host "Executing command: $Command" -ForegroundColor Green
   try {
-    # For vite command, use npx to ensure proper execution
+    # For vite command, use pnpm exec to ensure proper execution
     if ($Command -eq "vite") {
-      & npx vite @CommandArgs
+      & pnpm exec vite @CommandArgs
     } else {
       & $Command @CommandArgs
     }

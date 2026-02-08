@@ -28,11 +28,15 @@ export default async function globalSetup(config: FullConfig) {
     // 2. Environment validation
     await validateEnvironment(config)
 
-    // 3. Service health checks - skip if web servers are configured to auto-start
-    const hasWebServers =
-      config.webServer && Array.isArray(config.webServer) && config.webServer.length > 0
-    if (hasWebServers) {
-      console.log('🏥 Skipping service health check (web servers will auto-start)...')
+    // 3. Service health checks - skip if web servers are configured to auto-start or explicitly skipped
+    const hasWebServers = config.webServer && Array.isArray(config.webServer) && config.webServer.length > 0
+    const skipWebServer = process.env.PLAYWRIGHT_SKIP_WEBSERVER === 'true'
+    const startServers = process.env.PLAYWRIGHT_START_SERVERS === 'true'
+
+    if (hasWebServers || startServers) {
+      console.log('🏥 Skipping service health check (web servers configured to auto-start)...')
+    } else if (skipWebServer) {
+      console.log('🏥 Skipping service health check (PLAYWRIGHT_SKIP_WEBSERVER=true)...')
     } else {
       await checkServiceHealth(baseURL)
     }

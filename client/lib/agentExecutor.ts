@@ -1,10 +1,5 @@
 import type { AgentConnection, AgentNode, AgentTemplate } from '@/data/agentTemplates'
 
-// Constants for agent execution
-const _LLM_SIMULATION_DELAY_MS = 1000
-const _TOOL_SIMULATION_DELAY_MS = 500
-const _DECISION_THRESHOLD = 0.5
-
 // Simple agent execution engine
 export class AgentExecutor {
   private nodes: AgentNode[]
@@ -42,7 +37,7 @@ export class AgentExecutor {
     switch (node.type) {
       case 'input':
         // Input nodes set initial data
-        this.context[node.id] = node.config.prompt || ''
+        this.context[node.id] = node.config['prompt'] || ''
         break
 
       case 'llm': {
@@ -131,13 +126,13 @@ export class AgentExecutor {
 
   private async callLLM(prompt: unknown, config: Record<string, unknown>): Promise<string> {
     const { aiService } = await import('./aiService')
-    const model = (config.model as string) || undefined
+    const model = (config['model'] as string) || undefined
     const response = await aiService.generateResponse(String(prompt), model)
     return response.content
   }
 
   private evaluateDecision(input: unknown, config: Record<string, unknown>): boolean {
-    const condition = config.condition as string
+    const condition = config['condition'] as string
     if (!condition) return false
 
     // Simple condition evaluation
@@ -146,7 +141,7 @@ export class AgentExecutor {
   }
 
   private processData(input: unknown, config: Record<string, unknown>): unknown {
-    const operation = config.operation as string
+    const operation = config['operation'] as string
 
     if (operation === 'uppercase' && typeof input === 'string') {
       return input.toUpperCase()
@@ -162,11 +157,11 @@ export class AgentExecutor {
   }
 
   private async callTool(input: unknown, config: Record<string, unknown>): Promise<unknown> {
-    const toolName = config.tool as string
+    const toolName = config['tool'] as string
 
     // Call actual tools based on configuration
     if (toolName === 'fetch') {
-      const url = config.url as string
+      const url = config['url'] as string
       const response = await fetch(url)
       return response.json()
     }

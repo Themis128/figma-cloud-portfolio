@@ -28,11 +28,10 @@ export default defineConfig({
     timeout: 10000, // 10 seconds for assertions
   },
 
-  // Real APIs are less predictable
-  fullyParallel: false, // Run sequentially to avoid rate limits
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1, // Retry on network failures
-  workers: process.env.CI ? 1 : 2, // Limit parallel workers
+  retries: process.env.CI ? 2 : 1,
+  workers: process.env.CI ? 1 : 2,
 
   // Reporters
   reporter: [
@@ -48,9 +47,8 @@ export default defineConfig({
     // Base URL for testing
     baseURL: process.env.BASE_URL || 'http://localhost:3001',
 
-    // Longer timeouts for real API calls
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    actionTimeout: 10000,
+    navigationTimeout: 20000,
 
     // Collect trace on failure
     trace: 'on-first-retry',
@@ -75,11 +73,10 @@ export default defineConfig({
     },
   ],
 
-  // Web server configuration
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    timeout: 60000,
   },
 })

@@ -5,7 +5,7 @@ export const logger = {
   warn: (_tag: string, _msg: string) => {},
   error: (_tag: string, _msg: string) => {},
   debug: (_tag: string, _msg: string) => {
-    if (process.env.DEBUG) {
+    if (process.env['DEBUG']) {
     }
   },
 }

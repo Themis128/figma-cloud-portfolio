@@ -7,7 +7,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
     }) => {
       try {
         // Test the API endpoint directly with a mock reCAPTCHA token
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Test User',
             email: 'test@example.com',
@@ -43,7 +43,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
 
     test('should reject contact form submission without reCAPTCHA token', async ({ request }) => {
       try {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Test User',
             email: 'test@example.com',
@@ -67,7 +67,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
 
     test('should reject contact form submission with invalid email', async ({ request }) => {
       try {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Test User',
             email: 'invalid-email',
@@ -93,7 +93,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
       request,
     }) => {
       try {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Test User',
             // Missing email, subject, message
@@ -116,7 +116,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
     test('should handle server errors gracefully', async ({ request }) => {
       try {
         // Test with malformed data that might cause server errors
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: null, // Invalid data type
             email: 'test@example.com',
@@ -312,7 +312,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
     test('should handle API endpoint availability', async ({ request }) => {
       try {
         // Test basic API connectivity
-        const response = await request.get('http://localhost:3000/api/ping')
+        const response = await request.get('http://localhost:3002/api/ping')
 
         // Should get some response
         expect(response.status()).toBeGreaterThanOrEqual(200)
@@ -343,7 +343,7 @@ test.describe('reCAPTCHA and Google Analytics API Integration Tests', () => {
         // Make multiple API calls
         const promises = []
         for (let i = 0; i < 5; i++) {
-          promises.push(request.get('http://localhost:3000/api/ping'))
+          promises.push(request.get('http://localhost:3002/api/ping'))
         }
 
         const responses = await Promise.all(promises)

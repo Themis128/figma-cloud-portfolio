@@ -55,7 +55,7 @@ export default function Navigation() {
             onClick={() => setIsOpen(!isOpen)}
             className='md:hidden p-2 rounded-md text-white hover:text-cyan-400 hover:bg-white/10 transition-colors'
             aria-label='Toggle mobile menu'
-            aria-expanded={isOpen}
+            aria-expanded={isOpen ? 'true' : 'false'}
           >
             {isOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
           </button>

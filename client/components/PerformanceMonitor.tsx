@@ -1,5 +1,18 @@
+/**
+ * Performance Monitor - Core Web Vitals Tracking
+ *
+ * Latest GA4 Web Vitals Implementation:
+ * - Uses web-vitals library for accurate metric collection
+ * - Sends to GA4 with recommended parameters
+ * - Core Web Vitals rating calculation (good/needs-improvement/poor)
+ * - Debug mode support
+ * - Session tracking integration
+ *
+ * Reference: https://developers.google.com/analytics/devguides/collection/ga4
+ */
+
 import { useEffect } from 'react'
-import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
+import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
 
 // Performance monitoring constants
 const NAVIGATION_CHECK_DELAY_MS = 100
@@ -7,22 +20,23 @@ const SECONDS_PER_INTERVAL = 30
 const MILLISECONDS_PER_SECOND = 1000
 const MEMORY_TRACKING_INTERVAL_MS = SECONDS_PER_INTERVAL * MILLISECONDS_PER_SECOND // 30 seconds
 
-// Type for Google Analytics gtag function
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      targetId: string,
-      config?: {
-        event_category?: string
-        event_label?: string
-        value?: number
-        custom_map?: Record<string, string>
-        [key: string]: unknown
-      },
-    ) => void
-    webVitalsMetrics?: WebVitalsMetric[]
+// Type definitions for gtag.js - extending existing GoogleAnalytics declarations
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ExtendedWindow extends Window {
+  gtag?: (
+    command: 'config' | 'event' | 'set',
+    targetId: string | Record<string, unknown>,
+    config?: Record<string, unknown> | string,
+  ) => void
+  webVitalsMetrics?: WebVitalsMetric[]
+  gtagSession?: {
+    sessionId: number
+    engagementTime: number
   }
+}
+
+declare global {
+  interface Window extends ExtendedWindow {}
 }
 
 interface WebVitalsMetric {
@@ -32,222 +46,181 @@ interface WebVitalsMetric {
   id: string
 }
 
-// Analytics service integration function - REMOVED
-// Custom analytics endpoint removed - using Google Analytics 4 only
-// const sendAnalytics = async (event: string, data: Record<string, unknown>) => {
-//   try {
-//     await fetch("/api/analytics", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         event,
-//         data,
-//         timestamp: new Date().toISOString(),
-//         url: window.location.href,
-//         userAgent: navigator.userAgent,
-//       }),
-//     });
-//   } catch (_error) {
-//     // Silently fail in production
-//   }
-// };
+// Core Web Vitals Thresholds (GA4 Recommended)
+const WEB_VITALS_THRESHOLDS = {
+  LCP: { good: 2500, poor: 4000 }, // Largest Contentful Paint (ms)
+  FCP: { good: 1800, poor: 3000 }, // First Contentful Paint (ms)
+  CLS: { good: 0.1, poor: 0.25 }, // Cumulative Layout Shift
+  INP: { good: 200, poor: 500 }, // Interaction to Next Paint (ms)
+  TTFB: { good: 800, poor: 1800 }, // Time to First Byte (ms)
+}
+
+// Get session info
+const getSessionInfo = (): { sessionId: number; engagementTime: number } => {
+  if (typeof window === 'undefined') return { sessionId: 0, engagementTime: 0 }
+  const now = Date.now()
+  const sessionDuration = 30 * 60 * 1000 // 30 minutes
+
+  const existing = window.gtagSession
+
+  if (existing && now - existing.engagementTime < sessionDuration) {
+    return existing
+  }
+
+  const newSession = {
+    sessionId: Math.floor(now / 1000),
+    engagementTime: now,
+  }
+  window.gtagSession = newSession
+  return newSession
+}
+
+// Get engagement time in milliseconds
+const getEngagementTime = (): number => {
+  if (typeof window === 'undefined') return 0
+  const start = window.gtagSession?.engagementTime || Date.now()
+  return Date.now() - start
+}
+
+// Calculate Core Web Vitals rating
+const getMetricRating = (name: string, value: number): 'good' | 'needs-improvement' | 'poor' => {
+  const threshold = WEB_VITALS_THRESHOLDS[name as keyof typeof WEB_VITALS_THRESHOLDS]
+  if (!threshold) return 'needs-improvement'
+
+  if (value <= threshold.good) return 'good'
+  if (value <= threshold.poor) return 'needs-improvement'
+  return 'poor'
+}
+
+// Send web vital to GA4
+const sendWebVitalToGA4 = (metric: Metric): void => {
+  if (typeof window === 'undefined' || !window.gtag) return
+
+  const { sessionId, engagementTime } = getSessionInfo()
+  const rating = getMetricRating(metric.name, metric.value)
+
+  // GA4 Web Vitals recommended parameters
+  window.gtag('event', metric.name.toLowerCase(), {
+    // Core parameters
+    event_category: 'Web Vitals',
+    event_label: metric.name,
+    value: Math.round(metric.value),
+    metric_id: metric.id,
+    metric_value: Math.round(metric.value),
+    metric_delta: Math.round(metric.delta),
+    metric_rating: rating,
+
+    // Session tracking
+    session_id: sessionId,
+    engagement_time_msec: engagementTime,
+
+    // Debug mode in development
+    debug_mode: import.meta.env.DEV,
+  })
+}
+
+// Store metric globally for testing
+const storeMetric = (metric: Metric): void => {
+  if (typeof window === 'undefined') return
+
+  if (!window.webVitalsMetrics) {
+    window.webVitalsMetrics = []
+  }
+
+  // Add rating to the metric
+  const metricWithRating = {
+    ...metric,
+    rating: getMetricRating(metric.name, metric.value),
+    timestamp: Date.now(),
+  }
+
+  window.webVitalsMetrics.push(metricWithRating)
+}
+
+// Track a single web vital
+const trackWebVital = (metric: Metric): void => {
+  // Store metric globally
+  storeMetric(metric)
+
+  // Send to GA4
+  sendWebVitalToGA4(metric)
+}
 
 export function PerformanceMonitor() {
   useEffect(() => {
     // Only run on client-side
-    if (typeof window === 'undefined') {
-      return
-    }
+    if (typeof window === 'undefined') return
 
     // Initialize metrics array
     if (!window.webVitalsMetrics) {
       window.webVitalsMetrics = []
     }
 
-    // Track Core Web Vitals
-    const trackWebVitals = () => {
-      onCLS((metric: WebVitalsMetric) => {
-        // Store metric
-        if (window.webVitalsMetrics) {
-          window.webVitalsMetrics.push(metric)
-        }
+    // Track Core Web Vitals with web-vitals library
+    onCLS((metric) => {
+      trackWebVital(metric)
+    })
 
-        // Analytics calls removed - using Google Analytics 4 only
-        // sendAnalytics("web_vitals_cls", {
-        //   value: metric.value,
-        //   delta: metric.delta,
-        //   id: metric.id,
-        // });
+    onINP((metric) => {
+      trackWebVital(metric)
+    })
 
-        // Send to Google Analytics 4
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'web_vitals', {
-            event_category: 'Performance',
-            event_label: 'CLS',
-            value: Math.round(metric.value),
-            custom_parameter_metric_id: metric.id,
-          })
-        }
-      })
+    onFCP((metric) => {
+      trackWebVital(metric)
+    })
 
-      onINP((metric: WebVitalsMetric) => {
-        // Store metric
-        if (window.webVitalsMetrics) {
-          window.webVitalsMetrics.push(metric)
-        }
+    onLCP((metric) => {
+      trackWebVital(metric)
+    })
 
-        // Analytics calls removed - using Google Analytics 4 only
-        // sendAnalytics("web_vitals_inp", {
-        //   value: metric.value,
-        //   delta: metric.delta,
-        //   id: metric.id,
-        // });
+    onTTFB((metric) => {
+      trackWebVital(metric)
+    })
 
-        // Send to Google Analytics 4
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'web_vitals', {
-            event_category: 'Performance',
-            event_label: 'INP',
-            value: Math.round(metric.value),
-            custom_parameter_metric_id: metric.id,
-          })
-        }
-      })
-
-      onFCP((metric: WebVitalsMetric) => {
-        // Store metric
-        if (window.webVitalsMetrics) {
-          window.webVitalsMetrics.push(metric)
-        }
-
-        // Send to Google Analytics 4 only (removed custom analytics endpoint)
-        // sendAnalytics("web_vitals_fcp", {
-        //   value: metric.value,
-        //   delta: metric.delta,
-        //   id: metric.id,
-        // });
-
-        // Send to Google Analytics 4
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'web_vitals', {
-            event_category: 'Performance',
-            event_label: 'FCP',
-            value: Math.round(metric.value),
-            custom_parameter_metric_id: metric.id,
-          })
-        }
-      })
-
-      onLCP((metric: WebVitalsMetric) => {
-        // Store metric
-        if (window.webVitalsMetrics) {
-          window.webVitalsMetrics.push(metric)
-        }
-
-        // Analytics calls removed - using Google Analytics 4 only
-        // sendAnalytics("web_vitals_lcp", {
-        //   value: metric.value,
-        //   delta: metric.delta,
-        //   id: metric.id,
-        // });
-
-        // Send to Google Analytics 4
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'web_vitals', {
-            event_category: 'Performance',
-            event_label: 'LCP',
-            value: Math.round(metric.value),
-            custom_parameter_metric_id: metric.id,
-          })
-        }
-      })
-
-      onTTFB((metric: WebVitalsMetric) => {
-        // Store metric
-        if (window.webVitalsMetrics) {
-          window.webVitalsMetrics.push(metric)
-        }
-
-        // Analytics calls removed - using Google Analytics 4 only
-        // sendAnalytics("web_vitals_ttfb", {
-        //   value: metric.value,
-        //   delta: metric.delta,
-        //   id: metric.id,
-        // });
-
-        // Send to Google Analytics 4
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'web_vitals', {
-            event_category: 'Performance',
-            event_label: 'TTFB',
-            value: Math.round(metric.value),
-            custom_parameter_metric_id: metric.id,
-          })
-        } else {
-          // Debug logging removed - analytics handles production tracking
-        }
-      })
-    }
-
-    trackWebVitals()
-
+    // Navigation timing
     const trackNavigation = () => {
       const checkNavigationTiming = () => {
-        if (isPerformanceSupported()) {
-          const navigation = getNavigationEntry()
-          if (navigation) {
-            handleNavigationEntry(navigation)
+        if ('performance' in window && 'getEntriesByType' in window.performance) {
+          const navigationEntries = window.performance.getEntriesByType('navigation')
+          if (navigationEntries.length > 0) {
+            const navigation = navigationEntries[0] as PerformanceNavigationTiming
+
+            // Track navigation timing as custom event
+            if (typeof window !== 'undefined' && window.gtag) {
+              const { sessionId, engagementTime } = getSessionInfo()
+
+              window.gtag('event', 'navigation_timing', {
+                event_category: 'Performance',
+                event_label: 'navigation',
+                value: Math.round(navigation.duration),
+                session_id: sessionId,
+                engagement_time_msec: engagementTime,
+
+                // Navigation timing breakdown
+                dom_content_loaded: Math.round(
+                  navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+                ),
+                dom_complete: Math.round(
+                  navigation.domComplete - navigation.domContentLoadedEventEnd,
+                ),
+                load_complete: Math.round(navigation.loadEventEnd - navigation.loadEventStart),
+                total_time: Math.round(navigation.duration),
+              })
+            }
           }
         }
       }
 
-      // Check immediately and also after a short delay to catch load completion
+      // Check immediately and after a short delay
       checkNavigationTiming()
       setTimeout(checkNavigationTiming, NAVIGATION_CHECK_DELAY_MS)
     }
 
-    const isPerformanceSupported = () => {
-      return 'performance' in window && 'getEntriesByType' in window.performance
-    }
-
-    const getNavigationEntry = () => {
-      return window.performance.getEntriesByType('navigation')[0] as PerformanceEntry & {
-        domContentLoadedEventEnd: number
-        domContentLoadedEventStart: number
-        loadEventEnd: number
-        loadEventStart: number
-        fetchStart: number
-      }
-    }
-
-    const handleNavigationEntry = (
-      _navigation: PerformanceEntry & {
-        domContentLoadedEventEnd: number
-        domContentLoadedEventStart: number
-        loadEventEnd: number
-        loadEventStart: number
-        fetchStart: number
-      },
-    ) => {
-      if (process.env.NODE_ENV === 'production') {
-        // Send to analytics service
-        // const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
-        // const loadComplete = navigation.loadEventEnd - navigation.loadEventStart;
-        // const totalTime = navigation.loadEventEnd - navigation.fetchStart;
-        // analytics.track('navigation_timing', { domContentLoaded, loadComplete, totalTime })
-      }
-    }
-
     trackNavigation()
 
-    // Track route changes
-    if (process.env.NODE_ENV === 'production') {
-      // Send to analytics service
-      // analytics.track('route_change', { path: location.pathname })
-    } else {
-      // Debug logging removed - analytics handles production tracking
+    // Cleanup function
+    return () => {
+      // Any cleanup if needed
     }
   }, [])
 
@@ -263,12 +236,27 @@ export function PerformanceMonitor() {
       }
 
       if (perfWithMemory.memory) {
-        // Memory usage tracking - debug logging removed for production
-        // Previously logged: used/total/limit in MB
+        const { usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit } = perfWithMemory.memory
+        const usagePercent = (usedJSHeapSize / jsHeapSizeLimit) * 100
+
+        // Track memory as custom metric in GA4
+        if (typeof window !== 'undefined' && window.gtag) {
+          const { sessionId, engagementTime } = getSessionInfo()
+
+          window.gtag('event', 'memory_usage', {
+            event_category: 'Performance',
+            event_label: 'memory',
+            value: Math.round(usagePercent),
+            memory_used_mb: Math.round(usedJSHeapSize / 1024 / 1024),
+            memory_total_mb: Math.round(totalJSHeapSize / 1024 / 1024),
+            session_id: sessionId,
+            engagement_time_msec: engagementTime,
+          })
+        }
       }
     }
 
-    const interval = setInterval(trackMemory, MEMORY_TRACKING_INTERVAL_MS) // Every 30 seconds
+    const interval = setInterval(trackMemory, MEMORY_TRACKING_INTERVAL_MS)
     return () => {
       clearInterval(interval)
     }
@@ -276,3 +264,7 @@ export function PerformanceMonitor() {
 
   return null // This component doesn't render anything
 }
+
+// Export utility functions
+export { getMetricRating, getSessionInfo, getEngagementTime }
+export type { WebVitalsMetric }

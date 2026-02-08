@@ -198,8 +198,8 @@ class TestProgressServer {
 
     // API endpoint for logs
     this.app.get('/api/logs', (req, res) => {
-      const level = req.query.level as string
-      const search = req.query.search as string
+      const level = req.query['level'] as string
+      const search = req.query['search'] as string
 
       let filteredLogs = [...this.logs]
 

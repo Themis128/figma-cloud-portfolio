@@ -20,8 +20,8 @@ import {
  */
 
 // Configuration constants for simple setup using shared validation constants
-const CI_WORKERS = VALIDATION_CONSTANTS.MAX_CI_WORKERS
-const DEVELOPMENT_WORKERS = 4
+const CI_WORKERS = 2
+const DEVELOPMENT_WORKERS = 2
 const CI_RETRIES = 2
 const DEVELOPMENT_RETRIES = 1
 

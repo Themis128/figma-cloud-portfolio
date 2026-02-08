@@ -284,7 +284,7 @@ export const TEST_HEADERS = {
   'X-Test-Session': 'playwright-e2e',
   'X-Test-Framework': 'playwright',
   'X-Test-Environment': (env: string) => env,
-  'X-Test-Run-ID': process.env.GITHUB_RUN_ID || process.env.CI_RUN_ID || 'local',
+  'X-Test-Run-ID': process.env['GITHUB_RUN_ID'] || process.env['CI_RUN_ID'] || 'local',
 } as const
 
 /**
@@ -496,8 +496,8 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 export function getOptimalWorkers(environment: ConfigEnvironment): number {
   const settings = getEnvironmentSettings(environment)
   const cpuCount = os.cpus().length || 2 // Fallback to 2 if detection fails
-  const isCI = !!process.env.CI
-  const isGitHubActions = !!process.env.GITHUB_ACTIONS
+  const isCI = !!process.env['CI']
+  const isGitHubActions = !!process.env['GITHUB_ACTIONS']
 
   // Special handling for known CI environments
   if (isGitHubActions) {
@@ -672,7 +672,7 @@ export function createPlaywrightConfig(
 
     // Execution settings
     fullyParallel: true,
-    forbidOnly: !!process.env.CI,
+    forbidOnly: !!process.env['CI'],
     retries: settings.retries,
     timeout: settings.timeouts.test,
     workers,
@@ -780,14 +780,14 @@ export function createPlaywrightConfig(
           {
             command: 'npx tsx server/node-build.ts',
             url: 'http://localhost:3002/api/health',
-            reuseExistingServer: false, // Changed to false to ensure server starts
+            reuseExistingServer: true, // Reuse existing server instead of starting new one
             timeout: settings.timeouts.webServer,
             cwd: process.cwd(),
           },
           {
             command: 'npx vite',
             url: 'http://localhost:8081',
-            reuseExistingServer: false, // Changed to false to ensure server starts
+            reuseExistingServer: true, // Reuse existing server instead of starting new one
             timeout: settings.timeouts.webServer * 2, // Double timeout for dev server startup
             cwd: process.cwd(),
           },

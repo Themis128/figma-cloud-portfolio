@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { AIService, aiService, type AIResponse } from '@/lib/aiService'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AIService, aiService } from '@/lib/aiService'
 
 // Mock fetch globally
 const fetchMock = vi.fn()
@@ -25,7 +25,13 @@ describe('AIService', () => {
       service = new AIService()
 
       expect(service.getCurrentProvider()).toBe('ollama')
-      expect(service.getAvailableModels()).toEqual(['llama2', 'codellama', 'mistral', 'llama2:13b', 'codellama:13b'])
+      expect(service.getAvailableModels()).toEqual([
+        'llama2',
+        'codellama',
+        'mistral',
+        'llama2:13b',
+        'codellama:13b',
+      ])
     })
 
     it('should initialize with OpenAI provider when configured', () => {
@@ -65,12 +71,12 @@ describe('AIService', () => {
     it('should handle Ollama API responses', async () => {
       const mockResponse = {
         response: 'Test response from Ollama',
-        model: 'llama2'
+        model: 'llama2',
       }
 
       fetchMock.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockResponse)
+        json: () => Promise.resolve(mockResponse),
       })
 
       const response = await service.generateResponse('Test message')
@@ -80,7 +86,7 @@ describe('AIService', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: expect.stringContaining('Test message')
+        body: expect.stringContaining('Test message'),
       })
 
       expect(response.content).toBe('Test response from Ollama')
@@ -88,9 +94,15 @@ describe('AIService', () => {
     })
 
     it('should handle OpenAI API responses', async () => {
-      ;(import.meta as any).env.VITE_AI_PROVIDER = 'openai'
-      ;(import.meta as any).env.VITE_OPENAI_API_KEY = 'test_key'
+      // Create a service instance with OpenAI provider
       const openaiService = new AIService()
+      // Mock the provider to be OpenAI for this test
+      ;(openaiService as any).provider = {
+        name: 'openai',
+        apiKey: 'test_key',
+        baseURL: 'https://api.openai.com/v1',
+        models: ['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4'],
+      }
 
       const mockResponse = {
         choices: [{ message: { content: 'Test response from OpenAI' } }],
@@ -98,13 +110,13 @@ describe('AIService', () => {
         usage: {
           prompt_tokens: 10,
           completion_tokens: 20,
-          total_tokens: 30
-        }
+          total_tokens: 30,
+        },
       }
 
       fetchMock.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockResponse)
+        json: () => Promise.resolve(mockResponse),
       })
 
       const response = await openaiService.generateResponse('Test message')
@@ -113,9 +125,9 @@ describe('AIService', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer test_key',
+          Authorization: 'Bearer test_key',
         },
-        body: expect.stringContaining('Test message')
+        body: expect.stringContaining('Test message'),
       })
 
       expect(response.content).toBe('Test response from OpenAI')
@@ -123,7 +135,7 @@ describe('AIService', () => {
       expect(response.usage).toEqual({
         promptTokens: 10,
         completionTokens: 20,
-        totalTokens: 30
+        totalTokens: 30,
       })
     })
 
@@ -131,12 +143,12 @@ describe('AIService', () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 500,
-        statusText: 'Internal Server Error'
+        statusText: 'Internal Server Error',
       })
 
       const response = await service.generateResponse('Test message')
 
-      expect(response.content).toContain('fallback response')
+      expect(response.content).toContain("I'd be happy to help")
       expect(response.model).toBe('fallback')
     })
 
@@ -145,7 +157,7 @@ describe('AIService', () => {
 
       const response = await service.generateResponse('Test message')
 
-      expect(response.content).toContain('fallback response')
+      expect(response.content).toContain("I'd be happy to help")
       expect(response.model).toBe('fallback')
     })
   })

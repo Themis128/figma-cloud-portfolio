@@ -386,6 +386,10 @@ export function Interactive3DDemo({ projects, className, onProjectClick }: Inter
         }}
         dpr={[1, 2]}
         onError={handleWebglError}
+        aria-label="Interactive 3D project visualization canvas"
+        title="3D Portfolio Projects - Click and drag to explore"
+        role="img"
+        tabIndex={0}
         fallback={
           <div className='flex items-center justify-center h-full'>
             <div className='text-center p-6 max-w-md'>

@@ -3,8 +3,8 @@ import fetch from 'node-fetch'
 import { logger } from '../logger'
 
 // Simple in-memory LRU cache and rate limiter for proxy endpoints
-const CACHE_TTL_SECONDS = parseInt(process.env.GITHUB_CACHE_TTL_SECONDS || '15', 10)
-const MAX_CACHE_ENTRIES = parseInt(process.env.GITHUB_CACHE_MAX_ENTRIES || '200', 10)
+const CACHE_TTL_SECONDS = parseInt(process.env['GITHUB_CACHE_TTL_SECONDS'] || '15', 10)
+const MAX_CACHE_ENTRIES = parseInt(process.env['GITHUB_CACHE_MAX_ENTRIES'] || '200', 10)
 const cache = new Map<string, { ts: number; status: number; body: unknown }>()
 
 // Metrics
@@ -27,11 +27,11 @@ const MILLISECONDS_PER_SECOND = 1000
 const MILLISECONDS_PER_MINUTE = 60 * MILLISECONDS_PER_SECOND
 
 const RATE_LIMIT_WINDOW_MS = parseInt(
-  process.env.GITHUB_RATE_LIMIT_WINDOW_MS ||
+  process.env['GITHUB_RATE_LIMIT_WINDOW_MS'] ||
     String(DEFAULT_RATE_LIMIT_WINDOW_MINUTES * MILLISECONDS_PER_MINUTE),
   10,
 )
-const RATE_LIMIT_MAX = parseInt(process.env.GITHUB_RATE_LIMIT_MAX || '120', 10) // requests per window per IP
+const RATE_LIMIT_MAX = parseInt(process.env['GITHUB_RATE_LIMIT_MAX'] || '120', 10) // requests per window per IP
 const rateMap = new Map<string, { windowStart: number; count: number }>()
 
 function isRateLimited(ip?: string) {
@@ -86,7 +86,7 @@ async function callGitHubApi(path: string, token?: string) {
     'User-Agent': 'Deployment-Monitor-Proxy',
   }
 
-  const serverToken = process.env.VITE_GITHUB_TOKEN
+  const serverToken = process.env['VITE_GITHUB_TOKEN']
   if (serverToken) {
     headers.Authorization = `token ${serverToken}`
   } else if (token) {
@@ -118,7 +118,7 @@ export const handleGetWorkflows: RequestHandler = async (req, res) => {
 
     // Cache key (only safe to cache when server token is present)
     const cacheKey = `/workflows?owner=${req.query.owner || 'Themis128'}&repo=${req.query.repo || 'figma-cloud-portfolio'}`
-    const serverTokenPresent = Boolean(process.env.VITE_GITHUB_TOKEN)
+    const serverTokenPresent = Boolean(process.env['VITE_GITHUB_TOKEN'])
     if (serverTokenPresent) {
       const cached = getCached(cacheKey)
       if (cached) return res.status(cached.status).json(cached.body)
@@ -164,7 +164,7 @@ export const handleGetWorkflowRuns: RequestHandler = async (req, res) => {
 
     const perPage = req.query.per_page || '1'
     const cacheKey = `/workflows/${workflowId}/runs?owner=${owner}&repo=${repo}&per_page=${perPage}`
-    const serverTokenPresent = Boolean(process.env.VITE_GITHUB_TOKEN)
+    const serverTokenPresent = Boolean(process.env['VITE_GITHUB_TOKEN'])
     if (serverTokenPresent) {
       const cached = getCached(cacheKey)
       if (cached) return res.status(cached.status).json(cached.body)
@@ -201,7 +201,7 @@ export const handleGetRunJobs: RequestHandler = async (req, res) => {
         : undefined
 
     const cacheKey = `/runs/${runId}/jobs?owner=${owner}&repo=${repo}`
-    const serverTokenPresent = Boolean(process.env.VITE_GITHUB_TOKEN)
+    const serverTokenPresent = Boolean(process.env['VITE_GITHUB_TOKEN'])
     if (serverTokenPresent) {
       const cached = getCached(cacheKey)
       if (cached) return res.status(cached.status).json(cached.body)

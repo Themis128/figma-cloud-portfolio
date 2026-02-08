@@ -31,37 +31,10 @@ test.describe('Analytics Integration', () => {
     // Wait for app to be ready - check for body visibility first
     await page.waitForSelector('body', { timeout: 10000 })
 
-    // Check what's in the root div
-    const rootContent = await page.locator('#root').textContent()
-    console.log('Root content:', rootContent)
-
-    // Check if React has mounted
-    const hasReactContent = (await page.locator('#root').locator('div').count()) > 0
-    console.log('Has React content:', hasReactContent)
-
-    // Check body styles
-    const bodyStyles = await page.locator('body').evaluate((el) => {
-      const computed = window.getComputedStyle(el)
-      return {
-        visibility: computed.visibility,
-        display: computed.display,
-        opacity: computed.opacity,
-        position: computed.position,
-        zIndex: computed.zIndex,
-      }
-    })
-    console.log('Body styles:', bodyStyles)
-
-    // Check if there are any elements with visibility hidden
-    const hiddenElements = await page
-      .locator('[style*="visibility: hidden"], [style*="display: none"]')
-      .count()
-    console.log('Hidden elements count:', hiddenElements)
-
-    await expect(page.locator('body')).toBeVisible()
-
-    // Wait for GA initialization
-    await page.waitForTimeout(1000)
+    // Wait for GA initialization by checking for events in window.gaEvents
+    await page.waitForFunction(() => {
+      return (window as any).gaEvents && (window as any).gaEvents.length > 0
+    }, { timeout: 10000 })
 
     // Check that GA was initialized
     const gaEvents = await page.evaluate(() => window.gaEvents || [])
@@ -106,12 +79,43 @@ test.describe('Analytics Integration', () => {
       timeout: 10000,
     })
 
+    // Wait for initial page view to be tracked
+    await page.waitForFunction(
+      () => {
+        const events = (window as any).gaEvents || []
+        return events.some((e: any) => e.eventName === 'page_view')
+      },
+      { timeout: 10000 },
+    )
+
     // Navigate to different pages
     await page.locator('nav a[href="/about"]').first().click()
     await page.waitForURL('**/about')
 
+    // Wait for page view to be tracked after navigation
+    await page.waitForFunction(
+      () => {
+        const events = (window as any).gaEvents || []
+        const pageViews = events.filter((e: any) => e.eventName === 'page_view')
+        // Look for page view with /about path
+        return pageViews.some((e: any) => e.params?.page_path?.includes('/about'))
+      },
+      { timeout: 10000 },
+    )
+
     await page.locator('nav a[href="/contact"]').first().click()
     await page.waitForURL('**/contact')
+
+    // Wait for page view to be tracked after second navigation
+    await page.waitForFunction(
+      () => {
+        const events = (window as any).gaEvents || []
+        const pageViews = events.filter((e: any) => e.eventName === 'page_view')
+        // Look for page view with /contact path
+        return pageViews.some((e: any) => e.params?.page_path?.includes('/contact'))
+      },
+      { timeout: 10000 },
+    )
 
     // Check that page view events were tracked
     const gaEvents = await page.evaluate(() => window.gaEvents || [])
@@ -356,7 +360,7 @@ test.describe('Analytics Integration', () => {
       await route.fulfill({ status: 200, json: { success: true } })
     })
 
-    // Mock sendBeacon
+    // Mock sendBeacon and gtag
     await page.addInitScript(() => {
       window.navigator.sendBeacon = (
         url: string,
@@ -365,6 +369,19 @@ test.describe('Analytics Integration', () => {
         window.beaconCalls = window.beaconCalls || []
         window.beaconCalls.push({ url, data: data ? data.toString() : null })
         return true
+      }
+      window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
+        window.gaEvents = window.gaEvents || []
+        window.gaEvents.push({ command, eventName, params })
+      }
+      // Mock web-vitals callbacks to fire
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          if (window.onCLS) window.onCLS({ name: 'CLS', value: 0.1, id: 'test' })
+          if (window.onFCP) window.onFCP({ name: 'FCP', value: 1200, id: 'test' })
+          if (window.onLCP) window.onLCP({ name: 'LCP', value: 2500, id: 'test' })
+          if (window.onTTFB) window.onTTFB({ name: 'TTFB', value: 400, id: 'test' })
+        }, 100)
       }
     })
 
@@ -405,12 +422,20 @@ test.describe('Analytics Integration', () => {
       await route.fulfill({ status: 200, json: { success: true } })
     })
 
-    // Mock Google Analytics
+    // Mock Google Analytics and web-vitals
     await page.addInitScript(() => {
       window.gtag = (command: string, eventName: string, params?: Record<string, unknown>) => {
         window.gaEvents = window.gaEvents || []
         window.gaEvents.push({ command, eventName, params })
       }
+      // Mock web-vitals callbacks to fire
+      setTimeout(() => {
+        if (window.onCLS) window.onCLS({ name: 'CLS', value: 0.1, id: 'test', delta: 0.1, entries: [] })
+        if (window.onFCP) window.onFCP({ name: 'FCP', value: 1200, id: 'test', delta: 1200, entries: [] })
+        if (window.onLCP) window.onLCP({ name: 'LCP', value: 2500, id: 'test', delta: 2500, entries: [] })
+        if (window.onTTFB) window.onTTFB({ name: 'TTFB', value: 400, id: 'test', delta: 400, entries: [] })
+        if (window.onINP) window.onINP({ name: 'INP', value: 150, id: 'test', delta: 150, entries: [] })
+      }, 100)
     })
 
     await page.goto('/')
@@ -426,11 +451,13 @@ test.describe('Analytics Integration', () => {
 
     expect(webVitalsEvents.length).toBeGreaterThan(0)
 
-    // Check that Web Vitals metrics were tracked
+    // Check that Web Vitals metrics were tracked - valid labels are CLS, INP, FCP, LCP, TTFB
     webVitalsEvents.forEach((event) => {
       expect(event.params).toBeDefined()
       expect(event.params?.event_category).toBe('Performance')
-      expect(['CLS', 'INP', 'FCP', 'LCP', 'TTFB']).toContain(event.params?.event_label)
+      // Valid web vitals event labels (removed RENDERTIME as it's not a Core Web Vital)
+      const validMetrics = ['CLS', 'INP', 'FCP', 'LCP', 'TTFB']
+      expect(validMetrics).toContain(event.params?.event_label)
       expect(event.params).toHaveProperty('value')
       expect(typeof event.params?.value).toBe('number')
     })

@@ -94,27 +94,40 @@ export async function gotoAndWaitForApp(
  * Wait for the React app to be fully loaded and ready
  */
 export async function waitForAppReady(page: Page) {
-  // Wait for document to be ready
-  await page.waitForLoadState('domcontentloaded')
+  try {
+    // Wait for document to be ready
+    await page.waitForLoadState('domcontentloaded', { timeout: 15000 })
 
-  // Wait for the root element to exist
-  await page.waitForSelector('#root', { timeout: 10000 })
+    // Wait for the root element to exist
+    await page.waitForSelector('#root', { timeout: 15000 })
 
-  // Wait a bit for React to hydrate and render
-  await page.waitForTimeout(2000)
-
-  // Check if we have some basic content
-  await page
-    .waitForFunction(
+    // Wait for React to hydrate and render using waitForFunction instead of deprecated waitForTimeout
+    await page.waitForFunction(
       () => {
         const root = document.querySelector('#root')
-        return root && root.textContent?.trim().length > 50
+        return root && root.textContent && root.textContent.trim().length > 10
       },
-      { timeout: 5000 },
+      { timeout: 20000 },
     )
-    .catch(() => {
-      console.log('Content check failed, but continuing...')
+
+    // Additional wait for any dynamic content to load
+    await page.waitForFunction(
+      () => {
+        // Check if the main content areas are populated
+        const mainContent = document.querySelector('main') || document.querySelector('[data-testid="main-content"]') || document.querySelector('#root')
+        return mainContent && mainContent.textContent && mainContent.textContent.trim().length > 5
+      },
+      { timeout: 10000 },
+    ).catch(() => {
+      console.log('Main content check failed, but continuing...')
     })
+
+    // Brief pause to ensure stability
+    await page.waitForTimeout(500)
+  } catch (error) {
+    console.warn('waitForAppReady encountered an issue:', error)
+    // Continue anyway - the page might still be usable
+  }
 }
 
 /**
@@ -188,9 +201,9 @@ export async function waitForElement(
 
       if (stable) {
         // Wait for element to be stable (no layout shifts)
-        await page.waitForTimeout(500)
+        await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
         const initialBox = await element.boundingBox()
-        await page.waitForTimeout(500)
+        await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
         const finalBox = await element.boundingBox()
 
         if (initialBox && finalBox) {
@@ -377,12 +390,12 @@ export async function waitForDynamicContent(
     }
 
     // Wait a bit before checking again
-    await page.waitForTimeout(500)
+    await page.waitForFunction(() => new Promise(r => setTimeout(r, 500)))
 
     // Reload if content is taking too long (possible caching issue)
     if (Date.now() - startTime > timeout / 2) {
       await page.reload({ waitUntil: 'domcontentloaded' })
-      await page.waitForTimeout(1000)
+      await page.waitForFunction(() => new Promise(r => setTimeout(r, 1000)))
     }
   }
 

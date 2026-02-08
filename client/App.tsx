@@ -6,7 +6,17 @@ import { NetworkOptimizer } from '@/components/NetworkOptimizer'
 import { LoadingErrorBoundary, PageLoading } from '@/components/ui/enhanced-loading'
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring'
 
-const GoogleAnalytics = lazy(() => import('@/components/GoogleAnalytics'))
+// Conditionally import GoogleAnalytics based on environment
+let GoogleAnalytics: React.ComponentType
+if (import.meta.env.MODE === 'test') {
+  // Import synchronously for tests to avoid lazy loading issues
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const gaModule = require('@/components/GoogleAnalytics')
+  GoogleAnalytics = gaModule.default
+} else {
+  GoogleAnalytics = lazy(() => import('@/components/GoogleAnalytics'))
+}
+
 const ThemeProvider = lazy(() =>
   import('@/components/ThemeProvider').then((module) => ({ default: module.ThemeProvider })),
 )
@@ -34,9 +44,13 @@ function App() {
         <HelmetProvider>
           <ThemeProvider defaultTheme='dark' storageKey='portfolio-theme'>
             <BrowserRouter>
-              <Suspense fallback={null}>
+              {import.meta.env.MODE === 'test' ? (
                 <GoogleAnalytics />
-              </Suspense>
+              ) : (
+                <Suspense fallback={null}>
+                  <GoogleAnalytics />
+                </Suspense>
+              )}
               <Suspense
                 fallback={
                   <PageLoading

@@ -93,7 +93,7 @@ const getAssetFileName = (name: string): string => {
 }
 export default defineConfig(({ mode }) => {
   // Detect CI/CD environment
-  const isCI = process.env.CI || process.env.AMPLIFY_BUILD_CONFIG
+  const isCI = process.env['CI'] || process.env['AMPLIFY_BUILD_CONFIG']
 
   return {
     root: 'client',

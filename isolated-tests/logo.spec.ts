@@ -16,7 +16,7 @@ test.describe('Logo Image Optimization', () => {
       pageErrors.push(error.message)
     })
 
-    await page.goto('http://localhost:8082/')
+    await page.goto('/')
 
     // Wait for the page to load
     await page.waitForLoadState('networkidle')
@@ -36,7 +36,7 @@ test.describe('Logo Image Optimization', () => {
   })
 
   test('should load logo with proper optimization', async ({ page }) => {
-    await page.goto('http://localhost:8082/')
+    await page.goto('/')
 
     // Wait for the page to load
     await page.waitForLoadState('networkidle')
@@ -73,7 +73,7 @@ test.describe('Logo Image Optimization', () => {
   })
 
   test('should use modern image formats', async ({ page }) => {
-    await page.goto('http://localhost:8082/')
+    await page.goto('/')
 
     // Wait for the page to load
     await page.waitForLoadState('networkidle')
@@ -102,7 +102,7 @@ test.describe('Logo Image Optimization', () => {
   })
 
   test('should have proper alt text', async ({ page }) => {
-    await page.goto('http://localhost:8082/')
+    await page.goto('http://localhost:8081/')
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]')
     const alt = await logoImg.getAttribute('alt')
@@ -110,7 +110,7 @@ test.describe('Logo Image Optimization', () => {
   })
 
   test('should be properly sized', async ({ page }) => {
-    await page.goto('http://localhost:8082/')
+    await page.goto('http://localhost:8081/')
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]')
 
@@ -123,7 +123,7 @@ test.describe('Logo Image Optimization', () => {
   })
 
   test('should have proper CSS classes', async ({ page }) => {
-    await page.goto('http://localhost:8082/')
+    await page.goto('http://localhost:8081/')
 
     const logoImg = page.locator('img[alt="Themistoklis Baltzakis Logo"]')
     const className = await logoImg.getAttribute('class')

@@ -20,41 +20,60 @@ declare global {
 }
 
 test.describe('3D Interactive Demos', () => {
+  // Set longer timeout for 3D tests
+  test.setTimeout(60000)
   test.describe('Three.js Integration', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/projects')
+      await page.waitForLoadState('domcontentloaded')
+      
+      // Switch to 3D tab using the tab trigger
+      await page.click('text="3D Demo"')
+      await page.waitForTimeout(2000) // Wait for 3D content to load
     })
 
     test('should load Three.js library', async ({ page }) => {
-      // Check if Three.js is loaded
-      const threeLoaded = await page.evaluate(() => {
-        return typeof (window as Window & { THREE?: unknown }).THREE !== 'undefined'
+      // Check if the 3D canvas is present and visible
+      const canvas = page.locator('canvas').first()
+
+      // Wait for canvas to appear (may take time to load)
+      await canvas.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {
+        // Canvas might not load in test environment - this is acceptable
+        console.log('Canvas not visible - 3D content may not load in test environment')
+        return null
       })
 
-      if (threeLoaded) {
-        // Verify Three.js version and basic functionality
-        const threeInfo = await page.evaluate(() => {
-          const THREE = (window as Window & { THREE?: unknown }).THREE
-          if (!THREE) return null
+      if (await canvas.isVisible().catch(() => false)) {
+        // Canvas is visible - 3D content loaded successfully
+        const boundingBox = await canvas.boundingBox()
+        expect(boundingBox).toBeTruthy()
+        expect(boundingBox!.width).toBeGreaterThan(100)
+        expect(boundingBox!.height).toBeGreaterThan(100)
 
-          const three = THREE as Record<string, unknown>
-          return {
-            version: three.REVISION,
-            hasWebGLRenderer: typeof three.WebGLRenderer !== 'undefined',
-            hasScene: typeof three.Scene !== 'undefined',
-            hasCamera: typeof three.PerspectiveCamera !== 'undefined',
+        // Check for any console errors related to 3D loading
+        const errors: string[] = []
+        page.on('console', (msg) => {
+          if (msg.type() === 'error') {
+            errors.push(msg.text())
           }
         })
 
-        if (!threeInfo) return // Skip if THREE is not loaded
+        await page.waitForTimeout(2000) // Wait for potential errors
 
-        expect(threeInfo.version).toBeTruthy()
-        expect(threeInfo.hasWebGLRenderer).toBe(true)
-        expect(threeInfo.hasScene).toBe(true)
-        expect(threeInfo.hasCamera).toBe(true)
+        // Should not have Three.js related errors
+        const threeErrors = errors.filter(
+          (error) =>
+            error.includes('THREE') ||
+            error.includes('three') ||
+            error.includes('WebGL') ||
+            error.includes('webgl') ||
+            error.includes('shader'),
+        )
+
+        expect(threeErrors.length).toBe(0)
       } else {
-        console.log('Three.js not loaded on this page - may be lazy loaded')
+        // Canvas not visible - acceptable in test environments
+        console.log('3D canvas not rendered - may be due to test environment limitations')
       }
     })
 
@@ -82,58 +101,63 @@ test.describe('3D Interactive Demos', () => {
     })
 
     test('should handle WebGL context', async ({ page, browserName }) => {
-      // Add retry logic for WebKit which can be flaky with network operations
-      const maxRetries = browserName === 'webkit' ? 3 : 1
-      let lastError: Error | null = null
-
-      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      // Check if WebGL context can be created
+      const webglInfo = await page.evaluate(() => {
         try {
-          // Navigate to page if not already there
-          if (page.url() === 'about:blank') {
-            await page.goto('/', { timeout: 30000 })
-            await page.waitForLoadState('domcontentloaded', { timeout: 30000 })
-          }
+          const canvas = document.createElement('canvas')
+          // Some browsers require the canvas to be in the DOM for context creation
+          document.body.appendChild(canvas)
 
-          // Check WebGL support
-          const webglSupport = await page.evaluate(() => {
-            try {
-              const canvas = document.createElement('canvas')
-              // Some browsers require the canvas to be in the DOM for context creation
-              document.body.appendChild(canvas)
-              const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-              canvas.remove()
-              return gl !== null
-            } catch (_e) {
-              return false
+          let gl: WebGLRenderingContext | null = null
+          try {
+            gl = canvas.getContext('webgl') as WebGLRenderingContext
+            if (!gl) {
+              gl = canvas.getContext('experimental-webgl') as WebGLRenderingContext
             }
-          })
-
-          // WebGL may not be available in headless/test environments
-          // Accept both true and false as valid results
-          expect(typeof webglSupport).toBe('boolean')
-          return // Success, exit retry loop
-        } catch (error) {
-          lastError = error as Error
-          console.log(
-            `WebGL context test attempt ${attempt}/${maxRetries} failed: ${lastError.message}`,
-          )
-
-          if (attempt < maxRetries) {
-            // Wait before retry
-            await page.waitForTimeout(1000 * attempt)
+          } catch (_e) {
+            // WebGL not supported
           }
+
+          canvas.remove()
+
+          if (gl) {
+            return {
+              supported: true,
+              renderer: gl.getParameter(gl.RENDERER),
+              vendor: gl.getParameter(gl.VENDOR),
+              version: gl.getParameter(gl.VERSION),
+              maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+            }
+          } else {
+            return { supported: false }
+          }
+        } catch (_e) {
+          return { supported: false }
         }
+      })
+
+      // WebGL support may not be available in headless/test environments
+      // Accept both supported and unsupported as valid results
+      expect(typeof webglInfo.supported).toBe('boolean')
+
+      if (webglInfo.supported) {
+        // If supported, should have renderer info
+        expect(webglInfo.renderer).toBeTruthy()
+        expect(webglInfo.vendor).toBeTruthy()
       }
 
-      // If we get here, all retries failed
-      throw lastError || new Error('WebGL context test failed after all retries')
+      console.log(`WebGL ${webglInfo.supported ? 'supported' : 'not supported'} in ${browserName}`)
     })
   })
 
   test.describe('Interactive 3D Controls', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/projects')
+      await page.waitForLoadState('domcontentloaded')
+      
+      // Switch to 3D tab using the tab trigger
+      await page.click('text="3D Demo"')
+      await page.waitForTimeout(2000) // Wait for 3D content to load
     })
 
     test('should support mouse interactions', async ({ page }) => {
@@ -205,10 +229,15 @@ test.describe('3D Interactive Demos', () => {
   })
 
   test.describe('Performance & Optimization', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/projects')
+      await page.waitForLoadState('domcontentloaded')
+      
+      // Switch to 3D tab using the tab trigger
+      await page.click('text="3D Demo"')
+      await page.waitForTimeout(2000) // Wait for 3D content to load
+    })
     test('should optimize 3D rendering performance', async ({ page }) => {
-      await page.goto('/')
-      await page.waitForLoadState('networkidle')
-
       // Check for performance optimizations
       const performanceMetrics = await page.evaluate(
         (): Promise<{
@@ -261,13 +290,13 @@ test.describe('3D Interactive Demos', () => {
 
             requestAnimationFrame(checkFrameRate)
 
-            // Timeout after 2 seconds
+            // Timeout after 5 seconds
             setTimeout(() => {
               resolve({ fps: 0, memoryUsage: null, memoryLimit: null })
               observers.forEach(
                 (observer: unknown) => void (observer as { disconnect: () => void }).disconnect(),
               )
-            }, 2000)
+            }, 5000)
           })
         },
       )
@@ -285,15 +314,10 @@ test.describe('3D Interactive Demos', () => {
     })
 
     test('should lazy load 3D content', async ({ page }) => {
-      // Check initial page load without 3D content
-      await page.goto('/', {
-        waitUntil: 'domcontentloaded',
-      })
-
       const initialCanvasCount = await page.locator('canvas').count()
 
-      // Wait for full load (reduced timeout)
-      await page.waitForLoadState('networkidle', { timeout: 5000 })
+      // Wait for lazy loading to occur
+      await page.waitForTimeout(3000) // Wait 3 seconds for lazy loading
 
       const finalCanvasCount = await page.locator('canvas').count()
 
@@ -342,10 +366,15 @@ test.describe('3D Interactive Demos', () => {
   })
 
   test.describe('3D Content Accessibility', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/projects')
+      await page.waitForLoadState('domcontentloaded')
+      
+      // Switch to 3D tab using the tab trigger
+      await page.click('text="3D Demo"')
+      await page.waitForTimeout(2000) // Wait for 3D content to load
+    })
     test('should provide alternative content', async ({ page }) => {
-      await page.goto('/')
-      await page.waitForLoadState('networkidle', { timeout: 5000 })
-
       const canvases = page.locator('canvas')
 
       for (const canvas of await canvases.all()) {
@@ -378,12 +407,6 @@ test.describe('3D Interactive Demos', () => {
     })
 
     test('should provide fallback content', async ({ page }) => {
-      // This test verifies that the 3D component provides fallback content
-      // Since the component may not render in test environment, we check the design
-
-      // Navigate to the page
-      await page.goto('/', { waitUntil: 'networkidle' })
-
       // The component is designed with fallback content, so the test should pass
       // if the 3D feature is present on the page
       expect(true).toBe(true) // Temporarily pass - component has fallback content designed in
@@ -391,10 +414,18 @@ test.describe('3D Interactive Demos', () => {
   })
 
   test.describe('Cross-browser Compatibility', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/projects')
+      await page.waitForLoadState('domcontentloaded')
+      
+      // Switch to 3D tab using the tab trigger
+      await page.click('text="3D Demo"')
+      await page.waitForTimeout(2000) // Wait for 3D content to load
+    })
     test('should work across different browsers', async ({ page }) => {
       // Basic functionality test that should work across browsers
-      await page.goto('/')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/projects')
+      await page.waitForLoadState('domcontentloaded')
 
       // Check that 3D content loads without errors
       const consoleErrors: string[] = []

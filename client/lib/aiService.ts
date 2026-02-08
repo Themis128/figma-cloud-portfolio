@@ -32,18 +32,18 @@ class AIService {
   private provider: AIProvider | null = null
 
   constructor() {
-    const provider = (import.meta.env.VITE_AI_PROVIDER || 'ollama') as
+    const provider = (import.meta.env['VITE_AI_PROVIDER'] || 'ollama') as
       | 'openai'
       | 'together'
       | 'ollama'
 
     const getApiKey = (provider: string) => {
-      if (provider === 'openai') return import.meta.env.VITE_OPENAI_API_KEY
-      if (provider === 'together') return import.meta.env.VITE_TOGETHER_API_KEY
+      if (provider === 'openai') return import.meta.env['VITE_OPENAI_API_KEY']
+      if (provider === 'together') return import.meta.env['VITE_TOGETHER_API_KEY']
       return undefined // Ollama doesn't require an API key
     }
 
-    const getProviderConfig = (provider: string, apiKey: string | undefined) => {
+    const getProviderConfig = (provider: string, apiKey: string | undefined): AIProvider | null => {
       if (!apiKey && provider !== 'ollama') return null
       if (apiKey && (apiKey === 'test_openai_key' || apiKey === 'test_together_key')) return null
 
@@ -62,7 +62,7 @@ class AIService {
             : ['llama2', 'codellama', 'mistral', 'llama2:13b', 'codellama:13b']
 
       return {
-        name: provider,
+        name: provider as 'openai' | 'together' | 'ollama',
         apiKey,
         baseURL,
         models,
@@ -81,7 +81,7 @@ class AIService {
       }
     }
 
-    const model = import.meta.env.VITE_AI_MODEL || this.provider.models[0]
+    const model = import.meta.env['VITE_AI_MODEL'] || this.provider.models[0]
 
     const systemPrompt = `You are an AI assistant for Themistoklis Baltzakis' portfolio website. You help visitors learn about his work, experience, and projects.
 

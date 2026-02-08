@@ -6,7 +6,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
   test.describe('reCAPTCHA v3 Server-Side Validation', () => {
     test('should validate reCAPTCHA token with Google API', async ({ request }) => {
       // Test with a mock token that simulates Google's response
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Test User',
           email: 'test@example.com',
@@ -26,7 +26,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     })
 
     test('should reject requests without reCAPTCHA token', async ({ request }) => {
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Test User',
           email: 'test@example.com',
@@ -45,7 +45,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     test('should handle reCAPTCHA verification network failures', async ({ request }) => {
       // This test verifies that the server handles cases where Google's API is unreachable
       // We'll test this by making a request that should trigger the verification logic
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Network Test',
           email: 'network@example.com',
@@ -64,7 +64,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     })
 
     test('should validate email format before reCAPTCHA', async ({ request }) => {
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Test User',
           email: 'invalid-email-format',
@@ -114,7 +114,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       ]
 
       for (const testCase of testCases) {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: testCase,
         })
 
@@ -128,7 +128,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
 
     test('should handle malformed JSON gracefully', async ({ request }) => {
       // Send malformed data that could cause parsing errors
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: null, // Invalid type
           email: 'test@example.com',
@@ -147,7 +147,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     })
 
     test('should process valid contact form submissions', async ({ request }) => {
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Valid User',
           email: 'valid@example.com',
@@ -355,7 +355,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
 
       for (let i = 0; i < 10; i++) {
         promises.push(
-          request.get('http://localhost:3000/api/ping').then((response) => ({
+          request.get('http://localhost:3002/api/ping').then((response) => ({
             status: response.status(),
             index: i,
           })),
@@ -384,7 +384,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
 
       for (const testCase of errorCases) {
         const method = testCase.method as 'get' | 'post' | 'put' | 'delete' | 'patch'
-        const response = await request[method](`http://localhost:3000/api${testCase.endpoint}`)
+        const response = await request[method](`http://localhost:3002/api${testCase.endpoint}`)
 
         if (!response) throw new Error('No response received')
         expect(response.status()).toBe(testCase.expectedStatus)
@@ -444,7 +444,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       // Test with large message content
       const largeMessage = 'A'.repeat(10000) // 10KB message
 
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Large Payload Test',
           email: 'large@example.com',
@@ -465,7 +465,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     test('should handle special characters in form data', async ({ request }) => {
       const specialMessage = 'Special chars: àáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ @#$%^&*()'
 
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Special Chars Test ñ',
           email: 'special@example.com',
@@ -494,7 +494,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       ]
 
       for (const xssPayload of xssAttempts) {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'XSS Test',
             email: 'xss@example.com',
@@ -526,7 +526,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       ]
 
       for (const invalidEmail of invalidEmails) {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Email Validation Test',
             email: invalidEmail,
@@ -551,7 +551,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       const sqlInjections = ["'; DROP TABLE users; --", "' OR '1'='1", "admin'--", "1' OR '1' = '1"]
 
       for (const sqlPayload of sqlInjections) {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'SQL Injection Test',
             email: 'sql@example.com',
@@ -574,7 +574,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       const commandInjections = ['; rm -rf /', '| cat /etc/passwd', '`whoami`', '$(rm -rf /)']
 
       for (const cmdPayload of commandInjections) {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Command Injection Test',
             email: 'cmd@example.com',
@@ -598,7 +598,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
     test('should handle reCAPTCHA service unavailability', async ({ request }) => {
       // This test verifies that the server handles cases where reCAPTCHA verification fails
       // due to network issues or invalid tokens
-      const response = await request.post('http://localhost:3000/api/contact', {
+      const response = await request.post('http://localhost:3002/api/contact', {
         data: {
           name: 'Service Unavailable Test',
           email: 'unavailable@example.com',
@@ -627,7 +627,7 @@ test.describe('Comprehensive reCAPTCHA and Google Analytics Integration Tests', 
       ]
 
       for (const token of tokenFormats) {
-        const response = await request.post('http://localhost:3000/api/contact', {
+        const response = await request.post('http://localhost:3002/api/contact', {
           data: {
             name: 'Token Format Test',
             email: 'token@example.com',

@@ -246,9 +246,18 @@ const VIBRATE_MEDIUM = 275
 const VIBRATE_LONG = 200
 const VIBRATE_EXTRA_LONG = 600
 const LOCAL_NOTIFICATION_VIBRATE_PATTERN = [
-  VIBRATE_SHORT, VIBRATE_PAUSE, VIBRATE_SHORT, VIBRATE_MEDIUM,
-  VIBRATE_LONG, VIBRATE_MEDIUM, VIBRATE_SHORT, VIBRATE_PAUSE,
-  VIBRATE_SHORT, VIBRATE_MEDIUM, VIBRATE_LONG, VIBRATE_EXTRA_LONG
+  VIBRATE_SHORT,
+  VIBRATE_PAUSE,
+  VIBRATE_SHORT,
+  VIBRATE_MEDIUM,
+  VIBRATE_LONG,
+  VIBRATE_MEDIUM,
+  VIBRATE_SHORT,
+  VIBRATE_PAUSE,
+  VIBRATE_SHORT,
+  VIBRATE_MEDIUM,
+  VIBRATE_LONG,
+  VIBRATE_EXTRA_LONG,
 ]
 
 // Resume notification vibration pattern constant
@@ -278,13 +287,18 @@ export function useLocalNotifications() {
         },
       })
     },
-    []
+    [],
   )
 
   // Helper for navigation logic
   const handleNotificationNavigation = useCallback((url?: string) => {
-    if ('clients' in window && 'openWindow' in (window as Window & { clients: { openWindow: (url: string) => void } })) {
-      (window as Window & { clients: { openWindow: (url: string) => void } }).clients.openWindow(url || '/')
+    if (
+      'clients' in window &&
+      'openWindow' in (window as Window & { clients: { openWindow: (url: string) => void } })
+    ) {
+      ;(window as Window & { clients: { openWindow: (url: string) => void } }).clients.openWindow(
+        url || '/',
+      )
     } else {
       window.focus()
       if (url && url !== window.location.pathname) {
@@ -527,7 +541,9 @@ export class NotificationManager {
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const BASE64_PAD_LENGTH = 4
-  const padding = '='.repeat((BASE64_PAD_LENGTH - (base64String.length % BASE64_PAD_LENGTH)) % BASE64_PAD_LENGTH)
+  const padding = '='.repeat(
+    (BASE64_PAD_LENGTH - (base64String.length % BASE64_PAD_LENGTH)) % BASE64_PAD_LENGTH,
+  )
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
 
   const rawData = window.atob(base64)

@@ -30,9 +30,7 @@ export default function AIBrain() {
           fill='none'
           stroke='url(#brainGradient)'
           strokeWidth='2'
-          filter='url(#glow)'
-          className='animate-pulse'
-          style={{ animationDuration: '3s' }}
+          className='animate-pulse [animation-duration:3s] [filter:url(#glow)]'
         />
 
         {/* Inner hexagon */}
@@ -41,7 +39,7 @@ export default function AIBrain() {
           fill='rgba(0, 212, 255, 0.05)'
           stroke='#00d4ff'
           strokeWidth='1.5'
-          filter='url(#glow)'
+          className='[filter:url(#glow)]'
         />
 
         {/* Brain shape */}
@@ -54,7 +52,7 @@ export default function AIBrain() {
             strokeWidth='2'
             strokeLinecap='round'
             strokeLinejoin='round'
-            filter='url(#glow)'
+            className='[filter:url(#glow)]'
           />
 
           {/* Right hemisphere */}
@@ -65,7 +63,7 @@ export default function AIBrain() {
             strokeWidth='2'
             strokeLinecap='round'
             strokeLinejoin='round'
-            filter='url(#glow)'
+            className='[filter:url(#glow)]'
           />
 
           {/* Neural connections */}
@@ -76,14 +74,14 @@ export default function AIBrain() {
             y2='-5'
             stroke='#00d4ff'
             strokeWidth='1.5'
-            opacity='0.7'
+            className='opacity-70'
           />
-          <line x1='-25' y1='0' x2='-10' y2='10' stroke='#00d4ff' strokeWidth='1.5' opacity='0.7' />
-          <line x1='-20' y1='15' x2='-5' y2='20' stroke='#00d4ff' strokeWidth='1.5' opacity='0.7' />
+          <line x1='-25' y1='0' x2='-10' y2='10' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
+          <line x1='-20' y1='15' x2='-5' y2='20' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
 
-          <line x1='30' y1='-15' x2='15' y2='-5' stroke='#00d4ff' strokeWidth='1.5' opacity='0.7' />
-          <line x1='25' y1='0' x2='10' y2='10' stroke='#00d4ff' strokeWidth='1.5' opacity='0.7' />
-          <line x1='20' y1='15' x2='5' y2='20' stroke='#00d4ff' strokeWidth='1.5' opacity='0.7' />
+          <line x1='30' y1='-15' x2='15' y2='-5' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
+          <line x1='25' y1='0' x2='10' y2='10' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
+          <line x1='20' y1='15' x2='5' y2='20' stroke='#00d4ff' strokeWidth='1.5' className='opacity-70' />
 
           {/* Central processor */}
           <rect
@@ -92,30 +90,28 @@ export default function AIBrain() {
             width='16'
             height='16'
             fill='#00d4ff'
-            filter='url(#glow)'
-            className='animate-pulse'
-            style={{ animationDuration: '2s' }}
+            className='animate-pulse [animation-duration:2s] [filter:url(#glow)]'
           />
           <rect x='-6' y='-6' width='12' height='12' fill='#1a2849' />
 
           {/* Circuit lines from processor */}
-          <line x1='0' y1='8' x2='0' y2='40' stroke='#00d4ff' strokeWidth='2' opacity='0.8' />
-          <line x1='0' y1='-8' x2='0' y2='-40' stroke='#00d4ff' strokeWidth='2' opacity='0.8' />
-          <line x1='8' y1='0' x2='40' y2='0' stroke='#00d4ff' strokeWidth='2' opacity='0.8' />
-          <line x1='-8' y1='0' x2='-40' y2='0' stroke='#00d4ff' strokeWidth='2' opacity='0.8' />
+          <line x1='0' y1='8' x2='0' y2='40' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
+          <line x1='0' y1='-8' x2='0' y2='-40' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
+          <line x1='8' y1='0' x2='40' y2='0' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
+          <line x1='-8' y1='0' x2='-40' y2='0' stroke='#00d4ff' strokeWidth='2' className='opacity-80' />
 
           {/* Circuit nodes */}
-          <circle cx='0' cy='40' r='3' fill='#00d4ff' filter='url(#glow)' />
-          <circle cx='0' cy='-40' r='3' fill='#00d4ff' filter='url(#glow)' />
-          <circle cx='40' cy='0' r='3' fill='#00d4ff' filter='url(#glow)' />
-          <circle cx='-40' cy='0' r='3' fill='#00d4ff' filter='url(#glow)' />
+          <circle cx='0' cy='40' r='3' fill='#00d4ff' className='[filter:url(#glow)]' />
+          <circle cx='0' cy='-40' r='3' fill='#00d4ff' className='[filter:url(#glow)]' />
+          <circle cx='40' cy='0' r='3' fill='#00d4ff' className='[filter:url(#glow)]' />
+          <circle cx='-40' cy='0' r='3' fill='#00d4ff' className='[filter:url(#glow)]' />
         </g>
 
         {/* Corner decorative circles */}
-        <circle cx='75' cy='125' r='4' fill='#00d4ff' opacity='0.6' />
-        <circle cx='325' cy='125' r='4' fill='#00d4ff' opacity='0.6' />
-        <circle cx='75' cy='275' r='4' fill='#00d4ff' opacity='0.6' />
-        <circle cx='325' cy='275' r='4' fill='#00d4ff' opacity='0.6' />
+        <circle cx='75' cy='125' r='4' fill='#00d4ff' className='opacity-60' />
+        <circle cx='325' cy='125' r='4' fill='#00d4ff' className='opacity-60' />
+        <circle cx='75' cy='275' r='4' fill='#00d4ff' className='opacity-60' />
+        <circle cx='325' cy='275' r='4' fill='#00d4ff' className='opacity-60' />
 
         {/* Small decorative hexagons */}
         <polygon
@@ -123,14 +119,14 @@ export default function AIBrain() {
           fill='none'
           stroke='#00d4ff'
           strokeWidth='1'
-          opacity='0.4'
+          className='opacity-40'
         />
         <polygon
           points='50,300 65,310 65,330 50,340 35,330 35,310'
           fill='none'
           stroke='#00d4ff'
           strokeWidth='1'
-          opacity='0.4'
+          className='opacity-40'
         />
       </svg>
     </div>

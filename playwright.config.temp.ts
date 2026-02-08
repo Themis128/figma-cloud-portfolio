@@ -21,10 +21,10 @@ import {
  */
 
 // Configuration constants for experimental setup using shared validation constants
-const EXPERIMENTAL_RETRIES_CI = VALIDATION_CONSTANTS.MAX_CI_RETRIES
-const EXPERIMENTAL_RETRIES_LOCAL = 2
+const EXPERIMENTAL_RETRIES_CI = 2
+const EXPERIMENTAL_RETRIES_LOCAL = 1
 const EXPERIMENTAL_WORKERS_CI = 1
-const EXPERIMENTAL_WORKERS_LOCAL = VALIDATION_CONSTANTS.MAX_LOCAL_WORKERS
+const EXPERIMENTAL_WORKERS_LOCAL = 2
 
 // Create temporary configuration using the shared factory
 const config = createPlaywrightConfig('development', {

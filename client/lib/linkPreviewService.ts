@@ -202,21 +202,21 @@ function extractImageFromJsonLd(data: Record<string, unknown>): string | null {
   }
 
   // Direct image property
-  if (typeof data.image === 'string') return data.image
+  if (typeof data['image'] === 'string') return data['image']
   if (
-    data.image &&
-    typeof data.image === 'object' &&
-    'url' in data.image &&
-    typeof (data.image as Record<string, unknown>).url === 'string'
+    data['image'] &&
+    typeof data['image'] === 'object' &&
+    'url' in data['image'] &&
+    typeof (data['image'] as Record<string, unknown>)['url'] === 'string'
   ) {
-    return (data.image as Record<string, unknown>).url as string
+    return (data['image'] as Record<string, unknown>)['url'] as string
   }
 
   // Article or BlogPosting images
   if (data['@type'] === 'Article' || data['@type'] === 'BlogPosting') {
     return (
-      (typeof data.image === 'string' ? data.image : null) ||
-      (typeof data.thumbnailUrl === 'string' ? data.thumbnailUrl : null) ||
+      (typeof data['image'] === 'string' ? data['image'] : null) ||
+      (typeof data['thumbnailUrl'] === 'string' ? data['thumbnailUrl'] : null) ||
       null
     )
   }

@@ -270,7 +270,7 @@ export class ViewportLoader {
  */
 export class BundleAnalyzer {
   static analyzeChunkSizes(): void {
-    if (process.env.NODE_ENV !== 'development') return
+    if (process.env['NODE_ENV'] !== 'development') return
 
     // Measure and log chunk sizes
     performance.mark('bundle-analysis-start')
@@ -287,7 +287,7 @@ export class BundleAnalyzer {
   }
 
   static measureComponentLoad(componentName: string): void {
-    if (process.env.NODE_ENV !== 'development') return
+    if (process.env['NODE_ENV'] !== 'development') return
 
     performance.mark(`component-${componentName}-start`)
 

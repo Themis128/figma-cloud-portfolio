@@ -113,7 +113,7 @@ test.describe('API Integration Tests', () => {
 
       // Test VAPID key endpoint
       const response = await page.request.get(
-        'http://localhost:3000/api/push-notifications?action=vapid-public-key',
+        'http://localhost:3002/api/push-notifications?action=vapid-public-key',
       )
 
       if (response.ok()) {
