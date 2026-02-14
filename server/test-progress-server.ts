@@ -37,11 +37,11 @@ const PASS_THRESHOLD = 0.7
 const FAIL_THRESHOLD = 0.9
 const PROGRESS_PERCENT_FACTOR = 100
 
-// Lightweight logger wrapper to avoid direct console usage in source
+// Lightweight logger wrapper
 const logger = {
-  info: (..._args: unknown[]) => {},
-  warn: (..._args: unknown[]) => {},
-  error: (..._args: unknown[]) => {},
+  info: (...args: unknown[]) => console.log('[INFO]', ...args),
+  warn: (...args: unknown[]) => console.warn('[WARN]', ...args),
+  error: (...args: unknown[]) => console.error('[ERROR]', ...args),
 }
 
 interface TestProgress {
@@ -198,8 +198,8 @@ class TestProgressServer {
 
     // API endpoint for logs
     this.app.get('/api/logs', (req, res) => {
-      const level = req.query.level as string
-      const search = req.query.search as string
+      const level = req.query['level'] as string
+      const search = req.query['search'] as string
 
       let filteredLogs = [...this.logs]
 

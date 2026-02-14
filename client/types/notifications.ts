@@ -378,13 +378,13 @@ export function isValidPermissionState(value: string): value is NotificationPerm
 }
 
 export function isPushSubscriptionJSON(obj: unknown): obj is PushSubscriptionJSON {
-  return (
-    obj &&
-    typeof obj.endpoint === 'string' &&
-    obj.keys &&
-    typeof obj.keys.p256dh === 'string' &&
-    typeof obj.keys.auth === 'string'
-  )
+  if (!obj || typeof obj !== 'object') return false
+  const record = obj as Record<string, unknown>
+  if (typeof record['endpoint'] !== 'string') return false
+  const keys = record['keys']
+  if (!keys || typeof keys !== 'object') return false
+  const keysRecord = keys as Record<string, unknown>
+  return typeof keysRecord['p256dh'] === 'string' && typeof keysRecord['auth'] === 'string'
 }
 
 // Export all types as a namespace for easier importing

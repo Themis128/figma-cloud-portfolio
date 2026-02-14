@@ -20,7 +20,8 @@ const DAYS_PER_YEAR = 365
 const DAYS_PER_MONTH = 30
 const MINUTES_PER_CACHE_DURATION = 5
 const CACHE_DURATION_5_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_CACHE_DURATION
-const _CACHE_DURATION_1_YEAR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR
+const CACHE_DURATION_1_YEAR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_YEAR
+void CACHE_DURATION_1_YEAR // Reserved for future use
 const CACHE_DURATION_30_DAYS =
   SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_MONTH
 
@@ -93,7 +94,7 @@ const getAssetFileName = (name: string): string => {
 }
 export default defineConfig(({ mode }) => {
   // Detect CI/CD environment
-  const isCI = process.env.CI || process.env.AMPLIFY_BUILD_CONFIG
+  const isCI = process.env['CI'] || process.env['AMPLIFY_BUILD_CONFIG']
 
   return {
     root: 'client',
@@ -459,18 +460,9 @@ export default defineConfig(({ mode }) => {
               handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'static-resources',
-                // Exclude external scripts from caching to avoid CSP issues
-                cacheKeyWillBeUsed: ({ request }) => {
-                  const url = new URL(request.url)
-                  // Don't cache external scripts that might violate CSP
-                  if (
-                    url.hostname !== 'localhost' &&
-                    url.hostname !== '127.0.0.1' &&
-                    !url.hostname.includes('localhost')
-                  ) {
-                    return null // Skip caching
-                  }
-                  return request.url
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: CACHE_DURATION_5_MINUTES,
                 },
               },
             },

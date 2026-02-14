@@ -1,11 +1,12 @@
 export type LogLevel = 'info' | 'warn' | 'error' | 'debug'
 
 export const logger = {
-  info: (_tag: string, _msg: string) => {},
-  warn: (_tag: string, _msg: string) => {},
-  error: (_tag: string, _msg: string) => {},
-  debug: (_tag: string, _msg: string) => {
-    if (process.env.DEBUG) {
+  info: (tag: string, msg: string) => console.log(`[INFO][${tag}]`, msg),
+  warn: (tag: string, msg: string) => console.warn(`[WARN][${tag}]`, msg),
+  error: (tag: string, msg: string) => console.error(`[ERROR][${tag}]`, msg),
+  debug: (tag: string, msg: string) => {
+    if (process.env['DEBUG']) {
+      console.debug(`[DEBUG][${tag}]`, msg)
     }
   },
 }

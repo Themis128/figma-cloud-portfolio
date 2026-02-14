@@ -175,7 +175,7 @@ const ChartTooltipContent = React.forwardRef<
     }
 
     const getIndicatorColor = (item: ChartTooltipItem): string | undefined => {
-      return color || item.payload?.fill || item.color
+      return color || item.payload?.['fill'] || item.color
     }
 
     const renderIndicator = (

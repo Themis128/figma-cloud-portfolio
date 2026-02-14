@@ -115,7 +115,7 @@ export function CollaborationPanel({
   const recentActivity = useMemo(
     () =>
       events
-        .filter((event) => event.metadata?.roomId === roomId)
+        .filter((event) => event.metadata?.['roomId'] === roomId)
         .slice(-MAX_RECENT_ACTIVITY)
         .reverse(),
     [events, roomId],
@@ -404,7 +404,7 @@ export function TypingIndicator({ roomId, className }: TypingIndicatorProps) {
     return events
       .filter(
         (event) =>
-          event.metadata?.roomId === roomId &&
+          event.metadata?.['roomId'] === roomId &&
           event.data.isTyping &&
           now - event.timestamp < TYPING_TIMEOUT_MS, // 5 second timeout
       )

@@ -144,8 +144,8 @@ export default function Performance() {
 
       // Get current web vitals
       const coreWebVitals: Record<string, string> = {}
-      if (typeof window !== 'undefined' && window.webVitalsMetrics) {
-        window.webVitalsMetrics.forEach((metric: { name: string; value: number }) => {
+      if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>)['webVitalsMetrics']) {
+        ((window as unknown as Record<string, unknown>)['webVitalsMetrics'] as Array<{ name: string; value: number }>).forEach((metric: { name: string; value: number }) => {
           coreWebVitals[metric.name] = `${metric.value}${metric.name.includes('CLS') ? '' : 'ms'}`
         })
       }

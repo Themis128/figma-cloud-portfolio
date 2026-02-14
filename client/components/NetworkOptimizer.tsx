@@ -75,7 +75,7 @@ const DEFAULT_CONFIG: NetworkOptimizationConfig = {
 // Service worker registration utility
 const registerServiceWorker = (isSlowConnection: boolean): void => {
   // Skip manual registration if VitePWA is handling it (development mode)
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     return
   }
 
@@ -327,7 +327,7 @@ export function NetworkOptimizer({
       />
 
       {/* Network status indicator (development only) */}
-      {process.env.NODE_ENV === 'development' && (
+      {process.env['NODE_ENV'] === 'development' && (
         <div className={`network-status ${getNetworkStatusClass}`} aria-live='polite'>
           {getNetworkStatusText}
         </div>

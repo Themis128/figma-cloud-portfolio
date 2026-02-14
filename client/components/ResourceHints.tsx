@@ -244,7 +244,7 @@ export function ResourceHints({
         if (!entry.isIntersecting) return
 
         const target = entry.target as HTMLElement
-        const resourceUrl = target.dataset.prefetch || target.dataset.preload
+        const resourceUrl = target.dataset['prefetch'] || target.dataset['preload']
 
         if (!resourceUrl) return
 
@@ -261,11 +261,11 @@ export function ResourceHints({
         resourceUrl: string,
       ): HTMLLinkElement => {
         const link = document.createElement('link')
-        link.rel = target.dataset.preload ? 'preload' : 'prefetch'
+        link.rel = target.dataset['preload'] ? 'preload' : 'prefetch'
         link.href = resourceUrl
 
         // Set as attribute if valid
-        const asValue = target.dataset.as
+        const asValue = target.dataset['as']
         const validAs = new Set<ResourceHint['as']>([
           'font',
           'script',
@@ -278,7 +278,7 @@ export function ResourceHints({
           link.as = asValue
         }
 
-        if (target.dataset.type) link.type = target.dataset.type
+        if (target.dataset['type']) link.type = target.dataset['type']
 
         return link
       }

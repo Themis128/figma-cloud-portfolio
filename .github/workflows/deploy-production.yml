@@ -57,9 +57,8 @@ jobs:
           pnpm run build:server
         env:
           PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
-          # Set environment variables conditionally
-          VITE_RECAPTCHA_SITE_KEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-          VITE_GOOGLE_ANALYTICS_ID: G-FT79QM66D3
+          VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
+          VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -9,10 +9,8 @@ describe('AIService', () => {
   let service: AIService
 
   beforeEach(() => {
-    vi.clearAllMocks()(
-      // Reset environment variables for each test
-      import.meta as any,
-    ).env = undefined
+    vi.clearAllMocks()
+    // Reset environment variables for each test
     ;(import.meta as any).env = {}
   })
 
