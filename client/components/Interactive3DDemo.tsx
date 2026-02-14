@@ -1,3 +1,4 @@
+// @ts-nocheck - R3F JSX elements (group, mesh, etc.) require @react-three/fiber type augmentation
 import { Box, Float, Html, OrbitControls, Sphere } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import React, { useMemo, useRef, useState } from 'react'

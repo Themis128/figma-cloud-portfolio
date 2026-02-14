@@ -7,7 +7,7 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react'
-import type { Socket } from 'socket.io-client'
+import { io, type Socket } from 'socket.io-client'
 import type {
   AgentCollaborationData,
   PresenceData,
@@ -22,13 +22,23 @@ import type {
 
 class EnhancedSocketManager {
   private static instance: EnhancedSocketManager | null = null
-  private socket: Socket<import('socket.io-client').DefaultEventsMap> | null = null
+  private socket: Socket | null = null
   private connectionState: RealTimeConnection['status'] = 'disconnected'
-  private reconnectAttempts = 0
+  reconnectAttempts = 0
   private subscribers: Set<() => void> = new Set()
   private rooms: Set<string> = new Set()
+  private presenceData: Map<string, UserPresence> = new Map()
+  private reconnectDelay = 1000
+  private maxReconnectAttempts = 5
+  private CONNECTION_TIMEOUT = 10000
+  private HEARTBEAT_INTERVAL = 30000
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null
 
   private constructor() {}
+
+  private notifySubscribers(): void {
+    this.subscribers.forEach((callback) => callback())
+  }
 
   static getInstance(): EnhancedSocketManager {
     if (!EnhancedSocketManager.instance) {
@@ -59,7 +69,7 @@ class EnhancedSocketManager {
 
   connect(
     options: { userId?: string; autoReconnect?: boolean; heartbeat?: boolean } = {},
-  ): Promise<Socket<import('socket.io-client').DefaultEventsMap> | null> {
+  ): Promise<Socket | null> {
     if (this.socket?.connected) {
       return Promise.resolve(this.socket)
     }
@@ -95,7 +105,7 @@ class EnhancedSocketManager {
         this.startHeartbeat()
       }
 
-      return new Promise<Socket<import('socket.io-client').DefaultEventsMap> | null>(
+      return new Promise<Socket | null>(
         (resolve, reject) => {
           this.socket?.on('connect', () => {
             this.connectionState = 'connected'
@@ -125,7 +135,7 @@ class EnhancedSocketManager {
     } catch {
       this.connectionState = 'error'
       this.notifySubscribers()
-      return null
+      return Promise.resolve(null)
     }
   }
 
@@ -154,7 +164,7 @@ class EnhancedSocketManager {
       this.notifySubscribers()
     })
 
-    this.socket.on('reconnect_attempt', (attemptNumber) => {
+    this.socket.on('reconnect_attempt', (attemptNumber: number) => {
       this.connectionState = 'reconnecting'
       this.reconnectAttempts = attemptNumber
       this.notifySubscribers()
@@ -444,7 +454,9 @@ export function useRealtimeEvents<T = unknown>(eventName: string) {
 
     setIsListening(true)
 
-    const cleanup = on(eventName, (data: T, metadata?: unknown) => {
+    const cleanup = on(eventName, (...args: unknown[]) => {
+      const data = args[0] as T
+      const metadata = args[1] as Record<string, unknown> | undefined
       startTransition(() => {
         const event: RealTimeEvent<T> = {
           id: `${eventName}-${Date.now()}-${Math.random()}`,
@@ -512,7 +524,7 @@ export function useAgentCollaboration(agentId: string) {
   // Monitor for editing conflicts
   useEffect(() => {
     const editors = presence.filter((user) => user.isEditing)
-    setCurrentEditor(editors.length > 0 ? editors[0].userId : undefined)
+    setCurrentEditor(editors.length > 0 && editors[0] ? editors[0].userId : undefined)
   }, [presence])
 
   const startEditing = useCallback(() => {
@@ -567,15 +579,16 @@ export function useRealtimeNotifications() {
   useEffect(() => {
     if (!isConnected) return
 
-    const cleanup = on('realtime_notification', (notification: unknown) => {
-      showLocalNotification((notification as { title: string }).title, {
-        ...(notification as Record<string, unknown>),
+    const cleanup = on('realtime_notification', (...args: unknown[]) => {
+      const notification = args[0] as Record<string, unknown>
+      showLocalNotification(notification['title'] as string, {
+        ...notification,
         tag: 'realtime-notification',
         data: {
-          ...((notification as Record<string, unknown>)?.['data'] as Record<string, unknown>),
+          ...(notification['data'] as Record<string, unknown>),
           source: 'realtime',
         },
-      }).catch(() => {})
+      })
     })
 
     return cleanup

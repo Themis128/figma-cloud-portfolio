@@ -2,14 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { reportError, trackInteraction } from '@/lib/sentry'
 
-// Web Speech API type declarations
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition
-    webkitSpeechRecognition: typeof SpeechRecognition
-  }
-}
-
 interface SpeechRecognition extends EventTarget {
   continuous: boolean
   interimResults: boolean
@@ -84,10 +76,10 @@ export function useVoiceCommands(commands: VoiceCommand[] = []) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Check for Speech Recognition support
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      const SpeechRecognition = (window as unknown as Record<string, unknown>)['SpeechRecognition'] || (window as unknown as Record<string, unknown>)['webkitSpeechRecognition']
 
       if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition()
+        recognitionRef.current = new (SpeechRecognition as unknown as new () => SpeechRecognition)()
         if (recognitionRef.current) {
           recognitionRef.current.continuous = false
           recognitionRef.current.interimResults = true

@@ -177,7 +177,7 @@ export function usePushSubscription(vapidPublicKey?: string) {
       }
       const newSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
       })
       await sendSubscriptionToServer(newSubscription)
       return handleSuccess(newSubscription)

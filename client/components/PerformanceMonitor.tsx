@@ -25,23 +25,20 @@ const BYTES_PER_KILOBYTE = 1024
 const BYTES_PER_MEGABYTE = BYTES_PER_KILOBYTE * BYTES_PER_KILOBYTE
 const PERCENTAGE_MULTIPLIER = 100
 
-// Type definitions for gtag.js - extending existing GoogleAnalytics declarations
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ExtendedWindow extends Window {
-  gtag?: (
-    command: 'config' | 'event' | 'set' | 'consent',
-    targetId: string | Record<string, unknown>,
-    config?: Record<string, unknown> | string,
-  ) => void
-  webVitalsMetrics?: WebVitalsMetric[]
-  gtagSession?: {
-    sessionId: number
-    engagementTime: number
-  }
-}
-
+// Type definitions for performance monitoring window extensions
 declare global {
-  interface Window extends ExtendedWindow {}
+  interface Window {
+    gtag?: (
+      command: 'config' | 'event' | 'set' | 'consent',
+      targetId: string | Record<string, unknown>,
+      config?: Record<string, unknown> | string,
+    ) => void
+    webVitalsMetrics?: WebVitalsMetric[]
+    gtagSession?: {
+      sessionId: number
+      engagementTime: number
+    }
+  }
 }
 
 interface WebVitalsMetric {
