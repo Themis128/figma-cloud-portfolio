@@ -8,16 +8,9 @@ import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring'
 
 // Conditionally import GoogleAnalytics based on environment
 let GoogleAnalytics: React.ComponentType
-if (import.meta.env.MODE === 'test') {
-  // Import synchronously for tests to avoid lazy loading issues
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const gaModule = require('@/components/GoogleAnalytics')
-    GoogleAnalytics = gaModule.default
-  } catch (_error) {
-    // Fallback for test environments where require might not work
-    GoogleAnalytics = () => <div data-testid='google-analytics' />
-  }
+if (import.meta.env['MODE'] === 'test') {
+  // Provide a simple stub for test environments
+  GoogleAnalytics = () => <div data-testid='google-analytics' />
 } else {
   GoogleAnalytics = lazy(() => import('@/components/GoogleAnalytics'))
 }
@@ -49,7 +42,7 @@ function App() {
         <HelmetProvider>
           <ThemeProvider defaultTheme='dark' storageKey='portfolio-theme'>
             <BrowserRouter>
-              {import.meta.env.MODE === 'test' ? (
+              {import.meta.env['MODE'] === 'test' ? (
                 <GoogleAnalytics />
               ) : (
                 <Suspense fallback={null}>

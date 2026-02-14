@@ -120,7 +120,7 @@ const initializeGA4 = (measurementId: string) => {
       window.gtag('config', measurementId, {
         send_page_view: false, // We handle page views manually
         client_id: generateClientId(),
-        debug_mode: import.meta.env.DEV,
+        debug_mode: import.meta.env['DEV'],
       })
     } catch (_error) {
       // Silently handle GA4 config errors in production
@@ -153,7 +153,7 @@ const GoogleAnalytics = () => {
   // Initialize GA4 on mount
   useEffect(() => {
     const measurementId =
-      import.meta.env.VITE_GOOGLE_ANALYTICS_ID || import.meta.env.GOOGLE_ANALYTICS_ID || 'GA-TEST'
+      import.meta.env['VITE_GOOGLE_ANALYTICS_ID'] || import.meta.env['GOOGLE_ANALYTICS_ID'] || 'GA-TEST'
 
     initializeGA4(measurementId)
 
@@ -166,7 +166,7 @@ const GoogleAnalytics = () => {
     pageLoadTimeRef.current = Date.now()
 
     // In test environment, immediately trigger page view tracking
-    if (import.meta.env.MODE === 'test' && typeof window !== 'undefined') {
+    if (import.meta.env['MODE'] === 'test' && typeof window !== 'undefined') {
       // Force immediate execution for tests
       const TEST_EVENT_PUSH_DELAY_MS = 100
       setTimeout(() => {
@@ -252,7 +252,7 @@ const GoogleAnalytics = () => {
         })
       } catch (_error) {
         // Log error in development but don't throw
-        if (import.meta.env.DEV) {
+        if (import.meta.env['DEV']) {
         }
       }
     }
@@ -324,7 +324,7 @@ const GoogleAnalytics = () => {
             userAgent: navigator.userAgent,
           })
         } catch (_error) {
-          if (import.meta.env.DEV) {
+          if (import.meta.env['DEV']) {
           }
         }
       }
@@ -385,7 +385,7 @@ const GoogleAnalytics = () => {
             userAgent: navigator.userAgent,
           })
         } catch (_error) {
-          if (import.meta.env.DEV) {
+          if (import.meta.env['DEV']) {
           }
         }
       }
@@ -440,7 +440,7 @@ const GoogleAnalytics = () => {
             userAgent: navigator.userAgent,
           })
         } catch (_backendError) {
-          if (import.meta.env.DEV) {
+          if (import.meta.env['DEV']) {
           }
         }
       }

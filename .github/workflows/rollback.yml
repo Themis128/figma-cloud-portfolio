@@ -48,9 +48,26 @@ jobs:
           fi
 
       - name: Rollback deployment
-        uses: aws-actions/amplify-cli-wrapper@1.2.0
-        with:
-          args: publish --app-id ${{ steps.app-config.outputs.app_id }} --branch-name ${{ steps.app-config.outputs.branch }} --rollback ${{ github.event.inputs.target_commit }}
+        run: |
+          APP_ID="${{ steps.app-config.outputs.app_id }}"
+          BRANCH="${{ steps.app-config.outputs.branch }}"
+          TARGET_COMMIT="${{ github.event.inputs.target_commit }}"
+
+          if [ -n "$TARGET_COMMIT" ]; then
+            echo "Rolling back to commit: $TARGET_COMMIT"
+            git checkout "$TARGET_COMMIT"
+          else
+            echo "Rolling back to previous deployment"
+          fi
+
+          echo "Triggering Amplify redeploy for app $APP_ID on branch $BRANCH..."
+          aws amplify start-job \
+            --app-id "$APP_ID" \
+            --branch-name "$BRANCH" \
+            --job-type RELEASE \
+            --region ${{ secrets.AWS_REGION }}
+
+          echo "Rollback deployment triggered successfully"
         env:
           NODE_ENV: ${{ github.event.inputs.environment }}
           VITE_APP_ENV: ${{ github.event.inputs.environment }}

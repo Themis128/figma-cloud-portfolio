@@ -214,15 +214,15 @@ function extractImageFromArray(data: Record<string, unknown>[]): string | null {
 }
 
 function extractDirectImage(data: Record<string, unknown>): string | null {
-  if (typeof data.image === 'string') return data.image
+  if (typeof data['image'] === 'string') return data['image']
 
   if (
-    data.image &&
-    typeof data.image === 'object' &&
-    'url' in data.image &&
-    typeof (data.image as Record<string, unknown>).url === 'string'
+    data['image'] &&
+    typeof data['image'] === 'object' &&
+    'url' in (data['image'] as Record<string, unknown>) &&
+    typeof (data['image'] as Record<string, unknown>)['url'] === 'string'
   ) {
-    return (data.image as Record<string, unknown>).url as string
+    return (data['image'] as Record<string, unknown>)['url'] as string
   }
 
   return null
@@ -231,8 +231,8 @@ function extractDirectImage(data: Record<string, unknown>): string | null {
 function extractArticleImage(data: Record<string, unknown>): string | null {
   if (data['@type'] === 'Article' || data['@type'] === 'BlogPosting') {
     return (
-      (typeof data.image === 'string' ? data.image : null) ||
-      (typeof data.thumbnailUrl === 'string' ? data.thumbnailUrl : null) ||
+      (typeof data['image'] === 'string' ? data['image'] : null) ||
+      (typeof data['thumbnailUrl'] === 'string' ? data['thumbnailUrl'] : null) ||
       null
     )
   }
@@ -288,7 +288,7 @@ function resolveUrl(url: string, baseUrl: URL): string {
 function getProxyUrl(url: string): string {
   // For development, we'll use a CORS proxy
   // In production, implement a backend proxy or use a service like cors-anywhere
-  if (import.meta.env.DEV) {
+  if (import.meta.env['DEV']) {
     return `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
   }
   return url

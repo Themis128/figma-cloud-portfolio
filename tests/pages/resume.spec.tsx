@@ -597,7 +597,7 @@ describe('Resume', () => {
 
       // Find any skill badge and click it to remove
       const skillBadges = screen.queryAllByText(/\(.+\)/) // Find text with parentheses like "(Expert)"
-      if (skillBadges.length > 0) {
+      if (skillBadges.length > 0 && skillBadges[0]) {
         fireEvent.click(skillBadges[0])
         // Skill should be removed - we can't easily test this without more specific assertions
       }

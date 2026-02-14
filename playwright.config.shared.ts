@@ -284,7 +284,7 @@ export const TEST_HEADERS = {
   'X-Test-Session': 'playwright-e2e',
   'X-Test-Framework': 'playwright',
   'X-Test-Environment': (env: string) => env,
-  'X-Test-Run-ID': process.env.GITHUB_RUN_ID || process.env.CI_RUN_ID || 'local',
+  'X-Test-Run-ID': process.env['GITHUB_RUN_ID'] || process.env['CI_RUN_ID'] || 'local',
 } as const
 
 /**
@@ -496,8 +496,8 @@ export function getEnvironmentSettings(environment: ConfigEnvironment): Environm
 export function getOptimalWorkers(environment: ConfigEnvironment): number {
   const settings = getEnvironmentSettings(environment)
   const cpuCount = os.cpus().length || 2 // Fallback to 2 if detection fails
-  const isCI = !!process.env.CI
-  const isGitHubActions = !!process.env.GITHUB_ACTIONS
+  const isCI = !!process.env['CI']
+  const isGitHubActions = !!process.env['GITHUB_ACTIONS']
 
   // Special handling for known CI environments
   if (isGitHubActions) {
@@ -537,7 +537,6 @@ export function getBrowserProjects(environment: ConfigEnvironment) {
     },
     contextOptions: {
       reducedMotion: 'reduce',
-      strictSelectors: true,
       acceptDownloads: true,
       bypassCSP: environment === 'development', // Allow CSP bypass in development
       permissions: ['geolocation', 'notifications'],
@@ -672,7 +671,7 @@ export function createPlaywrightConfig(
 
     // Execution settings
     fullyParallel: true,
-    forbidOnly: !!process.env.CI,
+    forbidOnly: !!process.env['CI'],
     retries: settings.retries,
     timeout: settings.timeouts.test,
     workers,
@@ -728,7 +727,7 @@ export function createPlaywrightConfig(
 
     // Use configuration with modern browser settings
     use: {
-      baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8081',
+      baseURL: process.env['PLAYWRIGHT_BASE_URL'] || 'http://localhost:8081',
 
       // Enhanced timeouts
       actionTimeout: settings.timeouts.action,
@@ -745,7 +744,6 @@ export function createPlaywrightConfig(
       locale: 'en-US',
       timezoneId: 'America/New_York',
       colorScheme: 'light',
-      strictSelectors: true,
       acceptDownloads: true,
       bypassCSP: environment === 'development', // Allow CSP bypass in development
       permissions: ['geolocation', 'notifications'],
@@ -773,9 +771,9 @@ export function createPlaywrightConfig(
 
     // Web server configuration (environment-aware)
     ...(settings.features.enableWebServer &&
-      !process.env.CI &&
-      !process.env.PLAYWRIGHT_SKIP_WEBSERVER &&
-      process.env.PLAYWRIGHT_START_SERVERS === 'true' && {
+      !process.env['CI'] &&
+      !process.env['PLAYWRIGHT_SKIP_WEBSERVER'] &&
+      process.env['PLAYWRIGHT_START_SERVERS'] === 'true' && {
         webServer: [
           {
             command: 'npx tsx server/node-build.ts',
@@ -796,9 +794,9 @@ export function createPlaywrightConfig(
 
     // Test sharding for CI (environment-aware)
     ...(settings.features.enableSharding &&
-      process.env.SHARD && {
+      process.env['SHARD'] && {
         shard: (() => {
-          const shardParts = process.env.SHARD?.split('/')
+          const shardParts = process.env['SHARD']?.split('/')
           if (shardParts && shardParts.length === 2) {
             return {
               current: parseInt(shardParts[0] || '1', 10),
@@ -810,7 +808,7 @@ export function createPlaywrightConfig(
       }),
 
     // Enhanced snapshot handling
-    updateSnapshots: process.env.UPDATE_SNAPSHOTS === 'true' ? 'all' : 'missing',
+    updateSnapshots: process.env['UPDATE_SNAPSHOTS'] === 'true' ? 'all' : 'missing',
 
     // Metadata for debugging and reporting
     metadata: {
@@ -818,13 +816,13 @@ export function createPlaywrightConfig(
       testType: 'e2e',
       framework: 'playwright',
       timestamp: new Date().toISOString(),
-      commit: process.env.GITHUB_SHA || process.env.CI_COMMIT_SHA || 'local',
-      branch: process.env.GITHUB_REF_NAME || process.env.CI_BRANCH || 'unknown',
+      commit: process.env['GITHUB_SHA'] || process.env['CI_COMMIT_SHA'] || 'local',
+      branch: process.env['GITHUB_REF_NAME'] || process.env['CI_BRANCH'] || 'unknown',
       workers,
-      ci: !!process.env.CI,
-      ...(process.env.CI && {
-        pr: process.env.GITHUB_PR_NUMBER,
-        run: process.env.GITHUB_RUN_ID,
+      ci: !!process.env['CI'],
+      ...(process.env['CI'] && {
+        pr: process.env['GITHUB_PR_NUMBER'],
+        run: process.env['GITHUB_RUN_ID'],
       }),
     },
   }

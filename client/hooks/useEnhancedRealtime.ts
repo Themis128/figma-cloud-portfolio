@@ -69,7 +69,7 @@ class EnhancedSocketManager {
       this.notifySubscribers()
 
       const serverUrl =
-        import.meta.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3000'
+        import.meta.env['NODE_ENV'] === 'production' ? window.location.origin : 'http://localhost:3000'
 
       this.socket = io(serverUrl, {
         transports: ['websocket', 'polling'],
@@ -572,7 +572,7 @@ export function useRealtimeNotifications() {
         ...(notification as Record<string, unknown>),
         tag: 'realtime-notification',
         data: {
-          ...((notification as Record<string, unknown>)?.data as Record<string, unknown>),
+          ...((notification as Record<string, unknown>)?.['data'] as Record<string, unknown>),
           source: 'realtime',
         },
       }).catch(() => {})

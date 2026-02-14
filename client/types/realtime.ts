@@ -409,7 +409,7 @@ export interface RoomConfig {
 
 export const DEFAULT_REALTIME_CONFIG: RealtimeConfig = {
   serverUrl:
-    process.env.NODE_ENV === 'production'
+    process.env['NODE_ENV'] === 'production'
       ? window?.location?.origin || 'https://localhost:3000'
       : 'http://localhost:3000',
   autoConnect: true,
@@ -461,28 +461,28 @@ export function isValidRoomType(type: string): type is RoomType {
 }
 
 export function isRealtimeError(error: unknown): error is RealtimeError {
+  if (!error || typeof error !== 'object') return false
+  const record = error as Record<string, unknown>
   return (
-    error &&
-    typeof error === 'object' &&
-    'code' in error &&
-    typeof (error as Record<string, unknown>).code === 'string' &&
-    'message' in error &&
-    typeof (error as Record<string, unknown>).message === 'string' &&
-    'timestamp' in error &&
-    typeof (error as Record<string, unknown>).timestamp === 'number'
+    'code' in record &&
+    typeof record['code'] === 'string' &&
+    'message' in record &&
+    typeof record['message'] === 'string' &&
+    'timestamp' in record &&
+    typeof record['timestamp'] === 'number'
   )
 }
 
 export function isUserPresence(obj: unknown): obj is UserPresence {
+  if (!obj || typeof obj !== 'object') return false
+  const record = obj as Record<string, unknown>
   return (
-    obj &&
-    typeof obj === 'object' &&
-    'userId' in obj &&
-    typeof (obj as Record<string, unknown>).userId === 'string' &&
-    'status' in obj &&
-    typeof (obj as Record<string, unknown>).status === 'string' &&
-    'lastSeen' in obj &&
-    typeof (obj as Record<string, unknown>).lastSeen === 'number'
+    'userId' in record &&
+    typeof record['userId'] === 'string' &&
+    'status' in record &&
+    typeof record['status'] === 'string' &&
+    'lastSeen' in record &&
+    typeof record['lastSeen'] === 'number'
   )
 }
 

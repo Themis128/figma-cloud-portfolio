@@ -32,14 +32,14 @@ class AIService {
   private provider: AIProvider | null = null
 
   constructor() {
-    const provider = (import.meta.env.VITE_AI_PROVIDER || 'ollama') as
+    const provider = (import.meta.env['VITE_AI_PROVIDER'] || 'ollama') as
       | 'openai'
       | 'together'
       | 'ollama'
 
     const getApiKey = (provider: string) => {
-      if (provider === 'openai') return import.meta.env.VITE_OPENAI_API_KEY
-      if (provider === 'together') return import.meta.env.VITE_TOGETHER_API_KEY
+      if (provider === 'openai') return import.meta.env['VITE_OPENAI_API_KEY']
+      if (provider === 'together') return import.meta.env['VITE_TOGETHER_API_KEY']
       return undefined // Ollama doesn't require an API key
     }
 
@@ -98,7 +98,7 @@ class AIService {
       }
     }
 
-    const model = import.meta.env.VITE_AI_MODEL || this.provider.models[0]
+    const model = import.meta.env['VITE_AI_MODEL'] || this.provider.models[0]
 
     const systemPrompt = `You are an AI assistant for Themistoklis Baltzakis' portfolio website. You help visitors learn about his work, experience, and projects.
 
