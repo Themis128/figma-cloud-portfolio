@@ -24,6 +24,8 @@ type ChartTooltipItem = {
   payload?: Record<string, unknown>
 }
 
+type ChartConfigItem = ChartConfig[string]
+
 type ChartContextProps = {
   config: ChartConfig
 }
@@ -175,7 +177,7 @@ const ChartTooltipContent = React.forwardRef<
     }
 
     const getIndicatorColor = (item: ChartTooltipItem): string | undefined => {
-      return color || item.payload?.['fill'] || item.color
+      return color || (item.payload?.['fill'] as string | undefined) || item.color
     }
 
     const renderIndicator = (
@@ -238,7 +240,7 @@ const ChartTooltipContent = React.forwardRef<
       const itemConfig = getItemConfig(item)
 
       if (formatter && item?.value !== undefined && item.name) {
-        return formatter(item.value, item.name, item, index, item.payload)
+        return (formatter as (value: unknown, name: string, item: ChartTooltipItem, index: number, payload: unknown) => React.ReactNode)(item.value, item.name, item, index, item.payload)
       }
 
       return (
@@ -264,7 +266,7 @@ const ChartTooltipContent = React.forwardRef<
         )}
       >
         {nestLabel ? null : tooltipLabel}
-        <div className='grid gap-1.5'>{payload.map(renderTooltipItem)}</div>
+        <div className='grid gap-1.5'>{(payload as ChartTooltipItem[]).map(renderTooltipItem)}</div>
       </div>
     )
   },

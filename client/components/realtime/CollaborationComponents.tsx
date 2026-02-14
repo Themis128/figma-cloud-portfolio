@@ -405,10 +405,10 @@ export function TypingIndicator({ roomId, className }: TypingIndicatorProps) {
       .filter(
         (event) =>
           event.metadata?.['roomId'] === roomId &&
-          event.data.isTyping &&
+          (event.data as Record<string, unknown>)['isTyping'] &&
           now - event.timestamp < TYPING_TIMEOUT_MS, // 5 second timeout
       )
-      .map((event) => event.data.username || event.data.userId)
+      .map((event) => (event.data as Record<string, unknown>)['username'] || (event.data as Record<string, unknown>)['userId'])
       .slice(0, MAX_TYPING_USERS) // Show max 3 users
   }, [events, roomId])
 

@@ -51,9 +51,6 @@ const CLS_DECIMAL_PLACES = 4 // Decimal places for CLS display
 
 // Magic numbers for calculations
 const CLS_MULTIPLIER = 1000
-const RANDOM_ID_BASE = 36
-const RANDOM_ID_LENGTH = 9
-const BATCH_SIZE = 3
 const DEV_LONG_TASK_THRESHOLD = 100
 const PROD_LONG_TASK_THRESHOLD = 50
 const MEMORY_CHECK_INTERVAL = 30000
@@ -95,7 +92,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
   const {
     enabled = true,
     enableAdvancedMetrics = true,
-    batchReporting = true,
+    batchReporting: _batchReporting = true,
     onMetricsUpdate,
   } = options
   const [metrics, setMetrics] = useState<PerformanceMetrics>({})

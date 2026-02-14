@@ -33,29 +33,26 @@ const EVENT_DEDUPE_WINDOW_MS = 100 // Prevent duplicate events within 100ms
 const PAGE_VIEW_DEDUPE_WINDOW_MS = 500 // Prevent duplicate page views within 500ms
 
 // Type definitions for gtag.js and analytics tracking
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface GtagWindow extends Window {
-  gtag?: (
-    command: 'config' | 'event' | 'set' | 'consent',
-    targetId: string | Record<string, unknown>,
-    config?: Record<string, unknown> | string,
-  ) => void
-  gaEvents?: Array<{
-    command: string
-    eventName: string
-    params?: Record<string, unknown>
-  }>
-  gtagSession?: {
-    sessionId: number
-    engagementTime: number
-  }
-  trackContactFormSubmit?: () => void
-  trackResumeDownload?: () => void
-  trackError?: (error: string) => void
-}
-
 declare global {
-  interface Window extends GtagWindow {}
+  interface Window {
+    gtag?: (
+      command: 'config' | 'event' | 'set' | 'consent',
+      targetId: string | Record<string, unknown>,
+      config?: Record<string, unknown> | string,
+    ) => void
+    gaEvents?: Array<{
+      command: string
+      eventName: string
+      params?: Record<string, unknown>
+    }>
+    gtagSession?: {
+      sessionId: number
+      engagementTime: number
+    }
+    trackContactFormSubmit?: () => void
+    trackResumeDownload?: () => void
+    trackError?: (error: string) => void
+  }
 }
 
 // Event deduplication tracking

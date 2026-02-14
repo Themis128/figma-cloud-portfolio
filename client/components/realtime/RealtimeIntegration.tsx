@@ -445,7 +445,7 @@ function DebugPanel({ connection, presence, events }: DebugPanelProps) {
       {isExpanded && (
         <div className='space-y-2'>
           <div>Connection: {connection.status}</div>
-          <div>Socket ID: {connection.socket?.id || 'N/A'}</div>
+          <div>Socket ID: {String((connection.socket as Record<string, unknown> | null)?.['id'] || 'N/A')}</div>
           <div>Latency: {connection.latency || 'N/A'}ms</div>
           <div>Online Users: {presence.length}</div>
           <div>Events: {events.length}</div>
