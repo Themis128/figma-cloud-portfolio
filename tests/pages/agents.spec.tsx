@@ -129,6 +129,11 @@ vi.mock('lucide-react', () => ({
   ArrowLeft: () => <div data-testid='arrow-left-icon' />,
   Bot: () => <div data-testid='bot-icon' />,
   Sparkles: () => <div data-testid='sparkles-icon' />,
+  Zap: () => <div data-testid='zap-icon' />,
+  BarChart3: () => <div data-testid='bar-chart-icon' />,
+  BookOpen: () => <div data-testid='book-open-icon' />,
+  Play: () => <div data-testid='play-icon' />,
+  Users: () => <div data-testid='users-icon' />,
 }))
 
 const renderWithProviders = (component: React.ReactElement) => {
@@ -252,14 +257,16 @@ describe('Agents Page', () => {
 
     expect(screen.getByTestId('arrow-left-icon')).toBeInTheDocument()
     expect(screen.getByTestId('bot-icon')).toBeInTheDocument()
-    expect(screen.getByTestId('sparkles-icon')).toBeInTheDocument()
+    // Agents page uses Sparkles in header and the showcase toggle button
+    expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(2)
   })
 
   it('includes animated sections', () => {
     renderWithProviders(<Agents />)
 
     const animatedSections = screen.getAllByTestId('animated-section')
-    expect(animatedSections).toHaveLength(2)
+    // Header, showcase toggle, and main selector each use AnimatedSection
+    expect(animatedSections).toHaveLength(3)
   })
 
   it('shows breadcrumb navigation when not in select mode', async () => {
