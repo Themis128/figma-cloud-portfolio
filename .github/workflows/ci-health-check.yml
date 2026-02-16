@@ -87,13 +87,18 @@ jobs:
         run: |
           echo "🔍 Checking workflow syntax..."
 
+          # Ensure PyYAML is available on the runner
+          python3 -m pip install --user pyyaml >/dev/null 2>&1 || true
+
           # Check if workflows are valid YAML
           for workflow in .github/workflows/*.yml; do
             if [ -f "$workflow" ]; then
-              if python3 -c "import yaml; yaml.safe_load(open('$workflow'))" 2>/dev/null; then
+              if python3 -c "import yaml,sys; yaml.safe_load(open('$workflow'))" 2>/dev/null; then
                 echo "✅ $workflow syntax is valid"
               else
                 echo "❌ $workflow syntax is invalid"
+                # Print parsing error for easier debugging
+                python3 -c "import yaml,traceback,sys; print('Error parsing: $workflow'); traceback.print_exc()" || true
                 exit 1
               fi
             fi
