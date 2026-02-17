@@ -1,0 +1,37 @@
+name: E2E Tests
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main, production]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm run setup:playwright
+      - name: Build (server + client)
+        run: pnpm run build:ci
+      - name: Run Playwright E2E (CI)
+        run: pnpm run test:e2e:ci
+        env:
+          CI: true
+      - name: Upload Playwright artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            playwright-report
+            test-results
+            .playwright
