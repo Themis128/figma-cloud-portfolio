@@ -7,7 +7,6 @@ frontend:
     build:
       commands:
         - echo "Building application for Amplify deployment"
-        - bash scripts/load-secrets.sh --write-env .env.production
         - npm run build:client
         # Skip resume and server builds in CI/CD to prevent memory issues
   artifacts:
@@ -19,40 +18,6 @@ frontend:
       - node_modules/**/*
   environment:
     NODE_OPTIONS: "--max-old-space-size=2048"
-buildComputeType: LARGE_16GB
-
-functions:
-  ping:
-    handler: index.handler
-    runtime: nodejs18.x
-    memory: 256
-    timeout: 10
-
-  demo:
-    handler: index.handler
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-
-  contact:
-    handler: index.handler
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
-
-  resume:
-    handler: index.handler
-    runtime: nodejs18.x
-    memory: 2048
-    timeout: 300
-    environment:
-      NODE_OPTIONS: "--max-old-space-size=2048"
-
-  pushnotifications:
-    handler: index.handler
-    runtime: nodejs18.x
-    memory: 512
-    timeout: 30
 
 # Custom headers for performance and security
 customHeaders:
