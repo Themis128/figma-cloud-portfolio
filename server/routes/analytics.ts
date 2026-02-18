@@ -10,8 +10,10 @@ const HTTP_STATUS = {
 
 // Read optional server-side GA4 configuration from environment
 const GA_MEASUREMENT_ID =
-  process.env['GOOGLE_ANALYTICS_MEASUREMENT_ID'] || process.env['VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID'] || ''
-const GA_API_SECRET = process.env['GOOGLE_ANALYTICS_API_SECRET'] || process.env['GA4_API_SECRET'] || ''
+  process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID ||
+  process.env.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID ||
+  ''
+const GA_API_SECRET = process.env.GOOGLE_ANALYTICS_API_SECRET || process.env.GA4_API_SECRET || ''
 
 export const handleAnalytics = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -50,7 +52,7 @@ export const handleAnalytics = async (req: Request, res: Response): Promise<void
         }
 
         try {
-          const target = process.env['NODE_ENV'] === 'development' ? mpDebugUrl : mpUrl
+          const target = process.env.NODE_ENV === 'development' ? mpDebugUrl : mpUrl
           const response = await fetch(target, {
             method: 'POST',
             headers: {
@@ -63,7 +65,7 @@ export const handleAnalytics = async (req: Request, res: Response): Promise<void
           if (!response.ok) {
             const text = await response.text()
             console.error('[Analytics] Measurement Protocol forward failed:', response.status, text)
-          } else if (process.env['NODE_ENV'] === 'development') {
+          } else if (process.env.NODE_ENV === 'development') {
             const json = await response.json()
             console.log('[Analytics] MP debug response:', JSON.stringify(json))
           }
@@ -72,7 +74,9 @@ export const handleAnalytics = async (req: Request, res: Response): Promise<void
         }
       }
 
-      res.status(HTTP_STATUS.OK).json({ success: true, type: 'event', forwarded: !!(GA_MEASUREMENT_ID && GA_API_SECRET) })
+      res
+        .status(HTTP_STATUS.OK)
+        .json({ success: true, type: 'event', forwarded: !!(GA_MEASUREMENT_ID && GA_API_SECRET) })
       return
     }
 
@@ -88,6 +92,8 @@ export const handleAnalytics = async (req: Request, res: Response): Promise<void
     return
   } catch (error) {
     console.error('[Analytics] Error:', error)
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to process analytics' })
+    res
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: 'Failed to process analytics' })
   }
 }

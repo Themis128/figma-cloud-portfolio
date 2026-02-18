@@ -260,9 +260,7 @@ export default function Agents() {
                         if (response.ok) {
                           setViewMode('select')
                         }
-                      } catch (error) {
-                        console.error('Failed to save agent:', error)
-                      }
+                      } catch (_error) {}
                     }
                     saveAgent()
                   }}

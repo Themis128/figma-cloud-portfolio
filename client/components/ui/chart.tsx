@@ -177,7 +177,7 @@ const ChartTooltipContent = React.forwardRef<
     }
 
     const getIndicatorColor = (item: ChartTooltipItem): string | undefined => {
-      return color || (item.payload?.['fill'] as string | undefined) || item.color
+      return color || (item.payload?.fill as string | undefined) || item.color
     }
 
     const renderIndicator = (
@@ -240,7 +240,15 @@ const ChartTooltipContent = React.forwardRef<
       const itemConfig = getItemConfig(item)
 
       if (formatter && item?.value !== undefined && item.name) {
-        return (formatter as (value: unknown, name: string, item: ChartTooltipItem, index: number, payload: unknown) => React.ReactNode)(item.value, item.name, item, index, item.payload)
+        return (
+          formatter as (
+            value: unknown,
+            name: string,
+            item: ChartTooltipItem,
+            index: number,
+            payload: unknown,
+          ) => React.ReactNode
+        )(item.value, item.name, item, index, item.payload)
       }
 
       return (

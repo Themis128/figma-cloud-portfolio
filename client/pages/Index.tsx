@@ -33,7 +33,9 @@ export default function Index() {
     subject: '',
     message: '',
   })
-  const [contactStatus, setContactStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  const [contactStatus, setContactStatus] = useState<'idle' | 'sending' | 'success' | 'error'>(
+    'idle',
+  )
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -385,7 +387,11 @@ export default function Index() {
                       <p className='text-slate-400'>I'll get back to you within 24 hours.</p>
                     </div>
                   ) : (
-                    <form className='space-y-6' aria-labelledby='contact-heading' onSubmit={handleContactSubmit}>
+                    <form
+                      className='space-y-6'
+                      aria-labelledby='contact-heading'
+                      onSubmit={handleContactSubmit}
+                    >
                       <div className='grid md:grid-cols-2 gap-4'>
                         <div>
                           <label
@@ -399,7 +405,9 @@ export default function Index() {
                             type='text'
                             placeholder='John'
                             value={contactForm.firstName}
-                            onChange={(e) => setContactForm(f => ({ ...f, firstName: e.target.value }))}
+                            onChange={(e) =>
+                              setContactForm((f) => ({ ...f, firstName: e.target.value }))
+                            }
                             className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
                             required
                           />
@@ -417,7 +425,9 @@ export default function Index() {
                             type='text'
                             placeholder='Doe'
                             value={contactForm.lastName}
-                            onChange={(e) => setContactForm(f => ({ ...f, lastName: e.target.value }))}
+                            onChange={(e) =>
+                              setContactForm((f) => ({ ...f, lastName: e.target.value }))
+                            }
                             className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
                             required
                           />
@@ -436,7 +446,7 @@ export default function Index() {
                           type='email'
                           placeholder='your.email@domain.com'
                           value={contactForm.email}
-                          onChange={(e) => setContactForm(f => ({ ...f, email: e.target.value }))}
+                          onChange={(e) => setContactForm((f) => ({ ...f, email: e.target.value }))}
                           className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
                           required
                         />
@@ -454,7 +464,9 @@ export default function Index() {
                           type='text'
                           placeholder='Project inquiry'
                           value={contactForm.subject}
-                          onChange={(e) => setContactForm(f => ({ ...f, subject: e.target.value }))}
+                          onChange={(e) =>
+                            setContactForm((f) => ({ ...f, subject: e.target.value }))
+                          }
                           className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
                           required
                         />
@@ -472,14 +484,22 @@ export default function Index() {
                           placeholder='Tell me about your project...'
                           rows={5}
                           value={contactForm.message}
-                          onChange={(e) => setContactForm(f => ({ ...f, message: e.target.value }))}
+                          onChange={(e) =>
+                            setContactForm((f) => ({ ...f, message: e.target.value }))
+                          }
                           className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
                           required
                         />
                       </div>
 
                       {contactStatus === 'error' && (
-                        <p className='text-red-400 text-sm'>Failed to send. Please try the <Link to='/contact' className='underline'>contact page</Link> or email me directly.</p>
+                        <p className='text-red-400 text-sm'>
+                          Failed to send. Please try the{' '}
+                          <Link to='/contact' className='underline'>
+                            contact page
+                          </Link>{' '}
+                          or email me directly.
+                        </p>
                       )}
 
                       <Button

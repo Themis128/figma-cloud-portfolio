@@ -1,13 +1,13 @@
 /**
  * Unified Playwright Configuration
- * 
+ *
  * Consolidated configuration for all testing needs:
  * - E2E tests
  * - Visual regression
  * - Accessibility testing
  * - API integration tests
  * - Auto-fix capabilities
- * 
+ *
  * Usage:
  *   pnpm test:e2e           - Run all tests
  *   pnpm test:e2e:fast     - Fast execution mode
@@ -266,8 +266,8 @@ function getEnvironmentSettings(environment: ConfigEnvironment): EnvironmentSett
 function getOptimalWorkers(environment: ConfigEnvironment): number {
   const settings = getEnvironmentSettings(environment)
   const cpuCount = os.cpus().length || 2
-  const isCI = !!process.env['CI']
-  const isGitHubActions = !!process.env['GITHUB_ACTIONS']
+  const isCI = !!process.env.CI
+  const isGitHubActions = !!process.env.GITHUB_ACTIONS
 
   if (isGitHubActions) {
     return Math.min(2, settings.workers.max)
@@ -282,7 +282,10 @@ function getOptimalWorkers(environment: ConfigEnvironment): number {
 
   return Math.min(
     settings.workers.max,
-    Math.max(settings.workers.min, Math.min(cpuCount - 1, Math.floor(cpuCount * settings.workers.cpuFraction))),
+    Math.max(
+      settings.workers.min,
+      Math.min(cpuCount - 1, Math.floor(cpuCount * settings.workers.cpuFraction)),
+    ),
   )
 }
 
@@ -292,9 +295,9 @@ function getOptimalWorkers(environment: ConfigEnvironment): number {
 
 // Determine environment
 function getEnvironment(): ConfigEnvironment {
-  if (process.env['TEST_ENV'] === 'ci') return 'ci'
-  if (process.env['TEST_ENV'] === 'fast') return 'fast'
-  if (process.env['TEST_ENV'] === 'autofix') return 'autofix'
+  if (process.env.TEST_ENV === 'ci') return 'ci'
+  if (process.env.TEST_ENV === 'fast') return 'fast'
+  if (process.env.TEST_ENV === 'autofix') return 'autofix'
   return 'development'
 }
 
@@ -310,7 +313,11 @@ const getBrowserProjects = () => {
       use: {
         ...devices['Desktop Chrome'],
         launchOptions: {
-          args: [...BROWSER_LAUNCH_ARGS.PERFORMANCE, ...BROWSER_LAUNCH_ARGS.SECURITY, ...(environment === 'ci' ? BROWSER_LAUNCH_ARGS.CI : [])],
+          args: [
+            ...BROWSER_LAUNCH_ARGS.PERFORMANCE,
+            ...BROWSER_LAUNCH_ARGS.SECURITY,
+            ...(environment === 'ci' ? BROWSER_LAUNCH_ARGS.CI : []),
+          ],
           ignoreDefaultArgs: ['--enable-automation'],
           ignoreHTTPSErrors: true,
         },
@@ -399,7 +406,7 @@ const reporters = settings.reporting.reporters.map((reporter) => {
 const config: PlaywrightTestConfig = {
   testDir: './playwright-tests',
   fullyParallel: true,
-  forbidOnly: !!process.env['CI'],
+  forbidOnly: !!process.env.CI,
   retries: settings.retries,
   timeout: settings.timeouts.test,
   workers,
@@ -422,7 +429,7 @@ const config: PlaywrightTestConfig = {
   },
 
   use: {
-    baseURL: process.env['PLAYWRIGHT_BASE_URL'] || 'http://localhost:8081',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8081',
     actionTimeout: settings.timeouts.action,
     navigationTimeout: settings.timeouts.navigation,
     trace: settings.artifacts.trace as 'on' | 'off' | 'on-first-retry' | 'retain-on-failure',
@@ -442,23 +449,27 @@ const config: PlaywrightTestConfig = {
   projects: getBrowserProjects() as PlaywrightTestConfig['projects'],
 
   // Auto-fix settings
-  updateSnapshots: environment === 'autofix' || process.env['UPDATE_SNAPSHOTS'] === 'true' ? 'missing' : 'none',
+  updateSnapshots:
+    environment === 'autofix' || process.env.UPDATE_SNAPSHOTS === 'true' ? 'missing' : 'none',
 
   // Web server - always reuse existing to avoid port conflicts
-  webServer: process.env['PLAYWRIGHT_START_SERVERS'] === 'true' ? [
-    {
-      command: 'npx tsx server/node-build.ts',
-      url: 'http://localhost:3002/api/health',
-      reuseExistingServer: true,
-      timeout: settings.timeouts.webServer,
-    },
-    {
-      command: 'npx vite --port 8081',
-      url: 'http://localhost:8081',
-      reuseExistingServer: true,
-      timeout: settings.timeouts.webServer * 2,
-    },
-  ] : undefined,
+  webServer:
+    process.env.PLAYWRIGHT_START_SERVERS === 'true'
+      ? [
+          {
+            command: 'npx tsx server/node-build.ts',
+            url: 'http://localhost:3002/api/health',
+            reuseExistingServer: true,
+            timeout: settings.timeouts.webServer,
+          },
+          {
+            command: 'npx vite --port 8081',
+            url: 'http://localhost:8081',
+            reuseExistingServer: true,
+            timeout: settings.timeouts.webServer * 2,
+          },
+        ]
+      : undefined,
 
   metadata: {
     environment,
@@ -468,14 +479,6 @@ const config: PlaywrightTestConfig = {
     workers,
   },
 }
-
-// Log configuration
-console.log(`\n🧪 Playwright Configuration (${environment}):`)
-console.log(`   - Workers: ${config.workers}`)
-console.log(`   - Retries: ${config.retries}`)
-console.log(`   - Timeout: ${config.timeout}ms`)
-console.log(`   - Reporters: ${settings.reporting.reporters.join(', ')}`)
-console.log('')
 
 export default config
 export { config }

@@ -44,7 +44,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
   // Show prompt after user has been on the site for a bit
   useEffect(() => {
     const isTestEnvironment =
-      import.meta.env['MODE'] === 'test' ||
+      import.meta.env.MODE === 'test' ||
       window.location.href.includes('test') ||
       document.title.includes('test')
 
@@ -152,7 +152,7 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
 
   // Always show button in test mode (detect various test environments)
   const isTestEnvironment =
-    import.meta.env['MODE'] === 'test' ||
+    import.meta.env.MODE === 'test' ||
     window.location.href.includes('test') ||
     document.title.includes('test') ||
     window.navigator.webdriver || // Playwright sets this

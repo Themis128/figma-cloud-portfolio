@@ -94,7 +94,7 @@ const getAssetFileName = (name: string): string => {
 }
 export default defineConfig(({ mode }) => {
   // Detect CI/CD environment
-  const isCI = process.env['CI'] || process.env['AMPLIFY_BUILD_CONFIG']
+  const isCI = process.env.CI || process.env.AMPLIFY_BUILD_CONFIG
 
   return {
     root: 'client',
@@ -114,12 +114,12 @@ export default defineConfig(({ mode }) => {
       proxy:
         mode !== 'production'
           ? {
-            '/api': {
-              target: 'http://localhost:3002',
-              changeOrigin: true,
-              secure: false,
-            },
-          }
+              '/api': {
+                target: 'http://localhost:3002',
+                changeOrigin: true,
+                secure: false,
+              },
+            }
           : undefined,
       fs: {
         allow: ['.', '../client', '../shared'],
@@ -149,59 +149,59 @@ export default defineConfig(({ mode }) => {
           manualChunks: isCI
             ? undefined
             : {
-              // Core React chunk - highest priority
-              'react-core': ['react', 'react-dom'],
+                // Core React chunk - highest priority
+                'react-core': ['react', 'react-dom'],
 
-              // Router chunk - navigation critical
-              router: ['react-router-dom'],
+                // Router chunk - navigation critical
+                router: ['react-router-dom'],
 
-              // UI library - design system components
-              ui: [
-                '@radix-ui/react-dialog',
-                '@radix-ui/react-dropdown-menu',
-                '@radix-ui/react-tooltip',
-                '@radix-ui/react-toast',
-                '@radix-ui/react-accordion',
-                '@radix-ui/react-popover',
-                '@radix-ui/react-select',
-                '@radix-ui/react-tabs',
-                '@radix-ui/react-toggle-group',
-                'lucide-react',
-                'sonner',
-              ],
+                // UI library - design system components
+                ui: [
+                  '@radix-ui/react-dialog',
+                  '@radix-ui/react-dropdown-menu',
+                  '@radix-ui/react-tooltip',
+                  '@radix-ui/react-toast',
+                  '@radix-ui/react-accordion',
+                  '@radix-ui/react-popover',
+                  '@radix-ui/react-select',
+                  '@radix-ui/react-tabs',
+                  '@radix-ui/react-toggle-group',
+                  'lucide-react',
+                  'sonner',
+                ],
 
-              // 3D graphics - heavy chunk, lazy load
-              three: ['three', '@react-three/fiber', '@react-three/drei'],
+                // 3D graphics - heavy chunk, lazy load
+                three: ['three', '@react-three/fiber', '@react-three/drei'],
 
-              // Utilities - shared across components
-              utils: ['clsx', 'tailwind-merge', 'date-fns', 'zod'],
+                // Utilities - shared across components
+                utils: ['clsx', 'tailwind-merge', 'date-fns', 'zod'],
 
-              // Forms - feature-specific
-              forms: ['react-hook-form', '@hookform/resolvers'],
+                // Forms - feature-specific
+                forms: ['react-hook-form', '@hookform/resolvers'],
 
-              // State management
-              state: ['@tanstack/react-query'],
+                // State management
+                state: ['@tanstack/react-query'],
 
-              // Performance monitoring
-              performance: ['web-vitals'],
+                // Performance monitoring
+                performance: ['web-vitals'],
 
-              // Animation libraries - split for lazy loading
-              animations: ['framer-motion'],
+                // Animation libraries - split for lazy loading
+                animations: ['framer-motion'],
 
-              // Chart libraries - heavy, component-specific
-              charts: ['recharts'],
+                // Chart libraries - heavy, component-specific
+                charts: ['recharts'],
 
-              // PDF and document processing
-              // 'pdf-utils': ['jspdf', 'html2canvas'], // Temporarily disabled - dependencies not installed
+                // PDF and document processing
+                // 'pdf-utils': ['jspdf', 'html2canvas'], // Temporarily disabled - dependencies not installed
 
-              // Real-time features (Socket.IO)
-              realtime: ['socket.io-client'],
+                // Real-time features (Socket.IO)
+                realtime: ['socket.io-client'],
 
-              // Development utilities
-              ...(mode === 'development' && {
-                devtools: ['@redux-devtools/extension', 'react-error-boundary'],
-              }),
-            },
+                // Development utilities
+                ...(mode === 'development' && {
+                  devtools: ['@redux-devtools/extension', 'react-error-boundary'],
+                }),
+              },
 
           // Enhanced chunk naming with better organization
           chunkFileNames: (chunkInfo) => {
@@ -316,8 +316,8 @@ export default defineConfig(({ mode }) => {
       watch:
         mode === 'development'
           ? {
-            exclude: ['node_modules/**', 'dist/**', 'coverage/**'],
-          }
+              exclude: ['node_modules/**', 'dist/**', 'coverage/**'],
+            }
           : null,
     },
     plugins: [
@@ -327,46 +327,46 @@ export default defineConfig(({ mode }) => {
       isCI
         ? undefined
         : ViteImageOptimizer({
-          // Aggressive compression for maximum savings
-          png: {
-            quality: IMAGE_QUALITY_LOW,
-            compressionLevel: 9,
-            palette: true,
-            colors: 128, // Limit color palette
-          },
-          jpeg: {
-            quality: IMAGE_QUALITY_LOW,
-            progressive: true,
-            mozjpeg: true,
-          },
-          jpg: {
-            quality: IMAGE_QUALITY_LOW,
-            progressive: true,
-            mozjpeg: true,
-          },
-          webp: {
-            quality: IMAGE_QUALITY_MEDIUM,
-            effort: 6,
-            smartSubsample: true,
-            nearLossless: false,
-          },
-          avif: {
-            quality: IMAGE_QUALITY_LOW,
-            effort: 6,
-            chromaSubsampling: '4:2:0',
-          },
-          include: /\.(png|jpe?g|webp|avif)$/i,
-          exclude: /node_modules/,
-          // Additional optimization options
-          cache: false, // Disable cache to avoid path issues
-        }),
+            // Aggressive compression for maximum savings
+            png: {
+              quality: IMAGE_QUALITY_LOW,
+              compressionLevel: 9,
+              palette: true,
+              colors: 128, // Limit color palette
+            },
+            jpeg: {
+              quality: IMAGE_QUALITY_LOW,
+              progressive: true,
+              mozjpeg: true,
+            },
+            jpg: {
+              quality: IMAGE_QUALITY_LOW,
+              progressive: true,
+              mozjpeg: true,
+            },
+            webp: {
+              quality: IMAGE_QUALITY_MEDIUM,
+              effort: 6,
+              smartSubsample: true,
+              nearLossless: false,
+            },
+            avif: {
+              quality: IMAGE_QUALITY_LOW,
+              effort: 6,
+              chromaSubsampling: '4:2:0',
+            },
+            include: /\.(png|jpe?g|webp|avif)$/i,
+            exclude: /node_modules/,
+            // Additional optimization options
+            cache: false, // Disable cache to avoid path issues
+          }),
       mode === 'analyze'
         ? visualizer({
-          filename: 'dist/stats.html',
-          open: true,
-          gzipSize: true,
-          brotliSize: true,
-        })
+            filename: 'dist/stats.html',
+            open: true,
+            gzipSize: true,
+            brotliSize: true,
+          })
         : undefined,
       VitePWA({
         registerType: 'autoUpdate',

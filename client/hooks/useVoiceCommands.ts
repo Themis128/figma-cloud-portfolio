@@ -76,7 +76,9 @@ export function useVoiceCommands(commands: VoiceCommand[] = []) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Check for Speech Recognition support
-      const SpeechRecognition = (window as unknown as Record<string, unknown>)['SpeechRecognition'] || (window as unknown as Record<string, unknown>)['webkitSpeechRecognition']
+      const SpeechRecognition =
+        (window as unknown as Record<string, unknown>).SpeechRecognition ||
+        (window as unknown as Record<string, unknown>).webkitSpeechRecognition
 
       if (SpeechRecognition) {
         recognitionRef.current = new (SpeechRecognition as unknown as new () => SpeechRecognition)()

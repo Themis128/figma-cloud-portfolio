@@ -8,7 +8,7 @@ import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring'
 
 // Conditionally import GoogleAnalytics based on environment
 let GoogleAnalytics: React.ComponentType
-if (import.meta.env['MODE'] === 'test') {
+if (import.meta.env.MODE === 'test') {
   // Provide a simple stub for test environments
   GoogleAnalytics = () => <div data-testid='google-analytics' />
 } else {
@@ -42,7 +42,7 @@ function App() {
         <HelmetProvider>
           <ThemeProvider defaultTheme='dark' storageKey='portfolio-theme'>
             <BrowserRouter>
-              {import.meta.env['MODE'] === 'test' ? (
+              {import.meta.env.MODE === 'test' ? (
                 <GoogleAnalytics />
               ) : (
                 <Suspense fallback={null}>

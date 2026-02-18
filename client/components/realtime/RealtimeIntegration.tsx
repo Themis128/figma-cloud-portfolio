@@ -68,7 +68,7 @@ export function RealtimeIntegration({
 
   // Initialize notifications
   const { permission, requestPermission, isGranted } = useEnhancedNotifications(
-    import.meta.env['VITE_VAPID_PUBLIC_KEY'],
+    import.meta.env.VITE_VAPID_PUBLIC_KEY,
   )
 
   // Initialize real-time notifications
@@ -284,7 +284,7 @@ export function RealtimeIntegration({
       </div>
 
       {/* Debug Information (Development Only) */}
-      {import.meta.env['NODE_ENV'] === 'development' && (
+      {import.meta.env.NODE_ENV === 'development' && (
         <DebugPanel connection={connection} presence={presence} events={events} />
       )}
     </div>
@@ -445,7 +445,9 @@ function DebugPanel({ connection, presence, events }: DebugPanelProps) {
       {isExpanded && (
         <div className='space-y-2'>
           <div>Connection: {connection.status}</div>
-          <div>Socket ID: {String((connection.socket as Record<string, unknown> | null)?.['id'] || 'N/A')}</div>
+          <div>
+            Socket ID: {String((connection.socket as Record<string, unknown> | null)?.id || 'N/A')}
+          </div>
           <div>Latency: {connection.latency || 'N/A'}ms</div>
           <div>Online Users: {presence.length}</div>
           <div>Events: {events.length}</div>

@@ -147,10 +147,10 @@ export const handleContactForm = async (req: Request, res: Response) => {
     }
 
     // Verify reCAPTCHA
-    let recaptchaSecret = process.env['RECAPTCHA_SECRET_KEY']
+    let recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY
 
     // Use test keys in development/test environment
-    if (process.env['NODE_ENV'] !== 'production' || !recaptchaSecret) {
+    if (process.env.NODE_ENV !== 'production' || !recaptchaSecret) {
       // Google's test reCAPTCHA secret key - always validates successfully
       recaptchaSecret = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     }
@@ -199,7 +199,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
 
     // For test reCAPTCHA keys, score might be undefined - allow in development
     const isTestKey = recaptchaSecret === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-    if (!isTestKey && process.env['NODE_ENV'] === 'production' && recaptchaData.score === undefined) {
+    if (!isTestKey && process.env.NODE_ENV === 'production' && recaptchaData.score === undefined) {
       const response: ContactFormResponse = {
         success: false,
         message: 'reCAPTCHA verification failed. Please try again.',
@@ -210,9 +210,9 @@ export const handleContactForm = async (req: Request, res: Response) => {
     // Send confirmation email via AWS SES (with graceful failure handling)
     const sendEmailGracefully = async (): Promise<void> => {
       // Check if SES is configured
-      const awsAccessKeyId = process.env['AWS_ACCESS_KEY_ID']
-      const awsSecretAccessKey = process.env['AWS_SECRET_ACCESS_KEY']
-      const sesVerifiedEmail = process.env['SES_VERIFIED_EMAIL']
+      const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID
+      const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+      const sesVerifiedEmail = process.env.SES_VERIFIED_EMAIL
 
       // Skip email if SES is not properly configured
       if (!(awsAccessKeyId && awsSecretAccessKey && sesVerifiedEmail)) {
@@ -221,7 +221,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
       }
 
       try {
-        const sesClient = new SESClient({ region: process.env['AWS_REGION'] || 'us-east-1' })
+        const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-1' })
         await sesClient.send(
           new SendEmailCommand({
             Source: sesVerifiedEmail,
@@ -264,7 +264,7 @@ export const handleContactForm = async (req: Request, res: Response) => {
     void sendEmailGracefully()
 
     // Send Slack notification
-    const slackWebhookUrl = process.env['SLACK_WEBHOOK_URL']
+    const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
 
     if (slackWebhookUrl) {
       try {

@@ -67,7 +67,7 @@ export default function Settings() {
         // Get version from API or package.json
         const currentVersion = '1.0.0'
         let latestVersion = currentVersion
-        
+
         try {
           const response = await fetch('/api/version/latest')
           if (response.ok) {

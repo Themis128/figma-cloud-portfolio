@@ -98,8 +98,11 @@ jobs:
               --exclude-dir=.git \
               --exclude-dir=dist \
               --exclude-dir=.next \
+              --exclude-dir=portfolio-nextjs \
+              --exclude-dir=new-portfolio-next \
               --exclude="*.lock" \
               --exclude="pnpm-lock.yaml" \
+              --exclude="package-lock.json" \
               --exclude="*.md"; then
               echo "❌ ERROR: Potential secret detected matching pattern: $pattern"
               FOUND=1

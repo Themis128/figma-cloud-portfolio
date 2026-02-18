@@ -37,7 +37,9 @@ class EnhancedSocketManager {
   private constructor() {}
 
   private notifySubscribers(): void {
-    this.subscribers.forEach((callback) => callback())
+    this.subscribers.forEach((callback) => {
+      callback()
+    })
   }
 
   static getInstance(): EnhancedSocketManager {
@@ -79,7 +81,7 @@ class EnhancedSocketManager {
       this.notifySubscribers()
 
       const serverUrl =
-        import.meta.env['NODE_ENV'] === 'production' ? window.location.origin : 'http://localhost:3000'
+        import.meta.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3000'
 
       this.socket = io(serverUrl, {
         transports: ['websocket', 'polling'],
@@ -105,33 +107,31 @@ class EnhancedSocketManager {
         this.startHeartbeat()
       }
 
-      return new Promise<Socket | null>(
-        (resolve, reject) => {
-          this.socket?.on('connect', () => {
-            this.connectionState = 'connected'
-            this.reconnectAttempts = 0
-            this.notifySubscribers()
-            if (this.socket) {
-              resolve(this.socket)
-            } else {
-              reject(new Error('Socket not created'))
-            }
-          })
+      return new Promise<Socket | null>((resolve, reject) => {
+        this.socket?.on('connect', () => {
+          this.connectionState = 'connected'
+          this.reconnectAttempts = 0
+          this.notifySubscribers()
+          if (this.socket) {
+            resolve(this.socket)
+          } else {
+            reject(new Error('Socket not created'))
+          }
+        })
 
-          this.socket?.on('connect_error', (error) => {
-            this.connectionState = 'error'
-            this.notifySubscribers()
-            reject(error)
-          })
+        this.socket?.on('connect_error', (error) => {
+          this.connectionState = 'error'
+          this.notifySubscribers()
+          reject(error)
+        })
 
-          // Timeout fallback
-          setTimeout(() => {
-            if (this.connectionState !== 'connected') {
-              reject(new Error('Connection timeout'))
-            }
-          }, this.CONNECTION_TIMEOUT)
-        },
-      )
+        // Timeout fallback
+        setTimeout(() => {
+          if (this.connectionState !== 'connected') {
+            reject(new Error('Connection timeout'))
+          }
+        }, this.CONNECTION_TIMEOUT)
+      })
     } catch {
       this.connectionState = 'error'
       this.notifySubscribers()
@@ -581,11 +581,11 @@ export function useRealtimeNotifications() {
 
     const cleanup = on('realtime_notification', (...args: unknown[]) => {
       const notification = args[0] as Record<string, unknown>
-      showLocalNotification(notification['title'] as string, {
+      showLocalNotification(notification.title as string, {
         ...notification,
         tag: 'realtime-notification',
         data: {
-          ...(notification['data'] as Record<string, unknown>),
+          ...(notification.data as Record<string, unknown>),
           source: 'realtime',
         },
       })

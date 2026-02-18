@@ -1,5 +1,5 @@
 // Enhanced collaboration components with React 19 integration
-import { startTransition, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useEnhancedSocket, usePresence, useRealtimeEvents } from '@/hooks/useEnhancedRealtime'
 import { cn } from '@/lib/utils'
 import type { AgentCollaborationData, RealTimeEvent } from '@/types/realtime'
@@ -115,7 +115,7 @@ export function CollaborationPanel({
   const recentActivity = useMemo(
     () =>
       events
-        .filter((event) => event.metadata?.['roomId'] === roomId)
+        .filter((event) => event.metadata?.roomId === roomId)
         .slice(-MAX_RECENT_ACTIVITY)
         .reverse(),
     [events, roomId],
@@ -127,9 +127,7 @@ export function CollaborationPanel({
   )
 
   const toggleExpanded = useCallback(() => {
-    startTransition(() => {
-      setIsExpanded((prev) => !prev)
-    })
+    setIsExpanded((prev) => !prev)
   }, [])
 
   return (
@@ -404,11 +402,15 @@ export function TypingIndicator({ roomId, className }: TypingIndicatorProps) {
     return events
       .filter(
         (event) =>
-          event.metadata?.['roomId'] === roomId &&
-          (event.data as Record<string, unknown>)['isTyping'] &&
+          event.metadata?.roomId === roomId &&
+          (event.data as Record<string, unknown>).isTyping &&
           now - event.timestamp < TYPING_TIMEOUT_MS, // 5 second timeout
       )
-      .map((event) => (event.data as Record<string, unknown>)['username'] || (event.data as Record<string, unknown>)['userId'])
+      .map(
+        (event) =>
+          (event.data as Record<string, unknown>).username ||
+          (event.data as Record<string, unknown>).userId,
+      )
       .slice(0, MAX_TYPING_USERS) // Show max 3 users
   }, [events, roomId])
 

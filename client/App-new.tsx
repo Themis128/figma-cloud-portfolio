@@ -139,7 +139,7 @@ const RouteTransitionWrapper: React.FC<{ children: React.ReactNode }> = ({ child
 const queryClient = new QueryClient()
 
 const App = () => {
-  const recaptchaKey = import.meta.env['VITE_RECAPTCHA_SITE_KEY'] || import.meta.env['RECAPTCHA_SITE_KEY']
+  const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || import.meta.env.RECAPTCHA_SITE_KEY
   const hasRecaptcha = recaptchaKey && recaptchaKey.trim() !== ''
 
   const AppContent = () => (

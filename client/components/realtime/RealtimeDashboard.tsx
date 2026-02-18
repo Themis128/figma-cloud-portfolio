@@ -51,9 +51,8 @@ export function RealtimeDashboard({
   // Calculate real-time metrics
   const metrics = useMemo<RealtimeMetrics>(
     () => ({
-      connectionUptime: connection.status === 'connected'
-        ? Date.now() - MILLISECONDS_PER_SECOND
-        : 0,
+      connectionUptime:
+        connection.status === 'connected' ? Date.now() - MILLISECONDS_PER_SECOND : 0,
       messagesReceived: events.length,
       messagesSent: 0, // Would track this from socket manager
       averageLatency: connection.latency || 0,

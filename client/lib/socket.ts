@@ -11,7 +11,7 @@ class SocketManager {
       return this.socket
     }
 
-    const serverUrl = import.meta.env['DEV'] ? 'http://localhost:3002' : window.location.origin
+    const serverUrl = import.meta.env.DEV ? 'http://localhost:3002' : window.location.origin
 
     this.socket = io(serverUrl, {
       transports: ['websocket', 'polling'],

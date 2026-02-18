@@ -5,7 +5,7 @@ import './global.css'
 import App from './App'
 
 // Suppress React DevTools development message in console
-if (import.meta.env['DEV']) {
+if (import.meta.env.DEV) {
   // eslint-disable-next-line no-console
   const originalWarn = console.warn
   console.warn = (...args: unknown[]) => {

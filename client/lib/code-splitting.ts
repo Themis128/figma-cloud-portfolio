@@ -270,7 +270,7 @@ export function cleanupViewportLoader(): void {
  * Bundle size analyzer for development
  */
 export function analyzeChunkSizes(): void {
-  if (process.env['NODE_ENV'] !== 'development') return
+  if (process.env.NODE_ENV !== 'development') return
 
   // Measure and log chunk sizes
   performance.mark('bundle-analysis-start')
@@ -287,7 +287,7 @@ export function analyzeChunkSizes(): void {
 }
 
 export function measureComponentLoad(componentName: string): void {
-  if (process.env['NODE_ENV'] !== 'development') return
+  if (process.env.NODE_ENV !== 'development') return
 
   performance.mark(`component-${componentName}-start`)
 

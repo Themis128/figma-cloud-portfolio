@@ -409,7 +409,7 @@ export interface RoomConfig {
 
 export const DEFAULT_REALTIME_CONFIG: RealtimeConfig = {
   serverUrl:
-    process.env['NODE_ENV'] === 'production'
+    process.env.NODE_ENV === 'production'
       ? window?.location?.origin || 'https://localhost:3000'
       : 'http://localhost:3000',
   autoConnect: true,
@@ -465,11 +465,11 @@ export function isRealtimeError(error: unknown): error is RealtimeError {
   const record = error as Record<string, unknown>
   return (
     'code' in record &&
-    typeof record['code'] === 'string' &&
+    typeof record.code === 'string' &&
     'message' in record &&
-    typeof record['message'] === 'string' &&
+    typeof record.message === 'string' &&
     'timestamp' in record &&
-    typeof record['timestamp'] === 'number'
+    typeof record.timestamp === 'number'
   )
 }
 
@@ -478,11 +478,11 @@ export function isUserPresence(obj: unknown): obj is UserPresence {
   const record = obj as Record<string, unknown>
   return (
     'userId' in record &&
-    typeof record['userId'] === 'string' &&
+    typeof record.userId === 'string' &&
     'status' in record &&
-    typeof record['status'] === 'string' &&
+    typeof record.status === 'string' &&
     'lastSeen' in record &&
-    typeof record['lastSeen'] === 'number'
+    typeof record.lastSeen === 'number'
   )
 }
 

@@ -20,7 +20,7 @@ test.describe('Contact Form Submission with Analytics', () => {
           contentType: 'application/json',
           body: JSON.stringify({
             success: true,
-            message: "Message sent successfully! I'll get back to you within 24 hours."
+            message: "Message sent successfully! I'll get back to you within 24 hours.",
           }),
         })
       })
@@ -77,9 +77,7 @@ test.describe('Contact Form Submission with Analytics', () => {
       await page.waitForTimeout(3000)
 
       // Check if success message appears
-      const successMessage = page.locator(
-        'text=/Message sent successfully!/i',
-      )
+      const successMessage = page.locator('text=/Message sent successfully!/i')
       const isSuccessVisible = await successMessage.isVisible().catch(() => false)
       console.log('Success message visible:', isSuccessVisible)
 

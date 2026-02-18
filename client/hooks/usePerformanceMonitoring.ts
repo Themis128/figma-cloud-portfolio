@@ -138,7 +138,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
   // Helper functions for long task monitoring
   const getLongTaskThreshold = useCallback((): number => {
-    return import.meta.env['DEV'] ? DEV_LONG_TASK_THRESHOLD : PROD_LONG_TASK_THRESHOLD
+    return import.meta.env.DEV ? DEV_LONG_TASK_THRESHOLD : PROD_LONG_TASK_THRESHOLD
   }, [])
 
   const shouldReportLongTask = useCallback(
@@ -149,7 +149,7 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
   )
 
   const reportLongTaskToGA4 = useCallback((entry: PerformanceEntry): void => {
-    if (import.meta.env['DEV'] || typeof gtag === 'undefined') return
+    if (import.meta.env.DEV || typeof gtag === 'undefined') return
 
     const { sessionId, engagementTime } = getSessionInfo()
 

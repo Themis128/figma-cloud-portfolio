@@ -17,7 +17,11 @@
       "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" run view 21523726264 --json status,conclusion,name,jobs --jq '.jobs[] | {name, status, conclusion}')",
       "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" run view 21523726217 --json status,conclusion,name,jobs --jq '.jobs[] | {name, status, conclusion}')",
       "Bash(gh run view:*)",
-      "Bash(cmd /c \"gh run view 21523726264 --log-failed\")"
+      "Bash(cmd /c \"gh run view 21523726264 --log-failed\")",
+      "Bash(dir:*)",
+      "Bash(Get-ChildItem \"D:\\\\DevOptimizer\"\")",
+      "Bash(Select-Object Name)",
+      "Bash(code --version:*)"
     ]
   }
 }

@@ -117,7 +117,7 @@ const sendWebVitalToGA4 = (metric: Metric): void => {
     engagement_time_msec: engagementTime,
 
     // Debug mode in development
-    debug_mode: import.meta.env['DEV'],
+    debug_mode: import.meta.env.DEV,
   })
 }
 

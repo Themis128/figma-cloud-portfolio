@@ -41,44 +41,30 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Build application for CI
-        run: pnpm run build:no-secrets
-        env:
-          CI: true
-          NODE_ENV: production
-
-      - name: Verify build output
-        run: |
-          if [ ! -f dist/server/node-build.mjs ]; then
-            echo "❌ Server build file not found!"
-            exit 1
-          fi
-          echo "✅ Server build verified"
-          ls -lh dist/server/
-
       - name: Run Playwright tests
         run: npx playwright test --config=playwright.config.ci.ts --shard=${{ matrix.shard }}
         env:
+          PLAYWRIGHT_START_SERVERS: true
           SHARD: ${{ matrix.shard }}
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ strategy.job-index }}
+          name: playwright-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
           path: playwright-html-report/
           retention-days: 30
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ strategy.job-index }}
+          name: test-results-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
           path: test-results/
           retention-days: 30
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: blob-report-${{ strategy.job-index }}
+          name: blob-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
           path: blob-report/
           retention-days: 30
 
@@ -106,6 +92,7 @@ jobs:
         with:
           path: all-blob-reports
           pattern: blob-report-*
+          merge-multiple: true
 
       - name: List downloaded artifacts
         run: |
