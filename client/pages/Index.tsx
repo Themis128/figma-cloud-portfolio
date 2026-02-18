@@ -11,7 +11,8 @@ import {
   Shield,
   User,
 } from 'lucide-react'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const AIBrain = lazy(() => import('@/components/AIBrain'))
 const Navigation = lazy(() => import('@/components/Navigation'))
@@ -25,6 +26,40 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 export default function Index() {
+  const [contactForm, setContactForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: '',
+  })
+  const [contactStatus, setContactStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setContactStatus('sending')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `${contactForm.firstName} ${contactForm.lastName}`.trim(),
+          email: contactForm.email,
+          subject: contactForm.subject,
+          message: contactForm.message,
+        }),
+      })
+      if (res.ok) {
+        setContactStatus('success')
+        setContactForm({ firstName: '', lastName: '', email: '', subject: '', message: '' })
+      } else {
+        setContactStatus('error')
+      }
+    } catch {
+      setContactStatus('error')
+    }
+  }
+
   return (
     <div
       data-testid='index-page'
@@ -79,38 +114,44 @@ export default function Index() {
               {/* CTA Buttons */}
               <div className='flex flex-col sm:flex-row gap-4'>
                 <HoverButton>
-                  <Button
-                    size='lg'
-                    className='bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl'
-                    aria-describedby='learn-more-desc'
-                  >
-                    <User className='w-5 h-5 mr-2' aria-hidden='true' />
-                    Learn More
-                  </Button>
+                  <Link to='/about'>
+                    <Button
+                      size='lg'
+                      className='bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl'
+                      aria-describedby='learn-more-desc'
+                    >
+                      <User className='w-5 h-5 mr-2' aria-hidden='true' />
+                      Learn More
+                    </Button>
+                  </Link>
                 </HoverButton>
 
                 <HoverButton>
-                  <Button
-                    variant='outline'
-                    size='lg'
-                    className='border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900 font-semibold px-8 py-3 rounded-lg transition-all duration-300'
-                    aria-describedby='build-resume-desc'
-                  >
-                    <FileText className='w-5 h-5 mr-2' aria-hidden='true' />
-                    Build Resume
-                  </Button>
+                  <Link to='/resume'>
+                    <Button
+                      variant='outline'
+                      size='lg'
+                      className='border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900 font-semibold px-8 py-3 rounded-lg transition-all duration-300'
+                      aria-describedby='build-resume-desc'
+                    >
+                      <FileText className='w-5 h-5 mr-2' aria-hidden='true' />
+                      Build Resume
+                    </Button>
+                  </Link>
                 </HoverButton>
 
                 <HoverButton>
-                  <Button
-                    variant='outline'
-                    size='lg'
-                    className='border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-slate-900 font-semibold px-8 py-3 rounded-lg transition-all duration-300'
-                    aria-describedby='contact-desc'
-                  >
-                    <Mail className='w-5 h-5 mr-2' aria-hidden='true' />
-                    Get In Touch
-                  </Button>
+                  <Link to='/contact'>
+                    <Button
+                      variant='outline'
+                      size='lg'
+                      className='border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-slate-900 font-semibold px-8 py-3 rounded-lg transition-all duration-300'
+                      aria-describedby='contact-desc'
+                    >
+                      <Mail className='w-5 h-5 mr-2' aria-hidden='true' />
+                      Get In Touch
+                    </Button>
+                  </Link>
                 </HoverButton>
               </div>
 
@@ -153,7 +194,7 @@ export default function Index() {
 
                 <HoverIcon>
                   <a
-                    href='mailto:themistoklis@example.com'
+                    href='mailto:tbaltzakis@cloudless.gr'
                     className='text-slate-400 hover:text-cyan-400 transition-colors duration-300'
                     aria-label='Send me an email'
                   >
@@ -338,106 +379,118 @@ export default function Index() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form className='space-y-6' aria-labelledby='contact-heading'>
-                    <div className='grid md:grid-cols-2 gap-4'>
-                      <div>
-                        <label
-                          htmlFor='firstName'
-                          className='block text-sm font-medium text-slate-300 mb-2'
-                        >
-                          First Name
-                        </label>
-                        <Input
-                          id='firstName'
-                          type='text'
-                          placeholder='John'
-                          className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                          required
-                          aria-describedby='firstName-error'
-                        />
-                        <div id='firstName-error' className='sr-only' aria-live='polite'></div>
+                  {contactStatus === 'success' ? (
+                    <div className='text-center py-8'>
+                      <p className='text-green-400 text-lg font-medium mb-2'>✅ Message sent!</p>
+                      <p className='text-slate-400'>I'll get back to you within 24 hours.</p>
+                    </div>
+                  ) : (
+                    <form className='space-y-6' aria-labelledby='contact-heading' onSubmit={handleContactSubmit}>
+                      <div className='grid md:grid-cols-2 gap-4'>
+                        <div>
+                          <label
+                            htmlFor='firstName'
+                            className='block text-sm font-medium text-slate-300 mb-2'
+                          >
+                            First Name
+                          </label>
+                          <Input
+                            id='firstName'
+                            type='text'
+                            placeholder='John'
+                            value={contactForm.firstName}
+                            onChange={(e) => setContactForm(f => ({ ...f, firstName: e.target.value }))}
+                            className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor='lastName'
+                            className='block text-sm font-medium text-slate-300 mb-2'
+                          >
+                            Last Name
+                          </label>
+                          <Input
+                            id='lastName'
+                            type='text'
+                            placeholder='Doe'
+                            value={contactForm.lastName}
+                            onChange={(e) => setContactForm(f => ({ ...f, lastName: e.target.value }))}
+                            className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div>
                         <label
-                          htmlFor='lastName'
+                          htmlFor='email'
                           className='block text-sm font-medium text-slate-300 mb-2'
                         >
-                          Last Name
+                          Email Address
                         </label>
                         <Input
-                          id='lastName'
-                          type='text'
-                          placeholder='Doe'
+                          id='email'
+                          type='email'
+                          placeholder='your.email@domain.com'
+                          value={contactForm.email}
+                          onChange={(e) => setContactForm(f => ({ ...f, email: e.target.value }))}
                           className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
                           required
-                          aria-describedby='lastName-error'
                         />
-                        <div id='lastName-error' className='sr-only' aria-live='polite'></div>
                       </div>
-                    </div>
 
-                    <div>
-                      <label
-                        htmlFor='email'
-                        className='block text-sm font-medium text-slate-300 mb-2'
+                      <div>
+                        <label
+                          htmlFor='subject'
+                          className='block text-sm font-medium text-slate-300 mb-2'
+                        >
+                          Subject
+                        </label>
+                        <Input
+                          id='subject'
+                          type='text'
+                          placeholder='Project inquiry'
+                          value={contactForm.subject}
+                          onChange={(e) => setContactForm(f => ({ ...f, subject: e.target.value }))}
+                          className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor='message'
+                          className='block text-sm font-medium text-slate-300 mb-2'
+                        >
+                          Message
+                        </label>
+                        <Textarea
+                          id='message'
+                          placeholder='Tell me about your project...'
+                          rows={5}
+                          value={contactForm.message}
+                          onChange={(e) => setContactForm(f => ({ ...f, message: e.target.value }))}
+                          className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
+                          required
+                        />
+                      </div>
+
+                      {contactStatus === 'error' && (
+                        <p className='text-red-400 text-sm'>Failed to send. Please try the <Link to='/contact' className='underline'>contact page</Link> or email me directly.</p>
+                      )}
+
+                      <Button
+                        type='submit'
+                        disabled={contactStatus === 'sending'}
+                        className='w-full bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:opacity-60'
                       >
-                        Email Address
-                      </label>
-                      <Input
-                        id='email'
-                        type='email'
-                        placeholder='john.doe@example.com'
-                        className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        required
-                        aria-describedby='email-error'
-                      />
-                      <div id='email-error' className='sr-only' aria-live='polite'></div>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor='subject'
-                        className='block text-sm font-medium text-slate-300 mb-2'
-                      >
-                        Subject
-                      </label>
-                      <Input
-                        id='subject'
-                        type='text'
-                        placeholder='Project inquiry'
-                        className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        required
-                        aria-describedby='subject-error'
-                      />
-                      <div id='subject-error' className='sr-only' aria-live='polite'></div>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor='message'
-                        className='block text-sm font-medium text-slate-300 mb-2'
-                      >
-                        Message
-                      </label>
-                      <Textarea
-                        id='message'
-                        placeholder='Tell me about your project...'
-                        rows={5}
-                        className='bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        required
-                        aria-describedby='message-error'
-                      />
-                      <div id='message-error' className='sr-only' aria-live='polite'></div>
-                    </div>
-
-                    <Button
-                      type='submit'
-                      className='w-full bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-3 rounded-lg transition-all duration-300'
-                    >
-                      Send Message
-                    </Button>
-                  </form>
+                        {contactStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                      </Button>
+                    </form>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -448,10 +501,12 @@ export default function Index() {
       <footer className='relative z-10 bg-slate-900/50 border-t border-slate-700'>
         <div className='container mx-auto px-4 py-8'>
           <div className='text-center text-slate-400'>
-            <p>&copy; 2024 Themistoklis Baltzakis. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Themistoklis Baltzakis. All rights reserved.</p>
             <div className='flex justify-center gap-6 mt-4'>
               <a
                 href='https://linkedin.com/in/themistoklis-baltzakis'
+                target='_blank'
+                rel='noopener noreferrer'
                 className='hover:text-cyan-400 transition-colors'
                 aria-label='LinkedIn'
               >
@@ -459,13 +514,15 @@ export default function Index() {
               </a>
               <a
                 href='https://github.com/themistoklis'
+                target='_blank'
+                rel='noopener noreferrer'
                 className='hover:text-cyan-400 transition-colors'
                 aria-label='GitHub'
               >
                 GitHub
               </a>
               <a
-                href='mailto:themistoklis@example.com'
+                href='mailto:tbaltzakis@cloudless.gr'
                 className='hover:text-cyan-400 transition-colors'
                 aria-label='Email'
               >

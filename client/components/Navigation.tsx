@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { HoverButton } from '@/components/HoverAnimations'
 import { Logo } from '@/components/Logo'
@@ -11,10 +12,13 @@ export default function Navigation() {
 
   const navigationItems = [
     { name: 'About', href: '/about' },
+    { name: 'Projects', href: '/projects' },
     { name: 'Resume', href: '/resume' },
-    { name: 'Contact', href: '/contact' },
     { name: 'Performance', href: '/performance' },
     { name: 'Agents', href: '/agents' },
+    { name: 'Product', href: '/product' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Settings', href: '/settings' },
   ]
 
   return (
@@ -22,24 +26,24 @@ export default function Navigation() {
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-between h-16 md:h-20'>
           {/* Logo */}
-          <a
-            href='/'
+          <Link
+            to='/'
             className='flex items-center hover:opacity-80 transition-opacity'
             aria-label='Home'
           >
             <Logo size='md' />
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className='hidden md:flex items-center space-x-6 lg:space-x-8'>
             {navigationItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className='text-sm font-medium transition-colors duration-300 hover:text-cyan-400 text-white/80'
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -70,14 +74,14 @@ export default function Navigation() {
       >
         <div className='container mx-auto px-4 py-4 space-y-3'>
           {navigationItems.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
+              to={item.href}
               onClick={() => setIsOpen(false)}
               className='block w-full text-left px-4 py-3 rounded-lg transition-colors text-white/80 hover:bg-white/10 hover:text-white'
             >
               {item.name}
-            </a>
+            </Link>
           ))}
 
           {/* Notification Button for Mobile */}
@@ -88,13 +92,13 @@ export default function Navigation() {
           {/* CTA Button */}
           <div className='pt-2'>
             <HoverButton>
-              <a
-                href='/contact'
+              <Link
+                to='/contact'
                 onClick={() => setIsOpen(false)}
                 className='w-full px-6 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-lg transition-all duration-300 text-center font-medium'
               >
                 Get In Touch
-              </a>
+              </Link>
             </HoverButton>
           </div>
         </div>
