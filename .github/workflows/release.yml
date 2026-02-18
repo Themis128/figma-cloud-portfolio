@@ -3,22 +3,32 @@ on:
   push:
     tags: ['v*.*.*']
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
       - name: Build
         run: pnpm run build:ci
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -27,8 +37,8 @@ jobs:
             dist
             dist/spa
 
-      - name: Optional: Publish Docker image
-        if: env.DOCKER_USERNAME && env.DOCKER_PASSWORD
+      - name: Optional - Publish Docker image
+        if: ${{ env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != '' }}
         run: |
           echo "Publishing Docker image (placeholder). Configure registry steps and secrets."
 
@@ -45,16 +55,16 @@ jobs:
         run: |
           aws amplify start-job --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch-name ${{ secrets.AMPLIFY_BRANCH }} --job-type RELEASE
 
-      - name: Deploy to GitHub Pages (optional)
+      - name: Configure GitHub Pages (optional)
         if: ${{ secrets.DEPLOY_TO_GHPAGES == 'true' }}
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact for GitHub Pages
         if: ${{ secrets.DEPLOY_TO_GHPAGES == 'true' }}
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist/spa
 
       - name: Deploy to GitHub Pages
         if: ${{ secrets.DEPLOY_TO_GHPAGES == 'true' }}
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
