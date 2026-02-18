@@ -816,5 +816,3 @@ async function cleanupExpiredData() {
   }
 }
 
-// Precache manifest placeholder for Workbox injectManifest
-self.__WB_MANIFEST = [];
