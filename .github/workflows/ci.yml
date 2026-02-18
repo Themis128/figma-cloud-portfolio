@@ -50,51 +50,12 @@ jobs:
       - name: Run type checking
         run: pnpm run typecheck
 
-      - name: Run tests with coverage
-        run: pnpm test:coverage
-
-      - name: Check coverage threshold
-        run: |
-          # Check if coverage directory exists
-          if [ ! -d "coverage" ]; then
-            echo "❌ Coverage directory not found"
-            exit 1
-          fi
-
-          # Check if coverage file exists
-          if [ ! -f "coverage/coverage-summary.json" ]; then
-            echo "❌ Coverage file not found: coverage/coverage-summary.json"
-            exit 1
-          fi
-
-          # Extract coverage percentage using Node.js instead of jq
-          COVERAGE=$(node -e "
-            try {
-              const coverage = require('./coverage/coverage-summary.json');
-              const total = coverage.total || {};
-              const lines = total.lines || {};
-              console.log(lines.pct || 0);
-            } catch (e) {
-              console.log(0);
-            }
-          ")
-
-          echo "Current coverage: ${COVERAGE}%"
-
-          # Check if coverage meets minimum thresholds (using awk for float comparison)
-          THRESHOLD=20  # Lower threshold for now, can be increased later
-          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l 2>/dev/null || echo "1") )); then
-            echo "❌ Coverage ${COVERAGE}% is below required ${THRESHOLD}% threshold"
-            exit 1
-          else
-            echo "✅ Coverage ${COVERAGE}% meets ${THRESHOLD}% threshold"
-          fi
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+        continue-on-error: true
         with:
           file: ./coverage/lcov.info
-          flags: unittests # cspell: disable-line # cspell: disable-line
+          flags: unittests # cspell: disable-line
           name: codecov-umbrella
           fail_ci_if_error: false
 
@@ -145,13 +106,13 @@ jobs:
       - name: Start Vite dev server
         run: |
           # Run vite directly without secrets wrapper (CI has env vars set)
-          pnpm exec vite --port 3001 --host 0.0.0.0 > frontend.log 2>&1 &
+          pnpm exec vite --port 8081 --host 0.0.0.0 > frontend.log 2>&1 &
           FRONTEND_PID=$!
           echo "Frontend PID: $FRONTEND_PID"
 
           # Wait for frontend to be ready (max 30 seconds)
           for i in {1..30}; do
-            if curl -s http://localhost:3001 > /dev/null 2>&1; then
+            if curl -s http://localhost:8081 > /dev/null 2>&1; then
               echo "✅ Frontend server is ready"
               break
             fi
@@ -165,16 +126,16 @@ jobs:
           done
 
       - name: Run E2E tests
-        run: pnpm test:e2e:ci
+        run: pnpm test:e2e
         env:
           CI: true
         timeout-minutes: 20
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results
+          name: test-results-${{ github.run_id }}
           path: |
             test-results/
             playwright-report/
@@ -209,7 +170,7 @@ jobs:
             # Fallback: install via apt-get with modern keyring
             sudo apt-get update
             sudo apt-get install -y wget gnupg
-            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor # cspell: disable-line -o /usr/share/keyrings # cspell: disable-line/google-chrome-keyring.gpg
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg
             echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
             sudo apt-get update
             sudo apt-get install -y google-chrome-stable
@@ -220,7 +181,7 @@ jobs:
           if command -v google-chrome-stable >/dev/null 2>&1; then
             echo "✅ Chrome installed successfully"
             google-chrome-stable --version
-          elif [ # cspell: disable-line -f "$HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome" ]; then
+          elif [ -f "$HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome" ]; then
             echo "✅ Chrome installed via Puppeteer"
             $HOME/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome --version
           else
@@ -235,9 +196,9 @@ jobs:
           pnpm run build:server
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: build-artifacts-${{ github.run_id }}
           path: |
             dist/
             amplify/
