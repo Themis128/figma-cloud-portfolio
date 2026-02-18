@@ -186,7 +186,7 @@ export default defineConfig(({ mode }) => {
               performance: ['web-vitals'],
 
               // Animation libraries - split for lazy loading
-              animations: ['framer-motion', 'lottie-web'],
+              animations: ['framer-motion'],
 
               // Chart libraries - heavy, component-specific
               charts: ['recharts'],
