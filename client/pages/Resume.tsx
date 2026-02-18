@@ -40,7 +40,7 @@ const defaultResume: ResumeData = {
   name: 'Themistoklis Baltzakis',
   title: 'Cloud Architect & Cybersecurity Specialist',
   contact: {
-    email: 'baltzakis.themis@gmail.com',
+    email: 'tbaltzakis@cloudless.gr',
     linkedin: 'baltzakis-themis',
     website: 'www.baltzakisthemis.com',
   },
@@ -526,7 +526,7 @@ export default function Resume() {
                             type='email'
                             value={resume.contact.email || ''}
                             onChange={(e) => updateContact('email', e.target.value)}
-                            placeholder='your.email@example.com'
+                            placeholder='tbaltzakis@cloudless.gr'
                           />
                         </div>
                         <div className='space-y-2'>

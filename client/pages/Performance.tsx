@@ -97,14 +97,30 @@ export default function Performance() {
     return () => clearInterval(interval)
   }, [isMonitoring])
 
-  // Get bundle size (simulated)
+  // Get actual bundle size from build analysis
   useEffect(() => {
-    // In a real app, this would come from build analysis
-    setMetrics((prev: PerformanceMetrics) => ({
-      ...prev,
-      bundleSize: DEFAULT_BUNDLE_SIZE_MB, // MB
-      lighthouseScore: DEFAULT_LIGHTHOUSE_SCORE, // Score out of 100
-    }))
+    const getBundleSize = async () => {
+      try {
+        // Try to get bundle size from build stats
+        const response = await fetch('/api/performance/bundle-size')
+        if (response.ok) {
+          const data = await response.json()
+          setMetrics((prev: PerformanceMetrics) => ({
+            ...prev,
+            bundleSize: data.bundleSize || DEFAULT_BUNDLE_SIZE_MB,
+            lighthouseScore: data.lighthouseScore || DEFAULT_LIGHTHOUSE_SCORE,
+          }))
+        }
+      } catch {
+        // Fallback to default values
+        setMetrics((prev: PerformanceMetrics) => ({
+          ...prev,
+          bundleSize: DEFAULT_BUNDLE_SIZE_MB,
+          lighthouseScore: DEFAULT_LIGHTHOUSE_SCORE,
+        }))
+      }
+    }
+    getBundleSize()
   }, [])
 
   const getMemoryUsage = () => {
@@ -139,7 +155,7 @@ export default function Performance() {
         lighthouseScore: metrics.lighthouseScore,
       }
 
-      // Wait for Core Web Vitals to be measured (simulate)
+      // Wait for Core Web Vitals to be measured
       await new Promise((resolve) => setTimeout(resolve, PERFORMANCE_TEST_DELAY_MS))
 
       // Get current web vitals

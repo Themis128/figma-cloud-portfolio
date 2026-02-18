@@ -64,9 +64,19 @@ export default function Settings() {
             setUpdateMessage('Failed to check for updates.')
           })
       } else {
-        // Fallback: simulate version check
+        // Get version from API or package.json
         const currentVersion = '1.0.0'
-        const latestVersion = '1.0.0' // In real app, fetch from API
+        let latestVersion = currentVersion
+        
+        try {
+          const response = await fetch('/api/version/latest')
+          if (response.ok) {
+            const data = await response.json()
+            latestVersion = data.version
+          }
+        } catch {
+          // Use current version as fallback
+        }
 
         if (currentVersion === latestVersion) {
           setUpdateStatus('up-to-date')

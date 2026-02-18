@@ -39,6 +39,12 @@ export interface AnalyticsEvent {
   timestamp: string
   url: string
   userAgent: string
+  // Optional identifiers to support server-side Measurement Protocol forwarding
+  clientId?: string
+  userId?: string
+  eventId?: string
+  // Optional array for performance metrics / web-vitals payloads
+  metrics?: Array<Record<string, unknown>>
 }
 
 /**

@@ -82,6 +82,11 @@ const generateClientId = (): string => {
   return newId
 }
 
+// Generate stable event_id for deduplication (client + server)
+const generateEventId = (): string => {
+  return `${Date.now()}.${Math.random().toString(RANDOM_BASE).substring(RANDOM_START_INDEX, RANDOM_END_INDEX)}`
+}
+
 // Initialize session tracking
 const initializeSession = (): { sessionId: number; engagementTime: number } => {
   if (typeof window === 'undefined') return { sessionId: 0, engagementTime: 0 }
@@ -137,6 +142,7 @@ const trackSessionStart = () => {
     window.gtag('event', 'session_start', {
       session_id: Math.floor(Date.now() / SECONDS_TO_MS),
       engagement_time_msec: 0,
+      event_id: generateEventId(),
     })
   }
 }
@@ -213,6 +219,8 @@ const GoogleAnalytics = () => {
     const { sessionId } = initializeSession()
 
     // GA4 Page View with recommended parameters
+    const eventId = generateEventId()
+
     if (typeof window !== 'undefined' && window.gtag) {
       try {
         window.gtag('event', 'page_view', {
@@ -221,6 +229,7 @@ const GoogleAnalytics = () => {
           page_location: window.location.href,
           session_id: sessionId,
           engagement_time_msec: engagementTime,
+          event_id: eventId,
         })
       } catch (_error) {
         // Silently handle GA4 page view errors in production
@@ -233,7 +242,7 @@ const GoogleAnalytics = () => {
       })
     }
 
-    // Send to backend analytics with proper error handling
+    // Send to backend analytics with proper error handling (includes clientId + eventId for MP)
     const sendBackendAnalytics = async () => {
       try {
         await sendAnalyticsEvent({
@@ -246,6 +255,8 @@ const GoogleAnalytics = () => {
           timestamp: new Date().toISOString(),
           url: window.location.href,
           userAgent: navigator.userAgent,
+          clientId: generateClientId(),
+          eventId,
         })
       } catch (_error) {
         // Log error in development but don't throw
@@ -289,6 +300,7 @@ const GoogleAnalytics = () => {
 
       tracker.lastContactFormSubmit = now
       const currentEngagement = getEngagementTime()
+      const eventId = generateEventId()
 
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'contact_form_submit', {
@@ -297,6 +309,7 @@ const GoogleAnalytics = () => {
           value: currentEngagement,
           session_id: sessionId,
           engagement_time_msec: currentEngagement,
+          event_id: eventId,
         })
       } else if (ReactGA.isInitialized) {
         ReactGA.event({
@@ -306,7 +319,7 @@ const GoogleAnalytics = () => {
         })
       }
 
-      // Backend analytics with proper error handling
+      // Backend analytics with proper error handling (include clientId + eventId)
       const sendBackendAnalytics = async () => {
         try {
           await sendAnalyticsEvent({
@@ -319,6 +332,8 @@ const GoogleAnalytics = () => {
             timestamp: new Date().toISOString(),
             url: window.location.href,
             userAgent: navigator.userAgent,
+            clientId: generateClientId(),
+            eventId,
           })
         } catch (_error) {
           if (import.meta.env['DEV']) {
@@ -335,6 +350,7 @@ const GoogleAnalytics = () => {
         params: {
           event_category: 'engagement',
           engagement_time_msec: currentEngagement,
+          event_id: eventId,
         },
       })
     }
@@ -350,6 +366,7 @@ const GoogleAnalytics = () => {
 
       tracker.lastResumeDownload = now
       const currentEngagement = getEngagementTime()
+      const eventId = generateEventId()
 
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'generate_lead', {
@@ -358,6 +375,7 @@ const GoogleAnalytics = () => {
           value: currentEngagement,
           session_id: sessionId,
           engagement_time_msec: currentEngagement,
+          event_id: eventId,
         })
       } else if (ReactGA.isInitialized) {
         ReactGA.event({
@@ -367,7 +385,7 @@ const GoogleAnalytics = () => {
         })
       }
 
-      // Backend analytics with proper error handling
+      // Backend analytics with proper error handling (include clientId + eventId)
       const sendBackendAnalytics = async () => {
         try {
           await sendAnalyticsEvent({
@@ -380,6 +398,8 @@ const GoogleAnalytics = () => {
             timestamp: new Date().toISOString(),
             url: window.location.href,
             userAgent: navigator.userAgent,
+            clientId: generateClientId(),
+            eventId,
           })
         } catch (_error) {
           if (import.meta.env['DEV']) {
@@ -396,6 +416,7 @@ const GoogleAnalytics = () => {
         params: {
           event_category: 'conversion',
           engagement_time_msec: currentEngagement,
+          event_id: eventId,
         },
       })
     }
@@ -410,6 +431,7 @@ const GoogleAnalytics = () => {
       }
 
       tracker.lastError = now
+      const eventId = generateEventId()
 
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'exception', {
@@ -417,6 +439,7 @@ const GoogleAnalytics = () => {
           fatal: false,
           session_id: sessionId,
           engagement_time_msec: getEngagementTime(),
+          event_id: eventId,
         })
       } else if (ReactGA.isInitialized) {
         ReactGA.event({
@@ -426,7 +449,7 @@ const GoogleAnalytics = () => {
         })
       }
 
-      // Backend analytics with proper error handling
+      // Backend analytics with proper error handling (include clientId + eventId)
       const sendBackendAnalytics = async () => {
         try {
           await sendAnalyticsEvent({
@@ -435,6 +458,8 @@ const GoogleAnalytics = () => {
             timestamp: new Date().toISOString(),
             url: window.location.href,
             userAgent: navigator.userAgent,
+            clientId: generateClientId(),
+            eventId,
           })
         } catch (_backendError) {
           if (import.meta.env['DEV']) {
@@ -451,6 +476,7 @@ const GoogleAnalytics = () => {
         params: {
           description: error,
           fatal: false,
+          event_id: eventId,
         },
       })
     }

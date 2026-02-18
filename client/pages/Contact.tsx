@@ -168,7 +168,7 @@ export default function Contact() {
                           ? 'border-red-400/50'
                           : 'border-white/20'
                       }`}
-                      placeholder='your.email@example.com'
+                      placeholder='your.email@baltzakisthemis.com'
                     />
                     {submitStatus === 'error' && !formData.email && (
                       <p id='email-error' className='text-red-400 text-xs mt-1' role='alert'>
@@ -348,10 +348,10 @@ export default function Contact() {
                           Email
                         </div>
                         <a
-                          href='mailto:baltzakis.themis@gmail.com'
+                          href='mailto:tbaltzakis@cloudless.gr'
                           className='text-cyan-400 hover:text-cyan-300 transition-colors text-sm md:text-base break-all'
                         >
-                          baltzakis.themis@gmail.com
+                          tbaltzakis@cloudless.gr
                         </a>
                       </div>
                     </div>
@@ -410,7 +410,7 @@ export default function Contact() {
                 <div className='space-y-3 md:space-y-4'>
                   <HoverCard>
                     <a
-                      href='mailto:baltzakis.themis@gmail.com?subject=Project Inquiry'
+                      href='mailto:tbaltzakis@cloudless.gr?subject=Project Inquiry'
                       className='flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group'
                     >
                       <Send className='w-4 h-4 md:w-5 md:h-5 text-cyan-400 group-hover:text-cyan-300 shrink-0' />

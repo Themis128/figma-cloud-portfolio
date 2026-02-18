@@ -248,9 +248,23 @@ export default function Agents() {
                 <AgentBuilder
                   template={selectedTemplate}
                   onCancel={() => setViewMode('configure')}
-                  onSave={(_agent) => {
-                    // TODO: Save agent to backend
-                    setViewMode('select')
+                  onSave={(agent) => {
+                    // Save agent to backend API
+                    const saveAgent = async () => {
+                      try {
+                        const response = await fetch('/api/agents/save', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(agent),
+                        })
+                        if (response.ok) {
+                          setViewMode('select')
+                        }
+                      } catch (error) {
+                        console.error('Failed to save agent:', error)
+                      }
+                    }
+                    saveAgent()
                   }}
                 />
               </Suspense>

@@ -32,9 +32,10 @@ Navigate to: <https://github.com/Themis128/figma-cloud-portfolio/settings/secret
 ```bash
 AWS_ACCESS_KEY_ID          → Your AWS Access Key ID
 AWS_SECRET_ACCESS_KEY      → Your AWS Secret Access Key
-AWS_REGION                 → us-east-1 (or your preferred region)
-AMPLIFY_PRODUCTION_APP_ID  → Your Amplify production app ID
-AMPLIFY_STAGING_APP_ID     → Your Amplify staging app ID
+AWS_REGION                 → eu-central-1
+AMPLIFY_PRODUCTION_APP_ID  → d25rpobpd22vvg   ✅ confirmed (baltzakis-portfolio)
+AMPLIFY_STAGING_APP_ID     → d25rpobpd22vvg   ✅ same app — staging = a branch on this app
+                             (create a "staging" branch in Amplify Console if not yet done)
 ```
 
 #### Application Secrets (From your .env file)
@@ -44,6 +45,8 @@ VITE_RECAPTCHA_SITE_KEY           → 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
 VITE_RECAPTCHA_SECRET_KEY         → 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 VITE_GOOGLE_ANALYTICS_ID          → G-FT79QM66D3
 VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID → G-FT79QM66D3
+GOOGLE_ANALYTICS_MEASUREMENT_ID   → G-FT79QM66D3 (server-side, optional)
+GOOGLE_ANALYTICS_API_SECRET       → <GA4 Measurement Protocol API secret> (server-side)
 VITE_PUBLIC_RECAPTCHA_SITE_KEY    → 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
 VITE_AI_PROVIDER                  → ollama
 VITE_AI_MODEL                     → llama2
