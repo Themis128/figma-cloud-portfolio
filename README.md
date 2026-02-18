@@ -1,209 +1,236 @@
-# Baltzakis Themistoklis Portfolio
+# Themistoklis Baltzakis — Portfolio
 
-A modern, full-stack portfolio website built with React, TypeScript, Express, and deployed on AWS Amplify.
+> Personal portfolio and professional showcase for Themistoklis Baltzakis, Systems & Network Engineer and Full-Stack Developer.
 
-## 🚀 Features
+**Live Site:** [AWS Amplify](https://d1zjif7pi1h3om.amplifyapp.com) · **App ID:** `d1zjif7pi1h3om`
 
-- **Modern Tech Stack**: React 18, TypeScript, Express.js, Tailwind CSS
-- **Performance Optimized**: Vite build system, code splitting, image optimization
-- **SEO Ready**: Server-side rendering, meta tags, structured data
-- **Responsive Design**: Mobile-first approach with modern UI components
-- **Code Quality**: ESLint, Biome, comprehensive testing suite
-- **CI/CD**: Automated testing, linting, and deployment
+---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-### Frontend
+| Layer | Technology |
+|---|---|
+| Framework | React 19 (SPA) |
+| Build Tool | Vite 7 |
+| Language | TypeScript 5.9.3 |
+| Styling | Tailwind CSS v4 |
+| UI Components | Radix UI / shadcn/ui |
+| Routing | React Router DOM v7 |
+| 3D | Three.js |
+| Real-time | Socket.IO |
+| PWA | Workbox |
+| Backend | Express.js |
+| Deployment | AWS Amplify |
+| Analytics | Google Analytics GA4 |
+| Security | reCAPTCHA v3 |
+| Testing | Playwright E2E |
 
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **Radix UI** for accessible components
-- **Framer Motion** for animations
+---
 
-### Backend
+## Pages
 
-- **Express.js** with TypeScript
-- **Socket.io** for real-time features
-- **Firebase** for authentication and database
-- **Web Push** for notifications
+| Route | Description |
+|---|---|
+| `/` | Home — hero, feature cards, contact form |
+| `/about` | Professional bio, skills, career timeline |
+| `/product` | Work experience timeline |
+| `/projects` | Portfolio projects gallery (GitHub integration) |
+| `/resume` | Interactive resume builder with PDF export |
+| `/agents` | AI agents showcase |
+| `/settings` | App preferences (theme, notifications, privacy) |
+| `/performance` | Real-time performance monitoring dashboard |
+| `*` | 404 Not Found fallback |
 
-### Development & Quality
+---
 
-- **Biome** for fast linting and formatting
-- **Vitest** for unit testing
-- **Playwright** for E2E testing
-- **Codacy** for code quality analysis
-- **ESLint** for advanced code analysis
+## Getting Started
 
-## 📦 Installation
+### Prerequisites
 
-1. **Clone the repository**
+- Node.js 20+
+- pnpm 9+
 
-   ```bash
-   git clone https://github.com/Themis128/figma-cloud-portfolio.git
-   cd figma-cloud-portfolio
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   pnpm install
-   ```
-
-3. **Install required external tools (recommended)**
-
-   ```bash
-   pnpm setup:tools
-   ```
-
-   This installs:
-   - gitleaks (secret scanning)
-   - AWS CLI (deployment)
-   - Python (for scripts)
-   - Playwright browsers (E2E testing)
-
-4. **Set up environment variables**
-
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-5. **Start development servers**
-   ```bash
-   pnpm dev:all
-   ```
-
-## 🧪 Testing
+### Install
 
 ```bash
-# Unit tests
-pnpm test:unit
-
-# E2E tests
-pnpm test:e2e
-
-# All tests
-pnpm test
+pnpm install
 ```
-
-## 🔍 Code Quality & Analysis
-
-### Codacy Integration
-
-This project uses **Codacy** for automated code quality analysis. Codacy provides:
-
-- **Real-time Analysis**: Code quality feedback as you work
-- **Security Scanning**: Automated vulnerability detection
-- **Coverage Reports**: Test coverage visualization
-- **AI Guardrails**: AI-generated code validation
-- **PR Analysis**: Automated pull request quality checks
-
-#### Setup Codacy
-
-1. **Run the setup script**
-
-   ```bash
-   pnpm setup:codacy
-   ```
-
-2. **Complete the setup**
-   - Visit [Codacy](https://app.codacy.com)
-   - Add your repository: `Themis128/figma-cloud-portfolio`
-   - Get your Project Token from Settings → Integrations
-   - Add `CODACY_PROJECT_TOKEN` to GitHub repository secrets
-
-3. **Connect VS Code Extension**
-   - Install the Codacy extension
-   - Click the Codacy icon in the activity bar
-   - Click "Connect to Codacy"
-   - Sign in with GitHub
-
-#### Codacy Features in VS Code
-
-- **Issue Browser**: Browse issues by category and severity
-- **Inline Coverage**: Visualize test coverage in your editor
-- **AI Guardrails**: Validate AI-generated code
-- **Local Analysis**: Run analysis without pushing to GitHub
-- **PR Integration**: See quality feedback on pull requests
-
-## 📜 Available Scripts
-
-```bash
-# Development
-pnpm dev              # Start frontend dev server
-pnpm dev:all          # Start both frontend and backend
-pnpm start            # Start production server
-
-# Building
-pnpm build            # Build for production
-pnpm build:client     # Build frontend only
-pnpm build:server     # Build backend only
-pnpm build:resume     # Generate resume PDF
-
-# Quality & Testing
-pnpm lint             # Run Biome linter
-pnpm lint:fix         # Fix linting issues
-pnpm typecheck        # Run TypeScript checks
-pnpm test             # Run all tests
-pnpm test:unit        # Run unit tests
-pnpm test:e2e         # Run E2E tests
-
-# Setup & Utilities
-pnpm setup:codacy     # Configure Codacy integration
-pnpm setup:tools      # Install required external tools (gitleaks, AWS CLI, Python, Playwright browsers)
-pnpm setup:playwright # Install Playwright browsers only
-pnpm format           # Format code with Biome
-pnpm optimize-images  # Optimize images for web
-```
-
-## 🚀 Deployment
-
-### AWS Amplify
-
-The project is configured for AWS Amplify deployment with:
-
-- **Multi-stage builds**: Separate frontend/backend builds
-- **Environment-specific configs**: Development, staging, production
-- **Automated deployments**: Triggered by GitHub pushes
-- **Custom build scripts**: Optimized for the tech stack
 
 ### Environment Variables
 
-Required environment variables:
+Copy `.env.example` and fill in the values:
 
-```env
-# Firebase Configuration
-VITE_FIREBASE_API_KEY=your_firebase_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-
-# reCAPTCHA
-VITE_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
-
-# Optional: Codacy Integration
-CODACY_PROJECT_TOKEN=your_codacy_token
+```bash
+cp .env.example .env
 ```
 
-## 🤝 Contributing
+Required variables:
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Make your changes and ensure tests pass
-4. Run code quality checks: `pnpm lint && pnpm typecheck`
-5. Commit your changes: `git commit -m 'feat: add your feature'`
-6. Push to the branch: `git push origin feature/your-feature`
-7. Open a Pull Request
+```env
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_RECAPTCHA_SITE_KEY=your-recaptcha-v3-site-key
+RECAPTCHA_SECRET_KEY=your-recaptcha-v3-secret
+GITHUB_TOKEN=your-github-token
+CONTACT_EMAIL=your@email.com
+```
 
-## 📄 License
+### Development
 
-This project is private and proprietary.
+```bash
+# Start Vite dev server (frontend)
+pnpm dev
 
-## 👨‍💻 Author
+# Start Express API server
+pnpm server
 
-**Themistoklis Baltzakis**
+# Start both together
+pnpm dev:full
+```
 
-- Portfolio: [Your Portfolio URL]
-- LinkedIn: [Your LinkedIn]
-- Email: [Your Email]
+### Build
+
+```bash
+pnpm build
+```
+
+Output goes to `dist/`.
+
+### Preview Production Build
+
+```bash
+pnpm preview
+```
+
+---
+
+## Testing
+
+This project uses **Playwright** for E2E testing with 100% page and feature coverage.
+
+```bash
+# Run all E2E tests
+pnpm exec playwright test
+
+# Interactive UI mode
+pnpm exec playwright test --ui
+
+# Run a specific spec
+pnpm exec playwright test playwright-tests/product.spec.ts
+
+# Run with visible browser
+pnpm exec playwright test --headed
+
+# HTML report
+pnpm exec playwright test --reporter=html
+```
+
+See [`docs/TESTING.md`](docs/TESTING.md) for the complete testing guide including coverage map.
+
+---
+
+## Project Structure
+
+```
+new-portfolio/
+├── client/               # React 19 frontend
+│   ├── components/       # Reusable components
+│   ├── pages/            # Route-level pages
+│   ├── hooks/            # Custom hooks
+│   ├── lib/              # Utilities & API clients
+│   ├── data/             # Static data
+│   └── App.tsx           # Root + routing
+├── server/               # Express API
+│   └── routes/           # API handlers
+├── playwright-tests/     # E2E tests (50+ spec files)
+├── docs/                 # Documentation
+├── public/               # Static assets
+├── amplify/              # AWS Amplify config
+├── playwright.config.ts  # Playwright config
+├── vite.config.ts        # Vite config
+└── tailwind.config.ts    # Tailwind config
+```
+
+---
+
+## Documentation
+
+| Doc | Description |
+|---|---|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Full app architecture, tech stack, routing, backend |
+| [`docs/TESTING.md`](docs/TESTING.md) | Testing guide, coverage map, best practices |
+| [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) | AWS Amplify deployment steps |
+| [`docs/GITHUB_SECRETS_SETUP.md`](docs/GITHUB_SECRETS_SETUP.md) | GitHub Actions secrets configuration |
+| [`docs/GA4_UPGRADE_GUIDE.md`](docs/GA4_UPGRADE_GUIDE.md) | Google Analytics GA4 setup |
+| [`docs/SECURITY_SUMMARY.md`](docs/SECURITY_SUMMARY.md) | Security measures overview |
+| [`docs/PWA_README.md`](docs/PWA_README.md) | PWA / service worker details |
+| [`docs/CONTACT_FORM_SETUP.md`](docs/CONTACT_FORM_SETUP.md) | Contact form + reCAPTCHA setup |
+
+---
+
+## Features
+
+### 🎨 Interactive Resume Builder
+- Live tabbed editor with real-time preview
+- Auto-saves to localStorage (2s debounce)
+- PDF download export
+
+### 📊 Performance Dashboard
+- Real-time memory, CPU, network metrics
+- Lighthouse score display
+- Bundle analysis
+
+### 🔔 Push Notifications
+- Web Push API integration
+- Subscription management
+- Background sync
+
+### 🌐 PWA
+- Workbox service worker
+- Offline fallback
+- Installable on mobile/desktop
+
+### 🤖 AI Agents
+- AI workflow demonstrations
+- Agentic automation showcases
+
+### 🔒 Security
+- reCAPTCHA v3 on all forms
+- XSS, SQL injection, command injection protection
+- Helmet.js HTTP security headers
+- Rate limiting on API endpoints
+
+### 📈 Analytics
+- Google Analytics GA4 page views + custom events
+- Web Vitals (LCP, FID, CLS, TTFB, FCP) reporting
+
+---
+
+## Deployment
+
+Deployed on **AWS Amplify** with automatic builds on push to `main`.
+
+```bash
+# Manual deploy via Amplify CLI
+amplify publish
+```
+
+**App ID:** `d1zjif7pi1h3om`  
+**Build config:** `amplify.yml`
+
+See [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) for full deployment instructions.
+
+---
+
+## Contributing
+
+1. Fork the repo
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m 'feat: add my feature'`
+4. Push to the branch: `git push origin feature/my-feature`
+5. Open a Pull Request
+
+---
+
+## License
+
+MIT © Themistoklis Baltzakis
