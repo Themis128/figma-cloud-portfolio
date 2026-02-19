@@ -32,6 +32,9 @@ export default defineConfig({
         // External dependencies that should not be bundled
         'express',
         'cors',
+        'puppeteer',
+        'puppeteer-core',
+        '@sparticuz/chromium',
       ],
       output: {
         format: 'es',
