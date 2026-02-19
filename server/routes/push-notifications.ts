@@ -13,11 +13,13 @@ const vapidPublicKey = process.env.VAPID_PUBLIC_KEY
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
 const vapidEmail = process.env.VAPID_EMAIL || 'mailto:noreply@example.com'
 
-if (!vapidPublicKey || !vapidPrivateKey) {
-  console.warn('VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables are required for push notifications')
-} else {
+if (vapidPublicKey && vapidPrivateKey) {
   // Set VAPID details
   webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey)
+} else {
+  console.warn(
+    'VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables are required for push notifications',
+  )
 }
 
 const vapidKeys = {
