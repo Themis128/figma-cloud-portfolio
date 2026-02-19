@@ -48,23 +48,23 @@ wsl.exe -d Ubuntu-24.04 -- bash -l -c "source ~/.bash_env && <server-cmd>"
 
 ### Distro
 
-| Item | Value |
-| ------ | ------- |
-| Distro name | `Ubuntu-24.04` |
-| Home | `/home/tbaltzakis` |
+| Item          | Value                                          |
+| ------------- | ---------------------------------------------- |
+| Distro name   | `Ubuntu-24.04`                                 |
+| Home          | `/home/tbaltzakis`                             |
 | Windows mount | `\\wsl.localhost\Ubuntu-24.04\home\tbaltzakis` |
-| Project mount | `/mnt/d/Nuxt Projects/new-portfolio` |
+| Project mount | `/mnt/d/Nuxt Projects/new-portfolio`           |
 
 ### Installed Tools
 
-| Tool | Version | Installed via |
-| ------ | --------- | --------------- |
-| Node.js | v24.13.1 | nvm |
-| npm | 11.x | bundled with Node |
-| pnpm | 10.30.0 | `npm i -g pnpm` |
-| uv | 0.10.4 | astral.sh installer |
-| uvx | 0.10.4 | bundled with uv |
-| git | system | apt |
+| Tool    | Version  | Installed via       |
+| ------- | -------- | ------------------- |
+| Node.js | v24.13.1 | nvm                 |
+| npm     | 11.x     | bundled with Node   |
+| pnpm    | 10.30.0  | `npm i -g pnpm`     |
+| uv      | 0.10.4   | astral.sh installer |
+| uvx     | 0.10.4   | bundled with uv     |
+| git     | system   | apt                 |
 
 ### Shell Environment Files
 
@@ -153,13 +153,13 @@ File: `C:\Users\baltz\Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
 
 Useful aliases and functions added:
 
-| Command | What it does |
-| --------- | ------------- |
-| `maintain-wsl` | Triggers WSL2 maintenance task immediately |
-| `maintain-ide` | Triggers IDE maintenance task immediately |
-| `Get-MaintenanceLogs` | Shows last 20 lines of both maintenance logs |
-| `Get-MaintenanceLogs wsl` | Shows only WSL log |
-| `Get-MaintenanceLogs ide` | Shows only IDE log |
+| Command                   | What it does                                 |
+| ------------------------- | -------------------------------------------- |
+| `maintain-wsl`            | Triggers WSL2 maintenance task immediately   |
+| `maintain-ide`            | Triggers IDE maintenance task immediately    |
+| `Get-MaintenanceLogs`     | Shows last 20 lines of both maintenance logs |
+| `Get-MaintenanceLogs wsl` | Shows only WSL log                           |
+| `Get-MaintenanceLogs ide` | Shows only IDE log                           |
 
 ```powershell
 # Run from any PS7 terminal
@@ -219,27 +219,27 @@ All four AI agents use MCP (Model Context Protocol) servers routed through WSL2.
 
 ### All Servers (Cline Stable — 19 servers)
 
-| Server | Package | Notes |
-| -------- | --------- | ------- |
-| `sequential-thinking` | `@modelcontextprotocol/server-sequential-thinking` | Dynamic reasoning |
-| `memory` | `@modelcontextprotocol/server-memory` | Persistent knowledge graph |
-| `filesystem` | `@modelcontextprotocol/server-filesystem` | File read/write |
-| `git` | `mcp-server-git` | Git operations |
-| `fetch` | `@modelcontextprotocol/server-fetch` | HTTP requests |
-| `brave-search` | `@modelcontextprotocol/server-brave-search` | Web search |
-| `context7` | `@upstash/context7-mcp` | Up-to-date library docs |
-| `playwright` | `@playwright/mcp` | Browser automation |
-| `figma` | `figma-developer-mcp` | Figma design access |
-| `github` | `@modelcontextprotocol/server-github` | GitHub API |
-| `time` | `mcp-server-time` | Timezone / time tools |
-| `browser-tools` | `@agentdesks/mcp-browser-tools` | Browser DevTools |
-| `aws-docs` | `awslabs.aws-documentation-mcp-server` | AWS docs (uvx) |
-| `aws-cdk` | `awslabs.cdk-mcp-server` | CDK (uvx) |
-| `aws-cfn` | `awslabs.cfn-mcp-server` | CloudFormation (uvx) |
-| `aws-kb` | `awslabs.amazon-bedrock-agentcore-mcp-server` | Bedrock (uvx) |
-| `code-mode` | local node | Custom code assistant |
-| `software-planning` | local node | Project planning |
-| `github-actions` | local node | GitHub Actions helper |
+| Server                | Package                                            | Notes                      |
+| --------------------- | -------------------------------------------------- | -------------------------- |
+| `sequential-thinking` | `@modelcontextprotocol/server-sequential-thinking` | Dynamic reasoning          |
+| `memory`              | `@modelcontextprotocol/server-memory`              | Persistent knowledge graph |
+| `filesystem`          | `@modelcontextprotocol/server-filesystem`          | File read/write            |
+| `git`                 | `mcp-server-git`                                   | Git operations             |
+| `fetch`               | `@modelcontextprotocol/server-fetch`               | HTTP requests              |
+| `brave-search`        | `@modelcontextprotocol/server-brave-search`        | Web search                 |
+| `context7`            | `@upstash/context7-mcp`                            | Up-to-date library docs    |
+| `playwright`          | `@playwright/mcp`                                  | Browser automation         |
+| `figma`               | `figma-developer-mcp`                              | Figma design access        |
+| `github`              | `@modelcontextprotocol/server-github`              | GitHub API                 |
+| `time`                | `mcp-server-time`                                  | Timezone / time tools      |
+| `browser-tools`       | `@agentdesks/mcp-browser-tools`                    | Browser DevTools           |
+| `aws-docs`            | `awslabs.aws-documentation-mcp-server`             | AWS docs (uvx)             |
+| `aws-cdk`             | `awslabs.cdk-mcp-server`                           | CDK (uvx)                  |
+| `aws-cfn`             | `awslabs.cfn-mcp-server`                           | CloudFormation (uvx)       |
+| `aws-kb`              | `awslabs.amazon-bedrock-agentcore-mcp-server`      | Bedrock (uvx)              |
+| `code-mode`           | local node                                         | Custom code assistant      |
+| `software-planning`   | local node                                         | Project planning           |
+| `github-actions`      | local node                                         | GitHub Actions helper      |
 
 ### Verifying a Server is Running
 
@@ -273,11 +273,11 @@ sleep 5 && kill %1 2>/dev/null && echo "MCP OK"
 
 Three Task Scheduler tasks keep the environment clean and up-to-date:
 
-| Task Name | Schedule | Script |
-| ----------- | ---------- | -------- |
-| `VSCode-NodeCleanup` | Every 30 min | Built-in zombie node killer |
-| `VSCode-IDE-Maintain` | Daily 4:00 AM | `ide-maintain.ps1` |
-| `WSL2-Ubuntu-Maintain` | Weekly Sun 3:00 AM | `wsl-maintain.sh` |
+| Task Name              | Schedule           | Script                      |
+| ---------------------- | ------------------ | --------------------------- |
+| `VSCode-NodeCleanup`   | Every 30 min       | Built-in zombie node killer |
+| `VSCode-IDE-Maintain`  | Daily 4:00 AM      | `ide-maintain.ps1`          |
+| `WSL2-Ubuntu-Maintain` | Weekly Sun 3:00 AM | `wsl-maintain.sh`           |
 
 ### VSCode-IDE-Maintain (`ide-maintain.ps1`)
 
@@ -328,6 +328,7 @@ schtasks /Query /TN "VSCode-IDE-Maintain" /FO LIST
 ```
 
 ### Checking Task Status
+
 ```powershell
 schtasks /Query /FO TABLE | Select-String "VSCode|WSL2"
 ```
@@ -583,56 +584,56 @@ $svc.GetFolder('\').RegisterTask('WSL2-Ubuntu-Maintain', $xml, 6, $null, $null, 
 
 ### Scripts
 
-| File | Location | Purpose |
-| ------ | ---------- | --------- |
-| `ide-maintain.ps1` | `D:\Nuxt Projects\new-portfolio\` | Daily VS Code maintenance |
-| `wsl-maintain.sh` | `~/` (WSL2) | Weekly Ubuntu maintenance |
+| File                | Location                          | Purpose                           |
+| ------------------- | --------------------------------- | --------------------------------- |
+| `ide-maintain.ps1`  | `D:\Nuxt Projects\new-portfolio\` | Daily VS Code maintenance         |
+| `wsl-maintain.sh`   | `~/` (WSL2)                       | Weekly Ubuntu maintenance         |
 | `cleanup-watch.ps1` | `D:\Nuxt Projects\new-portfolio\` | Node zombie killer (every 30 min) |
 
 ### Logs
 
-| Log | Location | Rotation |
-| ----- | ---------- | --------- |
-| IDE maintenance | `D:\Nuxt Projects\new-portfolio\logs\ide-maintain.log` | 500 KB |
+| Log              | Location                                                             | Rotation   |
+| ---------------- | -------------------------------------------------------------------- | ---------- |
+| IDE maintenance  | `D:\Nuxt Projects\new-portfolio\logs\ide-maintain.log`               | 500 KB     |
 | WSL2 maintenance | `\\wsl.localhost\Ubuntu-24.04\home\tbaltzakis\logs\wsl-maintain.log` | 2000 lines |
 
 ### WSL2 Shell Files
 
-| File | Purpose |
-|------|---------|
-| `~/.bash_env` | Tool PATH setup, no interactive guards — sourced by MCP servers |
-| `~/.bash_profile` | Login shell entry point, sources `.bash_env` unconditionally |
-| `~/.bashrc` | Interactive shell config, includes `source ~/.bash_env` after guard |
-| `/etc/sudoers.d/tbaltzakis-apt` | Passwordless apt for maintenance script |
+| File                            | Purpose                                                             |
+| ------------------------------- | ------------------------------------------------------------------- |
+| `~/.bash_env`                   | Tool PATH setup, no interactive guards — sourced by MCP servers     |
+| `~/.bash_profile`               | Login shell entry point, sources `.bash_env` unconditionally        |
+| `~/.bashrc`                     | Interactive shell config, includes `source ~/.bash_env` after guard |
+| `/etc/sudoers.d/tbaltzakis-apt` | Passwordless apt for maintenance script                             |
 
 ### MCP Config Files
 
-| Agent | Config File |
-| ------- | ------------ |
-| Cline (Stable) | `C:\Users\baltz\AppData\Roaming\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json` |
+| Agent            | Config File                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Cline (Stable)   | `C:\Users\baltz\AppData\Roaming\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json`            |
 | Cline (Insiders) | `C:\Users\baltz\AppData\Roaming\Code - Insiders\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json` |
-| GitHub Copilot | `C:\Users\baltz\AppData\Roaming\Code - Insiders\User\mcp.json` |
-| Amazon Q | `C:\Users\baltz\.aws\amazonq\mcp.json` |
+| GitHub Copilot   | `C:\Users\baltz\AppData\Roaming\Code - Insiders\User\mcp.json`                                                              |
+| Amazon Q         | `C:\Users\baltz\.aws\amazonq\mcp.json`                                                                                      |
 
 ### VS Code Settings
 
-| Edition | Settings File |
-| --------- | -------------- |
-| VS Code Stable | `C:\Users\baltz\AppData\Roaming\Code\User\settings.json` |
+| Edition          | Settings File                                                       |
+| ---------------- | ------------------------------------------------------------------- |
+| VS Code Stable   | `C:\Users\baltz\AppData\Roaming\Code\User\settings.json`            |
 | VS Code Insiders | `C:\Users\baltz\AppData\Roaming\Code - Insiders\User\settings.json` |
 
 ### PowerShell Profile
 
-| File | Purpose |
-|------|---------|
+| File                                                                   | Purpose                              |
+| ---------------------------------------------------------------------- | ------------------------------------ |
 | `C:\Users\baltz\Documents\PowerShell\Microsoft.PowerShell_profile.ps1` | PS7 profile with maintenance aliases |
 
 ### Task Scheduler Tasks
 
-| Task | XML Location | Trigger |
-| ------ | ------------- | -------- |
-| `VSCode-NodeCleanup` | `C:\Windows\System32\Tasks\VSCode-NodeCleanup` | Every 30 min |
-| `VSCode-IDE-Maintain` | `C:\Windows\System32\Tasks\VSCode-IDE-Maintain` | Daily 4:00 AM |
+| Task                   | XML Location                                     | Trigger            |
+| ---------------------- | ------------------------------------------------ | ------------------ |
+| `VSCode-NodeCleanup`   | `C:\Windows\System32\Tasks\VSCode-NodeCleanup`   | Every 30 min       |
+| `VSCode-IDE-Maintain`  | `C:\Windows\System32\Tasks\VSCode-IDE-Maintain`  | Daily 4:00 AM      |
 | `WSL2-Ubuntu-Maintain` | `C:\Windows\System32\Tasks\WSL2-Ubuntu-Maintain` | Weekly Sun 3:00 AM |
 
 ---

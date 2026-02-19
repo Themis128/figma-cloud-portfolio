@@ -456,19 +456,19 @@ const config: PlaywrightTestConfig = {
   webServer:
     process.env.PLAYWRIGHT_START_SERVERS === 'true'
       ? [
-        {
-          command: 'npx tsx server/node-build.ts',
-          url: 'http://localhost:3002/api/health',
-          reuseExistingServer: true,
-          timeout: settings.timeouts.webServer,
-        },
-        {
-          command: 'npx vite --port 8082',
-          url: 'http://localhost:8082',
-          reuseExistingServer: true,
-          timeout: settings.timeouts.webServer * 2,
-        },
-      ]
+          {
+            command: 'npx tsx server/node-build.ts',
+            url: 'http://localhost:3002/api/health',
+            reuseExistingServer: true,
+            timeout: settings.timeouts.webServer,
+          },
+          {
+            command: 'npx vite --port 8082',
+            url: 'http://localhost:8082',
+            reuseExistingServer: true,
+            timeout: settings.timeouts.webServer * 2,
+          },
+        ]
       : undefined,
 
   metadata: {

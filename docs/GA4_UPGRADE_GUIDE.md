@@ -5,6 +5,7 @@ Quick summary: this document captures current GA4 best practices (client + serve
 ---
 
 ## TL;DR ✅
+
 - Use GA4 (gtag.js) with `send_page_view: false` and manually fire `page_view` on route changes (already implemented).
 - Add stable `event_id` on every event and include `client_id` for server-side Measurement Protocol (MP) forwarding — prevents duplicates and enables joining client & server signals.
 - Implement server-side MP forwarding (optional) for better resilience, enhanced conversions and privacy-safe server events.
@@ -14,6 +15,7 @@ Quick summary: this document captures current GA4 best practices (client + serve
 ---
 
 ## 2026 trends & why they matter
+
 - Privacy-first measurement: Consent Mode v2, cookieless measurement and first-party data are standard. Implement consent-aware tags and server-side controls.
 - Server-side tagging & Measurement Protocol v2: used to (1) improve data reliability, (2) do privacy-safe enrichment (hashed conversions), (3) reduce client-side loss (ad-blockers, network failures).
 - Event deduplication and stable identifiers: `event_id` + `client_id` to dedupe client/server duplicates.
@@ -25,6 +27,7 @@ Sources: Google Developers (GA4 + Measurement Protocol + Consent Mode), GTM serv
 ---
 
 ## Recommended implementation (summary)
+
 1. Client-side
    - Load Google tag (gtag.js) or GTM.
    - Initialize with `send_page_view: false` and manually emit `page_view` for SPA route changes.
@@ -46,6 +49,7 @@ Sources: Google Developers (GA4 + Measurement Protocol + Consent Mode), GTM serv
 ---
 
 ## Key GA4 details you should follow
+
 - Event dedupe: include `event_id` on client and server events.
 - Client identifier: `client_id` (persisted in localStorage/cookie) — MP relies on it to join events.
 - Consent mode: call `gtag('consent','default', {...})` before any `config` or `event`.
@@ -55,6 +59,7 @@ Sources: Google Developers (GA4 + Measurement Protocol + Consent Mode), GTM serv
 ---
 
 ## What I changed in this repo (applied)
+
 - Client: added stable `event_id` generation and included `event_id` on all outgoing gtag events (page_view, contact_form_submit, generate_lead, exception, web_vitals, etc.).
 - Client: included `clientId` in backend analytics payloads so server can forward accurately.
 - Server: `POST /api/analytics` now optionally forwards events to GA4 Measurement Protocol v2 when server env vars are present (measurement_id + api_secret). MP forwarding runs asynchronously and uses `event_id` + `client_id` for dedupe.
@@ -71,6 +76,7 @@ Files changed (high level):
 ---
 
 ## How to enable server-side MP forwarding (steps)
+
 1. In GA4 Admin → Data Streams → choose web stream → Measurement Protocol → create an API secret.
 2. Add the secret to your server environment as `GOOGLE_ANALYTICS_API_SECRET` and set `GOOGLE_ANALYTICS_MEASUREMENT_ID` (same as your client measurement id) in production secrets.
 3. Restart server. The `/api/analytics` endpoint will attempt to forward validated events to MP automatically.
@@ -81,6 +87,7 @@ Security note: keep the API secret on the server only (do NOT expose as `VITE_` 
 ---
 
 ## Developer checklist (quick)
+
 - [ ] Add `GOOGLE_ANALYTICS_API_SECRET` to server secrets (optional)
 - [ ] Verify `VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID` is set for client-side
 - [ ] Run E2E tests: `pnpm test:e2e --grep "Analytics"`
@@ -91,7 +98,8 @@ Security note: keep the API secret on the server only (do NOT expose as `VITE_` 
 ---
 
 ## Sample Measurement Protocol v2 payload (server)
-POST https://www.google-analytics.com/mp/collect?measurement_id=G-XXXX&api_secret=SECRET
+
+`POST https://www.google-analytics.com/mp/collect?measurement_id=G-XXXX&api_secret=SECRET`
 
 Body (JSON):
 {
@@ -111,17 +119,19 @@ Body (JSON):
 ---
 
 ## Testing & validation
+
 - Use GA DebugView and `mp/collect?debug` to verify server payloads.
 - Playwright tests in this repo already check `dataLayer` and common events — run `pnpm test:e2e`.
 
 ---
 
 ## Additional reading (official)
-- GA4 web + tag docs: https://developers.google.com/analytics/devguides/collection/ga4
-- Measurement Protocol (MP v2): https://developers.google.com/analytics/devguides/collection/protocol/ga4
-- Consent Mode v2 & developer guide: https://developers.google.com/tag-platform/devguides/consent
-- GTM server-side tagging: https://developers.google.com/tag-manager/server-side
-- BigQuery export: https://developers.google.com/analytics/bigquery
+
+- GA4 web + tag docs: [GA4 web + tag docs](https://developers.google.com/analytics/devguides/collection/ga4)
+- Measurement Protocol (MP v2): [Measurement Protocol (MP v2)](https://developers.google.com/analytics/devguides/collection/protocol/ga4)
+- Consent Mode v2 & developer guide: [Consent Mode v2 & developer guide](https://developers.google.com/tag-platform/devguides/consent)
+- GTM server-side tagging: [GTM server-side tagging](https://developers.google.com/tag-manager/server-side)
+- BigQuery export: [BigQuery export](https://developers.google.com/analytics/bigquery)
 
 ---
 

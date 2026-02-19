@@ -108,7 +108,8 @@ export default defineConfig(({ mode }) => {
       port: 8082, // Temporarily use 8082 to avoid port conflict
       strictPort: true, // Fail if port is in use instead of using another port
       hmr: {
-        port: 24681, // HMR port to avoid conflicts
+        // Let Vite choose an available port dynamically to avoid permission issues
+        // port: 24681,
       },
       // Proxy API requests to Express server during development/testing
       proxy:
