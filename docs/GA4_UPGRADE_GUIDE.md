@@ -67,6 +67,7 @@ Sources: Google Developers (GA4 + Measurement Protocol + Consent Mode), GTM serv
 - Docs: added this upgrade guide and updated secrets guide to include `GOOGLE_ANALYTICS_API_SECRET` and `GOOGLE_ANALYTICS_MEASUREMENT_ID` (server-side).
 
 Files changed (high level):
+
 - `client/components/GoogleAnalytics.tsx` (event_id + clientId additions)
 - `server/routes/analytics.ts` (MP forwarding + debug support)
 - `shared/api.ts` (type updates)
@@ -136,6 +137,7 @@ Body (JSON):
 ---
 
 If you want, I can:
+
 - Add Consent Mode calls and a small consent utility (reads a localStorage flag) to `GoogleAnalytics.tsx`.
 - Wire enhanced conversions (server-side hashed emails) into `/api/analytics`.
 - Add a Playwright test that asserts `event_id` is present in `dataLayer` for page views and conversions.

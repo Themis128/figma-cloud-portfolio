@@ -427,15 +427,19 @@ Get-Content "D:\Nuxt Projects\new-portfolio\logs\ide-maintain.log" -Tail 50
 ### MCP Server shows "Failed" or "Disconnected"
 
 **Check 1 — environment loads correctly:**
+
 ```bash
 wsl -d Ubuntu-24.04 -- bash -l -c "source ~/.bash_env && node --version && pnpm --version && uvx --version"
 ```
+
 All three should return version numbers. If not, check `~/.bash_env` exists.
 
 **Check 2 — test the server directly:**
+
 ```bash
 wsl -d Ubuntu-24.04 -- bash -l -c "source ~/.bash_env && npx -y @modelcontextprotocol/server-sequential-thinking"
 ```
+
 If it hangs (doesn't exit), that means it's running and waiting for input — this is correct behavior. If it exits immediately with an error, the package or path is wrong.
 
 **Check 3 — wrong distro name:**
@@ -557,6 +561,7 @@ The profile must exist:
    ```bash
    export PATH="/custom/tool/bin:$PATH"
    ```
+
 3. Reload: `source ~/.bash_env`
 4. All MCP servers will pick it up automatically on their next start
 
