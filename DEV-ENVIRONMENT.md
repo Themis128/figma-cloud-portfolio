@@ -558,6 +558,7 @@ The profile must exist:
 
 1. Install it so the binary lands in `~/.local/bin` (most tools do this by default)
 2. If it installs elsewhere, add to `~/.bash_env`:
+
    ```bash
    export PATH="/custom/tool/bin:$PATH"
    ```
