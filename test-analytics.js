@@ -7,7 +7,7 @@ async function testAnalytics() {
   const page = await browser.newPage()
 
   try {
-    await page.goto('http://localhost:8081', {
+    await page.goto('http://localhost:8082', {
       waitUntil: 'domcontentloaded',
       timeout: 10000,
     })

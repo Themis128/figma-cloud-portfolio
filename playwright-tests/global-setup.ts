@@ -19,7 +19,7 @@ export default async function globalSetup(config: FullConfig) {
 
   const startTime = Date.now()
   const environment = process.env.NODE_ENV || 'development'
-  const baseURL = config.projects[0]?.use?.baseURL || 'http://localhost:8081'
+  const baseURL = config.projects[0]?.use?.baseURL || 'http://localhost:8082'
 
   try {
     // 1. Setup global functions

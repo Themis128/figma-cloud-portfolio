@@ -5,7 +5,7 @@
 Full-stack React SPA with Express backend, dual-server development setup for AWS Amplify deployment.
 
 **Critical Development Setup:**
-- Frontend (Vite): `http://localhost:8081` - serves React SPA with hot reload
+- Frontend (Vite): `http://localhost:8082` - serves React SPA with hot reload
 - Backend (Express): `http://localhost:3002` - serves API endpoints with Socket.IO
 - **Always run both servers** for full functionality (real-time features, contact forms, resume generation)
 - **Why dual-server?** Vite dev server proxies `/api/*` requests to Express server, enabling seamless development experience
@@ -613,12 +613,12 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
   testDir: './tests',
   use: {
-    baseURL: 'http://localhost:8081',
+    baseURL: 'http://localhost:8082',
     headless: true,
   },
   webServer: {
     command: 'pnpm dev:all',
-    port: 8081,
+    port: 8082,
     timeout: 120000,
   },
 })
@@ -656,7 +656,7 @@ export function createPlaywrightConfig(preset: 'dev' | 'ci' | 'fast' | 'validati
     timeout: 30000,
     expect: { timeout: 5000 },
     use: {
-      baseURL: 'http://localhost:8081',
+      baseURL: 'http://localhost:8082',
       actionTimeout: 5000,
       navigationTimeout: 10000,
       launchOptions: {
@@ -845,7 +845,7 @@ export const contactHandler = defineFunction({
 ## Common Pitfalls
 
 1. **Single Server Development**: Never run only `pnpm dev` - Socket.IO, contact forms, resume PDFs require backend server
-2. **Port Conflicts**: Frontend uses 8081, backend uses 3002, HMR uses 24681
+2. **Port Conflicts**: Frontend uses 8082, backend uses 3002, HMR uses 24681
 3. **Path Imports**: Always use `@/` and `@shared/` aliases, never relative paths
 4. **Type Safety**: Define interfaces in `@shared/api.ts` before implementing features
 5. **Lazy Loading**: All page components MUST be lazy-loaded with `React.lazy()`

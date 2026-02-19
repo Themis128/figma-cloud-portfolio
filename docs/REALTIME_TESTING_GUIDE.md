@@ -22,14 +22,14 @@ npx tsx server/node-build.ts
 
 **Critical**: Both servers must be running for real-time features to work.
 
-- Frontend: `http://localhost:8081` (Vite dev server)
+- Frontend: `http://localhost:8082` (Vite dev server)
 - Backend: `http://localhost:3000` (Express + Socket.IO)
 
 ## Testing Socket.IO Server
 
 ### 1. Manual Socket.IO Connection Test
 
-Open browser console on `http://localhost:8081` and run:
+Open browser console on `http://localhost:8082` and run:
 
 ```javascript
 // Test Socket.IO connection
@@ -79,7 +79,7 @@ socket.emit("room:leave", "project:123");
 
 ### 3. Multi-tab Testing
 
-1. Open 2+ browser tabs to `http://localhost:8081`
+1. Open 2+ browser tabs to `http://localhost:8082`
 2. Open browser console in each tab
 3. Join the same room from different tabs:
 
@@ -324,7 +324,7 @@ import { EnhancedAgentsPage } from './examples/RealtimeExamples';
 <Route path="/test-realtime" element={<EnhancedAgentsPage />} />
 ```
 
-Visit `http://localhost:8081/test-realtime`
+Visit `http://localhost:8082/test-realtime`
 
 ### 2. Multi-user Scenario Testing
 
@@ -401,8 +401,8 @@ test("real-time features integration", async ({ browser }) => {
   const page2 = await context2.newPage();
 
   // Navigate both pages
-  await page1.goto("http://localhost:8081/test-realtime");
-  await page2.goto("http://localhost:8081/test-realtime");
+  await page1.goto("http://localhost:8082/test-realtime");
+  await page2.goto("http://localhost:8082/test-realtime");
 
   // Test presence
   await page1.click('[data-testid="join-room"]');

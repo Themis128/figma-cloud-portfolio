@@ -130,7 +130,7 @@ className={cn(
 ### Express Server Integration
 
 - **Development**:
-  - Vite dev server runs on port **8081** (frontend)
+  - Vite dev server runs on port **8082** (frontend)
   - Express API server runs on port **3000** (backend)
   - Vite proxies `/api` requests to the Express server automatically
 - **Production**: Single port serves both frontend and API
@@ -180,7 +180,7 @@ Path aliases:
 ## Development Commands
 
 ```bash
-pnpm dev                        # Start Vite dev server (frontend on port 8081)
+pnpm dev                        # Start Vite dev server (frontend on port 8082)
 npx tsx server/dev-server.ts    # Start Express API server (backend on port 3000)
 pnpm dev:all                    # Start both servers concurrently
 pnpm build                      # Production build
@@ -257,7 +257,7 @@ Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
 
 ## Architecture Notes
 
-- **Development**: Two-server setup (Vite on 8081, Express on 3000) with API proxy
+- **Development**: Two-server setup (Vite on 8082, Express on 3002) with API proxy
 - **Production**: Single-port deployment with Express serving both frontend and API
 - TypeScript throughout (client, server, shared)
 - Full hot reload for rapid development

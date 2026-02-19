@@ -26,7 +26,7 @@ export function initializeSocketIO(server: any) {
       origin:
         process.env.NODE_ENV === "production"
           ? process.env.FRONTEND_URL || false
-          : ["http://localhost:8081", "http://localhost:3000"],
+          : ["http://localhost:8082", "http://localhost:3002"],
       methods: ["GET", "POST"],
       credentials: true,
     },

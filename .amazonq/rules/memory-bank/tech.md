@@ -160,7 +160,7 @@
 
 ### Development
 ```bash
-pnpm dev              # Start frontend dev server (port 8081)
+pnpm dev              # Start frontend dev server (port 8082)
 pnpm dev:all          # Start frontend + backend (port 3002)
 pnpm start            # Start production server
 ```

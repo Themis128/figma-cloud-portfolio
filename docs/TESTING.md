@@ -8,16 +8,17 @@ This project uses **Playwright** for end-to-end (E2E) testing, targeting 100% co
 
 ## Test Framework
 
-| Tool | Version | Purpose |
-|---|---|---|
-| Playwright | ^1.49 | Browser automation & E2E testing |
-| @playwright/test | ^1.49 | Test runner, assertions, fixtures |
+| Tool             | Version | Purpose                           |
+| ---------------- | ------- | --------------------------------- |
+| Playwright       | ^1.49   | Browser automation & E2E testing  |
+| @playwright/test | ^1.49   | Test runner, assertions, fixtures |
 
 ### Configuration
 
 **File:** `playwright.config.ts`
 
-- Base URL: `http://localhost:5173` (Vite dev server) or `http://localhost:3000` (Express)
+- Base URL (local dev): `http://localhost:8082` (Vite dev server) — backend: `http://localhost:3002`
+- Note: Playwright/CI uses `http://localhost:8082` by default for local runs; override with `PLAYWRIGHT_BASE_URL` when necessary.
 - Browsers: Chromium, Firefox, WebKit (desktop + mobile viewports)
 - Test timeout: 30 seconds
 - Retries: 2 on CI, 0 locally
@@ -54,14 +55,14 @@ open playwright-report/index.html
 
 Shared helpers used across spec files:
 
-| Function | Description |
-|---|---|
-| `waitForAppReady(page)` | Waits for React hydration & all animations |
-| `setupTestEnvironment(page)` | Mocks APIs, sets localStorage, prepares state |
-| `measurePerformance(page)` | Captures Web Vitals and Lighthouse metrics |
-| `runAccessibilityAudit(page)` | Runs axe-core accessibility scan |
-| `findElementWithFallbacks(page, selectors[])` | Tries multiple selectors with fallbacks |
-| `navigateWithMobileSupport(page, href)` | Handles mobile hamburger menu navigation |
+| Function                                      | Description                                   |
+| --------------------------------------------- | --------------------------------------------- |
+| `waitForAppReady(page)`                       | Waits for React hydration & all animations    |
+| `setupTestEnvironment(page)`                  | Mocks APIs, sets localStorage, prepares state |
+| `measurePerformance(page)`                    | Captures Web Vitals and Lighthouse metrics    |
+| `runAccessibilityAudit(page)`                 | Runs axe-core accessibility scan              |
+| `findElementWithFallbacks(page, selectors[])` | Tries multiple selectors with fallbacks       |
+| `navigateWithMobileSupport(page, href)`       | Handles mobile hamburger menu navigation      |
 
 ---
 
@@ -282,32 +283,32 @@ Shared helpers used across spec files:
 
 ## Coverage Map
 
-| Page/Feature | Spec File(s) | Status |
-|---|---|---|
-| Home (/) | `app.spec.ts` | ✅ Covered |
-| About (/about) | `app.spec.ts` | ✅ Covered |
-| Product (/product) | `product.spec.ts` | ✅ Covered |
-| Projects (/projects) | `projects.spec.ts`, `routing-test.spec.ts` | ✅ Covered |
-| Resume (/resume) | `resume.spec.ts`, `app.spec.ts` | ✅ Covered |
-| Agents (/agents) | `agents.spec.ts`, `ai-agents.spec.ts` | ✅ Covered |
-| Settings (/settings) | `app.spec.ts` | ✅ Covered |
-| Performance (/performance) | `performance-monitoring.spec.ts`, `app.spec.ts` | ✅ Covered |
-| 404 Page | `navigation-spa.spec.ts`, `app.spec.ts` | ✅ Covered |
-| SPA Routing | `navigation-spa.spec.ts`, `routing-test.spec.ts` | ✅ Covered |
-| Contact API | `api-integration.spec.ts`, `contact-form-analytics.spec.ts` | ✅ Covered |
-| GitHub API | `github-api-integration.spec.ts`, `api-integration.spec.ts` | ✅ Covered |
-| Analytics GA4 | `analytics-integration.spec.ts`, `recaptcha-analytics.spec.ts` | ✅ Covered |
-| reCAPTCHA v3 | `recaptcha-analytics.spec.ts`, `comprehensive-recaptcha-analytics.spec.ts` | ✅ Covered |
-| Push Notifications | `push-notifications.spec.ts`, `app.spec.ts` | ✅ Covered |
-| PWA / Service Worker | `pwa-advanced.spec.ts` | ✅ Covered |
-| Socket.IO | `socketio-realtime.spec.ts` | ✅ Covered |
-| Three.js 3D | `3d-demos.spec.ts` | ✅ Covered |
-| Accessibility | `accessibility.spec.ts`, `app.spec.ts` | ✅ Covered |
-| Security | `security-privacy.spec.ts` | ✅ Covered |
-| SEO | `seo.spec.ts` | ✅ Covered |
-| Image Optimization | `image-optimization.spec.ts` | ✅ Covered |
-| Performance Metrics | `performance-monitoring.spec.ts`, `app.spec.ts` | ✅ Covered |
-| Theme Switching | `app.spec.ts` | ✅ Covered |
+| Page/Feature               | Spec File(s)                                                               | Status    |
+| -------------------------- | -------------------------------------------------------------------------- | --------- |
+| Home (/)                   | `app.spec.ts`                                                              | ✅ Covered |
+| About (/about)             | `app.spec.ts`                                                              | ✅ Covered |
+| Product (/product)         | `product.spec.ts`                                                          | ✅ Covered |
+| Projects (/projects)       | `projects.spec.ts`, `routing-test.spec.ts`                                 | ✅ Covered |
+| Resume (/resume)           | `resume.spec.ts`, `app.spec.ts`                                            | ✅ Covered |
+| Agents (/agents)           | `agents.spec.ts`, `ai-agents.spec.ts`                                      | ✅ Covered |
+| Settings (/settings)       | `app.spec.ts`                                                              | ✅ Covered |
+| Performance (/performance) | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
+| 404 Page                   | `navigation-spa.spec.ts`, `app.spec.ts`                                    | ✅ Covered |
+| SPA Routing                | `navigation-spa.spec.ts`, `routing-test.spec.ts`                           | ✅ Covered |
+| Contact API                | `api-integration.spec.ts`, `contact-form-analytics.spec.ts`                | ✅ Covered |
+| GitHub API                 | `github-api-integration.spec.ts`, `api-integration.spec.ts`                | ✅ Covered |
+| Analytics GA4              | `analytics-integration.spec.ts`, `recaptcha-analytics.spec.ts`             | ✅ Covered |
+| reCAPTCHA v3               | `recaptcha-analytics.spec.ts`, `comprehensive-recaptcha-analytics.spec.ts` | ✅ Covered |
+| Push Notifications         | `push-notifications.spec.ts`, `app.spec.ts`                                | ✅ Covered |
+| PWA / Service Worker       | `pwa-advanced.spec.ts`                                                     | ✅ Covered |
+| Socket.IO                  | `socketio-realtime.spec.ts`                                                | ✅ Covered |
+| Three.js 3D                | `3d-demos.spec.ts`                                                         | ✅ Covered |
+| Accessibility              | `accessibility.spec.ts`, `app.spec.ts`                                     | ✅ Covered |
+| Security                   | `security-privacy.spec.ts`                                                 | ✅ Covered |
+| SEO                        | `seo.spec.ts`                                                              | ✅ Covered |
+| Image Optimization         | `image-optimization.spec.ts`                                               | ✅ Covered |
+| Performance Metrics        | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
+| Theme Switching            | `app.spec.ts`                                                              | ✅ Covered |
 
 **Total coverage: 100% of pages and major features**
 

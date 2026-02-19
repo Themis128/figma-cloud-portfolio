@@ -8,38 +8,38 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | React 19 (SPA) |
-| Build Tool | Vite 7 |
-| Language | TypeScript 5.9.3 |
-| Styling | Tailwind CSS v4 |
+| Layer         | Technology           |
+| ------------- | -------------------- |
+| Framework     | React 19 (SPA)       |
+| Build Tool    | Vite 7               |
+| Language      | TypeScript 5.9.3     |
+| Styling       | Tailwind CSS v4      |
 | UI Components | Radix UI / shadcn/ui |
-| Routing | React Router DOM v7 |
-| 3D | Three.js |
-| Real-time | Socket.IO |
-| PWA | Workbox |
-| Backend | Express.js |
-| Deployment | AWS Amplify |
-| Analytics | Google Analytics GA4 |
-| Security | reCAPTCHA v3 |
-| Testing | Playwright E2E |
+| Routing       | React Router DOM v7  |
+| 3D            | Three.js             |
+| Real-time     | Socket.IO            |
+| PWA           | Workbox              |
+| Backend       | Express.js           |
+| Deployment    | AWS Amplify          |
+| Analytics     | Google Analytics GA4 |
+| Security      | reCAPTCHA v3         |
+| Testing       | Playwright E2E       |
 
 ---
 
 ## Pages
 
-| Route | Description |
-|---|---|
-| `/` | Home — hero, feature cards, contact form |
-| `/about` | Professional bio, skills, career timeline |
-| `/product` | Work experience timeline |
-| `/projects` | Portfolio projects gallery (GitHub integration) |
-| `/resume` | Interactive resume builder with PDF export |
-| `/agents` | AI agents showcase |
-| `/settings` | App preferences (theme, notifications, privacy) |
-| `/performance` | Real-time performance monitoring dashboard |
-| `*` | 404 Not Found fallback |
+| Route          | Description                                     |
+| -------------- | ----------------------------------------------- |
+| `/`            | Home — hero, feature cards, contact form        |
+| `/about`       | Professional bio, skills, career timeline       |
+| `/product`     | Work experience timeline                        |
+| `/projects`    | Portfolio projects gallery (GitHub integration) |
+| `/resume`      | Interactive resume builder with PDF export      |
+| `/agents`      | AI agents showcase                              |
+| `/settings`    | App preferences (theme, notifications, privacy) |
+| `/performance` | Real-time performance monitoring dashboard      |
+| `*`            | 404 Not Found fallback                          |
 
 ---
 
@@ -77,16 +77,17 @@ CONTACT_EMAIL=your@email.com
 ### Development
 
 ```bash
-# Start Vite dev server (frontend)
-pnpm dev
+# Frontend (Vite dev server — default: http://localhost:8082)
+pmn dev
 
-# Start Express API server
-pnpm server
+# Backend (Express API server — default: http://localhost:3002)
+npx tsx server/node-build.ts
 
-# Start both together
-pnpm dev:full
+# Start both servers together (concurrently)
+pnpm dev:all
 ```
 
+> Note: Playwright/CI now uses the canonical dev port `8082` by default — override with `PLAYWRIGHT_BASE_URL` if needed.
 ### Build
 
 ```bash
@@ -154,16 +155,17 @@ new-portfolio/
 
 ## Documentation
 
-| Doc | Description |
-|---|---|
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Full app architecture, tech stack, routing, backend |
-| [`docs/TESTING.md`](docs/TESTING.md) | Testing guide, coverage map, best practices |
-| [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) | AWS Amplify deployment steps |
-| [`docs/GITHUB_SECRETS_SETUP.md`](docs/GITHUB_SECRETS_SETUP.md) | GitHub Actions secrets configuration |
-| [`docs/GA4_UPGRADE_GUIDE.md`](docs/GA4_UPGRADE_GUIDE.md) | Google Analytics GA4 setup |
-| [`docs/SECURITY_SUMMARY.md`](docs/SECURITY_SUMMARY.md) | Security measures overview |
-| [`docs/PWA_README.md`](docs/PWA_README.md) | PWA / service worker details |
-| [`docs/CONTACT_FORM_SETUP.md`](docs/CONTACT_FORM_SETUP.md) | Contact form + reCAPTCHA setup |
+| Doc                                                            | Description                                                            |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                 | Full app architecture, tech stack, routing, backend                    |
+| [`docs/TESTING.md`](docs/TESTING.md)                           | Testing guide, coverage map, best practices                            |
+| [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md)         | AWS Amplify deployment steps                                           |
+| [`docs/GITHUB_SECRETS_SETUP.md`](docs/GITHUB_SECRETS_SETUP.md) | GitHub Actions secrets configuration                                   |
+| [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md)               | Server endpoints + shared TypeScript types (auto-sync source of truth) |
+| [`docs/GA4_UPGRADE_GUIDE.md`](docs/GA4_UPGRADE_GUIDE.md)       | Google Analytics GA4 setup                                             |
+| [`docs/SECURITY_SUMMARY.md`](docs/SECURITY_SUMMARY.md)         | Security measures overview                                             |
+| [`docs/PWA_README.md`](docs/PWA_README.md)                     | PWA / service worker details                                           |
+| [`docs/CONTACT_FORM_SETUP.md`](docs/CONTACT_FORM_SETUP.md)     | Contact form + reCAPTCHA setup                                         |
 
 ---
 

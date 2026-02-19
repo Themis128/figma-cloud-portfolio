@@ -13,7 +13,7 @@ This project implements a comprehensive, maintainable Playwright testing configu
 3. **Duplicate Browser Arguments** - Consolidated into reusable constants
 4. **Inconsistent Timeout Strategies** - Environment-aware timeout scaling
 5. **Missing Global Setup** - Proper test isolation and cleanup implemented
-6. **Outdated Base URLs** - Updated to match current app architecture (frontend: 8081, backend: 3000)
+6. **Outdated Base URLs** - Updated to match current app architecture (frontend: 8082, backend: 3002)
 7. **AI Agent Templates Testing** - Added comprehensive test coverage for the new `/agents` feature
 
 ### 🚀 New Features
@@ -233,8 +233,8 @@ const environmentSettings = {
 
 ### Before vs After
 
-| Metric              | Before       | After                 | Improvement     |
-| ------------------- | ------------ | --------------------- | --------------- |
+| Metric              | Before       | After                 | Improvement    |
+| ------------------- | ------------ | --------------------- | -------------- |
 | Configuration Score | 7-9/10       | **10/10**             | ✅ Perfect      |
 | Worker Allocation   | Hardcoded    | **Dynamic**           | ✅ Scalable     |
 | Browser Args        | Duplicated   | **Consolidated**      | ✅ Clean        |
@@ -272,7 +272,7 @@ const environmentSettings = {
 ```bash
 # Enable comprehensive debugging
 DEBUG_PLAYWRIGHT_CONFIG=true \
-PLAYWRIGHT_BASE_URL=http://localhost:8081 \
+PLAYWRIGHT_BASE_URL=http://localhost:8082 \
 npx playwright test --debug
 ```
 
@@ -307,7 +307,7 @@ This configuration achieves a **perfect 10/10 score** by implementing:
 - ✅ **Comprehensive Validation** with real-time health monitoring
 - ✅ **Performance Metrics** for continuous optimization
 - ✅ **Complete Documentation** for team adoption
-- ✅ **Updated Base URLs** matching current app architecture (frontend: 8081, backend: 3000)
+- ✅ **Updated Base URLs** matching current app architecture (frontend: 8082, backend: 3002)
 - ✅ **AI Agent Templates Support** with dedicated test configurations
 
 The solution is production-ready, scalable, and maintainable for long-term use.

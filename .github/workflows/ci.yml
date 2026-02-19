@@ -106,13 +106,13 @@ jobs:
       - name: Start Vite dev server
         run: |
           # Run vite directly without secrets wrapper (CI has env vars set)
-          pnpm exec vite --port 8081 --host 0.0.0.0 > frontend.log 2>&1 &
+          pnpm exec vite --port 8082 --host 0.0.0.0 > frontend.log 2>&1 &
           FRONTEND_PID=$!
           echo "Frontend PID: $FRONTEND_PID"
 
           # Wait for frontend to be ready (max 30 seconds)
           for i in {1..30}; do
-            if curl -s http://localhost:8081 > /dev/null 2>&1; then
+            if curl -s http://localhost:8082 > /dev/null 2>&1; then
               echo "✅ Frontend server is ready"
               break
             fi

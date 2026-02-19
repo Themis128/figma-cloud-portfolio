@@ -111,19 +111,19 @@ export function createServer() {
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; " +
-        "font-src 'self' https://fonts.gstatic.com https://use.typekit.net; " +
-        "img-src 'self' data: https: blob:; " +
-        "connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
-        "frame-src 'self' https://www.recaptcha.net; " +
-        "object-src 'none'; " +
-        "base-uri 'self'; " +
-        "form-action 'self'; " +
-        "frame-ancestors 'none'; " +
-        "worker-src 'self' blob: https://storage.googleapis.com; " +
-        "child-src 'self'; " +
-        "media-src 'self' blob: data:;",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com; " +
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; " +
+      "font-src 'self' https://fonts.gstatic.com https://use.typekit.net; " +
+      "img-src 'self' data: https: blob:; " +
+      "connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.recaptcha.net https://www.gstatic.com wss://localhost:* ws://localhost:*; " +
+      "frame-src 'self' https://www.recaptcha.net; " +
+      "object-src 'none'; " +
+      "base-uri 'self'; " +
+      "form-action 'self'; " +
+      "frame-ancestors 'none'; " +
+      "worker-src 'self' blob: https://storage.googleapis.com; " +
+      "child-src 'self'; " +
+      "media-src 'self' blob: data:;",
     )
 
     // HTTPS Strict Transport Security (only in production)
@@ -271,7 +271,7 @@ export function initializeSocketIO(server: HttpServer) {
       origin:
         process.env.NODE_ENV === 'production'
           ? (process.env.FRONTEND_URL ?? false)
-          : ['http://localhost:8081', 'http://localhost:3000'],
+          : ['http://localhost:8082', 'http://localhost:3002'],
       methods: ['GET', 'POST'],
       credentials: true,
     },

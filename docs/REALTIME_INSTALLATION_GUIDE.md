@@ -70,7 +70,7 @@ VITE_REALTIME_DEBUG=true
 # Server Configuration
 PORT=3000
 NODE_ENV=development
-CORS_ORIGINS=http://localhost:8081
+CORS_ORIGINS=http://localhost:8082
 
 # Performance Tuning
 VITE_SOCKET_MAX_LISTENERS=50
@@ -119,7 +119,7 @@ const server = createServer(app);
 // Socket.IO configuration
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(",") || ["http://localhost:8081"],
+    origin: process.env.CORS_ORIGINS?.split(",") || ["http://localhost:8082"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -189,7 +189,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 8081,
+    port: 8082,
     proxy: {
       // Proxy API requests to backend
       "/api": {
@@ -654,7 +654,7 @@ export function rateLimitMiddleware(socket: Socket, next: Function) {
 const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? ["https://your-domain.com", "https://www.your-domain.com"]
-    : ["http://localhost:8081", "http://localhost:3000"];
+    : ["http://localhost:8082", "http://localhost:3002"];
 
 const io = new Server(server, {
   cors: {

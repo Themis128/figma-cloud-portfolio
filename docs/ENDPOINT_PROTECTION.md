@@ -82,9 +82,9 @@ const getAllowedOrigins = () => {
   if (isDev) {
     return [
       "http://localhost:3001",
-      "http://localhost:8081",
+      "http://localhost:8082",
       "http://127.0.0.1:3001",
-      "http://127.0.0.1:8081",
+      "http://127.0.0.1:8082",
     ];
   }
 
@@ -131,7 +131,7 @@ app.use(cors(corsOptions));
 ```env
 # Local development
 NODE_ENV=development
-ALLOWED_ORIGINS=http://localhost:3001,http://localhost:8081
+ALLOWED_ORIGINS=http://localhost:3001,http://localhost:8082
 
 # Production
 NODE_ENV=production

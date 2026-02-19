@@ -54,7 +54,7 @@ pnpm dev
 **Expected output:**
 ```
 VITE vX.X.X  ready in XXX ms
-➜  Local:   http://localhost:8081/
+➜  Local:   http://localhost:8082/
 ```
 
 ---
@@ -112,7 +112,7 @@ Run through this checklist:
 - [ ] `pnpm install` completes without errors
 - [ ] `pnpm typecheck` shows minimal/zero errors
 - [ ] `pnpm dev` starts server successfully
-- [ ] Can access http://localhost:8081 in browser
+- [ ] Can access http://localhost:8082 in browser
 - [ ] VS Code shows 5 MCP servers loaded
 - [ ] Problems panel (`Ctrl+Shift+M`) is mostly clean
 

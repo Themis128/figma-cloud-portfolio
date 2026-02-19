@@ -164,7 +164,7 @@ test.describe('Advanced PWA Features', () => {
       // Construct full URL if href is relative
       const fullManifestUrl = manifestHref.startsWith('http')
         ? manifestHref
-        : `http://localhost:8081${manifestHref}`
+        : `http://localhost:8082${manifestHref}`
       const response = await page.request.get(fullManifestUrl)
       expect(response.status()).toBe(200)
 
@@ -280,7 +280,7 @@ test.describe('Advanced PWA Features', () => {
       // Construct full URL if href is relative
       const fullManifestUrl = manifestHref.startsWith('http')
         ? manifestHref
-        : `http://localhost:8081${manifestHref}`
+        : `http://localhost:8082${manifestHref}`
       const response = await page.request.get(fullManifestUrl)
       const manifest = await response.json()
 

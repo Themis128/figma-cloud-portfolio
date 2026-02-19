@@ -228,7 +228,7 @@ Push notifications are implemented using the Web Push API with VAPID keys.
 Push notifications require the Express API server to be running:
 
 ```bash
-# Terminal 1: Start Vite dev server (frontend on port 8081)
+# Terminal 1: Start Vite dev server (frontend on port 8082)
 pnpm dev
 
 # Terminal 2: Start Express API server (backend on port 3000)

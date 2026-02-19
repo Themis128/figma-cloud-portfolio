@@ -135,7 +135,7 @@ If you still have too many errors, you can relax more TypeScript rules in `tscon
 
 1. **Run:** `.\install-missing-types.bat`
 2. **Run:** `pnpm dev`
-3. **Test:** Open http://localhost:8081
+3. **Test:** Open http://localhost:8082
 4. **Fix remaining errors gradually** (they won't block development)
 
 The app should work despite the TypeScript errors! 🎉

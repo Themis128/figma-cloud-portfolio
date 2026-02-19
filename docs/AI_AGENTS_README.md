@@ -100,7 +100,7 @@ interface AgentTemplate {
 
 1. Navigate to `/agents` in the application
 2. Use the "Agents" link in the main navigation menu
-3. Access via direct URL: `http://localhost:8081/agents`
+3. Access via direct URL: `http://localhost:8082/agents`
 
 ### Template Selection Workflow
 

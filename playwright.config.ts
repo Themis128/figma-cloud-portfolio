@@ -429,7 +429,7 @@ const config: PlaywrightTestConfig = {
   },
 
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8081',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8082',
     actionTimeout: settings.timeouts.action,
     navigationTimeout: settings.timeouts.navigation,
     trace: settings.artifacts.trace as 'on' | 'off' | 'on-first-retry' | 'retain-on-failure',
@@ -456,19 +456,19 @@ const config: PlaywrightTestConfig = {
   webServer:
     process.env.PLAYWRIGHT_START_SERVERS === 'true'
       ? [
-          {
-            command: 'npx tsx server/node-build.ts',
-            url: 'http://localhost:3002/api/health',
-            reuseExistingServer: true,
-            timeout: settings.timeouts.webServer,
-          },
-          {
-            command: 'npx vite --port 8081',
-            url: 'http://localhost:8081',
-            reuseExistingServer: true,
-            timeout: settings.timeouts.webServer * 2,
-          },
-        ]
+        {
+          command: 'npx tsx server/node-build.ts',
+          url: 'http://localhost:3002/api/health',
+          reuseExistingServer: true,
+          timeout: settings.timeouts.webServer,
+        },
+        {
+          command: 'npx vite --port 8082',
+          url: 'http://localhost:8082',
+          reuseExistingServer: true,
+          timeout: settings.timeouts.webServer * 2,
+        },
+      ]
       : undefined,
 
   metadata: {

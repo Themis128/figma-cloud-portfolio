@@ -65,7 +65,7 @@
 
 ### Development Server Status:
 
-- **Frontend**: Running on http://localhost:8081/
+- **Frontend**: Running on http://localhost:8082/
 - **React 19**: Successfully integrated
 - **Hot Reload**: Working with enhanced performance
 - **Error Reporting**: Improved with better boundaries

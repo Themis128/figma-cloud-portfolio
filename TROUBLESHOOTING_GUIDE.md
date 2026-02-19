@@ -93,12 +93,12 @@ pnpm build:no-secrets
 ```
 
 ### Issue 6: Port Conflicts
-**Symptoms:** "Port 8081 is already in use"
+**Symptoms:** "Port 8082 is already in use"
 
 **Solution:**
 ```powershell
-# Find process using port 8081
-netstat -ano | findstr :8081
+# Find process using port 8082
+netstat -ano | findstr :8082
 
 # Kill the process (replace <PID> with actual process ID)
 taskkill /PID <PID> /F
@@ -220,7 +220,7 @@ pnpm --version   # Should be v10+
    pnpm dev
    ```
 
-4. Check application at: http://localhost:8081
+4. Check application at: http://localhost:8082
 
 ---
 

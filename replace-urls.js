@@ -3,7 +3,7 @@ const path = require('node:path')
 
 function replaceInFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf8')
-  const newContent = content.replace(/http:\/\/localhost:8081\//g, '/')
+  const newContent = content.replace(/http:\/\/localhost:(8081|8082)\//g, '/')
   if (newContent !== content) {
     fs.writeFileSync(filePath, newContent)
   }

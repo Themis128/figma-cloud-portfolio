@@ -6,7 +6,7 @@ async function runTest() {
   const page = await context.newPage()
 
   // Navigate to the page
-  await page.goto('http://localhost:8081')
+  await page.goto('http://localhost:8082')
 
   // Check for basic content
   const _title = await page.title()

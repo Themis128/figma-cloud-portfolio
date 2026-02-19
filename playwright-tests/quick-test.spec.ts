@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('homepage loads and displays content', async ({ page }) => {
-  await page.goto('http://localhost:8081')
+  await page.goto('http://localhost:8082')
 
   // Wait for the page to load
   await page.waitForLoadState('networkidle')
@@ -19,7 +19,7 @@ test('homepage loads and displays content', async ({ page }) => {
 })
 
 test('can navigate to Agents page', async ({ page }) => {
-  await page.goto('http://localhost:8081')
+  await page.goto('http://localhost:8082')
   await page.waitForLoadState('networkidle')
 
   // Click on first Agents link (in nav)
@@ -33,7 +33,7 @@ test('can navigate to Agents page', async ({ page }) => {
 })
 
 test('theme toggle works', async ({ page }) => {
-  await page.goto('http://localhost:8081')
+  await page.goto('http://localhost:8082')
   await page.waitForLoadState('networkidle')
 
   // Find and click theme toggle
