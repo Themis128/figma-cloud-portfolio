@@ -314,7 +314,7 @@ function OverviewTab({ connectionQuality, onlineCount, presence, roomsCount }: O
               className='flex items-center space-x-3 p-3 bg-gray-50 dark:bg-navy-750 rounded-lg'
             >
               <div className='relative'>
-                <div className='w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white font-medium'>
+                <div className='w-10 h-10 bg-linear-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white font-medium'>
                   {(user.username || user.userId).charAt(0).toUpperCase()}
                 </div>
                 <PresenceIndicator
@@ -366,7 +366,7 @@ function ActivityTab({ events }: ActivityTabProps) {
             key={event.id}
             className='flex items-start space-x-3 p-3 bg-gray-50 dark:bg-navy-750 rounded-lg'
           >
-            <div className='w-2 h-2 bg-cyan-500 rounded-full mt-2 flex-shrink-0' />
+            <div className='w-2 h-2 bg-cyan-500 rounded-full mt-2 shrink-0' />
             <div className='flex-1 min-w-0'>
               <p className='text-sm text-gray-900 dark:text-white'>
                 {event.type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}

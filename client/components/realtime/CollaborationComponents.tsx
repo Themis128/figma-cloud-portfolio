@@ -158,7 +158,7 @@ export function CollaborationPanel({
           <div className='flex -space-x-2'>
             {activeCollaborators.slice(0, MAX_COLLABORATOR_AVATARS).map((user) => (
               <div key={user.userId} className='relative'>
-                <div className='w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-medium'>
+                <div className='w-6 h-6 bg-linear-to-br from-cyan-400 to-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-medium'>
                   {(user.username || user.userId).charAt(0).toUpperCase()}
                 </div>
                 <PresenceIndicator
@@ -193,7 +193,7 @@ export function CollaborationPanel({
                 <div key={user.userId} className='flex items-center justify-between'>
                   <div className='flex items-center space-x-3'>
                     <div className='relative'>
-                      <div className='w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium'>
+                      <div className='w-8 h-8 bg-linear-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium'>
                         {(user.username || user.userId).charAt(0).toUpperCase()}
                       </div>
                       <PresenceIndicator
@@ -300,7 +300,7 @@ function ActivityItem({ event }: ActivityItemProps) {
 
   return (
     <div className='flex items-start space-x-2'>
-      <div className='flex-shrink-0 mt-0.5'>{getActivityIcon(event.data.changeType)}</div>
+      <div className='shrink-0 mt-0.5'>{getActivityIcon(event.data.changeType)}</div>
       <div className='flex-1 min-w-0'>
         <p className='text-sm text-gray-600 dark:text-gray-400'>{getActivityText(event.data)}</p>
         <p className='text-xs text-gray-500 dark:text-gray-500 mt-0.5'>{timeAgo}</p>

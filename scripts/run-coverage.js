@@ -170,11 +170,12 @@ console.log('')
 // Check if any coverage reports exist
 let coverageExists = false
 const vitestCoveragePath = path.join(PROJECT_ROOT, 'coverage', 'lcov.info')
+const FIVE_MINUTES_MS = 5 * 60 * 1000
 
 if (fs.existsSync(vitestCoveragePath)) {
   // Check if the file was modified recently (within last 5 minutes)
   const stats = fs.statSync(vitestCoveragePath)
-  const fiveMinutesAgo = Date.now() - 5 * 60 * 1000
+  const fiveMinutesAgo = Date.now() - FIVE_MINUTES_MS
   if (stats.mtime.getTime() > fiveMinutesAgo) {
     console.log('📁 Found recent Vitest coverage: coverage/lcov.info')
     coverageExists = true

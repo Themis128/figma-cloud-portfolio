@@ -27,13 +27,15 @@ const checks = {
   },
 }
 
+const SEPARATOR_LEN = 50
+
 console.log('🔍 Contact Form Configuration Check\n')
 
 let allPassed = true
 
 for (const [_key, check] of Object.entries(checks)) {
   console.log(`\n📋 ${check.name}`)
-  console.log('─'.repeat(50))
+  console.log('─'.repeat(SEPARATOR_LEN))
 
   // Check required variables
   for (const envVar of check.required) {
@@ -57,7 +59,7 @@ for (const [_key, check] of Object.entries(checks)) {
   }
 }
 
-console.log(`\n${'='.repeat(50)}`)
+console.log(`\n${'='.repeat(SEPARATOR_LEN)}`)
 
 if (allPassed) {
   console.log('✅ All required configurations are set!')
