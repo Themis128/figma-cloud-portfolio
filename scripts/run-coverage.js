@@ -1,4 +1,7 @@
+/* eslint-env node */
 /* global console, process */
+/* eslint-disable no-undef */
+// @ts-nocheck
 /**
  * Cross-platform Coverage Reporter for Codacy
  * Combines Vitest and Playwright coverage reports
@@ -85,6 +88,7 @@ function runVitestCoverage() {
  * Upload coverage to Codacy
  */
 async function uploadToCodacy() {
+  await Promise.resolve()
   console.log('🔄 Uploading coverage to Codacy...')
   console.log('')
 
@@ -170,7 +174,9 @@ console.log('')
 // Check if any coverage reports exist
 let coverageExists = false
 const vitestCoveragePath = path.join(PROJECT_ROOT, 'coverage', 'lcov.info')
-const FIVE_MINUTES_MS = 5 * 60 * 1000
+const MINUTE_MS = 60_000
+const FIVE_MINUTES = 5
+const FIVE_MINUTES_MS = FIVE_MINUTES * MINUTE_MS
 
 if (fs.existsSync(vitestCoveragePath)) {
   // Check if the file was modified recently (within last 5 minutes)

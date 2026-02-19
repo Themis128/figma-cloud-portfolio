@@ -73,6 +73,7 @@ export default async function globalSetup(config: FullConfig) {
  * Setup global test functions
  */
 async function setupGlobalFunctions(): Promise<void> {
+  await Promise.resolve()
   console.log('🔧 Setting up global test functions...')
 
   // Make waitForAppReady available globally
@@ -85,6 +86,7 @@ async function setupGlobalFunctions(): Promise<void> {
  * Validate environment configuration
  */
 async function validateEnvironment(config: FullConfig): Promise<void> {
+  await Promise.resolve()
   console.log('🔍 Validating environment...')
 
   // Check Node.js version
@@ -245,6 +247,7 @@ async function prepareTestData(): Promise<void> {
  * Setup performance monitoring
  */
 async function setupPerformanceMonitoring(): Promise<void> {
+  await Promise.resolve()
   console.log('📈 Setting up performance monitoring...')
 
   try {

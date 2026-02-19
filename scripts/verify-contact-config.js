@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-env node */
+/* global console, process */
 
 /**
  * Contact Form Configuration Verification Script
@@ -33,7 +35,7 @@ console.log('🔍 Contact Form Configuration Check\n')
 
 let allPassed = true
 
-for (const [_key, check] of Object.entries(checks)) {
+for (const check of Object.values(checks)) {
   console.log(`\n📋 ${check.name}`)
   console.log('─'.repeat(SEPARATOR_LEN))
 

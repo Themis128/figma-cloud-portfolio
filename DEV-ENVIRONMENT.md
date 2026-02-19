@@ -60,11 +60,9 @@ wsl.exe -d Ubuntu-24.04 -- bash -l -c "source ~/.bash_env && <server-cmd>"
 | Tool    | Version  | Installed via       |
 | ------- | -------- | ------------------- |
 | Node.js | v24.13.1 | nvm                 |
-| npm     | 11.x     | bundled with Node   |
 | pnpm    | 10.30.0  | `npm i -g pnpm`     |
 | uv      | 0.10.4   | astral.sh installer |
 | uvx     | 0.10.4   | bundled with uv     |
-| git     | system   | apt                 |
 
 ### Shell Environment Files
 
@@ -419,6 +417,39 @@ Get-Content "D:\Nuxt Projects\new-portfolio\logs\ide-maintain.log" -Tail 50
 ```
 
 1. Reload the agent (Cline: click the reload icon; Copilot: restart VS Code)
+
+### Development Servers
+
+To start the project's development servers from the project root use the workspace scripts and tasks.
+
+#### Frontend (Vite) dev server
+```bash
+pnpm dev
+```
+
+#### Backend (Express) dev server
+```bash
+npx tsx server/node-build.ts
+```
+
+#### Start both servers concurrently (convenience)
+```bash
+pnpm dev:all
+```
+
+#### Common run/build/test commands (from project root)
+- Install dependencies:
+```bash
+pnpm install
+```
+- Build all (resume/templates, client, server as configured):
+```bash
+pnpm run build
+```
+- Run unit tests:
+```bash
+pnpm test
+```
 
 ---
 

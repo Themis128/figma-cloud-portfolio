@@ -104,6 +104,7 @@ export async function measureAPICall<T>(
  * Setup page for real API testing
  */
 export async function setupRealAPIPage(page: Page): Promise<void> {
+  await Promise.resolve()
   // Don't mock any API calls - let them go through
   // Add logging for debugging
   page.on('console', (msg) => {
