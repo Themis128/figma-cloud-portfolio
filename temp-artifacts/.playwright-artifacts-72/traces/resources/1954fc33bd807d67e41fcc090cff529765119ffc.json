@@ -1,7 +1,0 @@
-{
-  "event": "web_vitals_ttfb",
-  "data": { "value": 9 },
-  "timestamp": "2026-01-26T19:57:27.822Z",
-  "url": "http://localhost:9000/projects",
-  "userAgent": "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.7632.6 Mobile Safari/537.36"
-}

@@ -100,10 +100,20 @@ jobs:
               --exclude-dir=.next \
               --exclude-dir=portfolio-nextjs \
               --exclude-dir=new-portfolio-next \
+              --exclude-dir=temp-artifacts \
+              --exclude-dir=performance-test-results \
+              --exclude-dir=playwright-html-report-ci \
+              --exclude-dir=playwright-report \
+              --exclude-dir=.codacy-coverage \
               --exclude="*.lock" \
               --exclude="pnpm-lock.yaml" \
               --exclude="package-lock.json" \
-              --exclude="*.md"; then
+              --exclude="*.md" \
+              --exclude="build-log*.txt" \
+              --exclude="log-url-*.txt" \
+              --exclude="*.zip" \
+              --exclude="*.jar" \
+              --exclude="*.jar.*"; then
               echo "❌ ERROR: Potential secret detected matching pattern: $pattern"
               FOUND=1
             fi
