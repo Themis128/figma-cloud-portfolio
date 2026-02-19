@@ -1,6 +1,6 @@
 name: Playwright Tests
 
-on:
+'on':
   push:
     branches: [main, production]
   pull_request:
@@ -50,22 +50,17 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: playwright-html-report/
-          retention-days: 30
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
+          name: test-results-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index }}
           path: test-results/
+          if-no-files-found: ignore
           retention-days: 30
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: blob-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
+          name: blob-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index }}
           path: blob-report/
+          if-no-files-found: ignore
           retention-days: 30
 
   merge-reports:
@@ -107,6 +102,7 @@ jobs:
         with:
           name: playwright-report-merged
           path: playwright-report
+          if-no-files-found: ignore
           retention-days: 30
 
       - name: Display test results summary

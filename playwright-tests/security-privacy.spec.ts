@@ -8,8 +8,13 @@ import { expect, test } from '@playwright/test'
 test.describe('Security & Privacy', () => {
   test.describe('HTTPS and Secure Connections', () => {
     test('should use HTTPS in production', { tag: '@fast' }, async ({ page }) => {
-      // Skip this test in development
-      if (process.env.NODE_ENV === 'development') {
+      // Skip in development or when running against a local server
+      const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8082'
+      if (
+        process.env.NODE_ENV === 'development' ||
+        baseURL.includes('localhost') ||
+        baseURL.includes('127.0.0.1')
+      ) {
         test.skip()
       }
 

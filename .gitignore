@@ -105,3 +105,12 @@ cline_mcp_settings.json
 
 # Codacy MCP Server (separate project)
 codacy-mcp-server/
+
+# CI/build artifact directories (contain hashes that trigger secret scanner)
+temp-artifacts/
+performance-test-results/
+playwright-html-report-ci/
+playwright-report/
+.codacy-coverage/
+build-log*.txt
+log-url-*.txt

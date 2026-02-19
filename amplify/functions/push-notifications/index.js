@@ -3,18 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 // @ts-ignore: No type definitions for 'web-push'
 const web_push_1 = require("web-push");
-// VAPID keys for Web Push API
+// VAPID keys for Web Push API - loaded from environment variables
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+const vapidEmail = process.env.VAPID_EMAIL || "mailto:noreply@example.com";
+if (vapidPublicKey && vapidPrivateKey) {
+  web_push_1.default.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey);
+} else {
+  console.warn("VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables are required for push notifications");
+}
 const vapidKeys = {
-  publicKey:
-    "BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk",
-  privateKey: "CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI",
+  publicKey: vapidPublicKey ?? "",
+  privateKey: vapidPrivateKey ?? "",
 };
-// Set VAPID details
-web_push_1.default.setVapidDetails(
-  "mailto:noreply@cloudles.gr", // Replace with your email
-  vapidKeys.publicKey,
-  vapidKeys.privateKey,
-);
 // In-memory storage for subscriptions (in production, use DynamoDB or similar)
 let subscriptions = [];
 const handler = async (event) => {

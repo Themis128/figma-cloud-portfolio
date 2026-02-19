@@ -50,14 +50,6 @@ jobs:
       - name: Run type checking
         run: pnpm run typecheck
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        continue-on-error: true
-        with:
-          file: ./coverage/lcov.info
-          flags: unittests # cspell: disable-line
-          name: codecov-umbrella
-          fail_ci_if_error: false
 
   e2e:
     runs-on: ubuntu-latest
@@ -136,9 +128,8 @@ jobs:
         if: always()
         with:
           name: test-results-${{ github.run_id }}
-          path: |
-            test-results/
-            playwright-report/
+          path: playwright-report/
+          if-no-files-found: ignore
           retention-days: 30
 
   build:

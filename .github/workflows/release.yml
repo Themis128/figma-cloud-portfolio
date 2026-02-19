@@ -11,6 +11,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AMPLIFY_APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+      AMPLIFY_BRANCH: ${{ secrets.AMPLIFY_BRANCH }}
+      DEPLOY_TO_GHPAGES: ${{ secrets.DEPLOY_TO_GHPAGES }}
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +49,7 @@ jobs:
           echo "Publishing Docker image (placeholder). Configure registry steps and secrets."
 
       - name: Configure AWS credentials (optional)
-        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' && secrets.AMPLIFY_APP_ID != '' && secrets.AMPLIFY_BRANCH != '' }}
+        if: ${{ env.AWS_ACCESS_KEY_ID != '' && env.AWS_SECRET_ACCESS_KEY != '' && env.AMPLIFY_APP_ID != '' && env.AMPLIFY_BRANCH != '' }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -51,20 +57,20 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
       - name: Start Amplify Console release
-        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' && secrets.AMPLIFY_APP_ID != '' && secrets.AMPLIFY_BRANCH != '' }}
+        if: ${{ env.AWS_ACCESS_KEY_ID != '' && env.AWS_SECRET_ACCESS_KEY != '' && env.AMPLIFY_APP_ID != '' && env.AMPLIFY_BRANCH != '' }}
         run: |
           aws amplify start-job --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch-name ${{ secrets.AMPLIFY_BRANCH }} --job-type RELEASE
 
       - name: Configure GitHub Pages (optional)
-        if: ${{ secrets.DEPLOY_TO_GHPAGES == 'true' }}
+        if: ${{ env.DEPLOY_TO_GHPAGES == 'true' }}
         uses: actions/configure-pages@v4
 
       - name: Upload artifact for GitHub Pages
-        if: ${{ secrets.DEPLOY_TO_GHPAGES == 'true' }}
+        if: ${{ env.DEPLOY_TO_GHPAGES == 'true' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist/spa
 
       - name: Deploy to GitHub Pages
-        if: ${{ secrets.DEPLOY_TO_GHPAGES == 'true' }}
+        if: ${{ env.DEPLOY_TO_GHPAGES == 'true' }}
         uses: actions/deploy-pages@v4

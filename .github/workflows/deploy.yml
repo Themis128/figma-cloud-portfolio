@@ -100,10 +100,21 @@ jobs:
               --exclude-dir=.next \
               --exclude-dir=portfolio-nextjs \
               --exclude-dir=new-portfolio-next \
+              --exclude-dir=temp-artifacts \
+              --exclude-dir=performance-test-results \
+              --exclude-dir=playwright-html-report-ci \
+              --exclude-dir=playwright-report \
+              --exclude-dir=.codacy-coverage \
               --exclude="*.lock" \
               --exclude="pnpm-lock.yaml" \
               --exclude="package-lock.json" \
-              --exclude="*.md"; then
+              --exclude="*.md" \
+              --exclude="build-log*.txt" \
+              --exclude="log-url-*.txt" \
+              --exclude="*.zip" \
+              --exclude="*.jar" \
+              --exclude="*.jar.*" \
+              --exclude="cli.json"; then
               echo "❌ ERROR: Potential secret detected matching pattern: $pattern"
               FOUND=1
             fi
@@ -137,6 +148,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install dependencies
@@ -297,6 +309,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install dependencies
