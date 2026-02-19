@@ -8,23 +8,21 @@ const HTTP_STATUS = {
   INTERNAL_SERVER_ERROR: 500,
 } as const
 
-// VAPID keys for Web Push API - loaded from environment variables
-const vapidPublicKey = process.env.VAPID_PUBLIC_KEY
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+// VAPID keys for Web Push API - loaded from environment variables or generated at startup
 const vapidEmail = process.env.VAPID_EMAIL || 'mailto:noreply@example.com'
 
-if (vapidPublicKey && vapidPrivateKey) {
-  // Set VAPID details
-  webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey)
-} else {
-  console.warn(
-    'VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables are required for push notifications',
-  )
+const generated = webpush.generateVAPIDKeys()
+const vapidKeys = {
+  publicKey: process.env.VAPID_PUBLIC_KEY || generated.publicKey,
+  privateKey: process.env.VAPID_PRIVATE_KEY || generated.privateKey,
 }
 
-const vapidKeys = {
-  publicKey: vapidPublicKey ?? '',
-  privateKey: vapidPrivateKey ?? '',
+webpush.setVapidDetails(vapidEmail, vapidKeys.publicKey, vapidKeys.privateKey)
+
+if (!process.env.VAPID_PUBLIC_KEY) {
+  console.warn(
+    'VAPID_PUBLIC_KEY not set — generated ephemeral VAPID keys. Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY in production.',
+  )
 }
 
 interface PushMessage {
