@@ -50,7 +50,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
+          name: test-results-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 30
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: blob-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
+          name: blob-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index }}
           path: blob-report/
           if-no-files-found: ignore
           retention-days: 30
