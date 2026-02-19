@@ -149,9 +149,9 @@ export const handleContactForm = async (req: Request, res: Response) => {
     // Verify reCAPTCHA
     let recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY
 
-    // Use test keys in development/test environment
-    if (process.env.NODE_ENV !== 'production' || !recaptchaSecret) {
-      // Google's test reCAPTCHA secret key - always validates successfully
+    // Use test keys only in non-production environments when no key is configured
+    if (process.env.NODE_ENV !== 'production' && !recaptchaSecret) {
+      // Google's test reCAPTCHA secret key - always validates successfully (dev only)
       recaptchaSecret = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     }
 

@@ -8,19 +8,22 @@ const HTTP_STATUS = {
   INTERNAL_SERVER_ERROR: 500,
 } as const
 
-// VAPID keys for Web Push API
-const vapidKeys = {
-  publicKey:
-    'BIYhxDOAqmZg6VijBF03tQjjLDBGnZO6plp45i4XQJbgY8EjudgnVYip5_pdbnHCZAmMXo74dstdV01n1DH0Oqk',
-  privateKey: 'CQ-R-YQ_453n-_he_1HCxn5b2P68xgahZK8ovVDWQZI',
+// VAPID keys for Web Push API - loaded from environment variables
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+const vapidEmail = process.env.VAPID_EMAIL || 'mailto:noreply@example.com'
+
+if (!vapidPublicKey || !vapidPrivateKey) {
+  console.warn('VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables are required for push notifications')
+} else {
+  // Set VAPID details
+  webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey)
 }
 
-// Set VAPID details
-webpush.setVapidDetails(
-  'mailto:noreply@cloudles.gr', // Replace with your email
-  vapidKeys.publicKey,
-  vapidKeys.privateKey,
-)
+const vapidKeys = {
+  publicKey: vapidPublicKey ?? '',
+  privateKey: vapidPrivateKey ?? '',
+}
 
 interface PushMessage {
   title: string
