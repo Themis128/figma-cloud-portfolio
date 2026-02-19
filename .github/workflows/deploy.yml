@@ -32,7 +32,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Run Biome linting
         run: pnpm lint
@@ -69,7 +69,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Run npm audit
         continue-on-error: true
@@ -151,7 +151,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Load secrets from AWS Secrets Manager
         run: |
@@ -222,7 +222,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Run quality checks (lint + typecheck)
         run: pnpm lint && pnpm typecheck
@@ -255,7 +255,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --no-audit
+        run: pnpm install --frozen-lockfile
 
       - uses: actions/download-artifact@v4
         with:
@@ -311,7 +311,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --no-audit
+        run: pnpm install --frozen-lockfile
 
       - uses: actions/download-artifact@v4
         with:
