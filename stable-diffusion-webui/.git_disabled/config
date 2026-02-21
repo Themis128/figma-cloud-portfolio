@@ -1,0 +1,28 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "upstream"]
+	url = https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
+[branch "master"]
+	remote = origin
+	vscode-merge-base = origin/master
+	merge = refs/heads/master
+	remote = upstream
+	merge = refs/heads/master
+	github-pr-owner-number = "AUTOMATIC1111#stable-diffusion-webui#17300"
+[branch "production"]
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+	github-pr-owner-number = "Themis128#figma-cloud-portfolio#2"
+[remote "origin"]
+	url = https://github.com/Themis128/stable-diffusion-webui.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
