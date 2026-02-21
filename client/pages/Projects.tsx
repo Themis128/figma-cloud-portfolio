@@ -76,9 +76,7 @@ const Projects: React.FC = () => {
       </Helmet>
 
       <div className='min-h-screen bg-linear-to-br from-slate-900 to-slate-800'>
-        <Suspense fallback={<div className='h-16 md:h-20 bg-slate-900/80 backdrop-blur-sm'></div>}>
-          <Navigation />
-        </Suspense>
+        <Navigation />
         <div className='container mx-auto px-4 py-12'>
           {/* Header */}
           <div className='text-center mb-12'>
