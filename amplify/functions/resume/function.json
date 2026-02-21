@@ -4,7 +4,8 @@
   "memory": 2048,
   "timeout": 300,
   "environment": {
-    "NODE_OPTIONS": "--max-old-space-size=2048"
+    "NODE_OPTIONS": "--max-old-space-size=2048",
+    "AWS_REGION": "us-east-1"
   },
   "layers": []
 }

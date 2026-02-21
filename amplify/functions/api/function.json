@@ -3,6 +3,9 @@
   "runtime": "nodejs18.x",
   "memory": 512,
   "timeout": 30,
-  "environment": {},
+  "environment": {
+    "AWS_REGION": "us-east-1",
+    "SES_REGION": "us-east-1"
+  },
   "layers": []
 }
