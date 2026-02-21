@@ -1,0 +1,41 @@
+// Prisma schema for agent management
+// See https://www.prisma.io/docs/concepts/components/prisma-schema for syntax
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Agent {
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  versions     AgentVersion[]
+  executions   AgentExecution[]
+}
+
+model AgentVersion {
+  id        String   @id @default(uuid())
+  agentId   String
+  agent     Agent    @relation(fields: [agentId], references: [id])
+  version   Int
+  config    Json
+  createdAt DateTime @default(now())
+}
+
+model AgentExecution {
+  id        String   @id @default(uuid())
+  agentId   String
+  agent     Agent    @relation(fields: [agentId], references: [id])
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+  status    String
+  error     String?
+  metrics   Json?
+}

@@ -11,6 +11,7 @@ import express, {
 } from 'express'
 import { Server as SocketIOServer } from 'socket.io'
 import { executeAgent, executeClaude } from './routes/ai'
+import { saveAgent, getAgents } from './routes/agents'
 import { handleAnalytics } from './routes/analytics'
 import { handleContactForm } from './routes/contact'
 import { handleDemo } from './routes/demo'
@@ -143,19 +144,17 @@ export function createServer() {
   // Serve static files from root directory (for deployment-monitor.html)
   app.use(express.static('.'))
 
-  // Caching middleware for API responses
-  app.use('/api', (req, res, next) => {
-    // Skip caching for POST/PUT/DELETE requests
-    if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-      return next()
-    }
 
-    // Set appropriate cache headers based on endpoint
+  // Register all API routes first
+  // ...existing code...
+
+  // Caching middleware for API responses (only for GET requests)
+  app.use('/api', (req, res, next) => {
+    if (req.method !== 'GET') return next()
     const cacheControl = getCacheControl(req.path)
     if (cacheControl) {
       res.setHeader('Cache-Control', cacheControl)
     }
-
     next()
   })
 
@@ -202,9 +201,14 @@ export function createServer() {
   app.put('/api/push-notifications', handlePushNotificationsPut)
   app.delete('/api/push-notifications', handlePushNotificationsDelete)
 
+
   // AI routes
   app.post('/api/ai/claude', executeClaude)
   app.post('/api/ai/agent', executeAgent)
+
+  // Agent logging routes
+  app.post('/api/agents', saveAgent)
+  app.get('/api/agents', getAgents)
 
   // Health check endpoints
   app.get('/api/health', (_req, res) => {

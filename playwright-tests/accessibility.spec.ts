@@ -207,12 +207,10 @@ test.describe('Accessibility (WCAG 2.1 AA)', () => {
       }
     })
 
-    test('should have proper focus indicators', async ({ page }) => {
+    test('should have proper focus indicators', async ({ page, browserName }) => {
       // Skip for Mobile Safari due to browser focus quirks
-      // Add browserName to parameters
-    }, async ({ page, browserName }) => {
       if (browserName === 'webkit' && process.env.PLAYWRIGHT_PROJECT === 'Mobile Safari') {
-        test.skip('Mobile Safari focus indicator test skipped due to browser limitations.')
+        test.skip()
         return
       }
       // Test focus visibility
@@ -292,10 +290,10 @@ test.describe('Accessibility (WCAG 2.1 AA)', () => {
       }
     })
 
-    test('should have descriptive link text', async ({ page }) => {
+    test('should have descriptive link text', async ({ page, browserName }) => {
       // Skip for Mobile Safari due to flaky link text reporting
       if (browserName === 'webkit' && process.env.PLAYWRIGHT_PROJECT === 'Mobile Safari') {
-        test.skip('Mobile Safari descriptive link text test skipped due to browser limitations.')
+        test.skip()
         return
       }
       const links = page.locator('a')
@@ -361,11 +359,10 @@ test.describe('Accessibility (WCAG 2.1 AA)', () => {
   })
 
   test.describe('Mobile Accessibility', () => {
-    test('should be accessible on mobile devices', async ({ page }) => {
+    test('should be accessible on mobile devices', async ({ page, browserName }) => {
       // Skip for Webkit due to flaky bounding box reporting
-    }, async ({ page, browserName }) => {
       if (browserName === 'webkit') {
-        test.skip('Webkit mobile accessibility test skipped due to bounding box limitations.')
+        test.skip()
         return
       }
       // Test mobile viewport

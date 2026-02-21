@@ -184,3 +184,46 @@ export interface AgentExecutionResponse {
   }
   error?: string
 }
+
+// Agent types for Amplify integration
+export interface Agent {
+  id?: string;
+  name: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AgentVersion {
+  id?: string;
+  agentId: string;
+  version: number;
+  config: Record<string, unknown>;
+  createdAt?: string;
+}
+
+export interface AgentExecution {
+  id?: string;
+  agentId: string;
+  startedAt?: string;
+  endedAt?: string;
+  status: string;
+  error?: string;
+  metrics?: Record<string, unknown>;
+}
+
+// API request/response types
+export interface SaveAgentRequest {
+  agent: Agent;
+}
+export interface SaveAgentResponse {
+  success: boolean;
+  agent?: Agent;
+  message?: string;
+}
+
+export interface ListAgentsResponse {
+  success: boolean;
+  agents: Agent[];
+  message?: string;
+}
