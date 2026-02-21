@@ -116,11 +116,10 @@ export default function Index() {
               {/* CTA Buttons */}
               <div className='flex flex-col sm:flex-row gap-4'>
                 <HoverButton>
-                  <Link to='/about'>
+                  <Link to='/about' aria-label='Learn more about Themistoklis Baltzakis'>
                     <Button
                       size='lg'
                       className='bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl'
-                      aria-describedby='learn-more-desc'
                     >
                       <User className='w-5 h-5 mr-2' aria-hidden='true' />
                       Learn More
@@ -129,12 +128,11 @@ export default function Index() {
                 </HoverButton>
 
                 <HoverButton>
-                  <Link to='/resume'>
+                  <Link to='/resume' aria-label='Build or download my resume'>
                     <Button
                       variant='outline'
                       size='lg'
                       className='border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900 font-semibold px-8 py-3 rounded-lg transition-all duration-300'
-                      aria-describedby='build-resume-desc'
                     >
                       <FileText className='w-5 h-5 mr-2' aria-hidden='true' />
                       Build Resume
@@ -143,12 +141,11 @@ export default function Index() {
                 </HoverButton>
 
                 <HoverButton>
-                  <Link to='/contact'>
+                  <Link to='/contact' aria-label='Get in touch via contact form'>
                     <Button
                       variant='outline'
                       size='lg'
                       className='border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-slate-900 font-semibold px-8 py-3 rounded-lg transition-all duration-300'
-                      aria-describedby='contact-desc'
                     >
                       <Mail className='w-5 h-5 mr-2' aria-hidden='true' />
                       Get In Touch
@@ -320,6 +317,7 @@ export default function Index() {
                   variant='outline'
                   size='sm'
                   className='border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900'
+                  aria-label='Learn more about Cloud Migration services'
                 >
                   Learn More
                 </Button>
@@ -335,6 +333,7 @@ export default function Index() {
                   variant='outline'
                   size='sm'
                   className='border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900'
+                  aria-label='Learn more about Security Assessment services'
                 >
                   Learn More
                 </Button>
@@ -352,6 +351,7 @@ export default function Index() {
                   variant='outline'
                   size='sm'
                   className='border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900'
+                  aria-label='Learn more about DevSecOps Implementation services'
                 >
                   Learn More
                 </Button>

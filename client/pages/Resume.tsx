@@ -19,6 +19,29 @@ import {
   User,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+
+// Simple error boundary for Resume page
+import React from 'react'
+
+class ResumeErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: unknown }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+  static getDerivedStateFromError(error: unknown) {
+    return { hasError: true, error }
+  }
+  componentDidCatch(error: unknown, errorInfo: unknown) {
+    // Optionally log error
+    // console.error('Resume page error:', error, errorInfo)
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div className="p-8 text-red-400 bg-red-900/20 rounded-lg">Something went wrong in the Resume page. Please refresh or try again later.</div>
+    }
+    return this.props.children
+  }
+}
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -87,7 +110,7 @@ const defaultResume: ResumeData = {
   ],
 }
 
-export default function Resume() {
+function Resume() {
   const [resume, setResume] = useState<ResumeData>(defaultResume)
   const [isGenerating, setIsGenerating] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
@@ -120,7 +143,7 @@ export default function Resume() {
     setIsGenerating(true)
     try {
       const blob = await generateResumePDF(resume)
-
+      if (!blob) throw new Error('No PDF blob returned')
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -129,15 +152,15 @@ export default function Resume() {
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-
       toast.success('Resume downloaded successfully!')
-
       // Track resume download
-      if (typeof window !== 'undefined' && window.trackResumeDownload) {
-        window.trackResumeDownload()
+      if (typeof window !== 'undefined' && (window as any).trackResumeDownload) {
+        (window as any).trackResumeDownload()
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('Failed to generate resume. Please try again.')
+      // Optionally log error
+      // console.error('Resume download error:', error)
     } finally {
       setIsGenerating(false)
     }
@@ -158,89 +181,89 @@ export default function Resume() {
 
   const addExperience = () => {
     const newExperience = {
-      title: '',
-      company: '',
-      date: '',
-      achievements: [],
-    }
-    updateResume('experience', [...resume.experience, newExperience])
-  }
+      return (
+        <ResumeErrorBoundary>
+          <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
+            {/* Circuit background */}
+            <CircuitBackground />
 
-  const removeExperience = (index: number) => {
-    const newExperience = resume.experience.filter((_, i) => i !== index)
-    updateResume('experience', newExperience)
-  }
+            {/* Navigation */}
+            <Navigation />
 
-  const updateExperience = (index: number, field: string, value: unknown) => {
-    const newExperience = [...resume.experience]
-    ;(newExperience[index] as Record<string, unknown>)[field] = value
-    updateResume('experience', newExperience)
-  }
+            <div className='relative z-10 min-h-screen'>
+              <div className='container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20'>
+                {/* Header */}
+                <div className='flex items-center justify-between mb-8'>
+                  <div className='flex items-center gap-4'>
+                    <Link to='/'>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        className='bg-white/10 border-white/20 text-white hover:bg-white/20'
+                      >
+                        <ArrowLeft className='w-4 h-4 mr-2' />
+                        Back to Home
+                      </Button>
+                    </Link>
+                    <div>
+                      <h1 className='text-3xl font-bold text-white'>Resume Builder</h1>
+                      <p className='text-white/70 text-sm mt-1'>
+                        Create a professional resume with live preview
+                      </p>
+                    </div>
+                  </div>
+                  <div className='flex gap-2'>
+                    <Button
+                      variant='outline'
+                      onClick={() => setShowPreview(!showPreview)}
+                      className='bg-white/10 border-white/20 text-white hover:bg-white/20'
+                    >
+                      {showPreview ? (
+                        <EyeOff className='w-4 h-4 mr-2' />
+                      ) : (
+                        <Eye className='w-4 h-4 mr-2' />
+                      )}
+                      {showPreview ? 'Hide' : 'Show'} Preview
+                    </Button>
+                    <Button
+                      variant='outline'
+                      onClick={() => {
+                        localStorage.setItem('resume-draft', JSON.stringify(resume))
+                        toast.success('Resume saved locally')
+                        setHasUnsavedChanges(false)
+                      }}
+                      className='bg-white/10 border-white/20 text-white hover:bg-white/20'
+                    >
+                      <Save className='w-4 h-4 mr-2' />
+                      Save Draft
+                    </Button>
+                    <Button
+                      onClick={handleDownload}
+                      disabled={isGenerating}
+                      className='bg-cyan-400 hover:bg-cyan-500 text-white'
+                    >
+                      <Download className='w-4 h-4 mr-2' />
+                      {isGenerating ? 'Generating...' : 'Download PDF'}
+                    </Button>
+                  </div>
+                </div>
 
-  const addEducation = () => {
-    const newEducation = {
-      degree: '',
-      institution: '',
-      date: '',
-    }
-    updateResume('education', [...resume.education, newEducation])
-  }
+                {hasUnsavedChanges && (
+                  <div className='mb-4 p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg'>
+                    <p className='text-yellow-200 text-sm'>
+                      You have unsaved changes. They will be auto-saved in 2 seconds.
+                    </p>
+                  </div>
+                )}
 
-  const removeEducation = (index: number) => {
-    const newEducation = resume.education.filter((_, i) => i !== index)
-    updateResume('education', newEducation)
-  }
-
-  const updateEducation = (index: number, field: string, value: string) => {
-    const newEducation = [...resume.education]
-    ;(newEducation[index] as Record<string, unknown>)[field] = value
-    updateResume('education', newEducation)
-  }
-
-  const addCertification = () => {
-    const newCertification = {
-      name: '',
-      issuer: '',
-      year: '',
-    }
-    updateResume('certifications', [...resume.certifications, newCertification])
-  }
-
-  const removeCertification = (index: number) => {
-    const newCertifications = resume.certifications.filter((_, i) => i !== index)
-    updateResume('certifications', newCertifications)
-  }
-
-  const updateCertification = (index: number, field: string, value: string) => {
-    const newCertifications = [...resume.certifications]
-    ;(newCertifications[index] as Record<string, unknown>)[field] = value
-    updateResume('certifications', newCertifications)
-  }
-
-  const addCompetencyCategory = () => {
-    const categoryName = prompt('Enter category name:')
-    if (categoryName && !resume.competencies[categoryName]) {
-      updateResume('competencies', {
-        ...resume.competencies,
-        [categoryName]: [],
-      })
-    }
-  }
-
-  const removeCompetencyCategory = (category: string) => {
-    const newCompetencies = { ...resume.competencies }
-    delete newCompetencies[category]
-    updateResume('competencies', newCompetencies)
-  }
-
-  const addCompetencySkill = (category: string) => {
-    const skill = prompt('Enter skill:')
-    if (skill) {
-      const newCompetencies = { ...resume.competencies }
-      newCompetencies[category] = [...(newCompetencies[category] || []), skill]
-      updateResume('competencies', newCompetencies)
-    }
-  }
+                <div
+                  className={`grid gap-8 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}
+                >
+                  {/* Form Section */}
+                  <div className={showPreview ? '' : 'max-w-4xl mx-auto'}>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className='flex items-center gap-2'>
 
   const removeCompetencySkill = (category: string, skillIndex: number) => {
     const newCompetencies = { ...resume.competencies }
@@ -891,3 +914,5 @@ export default function Resume() {
     </div>
   )
 }
+
+export default Resume

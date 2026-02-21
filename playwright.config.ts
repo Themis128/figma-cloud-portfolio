@@ -61,6 +61,28 @@ export interface EnvironmentSettings {
 // =============================================================================
 
 const BROWSER_LAUNCH_ARGS = {
+  // Chrome/Chromium only args - not compatible with WebKit
+  CHROMIUM_ONLY: [
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--disable-features=TranslateUI,BlinkGenPropertyTrees',
+    '--disable-ipc-flooding-protection',
+    '--disable-component-extensions-with-background-pages',
+    '--disable-hang-monitor',
+    '--disable-prompt-on-repost',
+    '--enable-features=NetworkService,NetworkServiceInProcess,VizDisplayCompositor',
+    '--disable-background-networking',
+    '--disable-sync',
+    '--disable-translate',
+    '--no-crash-upload',
+    '--disable-logging',
+    '--disable-dev-tools',
+    '--memory-pressure-off',
+    '--max_old_space_size=4096',
+    '--disable-accelerated-2d-canvas',
+  ],
+
   PERFORMANCE: [
     '--disable-background-timer-throttling',
     '--disable-backgrounding-occluded-windows',
@@ -97,6 +119,12 @@ const BROWSER_LAUNCH_ARGS = {
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-gpu',
+  ],
+
+  // WebKit-compatible security args (minimal set)
+  WEBKIT_SECURITY: [
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
   ],
 
   RESOURCES: [
@@ -345,7 +373,8 @@ const getBrowserProjects = () => {
         use: {
           ...devices['Desktop Safari'],
           launchOptions: {
-            args: [...BROWSER_LAUNCH_ARGS.PERFORMANCE, ...BROWSER_LAUNCH_ARGS.SECURITY],
+            // WebKit doesn't support Chrome/Firefox specific args - use minimal args
+            args: [],
             ignoreDefaultArgs: ['--enable-automation'],
             ignoreHTTPSErrors: true,
           },
@@ -375,7 +404,8 @@ const getBrowserProjects = () => {
         use: {
           ...devices['iPhone 14'],
           launchOptions: {
-            args: [...BROWSER_LAUNCH_ARGS.PERFORMANCE, ...BROWSER_LAUNCH_ARGS.SECURITY],
+            // WebKit doesn't support Chrome-specific args - use minimal args
+            args: [],
             ignoreDefaultArgs: ['--enable-automation'],
             ignoreHTTPSErrors: true,
           },

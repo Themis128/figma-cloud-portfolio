@@ -9,6 +9,15 @@ import { navigateWithMobileSupport } from './test-utils'
 test.describe('API Integration Tests', () => {
   test.describe('Resume API', () => {
     test('should generate and download resume PDF', { tag: '@fast' }, async ({ page }) => {
+      // Mock the resume PDF API to return a fake PDF blob
+      await page.route('**/api/resume/download', (route) => {
+        route.fulfill({
+          status: 200,
+          contentType: 'application/pdf',
+          body: Buffer.from('%PDF-1.4\n%Fake PDF for test\n', 'utf-8'),
+        })
+      })
+
       // Navigate to resume page
       await page.goto('/resume')
 
@@ -20,8 +29,11 @@ test.describe('API Integration Tests', () => {
       await expect(downloadButton).toBeVisible()
       await expect(downloadButton).toBeEnabled()
 
-      // For now, just verify the button exists and the page loads
-      // The actual download functionality would require backend integration
+      // Click the download button and ensure no error is thrown
+      await downloadButton.click()
+      // Optionally, check for a toast or UI feedback
+      await page.waitForTimeout(500)
+      // The actual download is mocked
       expect(true).toBe(true)
     })
 
@@ -50,6 +62,10 @@ test.describe('API Integration Tests', () => {
           await navigateWithMobileSupport(page, '/resume')
         }
 
+        // Click the download button and ensure error is handled gracefully
+        const downloadButton = page.locator('button:has-text("Download PDF")')
+        await downloadButton.click()
+        await page.waitForTimeout(500)
         // Should handle error gracefully (no crash, user feedback)
         await expect(page.locator('body')).toBeVisible()
       },
@@ -63,6 +79,22 @@ test.describe('API Integration Tests', () => {
       async ({ page, context }) => {
         // Grant notification permission
         await context.grantPermissions(['notifications'])
+
+        // Mock VAPID key and push subscription endpoints
+        await page.route('**/api/push/vapid-key', (route) => {
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ vapidKey: 'test-vapid-key' }),
+          })
+        })
+        await page.route('**/api/push/subscribe', (route) => {
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ success: true, endpoint: 'https://mock-endpoint' }),
+          })
+        })
 
         await page.goto('/')
 

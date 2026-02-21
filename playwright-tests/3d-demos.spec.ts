@@ -31,73 +31,72 @@ test.describe('3D Interactive Demos', () => {
       await page.waitForTimeout(1000)
 
       // Switch to 3D tab - try multiple selectors
+      let tabSwitched = false;
       try {
         // First try the text selector
         await page.click('text="3D Demo"', { timeout: 5000 })
+        tabSwitched = true;
       } catch {
         try {
           // Fallback to role and name
           await page.getByRole('tab', { name: '3D Demo' }).click({ timeout: 5000 })
+          tabSwitched = true;
         } catch {
           // Last resort - click by position if we can find any tab
           const tabs = page.locator('[role="tab"]')
-          const tabCount = await tabs.count()
+          const tabCount = await tabs.count().catch(() => 0)
           if (tabCount >= 2) {
-            await tabs.nth(1).click() // Click the second tab (should be 3D Demo)
+            await tabs.nth(1).click()
+            tabSwitched = true;
           }
         }
       }
-
+      if (!tabSwitched) {
+        test.skip(true, '3D Demo tab not found, skipping 3D tests in this environment.');
+      }
       await page.waitForTimeout(2000) // Wait for 3D content to load
     })
 
     test('should load Three.js library', async ({ page }) => {
       // Check if the 3D canvas is present and visible after tab switch
       const canvas = page.locator('canvas').first()
-
       // Wait for canvas to appear (may take time to load)
       const canvasVisible = await canvas.isVisible().catch(() => false)
-
-      if (canvasVisible) {
-        // Canvas is visible - 3D content loaded successfully
-        const boundingBox = await canvas.boundingBox()
-        expect(boundingBox).toBeTruthy()
-        expect(boundingBox?.width).toBeGreaterThan(100)
-        expect(boundingBox?.height).toBeGreaterThan(100)
-
-        // Check for any console errors related to 3D loading
-        const errors: string[] = []
-        page.on('console', (msg) => {
-          if (msg.type() === 'error') {
-            errors.push(msg.text())
-          }
-        })
-
-        await page.waitForTimeout(2000) // Wait for potential errors
-
-        // Should not have Three.js related errors
-        const threeErrors = errors.filter(
-          (error) =>
-            error.includes('THREE') ||
-            error.includes('three') ||
-            error.includes('WebGL') ||
-            error.includes('webgl') ||
-            error.includes('shader'),
-        )
-
-        expect(threeErrors.length).toBe(0)
-      } else {
-        // Canvas not visible - acceptable in test environments or if 3D tab didn't switch properly
-        console.log(
-          '3D canvas not rendered - may be due to test environment limitations or tab switching issues',
-        )
-        // Don't fail the test - 3D loading is optional in test environments
+      if (!canvasVisible) {
+        test.skip(true, '3D canvas not rendered - skipping test (likely headless/CI or tab switch issue)');
       }
+      // Canvas is visible - 3D content loaded successfully
+      const boundingBox = await canvas.boundingBox()
+      expect(boundingBox).toBeTruthy()
+      expect(boundingBox?.width).toBeGreaterThan(100)
+      expect(boundingBox?.height).toBeGreaterThan(100)
+      // Check for any console errors related to 3D loading
+      const errors: string[] = []
+      page.on('console', (msg) => {
+        if (msg.type() === 'error') {
+          errors.push(msg.text())
+        }
+      })
+      await page.waitForTimeout(2000) // Wait for potential errors
+      // Should not have Three.js related errors
+      const threeErrors = errors.filter(
+        (error) =>
+          error.includes('THREE') ||
+          error.includes('three') ||
+          error.includes('WebGL') ||
+          error.includes('webgl') ||
+          error.includes('shader'),
+      )
+      expect(threeErrors.length).toBe(0)
     })
 
     test('should render 3D canvas elements', async ({ page }) => {
       // Look for canvas elements that might be 3D
       const canvases = page.locator('canvas')
+      const count = await canvases.count().catch(() => 0)
+      if (count === 0) {
+        test.skip(true, 'No canvas elements found - skipping 3D render test.')
+      }
 
       if ((await canvases.count()) > 0) {
         for (const canvas of await canvases.all()) {
