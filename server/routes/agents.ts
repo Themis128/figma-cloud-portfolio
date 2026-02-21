@@ -3,7 +3,7 @@ import { logger } from '../logger'
 import { saveAgentToDB, listAgentsFromDB } from '../lib/amplify'
 import { AgentSchema } from '../lib/agent-validation'
 
-export const createAgent: RequestHandler = async (req, res) => {
+export const saveAgent: RequestHandler = async (req, res) => {
   try {
     const agent = req.body
     const parseResult = AgentSchema.safeParse(agent)
@@ -20,7 +20,7 @@ export const createAgent: RequestHandler = async (req, res) => {
   }
 }
 
-export const listAgents: RequestHandler = async (_req, res) => {
+export const getAgents: RequestHandler = async (_req, res) => {
   try {
     const agents = await listAgentsFromDB()
     logger.info(`[Agent] Listing ${agents.length} agents`)
