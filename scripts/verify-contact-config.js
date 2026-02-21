@@ -13,8 +13,8 @@ config()
 
 const checks = {
   aws: {
-    name: 'AWS Credentials',
-    required: ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION'],
+    name: 'AWS SES (Email Service)',
+    required: ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'SES_VERIFIED_EMAIL'],
     optional: [],
   },
   slack: {
