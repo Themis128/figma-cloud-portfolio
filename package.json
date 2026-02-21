@@ -35,6 +35,7 @@
     "setup:tools": "node scripts/setup-tools.js",
     "setup:playwright": "pnpm exec playwright install",
     "setup:contact": "node scripts/verify-contact-config.js",
+    "setup:ses": "node scripts/setup-ses.js",
     "setup:shell": "tsx scripts/shell-integration-setup.ts",
     "setup:secrets:sh": "bash ./scripts/set-gh-secrets.sh",
     "setup:secrets:ps1": "pwsh ./scripts/set-gh-secrets.ps1",

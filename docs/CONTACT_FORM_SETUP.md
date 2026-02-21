@@ -2,8 +2,20 @@
 
 ## Overview
 The contact form sends:
-- **Confirmation email** to users via AWS SES (from noreply@cloudless.com)
+- **Confirmation email** to users via AWS SES (from your verified email)
 - **Notification** to you via Slack webhook with all form details
+
+## Quick Setup
+
+Run the interactive setup script:
+```bash
+pnpm setup:ses
+```
+
+Or manually verify your configuration:
+```bash
+pnpm setup:contact
+```
 
 ## Prerequisites
 
