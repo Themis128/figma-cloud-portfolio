@@ -122,6 +122,73 @@ wsl -l -v
 wsl -d Ubuntu-24.04 -- bash -l -c "echo 'WSL OK'"
 ```
 
+### Issue 8: WSL2 Remote Connection Keeps Disconnecting
+**Symptoms:** VS Code Insiders frequently loses connection to WSL2, prompts "Reload Window", or shows "The reconnection grace time has expired"
+
+**Common Causes:**
+1. **WSL2 memory exhaustion** — vmmem process consumes all available RAM, WSL gets OOM-killed
+2. **No `.wslconfig`** — WSL defaults to 50% of system RAM with no memory reclaim
+3. **Sleep/hibernate** — reconnection grace time (3h) expires during sleep
+4. **Stale VS Code Server** — corrupted server state or orphaned processes inside WSL
+5. **Wrong connection method** — default method struggles to reconnect after network changes
+
+**Quick Diagnostic:**
+```powershell
+# Run the full diagnostic script
+& .\scripts\fix-wsl-connection.ps1
+
+# Or run with auto-fix (creates .wslconfig, etc.)
+& .\scripts\fix-wsl-connection.ps1 -FixAll
+```
+
+**Manual Fixes:**
+
+**Fix 1 — Create `C:\Users\<YourUsername>\.wslconfig`:**
+```ini
+[wsl2]
+memory=8GB
+processors=4
+swap=4GB
+localhostForwarding=true
+
+[experimental]
+autoMemoryReclaim=gradual
+sparseVhd=true
+```
+Then restart WSL: `wsl --shutdown`
+
+**Fix 2 — Use `wslExeProxy` connection method:**
+Add to VS Code Insiders `settings.json`:
+```json
+{
+  "remote.WSL2.connectionMethod": "wslExeProxy"
+}
+```
+This improves reconnection after sleep and network adapter changes.
+
+**Fix 3 — Clean stale VS Code Server in WSL:**
+```bash
+# Kill orphaned processes
+pkill -f vscode-server-insiders
+
+# Remove stale lock files
+find ~/.vscode-server-insiders/ -name '*.lock' -mmin +60 -delete
+
+# Nuclear option — forces full server re-download:
+rm -rf ~/.vscode-server-insiders
+```
+
+**Fix 4 — Keep WSL updated:**
+```powershell
+wsl --update
+wsl --shutdown
+```
+
+**Related GitHub Issues:**
+- [#10818](https://github.com/microsoft/vscode-remote-release/issues/10818) — WSL Connection consistently disconnecting
+- [#11091](https://github.com/microsoft/vscode-remote-release/issues/11091) — Constantly losing connection to WSL
+- [#10810](https://github.com/microsoft/vscode-remote-release/issues/10810) — Cannot reconnect after waking from sleep
+
 ---
 
 ## VS Code Specific Fixes
