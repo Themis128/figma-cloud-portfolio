@@ -1,0 +1,25 @@
+82a973c04367123ae98bd9abdf80d9eda9b910e2		branch 'master' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+dc34c0041c41654998111fd3e0ab2abcc426aec1	not-for-merge	branch 'Authenticated-Sysinfo' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+b2bbc01b920085d089c03ed5a787f56b70fd7773	not-for-merge	branch 'Forbid-too-small-crop-region---compact' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+920a3a4dceafd56f2c45f14ea61a31baa05bfc92	not-for-merge	branch 'SD3-Lora-page-filter---detection-not-implemented' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+9bc3332d86286765c15b0439229e68c535130f13	not-for-merge	branch 'add-Usage-Syntax-to-Prompts-from-file-or-textbox' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+e936dbb43b8e0f2bbd443e6188f88f0f3fd3b731	not-for-merge	branch 'add-middleware-after-app-has-started' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+d5eb3960465dcd8d33f53a39bd5830ea621e51f6	not-for-merge	branch 'bump-Pillow-blendmodes-dependency' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+661322707f003e89cf3a0897c72d2a9053d401df	not-for-merge	branch 'canvas-undo-hotkey,adjust-brush-size-by-area' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+c7fbcb5789378e3130457f97b074cf5d413f7eff	not-for-merge	branch 'compact-Soft-Inpainting-infotext' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+a36a30fb933723d983edd90044a697fe75bfb3b0	not-for-merge	branch 'consistency-dec' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+eb08cc3e077bff64a794eecaa70e6b67ba07d7de	not-for-merge	branch 'cu126-10-series-gpu' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+fd68e0c3846b07c637c3d57b0c38f06c8485a753	not-for-merge	branch 'dev' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+6aa7925d36431d882c9999f9514b818fcbfc312e	not-for-merge	branch 'fix-sd_hijack-infotext-cased-by-conda-cache' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+08c68820cda88f254a1a0d8b871e7695f6d83073	not-for-merge	branch 'gradio-4.x-test' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+623ce9ef50e4abcec7c8a9fd7779d65557c7e54a	not-for-merge	branch 'gradio4' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+a1219e84e2a00d1f75613e92e6b0a70ff94d03f2	not-for-merge	branch 'hires-button-opt-insert-gallery' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+9adeed18f16e4b9a30087c5c264c0875be5de9f6	not-for-merge	branch 'lora_emb_bundle' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+ac8c05398bd103404995fafb936e88a1b711344f	not-for-merge	branch 'method-3-fix-sd_hijack-infotext-cased-by-conda-cache' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+cdb88d798da8d4262e43e2b8cc0ac57cf2d34487	not-for-merge	branch 'more-extra-transparency-fix-again' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+842dd5ea75f0862645f20920ec06b10fa0477fc9	not-for-merge	branch 'option-reduce-connecting-to-huggingface' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+4861dccf7c2114e3782747e9f39c3c64e723e2f3	not-for-merge	branch 'reduce-server-request' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+f1d7c07a5a12f182b9456b5ed0871cce1fa795d4	not-for-merge	branch 'refiner_alt' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+8b3d98c5a580c3c72e82d03fdab2b643bf9a8edd	not-for-merge	branch 'release_candidate' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+22ad1d3fdc079c64f59ecaec1511485b56d6f522	not-for-merge	branch 'revert-use-of-gitpython-hijack' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
+60efbc4618f7ad2e0c5cb813bed3011af7a05e43	not-for-merge	branch 'server-reload-API' of https://github.com/AUTOMATIC1111/stable-diffusion-webui
