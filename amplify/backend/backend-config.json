@@ -1,1 +1,22 @@
-{}
+{
+"auth": {
+"auth": {
+"service": "Cognito",
+"providerPlugin": "awscloudformation",
+"dependsOn": []
+}
+},
+"data": {
+"agent": {
+"service": "DataStore",
+"providerPlugin": "awscloudformation",
+"dependsOn": [
+{
+"category": "auth",
+"resourceName": "auth"
+}
+],
+"build": true
+}
+}
+}

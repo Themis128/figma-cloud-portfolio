@@ -1,14 +1,8 @@
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
-const schema = a.schema({
-  // Define your data models here
-  // Example:
-  // Todo: a
-  //   .model({
-  //     content: a.string(),
-  //   })
-  //   .authorization((allow) => [allow.owner()]),
-});
+import { schema as agentSchema } from './agent-schema'
+
+const schema = agentSchema;
 
 export type Schema = ClientSchema<typeof schema>;
 
