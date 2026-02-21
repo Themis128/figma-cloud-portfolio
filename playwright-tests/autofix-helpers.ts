@@ -70,8 +70,8 @@ export class HealingLocator {
         this.attempts = 0
         return
       } catch (error: unknown) {
+        this.attempts = attempt
         if (this.isStaleError(error) && attempt < this.options.maxRetries) {
-          this.attempts = attempt
           await this.heal()
           continue
         }
@@ -302,10 +302,10 @@ export class SmartWaiter {
         if (typeof text === 'object' && text instanceof RegExp) {
           return text.test(elementText)
         }
-        return elementText.includes(text)
+        return elementText.includes(text as string)
       },
-      { timeout },
       { selector, text: expectedText },
+      { timeout },
     )
   }
 

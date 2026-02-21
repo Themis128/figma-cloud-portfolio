@@ -17,15 +17,15 @@ const checks = {
     required: ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'SES_VERIFIED_EMAIL'],
     optional: [],
   },
-  slack: {
-    name: 'Slack Webhook',
-    required: ['SLACK_WEBHOOK_URL'],
-    optional: [],
-  },
   recaptcha: {
     name: 'reCAPTCHA',
     required: ['RECAPTCHA_SECRET_KEY'],
     optional: [],
+  },
+  slack: {
+    name: 'Slack Webhook (Optional)',
+    required: [],
+    optional: ['SLACK_WEBHOOK_URL'],
   },
 }
 

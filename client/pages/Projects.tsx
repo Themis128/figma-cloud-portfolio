@@ -4,6 +4,7 @@ import { lazy, Suspense, useMemo } from 'react'
 import { Helmet } from 'react-helmet-async'
 
 import { useSampleProjects } from '@/components/Interactive3DDemo'
+import Navigation from '@/components/Navigation'
 
 const Interactive3DDemo = lazy(() =>
   import('@/components/Interactive3DDemo').then((module) => ({
@@ -74,7 +75,10 @@ const Projects: React.FC = () => {
         <script type='application/ld+json'>{JSON.stringify(structuredData)}</script>
       </Helmet>
 
-      <div className='min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800'>
+      <div className='min-h-screen bg-linear-to-br from-slate-900 to-slate-800'>
+        <Suspense fallback={<div className='h-16 md:h-20 bg-slate-900/80 backdrop-blur-sm'></div>}>
+          <Navigation />
+        </Suspense>
         <div className='container mx-auto px-4 py-12'>
           {/* Header */}
           <div className='text-center mb-12'>

@@ -68,6 +68,7 @@ export default function Navigation() {
 
       {/* Mobile Navigation */}
       <div
+        data-testid="mobile-menu"
         className={`md:hidden absolute top-full left-0 right-0 bg-white/10 backdrop-blur-md border-t border-white/20 transition-all duration-300 ${
           isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
         }`}

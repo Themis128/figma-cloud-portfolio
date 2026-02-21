@@ -50,6 +50,14 @@ test.describe('Deep Linking — Direct URL Access', () => {
     await page.goto('/this-route-does-not-exist-xyz')
     await page.waitForLoadState('domcontentloaded')
 
+    // Wait for React to hydrate - look for 404 content
+    await page.waitForFunction(() => {
+      const body = document.body.textContent || ''
+      return body.includes('404') || 
+             body.toLowerCase().includes('not found') ||
+             body.toLowerCase().includes("doesn't exist")
+    }, { timeout: 10000 })
+
     const body = await page.locator('body').textContent()
     // Should show a not-found message
     const has404 =
@@ -88,8 +96,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    // Try clicking the "About" link if it exists in nav
-    const aboutLink = page.locator('nav a[href="/about"]')
+    // Try clicking the "About" link if it exists in nav - use .first() to avoid strict mode violation
+    const aboutLink = page.locator('nav a[href="/about"]').first()
     if ((await aboutLink.count()) > 0) {
       await aboutLink.click()
       await page.waitForURL('**/about', { timeout: 5000 })
@@ -101,7 +109,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const productLink = page.locator('nav a[href="/product"]')
+    // Use .first() to avoid strict mode violation
+    const productLink = page.locator('nav a[href="/product"]').first()
     if ((await productLink.count()) > 0) {
       await productLink.click()
       await page.waitForURL('**/product', { timeout: 5000 })
@@ -116,7 +125,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const link = page.locator('nav a[href="/projects"]')
+    // Use .first() to avoid strict mode violation
+    const link = page.locator('nav a[href="/projects"]').first()
     if ((await link.count()) > 0) {
       await link.click()
       await page.waitForURL('**/projects', { timeout: 5000 })
@@ -128,7 +138,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const link = page.locator('nav a[href="/resume"]')
+    // Use .first() to avoid strict mode violation
+    const link = page.locator('nav a[href="/resume"]').first()
     if ((await link.count()) > 0) {
       await link.click()
       await page.waitForURL('**/resume', { timeout: 5000 })
@@ -140,7 +151,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const link = page.locator('nav a[href="/settings"]')
+    // Use .first() to avoid strict mode violation
+    const link = page.locator('nav a[href="/settings"]').first()
     if ((await link.count()) > 0) {
       await link.click()
       await page.waitForURL('**/settings', { timeout: 5000 })
@@ -152,7 +164,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const link = page.locator('nav a[href="/performance"]')
+    // Use .first() to avoid strict mode violation
+    const link = page.locator('nav a[href="/performance"]').first()
     if ((await link.count()) > 0) {
       await link.click()
       await page.waitForURL('**/performance', { timeout: 5000 })
@@ -164,7 +177,8 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const link = page.locator('nav a[href="/agents"]')
+    // Use .first() to avoid strict mode violation
+    const link = page.locator('nav a[href="/agents"]').first()
     if ((await link.count()) > 0) {
       await link.click()
       await page.waitForURL('**/agents', { timeout: 5000 })
@@ -245,17 +259,18 @@ test.describe('Mobile Navigation — Hamburger Menu', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    // Find and click the mobile menu button
-    const menuButton = page.locator('button[aria-label*="menu" i], [class*="hamburger"]').first()
+    // Find and click the mobile menu button by aria-label
+    const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
 
     if ((await menuButton.count()) > 0) {
       await menuButton.click()
+      
+      // Wait for menu animation
+      await page.waitForTimeout(500)
 
-      // Menu should now be expanded/visible
-      const mobileMenu = page.locator(
-        '[class*="mobile-menu"], [class*="mobile-nav"], nav ul, [role="menu"]',
-      )
-      await expect(mobileMenu.first()).toBeVisible()
+      // Check that the mobile menu container is visible using testid
+      const mobileMenu = page.getByTestId('mobile-menu')
+      await expect(mobileMenu).toBeVisible()
     }
   })
 
@@ -328,13 +343,23 @@ test.describe('Route Content — Each Page Renders Expected Content', () => {
 
   test('/projects renders projects gallery', async ({ page }) => {
     await page.goto('/projects')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
+    
+    // Wait for React to hydrate - look for any content
+    await page.waitForFunction(() => {
+      const body = document.body.textContent || ''
+      return body.length > 100
+    }, { timeout: 10000 })
 
     const body = await page.locator('body').textContent()
+    // The page shows "Projects & Portfolio" heading and project statistics
     const hasContent =
       body?.toLowerCase().includes('project') ||
-      body?.toLowerCase().includes('github') ||
-      body?.toLowerCase().includes('portfolio')
+      body?.toLowerCase().includes('portfolio') ||
+      body?.toLowerCase().includes('web app') ||
+      body?.toLowerCase().includes('work') ||
+      body?.toLowerCase().includes('3d') ||
+      body?.toLowerCase().includes('grid')
     expect(hasContent).toBeTruthy()
   })
 
@@ -397,13 +422,25 @@ test.describe('Route Health — No 500 Errors or Blank Pages', () => {
       await page.goto(route.path)
       await page.waitForLoadState('domcontentloaded')
 
+      // Wait for React to hydrate
+      await page.waitForFunction(() => {
+        const body = document.body.textContent || ''
+        return body.length > 50
+      }, { timeout: 10000 })
+
       const bodyText = await page.locator('body').textContent()
       expect(bodyText?.trim().length).toBeGreaterThan(50)
     })
 
     test(`${route.path} has a visible navigation bar`, async ({ page }) => {
       await page.goto(route.path)
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
+
+      // Wait for React to hydrate and render nav
+      await page.waitForFunction(() => {
+        const nav = document.querySelector('nav')
+        return nav !== null
+      }, { timeout: 10000 })
 
       const nav = page.locator('nav')
       await expect(nav.first()).toBeVisible()

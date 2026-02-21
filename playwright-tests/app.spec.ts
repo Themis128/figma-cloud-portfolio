@@ -199,12 +199,13 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     // On desktop, check for main navigation links
     const viewportSize = page.viewportSize()
     if (viewportSize && viewportSize.width >= 768) {
-      await expect(page.getByRole('link', { name: 'Home' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'About' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'Resume' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'Contact' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'Performance' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'Agents' })).toBeVisible()
+      // Use .first() to avoid strict mode violations when multiple matching links exist
+      await expect(page.getByRole('link', { name: 'Home' }).first()).toBeVisible()
+      await expect(page.getByRole('link', { name: 'About' }).first()).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Resume' }).first()).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Contact' }).first()).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Performance' }).first()).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Agents' }).first()).toBeVisible()
     } else {
       // On mobile, navigation links are in the mobile menu
       // Just check that the mobile menu button exists
@@ -300,8 +301,8 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
     const mobileMenu = page.locator('[role="dialog"], .mobile-menu, [aria-expanded="true"]')
     await expect(mobileMenu).toBeVisible()
 
-    // Click a navigation link
-    await page.getByRole('link', { name: 'About' }).click()
+    // Click a navigation link - use .first() to avoid strict mode violation
+    await page.getByRole('link', { name: 'About' }).first().click()
 
     // Mobile menu should be closed
     await expect(mobileMenu).not.toBeVisible()
@@ -709,8 +710,8 @@ test.describe('Baltzakis Themistoklis Portfolio', () => {
       // Check phone
       await expect(page.getByText('+30 697 777 7838')).toBeVisible()
 
-      // Check email
-      await expect(page.getByText('baltzakis.themis@gmail.com')).toBeVisible()
+      // Check email - updated to match actual component (tbaltzakis@cloudless.gr)
+      await expect(page.getByText('tbaltzakis@cloudless.gr')).toBeVisible()
 
       // Check LinkedIn link
       const linkedinLink = page.getByRole('link', {

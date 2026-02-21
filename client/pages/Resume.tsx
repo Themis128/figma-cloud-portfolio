@@ -181,89 +181,92 @@ function Resume() {
 
   const addExperience = () => {
     const newExperience = {
-      return (
-        <ResumeErrorBoundary>
-          <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
-            {/* Circuit background */}
-            <CircuitBackground />
+      title: 'New Position',
+      company: 'Company Name | Location',
+      date: 'Start Date - End Date',
+      achievements: ['Key achievement 1', 'Key achievement 2'],
+    }
+    updateResume('experience', [...resume.experience, newExperience])
+  }
 
-            {/* Navigation */}
-            <Navigation />
+  const removeExperience = (index: number) => {
+    updateResume(
+      'experience',
+      resume.experience.filter((_, i) => i !== index)
+    )
+  }
 
-            <div className='relative z-10 min-h-screen'>
-              <div className='container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20'>
-                {/* Header */}
-                <div className='flex items-center justify-between mb-8'>
-                  <div className='flex items-center gap-4'>
-                    <Link to='/'>
-                      <Button
-                        variant='outline'
-                        size='sm'
-                        className='bg-white/10 border-white/20 text-white hover:bg-white/20'
-                      >
-                        <ArrowLeft className='w-4 h-4 mr-2' />
-                        Back to Home
-                      </Button>
-                    </Link>
-                    <div>
-                      <h1 className='text-3xl font-bold text-white'>Resume Builder</h1>
-                      <p className='text-white/70 text-sm mt-1'>
-                        Create a professional resume with live preview
-                      </p>
-                    </div>
-                  </div>
-                  <div className='flex gap-2'>
-                    <Button
-                      variant='outline'
-                      onClick={() => setShowPreview(!showPreview)}
-                      className='bg-white/10 border-white/20 text-white hover:bg-white/20'
-                    >
-                      {showPreview ? (
-                        <EyeOff className='w-4 h-4 mr-2' />
-                      ) : (
-                        <Eye className='w-4 h-4 mr-2' />
-                      )}
-                      {showPreview ? 'Hide' : 'Show'} Preview
-                    </Button>
-                    <Button
-                      variant='outline'
-                      onClick={() => {
-                        localStorage.setItem('resume-draft', JSON.stringify(resume))
-                        toast.success('Resume saved locally')
-                        setHasUnsavedChanges(false)
-                      }}
-                      className='bg-white/10 border-white/20 text-white hover:bg-white/20'
-                    >
-                      <Save className='w-4 h-4 mr-2' />
-                      Save Draft
-                    </Button>
-                    <Button
-                      onClick={handleDownload}
-                      disabled={isGenerating}
-                      className='bg-cyan-400 hover:bg-cyan-500 text-white'
-                    >
-                      <Download className='w-4 h-4 mr-2' />
-                      {isGenerating ? 'Generating...' : 'Download PDF'}
-                    </Button>
-                  </div>
-                </div>
+  const updateExperience = (index: number, field: string, value: unknown) => {
+    const newExperience = [...resume.experience]
+    newExperience[index] = { ...newExperience[index], [field]: value }
+    updateResume('experience', newExperience)
+  }
 
-                {hasUnsavedChanges && (
-                  <div className='mb-4 p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg'>
-                    <p className='text-yellow-200 text-sm'>
-                      You have unsaved changes. They will be auto-saved in 2 seconds.
-                    </p>
-                  </div>
-                )}
+  const addEducation = () => {
+    const newEducation = {
+      degree: 'Degree Name',
+      institution: 'Institution Name | Location',
+      date: 'Start Year - End Year',
+    }
+    updateResume('education', [...resume.education, newEducation])
+  }
 
-                <div
-                  className={`grid gap-8 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}
-                >
-                  {/* Form Section */}
-                  <div className={showPreview ? '' : 'max-w-4xl mx-auto'}>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className='flex items-center gap-2'>
+  const removeEducation = (index: number) => {
+    updateResume(
+      'education',
+      resume.education.filter((_, i) => i !== index)
+    )
+  }
+
+  const updateEducation = (index: number, field: string, value: string) => {
+    const newEducation = [...resume.education]
+    newEducation[index] = { ...newEducation[index], [field]: value }
+    updateResume('education', newEducation)
+  }
+
+  const addCertification = () => {
+    const newCertification = {
+      name: 'Certification Name',
+      issuer: 'Issuing Organization',
+      year: '2024',
+    }
+    updateResume('certifications', [...resume.certifications, newCertification])
+  }
+
+  const removeCertification = (index: number) => {
+    updateResume(
+      'certifications',
+      resume.certifications.filter((_, i) => i !== index)
+    )
+  }
+
+  const updateCertification = (index: number, field: string, value: string) => {
+    const newCertifications = [...resume.certifications]
+    newCertifications[index] = { ...newCertifications[index], [field]: value }
+    updateResume('certifications', newCertifications)
+  }
+
+  const addCompetencyCategory = () => {
+    const category = prompt('Enter category name:')
+    if (category) {
+      updateResume('competencies', { ...resume.competencies, [category]: [] })
+    }
+  }
+
+  const removeCompetencyCategory = (category: string) => {
+    const newCompetencies = { ...resume.competencies }
+    delete newCompetencies[category]
+    updateResume('competencies', newCompetencies)
+  }
+
+  const addCompetencySkill = (category: string) => {
+    const skill = prompt('Enter skill:')
+    if (skill) {
+      const newCompetencies = { ...resume.competencies }
+      newCompetencies[category] = [...(newCompetencies[category] || []), skill]
+      updateResume('competencies', newCompetencies)
+    }
+  }
 
   const removeCompetencySkill = (category: string, skillIndex: number) => {
     const newCompetencies = { ...resume.competencies }
@@ -421,9 +424,10 @@ function Resume() {
   )
 
   return (
-    <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
-      {/* Circuit background */}
-      <CircuitBackground />
+    <ResumeErrorBoundary>
+      <div className='min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden'>
+        {/* Circuit background */}
+        <CircuitBackground />
 
       {/* Navigation */}
       <Navigation />
@@ -911,7 +915,8 @@ function Resume() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </ResumeErrorBoundary>
   )
 }
 

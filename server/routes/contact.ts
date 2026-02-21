@@ -263,22 +263,33 @@ export const handleContactForm = async (req: Request, res: Response) => {
     // Send email asynchronously (don't await - continue with response)
     void sendEmailGracefully()
 
-    // Send Slack notification
-    const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
+    // Send Slack notification with retry logic
+    const sendSlackNotification = async (retryCount = 0): Promise<void> => {
+      const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
 
-    if (slackWebhookUrl) {
+      if (!slackWebhookUrl) {
+        console.log('Slack webhook not configured - skipping notification')
+        return
+      }
+
+      const maxRetries = 3
+      const retryDelayMs = 1000
+
       try {
-        await fetch(slackWebhookUrl, {
+        const response = await fetch(slackWebhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: '📬 New Contact Form Submission',
+            username: 'Portfolio Contact Bot',
+            icon_emoji: ':email:',
             blocks: [
               {
                 type: 'header',
                 text: {
                   type: 'plain_text',
                   text: '📬 New Contact Form Submission',
+                  emoji: true,
                 },
               },
               {
@@ -296,25 +307,59 @@ export const handleContactForm = async (req: Request, res: Response) => {
                 type: 'section',
                 text: {
                   type: 'mrkdwn',
-                  text: `*Message:*\n${sanitizedMessage}`,
+                  text: `*Message:*\n${sanitizedMessage.substring(0, 500)}${sanitizedMessage.length > 500 ? '...' : ''}`,
                 },
+              },
+              {
+                type: 'divider',
               },
               {
                 type: 'context',
                 elements: [
                   {
                     type: 'mrkdwn',
-                    text: `Submitted at: <!date^${Math.floor(Date.now() / 1000)}^{date_short_pretty} at {time}|${new Date().toISOString()}>`,
+                    text: `:clock3: Submitted at: <!date^${Math.floor(Date.now() / 1000)}^{date_short_pretty} at {time}|${new Date().toISOString()}>`,
+                  },
+                ],
+              },
+              {
+                type: 'actions',
+                elements: [
+                  {
+                    type: 'button',
+                    text: {
+                      type: 'plain_text',
+                      text: 'Reply via Email',
+                      emoji: true,
+                    },
+                    url: `mailto:${sanitizedEmail}?subject=Re: ${sanitizedSubject}`,
                   },
                 ],
               },
             ],
           }),
         })
+
+        if (!response.ok) {
+          throw new Error(`Slack API returned ${response.status}`)
+        }
+
+        console.log('Slack notification sent successfully')
       } catch (slackError) {
-        console.error('Failed to send Slack notification:', slackError)
+        const errorMessage = slackError instanceof Error ? slackError.message : 'Unknown error'
+
+        if (retryCount < maxRetries) {
+          console.warn(`Slack notification failed (attempt ${retryCount + 1}/${maxRetries + 1}): ${errorMessage}`)
+          await new Promise((resolve) => setTimeout(resolve, retryDelayMs * (retryCount + 1)))
+          return sendSlackNotification(retryCount + 1)
+        }
+
+        console.error('Failed to send Slack notification after all retries:', errorMessage)
       }
     }
+
+    // Send Slack notification asynchronously (don't await - continue with response)
+    void sendSlackNotification()
 
     // Simulate processing delay
     await new Promise((resolve) => setTimeout(resolve, CONTACT_CONSTANTS.PROCESSING_DELAY_MS))
