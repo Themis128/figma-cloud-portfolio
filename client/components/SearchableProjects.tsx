@@ -250,8 +250,16 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({ className, proj
                         Featured
                       </Badge>
                     )}
-                    <div className='aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center'>
-                      <Code className='h-16 w-16 text-gray-400' />
+                    <div className='aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center overflow-hidden'>
+                      {project.image ? (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className='w-full h-full object-cover'
+                        />
+                      ) : (
+                        <Code className='h-16 w-16 text-gray-400' />
+                      )}
                     </div>
                   </div>
 

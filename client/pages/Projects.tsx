@@ -3,18 +3,17 @@ import type React from 'react'
 import { lazy, Suspense, useMemo } from 'react'
 import { Helmet } from 'react-helmet-async'
 
-import { useSampleProjects } from '@/components/Interactive3DDemo'
 import Navigation from '@/components/Navigation'
+import SearchableProjects from '@/components/SearchableProjects'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useSampleProjects } from '@/data/projectsData'
 
 const Interactive3DDemo = lazy(() =>
   import('@/components/Interactive3DDemo').then((module) => ({
     default: module.Interactive3DDemo,
   })),
 )
-
-import SearchableProjects from '@/components/SearchableProjects'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const Projects: React.FC = () => {
   const sampleProjects = useSampleProjects()

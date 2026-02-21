@@ -1,9 +1,12 @@
 // @ts-nocheck - R3F JSX elements (group, mesh, etc.) require @react-three/fiber type augmentation
 import { Box, Float, Html, OrbitControls, Sphere } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import * as THREE from 'three'
 import { cn } from '@/lib/utils'
+import type { Project3D } from '@/data/projectsData'
+export type { Project3D } from '@/data/projectsData'
+export { useSampleProjects } from '@/data/projectsData'
 
 // 3D Animation and geometry constants
 const ROTATION_SPEED_X = 0.005
@@ -46,60 +49,6 @@ const DIRECTIONAL_LIGHT_Z = 5
 const POINT_LIGHT_X = -10
 const POINT_LIGHT_Y = -10
 const POINT_LIGHT_Z = -5
-// Sample project position coordinates (demo data)
-const SAMPLE_PROJECT_1_X = -3
-const SAMPLE_PROJECT_1_Y = 2
-const SAMPLE_PROJECT_1_Z = 0
-const SAMPLE_PROJECT_2_X = 3
-const SAMPLE_PROJECT_2_Y = 1
-const SAMPLE_PROJECT_2_Z = -1
-const SAMPLE_PROJECT_3_X = 0
-const SAMPLE_PROJECT_3_Y = -2
-const SAMPLE_PROJECT_3_Z = 2
-const SAMPLE_PROJECT_4_X = -2
-const SAMPLE_PROJECT_4_Y = -1
-const SAMPLE_PROJECT_4_Z = -2
-const SAMPLE_PROJECT_5_X = 2
-const SAMPLE_PROJECT_5_Y = -1
-const SAMPLE_PROJECT_5_Z = 1
-// Sample project positions (demo data)
-const SAMPLE_PROJECT_1_POSITION: [number, number, number] = [
-  SAMPLE_PROJECT_1_X,
-  SAMPLE_PROJECT_1_Y,
-  SAMPLE_PROJECT_1_Z,
-]
-const SAMPLE_PROJECT_2_POSITION: [number, number, number] = [
-  SAMPLE_PROJECT_2_X,
-  SAMPLE_PROJECT_2_Y,
-  SAMPLE_PROJECT_2_Z,
-]
-const SAMPLE_PROJECT_3_POSITION: [number, number, number] = [
-  SAMPLE_PROJECT_3_X,
-  SAMPLE_PROJECT_3_Y,
-  SAMPLE_PROJECT_3_Z,
-]
-const SAMPLE_PROJECT_4_POSITION: [number, number, number] = [
-  SAMPLE_PROJECT_4_X,
-  SAMPLE_PROJECT_4_Y,
-  SAMPLE_PROJECT_4_Z,
-]
-const SAMPLE_PROJECT_5_POSITION: [number, number, number] = [
-  SAMPLE_PROJECT_5_X,
-  SAMPLE_PROJECT_5_Y,
-  SAMPLE_PROJECT_5_Z,
-]
-
-interface Project3D {
-  id: string
-  title: string
-  description: string
-  technologies: string[]
-  color: string
-  position: [number, number, number]
-  scale: number
-  category: 'web' | 'mobile' | 'ai' | 'tools' | 'game'
-  year: number
-}
 
 interface Interactive3DDemoProps {
   projects: Project3D[]
@@ -414,72 +363,6 @@ export function Interactive3DDemo({ projects, className, onProjectClick }: Inter
         <p>🖱️ Click and drag to rotate • 🔍 Scroll to zoom • 🎯 Click spheres to interact</p>
       </div>
     </div>
-  )
-}
-
-/**
- * Hook to create sample project data
- */
-export function useSampleProjects(): Project3D[] {
-  return useMemo(
-    () => [
-      {
-        id: 'portfolio',
-        title: 'Portfolio Website',
-        description: 'Modern React portfolio with 3D elements',
-        technologies: ['React', 'Three.js', 'TypeScript'],
-        color: '#3b82f6',
-        position: SAMPLE_PROJECT_1_POSITION,
-        scale: 1,
-        category: 'web',
-        year: 2024,
-      },
-      {
-        id: 'ecommerce',
-        title: 'E-commerce Platform',
-        description: 'Full-stack e-commerce solution',
-        technologies: ['Next.js', 'Stripe', 'PostgreSQL'],
-        color: '#10b981',
-        position: SAMPLE_PROJECT_2_POSITION,
-        scale: 0.8,
-        category: 'web',
-        year: 2024,
-      },
-      {
-        id: 'dashboard',
-        title: 'Analytics Dashboard',
-        description: 'Real-time data visualization dashboard',
-        technologies: ['React', 'D3.js', 'WebSocket'],
-        color: '#f59e0b',
-        position: SAMPLE_PROJECT_3_POSITION,
-        scale: 1.2,
-        category: 'web',
-        year: 2023,
-      },
-      {
-        id: 'mobile-app',
-        title: 'Mobile App',
-        description: 'Cross-platform mobile application',
-        technologies: ['React Native', 'Firebase', 'Expo'],
-        color: '#ef4444',
-        position: SAMPLE_PROJECT_4_POSITION,
-        scale: 0.9,
-        category: 'mobile',
-        year: 2023,
-      },
-      {
-        id: 'api',
-        title: 'REST API',
-        description: 'Scalable REST API with authentication',
-        technologies: ['Node.js', 'Express', 'JWT'],
-        color: '#8b5cf6',
-        position: SAMPLE_PROJECT_5_POSITION,
-        scale: 0.7,
-        category: 'tools',
-        year: 2024,
-      },
-    ],
-    [],
   )
 }
 

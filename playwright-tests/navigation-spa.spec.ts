@@ -96,9 +96,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    // Try clicking the "About" link if it exists in nav - use .first() to avoid strict mode violation
+    // Check viewport for mobile handling
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // On mobile, open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
+    // Try clicking the "About" link if it exists and is visible in nav
     const aboutLink = page.locator('nav a[href="/about"]').first()
-    if ((await aboutLink.count()) > 0) {
+    if (await aboutLink.isVisible()) {
       await aboutLink.click()
       await page.waitForURL('**/about', { timeout: 5000 })
       await expect(page).toHaveURL(/\/about/)
@@ -109,9 +122,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
+    // Check viewport for mobile handling
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // On mobile, open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
     // Use .first() to avoid strict mode violation
     const productLink = page.locator('nav a[href="/product"]').first()
-    if ((await productLink.count()) > 0) {
+    if (await productLink.isVisible()) {
       await productLink.click()
       await page.waitForURL('**/product', { timeout: 5000 })
       await expect(page).toHaveURL(/\/product/)
@@ -127,7 +153,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
 
     // Use .first() to avoid strict mode violation
     const link = page.locator('nav a[href="/projects"]').first()
-    if ((await link.count()) > 0) {
+
+    // On mobile, desktop nav links are hidden - need to open mobile menu first
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // Open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
+    // Now check if the link is visible (not just present in DOM)
+    if (await link.isVisible()) {
       await link.click()
       await page.waitForURL('**/projects', { timeout: 5000 })
       await expect(page).toHaveURL(/\/projects/)
@@ -138,9 +179,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
+    // Check viewport for mobile handling
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // On mobile, open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
     // Use .first() to avoid strict mode violation
     const link = page.locator('nav a[href="/resume"]').first()
-    if ((await link.count()) > 0) {
+    if (await link.isVisible()) {
       await link.click()
       await page.waitForURL('**/resume', { timeout: 5000 })
       await expect(page).toHaveURL(/\/resume/)
@@ -151,9 +205,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
+    // Check viewport for mobile handling
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // On mobile, open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
     // Use .first() to avoid strict mode violation
     const link = page.locator('nav a[href="/settings"]').first()
-    if ((await link.count()) > 0) {
+    if (await link.isVisible()) {
       await link.click()
       await page.waitForURL('**/settings', { timeout: 5000 })
       await expect(page).toHaveURL(/\/settings/)
@@ -164,9 +231,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
+    // Check viewport for mobile handling
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // On mobile, open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
     // Use .first() to avoid strict mode violation
     const link = page.locator('nav a[href="/performance"]').first()
-    if ((await link.count()) > 0) {
+    if (await link.isVisible()) {
       await link.click()
       await page.waitForURL('**/performance', { timeout: 5000 })
       await expect(page).toHaveURL(/\/performance/)
@@ -177,9 +257,22 @@ test.describe('SPA Navigation — Link Component (No Full Page Reload)', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
+    // Check viewport for mobile handling
+    const viewport = page.viewportSize()
+    const isMobile = viewport ? viewport.width < 768 : false
+
+    if (isMobile) {
+      // On mobile, open mobile menu first
+      const menuButton = page.getByRole('button', { name: 'Toggle mobile menu' })
+      if (await menuButton.isVisible()) {
+        await menuButton.click()
+        await page.waitForTimeout(300) // Wait for animation
+      }
+    }
+
     // Use .first() to avoid strict mode violation
     const link = page.locator('nav a[href="/agents"]').first()
-    if ((await link.count()) > 0) {
+    if (await link.isVisible()) {
       await link.click()
       await page.waitForURL('**/agents', { timeout: 5000 })
       await expect(page).toHaveURL(/\/agents/)
