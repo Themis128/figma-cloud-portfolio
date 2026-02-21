@@ -7,25 +7,46 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.backup
+.env*.backup
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
+*.swp
+*.swo
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-.config/
-!.env
+# OS generated files
+.DS_Store
+Thumbs.db
 
+# Temporary files
+*.tmp
+*.temp/
+.cache/
+tmpclaude-*
+nul
 
 # Lambda deployment artifacts
 lambda-deploy/
@@ -36,46 +57,13 @@ test-results/
 playwright-report/
 playwright-report-*/
 playwright-html-report/
-
-# Build outputs
-build/
-dist/
-*.tsbuildinfo
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.backup*
-.env*.backup
-
-# IDE and editor files
-.vscode/settings.json
-.idea/
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
-tmpclaude-*
-nul
+playwright-html-report-ci/
 
 # Coverage reports
 coverage/
 .nyc_output/
 
-
-#Ignore insiders AI rules
-.github\instructions\codacy.instructions.md
-
+# Amplify
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -84,9 +72,6 @@ amplify/mock-data
 amplify/mock-api-resources
 amplify/backend/amplify-meta.json
 amplify/backend/.temp
-build/
-dist/
-node_modules/
 aws-exports.js
 awsconfiguration.json
 amplifyconfiguration.json
@@ -106,11 +91,18 @@ cline_mcp_settings.json
 # Codacy MCP Server (separate project)
 codacy-mcp-server/
 
-# CI/build artifact directories (contain hashes that trigger secret scanner)
+# CI/build artifact directories
 temp-artifacts/
 performance-test-results/
-playwright-html-report-ci/
-playwright-report/
 .codacy-coverage/
 build-log*.txt
 log-url-*.txt
+
+# Stable Diffusion WebUI (large model files)
+stable-diffusion-webui/models/
+stable-diffusion-webui/outputs/
+stable-diffusion-webui/logs/
+
+# Misc
+*.local
+.config/
