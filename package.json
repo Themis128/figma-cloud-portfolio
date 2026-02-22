@@ -97,6 +97,7 @@
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.20.0",
+    "@aws-amplify/backend-cli": "^1.8.2",
     "@aws-sdk/client-amplify": "^3.975.0",
     "@biomejs/biome": "^2.3.13",
     "@hookform/resolvers": "^5.2.2",
