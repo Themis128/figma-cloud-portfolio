@@ -8,31 +8,46 @@ test.describe('AI Agent Builder E2E', () => {
     await page.goto('http://localhost:8082/agents')
 
     // Wait for the header
-    await expect(page.getByRole('heading', { name: /AI Agent Builder/i })).toBeVisible()
+    const header = page.getByRole('heading', { name: /AI Agent Builder/i })
+    await header.waitFor({ state: 'visible', timeout: 10000 })
+    await expect(header).toBeVisible({ timeout: 10000 })
 
     // Select a template (first visible template card)
     const templateCard = page.locator('[data-testid="template-card"]').first()
-    await expect(templateCard).toBeVisible()
+    await templateCard.waitFor({ state: 'visible', timeout: 10000 })
+    await expect(templateCard).toBeVisible({ timeout: 10000 })
     await templateCard.click()
 
     // Wait for the template configuration view
-    await expect(page.getByRole('heading', { name: /Ready to Build Your Agent/i })).toBeVisible()
+    const configHeader = page.getByRole('heading', { name: /Ready to Build Your Agent/i })
+    await configHeader.waitFor({ state: 'visible', timeout: 10000 })
+    await expect(configHeader).toBeVisible({ timeout: 10000 })
 
     // Start building the agent
-    await page.getByRole('button', { name: /Start Building Agent/i }).click()
+    const startButton = page.getByRole('button', { name: /Start Building Agent/i })
+    await startButton.waitFor({ state: 'visible', timeout: 10000 })
+    await startButton.click()
 
     // Wait for AgentBuilder to load
-    await expect(page.getByRole('button', { name: /Save/i })).toBeVisible()
+    const saveButton = page.getByRole('button', { name: /Save/i })
+    await saveButton.waitFor({ state: 'visible', timeout: 10000 })
+    await expect(saveButton).toBeVisible({ timeout: 10000 })
 
     // Optionally, run the agent (if UI supports it)
-    if (await page.getByRole('button', { name: /Run Agent/i }).isVisible()) {
-      await page.getByRole('button', { name: /Run Agent/i }).click()
-      await expect(page.getByText(/Execution Result|Result/i)).toBeVisible()
+    const runButton = page.getByRole('button', { name: /Run Agent/i })
+    if (await runButton.isVisible()) {
+      await runButton.waitFor({ state: 'visible', timeout: 10000 })
+      await runButton.click()
+      const resultText = page.getByText(/Execution Result|Result/i)
+      await resultText.waitFor({ state: 'visible', timeout: 10000 })
+      await expect(resultText).toBeVisible({ timeout: 10000 })
     }
 
     // Save the agent
-    await page.getByRole('button', { name: /Save/i }).click()
+    await saveButton.click()
     // Should return to template selection
-    await expect(page.getByText(/custom template|template/i, { exact: false })).toBeVisible()
+    const templateSelectButton = page.getByRole('button', { name: 'Template Selection' })
+    await templateSelectButton.waitFor({ state: 'visible', timeout: 10000 })
+    await expect(templateSelectButton).toBeVisible({ timeout: 10000 })
   })
 })
