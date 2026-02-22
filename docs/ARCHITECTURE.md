@@ -133,6 +133,8 @@ Client-side routing is handled by **React Router DOM v7**. All navigation uses `
 
 | Component | Purpose |
 |---|---|
+| `amplifyConfig` | AWS Amplify client configuration and initialization |
+| `useAmplifyAuth` | Hook for AWS Cognito authentication (placeholder) |
 | `Navigation` | Top navbar with SPA `<Link>` routing, mobile hamburger menu |
 | `CircuitBackground` | Animated SVG/Canvas circuit board background |
 | `AnimatedSection` | Intersection Observer scroll animation wrapper |

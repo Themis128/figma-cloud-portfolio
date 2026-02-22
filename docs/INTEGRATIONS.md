@@ -531,6 +531,65 @@ beforeSend(event, hint) {
 
 ## 🔐 Authentication & Security
 
+### AWS Amplify Configuration
+
+**Purpose**: AWS Amplify client configuration for authentication and API access
+**Files**: `/client/lib/amplifyConfig.ts`, `/client/hooks/useAmplifyAuth.ts`
+
+**Features**:
+
+- AWS Cognito User Pool authentication
+- Identity Pool for AWS resource access
+- REST API (API Gateway) configuration
+- GraphQL API configuration
+- DataStore sync configuration
+
+**Configuration**:
+
+```typescript
+// client/lib/amplifyConfig.ts
+import { Amplify } from 'aws-amplify'
+import outputs from '../../amplify_outputs.json'
+
+const config = {
+  Auth: {
+    Cognito: {
+      userPoolId: outputs.auth?.user_pool_id,
+      userPoolClientId: outputs.auth?.user_pool_client_id,
+      identityPoolId: outputs.auth?.identity_pool_id,
+      signUpVerificationMethod: 'link',
+      loginWith: { email: true },
+    },
+  },
+  API: {
+    REST: { api: { endpoint: outputs.api?.url } },
+    GraphQL: { endpoint: outputs.data?.url, defaultAuthMode: 'userPool' },
+  },
+}
+```
+
+**Usage**:
+
+```typescript
+import { initializeAmplify, isAmplifyConfigured } from './lib/amplifyConfig'
+
+// Initialize on app startup
+initializeAmplify()
+
+// Check if configured
+if (isAmplifyConfigured()) {
+  // Use Amplify features
+}
+```
+
+**Setup**:
+
+1. Deploy Amplify backend: `amplify sandbox`
+2. This generates `amplify_outputs.json`
+3. Configuration is auto-loaded from outputs file
+
+---
+
 ### Web Security Headers
 
 **Files**: `/server/index.ts`
@@ -1331,6 +1390,6 @@ AMPLIFY_STAGING_APP_ID=
 
 ---
 
-**Last Updated**: 2026-02-01
-**Version**: 1.0.0
+**Last Updated**: 2026-02-22
+**Version**: 1.1.0
 **Maintainer**: Themistoklis Baltzakis
