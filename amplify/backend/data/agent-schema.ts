@@ -1,6 +1,6 @@
-import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
+import { a, type ClientSchema } from "@aws-amplify/backend";
 
-const schema = a.schema({
+export const schema = a.schema({
   Agent: a
     .model({
       name: a.string().required(),
@@ -29,13 +29,37 @@ const schema = a.schema({
       metrics: a.json(),
     })
     .authorization((allow) => [allow.owner()]),
+
+  // Contact message model for storing contact form submissions
+  ContactMessage: a
+    .model({
+      name: a.string().required(),
+      email: a.email().required(),
+      subject: a.string().required(),
+      message: a.string().required(),
+      recaptchaScore: a.float(),
+      status: a.string().default("new"),
+      createdAt: a.timestamp().default(() => new Date()),
+    })
+    .authorization((allow) => [
+      allow.owner(),
+      allow.publicApiKey().to(["create"]),
+    ]),
+
+  // Resume data model for user resumes
+  Resume: a
+    .model({
+      userId: a.string().required(),
+      title: a.string(),
+      personalInfo: a.json(),
+      experience: a.json(),
+      education: a.json(),
+      certifications: a.json(),
+      skills: a.json(),
+      createdAt: a.timestamp().default(() => new Date()),
+      updatedAt: a.timestamp().default(() => new Date()),
+    })
+    .authorization((allow) => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-    defaultAuthorizationMode: "userPool",
-  },
-});

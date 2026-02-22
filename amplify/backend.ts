@@ -1,4 +1,6 @@
 import { defineBackend, defineFunction } from "@aws-amplify/backend";
+import { auth } from "./backend/auth/resource";
+import { data } from "./backend/data/resource";
 
 const pingFunction = defineFunction({
   name: "ping",
@@ -13,6 +15,10 @@ const demoFunction = defineFunction({
 const contactFunction = defineFunction({
   name: "contact",
   entry: "./functions/contact/index.ts",
+  environment: {
+    // reCAPTCHA secret will be set via environment variables
+    RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY || "",
+  },
 });
 
 const resumeFunction = defineFunction({
@@ -23,6 +29,10 @@ const resumeFunction = defineFunction({
 const pushNotificationsFunction = defineFunction({
   name: "push-notifications",
   entry: "./functions/push-notifications/index.ts",
+  environment: {
+    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY || "",
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || "",
+  },
 });
 
 const playwrightAutofixFunction = defineFunction({
@@ -34,12 +44,48 @@ const playwrightAutofixFunction = defineFunction({
 });
 
 const backend = defineBackend({
+  auth,
+  data,
   ping: pingFunction,
   demo: demoFunction,
   contact: contactFunction,
   resume: resumeFunction,
   "push-notifications": pushNotificationsFunction,
   "playwright-autofix": playwrightAutofixFunction,
+});
+
+// Create API Gateway for Lambda functions
+const apiStack = backend.createStack("api-stack");
+
+// Expose Lambda functions as HTTP endpoints
+backend.ping.addHttpEndpoint({
+  path: "/ping",
+  methods: ["GET"],
+});
+
+backend.demo.addHttpEndpoint({
+  path: "/demo",
+  methods: ["GET"],
+});
+
+backend.contact.addHttpEndpoint({
+  path: "/contact",
+  methods: ["POST", "OPTIONS"],
+});
+
+backend.resume.addHttpEndpoint({
+  path: "/resume",
+  methods: ["GET", "POST"],
+});
+
+backend["push-notifications"].addHttpEndpoint({
+  path: "/push-notifications",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+});
+
+backend["playwright-autofix"].addHttpEndpoint({
+  path: "/playwright-autofix",
+  methods: ["GET", "POST"],
 });
 
 export default backend;

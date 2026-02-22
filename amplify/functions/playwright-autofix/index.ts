@@ -244,9 +244,26 @@ export const handler = async (
 ): Promise<APIGatewayProxyResultV2<AutofixResponse>> => {
   const startTime = Date.now();
 
+  // Immediate log for guaranteed output
+  console.log('[Lambda] Handler invoked - event:', JSON.stringify(event));
+  // Log incoming event for debugging
+  console.log('Received event:', JSON.stringify(event));
+
   try {
     // Parse request body
-    const body = event.body ? JSON.parse(event.body) : {};
+    let body: any = {};
+    if (event.body) {
+      try {
+        body = JSON.parse(event.body);
+        console.log('Parsed body:', body);
+      } catch (parseErr) {
+        console.error('Body parse error:', parseErr);
+        throw new Error('Invalid JSON body');
+      }
+    } else {
+      console.warn('No body provided in event');
+    }
+
     const request: AutofixRequest = {
       testTitle: body.testTitle || 'Unknown Test',
       error: body.error || { message: 'Unknown error' },
@@ -256,6 +273,9 @@ export const handler = async (
       selector: body.selector,
       timeout: body.timeout,
     };
+
+    // Log parsed request
+    console.log('AutofixRequest:', request);
 
     // Analyze error and generate suggestions
     const suggestions = analyzeError(request);
@@ -278,6 +298,9 @@ export const handler = async (
       },
     };
 
+    // Log response
+    console.log('AutofixResponse:', response);
+
     return {
       statusCode: 200,
       headers: {
@@ -290,6 +313,7 @@ export const handler = async (
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Handler error:', errorMessage);
     
     return {
       statusCode: 500,

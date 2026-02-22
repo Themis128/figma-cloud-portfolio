@@ -1,0 +1,70 @@
+{
+    "Functions": [
+        {
+            "FunctionName": "playwright-autofix",
+            "FunctionArn": "arn:aws:lambda:us-east-1:278585680617:function:playwright-autofix",
+            "Runtime": "nodejs20.x",
+            "Role": "arn:aws:iam::278585680617:role/newsletter-lambda-role",
+            "Handler": "index.handler",
+            "CodeSize": 4384,
+            "Description": "",
+            "Timeout": 3,
+            "MemorySize": 128,
+            "LastModified": "2026-02-22T08:56:50.697+0000",
+            "CodeSha256": "6jZ4VpKp7Wqzc4lRti+ek1shRT+FQuI40zBIEGjkldY=",
+            "Version": "$LATEST",
+            "TracingConfig": {
+                "Mode": "PassThrough"
+            },
+            "RevisionId": "0df64b15-b1de-4f76-a774-d3d4eb7c98fa",
+            "PackageType": "Zip",
+            "Architectures": [
+                "x86_64"
+            ],
+            "EphemeralStorage": {
+                "Size": 512
+            },
+            "SnapStart": {
+                "ApplyOn": "None",
+                "OptimizationStatus": "Off"
+            },
+            "LoggingConfig": {
+                "LogFormat": "Text",
+                "LogGroup": "/aws/lambda/playwright-autofix"
+            }
+        },
+        {
+            "FunctionName": "figma-portfolio-api",
+            "FunctionArn": "arn:aws:lambda:us-east-1:278585680617:function:figma-portfolio-api",
+            "Runtime": "nodejs20.x",
+            "Role": "arn:aws:iam::278585680617:role/newsletter-lambda-role",
+            "Handler": "handler.handler",
+            "CodeSize": 34905380,
+            "Description": "",
+            "Timeout": 3,
+            "MemorySize": 128,
+            "LastModified": "2026-01-19T17:45:31.000+0000",
+            "CodeSha256": "rKyTV2S2KAI56RoIaEyBT4IgQlWT0kcKQpWFoVO4jgQ=",
+            "Version": "$LATEST",
+            "TracingConfig": {
+                "Mode": "PassThrough"
+            },
+            "RevisionId": "a9a44627-1a7c-45cf-8f59-8b473b9b41e9",
+            "PackageType": "Zip",
+            "Architectures": [
+                "arm64"
+            ],
+            "EphemeralStorage": {
+                "Size": 512
+            },
+            "SnapStart": {
+                "ApplyOn": "None",
+                "OptimizationStatus": "Off"
+            },
+            "LoggingConfig": {
+                "LogFormat": "Text",
+                "LogGroup": "/aws/lambda/figma-portfolio-api"
+            }
+        }
+    ]
+}
