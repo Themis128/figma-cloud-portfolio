@@ -1,0 +1,6 @@
+{
+  "app": "figma-cloud-portfolio",
+  "context": {
+    "aws-cdk:depsLockFilePath": "pnpm-lock.yaml"
+  }
+}

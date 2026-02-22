@@ -12,4 +12,10 @@ const backend = defineBackend({
   data,
 });
 
+/**
+ * Configure CDK to use pnpm-lock.yaml instead of package-lock.json
+ * This resolves the "Multiple package lock files found" error
+ */
+backend.stack.node.setContext("aws-cdk:depsLockFilePath", "pnpm-lock.yaml");
+
 export default backend;

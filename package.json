@@ -59,7 +59,11 @@
     "clean": "node -e \"const fs = require('fs'); ['dist', 'coverage', 'test-results', 'playwright-report', '.codacy-cli-v2'].forEach(dir => { try { if (fs.existsSync(dir)) { fs.rmSync(dir, { recursive: true, force: true }); console.log('Removed:', dir); } } catch (e) { console.error('Error removing', dir, e.message); } });\"",
     "clean:deps": "node -e \"const fs = require('fs'); ['node_modules', 'pnpm-lock.yaml'].forEach(dir => { try { if (fs.existsSync(dir)) { fs.rmSync(dir, { recursive: true, force: true }); console.log('Removed:', dir); } } catch (e) { console.error('Error removing', dir, e.message); } });\"",
     "pnpm:optimize": "node scripts/pnpm-optimize.js",
-    "postinstall": "node scripts/postinstall.js || true"
+    "postinstall": "node scripts/postinstall.js || true",
+    "netlify:dev": "netlify dev",
+    "netlify:deploy": "netlify deploy --prod",
+    "netlify:deploy:preview": "netlify deploy",
+    "netlify:build": "pnpm run build:client"
   },
   "dependencies": {
     "@agentdeskai/browser-tools-mcp": "^1.2.1",

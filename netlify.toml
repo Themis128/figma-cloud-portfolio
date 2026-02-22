@@ -1,0 +1,215 @@
+# =============================================================================
+# NETLIFY CONFIGURATION
+# =============================================================================
+# This configuration file sets up the portfolio for deployment on Netlify.
+# It includes build settings, redirects, headers, and plugin configurations.
+# =============================================================================
+
+# =============================================================================
+# BUILD SETTINGS
+# =============================================================================
+[build]
+  # Build command - builds the client-side SPA
+  command = "pnpm run build:client"
+  
+  # Directory to publish (Vite outputs to dist/spa)
+  publish = "dist/spa"
+  
+  # Directory for Netlify Functions (if using serverless functions)
+  functions = "netlify/functions"
+  
+  # Node.js version
+  environment = { NODE_VERSION = "20" }
+
+# =============================================================================
+# BUILD PLUGINS
+# =============================================================================
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  
+  [plugins.inputs]
+    output_path = "lighthouse-reports"
+
+# =============================================================================
+# DEPLOY CONTEXTS
+# =============================================================================
+
+# Production context
+[context.production]
+  command = "pnpm run build:client"
+  environment = { NODE_ENV = "production", VITE_APP_ENV = "production" }
+
+# Deploy preview context (for PRs)
+[context.deploy-preview]
+  command = "pnpm run build:client"
+  environment = { NODE_ENV = "production", VITE_APP_ENV = "staging" }
+
+# Branch deploy context (for branch deployments)
+[context.branch-deploy]
+  command = "pnpm run build:client"
+  environment = { NODE_ENV = "production", VITE_APP_ENV = "staging" }
+
+# =============================================================================
+# REDIRECTS & REWRITES
+# =============================================================================
+
+# SPA Fallback - All routes should serve index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = { Role = [] }
+
+# API proxy to external backend (if applicable)
+# Uncomment and modify if you have a separate API backend
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://your-api.example.com/api/:splat"
+#   status = 200
+#   force = true
+
+# Redirect www to non-www (optional - choose one)
+# [[redirects]]
+#   from = "https://www.yourdomain.com/*"
+#   to = "https://yourdomain.com/:splat"
+#   status = 301
+#   force = true
+
+# =============================================================================
+# HEADERS - Security & Performance
+# =============================================================================
+
+# Global headers for all routes
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    
+    # Content Security Policy - adjust as needed for your requirements
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://www.recaptcha.net https://www.gstatic.com https://storage.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://p.typekit.net; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.recaptcha.net https://www.gstatic.com https://*.amazonaws.com https://*.on.aws wss://localhost:* ws://localhost:*; frame-src 'self' https://www.recaptcha.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
+    
+    # DNS prefetch control
+    X-DNS-Prefetch-Control = "off"
+
+# JavaScript files - long cache with immutable
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/javascript"
+
+# JavaScript module files
+[[headers]]
+  for = "/*.mjs"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/javascript"
+
+# CSS files - long cache with immutable
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Images - medium cache duration
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
+  for = "/*.avif"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+# Fonts - long cache
+[[headers]]
+  for = "/*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+# HTML files - no cache to ensure fresh content
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Service Worker - no cache to ensure updates
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# Web manifest
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+# Robots.txt
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Sitemap
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# =============================================================================
+# NETLIFY FUNCTIONS (Optional)
+# =============================================================================
+# Uncomment to configure Netlify Functions for serverless backend
+# 
+# [functions]
+#   directory = "netlify/functions"
+#   node_bundler = "esbuild"
+#   
+# [functions."contact-form"]
+#   memory = 256
+#   timeout = 10
+
+# =============================================================================
+# FORM HANDLING (Optional)
+# =============================================================================
+# Netlify Forms integration - add data-netlify="true" to your form
+# 
+# [[redirects]]
+#   from = "/contact-success"
+#   to = "/contact?success=true"
+#   status = 200
