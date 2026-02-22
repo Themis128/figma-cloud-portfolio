@@ -297,6 +297,14 @@ git diff playwright.config*.ts
 
 ## 🎉 Summary
 
+### Lambda AI Autofix Integration
+
+- Playwright autofix Lambda function deployed and live
+- Endpoint set in `.env` as `PLAYWRIGHT_AUTOFIX_ENDPOINT` and `AUTOFIX_LAMBDA_URL`
+- Playwright config and reporter reference Lambda endpoint for AI-powered suggestions
+- Tests run in autofix mode (`pnpm test:e2e:autofix`) now use Lambda for real-time fixes
+- Documentation updated for setup, troubleshooting, and endpoint usage
+
 This configuration achieves a **perfect 10/10 score** by implementing:
 
 - ✅ **Factory Pattern** for maintainable, reusable configurations

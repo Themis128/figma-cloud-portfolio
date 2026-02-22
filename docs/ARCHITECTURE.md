@@ -137,12 +137,19 @@ Client-side routing is handled by **React Router DOM v7**. All navigation uses `
 | `CircuitBackground` | Animated SVG/Canvas circuit board background |
 | `AnimatedSection` | Intersection Observer scroll animation wrapper |
 | `ThemeSwitcher` | Light/dark/system theme toggle |
+| `ThemeToggleButton` | Compact theme toggle button with sun/moon icons |
+| `CookieConsentBar` | GDPR-compliant cookie consent banner with accept/decline |
+| `AccessibilityButton` | Quick access accessibility settings button |
 | `OptimizedImage` | Lazy-loading, responsive image wrapper |
 | `Skeleton` | Loading placeholder animations |
 | `HoverAnimations` | CSS/JS hover interaction effects |
 | `RealtimeTest` | Socket.IO connection tester |
 | `PerformanceTester` | Performance benchmark runner |
 | `PushNotificationTester` | Push notification API tester |
+| `SkillsMatrix` | Skills visualization grid for About page |
+| `Timeline` | Career timeline component for About page |
+| `ContactForm` | Reusable contact form with validation |
+| `ProjectShowcase` | Project gallery display component |
 
 ---
 
@@ -161,6 +168,11 @@ Express.js API server providing:
 | `GET /api/push-notifications` | GET | Push subscription management |
 | `POST /api/ai/*` | POST | AI agent endpoints |
 | `GET /api/demo/*` | GET | Demo content endpoints |
+| `GET /api/playwright-autofix/config` | GET | Get Playwright autofix configuration |
+| `POST /api/playwright-autofix/config` | POST | Update Playwright autofix configuration |
+| `POST /api/playwright-autofix/analyze` | POST | Analyze test failure and get AI suggestions |
+| `GET /api/playwright-autofix/patterns` | GET | Get common error patterns for autofix |
+| `GET /api/playwright-autofix/health` | GET | Health check for autofix service |
 
 ### Contact Route (`server/routes/contact.ts`)
 - Input validation (name, email, message required)

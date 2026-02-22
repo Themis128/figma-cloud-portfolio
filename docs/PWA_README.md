@@ -206,10 +206,28 @@ project/
 ## Next Steps
 
 - ~~Add push notifications for real-time updates~~ ✅ Implemented
+- ~~Add PWA update notification UI~~ ✅ Implemented
 - Implement background sync for offline actions
 - Add app shortcuts for quick actions
 - Configure different caching strategies per route
 - Add PWA-specific analytics tracking
+
+---
+
+## PWA Update Notifications
+
+The application includes a PWA update notification system that alerts users when a new version is available.
+
+### Features
+
+- **Update Detection**: Automatically detects when a new service worker version is available
+- **User Notification**: Shows a non-intrusive notification banner prompting users to update
+- **One-Click Update**: Users can update with a single click
+- **Dismiss Option**: Users can dismiss the notification if they prefer to update later
+
+### Component
+
+- `tests/pwa-update-notification.spec.ts` - Tests for PWA update notification functionality
 
 ---
 

@@ -173,6 +173,30 @@ Shared helpers used across spec files:
 - ✅ Subscribe/unsubscribe actions
 - ✅ Notification received confirmation
 
+#### `playwright-tests/theme-provider.integration.spec.ts`
+- ✅ Theme provider initializes correctly
+- ✅ Theme persists across page reloads
+- ✅ System theme detection works
+- ✅ Theme toggle cycles through options
+
+#### `tests/cookie-consent.spec.ts`
+- ✅ Cookie consent bar renders on first visit
+- ✅ Accept button stores consent
+- ✅ Decline button stores decline
+- ✅ Consent bar hidden after choice
+- ✅ Responsive layout on mobile
+
+#### `tests/accessibility-button.spec.ts`
+- ✅ Accessibility button renders
+- ✅ Opens accessibility menu
+- ✅ Toggles accessibility features
+- ✅ Keyboard navigation works
+
+#### `tests/pwa-update-notification.spec.ts`
+- ✅ PWA update notification appears
+- ✅ Update button triggers service worker update
+- ✅ Dismiss button hides notification
+
 #### `playwright-tests/pwa-advanced.spec.ts`
 - ✅ Service worker registers
 - ✅ Manifest is valid
@@ -308,7 +332,11 @@ Shared helpers used across spec files:
 | SEO                        | `seo.spec.ts`                                                              | ✅ Covered |
 | Image Optimization         | `image-optimization.spec.ts`                                               | ✅ Covered |
 | Performance Metrics        | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
-| Theme Switching            | `app.spec.ts`                                                              | ✅ Covered |
+| Theme Switching            | `app.spec.ts`, `theme-provider.integration.spec.ts`                        | ✅ Covered |
+| Cookie Consent             | `tests/cookie-consent.spec.ts`                                             | ✅ Covered |
+| Accessibility Button       | `tests/accessibility-button.spec.ts`                                       | ✅ Covered |
+| PWA Update Notification    | `tests/pwa-update-notification.spec.ts`                                    | ✅ Covered |
+| Playwright Autofix API     | `server/routes/playwright-autofix.ts`                                      | ✅ Covered |
 
 **Total coverage: 100% of pages and major features**
 
