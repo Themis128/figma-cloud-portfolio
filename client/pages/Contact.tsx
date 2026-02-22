@@ -2,6 +2,7 @@ import { Globe, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useState } from 'react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link } from 'react-router-dom'
+import { ContactForm } from '@/components/forms/ContactForm'
 
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
@@ -134,7 +135,7 @@ export default function Contact() {
                       required
                       aria-required='true'
                       aria-describedby='name-error'
-                      className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
+                      className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-11 ${
                         submitStatus === 'error' && !formData.name
                           ? 'border-red-400/50'
                           : 'border-white/20'
@@ -163,7 +164,7 @@ export default function Contact() {
                       required
                       aria-required='true'
                       aria-describedby='email-error'
-                      className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
+                      className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-11 ${
                         submitStatus === 'error' && !formData.email
                           ? 'border-red-400/50'
                           : 'border-white/20'
@@ -194,7 +195,7 @@ export default function Contact() {
                     required
                     aria-required='true'
                     aria-describedby='subject-error'
-                    className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-[44px] ${
+                    className={`w-full px-3 sm:px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/50 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all text-sm md:text-base min-h-11 ${
                       submitStatus === 'error' && !formData.subject
                         ? 'border-red-400/50'
                         : 'border-white/20'
@@ -243,7 +244,7 @@ export default function Contact() {
                   <button
                     type='submit'
                     disabled={isSubmitting}
-                    className='w-full sm:w-auto px-6 sm:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 disabled:bg-cyan-400/50 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium min-h-[44px] text-sm md:text-base'
+                    className='w-full sm:w-auto px-6 sm:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 disabled:bg-cyan-400/50 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium min-h-11 text-sm md:text-base'
                   >
                     {isSubmitting ? (
                       <>
@@ -512,7 +513,7 @@ export default function Contact() {
                 <HoverButton>
                   <Link
                     to='/about'
-                    className='inline-block px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/60 hover:border-cyan-400 text-white/90 hover:text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-[44px]'
+                    className='inline-block px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/60 hover:border-cyan-400 text-white/90 hover:text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11'
                   >
                     Learn More About Me
                   </Link>
@@ -520,7 +521,7 @@ export default function Contact() {
                 <HoverButton>
                   <Link
                     to='/'
-                    className='inline-block px-6 sm:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-[44px]'
+                    className='inline-block px-6 sm:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11'
                   >
                     Back to Home
                   </Link>
@@ -530,6 +531,7 @@ export default function Contact() {
           </div>
         </div>
       </div>
+      <ContactForm />
     </div>
   )
 }

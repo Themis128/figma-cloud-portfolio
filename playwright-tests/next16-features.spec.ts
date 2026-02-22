@@ -5,7 +5,7 @@ import { waitForAppReady } from './test-utils'
  * React + Vite SPA Features Test Suite
  * Tests for React SPA specific features including routing,
  * lazy loading, and client-side rendering.
- * 
+ *
  * Note: This project is a React + Vite SPA, not Next.js.
  * Tests have been updated to reflect the actual architecture.
  */
@@ -55,7 +55,7 @@ test.describe('React SPA Features', () => {
     // Verify dynamic content is loaded
     await page.goto('/')
     await waitForAppReady(page)
-    
+
     const bodyText = await page.locator('body').textContent()
     expect(bodyText?.length).toBeGreaterThan(50)
   })
@@ -71,9 +71,7 @@ test.describe('React SPA Features', () => {
     await waitForAppReady(page)
 
     // Verify static assets are loaded
-    const staticAssets = requests.filter(
-      (url) => url.includes('.js') || url.includes('.css')
-    )
+    const staticAssets = requests.filter((url) => url.includes('.js') || url.includes('.css'))
     expect(staticAssets.length).toBeGreaterThan(0)
   })
 

@@ -97,7 +97,7 @@ Expected list:
 
 1. **Open AWS Amplify Console**
    - Go to: https://us-east-1.console.aws.amazon.com/amplify/
-   - Click: Your portfolio app
+   - Click: Your portfolio app (us-east-1 region)
 
 2. **Add Environment Variables**
    - Left sidebar: **Settings**

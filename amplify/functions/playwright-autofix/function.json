@@ -1,0 +1,14 @@
+{
+  "name": "playwright-autofix",
+  "handler": "index.handler",
+  "runtime": "nodejs20.x",
+  "timeout": 30,
+  "memorySize": 512,
+  "environment": {
+    "LOG_LEVEL": "info"
+  },
+  "httpApi": {
+    "path": "/autofix",
+    "method": "POST"
+  }
+}

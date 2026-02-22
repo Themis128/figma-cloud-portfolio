@@ -4,7 +4,6 @@
 
 This is a **React 19 Single-Page Application (SPA)** built with Vite 7, deployed on **AWS Amplify** (App ID: `d1zjif7pi1h3om`). It serves as a personal portfolio for Themistoklis Baltzakis — a Systems & Network Engineer with full-stack and AI development skills.
 
----
 
 ## Tech Stack
 
@@ -20,7 +19,7 @@ This is a **React 19 Single-Page Application (SPA)** built with Vite 7, deployed
 | Real-time | Socket.IO |
 | PWA | Workbox (service worker) |
 | Backend | Express.js (Node) |
-| Deployment | AWS Amplify |
+ | Deployment | AWS Amplify (us-east-1) |
 | Analytics | Google Analytics GA4 |
 | Security | reCAPTCHA v3 |
 

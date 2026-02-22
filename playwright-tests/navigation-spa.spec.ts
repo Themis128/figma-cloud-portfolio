@@ -51,12 +51,17 @@ test.describe('Deep Linking — Direct URL Access', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for React to hydrate - look for 404 content
-    await page.waitForFunction(() => {
-      const body = document.body.textContent || ''
-      return body.includes('404') || 
-             body.toLowerCase().includes('not found') ||
-             body.toLowerCase().includes("doesn't exist")
-    }, { timeout: 10000 })
+    await page.waitForFunction(
+      () => {
+        const body = document.body.textContent || ''
+        return (
+          body.includes('404') ||
+          body.toLowerCase().includes('not found') ||
+          body.toLowerCase().includes("doesn't exist")
+        )
+      },
+      { timeout: 10000 },
+    )
 
     const body = await page.locator('body').textContent()
     // Should show a not-found message
@@ -357,7 +362,7 @@ test.describe('Mobile Navigation — Hamburger Menu', () => {
 
     if ((await menuButton.count()) > 0) {
       await menuButton.click()
-      
+
       // Wait for menu animation
       await page.waitForTimeout(500)
 
@@ -437,12 +442,15 @@ test.describe('Route Content — Each Page Renders Expected Content', () => {
   test('/projects renders projects gallery', async ({ page }) => {
     await page.goto('/projects')
     await page.waitForLoadState('domcontentloaded')
-    
+
     // Wait for React to hydrate - look for any content
-    await page.waitForFunction(() => {
-      const body = document.body.textContent || ''
-      return body.length > 100
-    }, { timeout: 10000 })
+    await page.waitForFunction(
+      () => {
+        const body = document.body.textContent || ''
+        return body.length > 100
+      },
+      { timeout: 10000 },
+    )
 
     const body = await page.locator('body').textContent()
     // The page shows "Projects & Portfolio" heading and project statistics
@@ -516,10 +524,13 @@ test.describe('Route Health — No 500 Errors or Blank Pages', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Wait for React to hydrate
-      await page.waitForFunction(() => {
-        const body = document.body.textContent || ''
-        return body.length > 50
-      }, { timeout: 10000 })
+      await page.waitForFunction(
+        () => {
+          const body = document.body.textContent || ''
+          return body.length > 50
+        },
+        { timeout: 10000 },
+      )
 
       const bodyText = await page.locator('body').textContent()
       expect(bodyText?.trim().length).toBeGreaterThan(50)
@@ -530,10 +541,13 @@ test.describe('Route Health — No 500 Errors or Blank Pages', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Wait for React to hydrate and render nav
-      await page.waitForFunction(() => {
-        const nav = document.querySelector('nav')
-        return nav !== null
-      }, { timeout: 10000 })
+      await page.waitForFunction(
+        () => {
+          const nav = document.querySelector('nav')
+          return nav !== null
+        },
+        { timeout: 10000 },
+      )
 
       const nav = page.locator('nav')
       await expect(nav.first()).toBeVisible()

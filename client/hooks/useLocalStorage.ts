@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 /**
  * useLocalStorage hook for persistent state synced with localStorage.
@@ -8,23 +8,23 @@ import { useState } from "react";
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      const item = window.localStorage.getItem(key)
+      return item ? JSON.parse(item) : initialValue
     } catch (error) {
-      return initialValue;
+      return initialValue
     }
-  });
+  })
 
   const setValue = (value: T | ((val: T) => T)) => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      const valueToStore = value instanceof Function ? value(storedValue) : value
+      setStoredValue(valueToStore)
+      window.localStorage.setItem(key, JSON.stringify(valueToStore))
     } catch (error) {
       // Optionally handle error
-      console.error("Error saving to localStorage:", error);
+      console.error('Error saving to localStorage:', error)
     }
-  };
+  }
 
-  return [storedValue, setValue] as const;
+  return [storedValue, setValue] as const
 }

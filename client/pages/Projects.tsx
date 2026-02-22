@@ -8,6 +8,7 @@ import SearchableProjects from '@/components/SearchableProjects'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useSampleProjects } from '@/data/projectsData'
+import { ProjectShowcase } from '@/components/projects/ProjectShowcase'
 
 const Interactive3DDemo = lazy(() =>
   import('@/components/Interactive3DDemo').then((module) => ({
@@ -159,6 +160,7 @@ const Projects: React.FC = () => {
           </Tabs>
         </div>
       </div>
+      <ProjectShowcase />
     </>
   )
 }

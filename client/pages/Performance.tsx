@@ -365,12 +365,21 @@ export default function Performance() {
           <Card className='p-6' data-testid='performance-tips'>
             <h3 className='text-lg font-semibold mb-4'>Performance Tips</h3>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div className='space-y-2'>
-                <h4 className='font-medium text-cyan-400'>🚀 Core Web Vitals</h4>
-                <ul className='text-sm text-muted-foreground space-y-1'>
-                  <li>• LCP &lt; 2.5s for good user experience</li>
-                  <li>• CLS &lt; 0.1 to prevent layout shifts</li>
-                  <li>• FID &lt; 100ms for responsive interactions</li>
+              <div className='space-y-2' data-testid='core-web-vitals-section'>
+                <h4 className='font-medium text-cyan-400' data-testid='core-web-vitals-heading'>
+                  🚀 Core Web Vitals
+                </h4>
+                <ul
+                  className='text-sm text-muted-foreground space-y-1'
+                  data-testid='core-web-vitals-list'
+                >
+                  <li data-testid='core-web-vitals-lcp'>
+                    • LCP &lt; 2.5s for good user experience
+                  </li>
+                  <li data-testid='core-web-vitals-cls'>• CLS &lt; 0.1 to prevent layout shifts</li>
+                  <li data-testid='core-web-vitals-fid'>
+                    • FID &lt; 100ms for responsive interactions
+                  </li>
                 </ul>
               </div>
               <div className='space-y-2'>

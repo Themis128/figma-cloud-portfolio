@@ -31,28 +31,28 @@ test.describe('3D Interactive Demos', () => {
       await page.waitForTimeout(1000)
 
       // Switch to 3D tab - try multiple selectors
-      let tabSwitched = false;
+      let tabSwitched = false
       try {
         // First try the text selector
         await page.click('text="3D Demo"', { timeout: 5000 })
-        tabSwitched = true;
+        tabSwitched = true
       } catch {
         try {
           // Fallback to role and name
           await page.getByRole('tab', { name: '3D Demo' }).click({ timeout: 5000 })
-          tabSwitched = true;
+          tabSwitched = true
         } catch {
           // Last resort - click by position if we can find any tab
           const tabs = page.locator('[role="tab"]')
           const tabCount = await tabs.count().catch(() => 0)
           if (tabCount >= 2) {
             await tabs.nth(1).click()
-            tabSwitched = true;
+            tabSwitched = true
           }
         }
       }
       if (!tabSwitched) {
-        test.skip(true, '3D Demo tab not found, skipping 3D tests in this environment.');
+        test.skip(true, '3D Demo tab not found, skipping 3D tests in this environment.')
       }
       await page.waitForTimeout(2000) // Wait for 3D content to load
     })
@@ -63,7 +63,10 @@ test.describe('3D Interactive Demos', () => {
       // Wait for canvas to appear (may take time to load)
       const canvasVisible = await canvas.isVisible().catch(() => false)
       if (!canvasVisible) {
-        test.skip(true, '3D canvas not rendered - skipping test (likely headless/CI or tab switch issue)');
+        test.skip(
+          true,
+          '3D canvas not rendered - skipping test (likely headless/CI or tab switch issue)',
+        )
       }
       // Canvas is visible - 3D content loaded successfully
       const boundingBox = await canvas.boundingBox()

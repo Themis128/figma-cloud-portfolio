@@ -15,7 +15,6 @@ import { lazy, Suspense, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const AIBrain = lazy(() => import('@/components/AIBrain'))
-const Navigation = lazy(() => import('@/components/Navigation'))
 
 import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
@@ -67,11 +66,10 @@ export default function Index() {
       data-testid='index-page'
       className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden'
     >
+      {/* ThemeToggleButton removed */}
       <CircuitBackground />
 
-      <Suspense fallback={<div className='h-16 md:h-20 bg-slate-900/80 backdrop-blur-sm'></div>}>
-        <Navigation />
-      </Suspense>
+      {/* Navigation removed: now rendered globally in App.tsx */}
 
       {/* Skip to main content link */}
       <a

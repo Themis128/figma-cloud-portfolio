@@ -193,11 +193,10 @@ export function LinkPreview({
     setLoading(false)
   }, [handleTestEnvironment])
 
-  useEffect(() => {
-    let isMounted = true
-
-    const loadPreview = async () => {
-      if (!isMounted) return
+  // Extracted loadPreview logic to reduce complexity
+  const runLoadPreview = useCallback(
+    async (isMounted: { current: boolean }) => {
+      if (!isMounted.current) return
 
       setLoading(true)
       setError(null)
@@ -210,20 +209,25 @@ export function LinkPreview({
       try {
         await loadPreviewData()
       } finally {
-        if (isMounted) {
+        if (isMounted.current) {
           setLoading(false)
         }
       }
-    }
+    },
+    [isTestEnvironment, handleTestMode, loadPreviewData],
+  )
+
+  useEffect(() => {
+    const isMounted = { current: true }
 
     if (url) {
-      loadPreview()
+      runLoadPreview(isMounted)
     }
 
     return () => {
-      isMounted = false
+      isMounted.current = false
     }
-  }, [url, isTestEnvironment, handleTestMode, loadPreviewData])
+  }, [url, runLoadPreview])
 
   const handleClick = () => {
     if (onClick) {

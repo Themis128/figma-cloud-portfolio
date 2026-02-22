@@ -29,6 +29,7 @@ import {
   handlePushNotificationsPut,
 } from './routes/push-notifications'
 import { handleResumeDownload } from './routes/resume'
+import playwrightAutofixRouter from './routes/playwright-autofix'
 import { sentryErrorHandler } from './sentry'
 
 // Local logger wrapping console for structured output
@@ -144,7 +145,6 @@ export function createServer() {
   // Serve static files from root directory (for deployment-monitor.html)
   app.use(express.static('.'))
 
-
   // Register all API routes first
   // ...existing code...
 
@@ -201,7 +201,6 @@ export function createServer() {
   app.put('/api/push-notifications', handlePushNotificationsPut)
   app.delete('/api/push-notifications', handlePushNotificationsDelete)
 
-
   // AI routes
   app.post('/api/ai/claude', executeClaude)
   app.post('/api/ai/agent', executeAgent)
@@ -209,6 +208,9 @@ export function createServer() {
   // Agent logging routes
   app.post('/api/agents', saveAgent)
   app.get('/api/agents', getAgents)
+
+  // Playwright AI Autofix routes
+  app.use('/api/playwright-autofix', playwrightAutofixRouter)
 
   // Health check endpoints
   app.get('/api/health', (_req, res) => {

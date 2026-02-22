@@ -83,8 +83,11 @@ async function setup() {
 
     const awsAccessKeyId = await question('Enter your AWS Access Key ID: ')
     const awsSecretAccessKey = await question('Enter your AWS Secret Access Key: ')
-    const awsRegion = await question('Enter AWS Region (default: eu-central-1): ') || 'eu-central-1'
-    const sesVerifiedEmail = await question('Enter your verified SES email (e.g., noreply@yourdomain.com): ')
+    const awsRegion =
+      (await question('Enter AWS Region (default: eu-central-1): ')) || 'eu-central-1'
+    const sesVerifiedEmail = await question(
+      'Enter your verified SES email (e.g., noreply@yourdomain.com): ',
+    )
 
     if (!(awsAccessKeyId && awsSecretAccessKey && sesVerifiedEmail)) {
       console.log('\n❌ All fields are required. Please try again.\n')

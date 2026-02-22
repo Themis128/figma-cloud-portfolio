@@ -29,33 +29,30 @@ export const ResumePage = lazy(() => import('../pages/Resume'))
 // =============================================================================
 
 // Complex interactive components
-// Note: ContactForm component not found - commented out
-// export const ContactForm = lazy(() =>
-//   import('../components/forms/ContactForm').then((module) => ({
-//     default: module.ContactForm,
-//   })),
-// )
 
-// Note: ProjectShowcase component not found - commented out
-// export const ProjectShowcase = lazy(() =>
-//   import('../components/projects/ProjectShowcase').then((module) => ({
-//     default: module.ProjectShowcase,
-//   })),
-// )
+export const ContactForm = lazy(() =>
+  import('../components/forms/ContactForm').then((module) => ({
+    default: module.ContactForm,
+  })),
+)
 
-// Note: SkillsMatrix component not found - commented out
-// export const SkillsMatrix = lazy(() =>
-//   import('../components/about/SkillsMatrix').then((module) => ({
-//     default: module.SkillsMatrix,
-//   })),
-// )
+export const ProjectShowcase = lazy(() =>
+  import('../components/projects/ProjectShowcase').then((module) => ({
+    default: module.ProjectShowcase,
+  })),
+)
 
-// Note: Timeline component not found - commented out
-// export const TimelineComponent = lazy(() =>
-//   import('../components/about/Timeline').then((module) => ({
-//     default: module.Timeline,
-//   })),
-// )
+export const SkillsMatrix = lazy(() =>
+  import('../components/about/SkillsMatrix').then((module) => ({
+    default: module.SkillsMatrix,
+  })),
+)
+
+export const TimelineComponent = lazy(() =>
+  import('../components/about/Timeline').then((module) => ({
+    default: module.Timeline,
+  })),
+)
 
 // Agent-related components (heavy dependencies)
 export const AgentBuilder = lazy(() => import('../components/agents/AgentBuilder'))

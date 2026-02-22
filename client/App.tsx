@@ -5,6 +5,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { NetworkOptimizer } from '@/components/NetworkOptimizer'
 import { LoadingErrorBoundary, PageLoading } from '@/components/ui/enhanced-loading'
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring'
+import { CookieConsentBar } from '@/components/CookieConsentBar'
+import { AccessibilityButton } from '@/components/ui/AccessibilityButton'
+import { Suspense as ReactSuspense } from 'react'
+const Navigation = lazy(() => import('@/components/Navigation'))
 
 // Conditionally import GoogleAnalytics based on environment
 let GoogleAnalytics: React.ComponentType
@@ -49,6 +53,12 @@ function App() {
                   <GoogleAnalytics />
                 </Suspense>
               )}
+              {/* Global Navigation bar */}
+              <ReactSuspense
+                fallback={<div className='h-16 md:h-20 bg-slate-900/80 backdrop-blur-sm'></div>}
+              >
+                <Navigation />
+              </ReactSuspense>
               <Suspense
                 fallback={
                   <PageLoading
@@ -69,6 +79,8 @@ function App() {
                   <Route path='/settings' element={<Settings />} />
                   <Route path='*' element={<NotFound />} />
                 </Routes>
+                <CookieConsentBar />
+                <AccessibilityButton />
               </Suspense>
             </BrowserRouter>
           </ThemeProvider>

@@ -25,12 +25,21 @@ const pushNotificationsFunction = defineFunction({
   entry: "./functions/push-notifications/index.ts",
 });
 
+const playwrightAutofixFunction = defineFunction({
+  name: "playwright-autofix",
+  entry: "./functions/playwright-autofix/index.ts",
+  runtime: 20, // Node.js 20.x
+  timeoutSeconds: 30,
+  memoryMB: 512,
+});
+
 const backend = defineBackend({
   ping: pingFunction,
   demo: demoFunction,
   contact: contactFunction,
   resume: resumeFunction,
   "push-notifications": pushNotificationsFunction,
+  "playwright-autofix": playwrightAutofixFunction,
 });
 
 export default backend;

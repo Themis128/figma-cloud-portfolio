@@ -75,7 +75,7 @@ test.describe('Performance Monitoring', () => {
 
     // For mobile browsers or small viewports, navigate directly to avoid menu interaction issues
     const isMobile = browserName.includes('Mobile') || (page.viewportSize()?.width || 0) < 768
-    
+
     if (isMobile) {
       // Navigate directly to about page
       await page.goto('/about')

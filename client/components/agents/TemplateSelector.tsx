@@ -208,6 +208,7 @@ export default function TemplateSelector({
                       ? 'border-cyan-400 bg-white/10'
                       : 'border-white/10 hover:border-cyan-400/50'
                   }`}
+                  data-testid='template-card'
                   onClick={() => {
                     onSelectTemplate(template)
                   }}

@@ -104,7 +104,7 @@ test.describe('Image Optimization Features', () => {
     if (sourceCount === 0) {
       const imagesWithSrcset = page.locator('img[srcset]')
       const imgSrcsetCount = await imagesWithSrcset.count()
-      
+
       // If no srcset at all, just verify images exist
       if (imgSrcsetCount === 0) {
         const images = page.locator('img')
@@ -113,7 +113,7 @@ test.describe('Image Optimization Features', () => {
         console.log('No srcset found - basic image check passed')
         return
       }
-      
+
       // Check at least one image has valid srcset
       const srcset = await imagesWithSrcset.first().getAttribute('srcset')
       expect(srcset).toBeTruthy()

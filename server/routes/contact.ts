@@ -349,7 +349,9 @@ export const handleContactForm = async (req: Request, res: Response) => {
         const errorMessage = slackError instanceof Error ? slackError.message : 'Unknown error'
 
         if (retryCount < maxRetries) {
-          console.warn(`Slack notification failed (attempt ${retryCount + 1}/${maxRetries + 1}): ${errorMessage}`)
+          console.warn(
+            `Slack notification failed (attempt ${retryCount + 1}/${maxRetries + 1}): ${errorMessage}`,
+          )
           await new Promise((resolve) => setTimeout(resolve, retryDelayMs * (retryCount + 1)))
           return sendSlackNotification(retryCount + 1)
         }

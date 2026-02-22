@@ -1,0 +1,16 @@
+{
+  "name": "playwright-autofix",
+  "version": "1.0.0",
+  "description": "AI-powered Playwright test autofix Lambda function",
+  "main": "index.ts",
+  "types": "node",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  }
+}

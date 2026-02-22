@@ -129,21 +129,32 @@ const AccessibilityEnhancer: React.FC = () => {
 
   if (!isOpen) {
     return (
-      <div className='fixed bottom-24 right-6 z-50'>
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant='outline'
-          className='rounded-full w-14 h-14 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700'
-          aria-label='Accessibility Settings'
-        >
-          <Settings className='h-6 w-6 text-gray-600 dark:text-gray-300' />
-        </Button>
+      <div className='fixed bottom-6 left-6 z-50'>
+        <div className='relative group'>
+          <Button
+            onClick={() => setIsOpen(true)}
+            variant='outline'
+            className='rounded-full w-16 h-16 bg-cyan-600 text-white border-2 border-cyan-700 shadow-lg hover:bg-cyan-700 focus:outline-none focus:ring-4 focus:ring-cyan-400 transition-all animate-pulse'
+            aria-label='Accessibility Settings'
+            tabIndex={0}
+          >
+            <Settings className='h-7 w-7' aria-hidden='true' />
+            <span className='sr-only'>Accessibility</span>
+          </Button>
+          {/* Tooltip */}
+          <span className='absolute left-20 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs rounded px-3 py-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none whitespace-nowrap'>
+            Accessibility Settings
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className='fixed bottom-6 right-6 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50'>
+    <div
+      className='fixed bottom-6 left-6 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50'
+      data-testid='accessibility-panel'
+    >
       {/* Header */}
       <div className='flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700'>
         <div className='flex items-center space-x-3'>

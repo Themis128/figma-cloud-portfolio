@@ -5,6 +5,8 @@ import { AnimatedSection } from '@/components/AnimatedSection'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverCard } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
+import { SkillsMatrix } from '@/components/about/SkillsMatrix'
+import { Timeline } from '@/components/about/Timeline'
 
 export default function About() {
   return (
@@ -257,6 +259,8 @@ export default function About() {
                 </Link>
               </div>
             </AnimatedSection>
+            <SkillsMatrix />
+            <Timeline />
           </div>
         </div>
       </div>

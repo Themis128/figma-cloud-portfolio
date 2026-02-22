@@ -168,7 +168,9 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
         data-testid={testId || 'notification-button'}
       >
         <Settings className='h-4 w-4' />
-        <span className='hidden lg:inline'>Enable notifications</span>
+        <span className='hidden lg:inline' data-testid='notification-button-text'>
+          Enable notifications
+        </span>
       </Button>
     )
   }
@@ -196,7 +198,9 @@ export function NotificationButton({ 'data-testid': testId }: { 'data-testid'?: 
         data-testid={testId || 'notification-button'}
       >
         <ButtonIcon className='h-4 w-4' />
-        <span className='hidden lg:inline'>{getButtonText()}</span>
+        <span className='hidden lg:inline' data-testid='notification-button-text'>
+          {getButtonText()}
+        </span>
       </Button>
     )
   }

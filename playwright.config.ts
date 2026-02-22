@@ -122,10 +122,7 @@ const BROWSER_LAUNCH_ARGS = {
   ],
 
   // WebKit-compatible security args (minimal set)
-  WEBKIT_SECURITY: [
-    '--no-sandbox',
-    '--disable-dev-shm-usage',
-  ],
+  WEBKIT_SECURITY: ['--no-sandbox', '--disable-dev-shm-usage'],
 
   RESOURCES: [
     '--disable-dev-shm-usage',
@@ -418,23 +415,9 @@ const getBrowserProjects = () => {
   return baseProjects
 }
 
-// Build reporters
-const reporters = settings.reporting.reporters.map((reporter) => {
-  switch (reporter) {
-    case 'html':
-      return ['html', { open: 'never', outputFolder: `${settings.reporting.outputDir}/html` }]
-    case 'junit':
-      return ['junit', { outputFile: `${settings.reporting.outputDir}/junit.xml` }]
-    case 'json':
-      return ['json', { outputFile: `${settings.reporting.outputDir}/results.json` }]
-    default:
-      return [reporter]
-  }
-})
-
 // Create config
 const config: PlaywrightTestConfig = {
-  testDir: './playwright-tests',
+  testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: settings.retries,
@@ -446,7 +429,14 @@ const config: PlaywrightTestConfig = {
   // globalTeardown: './playwright-tests/global-teardown.ts',
 
   outputDir: `${settings.reporting.outputDir}/artifacts`,
-  reporter: reporters as unknown as PlaywrightTestConfig['reporter'],
+  reporter: [
+    ['line'],
+    ['./playwright-ai-autofix-reporter', {
+      endpoint: process.env.PLAYWRIGHT_AUTOFIX_ENDPOINT || process.env.AUTOFIX_LAMBDA_URL,
+      realTimeConfig: true,
+      outputPath: `${settings.reporting.outputDir}/autofix-report.json`,
+    }],
+  ],
 
   expect: {
     timeout: settings.timeouts.expect,

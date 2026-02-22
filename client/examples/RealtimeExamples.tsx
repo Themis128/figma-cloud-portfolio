@@ -44,104 +44,88 @@ export function EnhancedAgentsPage() {
                   : 'bg-gray-100 text-gray-800 dark:bg-navy-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-navy-600',
               )}
             >
-              {showRealtimePanel ? 'Hide' : 'Show'} Real-time Panel
+              {showRealtimePanel ? 'Hide Real-time Panel' : 'Show Real-time Panel'}
             </button>
           </div>
-        </div>
-      </div>
-
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
-          {/* Agents List */}
-          <div className='lg:col-span-1'>
-            <div className='bg-white dark:bg-navy-800 rounded-lg shadow-sm border border-gray-200 dark:border-navy-700'>
-              <div className='p-4 border-b border-gray-200 dark:border-navy-700'>
-                <h2 className='font-semibold text-gray-900 dark:text-white'>Available Agents</h2>
-              </div>
-              <div className='p-4 space-y-2'>
-                {agents.map((agent) => (
-                  <button
-                    type='button'
-                    key={agent.id}
-                    onClick={() => handleAgentSelect(agent.id)}
+          <div className='p-4 space-y-2'>
+            {agents.map((agent) => (
+              <button
+                type='button'
+                key={agent.id}
+                onClick={() => handleAgentSelect(agent.id)}
+                className={cn(
+                  'w-full text-left p-3 rounded-lg transition-colors',
+                  selectedAgent === agent.id
+                    ? 'bg-cyan-50 border-cyan-200 text-cyan-900 dark:bg-cyan-900/20 dark:border-cyan-700 dark:text-cyan-100'
+                    : 'hover:bg-gray-50 dark:hover:bg-navy-750 border-transparent',
+                )}
+              >
+                <div className='flex items-center justify-between'>
+                  <span className='font-medium'>{agent.name}</span>
+                  <div
                     className={cn(
-                      'w-full text-left p-3 rounded-lg transition-colors',
-                      selectedAgent === agent.id
-                        ? 'bg-cyan-50 border-cyan-200 text-cyan-900 dark:bg-cyan-900/20 dark:border-cyan-700 dark:text-cyan-100'
-                        : 'hover:bg-gray-50 dark:hover:bg-navy-750 border-transparent',
+                      'w-2 h-2 rounded-full',
+                      agent.status === 'active' && 'bg-green-500',
+                      agent.status === 'idle' && 'bg-yellow-500',
+                      agent.status === 'running' && 'bg-blue-500 animate-pulse',
                     )}
-                  >
-                    <div className='flex items-center justify-between'>
-                      <span className='font-medium'>{agent.name}</span>
-                      <div
-                        className={cn(
-                          'w-2 h-2 rounded-full',
-                          agent.status === 'active' && 'bg-green-500',
-                          agent.status === 'idle' && 'bg-yellow-500',
-                          agent.status === 'running' && 'bg-blue-500 animate-pulse',
-                        )}
-                      />
-                    </div>
-                    <div className='text-sm text-gray-600 dark:text-gray-400 capitalize'>
-                      {agent.status}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Collaboration Panel for Selected Agent */}
-            {selectedAgent && (
-              <div className='mt-6'>
-                <CollaborationPanel
-                  roomId={`agent:${selectedAgent}`}
-                  title='Agent Collaboration'
-                  showActivityFeed
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Main Content Area */}
-          <div
-            className={cn(
-              'transition-all duration-200',
-              showRealtimePanel ? 'lg:col-span-2' : 'lg:col-span-3',
-            )}
-          >
-            {selectedAgent ? (
-              <AgentCollaborationWrapper agentId={selectedAgent}>
-                <AgentBuilder agentId={selectedAgent} />
-              </AgentCollaborationWrapper>
-            ) : (
-              <div className='bg-white dark:bg-navy-800 rounded-lg shadow-sm border border-gray-200 dark:border-navy-700 p-8'>
-                <div className='text-center'>
-                  <h3 className='text-lg font-medium text-gray-900 dark:text-white mb-2'>
-                    Select an Agent
-                  </h3>
-                  <p className='text-gray-600 dark:text-gray-400'>
-                    Choose an agent from the list to start collaborating in real-time
-                  </p>
+                  />
                 </div>
-              </div>
-            )}
+                <div className='text-sm text-gray-600 dark:text-gray-400 capitalize'>
+                  {agent.status}
+                </div>
+              </button>
+            ))}
           </div>
-
-          {/* Real-time Panel */}
-          {showRealtimePanel && (
-            <div className='lg:col-span-1'>
-              <RealtimeIntegration
-                userId='current-user' // Replace with actual user ID
-                username='John Doe' // Replace with actual username
-                showDashboard={false} // Use compact mode in sidebar
-                showCollaboration={true}
-                showNotifications={true}
-                className='sticky top-4'
+          {/* Collaboration Panel for Selected Agent */}
+          {selectedAgent && (
+            <div className='mt-6'>
+              <CollaborationPanel
+                roomId={`agent:${selectedAgent}`}
+                title='Agent Collaboration'
+                showActivityFeed
               />
             </div>
           )}
         </div>
       </div>
+      {/* Main Content Area */}
+      <div
+        className={cn(
+          'transition-all duration-200',
+          showRealtimePanel ? 'lg:col-span-2' : 'lg:col-span-3',
+        )}
+      >
+        {selectedAgent ? (
+          <AgentCollaborationWrapper agentId={selectedAgent}>
+            <AgentBuilder agentId={selectedAgent} />
+          </AgentCollaborationWrapper>
+        ) : (
+          <div className='bg-white dark:bg-navy-800 rounded-lg shadow-sm border border-gray-200 dark:border-navy-700 p-8'>
+            <div className='text-center'>
+              <h3 className='text-lg font-medium text-gray-900 dark:text-white mb-2'>
+                Select an Agent
+              </h3>
+              <p className='text-gray-600 dark:text-gray-400'>
+                Choose an agent from the list to start collaborating in real-time
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* Real-time Panel */}
+      {showRealtimePanel && (
+        <div className='lg:col-span-1'>
+          <RealtimeIntegration
+            userId='current-user' // Replace with actual user ID
+            username='John Doe' // Replace with actual username
+            showDashboard={false} // Use compact mode in sidebar
+            showCollaboration={true}
+            showNotifications={true}
+            className='sticky top-4'
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -248,19 +232,17 @@ function AgentBuilder({ agentId: _agentId }: AgentBuilderProps) {
             <div>
               <label
                 htmlFor='agent-model'
-                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
-              >
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                 Model
               </label>
               <select
                 id='agent-model'
                 value={agentConfig.model}
                 onChange={(e) => handleConfigChange('model', e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 dark:border-navy-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-navy-700 dark:text-white'
-              >
+                className='w-full px-3 py-2 border border-gray-300 dark:border-navy-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-navy-700 dark:text-white'>
                 <option value='gpt-4'>GPT-4</option>
-                <option value='gpt-3.5-turbo'>GPT-3.5 Turbo</option>
-                <option value='claude-3'>Claude 3</option>
+                <option value='gpt-3.5'>GPT-3.5</option>
+                <option value='distilgpt2'>DistilGPT-2</option>
               </select>
             </div>
 
@@ -344,7 +326,7 @@ function AgentBuilder({ agentId: _agentId }: AgentBuilderProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // =============================================================================

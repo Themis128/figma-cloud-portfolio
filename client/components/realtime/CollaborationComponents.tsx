@@ -528,14 +528,13 @@ const MoveIcon = ({ className }: { className?: string }) => (
     viewBox='0 0 24 24'
     stroke='currentColor'
     role='img'
-    aria-label='Move'
+    aria-label='Move icon'
   >
     <title>Move</title>
     <path
       strokeLinecap='round'
       strokeLinejoin='round'
-      strokeWidth={2}
-      d='M7 16l-4-4m0 0l4-4m-4 4h18'
+      d='M12 2v20M2 12h20M7 7l5 5-5 5'
     />
   </svg>
 )
@@ -547,14 +546,13 @@ const RenameIcon = ({ className }: { className?: string }) => (
     viewBox='0 0 24 24'
     stroke='currentColor'
     role='img'
-    aria-label='Rename'
+    aria-label='Rename icon'
   >
     <title>Rename</title>
     <path
       strokeLinecap='round'
       strokeLinejoin='round'
-      strokeWidth={2}
-      d='M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z'
+      d='M4 4v16M20 4v16M8 8l8 8-8 8'
     />
   </svg>
 )
@@ -566,21 +564,13 @@ const ActivityIcon = ({ className }: { className?: string }) => (
     viewBox='0 0 24 24'
     stroke='currentColor'
     role='img'
-    aria-label='Activity'
+    aria-label='Activity icon'
   >
     <title>Activity</title>
     <path
       strokeLinecap='round'
       strokeLinejoin='round'
-      strokeWidth={2}
-      d='M13 10V3L4 14h7v7l9-11h-7z'
+      d='M12 2v20M2 12h20M7 7l5 5-5 5'
     />
   </svg>
 )
-
-export default {
-  PresenceIndicator,
-  CollaborationPanel,
-  ConnectionStatus,
-  TypingIndicator,
-}

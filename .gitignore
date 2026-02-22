@@ -98,10 +98,25 @@ performance-test-results/
 build-log*.txt
 log-url-*.txt
 
-# Stable Diffusion WebUI (large model files)
-stable-diffusion-webui/models/
-stable-diffusion-webui/outputs/
-stable-diffusion-webui/logs/
+# Stable Diffusion WebUI (large model files and nested git repo)
+stable-diffusion-webui/
+
+# Python virtual environment and packages
+python/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# AWS CLI installation
+aws/
+awscliv2.zip
+
+# Amplify internal directory
+.amplify/
 
 # Misc
 *.local
