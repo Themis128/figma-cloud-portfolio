@@ -1,0 +1,42 @@
+name: Auto-Fix from Monitoring Relay
+
+on:
+  repository_dispatch:
+    types: [auto-fix-trigger]
+
+jobs:
+  auto-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Playwright autofix
+        run: pnpm test:e2e:autofix
+
+      - name: Commit and push fixes (if any)
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(auto-fix): apply automated fixes from monitoring relay"
+            git push origin HEAD:autofix/relay-$(date +%s)
+          fi
+
+      - name: Create Pull Request
+        if: success() && steps.commit.outputs.committed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ github.head_ref }}
+          title: "Automated Fixes from Monitoring Relay"
+          body: "This PR was created automatically by the monitoring relay workflow. Please review and merge if appropriate."
+          base: production
