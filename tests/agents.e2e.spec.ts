@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 // E2E test for the /agents page: template selection, creation, and agent build flow
 

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 // Utility to check theme class on <html>
 async function expectTheme(page, theme: 'dark' | 'light') {

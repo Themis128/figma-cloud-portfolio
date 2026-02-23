@@ -15,6 +15,7 @@ export function ThemeToggleButton() {
       aria-haspopup='menu'
       aria-expanded='false'
       data-state='closed'
+      type='button'
     >
       {/* Sun icon */}
       <svg

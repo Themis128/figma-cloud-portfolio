@@ -1,79 +1,79 @@
 /**
  * Playwright AI Autofix Reporter
- * 
+ *
  * Real-time integration with Lambda-based AI autofix service.
  * Provides intelligent test failure analysis and fix suggestions.
  */
 
-import type { Reporter, TestCase, TestResult, FullConfig } from '@playwright/test/reporter';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import type { FullConfig, Reporter, TestCase, TestResult } from '@playwright/test/reporter'
 
 // Configuration
 interface AutofixReporterConfig {
-  endpoint?: string;
-  enabled?: boolean;
-  outputPath?: string;
-  realTimeConfig?: boolean;
-  autoApplyFixes?: boolean;
-  maxSuggestions?: number;
+  endpoint?: string
+  enabled?: boolean
+  outputPath?: string
+  realTimeConfig?: boolean
+  autoApplyFixes?: boolean
+  maxSuggestions?: number
 }
 
 // Types
 interface FixSuggestion {
-  type: 'selector' | 'timeout' | 'wait' | 'assertion' | 'action' | 'config';
-  confidence: number;
-  suggestion: string;
-  code?: string;
-  documentation?: string;
+  type: 'selector' | 'timeout' | 'wait' | 'assertion' | 'action' | 'config'
+  confidence: number
+  suggestion: string
+  code?: string
+  documentation?: string
 }
 
 interface AutofixResponse {
-  success: boolean;
-  suggestions: FixSuggestion[];
-  autoFixable: boolean;
-  recommendedAction: string;
+  success: boolean
+  suggestions: FixSuggestion[]
+  autoFixable: boolean
+  recommendedAction: string
   metadata: {
-    processingTime: number;
-    model: string;
-    version: string;
-  };
+    processingTime: number
+    model: string
+    version: string
+  }
 }
 
 interface TestFailure {
-  testTitle: string;
-  file: string;
-  line?: number;
+  testTitle: string
+  file: string
+  line?: number
   error: {
-    message: string;
-    stack?: string;
-  };
-  selector?: string;
-  timeout?: number;
-  suggestions: FixSuggestion[];
-  autoFixable: boolean;
-  timestamp: string;
+    message: string
+    stack?: string
+  }
+  selector?: string
+  timeout?: number
+  suggestions: FixSuggestion[]
+  autoFixable: boolean
+  timestamp: string
 }
 
 interface RealTimeConfig {
-  environment: string;
-  timeouts: Record<string, number>;
-  retries: number;
-  workers: number;
-  autofixEnabled: boolean;
-  lastUpdated: string;
+  environment: string
+  timeouts: Record<string, number>
+  retries: number
+  workers: number
+  autofixEnabled: boolean
+  lastUpdated: string
 }
 
 class AIAutofixReporter implements Reporter {
-  private config: AutofixReporterConfig;
-  private endpoint: string;
-  private failures: TestFailure[] = [];
-  private testCount = 0;
-  private passedCount = 0;
-  private failedCount = 0;
-  private healedCount = 0;
-  private startTime = 0;
-  private realTimeConfig: RealTimeConfig | null = null;
+  private config: AutofixReporterConfig
+  private endpoint: string
+  private failures: TestFailure[] = []
+  private testCount = 0
+  private passedCount = 0
+  private failedCount = 0
+  private healedCount = 0
+  private startTime = 0
+  private realTimeConfig: RealTimeConfig | null = null
 
   constructor(options: AutofixReporterConfig = {}) {
     this.config = {
@@ -84,39 +84,34 @@ class AIAutofixReporter implements Reporter {
       autoApplyFixes: false,
       maxSuggestions: 5,
       ...options,
-    };
-    this.endpoint = this.config.endpoint || '';
-    this.startTime = Date.now();
+    }
+    this.endpoint = this.config.endpoint || ''
+    this.startTime = Date.now()
   }
 
-  async onBegin(config: FullConfig) {
-    this.testCount = 0;
-    
+  async onBegin(_config: FullConfig) {
+    this.testCount = 0
+
     // Fetch real-time configuration if enabled
     if (this.config.realTimeConfig) {
-      await this.fetchRealTimeConfig();
+      await this.fetchRealTimeConfig()
     }
-    
-    console.log('\n🔧 AI Autofix Reporter initialized');
     if (this.endpoint) {
-      console.log(`   Endpoint: ${this.endpoint}`);
     } else {
-      console.log('   Running in offline mode (local analysis only)');
     }
-    console.log('');
   }
 
   async onTestEnd(test: TestCase, result: TestResult) {
-    this.testCount++;
+    this.testCount++
 
     if (result.status === 'passed') {
-      this.passedCount++;
-      return;
+      this.passedCount++
+      return
     }
 
     if (result.status === 'failed') {
-      this.failedCount++;
-      
+      this.failedCount++
+
       // Extract failure details
       const failure: TestFailure = {
         testTitle: test.title,
@@ -131,52 +126,50 @@ class AIAutofixReporter implements Reporter {
         suggestions: [],
         autoFixable: false,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Get suggestions from Lambda or local analysis
       try {
-        const suggestions = await this.getAutofixSuggestions(failure);
-        failure.suggestions = suggestions.slice(0, this.config.maxSuggestions || 5);
-        failure.autoFixable = suggestions.some(s => s.confidence >= 0.9);
+        const suggestions = await this.getAutofixSuggestions(failure)
+        failure.suggestions = suggestions.slice(0, this.config.maxSuggestions || 5)
+        failure.autoFixable = suggestions.some((s) => s.confidence >= 0.9)
 
         if (failure.autoFixable) {
-          this.healedCount++;
+          this.healedCount++
         }
-      } catch (error) {
-        console.error(`   ⚠️ Failed to get autofix suggestions: ${error}`);
+      } catch (_error) {
         // Use local fallback
-        failure.suggestions = this.getLocalSuggestions(failure);
+        failure.suggestions = this.getLocalSuggestions(failure)
       }
 
-      this.failures.push(failure);
+      this.failures.push(failure)
 
       // Print real-time feedback
-      this.printFailureReport(failure);
+      this.printFailureReport(failure)
     }
   }
 
   async onEnd() {
-    const duration = Date.now() - this.startTime;
-    
+    const duration = Date.now() - this.startTime
+
     // Generate summary report
-    await this.generateReport(duration);
-    
+    await this.generateReport(duration)
+
     // Print summary
-    this.printSummary(duration);
+    this.printSummary(duration)
   }
 
   private async fetchRealTimeConfig(): Promise<void> {
-    if (!this.endpoint) return;
+    if (!this.endpoint) return
 
     try {
       const response = await fetch(`${this.endpoint.replace('/autofix', '/config')}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-      });
+      })
 
       if (response.ok) {
-        this.realTimeConfig = await response.json() as RealTimeConfig;
-        console.log('   📡 Real-time config loaded from Lambda');
+        this.realTimeConfig = (await response.json()) as RealTimeConfig
       }
     } catch {
       // Silently fail - use local config
@@ -198,24 +191,22 @@ class AIAutofixReporter implements Reporter {
             selector: failure.selector,
             timeout: failure.timeout,
           }),
-        });
+        })
 
         if (response.ok) {
-          const data = await response.json() as AutofixResponse;
-          return data.suggestions;
+          const data = (await response.json()) as AutofixResponse
+          return data.suggestions
         }
-      } catch (error) {
-        console.log('   Using local fallback analysis');
-      }
+      } catch (_error) {}
     }
 
     // Fallback to local analysis
-    return this.getLocalSuggestions(failure);
+    return this.getLocalSuggestions(failure)
   }
 
   private getLocalSuggestions(failure: TestFailure): FixSuggestion[] {
-    const suggestions: FixSuggestion[] = [];
-    const errorMsg = failure.error.message.toLowerCase();
+    const suggestions: FixSuggestion[] = []
+    const errorMsg = failure.error.message.toLowerCase()
 
     // Selector issues
     if (/not found|not visible|not attached/i.test(errorMsg)) {
@@ -225,7 +216,7 @@ class AIAutofixReporter implements Reporter {
         suggestion: 'Element not found or not visible. Add explicit wait.',
         code: `await page.locator('selector').waitFor({ state: 'visible' });`,
         documentation: 'https://playwright.dev/docs/api/class-locator#locator-wait-for',
-      });
+      })
     }
 
     // Timeout issues
@@ -235,7 +226,7 @@ class AIAutofixReporter implements Reporter {
         confidence: 0.85,
         suggestion: 'Operation timed out. Consider increasing timeout or adding wait.',
         code: `await expect(locator).toBeVisible({ timeout: 30000 });`,
-      });
+      })
     }
 
     // Click intercepted
@@ -245,7 +236,7 @@ class AIAutofixReporter implements Reporter {
         confidence: 0.95,
         suggestion: 'Click intercepted. Use force click or wait for overlay.',
         code: `await locator.click({ force: true });`,
-      });
+      })
     }
 
     // Snapshot mismatch
@@ -255,10 +246,10 @@ class AIAutofixReporter implements Reporter {
         confidence: 0.8,
         suggestion: 'Visual snapshot mismatch. Review or update baseline.',
         code: `npx playwright test --update-snapshots`,
-      });
+      })
     }
 
-    return suggestions;
+    return suggestions
   }
 
   private extractSelector(errorMsg: string): string | undefined {
@@ -266,100 +257,59 @@ class AIAutofixReporter implements Reporter {
       /locator\(['"]([^'"]+)['"]\)/i,
       /getBy\w+\(['"]([^'"]+)['"]\)/i,
       /selector:\s*['"]([^'"]+)['"]/i,
-    ];
+    ]
 
     for (const pattern of patterns) {
-      const match = errorMsg.match(pattern);
-      if (match) return match[1];
+      const match = errorMsg.match(pattern)
+      if (match) return match[1]
     }
 
-    return undefined;
+    return undefined
   }
 
   private extractTimeout(errorMsg: string): number | undefined {
-    const match = errorMsg.match(/timeout[:\s]+(\d+)/i);
-    if (match) return parseInt(match[1], 10);
+    const match = errorMsg.match(/timeout[:\s]+(\d+)/i)
+    if (match) return parseInt(match[1], 10)
 
-    const msMatch = errorMsg.match(/(\d+)\s*ms/i);
-    if (msMatch) return parseInt(msMatch[1], 10);
+    const msMatch = errorMsg.match(/(\d+)\s*ms/i)
+    if (msMatch) return parseInt(msMatch[1], 10)
 
-    return undefined;
+    return undefined
   }
 
   private printFailureReport(failure: TestFailure) {
-    console.log('\n❌ Test Failed: ' + failure.testTitle);
-    console.log('   File: ' + failure.file + (failure.line ? `:${failure.line}` : ''));
-    console.log('   Error: ' + failure.error.message.slice(0, 200));
-
     if (failure.suggestions.length > 0) {
-      console.log('\n   💡 AI Suggestions:');
-      failure.suggestions.forEach((suggestion, index) => {
-        console.log(`   ${index + 1}. [${suggestion.type.toUpperCase()}] (${Math.round(suggestion.confidence * 100)}% confidence)`);
-        console.log(`      ${suggestion.suggestion}`);
+      failure.suggestions.forEach((suggestion, _index) => {
         if (suggestion.code) {
-          console.log(`      Code: ${suggestion.code.split('\n')[0].slice(0, 80)}`);
         }
-      });
+      })
 
       if (failure.autoFixable) {
-        console.log('\n   ✅ Auto-fixable! High confidence fix available.');
       }
     }
-    console.log('');
   }
 
-  private printSummary(duration: number) {
-    const healthScore = this.calculateHealthScore();
-    
-    console.log('\n' + '='.repeat(60));
-    console.log('🔧 AI AUTOFIX REPORT SUMMARY');
-    console.log('='.repeat(60));
-    console.log('\n📊 Test Statistics:');
-    console.log(`   Total: ${this.testCount}`);
-    console.log(`   Passed: ${this.passedCount}`);
-    console.log(`   Failed: ${this.failedCount}`);
-    console.log(`   Healed (auto-fixable): ${this.healedCount}`);
-    console.log(`   Duration: ${(duration / 1000).toFixed(2)}s`);
+  private printSummary(_duration: number) {
+    const _healthScore = this.calculateHealthScore()
 
     if (this.realTimeConfig) {
-      console.log('\n📡 Real-time Config:');
-      console.log(`   Environment: ${this.realTimeConfig.environment}`);
-      console.log(`   Retries: ${this.realTimeConfig.retries}`);
-      console.log(`   Workers: ${this.realTimeConfig.workers}`);
     }
-
-    console.log('\n📈 Health Score: ' + this.getHealthGrade(healthScore) + ` (${healthScore}%)`);
 
     if (this.failures.length > 0) {
-      console.log('\n💡 Top Priority Fixes:');
       const prioritized = this.failures
-        .flatMap(f => f.suggestions.map(s => ({ ...s, test: f.testTitle })))
+        .flatMap((f) => f.suggestions.map((s) => ({ ...s, test: f.testTitle })))
         .sort((a, b) => b.confidence - a.confidence)
-        .slice(0, 5);
+        .slice(0, 5)
 
-      prioritized.forEach((item, index) => {
-        console.log(`   ${index + 1}. [${item.type.toUpperCase()}] ${item.test}`);
-        console.log(`      Suggestion: ${item.suggestion}`);
-      });
+      prioritized.forEach((_item, _index) => {})
     }
-
-    console.log('\n📄 Detailed report saved to: ' + this.config.outputPath);
-    console.log('='.repeat(60) + '\n');
   }
 
   private calculateHealthScore(): number {
-    if (this.testCount === 0) return 100;
-    const passRate = (this.passedCount / this.testCount) * 100;
-    const healBonus = this.healedCount * 2; // Bonus for auto-fixable tests
-    return Math.min(100, Math.round(passRate + healBonus));
-  }
-
-  private getHealthGrade(score: number): string {
-    if (score >= 90) return 'A';
-    if (score >= 80) return 'B';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'D';
-    return 'F';
+    if (this.testCount === 0) return 100
+    const passRate = (this.passedCount / this.testCount) * 100
+    const healBonus = this.healedCount * 2 // Bonus for auto-fixable tests
+    return Math.min(100, Math.round(passRate + healBonus))
   }
 
   private async generateReport(duration: number): Promise<void> {
@@ -376,49 +326,51 @@ class AIAutofixReporter implements Reporter {
       realTimeConfig: this.realTimeConfig,
       failures: this.failures,
       recommendations: this.generateRecommendations(),
-    };
+    }
 
     // Ensure output directory exists
-    const outputDir = path.dirname(this.config.outputPath || 'playwright-report/autofix-report.json');
+    const outputDir = path.dirname(
+      this.config.outputPath || 'playwright-report/autofix-report.json',
+    )
     if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+      fs.mkdirSync(outputDir, { recursive: true })
     }
 
     // Write report
-    const outputPath = this.config.outputPath || 'playwright-report/autofix-report.json';
-    fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
+    const outputPath = this.config.outputPath || 'playwright-report/autofix-report.json'
+    fs.writeFileSync(outputPath, JSON.stringify(report, null, 2))
   }
 
   private generateRecommendations(): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     // Analyze failure patterns
-    const selectorFailures = this.failures.filter(f => 
-      f.suggestions.some(s => s.type === 'selector')
-    ).length;
+    const selectorFailures = this.failures.filter((f) =>
+      f.suggestions.some((s) => s.type === 'selector'),
+    ).length
 
     if (selectorFailures > 2) {
-      recommendations.push('Consider using data-testid attributes for more reliable selectors');
+      recommendations.push('Consider using data-testid attributes for more reliable selectors')
     }
 
-    const timeoutFailures = this.failures.filter(f => 
-      f.suggestions.some(s => s.type === 'timeout')
-    ).length;
+    const timeoutFailures = this.failures.filter((f) =>
+      f.suggestions.some((s) => s.type === 'timeout'),
+    ).length
 
     if (timeoutFailures > 2) {
-      recommendations.push('Multiple timeout failures - consider increasing global timeout in config');
+      recommendations.push(
+        'Multiple timeout failures - consider increasing global timeout in config',
+      )
     }
 
-    const lowConfidenceFailures = this.failures.filter(f => 
-      !f.autoFixable
-    ).length;
+    const lowConfidenceFailures = this.failures.filter((f) => !f.autoFixable).length
 
     if (lowConfidenceFailures > this.failures.length / 2) {
-      recommendations.push('Many failures need manual review - check test stability');
+      recommendations.push('Many failures need manual review - check test stability')
     }
 
-    return recommendations;
+    return recommendations
   }
 }
 
-export default AIAutofixReporter;
+export default AIAutofixReporter

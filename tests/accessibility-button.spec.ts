@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 import { skipIfLambdaOffline } from '../playwright-ai-sync'
 
@@ -16,7 +16,7 @@ test('Accessibility button opens settings', async ({ page }) => {
   try {
     await panel.waitFor({ state: 'visible', timeout: 60000 })
     await expect(panel).toBeVisible({ timeout: 60000 })
-  } catch (err) {
+  } catch (_err) {
     test.skip('Accessibility panel not present after button click, skipping test')
     return
   }

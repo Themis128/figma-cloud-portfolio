@@ -18,10 +18,8 @@ import {
   Trash2,
   User,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
-
 // Simple error boundary for Resume page
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 class ResumeErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -49,6 +47,7 @@ class ResumeErrorBoundary extends React.Component<
     return this.props.children
   }
 }
+
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -164,7 +163,7 @@ function Resume() {
       if (typeof window !== 'undefined' && (window as any).trackResumeDownload) {
         ;(window as any).trackResumeDownload()
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to generate resume. Please try again.')
       // Optionally log error
       // console.error('Resume download error:', error)

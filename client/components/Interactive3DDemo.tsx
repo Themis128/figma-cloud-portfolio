@@ -3,8 +3,9 @@ import { Box, Float, Html, OrbitControls, Sphere } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import React, { useRef, useState } from 'react'
 import * as THREE from 'three'
-import { cn } from '@/lib/utils'
 import type { Project3D } from '@/data/projectsData'
+import { cn } from '@/lib/utils'
+
 export type { Project3D } from '@/data/projectsData'
 export { useSampleProjects } from '@/data/projectsData'
 

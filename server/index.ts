@@ -10,8 +10,8 @@ import express, {
   type Response,
 } from 'express'
 import { Server as SocketIOServer } from 'socket.io'
+import { getAgents, saveAgent } from './routes/agents'
 import { executeAgent, executeClaude } from './routes/ai'
-import { saveAgent, getAgents } from './routes/agents'
 import { handleAnalytics } from './routes/analytics'
 import { handleContactForm } from './routes/contact'
 import { handleDemo } from './routes/demo'
@@ -22,6 +22,7 @@ import {
   handleGetWorkflows,
   handleValidateToken,
 } from './routes/github'
+import playwrightAutofixRouter from './routes/playwright-autofix'
 import {
   handlePushNotificationsDelete,
   handlePushNotificationsGet,
@@ -29,7 +30,6 @@ import {
   handlePushNotificationsPut,
 } from './routes/push-notifications'
 import { handleResumeDownload } from './routes/resume'
-import playwrightAutofixRouter from './routes/playwright-autofix'
 import { sentryErrorHandler } from './sentry'
 
 // Local logger wrapping console for structured output

@@ -431,11 +431,14 @@ const config: PlaywrightTestConfig = {
   outputDir: `${settings.reporting.outputDir}/artifacts`,
   reporter: [
     ['line'],
-    ['./playwright-ai-autofix-reporter', {
-      endpoint: process.env.PLAYWRIGHT_AUTOFIX_ENDPOINT || process.env.AUTOFIX_LAMBDA_URL,
-      realTimeConfig: true,
-      outputPath: `${settings.reporting.outputDir}/autofix-report.json`,
-    }],
+    [
+      './playwright-ai-autofix-reporter',
+      {
+        endpoint: process.env.PLAYWRIGHT_AUTOFIX_ENDPOINT || process.env.AUTOFIX_LAMBDA_URL,
+        realTimeConfig: true,
+        outputPath: `${settings.reporting.outputDir}/autofix-report.json`,
+      },
+    ],
   ],
 
   expect: {

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('Cookie consent bar appears and works', async ({ page }) => {
   await page.goto('/')

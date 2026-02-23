@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 import { skipIfLambdaOffline } from '../playwright-ai-sync'
 
@@ -14,7 +14,7 @@ test('Cookie consent bar appears and works', async ({ page }) => {
   // Wait for bar to appear, skip if not present
   try {
     await expect(bar).toBeVisible({ timeout: 30000 })
-  } catch (err) {
+  } catch (_err) {
     test.skip('Cookie consent bar not present, skipping test')
     return
   }

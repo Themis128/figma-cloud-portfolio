@@ -531,11 +531,7 @@ const MoveIcon = ({ className }: { className?: string }) => (
     aria-label='Move icon'
   >
     <title>Move</title>
-    <path
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      d='M12 2v20M2 12h20M7 7l5 5-5 5'
-    />
+    <path strokeLinecap='round' strokeLinejoin='round' d='M12 2v20M2 12h20M7 7l5 5-5 5' />
   </svg>
 )
 
@@ -549,11 +545,7 @@ const RenameIcon = ({ className }: { className?: string }) => (
     aria-label='Rename icon'
   >
     <title>Rename</title>
-    <path
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      d='M4 4v16M20 4v16M8 8l8 8-8 8'
-    />
+    <path strokeLinecap='round' strokeLinejoin='round' d='M4 4v16M20 4v16M8 8l8 8-8 8' />
   </svg>
 )
 
@@ -567,10 +559,6 @@ const ActivityIcon = ({ className }: { className?: string }) => (
     aria-label='Activity icon'
   >
     <title>Activity</title>
-    <path
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      d='M12 2v20M2 12h20M7 7l5 5-5 5'
-    />
+    <path strokeLinecap='round' strokeLinejoin='round' d='M12 2v20M2 12h20M7 7l5 5-5 5' />
   </svg>
 )

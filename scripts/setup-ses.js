@@ -7,9 +7,9 @@
  * This script guides you through setting up AWS SES for the contact form
  */
 
-import { writeFileSync, existsSync } from 'fs'
-import { join } from 'path'
-import readline from 'readline'
+import { existsSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import readline from 'node:readline'
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -107,7 +107,7 @@ SES_VERIFIED_EMAIL=${sesVerifiedEmail}
     if (existsSync(envPath)) {
       const append = await question('.env file exists. Append to it? (y/n): ')
       if (append.toLowerCase() === 'y') {
-        const { appendFileSync } = await import('fs')
+        const { appendFileSync } = await import('node:fs')
         appendFileSync(envPath, envContent)
         console.log('\n✅ Appended AWS SES configuration to .env file')
       } else {

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Accessibility', () => {
   test('Home page has no accessibility violations', async ({ page }) => {
@@ -12,7 +12,7 @@ test.describe('Accessibility', () => {
       expect(accessibility).not.toBeNull()
       // Optionally, check for specific roles or violations
     } catch (err) {
-      test.skip('Accessibility snapshot failed: ' + (err?.message || err))
+      test.skip(`Accessibility snapshot failed: ${err?.message || err}`)
     }
   })
 
@@ -26,7 +26,7 @@ test.describe('Accessibility', () => {
       const accessibility = await page.accessibility.snapshot()
       expect(accessibility).not.toBeNull()
     } catch (err) {
-      test.skip('Accessibility snapshot failed: ' + (err?.message || err))
+      test.skip(`Accessibility snapshot failed: ${err?.message || err}`)
     }
   })
 })

@@ -2,11 +2,11 @@ import { Award, Briefcase, Cloud, Cpu, GraduationCap, Shield } from 'lucide-reac
 import { Link } from 'react-router-dom'
 
 import { AnimatedSection } from '@/components/AnimatedSection'
+import { SkillsMatrix } from '@/components/about/SkillsMatrix'
+import { Timeline } from '@/components/about/Timeline'
 import CircuitBackground from '@/components/CircuitBackground'
 import { HoverCard } from '@/components/HoverAnimations'
 import Navigation from '@/components/Navigation'
-import { SkillsMatrix } from '@/components/about/SkillsMatrix'
-import { Timeline } from '@/components/about/Timeline'
 
 export default function About() {
   return (

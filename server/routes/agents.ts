@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express'
-import { logger } from '../logger'
-import { saveAgentToDB, listAgentsFromDB } from '../lib/amplify'
 import { AgentSchema } from '../lib/agent-validation'
+import { listAgentsFromDB, saveAgentToDB } from '../lib/amplify'
+import { logger } from '../logger'
 
 export const saveAgent: RequestHandler = async (req, res) => {
   try {
@@ -12,16 +12,16 @@ export const saveAgent: RequestHandler = async (req, res) => {
       res
         .status(400)
         .json({ success: false, message: 'Invalid agent data', errors: parseResult.error.errors })
-      return;
+      return
     }
     const saved = await saveAgentToDB(parseResult.data)
     logger.info('[Agent]', `[Saved: ${parseResult.data.name} (${saved.id})]`)
     res.json({ success: true, agent: saved })
-    return;
+    return
   } catch (error) {
     logger.error('[Agent] Save error:', String(error))
     res.status(500).json({ success: false, message: 'Internal error' })
-    return;
+    return
   }
 }
 

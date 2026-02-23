@@ -1,6 +1,11 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 import { skipIfLambdaOffline } from '../playwright-ai-sync'
+
+const LONG_TIMEOUT_MS = 60000
+const THEME_TRANSITION_MS = 2000
+const NAV_TRANSITION_MS = 500
+const SHORT_TIMEOUT_MS = 10000
 
 test.beforeAll(async () => {
   await skipIfLambdaOffline(test)
@@ -17,42 +22,44 @@ test.describe('ThemeProvider integration', () => {
     await page.goto('/')
     // Try to find desktop theme toggle button
     let toggle = page.locator('button[data-testid="theme-toggle-desktop"]')
-    if (!(await toggle.count()) || !(await toggle.isVisible())) {
+    const toggleCount = await toggle.count()
+    const isToggleVisible = toggleCount > 0 && (await toggle.isVisible())
+    if (isToggleVisible) {
+      await toggle.waitFor({ state: 'visible', timeout: LONG_TIMEOUT_MS })
+      await expect(toggle).toBeVisible({ timeout: LONG_TIMEOUT_MS })
+    } else {
       // Fallback to mobile theme toggle button
       toggle = page.locator('button[data-testid="theme-toggle-mobile"]')
-      await toggle.waitFor({ state: 'visible', timeout: 60000 })
-      await expect(toggle).toBeVisible({ timeout: 60000 })
-    } else {
-      await toggle.waitFor({ state: 'visible', timeout: 60000 })
-      await expect(toggle).toBeVisible({ timeout: 60000 })
+      await toggle.waitFor({ state: 'visible', timeout: LONG_TIMEOUT_MS })
+      await expect(toggle).toBeVisible({ timeout: LONG_TIMEOUT_MS })
     }
 
     // Initial theme (should match system or default)
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(THEME_TRANSITION_MS)
     await expectTheme(page, 'dark') // Adjust if your default is 'light' or 'system'
 
     // Toggle to light
     await toggle.click()
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(THEME_TRANSITION_MS)
     await expectTheme(page, 'light')
 
     // Toggle to system (if supported)
     await toggle.click()
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(THEME_TRANSITION_MS)
     // System theme resolves to dark or light
     const htmlClass = await page.evaluate(() => document.documentElement.className)
     expect(['dark', 'light']).toContain(htmlClass)
 
     // Navigate to another page
     await page.goto('/about')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(NAV_TRANSITION_MS)
     // Theme should persist
     const htmlClassAfterNav = await page.evaluate(() => document.documentElement.className)
     expect(['dark', 'light']).toContain(htmlClassAfterNav)
 
     // Go back to home
     await page.goto('/')
-    await toggle.waitFor({ state: 'visible', timeout: 10000 })
-    await expect(toggle).toBeVisible({ timeout: 10000 })
+    await toggle.waitFor({ state: 'visible', timeout: SHORT_TIMEOUT_MS })
+    await expect(toggle).toBeVisible({ timeout: SHORT_TIMEOUT_MS })
   })
 })

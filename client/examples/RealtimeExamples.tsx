@@ -232,14 +232,16 @@ function AgentBuilder({ agentId: _agentId }: AgentBuilderProps) {
             <div>
               <label
                 htmlFor='agent-model'
-                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+              >
                 Model
               </label>
               <select
                 id='agent-model'
                 value={agentConfig.model}
                 onChange={(e) => handleConfigChange('model', e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 dark:border-navy-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-navy-700 dark:text-white'>
+                className='w-full px-3 py-2 border border-gray-300 dark:border-navy-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-navy-700 dark:text-white'
+              >
                 <option value='gpt-4'>GPT-4</option>
                 <option value='gpt-3.5'>GPT-3.5</option>
                 <option value='distilgpt2'>DistilGPT-2</option>
@@ -326,7 +328,7 @@ function AgentBuilder({ agentId: _agentId }: AgentBuilderProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================

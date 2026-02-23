@@ -4,11 +4,11 @@ import { lazy, Suspense, useMemo } from 'react'
 import { Helmet } from 'react-helmet-async'
 
 import Navigation from '@/components/Navigation'
+import { ProjectShowcase } from '@/components/projects/ProjectShowcase'
 import SearchableProjects from '@/components/SearchableProjects'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useSampleProjects } from '@/data/projectsData'
-import { ProjectShowcase } from '@/components/projects/ProjectShowcase'
 
 const Interactive3DDemo = lazy(() =>
   import('@/components/Interactive3DDemo').then((module) => ({

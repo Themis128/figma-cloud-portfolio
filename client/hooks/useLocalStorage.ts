@@ -10,7 +10,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       const item = window.localStorage.getItem(key)
       return item ? JSON.parse(item) : initialValue
-    } catch (error) {
+    } catch (_error) {
       return initialValue
     }
   })
@@ -20,10 +20,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       const valueToStore = value instanceof Function ? value(storedValue) : value
       setStoredValue(valueToStore)
       window.localStorage.setItem(key, JSON.stringify(valueToStore))
-    } catch (error) {
-      // Optionally handle error
-      console.error('Error saving to localStorage:', error)
-    }
+    } catch (_error) {}
   }
 
   return [storedValue, setValue] as const

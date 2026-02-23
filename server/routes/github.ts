@@ -236,7 +236,7 @@ export const handleValidateToken: RequestHandler = async (req, res) => {
 }
 
 // Metrics endpoint for lightweight observability
-export const handleGetMetrics: RequestHandler = async (_req, res) => {
+export const handleGetMetrics: RequestHandler = (_req, res) => {
   try {
     // Return a shallow copy to avoid accidental mutation
     return res.json({ ...metrics })
