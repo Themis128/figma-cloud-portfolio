@@ -1,0 +1,8 @@
+.next/
+node_modules/
+dist/
+public/
+amplify/
+pnpm-lock.yaml
+# Broken syntax — Prettier cannot parse
+playwright-tests/3d-demos.spec.ts

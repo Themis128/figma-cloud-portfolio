@@ -1,0 +1,84 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install -g pnpm
+        - pnpm install --frozen-lockfile
+    build:
+      commands:
+        - pnpm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
+  environment:
+    NODE_OPTIONS: "--max-old-space-size=2048"
+
+# Custom headers for security and caching (CloudFront level)
+customHeaders:
+  # JavaScript files
+  - pattern: "**/*.js"
+    headers:
+      - key: "Content-Type"
+        value: "application/javascript"
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # ES Modules
+  - pattern: "**/*.mjs"
+    headers:
+      - key: "Content-Type"
+        value: "application/javascript"
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # CSS files
+  - pattern: "**/*.css"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # Images
+  - pattern: "**/*.{png,jpg,jpeg,gif,webp,avif,svg,ico}"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=2592000, immutable"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # Fonts
+  - pattern: "**/*.{woff,woff2,ttf,eot}"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+      - key: "Access-Control-Allow-Origin"
+        value: "*"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # HTML files
+  - pattern: "**/*.html"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=0, must-revalidate"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+
+  # JSON and manifest files
+  - pattern: "**/*.{json,webmanifest}"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=86400, must-revalidate"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"

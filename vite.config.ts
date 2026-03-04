@@ -1,0 +1,1 @@
+// Vite build config placeholder

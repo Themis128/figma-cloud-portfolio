@@ -1,0 +1,24 @@
+# Large auto-generated files — exclude from Cline context
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Test snapshots & coverage
+coverage/
+__snapshots__/
+playwright-report/
+test-results/
+
+# Misc large/binary files
+*.map
+*.tsbuildinfo
+public/fonts/
