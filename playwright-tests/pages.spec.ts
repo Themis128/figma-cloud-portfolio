@@ -1,0 +1,58 @@
+import { expect, test } from "@playwright/test";
+
+test.describe("Main Pages", () => {
+  test("should load home page correctly", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+    await expect(page.locator("h1")).toBeVisible();
+    await expect(page.locator("nav")).toBeVisible();
+    // Home page may not have a visible footer element
+  });
+
+  test("should navigate to About page", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+    // Click About link in nav
+    await page.locator('a[href="/about"]').first().click();
+    await expect(page).toHaveURL(/\/about/);
+    // About page heading is "About Me"
+    const headingText = await page.locator("h1").textContent();
+    expect(headingText?.toLowerCase()).toContain("about");
+  });
+
+  test("should navigate to Projects page", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+    // Projects page is accessible directly (no nav link called "Projects" in desktop nav)
+    await page.goto("/projects");
+    await expect(page).toHaveURL(/\/projects/);
+    const headingText = await page.locator("h1").textContent();
+    expect(headingText?.toLowerCase()).toContain("project");
+  });
+
+  test("should navigate to Resume page", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+    await page.locator('a[href="/resume"]').first().click();
+    await expect(page).toHaveURL(/\/resume/);
+    // Resume page heading is "Resume Builder"
+    const headingText = await page.locator("h1").textContent();
+    expect(headingText?.toLowerCase()).toContain("resume");
+  });
+
+  test("should navigate to Contact page", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+    await page.locator('a[href="/contact"]').first().click();
+    await expect(page).toHaveURL(/\/contact/);
+    // Contact page heading is "Get In Touch"
+    const headingText = await page.locator("h1").textContent();
+    expect(headingText?.toLowerCase()).toContain("get in touch");
+  });
+
+  test("should handle 404 page", async ({ page }) => {
+    await page.goto("/nonexistent-page-that-does-not-exist");
+    // Next.js shows a 404 page — just verify the page loaded without crashing
+    await expect(page.locator("body")).toBeVisible();
+  });
+});

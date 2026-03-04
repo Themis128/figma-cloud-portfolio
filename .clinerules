@@ -1,0 +1,39 @@
+# Cline Rules - Workspace Rules
+
+## Project Context
+- This is a Next.js portfolio website with React, TypeScript, and Tailwind CSS
+- The project uses Vite for the client-side app
+- Includes server-side components with Express/Node.js
+- Uses Playwright for testing
+- Deployed on AWS Amplify with GitHub integration
+
+## Code Style & Standards
+- Use TypeScript for all new code
+- Follow existing ESLint and Prettier configurations
+- Use functional components with hooks in React
+- Follow the existing component structure in `client/components/`
+- Use Tailwind CSS for styling (as configured in tailwind.config.ts)
+
+## API & Integrations
+- Anthropic Claude API (claude-3-haiku/sonnet/opus)
+- OpenAI API (GPT-4, GPT-4o-mini)
+- Builder.io for CMS
+- GitHub API integration
+- AWS services (Lambda, API Gateway, Secrets Manager)
+- reCAPTCHA for forms
+
+## Testing Requirements
+- Run Playwright tests before committing significant changes
+- Use the existing test structure in `playwright-tests/`
+- Include accessibility tests for new components
+
+## Security Guidelines
+- Never commit API keys or secrets to version control
+- Use environment variables for sensitive data
+- Follow AWS security best practices
+- Implement proper input validation on all endpoints
+
+## Deployment
+- Main branch deploys to production automatically via Amplify
+- Use feature branches for development
+- Check deployment status after pushing to main

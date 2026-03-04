@@ -1,0 +1,97 @@
+import { io, type Socket } from "socket.io-client";
+
+class SocketManager {
+  private socket: Socket | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectDelay = 1000;
+
+  connect(userId: string, userName?: string) {
+    if (this.socket?.connected) {
+      return this.socket;
+    }
+
+    const serverUrl =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : window.location.origin;
+
+    this.socket = io(serverUrl, {
+      transports: ["websocket", "polling"],
+      timeout: 20000,
+      forceNew: true,
+    });
+
+    this.socket.on("connect", () => {
+      this.reconnectAttempts = 0;
+
+      // Join with user data
+      this.socket?.emit("user:join", { id: userId, name: userName });
+    });
+
+    this.socket.on("disconnect", (reason) => {
+      if (
+        reason === "io server disconnect" ||
+        reason === "io client disconnect"
+      ) {
+        // Server disconnected us, try to reconnect
+        this.handleReconnect(userId, userName);
+      }
+    });
+
+    this.socket.on("connect_error", (_error) => {
+      this.handleReconnect(userId, userName);
+    });
+
+    this.socket.on("reconnect_attempt", (_attempt) => {});
+
+    this.socket.on("reconnect_failed", () => {});
+
+    return this.socket;
+  }
+
+  private handleReconnect(userId: string, userName?: string) {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      setTimeout(() => {
+        this.connect(userId, userName);
+      }, this.reconnectDelay * this.reconnectAttempts);
+    } else {
+    }
+  }
+
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+      this.reconnectAttempts = 0;
+    }
+  }
+
+  getSocket() {
+    return this.socket;
+  }
+
+  isConnected() {
+    return this.socket?.connected ?? false;
+  }
+
+  // Convenience methods for common events
+  emit(event: string, data?: unknown) {
+    this.socket?.emit(event, data);
+  }
+
+  on(event: string, callback: (...args: unknown[]) => void) {
+    this.socket?.on(event, callback);
+  }
+
+  off(event: string, callback?: (...args: unknown[]) => void) {
+    if (callback) {
+      this.socket?.off(event, callback);
+    } else {
+      this.socket?.off(event);
+    }
+  }
+}
+
+export const socketManager = new SocketManager();

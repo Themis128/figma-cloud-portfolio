@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for resume builder */
+.resume-builder {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-100;
+}
+
+.section-header {
+  @apply text-2xl font-bold text-gray-900 mb-6;
+}
+
+.form-control {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.skill-level {
+  @apply text-sm text-gray-500 ml-2;
+}
+
+.action-button {
+  @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition;
+}
+
+.mcp-status {
+  @apply bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6;
+}
+
+.mcp-server {
+  @apply flex items-center justify-between;
+}
+
+.mcp-status-badge {
+  @apply px-2 py-1 rounded-full text-sm font-medium;
+}
+
+.connected {
+  @apply bg-green-100 text-green-800;
+}
+
+.disconnected {
+  @apply bg-red-100 text-red-800;
+}
+
+.ai-suggestions {
+  @apply bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6;
+}
+
+.version-control {
+  @apply bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6;
+}
+
+.error-message {
+  @apply bg-red-50 border border-red-200 rounded-lg p-4 mb-4;
+}
+
+.success-message {
+  @apply bg-green-50 border border-green-200 rounded-lg p-4 mb-4;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .resume-builder {
+    @apply bg-white;
+  }
+
+  .section-header {
+    @apply text-xl;
+  }
+
+  .form-control {
+    @apply px-2 py-1 text-sm;
+  }
+
+  .action-button {
+    @apply px-3 py-1 text-sm;
+  }
+}
