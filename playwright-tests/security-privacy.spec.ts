@@ -12,18 +12,14 @@ test.describe("Security & Privacy", () => {
       { tag: "@fast" },
       async ({ page }) => {
         // Skip in development or when running against a local server
-        const baseURL =
-          process.env.PLAYWRIGHT_BASE_URL || "/";
+        await page.goto("/");
+        const url = page.url();
         if (
-          process.env.NODE_ENV === "development" ||
-          baseURL.includes("localhost") ||
-          baseURL.includes("127.0.0.1")
+          url.includes("localhost") ||
+          url.includes("127.0.0.1")
         ) {
           test.skip();
         }
-
-        await page.goto("/");
-        const url = page.url();
         expect(url).toMatch(/^https:\/\//);
       },
     );

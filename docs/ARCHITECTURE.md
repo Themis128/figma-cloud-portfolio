@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a **Next.js 16 application** with the App Router, deployed on **AWS Amplify** (App ID: `d1zjif7pi1h3om`). It serves as the personal portfolio of Themistoklis Baltzakis — a Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise.
+This is a **Next.js 15 application** with the App Router, deployed as a **static export** on **S3 + CloudFront** (frontend) with an **AWS Lambda** function (backend). It serves as the personal portfolio of Themistoklis Baltzakis — a Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise.
 
 ---
 
@@ -10,19 +10,18 @@ This is a **Next.js 16 application** with the App Router, deployed on **AWS Ampl
 
 | Layer                  | Technology               |
 | ---------------------- | ------------------------ |
-| Framework              | Next.js 16 (App Router)  |
-| Language               | TypeScript 5.9.3         |
-| Styling                | Tailwind CSS v4          |
-| UI components          | Radix UI, shadcn/ui      |
-| Animation              | Framer Motion            |
-| 3D graphics            | Three.js                 |
-| Real-time              | Socket.IO                |
-| PWA                    | Workbox (service worker) |
-| Backend                | Express.js (Node)        |
-| Deployment             | AWS Amplify (us-east-1)  |
-| Analytics              | Google Analytics GA4     |
-| Security               | reCAPTCHA v3, Helmet.js  |
-| Performance monitoring | web-vitals library       |
+| Framework              | Next.js 15 (App Router)                          |
+| Language               | TypeScript 5                                      |
+| Styling                | Tailwind CSS v4                                   |
+| UI components          | Radix UI, shadcn/ui                               |
+| Animation              | Framer Motion                                     |
+| PWA                    | Workbox (service worker)                          |
+| Backend (production)   | AWS Lambda (`figma-portfolio-api`)                |
+| Backend (local dev)    | Express.js on port 3001                           |
+| Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
+| Analytics              | Google Analytics GA4 + Sentry                     |
+| Security               | reCAPTCHA v3, security headers via next.config.ts |
+| Performance monitoring | web-vitals library                                |
 
 ---
 
@@ -42,12 +41,7 @@ portfolio-nextjs/
 │   │   ├── projects/         # Projects gallery
 │   │   ├── resume/           # Interactive resume builder
 │   │   ├── settings/         # App preferences
-│   │   └── api/              # API Routes (backend)
-│   │       ├── contact/      # Contact form handler
-│   │       ├── github/       # GitHub API proxy
-│   │       ├── resume/       # Resume JSON endpoint
-│   │       ├── chat/         # AI chatbot (HuggingFace)
-│   │       └── booking/      # Cal.com booking (create + slots)
+│   │   └── builder/          # Builder.io page (optional)
 │   ├── components/           # Reusable UI components
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
@@ -56,7 +50,7 @@ portfolio-nextjs/
 │   ├── data/                 # Static data
 │   ├── types/                # Shared TypeScript types
 │   └── styles/               # Global styles
-├── server/                   # Legacy Express stubs (dev-only, not deployed)
+├── server/                   # Express dev server (port 3001) — resume, API keys, playwright-autofix
 ├── playwright-tests/         # E2E test suite
 ├── docs/                     # Project documentation
 ├── public/                   # Static assets
@@ -183,18 +177,35 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 ## Backend Architecture
 
-All backend logic runs as **Next.js API Routes** (`src/app/api/`), deployed alongside the frontend via Amplify (Lambda compute for SSR + API routes, S3 + CloudFront for static assets).
+The frontend is a **static export** (`output: "export"`) — no server-side rendering or API routes in Next.js. All backend logic runs on a **single AWS Lambda function** (`figma-portfolio-api`) fronted by CloudFront at `/api/*`.
 
-| Route                      | Method | Description                                                        |
-| -------------------------- | ------ | ------------------------------------------------------------------ |
-| `POST /api/contact`        | POST   | Contact form — reCAPTCHA v3, XSS/SQL injection protection          |
-| `GET /api/github`          | GET    | GitHub profile/repo proxy with 5-min in-memory cache               |
-| `GET /api/resume`          | GET    | Resume JSON data endpoint                                          |
-| `POST /api/chat`           | POST   | AI chatbot — HuggingFace Llama 3.1, SSE streaming, booking intent |
-| `POST /api/booking/create` | POST   | Create a booking via Cal.com API                                   |
-| `GET /api/booking/slots`   | GET    | Fetch available booking slots from Cal.com                         |
+### Production (Lambda)
 
-> **Note:** The `server/` directory contains legacy Express stubs from the pre-migration era. All production API logic lives in `src/app/api/`.
+- **Function URL**: `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
+- **Runtime**: Node.js, Express 5 + serverless-http
+- **Memory**: 256 MB
+- **Timeout**: 15 seconds
+- **Environment Variables**: 14 (see Deployment section below)
+
+| Route                                     | Method       | Description                                           |
+| ----------------------------------------- | ------------ | ----------------------------------------------------- |
+| `/api/ping`                               | GET          | Health check                                          |
+| `/api/demo`                               | GET          | Demo endpoint                                         |
+| `/api/contact`                            | POST         | Contact form — reCAPTCHA v3, SES email, Sentry        |
+| `/api/resume`                             | GET          | 302 redirect to `/resume.pdf`                         |
+| `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID)       |
+| `/api/organizations/api_keys`             | GET/POST     | List / create API keys (Slack notifications)          |
+| `/api/organizations/api_keys/:id`         | GET/POST/DELETE | Get / update / delete API key (Slack notifications)|
+
+### Local Development (Express)
+
+The `server/` directory runs an Express server on **port 3001** for local development:
+
+| Route                             | Handler                        |
+| --------------------------------- | ------------------------------ |
+| `/api/resume`                     | `server/routes/resume.ts`      |
+| `/api/organizations/api_keys`     | `server/routes/apiKeys.ts`     |
+| `/api/playwright-autofix`         | `server/routes/playwrightAutofix.ts` |
 
 ---
 
@@ -230,27 +241,52 @@ All backend logic runs as **Next.js API Routes** (`src/app/api/`), deployed alon
 
 ## Deployment
 
-| Item     | Detail                                                      |
-| -------- | ----------------------------------------------------------- |
-| Platform | AWS Amplify (App ID: `d1zjif7pi1h3om`, region: `us-east-1`) |
-| Build    | `next build` → `.next/` output                              |
-| CI/CD    | GitHub Actions + Amplify auto-deploy on push to `main`      |
-| Config   | `amplify.yml` defines build phases                          |
+### Frontend (S3 + CloudFront)
 
-### Required Environment Variables
+| Item         | Detail                                                  |
+| ------------ | ------------------------------------------------------- |
+| S3 bucket    | `figma-portfolio-static`                                |
+| CloudFront   | Distribution `E134SCTR0QGQKJ`                          |
+| Build        | `pnpm build` → `out/` directory (static export)         |
+| Deploy       | `aws s3 sync out/ s3://figma-portfolio-static --delete` |
+| Invalidation | `aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"` |
+
+### Backend (Lambda)
+
+| Item          | Detail                            |
+| ------------- | --------------------------------- |
+| Function name | `figma-portfolio-api`             |
+| Region        | `us-east-1`                       |
+| Memory        | 256 MB                            |
+| Timeout       | 15 seconds                        |
+| Routing       | CloudFront `/api/*` → Lambda      |
+
+### Lambda Environment Variables (14)
 
 ```
-# Client-side (NEXT_PUBLIC_ prefix — bundled into JS)
+NODE_ENV                          # production
+RECAPTCHA_SECRET_KEY              # reCAPTCHA v3 secret
+SES_VERIFIED_EMAIL                # SES sender email
+SENTRY_DSN                        # Sentry error tracking
+SENTRY_ENVIRONMENT                # production
+PING_MESSAGE                      # Health check response
+SLACK_WEBHOOK_URL                 # Slack incoming webhook
+SLACK_CHANNEL                     # Slack channel for notifications
+ANTHROPIC_API_KEY                 # Claude API key
+VAPID_PUBLIC_KEY                  # Web push VAPID public key
+VAPID_PRIVATE_KEY                 # Web push VAPID private key
+VAPID_EMAIL                       # VAPID contact email
+GOOGLE_ANALYTICS_MEASUREMENT_ID   # GA4 measurement ID
+GOOGLE_ANALYTICS_API_SECRET       # GA4 Measurement Protocol secret
+```
+
+### Client-side Environment Variables (bundled into JS)
+
+```
 NEXT_PUBLIC_SITE_URL              # Canonical URL (https://baltzakis.dev)
 NEXT_PUBLIC_GA_ID                 # Google Analytics GA4 measurement ID
-NEXT_PUBLIC_SENTRY_DSN            # Sentry error tracking (optional)
-
-# Server-side (used only in API routes — never exposed to browser)
-RECAPTCHA_SECRET_KEY              # reCAPTCHA v3 secret
-GITHUB_TOKEN                      # GitHub API token
-HF_TOKEN                          # HuggingFace Inference API token (chat)
-CAL_API_KEY                       # Cal.com API key (booking)
-CAL_EVENT_TYPE_ID                 # Cal.com event type ID (booking)
+NEXT_PUBLIC_SENTRY_DSN            # Sentry error tracking
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
 ```
 
 ---
@@ -269,7 +305,7 @@ CAL_EVENT_TYPE_ID                 # Cal.com event type ID (booking)
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 50+ spec files)
+- **E2E Tests**: Playwright (`playwright-tests/` — 69 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Accessibility**: Playwright accessibility assertions on all pages
 

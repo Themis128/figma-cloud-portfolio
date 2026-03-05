@@ -1,15 +1,16 @@
 # API Reference (developer-focused)
 
-This document is the source-of-truth for the server API and the shared TypeScript interfaces used by client and server (`/shared/api.ts`). Use these endpoints for integration tests, local development and for building clients.
+This document is the source-of-truth for the server API and the shared TypeScript interfaces used by client and server (`src/types/api.ts`). Use these endpoints for integration tests, local development and for building clients.
 
 ---
 
 ## Quick facts
 
 - Base path: `/api`
-- Dev servers (default): **Frontend** http://localhost:8082, **Backend** http://localhost:3002
+- Dev servers (default): **Frontend** http://localhost:8082, **Backend** http://localhost:3001
+- **Production**: Frontend on S3 + CloudFront, backend on Lambda via CloudFront `/api/*`
 - Auth: public endpoints; some routes may forward to third-party services (GitHub, SES, GA4)
-- Request/response types live in `shared/api.ts`
+- Request/response types live in `src/types/api.ts`
 - Content-Type: `application/json` for all POST/PUT requests unless otherwise noted
 
 ---
@@ -20,10 +21,11 @@ This document is the source-of-truth for the server API and the shared TypeScrip
 2. [General / Demo Endpoints](#general--demo-endpoints)
 3. [Contact Form](#contact-form)
 4. [Analytics](#analytics)
-5. [Resume (PDF Generation)](#resume-pdf-generation)
+5. [Resume](#resume)
 6. [GitHub Proxy](#github-proxy)
 7. [Push Notifications](#push-notifications)
-8. [Portfolio Chatbot](#portfolio-chatbot)
+8. [API Keys Management](#api-keys-management)
+9. [Portfolio Chatbot](#portfolio-chatbot)
 9. [AI / Agent Endpoints](#ai--agent-endpoints)
 10. [Agents Management](#agents-management)
 11. [AWS Amplify GraphQL API](#aws-amplify-graphql-api)
@@ -286,83 +288,20 @@ Submit web vitals and performance metrics.
 
 ---
 
-### Resume (PDF Generation)
+### Resume
 
-#### GET /api/resume/download
+#### GET /api/resume
 
-Download resume as PDF (uses default resume data from `public/resume-content.md`).
+Redirects to the static resume PDF.
 
-**Response (200):**
+**Response (302):**
 
-- Content-Type: `application/pdf`
-- Content-Disposition: `attachment; filename="Firstname_Lastname_Resume.pdf"`
-- Binary PDF stream
-
-**Response (500):**
-
-```json
-{
-  "error": "Failed to generate resume PDF",
-  "message": "Error details..."
-}
-```
-
----
-
-#### POST /api/resume/download
-
-Generate and download a custom resume PDF.
-
-**Request Body:**
-
-```json
-{
-  "name": "John Doe",
-  "title": "Senior Software Engineer",
-  "contact": {
-    "email": "john@example.com",
-    "linkedin": "linkedin.com/in/johndoe",
-    "website": "johndoe.dev"
-  },
-  "summary": "Experienced software engineer...",
-  "competencies": {
-    "Languages": ["TypeScript", "Python", "Go"],
-    "Cloud": ["AWS", "Azure", "GCP"]
-  },
-  "experience": [
-    {
-      "title": "Senior Engineer",
-      "company": "Tech Corp | Remote",
-      "date": "January 2020 - Present",
-      "achievements": ["Led team of 5 engineers", "Reduced costs by 40%"]
-    }
-  ],
-  "education": [
-    {
-      "degree": "B.S. Computer Science",
-      "institution": "University of Technology",
-      "date": "2015"
-    }
-  ],
-  "certifications": [
-    {
-      "name": "AWS Solutions Architect",
-      "issuer": "Amazon Web Services",
-      "year": "2023"
-    }
-  ]
-}
-```
-
-**Request Type:** `ResumeData`
-
-**Response:** Same as GET endpoint.
+- `Location: /resume.pdf`
 
 **Notes:**
 
-- Uses Puppeteer for PDF generation
-- A4 format with modern styling
-- All inputs sanitized to prevent injection attacks
+- Production Lambda returns a 302 redirect to the static PDF hosted on S3/CloudFront
+- Local Express dev server on port 3001 handles resume generation
 
 ---
 
@@ -528,7 +467,7 @@ Validate a GitHub token.
 - Cache TTL: `GITHUB_CACHE_TTL_SECONDS` (default: 15s)
 - Max cache entries: `GITHUB_CACHE_MAX_ENTRIES` (default: 200)
 - Rate limit: `GITHUB_RATE_LIMIT_MAX` (default: 120 per hour per IP)
-- Requires `VITE_GITHUB_TOKEN` for authenticated requests
+- Requires `GITHUB_TOKEN` for authenticated requests
 
 ---
 
@@ -685,9 +624,100 @@ Remove a subscription.
 
 **Configuration:**
 
-- `VAPID_PUBLIC_KEY` - VAPID public key (auto-generated if not set)
-- `VAPID_PRIVATE_KEY` - VAPID private key (auto-generated if not set)
-- `VAPID_EMAIL` - Contact email for VAPID (default: mailto:noreply@example.com)
+- `VAPID_PUBLIC_KEY` - VAPID public key (permanent, set in Lambda env vars)
+- `VAPID_PRIVATE_KEY` - VAPID private key (permanent, set in Lambda env vars)
+- `VAPID_EMAIL` - Contact email for VAPID (mailto:noreply@cloudless.gr)
+
+---
+
+### API Keys Management
+
+CRUD operations for organization API keys. All mutating operations send Slack notifications via `SLACK_WEBHOOK_URL`.
+
+#### GET /api/organizations/api_keys
+
+List all API keys.
+
+**Response (200):**
+
+```json
+[
+  {
+    "id": "ak_1234567890",
+    "created_at": "2024-01-15T10:30:00Z",
+    "created_by": { "id": "user_123", "type": "user" },
+    "name": "Development API Key",
+    "partial_key_hint": "ak_1234",
+    "status": "active",
+    "type": "api_key",
+    "workspace_id": "ws_123"
+  }
+]
+```
+
+#### GET /api/organizations/api_keys/:api_key_id
+
+Get API key details by ID.
+
+**Response (404):**
+
+```json
+{
+  "error": { "code": "NOT_FOUND", "message": "API key with ID ak_xxx not found" }
+}
+```
+
+#### POST /api/organizations/api_keys
+
+Create a new API key.
+
+**Request Body:**
+
+```json
+{
+  "name": "My New Key",
+  "workspace_id": "ws_123"
+}
+```
+
+**Response (201):** Returns the created `APIKey` object.
+
+#### POST /api/organizations/api_keys/:api_key_id
+
+Update an API key's name or status.
+
+**Request Body:**
+
+```json
+{
+  "name": "Updated Name",
+  "status": "inactive"
+}
+```
+
+**Response (200):** Returns the updated `APIKey` object.
+
+**Valid statuses:** `active`, `inactive`, `archived`
+
+#### DELETE /api/organizations/api_keys/:api_key_id
+
+Delete an API key.
+
+**Response (200):**
+
+```json
+{
+  "id": "ak_1234567890",
+  "deleted": true
+}
+```
+
+**TypeScript Types:** `APIKey`, `CreateAPIKeyRequest`, `UpdateAPIKeyRequest` (defined in `src/types/api.ts`)
+
+**Environment Variables:**
+
+- `SLACK_WEBHOOK_URL` - Slack incoming webhook for notifications
+- `SLACK_CHANNEL` - Target Slack channel (default: #personal-website)
 
 ---
 
@@ -1192,18 +1222,20 @@ query ListResumes {
 
 ### AWS Lambda Functions
 
-Lambda functions deployed via API Gateway and Lambda URLs.
+Single Lambda function (`figma-portfolio-api`) handling all API routes, fronted by CloudFront at `/api/*`.
 
-**API Gateway URL:** `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com`
+**Lambda Function URL:** `https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
+**CloudFront**: Distribution `E134SCTR0QGQKJ` routes `/api/*` to Lambda
 
-| Function           | Path                | Description                  |
-| ------------------ | ------------------- | ---------------------------- |
-| ping               | /ping               | Health check                 |
-| demo               | /demo               | Demo endpoint                |
-| contact            | /contact            | Contact form                 |
-| resume             | /resume             | Resume generation            |
-| push-notifications | /push-notifications | Push notification management |
-| playwright-autofix | Lambda URL          | Test failure analysis        |
+| Path                              | Method       | Description                      |
+| --------------------------------- | ------------ | -------------------------------- |
+| /api/ping                         | GET          | Health check                     |
+| /api/demo                         | GET          | Demo endpoint                    |
+| /api/contact                      | POST         | Contact form (reCAPTCHA + SES)   |
+| /api/resume                       | GET          | 302 redirect to resume.pdf       |
+| /api/push-notifications           | GET/PUT/POST/DELETE | Push notification management |
+| /api/organizations/api_keys       | GET/POST     | List / create API keys           |
+| /api/organizations/api_keys/:id   | GET/POST/DELETE | Get / update / delete API key |
 
 ---
 
@@ -1682,7 +1714,7 @@ curl -N -X POST http://localhost:3000/api/chat \
 ### Contact Form Submission
 
 ```bash
-curl -X POST http://localhost:3002/api/contact \
+curl -X POST http://localhost:3001/api/contact \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Jane Doe",
@@ -1696,7 +1728,7 @@ curl -X POST http://localhost:3002/api/contact \
 ### Agent Execution
 
 ```bash
-curl -X POST http://localhost:3002/api/ai/agent \
+curl -X POST http://localhost:3001/api/ai/agent \
   -H "Content-Type: application/json" \
   -d '{
     "templateId": "basic-chatbot",
@@ -1709,17 +1741,17 @@ curl -X POST http://localhost:3002/api/ai/agent \
 ### GitHub Workflows
 
 ```bash
-curl http://localhost:3002/api/github/workflows?owner=Themis128&repo=figma-cloud-portfolio
+curl http://localhost:3001/api/github/workflows?owner=Themis128&repo=figma-cloud-portfolio
 ```
 
 ### Push Notification Subscription
 
 ```bash
 # Get VAPID public key
-curl http://localhost:3002/api/push-notifications?action=vapid-public-key
+curl http://localhost:3001/api/push-notifications?action=vapid-public-key
 
 # Subscribe
-curl -X PUT http://localhost:3002/api/push-notifications \
+curl -X PUT http://localhost:3001/api/push-notifications \
   -H "Content-Type: application/json" \
   -d '{
     "endpoint": "https://fcm.googleapis.com/...",
@@ -1730,7 +1762,7 @@ curl -X PUT http://localhost:3002/api/push-notifications \
   }'
 
 # Send notification
-curl -X POST http://localhost:3002/api/push-notifications \
+curl -X POST http://localhost:3001/api/push-notifications \
   -H "Content-Type: application/json" \
   -d '{
     "message": {
@@ -1740,24 +1772,33 @@ curl -X POST http://localhost:3002/api/push-notifications \
   }'
 ```
 
-### Resume Download
+### Resume
 
 ```bash
-# Download default resume
-curl -O -J http://localhost:3002/api/resume/download
+# Resume endpoint (redirects to PDF)
+curl -L http://localhost:3001/api/resume
+```
 
-# Generate custom resume
-curl -X POST http://localhost:3002/api/resume/download \
+### API Keys
+
+```bash
+# List all API keys
+curl http://localhost:3001/api/organizations/api_keys
+
+# Create a new key
+curl -X POST http://localhost:3001/api/organizations/api_keys \
   -H "Content-Type: application/json" \
-  -d '{ "name": "John Doe", "title": "Engineer", "summary": "..." }' \
-  -o resume.pdf
+  -d '{ "name": "My Key", "workspace_id": "ws_123" }'
+
+# Delete a key
+curl -X DELETE http://localhost:3001/api/organizations/api_keys/ak_1234567890
 ```
 
 ### Playwright Autofix
 
 ```bash
 # Analyze test failure
-curl -X POST http://localhost:3002/api/playwright-autofix/analyze \
+curl -X POST http://localhost:3001/api/playwright-autofix/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "testTitle": "should login",
@@ -1768,7 +1809,7 @@ curl -X POST http://localhost:3002/api/playwright-autofix/analyze \
   }'
 
 # Get error patterns
-curl http://localhost:3002/api/playwright-autofix/patterns
+curl http://localhost:3001/api/playwright-autofix/patterns
 ```
 
 ---
@@ -1842,7 +1883,7 @@ All endpoints follow a consistent error response format:
 | `PYTHON_BOT_URL`                  | For chatbot         | Python FastAPI backend URL (default: `http://localhost:8001`) |
 | `HF_TOKEN`                        | For chatbot backend | HuggingFace API token for Mistral inference                   |
 | `ANTHROPIC_API_KEY`               | For AI endpoints    | Anthropic API key                                             |
-| `VITE_GITHUB_TOKEN`               | For GitHub proxy    | GitHub personal access token                                  |
+| `GITHUB_TOKEN`                    | For GitHub proxy    | GitHub personal access token                                  |
 | `RECAPTCHA_SECRET_KEY`            | For contact form    | reCAPTCHA v3 secret key                                       |
 | `GOOGLE_ANALYTICS_MEASUREMENT_ID` | Optional            | GA4 Measurement ID                                            |
 | `GA4_API_SECRET`                  | Optional            | GA4 API secret                                                |

@@ -28,7 +28,7 @@
 ### Firebase (v12.8.0)
 
 **Purpose**: Cloud Messaging & Push Notifications
-**Files**: `/client/lib/firebase.ts`, `/client/hooks/usePushNotifications.ts`
+**Files**: `src/lib/firebase.ts`, `src/hooks/usePushNotifications.ts`
 
 **Features**:
 
@@ -40,13 +40,13 @@
 **Configuration**:
 
 ```env
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-VITE_FIREBASE_VAPID_KEY=your_vapid_key
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key
 ```
 
 **Setup**:
@@ -63,7 +63,7 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 ### Google Analytics 4 (react-ga4 v2.1.0)
 
 **Purpose**: Website analytics and user behavior tracking
-**Files**: `/client/components/GoogleAnalytics.tsx`
+**Files**: `src/components/GoogleAnalytics.tsx`
 
 **Features**:
 
@@ -80,8 +80,8 @@ VITE_FIREBASE_VAPID_KEY=your_vapid_key
 **Configuration**:
 
 ```env
-VITE_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
-VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+GOOGLE_ANALYTICS_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
 **Setup**:
@@ -105,7 +105,7 @@ trackEvent("category", "action", "label", value);
 ### Google reCAPTCHA v3 (v1.11.0)
 
 **Purpose**: Bot protection for contact form
-**Files**: `/client/pages/Contact.tsx`, `/server/routes/contact.ts`
+**Files**: `src/app/contact/page.tsx`, Lambda-based backend
 
 **Features**:
 
@@ -118,12 +118,10 @@ trackEvent("category", "action", "label", value);
 
 ```env
 # Client-side (public)
-VITE_RECAPTCHA_SITE_KEY=your_site_key
-VITE_PUBLIC_RECAPTCHA_SITE_KEY=your_site_key
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_site_key
 
 # Server-side (private)
 RECAPTCHA_SECRET_KEY=your_secret_key
-VITE_RECAPTCHA_SECRET_KEY=your_secret_key
 ```
 
 **Setup**:
@@ -133,7 +131,9 @@ VITE_RECAPTCHA_SECRET_KEY=your_secret_key
 3. Add your domains
 4. Get site key (public) and secret key (private)
 
-**Test Keys** (for development):
+**Production Keys**: Real reCAPTCHA v3 keys registered for `baltzakisthemis.com` are used in production.
+
+**Test Keys** (for development only):
 
 - Site key: `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`
 - Secret key: `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`
@@ -143,7 +143,7 @@ VITE_RECAPTCHA_SECRET_KEY=your_secret_key
 ### GitHub API Integration
 
 **Purpose**: Workflow monitoring and deployment status
-**Files**: `/server/routes/github.ts`
+**Files**: Lambda-based backend
 
 **Features**:
 
@@ -159,7 +159,6 @@ VITE_RECAPTCHA_SECRET_KEY=your_secret_key
 
 ```env
 GITHUB_TOKEN=ghp_your_personal_access_token
-VITE_GITHUB_TOKEN=ghp_your_personal_access_token
 ```
 
 **Required Scopes**:
@@ -188,7 +187,7 @@ VITE_GITHUB_TOKEN=ghp_your_personal_access_token
 ### Anthropic Claude (v0.72.1)
 
 **Purpose**: AI-powered chat and agent workflows
-**Files**: `/server/routes/ai.ts`, `/client/components/AIAssistant.tsx`
+**Files**: Lambda-based backend, `src/components/AIAssistant.tsx`
 
 **Features**:
 
@@ -201,7 +200,7 @@ VITE_GITHUB_TOKEN=ghp_your_personal_access_token
 **Configuration**:
 
 ```env
-VITE_ANTHROPIC_API_KEY=sk-ant-api03-your_key_here
+ANTHROPIC_API_KEY=sk-ant-api03-your_key_here
 ```
 
 **Models Available**:
@@ -231,7 +230,7 @@ const response = await anthropic.messages.create({
 ### Multi-Provider AI Service
 
 **Purpose**: Unified AI interface supporting multiple providers
-**Files**: `/client/lib/aiService.ts`
+**Files**: `src/lib/aiService.ts`
 
 **Supported Providers**:
 
@@ -246,9 +245,9 @@ const response = await anthropic.messages.create({
 **Configuration**:
 
 ```env
-VITE_AI_PROVIDER=openai
-VITE_OPENAI_API_KEY=sk-your_openai_key_here
-VITE_AI_MODEL=gpt-4o-mini
+NEXT_PUBLIC_AI_PROVIDER=openai
+NEXT_PUBLIC_OPENAI_API_KEY=sk-your_openai_key_here
+NEXT_PUBLIC_AI_MODEL=gpt-4o-mini
 ```
 
 #### 2. Together AI
@@ -262,8 +261,8 @@ VITE_AI_MODEL=gpt-4o-mini
 **Configuration**:
 
 ```env
-VITE_AI_PROVIDER=together
-VITE_TOGETHER_API_KEY=your_together_api_key
+NEXT_PUBLIC_AI_PROVIDER=together
+NEXT_PUBLIC_TOGETHER_API_KEY=your_together_api_key
 ```
 
 #### 3. Ollama (Local LLMs)
@@ -278,9 +277,9 @@ VITE_TOGETHER_API_KEY=your_together_api_key
 **Configuration**:
 
 ```env
-VITE_AI_PROVIDER=ollama
-VITE_OLLAMA_BASE_URL=http://localhost:11434/v1
-VITE_AI_MODEL=llama2
+NEXT_PUBLIC_AI_PROVIDER=ollama
+NEXT_PUBLIC_OLLAMA_BASE_URL=http://localhost:11434/v1
+NEXT_PUBLIC_AI_MODEL=llama2
 ```
 
 **Setup Ollama**:
@@ -309,10 +308,10 @@ ollama serve
 
 **Files**:
 
-- `/client/components/AIAssistant.tsx` - Chat interface
-- `/client/components/AIBrain.tsx` - AI logic components
-- `/client/components/agents/AgentBuilder.tsx` - Agent creation
-- `/client/components/agents/` - Agent templates
+- `src/components/AIAssistant.tsx` - Chat interface
+- `src/components/AIBrain.tsx` - AI logic components
+- `src/components/agents/AgentBuilder.tsx` - Agent creation
+- `src/components/agents/` - Agent templates
 
 **Features**:
 
@@ -471,12 +470,12 @@ test('renders component', () => {
 ### Sentry
 
 **Purpose**: Error tracking and performance monitoring
-**Files**: `/server/sentry.ts`
+**Files**: `src/lib/sentry.ts`
 
 **Packages**:
 
 - `@sentry/node` (v10.36.0) - Backend
-- `@sentry/react` (v10.36.0) - Frontend
+- `@sentry/nextjs` (v10.36.0) - Frontend
 - `@sentry/tracing` (v7.120.4) - Performance
 
 **Features**:
@@ -495,7 +494,7 @@ test('renders component', () => {
 
 ```env
 # Client-side
-VITE_SENTRY_DSN=https://your_key@o123456.ingest.sentry.io/123456
+NEXT_PUBLIC_SENTRY_DSN=https://your_key@o123456.ingest.sentry.io/123456
 
 # Server-side
 SENTRY_DSN=https://your_key@o123456.ingest.sentry.io/123456
@@ -505,7 +504,7 @@ SENTRY_ACCESS_TOKEN=sntrys_your_token_here
 SENTRY_ORG_SLUG=your_org_name
 
 # Release tracking
-VITE_APP_VERSION=1.0.0
+NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
 **Setup**:
@@ -534,7 +533,7 @@ beforeSend(event, hint) {
 ### AWS Amplify Configuration
 
 **Purpose**: AWS Amplify client configuration for authentication and API access
-**Files**: `/client/lib/amplifyConfig.ts`, `/client/hooks/useAmplifyAuth.ts`
+**Files**: `src/lib/amplifyConfig.ts`, `src/hooks/useAmplifyAuth.ts`
 
 **Features**:
 
@@ -547,7 +546,7 @@ beforeSend(event, hint) {
 **Configuration**:
 
 ```typescript
-// client/lib/amplifyConfig.ts
+// src/lib/amplifyConfig.ts
 import { Amplify } from "aws-amplify";
 import outputs from "../../amplify_outputs.json";
 
@@ -592,7 +591,7 @@ if (isAmplifyConfigured()) {
 
 ### Web Security Headers
 
-**Files**: `/server/index.ts`
+**Files**: `next.config.ts` (headers configuration)
 
 **Implemented Headers**:
 
@@ -626,7 +625,7 @@ app.use((req, res, next) => {
 
 ### Contact Form Security
 
-**Files**: `/server/routes/contact.ts`
+**Files**: Lambda-based backend
 
 **Security Measures**:
 
@@ -691,7 +690,7 @@ node scripts/run-with-secrets.js pnpm dev
 
 ### Custom Analytics Endpoint
 
-**Files**: `/server/routes/analytics.ts`
+**Files**: Lambda-based backend
 
 **Features**:
 
@@ -750,11 +749,11 @@ onLCP((metric) => trackEvent("Web Vitals", "LCP", metric.value));
 ### Web Push API (v3.6.7)
 
 **Purpose**: Server-side push notifications
-**Files**: `/server/routes/push-notifications.ts`
+**Files**: Lambda-based backend
 
 **Features**:
 
-- VAPID key management
+- VAPID key authentication (permanent keys, not ephemeral/auto-generated)
 - Subscription storage (in-memory)
 - Push message sending
 - Subscription lifecycle (subscribe/unsubscribe)
@@ -762,7 +761,7 @@ onLCP((metric) => trackEvent("Web Vitals", "LCP", metric.value));
 **Configuration**:
 
 ```env
-VITE_FIREBASE_VAPID_KEY=your_vapid_key_here
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key_here
 ```
 
 **API Endpoints**:
@@ -1067,7 +1066,7 @@ Opens visual bundle analysis showing:
 - SPA navigation fallback
 - App installation prompts
 
-**Hook**: `/client/hooks/usePWA.ts`
+**Hook**: `src/hooks/usePWA.ts`
 
 ```typescript
 const { isInstallable, install, isInstalled } = usePWA();
@@ -1124,11 +1123,11 @@ AMPLIFY_STAGING_APP_ID=your_staging_app_id
 **Lambda Function URLs**:
 
 ```env
-VITE_LAMBDA_CONTACT_URL=https://your-contact-function.amazonaws.com
-VITE_LAMBDA_RESUME_URL=https://your-resume-function.amazonaws.com
-VITE_LAMBDA_PUSH_NOTIFICATIONS_URL=https://your-push-function.amazonaws.com
-VITE_LAMBDA_PING_URL=https://your-ping-function.amazonaws.com
-VITE_LAMBDA_DEMO_URL=https://your-demo-function.amazonaws.com
+NEXT_PUBLIC_LAMBDA_CONTACT_URL=https://your-contact-function.amazonaws.com
+NEXT_PUBLIC_LAMBDA_RESUME_URL=https://your-resume-function.amazonaws.com
+NEXT_PUBLIC_LAMBDA_PUSH_NOTIFICATIONS_URL=https://your-push-function.amazonaws.com
+NEXT_PUBLIC_LAMBDA_PING_URL=https://your-ping-function.amazonaws.com
+NEXT_PUBLIC_LAMBDA_DEMO_URL=https://your-demo-function.amazonaws.com
 ```
 
 ---
@@ -1173,9 +1172,9 @@ AWS_REGION=us-east-1
 aws secretsmanager create-secret \
   --name portfolio/env \
   --secret-string '{
-    "VITE_FIREBASE_API_KEY":"your_key",
+    "NEXT_PUBLIC_FIREBASE_API_KEY":"your_key",
     "GITHUB_TOKEN":"your_token",
-    "VITE_RECAPTCHA_SITE_KEY":"your_key"
+    "NEXT_PUBLIC_RECAPTCHA_SITE_KEY":"your_key"
   }'
 ```
 
@@ -1198,20 +1197,20 @@ pnpm build  # Wrapped with secrets loader
 NODE_ENV=development
 
 # Firebase (for push notifications)
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
-VITE_FIREBASE_VAPID_KEY=
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=
 
 # reCAPTCHA (for contact form)
-VITE_RECAPTCHA_SITE_KEY=
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
 RECAPTCHA_SECRET_KEY=
 
 # Google Analytics (optional)
-VITE_GOOGLE_ANALYTICS_ID=
+NEXT_PUBLIC_GA_ID=
 
 # GitHub API (optional)
 GITHUB_TOKEN=
@@ -1221,13 +1220,13 @@ GITHUB_TOKEN=
 
 ```env
 # AI Providers (choose one)
-VITE_ANTHROPIC_API_KEY=
-VITE_OPENAI_API_KEY=
-VITE_TOGETHER_API_KEY=
-VITE_OLLAMA_BASE_URL=http://localhost:11434/v1
+ANTHROPIC_API_KEY=
+NEXT_PUBLIC_OPENAI_API_KEY=
+NEXT_PUBLIC_TOGETHER_API_KEY=
+NEXT_PUBLIC_OLLAMA_BASE_URL=http://localhost:11434/v1
 
 # Error Tracking
-VITE_SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
 SENTRY_DSN=
 SENTRY_ACCESS_TOKEN=
 
@@ -1250,11 +1249,11 @@ AWS_SECRETS_MANAGER_ID=portfolio/env
 
 ```env
 # Lambda Functions
-VITE_LAMBDA_CONTACT_URL=
-VITE_LAMBDA_RESUME_URL=
-VITE_LAMBDA_PUSH_NOTIFICATIONS_URL=
-VITE_LAMBDA_PING_URL=
-VITE_LAMBDA_DEMO_URL=
+NEXT_PUBLIC_LAMBDA_CONTACT_URL=
+NEXT_PUBLIC_LAMBDA_RESUME_URL=
+NEXT_PUBLIC_LAMBDA_PUSH_NOTIFICATIONS_URL=
+NEXT_PUBLIC_LAMBDA_PING_URL=
+NEXT_PUBLIC_LAMBDA_DEMO_URL=
 
 # Amplify
 AMPLIFY_PRODUCTION_APP_ID=
@@ -1329,7 +1328,7 @@ AMPLIFY_STAGING_APP_ID=
 
    ```bash
    # View all env vars
-   printenv | grep VITE_
+   printenv | grep NEXT_PUBLIC_
    ```
 
 2. **Verify API keys are valid**:
@@ -1351,7 +1350,7 @@ AMPLIFY_STAGING_APP_ID=
 
 **Firebase not initializing**:
 
-- Verify all `VITE_FIREBASE_*` variables are set
+- Verify all `NEXT_PUBLIC_FIREBASE_*` variables are set
 - Check Firebase console for project status
 - Ensure domain is allowlisted
 
@@ -1393,3 +1392,48 @@ AMPLIFY_STAGING_APP_ID=
 **Last Updated**: 2026-02-22
 **Version**: 1.1.0
 **Maintainer**: Themistoklis Baltzakis
+
+## 🆕 Latest Updates - February 22, 2026
+
+### **Major New Features & Components**
+
+#### **✅ New UI Components**
+
+- **CookieConsentBar**: GDPR-compliant cookie consent banner with accept/decline options
+- **ThemeToggleButton**: Compact theme toggle button with sun/moon icons and smooth transitions
+- **AccessibilityButton**: Quick access accessibility settings button
+- **SkillsMatrix**: Skills visualization grid for the About page
+- **Timeline**: Career timeline component for the About page
+- **ContactForm**: Reusable contact form with validation
+- **ProjectShowcase**: Project gallery display component
+
+#### **✅ AI-Powered Playwright Autofix System**
+
+- **Lambda Function**: Deploy Playwright autofix as AWS Lambda for cloud-based analysis
+- **Local Server Route**: Built-in Express endpoint for local development
+- **Offline Mode**: Built-in analysis without external dependencies
+- **Real-time Configuration**: Dynamic configuration updates without redeployment
+- **Intelligent Suggestions**: AI-powered test failure analysis with confidence scores
+
+#### **✅ DistilGPT2 Lambda Integration**
+
+- **Text Generation**: Serverless text generation using HuggingFace Transformers
+- **Deployment Scripts**: Automated deployment scripts for AWS Lambda
+- **Layer Packaging**: Instructions for packaging ML dependencies
+
+#### **✅ Enhanced Test Coverage**
+
+- **theme-provider.integration.spec.ts**: Theme provider integration tests
+- **cookie-consent.spec.ts**: Cookie consent bar tests
+- **accessibility-button.spec.ts**: Accessibility button tests
+- **pwa-update-notification.spec.ts**: PWA update notification tests
+- **performance-monitoring.spec.ts**: Performance monitoring tests
+- **push-notifications.spec.ts**: Push notification tests
+
+#### **✅ New API Endpoints**
+
+- `GET /api/playwright-autofix/config` - Get Playwright autofix configuration
+- `POST /api/playwright-autofix/config` - Update Playwright autofix configuration
+- `POST /api/playwright-autofix/analyze` - Analyze test failure and get AI suggestions
+- `GET /api/playwright-autofix/patterns` - Get common error patterns for autofix
+- `GET /api/playwright-autofix/health` - Health check for autofix service

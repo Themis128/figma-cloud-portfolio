@@ -58,7 +58,7 @@ test.describe("GitHub API Integration", () => {
       const workflows = await page.evaluate(async () => {
         try {
           const response = await fetch(
-            "http://localhost:3002/api/github/workflows/figma-cloud-portfolio",
+            "http://localhost:3001/api/github/workflows/figma-cloud-portfolio",
           );
           return await response.json();
         } catch (_error) {
@@ -108,7 +108,7 @@ test.describe("GitHub API Integration", () => {
       const runs = await page.evaluate(async () => {
         try {
           const response = await fetch(
-            "http://localhost:3002/api/github/runs/1",
+            "http://localhost:3001/api/github/runs/1",
           );
           return await response.json();
         } catch (_error) {
@@ -165,7 +165,7 @@ test.describe("GitHub API Integration", () => {
       const jobs = await page.evaluate(async () => {
         try {
           const response = await fetch(
-            "http://localhost:3002/api/github/jobs/12345",
+            "http://localhost:3001/api/github/jobs/12345",
           );
           return await response.json();
         } catch (_error) {
@@ -198,7 +198,7 @@ test.describe("GitHub API Integration", () => {
       const response = await page.evaluate(async () => {
         try {
           const res = await fetch(
-            "http://localhost:3002/api/github/workflows/test-repo",
+            "http://localhost:3001/api/github/workflows/test-repo",
           );
           return {
             status: res.status,
@@ -239,7 +239,7 @@ test.describe("GitHub API Integration", () => {
       const response = await page.evaluate(async () => {
         try {
           const res = await fetch(
-            "http://localhost:3002/api/github/workflows/test-repo",
+            "http://localhost:3001/api/github/workflows/test-repo",
           );
           const data = await res.json();
           return {
@@ -281,9 +281,9 @@ test.describe("GitHub API Integration", () => {
       // Make multiple requests
       await page.evaluate(async () => {
         const repo = "test-repo";
-        await fetch(`http://localhost:3002/api/github/workflows/${repo}`);
-        await fetch(`http://localhost:3002/api/github/workflows/${repo}`);
-        await fetch(`http://localhost:3002/api/github/workflows/${repo}`);
+        await fetch(`http://localhost:3001/api/github/workflows/${repo}`);
+        await fetch(`http://localhost:3001/api/github/workflows/${repo}`);
+        await fetch(`http://localhost:3001/api/github/workflows/${repo}`);
       });
 
       // Without cache, would make 3 requests
@@ -453,7 +453,7 @@ test.describe("GitHub API Integration", () => {
       const failedRun = await page.evaluate(async () => {
         try {
           const response = await fetch(
-            "http://localhost:3002/api/github/runs/1",
+            "http://localhost:3001/api/github/runs/1",
           );
           const data = await response.json();
           return data.workflow_runs[0];
@@ -517,7 +517,7 @@ test.describe("GitHub API Integration", () => {
       const response = await page.evaluate(async () => {
         try {
           const res = await fetch(
-            "http://localhost:3002/api/github/workflows/test-repo",
+            "http://localhost:3001/api/github/workflows/test-repo",
           );
           return {
             status: res.status,
@@ -576,7 +576,7 @@ test.describe("GitHub API Integration", () => {
 
       const networkError = await page.evaluate(async () => {
         try {
-          await fetch("http://localhost:3002/api/github/workflows/test-repo");
+          await fetch("http://localhost:3001/api/github/workflows/test-repo");
           return false;
         } catch (_error) {
           return true;
@@ -606,7 +606,7 @@ test.describe("GitHub API Integration", () => {
           const timeout = setTimeout(() => controller.abort(), 3000);
 
           const response = await fetch(
-            "http://localhost:3002/api/github/workflows/test-repo",
+            "http://localhost:3001/api/github/workflows/test-repo",
             {
               signal: controller.signal,
             },
@@ -638,7 +638,7 @@ test.describe("GitHub API Integration", () => {
         };
 
         return fetchWithFallback(
-          "http://localhost:3002/api/github/workflows/test-repo",
+          "http://localhost:3001/api/github/workflows/test-repo",
           {
             workflows: [],
             total_count: 0,

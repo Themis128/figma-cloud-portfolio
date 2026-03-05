@@ -21,9 +21,11 @@ import {
  * Run with: pnpm test:e2e:real
  */
 
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+
 test.describe("Google reCAPTCHA v3 - Real Integration", () => {
   const config = loadRealAPIConfig();
-  const requiredVars = ["VITE_RECAPTCHA_SITE_KEY", "RECAPTCHA_SECRET_KEY"];
+  const requiredVars = ["NEXT_PUBLIC_RECAPTCHA_SITE_KEY", "RECAPTCHA_SECRET_KEY"];
 
   test.beforeAll(() => {
     if (!config.enableAnalytics) {
@@ -47,7 +49,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
 
   test("should load real reCAPTCHA v3 script", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/contact");
+    await page.goto("/contact");
     await waitForAppReady(page);
 
     const { result: captchaStatus, duration } = await measureAPICall(
@@ -103,7 +105,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
 
   test("should generate real reCAPTCHA token", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/contact");
+    await page.goto("/contact");
     await waitForAppReady(page);
 
     const { result: tokenResult, duration } = await measureAPICall(
@@ -135,7 +137,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
             }
 
             grecaptcha.ready(() => {
-              const siteKey = process.env.VITE_RECAPTCHA_SITE_KEY || "";
+              const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
 
               if (!siteKey) {
                 resolve({
@@ -195,7 +197,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
 
   test("should verify real token with backend", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/contact");
+    await page.goto("/contact");
     await waitForAppReady(page);
 
     // First, generate a token
@@ -219,7 +221,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
         }
 
         grecaptcha.ready(() => {
-          const siteKey = process.env.VITE_RECAPTCHA_SITE_KEY || "";
+          const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
           grecaptcha
             .execute(siteKey, { action: "submit" })
             .then((token) => resolve(token))
@@ -244,7 +246,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
       async () => {
         try {
           const response = await page.request.post(
-            "http://localhost:3000/api/contact",
+            `${API_BASE_URL}/api/contact`,
             {
               data: {
                 name: "Test User",
@@ -300,7 +302,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
     page,
   }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/contact");
+    await page.goto("/contact");
     await waitForAppReady(page);
 
     // Check if contact form exists
@@ -376,7 +378,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
     const { result: perfImpact, duration } = await measureAPICall(
       "reCAPTCHA Performance",
       async () => {
-        await page.goto("http://localhost:3001/contact");
+        await page.goto("/contact");
         await waitForAppReady(page);
 
         return await page.evaluate(() => {
@@ -444,7 +446,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
 
   test("should check reCAPTCHA API rate limits", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/contact");
+    await page.goto("/contact");
     await waitForAppReady(page);
 
     console.log(`📊 reCAPTCHA Rate Limits:`);
@@ -468,7 +470,7 @@ test.describe("Google reCAPTCHA v3 - Real Integration", () => {
     page,
   }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/contact");
+    await page.goto("/contact");
     await waitForAppReady(page);
 
     const { result: bestPractices, duration } = await measureAPICall(

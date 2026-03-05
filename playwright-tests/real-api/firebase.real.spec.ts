@@ -24,10 +24,10 @@ import {
 test.describe("Firebase - Real Integration", () => {
   const config = loadRealAPIConfig();
   const requiredVars = [
-    "VITE_FIREBASE_API_KEY",
-    "VITE_FIREBASE_PROJECT_ID",
-    "VITE_FIREBASE_MESSAGING_SENDER_ID",
-    "VITE_FIREBASE_APP_ID",
+    "NEXT_PUBLIC_FIREBASE_API_KEY",
+    "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+    "NEXT_PUBLIC_FIREBASE_APP_ID",
   ];
 
   test.beforeAll(() => {

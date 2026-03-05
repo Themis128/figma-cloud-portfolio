@@ -1,137 +1,131 @@
 # Baltzakis Themistoklis Portfolio
 
-A production-ready full-stack React application for a professional portfolio, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod, PWA capabilities, and Web Push API notifications.
+A production-ready portfolio built with Next.js 15 (App Router), TypeScript 5, Tailwind CSS v4, and a dark cyberpunk aesthetic. Static export deployed to S3 + CloudFront with a Lambda backend.
 
 ## Tech Stack
 
-- **Frontend**: React 18.3.1 + React Router 6 (SPA) + TypeScript 5.9.3 + Vite 4.2.2 + TailwindCSS 3.4.19
-- **Backend**: Express server integrated with Vite dev server
-- **PWA**: Vite PWA plugin with service worker, offline caching, and installable features
-- **Notifications**: Web Push API with VAPID keys (no external services required)
-- **Testing**: Vitest 3.2.4 + Playwright 1.40+ E2E (40/40 tests passing)
-- **UI**: Radix UI + TailwindCSS 3.4.19 + Lucide React icons
+- **Framework**: Next.js 15 (App Router) with static export
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS v4 + Radix UI + shadcn/ui
+- **Animation**: Framer Motion
+- **Backend**: AWS Lambda (production), Express dev server (local)
+- **Hosting**: S3 + CloudFront (frontend), Lambda Function URL (backend)
+- **PWA**: Service worker with offline caching and push notifications
+- **Testing**: Playwright 1.49+ E2E (69 test files)
+- **Analytics**: Google Analytics 4 + Sentry error tracking
 - **Package Manager**: PNPM
-- **Code Quality**: Biome linting + ESLint with accessibility & security plugins
-- **Analytics**: Google Analytics 4 + Custom performance monitoring
 
 ## Project Structure
 
 ```
-client/                   # React SPA frontend
-  pages/                # Route components (Index.tsx = home)
-  components/ui/        # Pre-built UI component library
-  App.tsx               # App entry point with SPA routing setup
-  global.css            # TailwindCSS 3 theming and global styles
-
-server/                   # Express API backend
-  index.ts              # Main server setup (express config + routes)
-  routes/               # API handlers
-
-shared/                   # Types used by both client & server
-  api.ts                # Shared API interfaces
-
-amplify/                  # AWS Amplify Gen 2 backend
-  functions/            # Lambda functions
-  backend/              # Amplify backend configuration
-
-public/                   # Static assets and PWA files
-scripts/                  # Build and utility scripts
+src/
+  app/                  # Next.js App Router pages
+    about/              # About page
+    agents/             # AI agents showcase
+    contact/            # Contact form (reCAPTCHA v3)
+    performance/        # Performance monitoring showcase
+    product/            # Work experience
+    projects/           # Projects gallery
+    resume/             # Resume builder
+    settings/           # App settings
+  components/           # Reusable UI components
+    ui/                 # shadcn/ui components
+    performance/        # Performance page components
+  hooks/                # Custom React hooks
+  lib/                  # Utility functions (api.ts, sentry.ts, etc.)
+  types/                # TypeScript interfaces (api.ts)
+  data/                 # Static data files
+  styles/               # Global styles
+server/                 # Express dev server (port 3001)
+  routes/               # API handlers (resume, apiKeys, playwrightAutofix)
+playwright-tests/       # E2E test suite (69 specs)
+docs/                   # Documentation (~55 reference files)
+public/                 # Static assets and PWA files
 ```
 
 ## Key Features
 
-- **SPA Routing**: React Router 6 with clean URL structure
-- **PWA Ready**: Offline caching, installable, push notifications
-- **Type Safety**: Full TypeScript throughout client, server, and shared code
-- **Modern UI**: Radix UI components with TailwindCSS styling
-- **Performance**: Optimized images, lazy loading, performance monitoring
-- **Testing**: Comprehensive test suite with Vitest and Playwright
-- **Analytics**: Google Analytics 4 + custom performance tracking
-- **Deployment**: Multiple deployment options (Netlify, Vercel, AWS Amplify)
+- **Dark Cyberpunk Design**: Circuit board backgrounds, cyan accents, glass morphism
+- **Static Export**: Pre-rendered HTML served from CloudFront CDN
+- **PWA Ready**: Offline caching, installable, web push notifications
+- **Type Safety**: Full TypeScript with strict mode
+- **Performance Showcase**: Live Web Vitals, industry benchmarks, optimization checklist
+- **AI Integrations**: Multi-provider AI (Ollama, OpenAI, Together, Anthropic)
+- **Analytics**: GA4 + Sentry + custom performance monitoring
+- **API Keys Management**: Full CRUD with Slack notifications
 
 ## Development
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - PNPM
 - Git
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/Themis128/new-portfolio.git
-cd new-portfolio
-
-# Install dependencies
 pnpm install
 ```
 
 ### Running Development Servers
 
 ```bash
-# Terminal 1: Start Vite dev server (frontend on port 8082)
+# Terminal 1: Start Next.js dev server (frontend on port 8082)
 pnpm dev
 
-# Terminal 2: Start Express API server (backend on port 3000)
-npx tsx server/node-build.ts
+# Terminal 2: Start Express API server (backend on port 3001)
+npx tsx server/index.ts
 ```
-
-> **Note**: For push notifications to work in development, you need both servers running. The Vite dev server proxies `/api` requests to the Express server.
 
 ## Available Scripts
 
 ```bash
-pnpm dev                        # Start Vite dev server (frontend)
-npx tsx server/node-build.ts    # Start Express API server (backend)
-pnpm build                      # Production build
-pnpm start                      # Start production server
+pnpm dev                        # Start Next.js dev server
+pnpm build                      # Production static export (out/)
 pnpm typecheck                  # TypeScript validation
-pnpm test                       # Run Vitest tests
 pnpm test:e2e                   # Run Playwright E2E tests
+pnpm lint                       # Run Biome linter
 ```
 
 ## API Endpoints
 
-- `GET /api/ping` - Health check
-- `GET /api/demo` - Demo endpoint
-- `GET /api/push-notifications?action=vapid-public-key` - Get VAPID public key
-- `PUT /api/push-notifications` - Store push subscription
-- `POST /api/push-notifications` - Send push notification
-- `DELETE /api/push-notifications` - Remove subscription
-- `POST /api/analytics` - Send performance analytics data
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/ping` | GET | Health check |
+| `/api/demo` | GET | Demo endpoint |
+| `/api/contact` | POST | Contact form (reCAPTCHA v3 validated) |
+| `/api/resume` | GET | Redirect to resume PDF |
+| `/api/push-notifications` | GET/PUT/POST/DELETE | Web push subscription management |
+| `/api/organizations/api_keys` | GET/POST | List / create API keys |
+| `/api/organizations/api_keys/:id` | GET/POST/DELETE | Get / update / delete API key |
 
 ## Deployment
 
-### Production Build
+### Frontend (S3 + CloudFront)
 
 ```bash
 pnpm build
-pnpm start
+aws s3 sync out/ s3://figma-portfolio-static --delete
+aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"
 ```
 
-### Cloud Deployment Options
+### Backend (AWS Lambda)
 
-- **Netlify**: Connect your GitHub repo for automatic deployments
-- **Vercel**: Deploy with zero configuration
-- **AWS Amplify**: Full-stack deployment with backend functions
+Single Lambda function (`figma-portfolio-api`) fronted by CloudFront at `/api/*`.
+- Function URL: `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
+- Runtime: Node.js, 256MB memory, 15s timeout
+- 14 environment variables (see [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md))
 
-### Deployment Documentation
+### Documentation
 
-| Platform       | Documentation                                    | Use Case                           |
-| -------------- | ------------------------------------------------ | ---------------------------------- |
-| Netlify        | [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md) | Static sites, serverless functions |
-| AWS Amplify    | [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)     | Full-stack with backend            |
-| GitHub Actions | [CI_CD_README.md](./CI_CD_README.md)             | CI/CD pipeline setup               |
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+| Topic | File |
+|---|---|
+| Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| API Reference | [docs/API_REFERENCE.md](docs/API_REFERENCE.md) |
+| Deployment | [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) |
+| Integrations | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) |
+| Testing | [docs/TESTING.md](docs/TESTING.md) |
 
 ## License
 
@@ -139,8 +133,5 @@ This project is private and proprietary.
 
 ## Author
 
-**Themistoklis Baltzakis**
-
-- Portfolio: [Your Portfolio URL]
-- LinkedIn: [Your LinkedIn]
-- Email: [Your Email]
+**Themistoklis Baltzakis** — Cloud Architect & Cybersecurity Specialist
+- Portfolio: [baltzakis.dev](https://baltzakis.dev)

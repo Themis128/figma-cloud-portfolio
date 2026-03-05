@@ -178,8 +178,9 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
 
-  // Output configuration for deployment
-  output: "standalone",
+  // Static export for S3 + CloudFront hosting (production builds only)
+  // Dev server needs full Next.js features (rewrites, headers, etc.)
+  ...(process.env.NODE_ENV === "production" && { output: "export" as const }),
 
   // Compression and optimization settings
   compress: true,
@@ -242,11 +243,11 @@ const nextConfig: NextConfig = {
 // Bundle analyzer is now handled via @next/bundle-analyzer package
 // To enable, run: ANALYZE=true npm run build
 
-// Conditionally add production settings
+// Static export requires unoptimized images (no server-side processing)
 if (process.env.NODE_ENV === "production") {
   nextConfig.images = {
     ...nextConfig.images,
-    unoptimized: false,
+    unoptimized: true,
   };
 }
 

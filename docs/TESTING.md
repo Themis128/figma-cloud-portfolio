@@ -17,8 +17,8 @@ This project uses **Playwright** for end-to-end (E2E) testing, targeting 100% co
 
 **File:** `playwright.config.ts`
 
-- Base URL (local dev): `http://localhost:8082` (Vite dev server) — backend: `http://localhost:3002`
-- Note: Playwright/CI uses `http://localhost:8082` by default for local runs; override with `PLAYWRIGHT_BASE_URL` when necessary.
+- Base URL (local dev): `http://localhost:8082` (Next.js dev server) — backend: `http://localhost:3001` (Express dev server)
+- Override with `PLAYWRIGHT_BASE_URL` for CI or production testing.
 - Browsers: Chromium, Firefox, WebKit (desktop + mobile viewports)
 - Test timeout: 30 seconds
 - Retries: 2 on CI, 0 locally
@@ -367,6 +367,7 @@ Shared helpers used across spec files:
 | Accessibility Button       | `tests/accessibility-button.spec.ts`                                       | ✅ Covered |
 | PWA Update Notification    | `tests/pwa-update-notification.spec.ts`                                    | ✅ Covered |
 | Playwright Autofix API     | `server/routes/playwright-autofix.ts`                                      | ✅ Covered |
+| API Keys CRUD              | `api-keys.spec.ts`                                                         | ✅ Covered |
 
 **Total coverage: 100% of pages and major features**
 
