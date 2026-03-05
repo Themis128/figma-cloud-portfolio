@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { setupTestEnvironment, teardownTestEnvironment } from "./test-utils";
 
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+
 // These tests target an external push notifications API server on port 3002.
 // The Next.js app (port 3000) does not include this API route, so these tests
 // are skipped unless the external backend service is running separately.
@@ -16,7 +18,7 @@ test.describe.skip("Push Notifications API", () => {
   test.describe("GET /api/push-notifications", () => {
     test("should return VAPID public key", async ({ request }) => {
       const response = await request.get(
-        "http://localhost:3002/api/push-notifications?action=vapid-public-key",
+        `${API_BASE_URL}/api/push-notifications?action=vapid-public-key`,
       );
 
       expect(response.ok()).toBe(true);
@@ -29,7 +31,7 @@ test.describe.skip("Push Notifications API", () => {
 
     test("should return subscriptions count", async ({ request }) => {
       const response = await request.get(
-        "http://localhost:3002/api/push-notifications?action=subscriptions",
+        `${API_BASE_URL}/api/push-notifications?action=subscriptions`,
       );
 
       expect(response.ok()).toBe(true);
@@ -53,13 +55,13 @@ test.describe.skip("Push Notifications API", () => {
         },
       };
 
-      await request.put("http://localhost:3002/api/push-notifications", {
+      await request.put(`${API_BASE_URL}/api/push-notifications`, {
         data: subscription,
       });
 
       // Now send test notification
       const response = await request.get(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
       );
 
       expect(response.ok()).toBe(true);
@@ -79,7 +81,7 @@ test.describe.skip("Push Notifications API", () => {
       // For now, we'll test the error case by making the request without subscriptions
 
       const response = await request.get(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
       );
 
       // This might fail if there are existing subscriptions, but let's test the structure
@@ -121,7 +123,7 @@ test.describe.skip("Push Notifications API", () => {
       ];
 
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions,
@@ -143,7 +145,7 @@ test.describe.skip("Push Notifications API", () => {
 
     test("should return error for missing message", async ({ request }) => {
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions: [],
@@ -161,7 +163,7 @@ test.describe.skip("Push Notifications API", () => {
       request,
     }) => {
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions: "invalid",
@@ -196,7 +198,7 @@ test.describe.skip("Push Notifications API", () => {
       ];
 
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions,
@@ -227,7 +229,7 @@ test.describe.skip("Push Notifications API", () => {
       };
 
       const response = await request.put(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: subscription,
         },
@@ -251,7 +253,7 @@ test.describe.skip("Push Notifications API", () => {
       };
 
       const response = await request.put(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: invalidSubscription,
         },
@@ -282,13 +284,13 @@ test.describe.skip("Push Notifications API", () => {
       };
 
       // Store first subscription
-      await request.put("http://localhost:3002/api/push-notifications", {
+      await request.put(`${API_BASE_URL}/api/push-notifications`, {
         data: subscription1,
       });
 
       // Store second subscription with same endpoint (should update)
       const response = await request.put(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: subscription2,
         },
@@ -311,7 +313,7 @@ test.describe.skip("Push Notifications API", () => {
         },
       };
 
-      await request.put("http://localhost:3002/api/push-notifications", {
+      await request.put(`${API_BASE_URL}/api/push-notifications`, {
         data: subscription,
       });
 
@@ -332,7 +334,7 @@ test.describe.skip("Push Notifications API", () => {
       request,
     }) => {
       const response = await request.delete(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
       );
 
       expect(response.status()).toBe(400);
@@ -358,7 +360,7 @@ test.describe.skip("Push Notifications API", () => {
       request,
     }) => {
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: "invalid json",
           headers: {
@@ -389,7 +391,7 @@ test.describe.skip("Push Notifications API", () => {
       ];
 
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions,
@@ -411,7 +413,7 @@ test.describe.skip("Push Notifications API", () => {
   test.describe("Security & Validation", () => {
     test("should validate VAPID key format", async ({ request }) => {
       const response = await request.get(
-        "http://localhost:3002/api/push-notifications?action=vapid-public-key",
+        `${API_BASE_URL}/api/push-notifications?action=vapid-public-key`,
       );
 
       expect(response.ok()).toBe(true);
@@ -443,7 +445,7 @@ test.describe.skip("Push Notifications API", () => {
       ];
 
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions,
@@ -466,7 +468,7 @@ test.describe.skip("Push Notifications API", () => {
       };
 
       const response = await request.put(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: invalidSubscription,
         },
@@ -498,7 +500,7 @@ test.describe.skip("Push Notifications API", () => {
       const promises = Array(5)
         .fill(null)
         .map(() =>
-          request.post("http://localhost:3002/api/push-notifications", {
+          request.post(`${API_BASE_URL}/api/push-notifications`, {
             data: {
               subscriptions,
               message: testMessage,
@@ -532,7 +534,7 @@ test.describe.skip("Push Notifications API", () => {
         }));
 
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions,
@@ -571,7 +573,7 @@ test.describe.skip("Push Notifications API", () => {
       ];
 
       const response = await request.post(
-        "http://localhost:3002/api/push-notifications",
+        `${API_BASE_URL}/api/push-notifications`,
         {
           data: {
             subscriptions,

@@ -1,23 +1,19 @@
-# 🚀 AWS Amplify Deployment Checklist
+# Deployment Checklist (S3 + CloudFront + Lambda)
 
 ## ✅Pre-Deployment Setup (COMPLETED)
 
 ### 1. Environment Variables (CRITICAL)
 
-- [x] Go to AWS Amplify Console → Your App → Environment variables
-- [x] Set the following **required** environment variables:
+- [x] Set environment variables (split between build-time and Lambda):
 
   ```bash
-  # Client-side (NEXT_PUBLIC_ prefix — bundled into browser JS)
+  # Client-side (NEXT_PUBLIC_ prefix — baked into static build at `pnpm build` time)
   NEXT_PUBLIC_SITE_URL=https://baltzakis.dev
   NEXT_PUBLIC_GA_ID=G-FT79QM66D3
+  NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 
-  # Server-side (API routes only — never exposed to browser)
-  RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
-  GITHUB_TOKEN=your_github_token
-  HF_TOKEN=your_huggingface_token
-  CAL_API_KEY=your_cal_com_api_key
-  CAL_EVENT_TYPE_ID=your_cal_event_type_id
+  # Server-side (Lambda environment variables — never exposed to browser)
+  # See "Lambda Configuration Verification" section for full list
   ```
 
 - [x] **Optional** — error tracking:
@@ -49,83 +45,95 @@
 
 ### 2. AWS IAM Permissions
 
-- [x] Ensure your AWS account has Amplify permissions
+- [x] Ensure your AWS account has S3, CloudFront, and Lambda permissions
 - [x] Lambda execution permissions are configured
 - [x] CloudWatch logs permissions for monitoring
 
 ### 3. Repository Setup
 
 - [x] Code is committed and pushed to GitHub
-- [x] Branch protection rules allow Amplify deployment
+- [x] Branch protection rules configured
 - [x] Webhooks are configured for automatic deployment
 - [x] Service worker registration conflict fixed
 
 ## Deployment Steps
 
-### 1. Connect Repository
+### 1. Repository & Build
 
-- [x] Go to AWS Amplify Console
-- [x] Click "New app" → "Host web app"
-- [x] Select GitHub as provider
-- [x] Authorize AWS Amplify to access your GitHub account
-- [x] Select repository: `Themis128/figma-cloud-portfolio`
-- [x] Select branch: `production`
+- [x] Repository: `Themis128/figma-cloud-portfolio`
+- [x] Branch: `production`
+- [x] `pnpm build` produces static `out/` directory
+- [x] Sync `out/` to S3 bucket `figma-portfolio-static`
 
-### 2. Configure Build Settings
+### 2. Configure Infrastructure
 
-- [x] App name: `figma-cloud-portfolio` (or your preferred name)
-- [x] Build settings should auto-detect from `amplify.yml`
-- [x] Environment: `Production`
-- [x] Verify build commands match `amplify.yml`
+- [x] S3 bucket: `figma-portfolio-static` (static hosting)
+- [x] CloudFront distribution: `E134SCTR0QGQKJ` (CDN)
+- [x] Lambda function: `figma-portfolio-api` (backend)
+- [x] CloudFront `/api/*` cache behavior routes to Lambda
 
 ### 3. Environment Variables
 
-- [x] Add all required environment variables
-- [x] Mark sensitive variables as "secret" if needed
+- [x] Client-side vars (`NEXT_PUBLIC_*`) set in build environment (baked into `out/` at build time)
+- [x] Server-side vars set as Lambda environment variables
 - [x] Verify variable names match your code expectations
 
 ### 4. Advanced Settings
 
-- [x] **Custom headers**: Already configured in `amplify.yml`
-- [x] **Rewrites and redirects**: Next.js handles routing (SSR + static)
-- [x] **Custom build images**: Not needed (using standard Node.js)
+- [x] **Custom headers**: Configured via CloudFront response headers policy
+- [x] **Rewrites and redirects**: CloudFront `/api/*` cache behavior routes to Lambda
+- [x] **Static export**: `pnpm build` produces `out/` directory, synced to S3
 
 ## Post-Deployment Verification
 
 ### 1. Frontend Deployment
 
-- [x] App URL is accessible: `https://[branch-name].[app-id].amplifyapp.com`
+- [x] App URL is accessible: `https://baltzakis.dev` (CloudFront distribution `E134SCTR0QGQKJ`)
 - [x] Homepage loads without errors
 - [x] Navigation works correctly
-- [x] Static assets load (images, CSS, JS)
+- [x] Static assets load from S3 via CloudFront (images, CSS, JS)
 - [x] PWA features work (service worker, manifest) - FIXED: Service worker registration conflict resolved
 - [x] No InvalidStateError for service worker registration
-- [x] Production build successful (72 precached entries, 4.4MB)
+- [x] Production build successful — `pnpm build` produces `out/` directory
 
-### 2. API Functions Testing
+### 2. Lambda Backend Testing
 
-- [x] Health check: `GET /api/ping` → Returns `{"message":"ping pong"}`
+- [x] Health check: `GET /api/ping` → Returns `{"message":"ping pong"}` (routed via CloudFront to Lambda)
 - [x] Contact form: Test form submission with required fields (name, email, subject, message, recaptchaToken)
 - [x] Analytics: Test event tracking with required fields (event, timestamp, url, userAgent)
-- [x] Resume download: Test PDF generation (30s timeout required)
 - [x] Push notifications: Test subscription functionality
-- [x] GitHub API: Test workflow retrieval
-- [x] Run comprehensive API tests: `node scripts/test-api.js` (all endpoints return 200 ✅)
+- [x] All `/api/*` requests route through CloudFront to Lambda function `figma-portfolio-api`
 
 ### 3. Performance & Security
 
 - [x] Lighthouse score > 90 (target achieved)
-- [x] HTTPS certificate is valid (auto-enabled by Amplify)
-- [x] CORS headers properly configured in `amplify.yml`
+- [x] HTTPS certificate is valid (ACM certificate on CloudFront)
+- [x] CORS headers properly configured in CloudFront response headers policy
 - [x] Content Security Policy headers set
 - [x] Service worker caching functional (72 precached entries, 4.4MB)
 - [x] Image optimization active (WebP/AVIF generation)
 - [x] Code splitting implemented (vendor/router/ui chunks)
 - [x] Bundle analysis available via `pnpm run build:analyze`
 
+### Lambda Configuration Verification
+
+- [ ] Lambda function `figma-portfolio-api` accessible
+- [ ] 14 environment variables set (NODE_ENV, RECAPTCHA_SECRET_KEY, SES_VERIFIED_EMAIL, SENTRY_DSN, SENTRY_ENVIRONMENT, PING_MESSAGE, SLACK_WEBHOOK_URL, SLACK_CHANNEL, ANTHROPIC_API_KEY, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, GOOGLE_ANALYTICS_MEASUREMENT_ID, GOOGLE_ANALYTICS_API_SECRET)
+- [ ] Timeout: 15 seconds
+- [ ] Memory: 256 MB
+- [ ] SES using Lambda execution role (no explicit AWS credentials)
+
+### Static Frontend Verification
+
+- [ ] `pnpm build` produces `out/` directory
+- [ ] S3 bucket `figma-portfolio-static` synced
+- [ ] CloudFront distribution `E134SCTR0QGQKJ` active
+- [ ] No custom error responses on CloudFront
+- [ ] `/api/*` cache behavior routes to Lambda
+
 ### 4. Monitoring Setup
 
-- [x] CloudWatch logs are accessible (auto-enabled with Amplify)
+- [x] CloudWatch logs are accessible (Lambda function logging)
 - [x] Error tracking (Sentry) is configured
 - [x] Analytics (Google Analytics) is working
 - [x] Performance monitoring is active
@@ -135,21 +143,21 @@
 ### Build Failures
 
 **Issue**: `pnpm install` fails
-**Solution**: Check Node.js version compatibility, ensure `amplify.yml` has correct pnpm setup
+**Solution**: Check Node.js version compatibility
 
-**Issue**: Lambda function build fails
-**Solution**: Check function-specific `package.json` and dependencies
+**Issue**: `pnpm build` does not produce `out/` directory
+**Solution**: Ensure `output: 'export'` is set in `next.config.ts`
 
 ### Runtime Errors
 
 **Issue**: Lambda timeout errors
-**Solution**: Increase timeout in `amplify.yml` functions section (resume function needs 300s)
+**Solution**: Increase timeout in Lambda configuration (currently 15 seconds)
 
 **Issue**: Memory errors in Lambda
-**Solution**: Increase memory allocation (resume function needs 2048MB)
+**Solution**: Increase memory allocation in Lambda configuration (currently 256 MB)
 
 **Issue**: CORS errors
-**Solution**: Verify custom headers in `amplify.yml` and Lambda responses
+**Solution**: Verify CloudFront response headers policy and Lambda CORS response headers
 
 **Issue**: Service worker registration fails with InvalidStateError
 **Solution**: ✅FIXED - Conflicting VitePWA configurations removed, now using injectManifest strategy
@@ -166,17 +174,17 @@
 ### Environment Issues
 
 **Issue**: Missing environment variables
-**Solution**: Add variables in Amplify Console → Environment variables
+**Solution**: Client-side vars (`NEXT_PUBLIC_*`) must be set before `pnpm build`; server-side vars must be set in Lambda configuration
 
 **Issue**: Wrong environment variable values
-**Solution**: Check variable names match code expectations (case-sensitive)
+**Solution**: Check variable names match code expectations (case-sensitive). Client-side vars are baked into static output at build time.
 
 ## Rollback Plan
 
 ### Emergency Rollback
 
-1. Go to Amplify Console → Deployments
-2. Click "Rollback" on a previous successful deployment
+1. Re-sync previous `out/` build to S3 bucket `figma-portfolio-static`
+2. Invalidate CloudFront distribution `E134SCTR0QGQKJ`
 3. Monitor the rollback process
 4. Test functionality after rollback
 
@@ -190,17 +198,17 @@
 
 ### Frontend Optimizations
 
-- [x] Enable gzip compression (auto-enabled by Amplify)
-- [x] CDN distribution (CloudFront auto-configured)
+- [x] Enable gzip compression (CloudFront compression enabled)
+- [x] CDN distribution (CloudFront `E134SCTR0QGQKJ`)
 - [x] Image optimization (already implemented)
 - [x] Code splitting (already configured)
 - [x] Service worker caching
 
 ### Lambda Optimizations
 
-- [x] Provisioned concurrency for frequently used functions (resume function configured)
-- [x] Memory optimization to reduce cold start times (2048MB allocated for resume)
-- [x] Function versioning for gradual deployments
+- [x] Single Lambda function `figma-portfolio-api` handles all `/api/*` routes
+- [x] Memory: 256 MB, Timeout: 15 seconds
+- [x] SES using Lambda execution role (no explicit AWS credentials needed)
 
 ## Security Checklist
 
@@ -220,10 +228,10 @@
    - Function duration > 80% of timeout (configured)
    - 5xx errors > 1% (configured)
 
-2. **Amplify Monitoring**:
-   - Build success/failure notifications (enabled)
-   - Performance metrics (available)
-   - Error rates (monitored)
+2. **CloudFront Monitoring**:
+   - Cache hit ratio (monitored)
+   - Error rates (4xx/5xx tracked)
+   - Request metrics (available)
 
 3. **Application Monitoring**:
    - Sentry for error tracking (configured)
@@ -241,8 +249,8 @@
 - [x] All code committed and pushed to production branch
 - [x] Repository: `Themis128/figma-cloud-portfolio`
 - [x] Branch: `production`
-- [x] Build artifacts ready in `dist/` directory
-- [x] API endpoints tested and functional (`node scripts/test-api.js`)
+- [x] Build artifacts ready in `out/` directory (static export)
+- [x] Lambda backend `figma-portfolio-api` deployed and functional
 - [x] Linting and formatting checks pass (`biome check .`)
 - [x] TypeScript compilation successful (`tsc`)
 - [x] Test coverage meets requirements (Vitest + Playwright)
@@ -296,7 +304,7 @@
 2. **Build Verification**:
 
    ```bash
-   pnpm run build         # Full production build
+   pnpm run build         # Static export → out/ directory
    pnpm run typecheck     # TypeScript validation
    pnpm run lint          # Code quality checks
    ```
@@ -307,34 +315,30 @@
    pnpm run build:analyze # Bundle analysis
    ```
 
-### 📋 Next Steps for Deployment
+### Next Steps for Deployment
 
-1. **Connect to AWS Amplify** (if not already connected):
-   - Go to AWS Amplify Console
-   - Create new app or use existing
-   - Connect GitHub repository
-   - Select `production` branch
+1. **Build static frontend**:
+   - Run `pnpm build` (produces `out/` directory)
+   - Ensure `NEXT_PUBLIC_*` vars are set before building (baked into static output)
 
-2. **Configure Environment Variables**:
-   - Set required variables in Amplify Console
-   - Focus on: `VITE_RECAPTCHA_SITE_KEY`, `VITE_GOOGLE_ANALYTICS_ID`
+2. **Deploy to S3 + CloudFront**:
+   - Sync `out/` to S3 bucket `figma-portfolio-static`
+   - Invalidate CloudFront distribution `E134SCTR0QGQKJ`
 
-3. **Deploy**:
-   - Amplify will automatically build and deploy
-   - Monitor build logs for any issues
-   - Test deployed application
+3. **Configure Lambda**:
+   - Verify `figma-portfolio-api` function is deployed
+   - Set 14 Lambda environment variables (see Lambda Configuration Verification below)
+   - Confirm CloudFront `/api/*` cache behavior routes to Lambda
 
-### 🎯 Expected Outcome
+### Expected Outcome
 
-- ✅Clean deployment without service worker errors
-- ✅PWA features functional (offline, caching, notifications)
-- ✅All API endpoints working (9/9 endpoints tested and passing)
-- ✅Performance optimized with 72 precached assets
-- ✅Lighthouse scores > 90 across all metrics
-- ✅TypeScript compilation successful
-- ✅All linting and formatting checks pass
-- ✅Test coverage meets requirements
-- ✅Bundle size optimized (< 5MB total)
+- Static frontend served from S3 via CloudFront
+- All `/api/*` requests routed to Lambda function `figma-portfolio-api`
+- PWA features functional (offline, caching, notifications)
+- Lighthouse scores > 90 across all metrics
+- TypeScript compilation successful
+- All linting and formatting checks pass
+- Bundle size optimized (< 5MB total)
 
 ---
 
@@ -348,13 +352,12 @@
 - **First Contentful Paint**: < 1.5s
 - **Largest Contentful Paint**: < 2.5s
 
-### API Performance
+### Lambda Performance
 
-- **Health Check**: < 100ms
-- **Contact Form**: < 500ms
-- **Resume Download**: < 30s (Puppeteer PDF generation)
-- **Analytics**: < 200ms
-- **GitHub API**: < 1s
+- **Health Check** (`/api/ping`): < 100ms
+- **Contact Form** (`/api/contact`): < 500ms
+- **Analytics** (`/api/analytics`): < 200ms
+- **Cold start**: ~1-2s (256 MB, 15s timeout)
 
 ### Test Coverage
 
@@ -365,16 +368,13 @@
 
 ---
 
-## ✅ CODE READY FOR DEPLOYMENT - COMMITTED AND PUSHED
+## CODE READY FOR DEPLOYMENT
 
-**Latest Commit**: `6be76cd` - "feat: update deployment checklist and test configurations for production deployment"
-**Branch**: `production`
 **Repository**: `Themis128/figma-cloud-portfolio`
-**Status**: All changes committed and pushed to GitHub ✅
+**Branch**: `production`
+**Infrastructure**: S3 (`figma-portfolio-static`) + CloudFront (`E134SCTR0QGQKJ`) + Lambda (`figma-portfolio-api`)
 
-### 🚀 Ready for AWS Amplify Deployment
-
-The codebase is now fully prepared for production deployment to AWS Amplify. All pre-deployment checks have passed, code is committed, and the repository is ready for connection to Amplify.
+The codebase is fully prepared for production deployment. `pnpm build` produces the `out/` directory for S3 sync. The Lambda backend handles all `/api/*` routes.
 
 ---
 
@@ -417,83 +417,46 @@ See `POST_DEPLOYMENT_VERIFICATION.md` for comprehensive manual testing checklist
 
 ---
 
-## 🎯 Deployment Status: READY FOR PRODUCTION
+## Deployment Status: READY FOR PRODUCTION
 
-**Current State**: All systems operational and ready for production deployment
-**API Health**: 9/9 endpoints passing ✅
-**Build Status**: Production build successful ✅
-**Security**: All security measures implemented ✅
-**Performance**: Lighthouse scores >90 ✅
-**Monitoring**: Full observability configured ✅
-
-**Verification Tools**: Automated scripts and manual checklist prepared ✅
-
-### 🎉 Final Status Summary
-
-**Pre-Deployment Setup**: ✅COMPLETED
-
-- Environment variables configured
-- AWS IAM permissions verified
-- Repository setup complete
-
-**Deployment Steps**: ✅COMPLETED
-
-- Repository connected to Amplify
-- Build settings configured
-- Environment variables set
-- Advanced settings optimized
-
-**Post-Deployment Verification**: ✅COMPLETED
-
-- Frontend deployment successful
-- All API endpoints tested and functional
-- Performance metrics achieved
-- Monitoring and alerts configured
-
-**Security & Performance**: ✅COMPLETED
-
-- HTTPS enforced
-- Security headers configured
-- Performance optimizations active
-- Monitoring systems operational
-
-### 🚀 Deployment Status: READY FOR PRODUCTION
-
-**Current State**: All systems operational and ready for production deployment
-**API Health**: 9/9 endpoints passing ✅
-**Build Status**: Production build successful ✅
-**Security**: All security measures implemented ✅
-**Performance**: Lighthouse scores >90 ✅
-**Monitoring**: Full observability configured ✅
+**Current State**: All systems operational
+**Infrastructure**: S3 + CloudFront (static frontend) + Lambda (backend API)
+**Build Output**: `out/` directory (static export)
+**Lambda**: `figma-portfolio-api` — 14 env vars, 256 MB, 15s timeout
+**Security**: All security measures implemented
+**Performance**: Lighthouse scores >90
+**Monitoring**: CloudWatch + Sentry + Google Analytics
 
 ---
 
-## 📋 Environment Variables Summary
+## Environment Variables Summary
 
-### ✅ **REQUIRED Variables**
+### Client-Side Variables (baked into static build at `pnpm build` time)
 
-Set these in AWS Amplify Console → Environment variables:
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Canonical URL (`https://baltzakis.dev`) |
+| `NEXT_PUBLIC_GA_ID` | Google Analytics GA4 measurement ID |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | reCAPTCHA v3 client-side site key |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry error tracking DSN (optional) |
 
-1. **`NEXT_PUBLIC_SITE_URL`** — Canonical URL (`https://baltzakis.dev`)
-   - Used in: `next.config.ts`, `src/app/layout.tsx`
+### Lambda Environment Variables (14 total, set on `figma-portfolio-api`)
 
-2. **`NEXT_PUBLIC_GA_ID`** — Google Analytics GA4 measurement ID
-   - Used in: `src/components/GoogleAnalytics.tsx`
+| # | Variable | Description |
+|---|---|---|
+| 1 | `NODE_ENV` | `production` |
+| 2 | `RECAPTCHA_SECRET_KEY` | reCAPTCHA v3 server-side secret |
+| 3 | `SES_VERIFIED_EMAIL` | Verified SES email for contact form |
+| 4 | `SENTRY_DSN` | Sentry DSN for Lambda error tracking |
+| 5 | `SENTRY_ENVIRONMENT` | Sentry environment tag (`production`) |
+| 6 | `PING_MESSAGE` | Health check response message |
+| 7 | `SLACK_WEBHOOK_URL` | Slack incoming webhook for notifications |
+| 8 | `SLACK_CHANNEL` | Slack channel for notifications |
+| 9 | `ANTHROPIC_API_KEY` | Anthropic API key for AI features |
+| 10 | `VAPID_PUBLIC_KEY` | Web Push VAPID public key |
+| 11 | `VAPID_PRIVATE_KEY` | Web Push VAPID private key |
+| 12 | `VAPID_EMAIL` | Web Push VAPID contact email |
+| 13 | `GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 measurement ID (server-side events) |
+| 14 | `GOOGLE_ANALYTICS_API_SECRET` | GA4 Measurement Protocol API secret |
 
-3. **`RECAPTCHA_SECRET_KEY`** — reCAPTCHA v3 server-side secret
-   - Used in: `src/app/api/contact/route.ts`
-
-4. **`GITHUB_TOKEN`** — GitHub API token for repo proxy
-   - Used in: `src/app/api/github/route.ts`
-
-5. **`HF_TOKEN`** — HuggingFace Inference API token
-   - Used in: `src/app/api/chat/route.ts`
-
-6. **`CAL_API_KEY`** / **`CAL_EVENT_TYPE_ID`** — Cal.com booking integration
-   - Used in: `src/app/api/booking/create/route.ts`, `src/app/api/booking/slots/route.ts`
-
-### 📝 **OPTIONAL Variables**
-
-- **`NEXT_PUBLIC_SENTRY_DSN`**: Error tracking (Sentry)
-- **`NEXT_PUBLIC_FIREBASE_*`**: Push notifications (Firebase)
-- **`NEXT_PUBLIC_AI_PROVIDER`** / **`NEXT_PUBLIC_OPENAI_API_KEY`**: Client-side AI features
+> **Note:** SES uses the Lambda execution role — no explicit AWS credentials (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`) are needed.

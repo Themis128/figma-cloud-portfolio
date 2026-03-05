@@ -43,7 +43,7 @@ const config = createPlaywrightConfig("development", {
   ],
   // Use environment-aware base URL
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Updated for current app architecture
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Next.js dev server (matches NEXT_PUBLIC_SITE_URL in .env.local)
   },
 });
 

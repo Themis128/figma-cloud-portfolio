@@ -25,7 +25,7 @@ import {
 
 test.describe("Google Analytics 4 - Real Integration", () => {
   const config = loadRealAPIConfig();
-  const requiredVars = ["VITE_GOOGLE_ANALYTICS_ID"];
+  const requiredVars = ["NEXT_PUBLIC_GA_ID"];
 
   test.beforeAll(() => {
     if (!config.enableAnalytics) {
@@ -48,7 +48,7 @@ test.describe("Google Analytics 4 - Real Integration", () => {
 
   test("should load real GA4 tracking script", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/");
+    await page.goto("/");
     await waitForAppReady(page);
 
     const { result: gaStatus, duration } = await measureAPICall(
@@ -114,7 +114,7 @@ test.describe("Google Analytics 4 - Real Integration", () => {
       }
     });
 
-    await page.goto("http://localhost:3001/");
+    await page.goto("/");
     await waitForAppReady(page);
 
     // Wait for GA to send page view
@@ -170,7 +170,7 @@ test.describe("Google Analytics 4 - Real Integration", () => {
       }
     });
 
-    await page.goto("http://localhost:3001/");
+    await page.goto("/");
     await waitForAppReady(page);
 
     const { result: customEvent, duration } = await measureAPICall(
@@ -224,7 +224,7 @@ test.describe("Google Analytics 4 - Real Integration", () => {
 
   test("should track real Core Web Vitals", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/");
+    await page.goto("/");
     await waitForAppReady(page);
 
     const { result: webVitals, duration } = await measureAPICall(
@@ -281,7 +281,7 @@ test.describe("Google Analytics 4 - Real Integration", () => {
 
   test("should verify GA4 measurement ID configuration", async ({ page }) => {
     await setupRealAPIPage(page);
-    await page.goto("http://localhost:3001/");
+    await page.goto("/");
     await waitForAppReady(page);
 
     const { result: config, duration } = await measureAPICall(
@@ -330,7 +330,7 @@ test.describe("Google Analytics 4 - Real Integration", () => {
     const { result: perfImpact, duration } = await measureAPICall(
       "Analytics Performance Impact",
       async () => {
-        await page.goto("http://localhost:3001/");
+        await page.goto("/");
         await waitForAppReady(page);
 
         return await page.evaluate(() => {

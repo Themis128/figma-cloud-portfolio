@@ -23,11 +23,10 @@ test.describe("API Integration Tests", () => {
     expect(criticalErrors.length).toBe(0);
   });
 
-  test("should fetch resume data via API", async ({ request }) => {
-    const response = await request.get("/api/resume");
+  test("should fetch resume download via API", async ({ request }) => {
+    const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+    const response = await request.get(`${API_BASE_URL}/api/resume/download`);
     expect(response.status()).toBe(200);
-    const data = await response.json();
-    expect(data).toHaveProperty("personal");
   });
 
   test("should cache API responses on reload", async ({ page }) => {

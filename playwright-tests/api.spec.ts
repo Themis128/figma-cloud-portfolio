@@ -1,81 +1,74 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("API Endpoints", () => {
-  test("should respond to /api/resume with resume data", async ({
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+
+// Lambda-only endpoints (contact, github) are not available on the local Express dev server.
+// These tests target the Express dev server on port 3001.
+// For Lambda endpoint tests, set API_BASE_URL to the Lambda function URL.
+
+test.describe("API Endpoints — Express Dev Server", () => {
+  test("GET /api/organizations/api_keys — should return array", async ({
     request,
   }) => {
-    const response = await request.get("/api/resume");
-    expect(response.status()).toBe(200);
-
+    const response = await request.get(
+      `${API_BASE_URL}/api/organizations/api_keys`,
+    );
+    expect(response.ok()).toBe(true);
     const data = await response.json();
-    expect(data).toHaveProperty("personal");
-    expect(data.personal).toHaveProperty("name");
-    expect(data.personal.name).toBe("Themistoklis Baltzakis");
+    expect(Array.isArray(data)).toBe(true);
   });
 
-  test("should respond to /api/github with data", async ({
-    request,
-  }) => {
-    const response = await request.get("/api/github");
-    // May fail if no GITHUB_TOKEN is set — returns 502 on upstream error
-    expect([200, 500, 502]).toContain(response.status());
+  test("GET /api/resume/download — should respond", async ({ request }) => {
+    const response = await request.get(`${API_BASE_URL}/api/resume/download`);
+    expect(response.status()).toBe(200);
   });
 
   test("should handle 404 for non-existent API endpoints", async ({
     request,
   }) => {
-    const response = await request.get("/api/non-existent");
-    // Next.js dev server may return 200 (HTML not-found page), 404, or 405
-    expect([200, 400, 404, 405]).toContain(response.status());
+    const response = await request.get(`${API_BASE_URL}/api/non-existent`);
+    expect([404, 500]).toContain(response.status());
   });
 
-  test("should handle invalid HTTP methods on contact endpoint", async ({
+  test("should return proper content-type for JSON endpoints", async ({
     request,
   }) => {
-    const response = await request.get("/api/contact");
+    const response = await request.get(
+      `${API_BASE_URL}/api/organizations/api_keys`,
+    );
+    expect(response.ok()).toBe(true);
+    expect(response.headers()["content-type"]).toContain("application/json");
+  });
+
+  test("GET / — root should respond", async ({ request }) => {
+    const response = await request.get(`${API_BASE_URL}/`);
+    expect(response.ok()).toBe(true);
+  });
+});
+
+test.describe("API Endpoints — Lambda Only", () => {
+  // These tests require the Lambda function URL or a running Next.js dev server
+  // with API routes. Skip when testing against the local Express server.
+  const isLocalExpress =
+    !process.env.API_BASE_URL ||
+    process.env.API_BASE_URL.includes("localhost:3001");
+
+  test("should respond to /api/contact with 404/405 for GET", async ({
+    request,
+  }) => {
+    test.skip(isLocalExpress, "Contact endpoint only available on Lambda");
+    const response = await request.get(`${API_BASE_URL}/api/contact`);
     expect([404, 405]).toContain(response.status());
   });
 
   test("should reject malformed JSON on contact endpoint", async ({
     request,
   }) => {
-    const response = await request.post("/api/contact", {
+    test.skip(isLocalExpress, "Contact endpoint only available on Lambda");
+    const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: "{invalid json",
       headers: { "Content-Type": "application/json" },
     });
     expect([400, 500]).toContain(response.status());
-  });
-
-  test("should handle API timeout gracefully", async ({ request }) => {
-    try {
-      const response = await request.get("/api/resume", {
-        timeout: 1,
-      });
-      // If response comes back despite tiny timeout, that's fine
-      expect(response.status()).toBe(200);
-    } catch (error) {
-      // Timeout occurred - acceptable behavior
-      // Error message may say "timeout" or "Request timed out"
-      expect((error as Error).message.toLowerCase()).toMatch(/timeout|timed out|aborted/i);
-    }
-  });
-
-  test("should return resume data with correct structure", async ({
-    request,
-  }) => {
-    const response = await request.get("/api/resume");
-    expect(response.status()).toBe(200);
-
-    const data = await response.json();
-    expect(data).toHaveProperty("personal");
-    expect(data).toHaveProperty("experience");
-    expect(data.personal).toHaveProperty("title");
-    expect(data.personal).toHaveProperty("email");
-  });
-
-  test("should return proper content-type header", async ({ request }) => {
-    const response = await request.get("/api/resume");
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toContain("application/json");
   });
 });

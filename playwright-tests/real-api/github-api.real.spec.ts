@@ -23,7 +23,7 @@ import {
 
 test.describe("GitHub API - Real Integration", () => {
   const config = loadRealAPIConfig();
-  const requiredVars = ["GITHUB_TOKEN", "VITE_GITHUB_TOKEN"];
+  const requiredVars = ["GITHUB_TOKEN"];
 
   test.beforeAll(() => {
     // Skip if GitHub API testing is disabled or credentials missing

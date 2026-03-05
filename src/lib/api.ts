@@ -3,7 +3,7 @@
  * This replaces the direct /api/* routes with Lambda function URLs
  */
 
-import type { ContactFormRequest, ResumeData } from "@/types/api";
+import type { ContactFormRequest, ResumeData, APIKey } from "@/types/api";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
@@ -186,5 +186,73 @@ export async function ping(): Promise<{ message: string; timestamp: string }> {
  */
 export async function getDemo(): Promise<{ message: string }> {
   const response = await apiRequest("demo");
+  return response.json();
+}
+
+/**
+ * List all API keys
+ */
+export async function listAPIKeys(): Promise<APIKey[]> {
+  const response = await apiRequest(
+    `${API_BASE_URL}/organizations/api_keys`,
+  );
+  return response.json();
+}
+
+/**
+ * Get an API key by ID
+ */
+export async function getAPIKey(apiKeyId: string): Promise<APIKey> {
+  const response = await apiRequest(
+    `${API_BASE_URL}/organizations/api_keys/${apiKeyId}`,
+  );
+  return response.json();
+}
+
+/**
+ * Create a new API key
+ */
+export async function createAPIKey(
+  data: { name: string; workspace_id?: string | null },
+): Promise<APIKey> {
+  const response = await apiRequest(
+    `${API_BASE_URL}/organizations/api_keys`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    },
+  );
+  return response.json();
+}
+
+/**
+ * Update an API key
+ */
+export async function updateAPIKey(
+  apiKeyId: string,
+  data: { name?: string; status?: "active" | "inactive" | "archived" },
+): Promise<APIKey> {
+  const response = await apiRequest(
+    `${API_BASE_URL}/organizations/api_keys/${apiKeyId}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    },
+  );
+  return response.json();
+}
+
+/**
+ * Delete an API key
+ */
+export async function deleteAPIKey(
+  apiKeyId: string,
+): Promise<{ id: string; deleted: boolean }> {
+  const response = await apiRequest(
+    `${API_BASE_URL}/organizations/api_keys/${apiKeyId}`,
+    {
+      method: "DELETE",
+    },
+  );
   return response.json();
 }

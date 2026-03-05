@@ -177,8 +177,8 @@ const BROWSER_LAUNCH_ARGS = {
   ],
 };
 
-// Next.js 16 specific configurations
-const NEXTJS_16_CONFIG = {
+// Next.js 15 specific configurations
+const NEXTJS_15_CONFIG = {
   timeouts: {
     action: 15000,
     navigation: 45000,

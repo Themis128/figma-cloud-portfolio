@@ -2,13 +2,15 @@
 /* biome-disable lint/suspicious/noExplicitAny */
 import { expect, test } from "@playwright/test";
 
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+
 test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", () => {
-  // Skip tests that require external API server on port 3002 — not available in CI/dev
-  test.describe.skip("reCAPTCHA v3 Server-Side Validation (requires external API on port 3002)", () => {
+  // Skip tests that require external API server (API_BASE_URL) — not available in CI/dev
+  test.describe.skip("reCAPTCHA v3 Server-Side Validation (requires external API (API_BASE_URL))", () => {
     test("should validate reCAPTCHA token with Google API", async ({
       request,
     }) => {
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: {
           name: "Test User",
           email: "test@example.com",
@@ -27,7 +29,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should reject requests without reCAPTCHA token", async ({
       request,
     }) => {
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: {
           name: "Test User",
           email: "test@example.com",
@@ -44,7 +46,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should handle reCAPTCHA verification network failures", async ({
       request,
     }) => {
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: {
           name: "Network Test",
           email: "network@example.com",
@@ -62,7 +64,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should validate email format before reCAPTCHA", async ({
       request,
     }) => {
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: {
           name: "Test User",
           email: "invalid-email-format",
@@ -85,7 +87,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
         { subject: "Test Subject", email: "test@example.com", message: "Test message", recaptchaToken: "test-token" },
       ];
       for (const testCase of testCases) {
-        const response = await request.post("http://localhost:3002/api/contact", { data: testCase });
+        const response = await request.post(`${API_BASE_URL}/api/contact`, { data: testCase });
         expect(response.status()).toBe(400);
         const data = await response.json();
         expect(data.success).toBe(false);
@@ -94,7 +96,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
 
     test("should handle malformed JSON gracefully", async ({ request }) => {
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: { name: null, email: "test@example.com", subject: "Malformed Data Test", message: "Testing malformed input handling", recaptchaToken: "test-token" },
       });
       expect(response.status()).toBeLessThan(500);
@@ -106,7 +108,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     test("should process valid contact form submissions", async ({
       request,
     }) => {
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: { name: "Valid User", email: "valid@example.com", subject: "Valid Submission Test", message: "This is a valid contact form submission for testing purposes.", recaptchaToken: "test-token-valid" },
       });
       expect(response.status()).toBeGreaterThanOrEqual(200);
@@ -313,10 +315,10 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       await expect(page.locator("body")).toBeVisible();
     });
 
-    // Skipped: requires external API server on port 3002
+    // Skipped: requires external API server (API_BASE_URL)
     test.skip("should handle concurrent API calls", async () => {});
 
-    // Skipped: requires external API server on port 3002
+    // Skipped: requires external API server (API_BASE_URL)
     test.skip("should handle API endpoint error responses gracefully", async () => {});
   });
 
@@ -380,15 +382,15 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
       await expect(page.locator("body")).toBeVisible();
     });
 
-    // Skipped: requires external API server on port 3002
+    // Skipped: requires external API server (API_BASE_URL)
     test.skip("should handle large payloads gracefully", async () => {});
 
-    // Skipped: requires external API server on port 3002
+    // Skipped: requires external API server (API_BASE_URL)
     test.skip("should handle special characters in form data", async () => {});
   });
 
-  // Skip: all tests in this block require external API server on port 3002
-  test.describe.skip("Security and Validation Tests (requires external API on port 3002)", () => {
+  // Skip: all tests in this block require external API server (API_BASE_URL)
+  test.describe.skip("Security and Validation Tests (requires external API (API_BASE_URL))", () => {
     test("should prevent XSS attempts in form fields", async ({ request }) => {
       const xssAttempts = [
         '<script>alert("XSS")</script>',
@@ -399,7 +401,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
       for (const xssPayload of xssAttempts) {
         const response = await request.post(
-          "http://localhost:3002/api/contact",
+          `${API_BASE_URL}/api/contact`,
           {
             data: {
               name: "XSS Test",
@@ -434,7 +436,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
       for (const invalidEmail of invalidEmails) {
         const response = await request.post(
-          "http://localhost:3002/api/contact",
+          `${API_BASE_URL}/api/contact`,
           {
             data: {
               name: "Email Validation Test",
@@ -467,7 +469,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
       for (const sqlPayload of sqlInjections) {
         const response = await request.post(
-          "http://localhost:3002/api/contact",
+          `${API_BASE_URL}/api/contact`,
           {
             data: {
               name: "SQL Injection Test",
@@ -498,7 +500,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
       for (const cmdPayload of commandInjections) {
         const response = await request.post(
-          "http://localhost:3002/api/contact",
+          `${API_BASE_URL}/api/contact`,
           {
             data: {
               name: "Command Injection Test",
@@ -520,14 +522,14 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
     });
   });
 
-  // Skip: tests require external API server on port 3002
-  test.describe.skip("Integration with External Services (requires external API on port 3002)", () => {
+  // Skip: tests require external API server (API_BASE_URL)
+  test.describe.skip("Integration with External Services (requires external API (API_BASE_URL))", () => {
     test("should handle reCAPTCHA service unavailability", async ({
       request,
     }) => {
       // This test verifies that the server handles cases where reCAPTCHA verification fails
       // due to network issues or invalid tokens
-      const response = await request.post("http://localhost:3002/api/contact", {
+      const response = await request.post(`${API_BASE_URL}/api/contact`, {
         data: {
           name: "Service Unavailable Test",
           email: "unavailable@example.com",
@@ -559,7 +561,7 @@ test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", 
 
       for (const token of tokenFormats) {
         const response = await request.post(
-          "http://localhost:3002/api/contact",
+          `${API_BASE_URL}/api/contact`,
           {
             data: {
               name: "Token Format Test",

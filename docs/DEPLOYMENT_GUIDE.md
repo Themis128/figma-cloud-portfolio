@@ -1,389 +1,192 @@
-# AWS Amplify Deployment Guide
+# Deployment Guide
 
-## 🚀 Quick Deployment
+## Architecture
 
-```bash
-# Deploy via GitHub integration (recommended)
-# App ID: d1zjif7pi1h3om
-# Region: us-east-1
-```
+- **Frontend**: Static export (`next build` with `output: "export"`) → S3 bucket → CloudFront CDN
+- **Backend**: Single AWS Lambda function (`figma-portfolio-api`) → CloudFront `/api/*` routing
+- **Domain**: `baltzakisthemis.com` via CloudFront
 
-## 📋 Prerequisites
+## Prerequisites
 
 ### Local Environment
 
 - **Node.js**: Version 20.x or higher
 - **PNPM**: Package manager (`npm install -g pnpm`)
-- **Git**: Version control system
 - **AWS CLI**: Configured with your AWS credentials
 
-### AWS Account
+### AWS Resources
 
-- **AWS Account**: Active AWS account with billing enabled
-- **IAM Permissions**: Amplify, CloudFormation, and related service permissions
-- **GitHub Account**: Repository access for CI/CD integration
+| Resource | Identifier |
+|---|---|
+| S3 bucket | `figma-portfolio-static` |
+| CloudFront distribution | `E134SCTR0QGQKJ` |
+| Lambda function | `figma-portfolio-api` |
+| Region | `us-east-1` |
 
-## 🏗️ Local Build Process
+## Local Build Process
 
 ### 1. Install Dependencies
 
 ```bash
-# Install all project dependencies
 pnpm install
 ```
 
-### 2. Run Tests Locally
+### 2. Run Tests
 
 ```bash
-# Run unit tests
-pnpm test
-
-# Run E2E tests
 pnpm test:e2e
-
-# Run linting
 pnpm lint
 ```
 
 ### 3. Build for Production
 
 ```bash
-# Build the Next.js application (frontend + API routes)
+# Builds static HTML/CSS/JS to out/ directory
 pnpm build
-
-# This runs: next build → outputs to .next/ (standalone mode)
 ```
 
-### 4. Test Production Build Locally
+> **Note**: `output: "export"` is conditional on `NODE_ENV === "production"`. The dev server (`pnpm dev`) runs normally without static export restrictions.
+
+### 4. Test Build Locally
 
 ```bash
-# Start production server
-pnpm start
-
-# Visit http://localhost:3000 to test
+# Serve the static output
+npx serve out
 ```
 
-## ☁️ AWS Setup
+## Frontend Deployment (S3 + CloudFront)
 
-### 1. Configure AWS CLI
+### Deploy Static Assets
 
 ```bash
-# Configure AWS credentials
-aws configure
+# Sync build output to S3
+aws s3 sync out/ s3://figma-portfolio-static --delete --region us-east-1
 
-# Enter your:
-# - AWS Access Key ID
-# - AWS Secret Access Key
-# - Default region (us-east-1)
-# - Default output format (json)
+# Invalidate CloudFront cache
+aws cloudfront create-invalidation \
+  --distribution-id E134SCTR0QGQKJ \
+  --paths "/*"
 ```
 
-### 2. Verify AWS Configuration
+### Verify Deployment
 
 ```bash
-# Check your AWS configuration
-aws configure list
-
-# Test AWS connection
-aws sts get_caller_identity
+# Check all routes return 200
+for route in "" about agents contact performance product projects resume settings; do
+  echo -n "/$route: "
+  curl -s -o /dev/null -w "%{http_code}" "https://baltzakisthemis.com/$route"
+  echo
+done
 ```
 
-## 🚀 AWS Amplify Deployment
+## Backend Deployment (Lambda)
 
-### 🎯 Primary Method: GitHub Integration (Recommended)
+### Lambda Configuration
 
-This is the **recommended approach** for continuous deployment and development workflow.
+| Setting | Value |
+|---|---|
+| Function name | `figma-portfolio-api` |
+| Runtime | Node.js |
+| Memory | 256 MB |
+| Timeout | 15 seconds |
+| Function URL | `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws` |
 
-#### Step 1: Prepare Your Repository
-
-Ensure your code is committed and pushed to GitHub:
+### Environment Variables (14)
 
 ```bash
-# Commit your changes
-git add .
-git commit -m "Ready for deployment"
-git push origin main
+NODE_ENV=production
+RECAPTCHA_SECRET_KEY=<real reCAPTCHA v3 secret>
+SES_VERIFIED_EMAIL=noreply@cloudless.gr
+SENTRY_DSN=<sentry DSN>
+SENTRY_ENVIRONMENT=production
+PING_MESSAGE=ping_pong
+SLACK_WEBHOOK_URL=<slack webhook>
+SLACK_CHANNEL=#personal-website
+ANTHROPIC_API_KEY=<anthropic key>
+VAPID_PUBLIC_KEY=<vapid public>
+VAPID_PRIVATE_KEY=<vapid private>
+VAPID_EMAIL=mailto:noreply@cloudless.gr
+GOOGLE_ANALYTICS_MEASUREMENT_ID=G-FT79QM66D3
+GOOGLE_ANALYTICS_API_SECRET=<ga4 api secret>
 ```
 
-#### Step 2: Create Amplify App with GitHub Integration
-
-1. **Open AWS Amplify Console**:
-   - Go to: https://console.aws.amazon.com/amplify/home
-   - Click **"Create app"** → **"Host web app"**
-
-2. **Connect GitHub Repository**:
-   - Choose **"GitHub"** as your repository source
-   - Click **"Authorize AWS Amplify"** to connect your GitHub account
-   - **Grant repository access**: Ensure AWS Amplify can access your repository
-   - Select your repository: `YOUR_USERNAME/YOUR_REPO`
-
-3. **Configure Build Settings**:
-   - **App name**: `your-portfolio-name`
-   - **Branch**: `main` (production) or `ai_main_ac9340bcfb26` (your current branch)
-   - **Build settings**: Auto-detected from `amplify.yml` in your repository
-
-4. **Environment Variables** (Optional):
-   - Add any required environment variables in the Amplify Console
-
-5. **Deploy**:
-   - Click **"Save and deploy"**
-   - AWS Amplify will clone your repository and start building
-
-#### Step 3: Enable Automatic Deployments
-
-Once connected, future commits will automatically trigger deployments:
-
-- **Push to main**: Production deployment
-- **Create PR**: CI testing without deployment
-- **Push to develop**: Staging deployment (if configured)
-
-### 🔄 Alternative Method: Manual ZIP Upload
-
-For one-time deployments or testing without GitHub integration:
-
-#### Step 1: Build Locally
+### Update Lambda Environment
 
 ```bash
-# Build the application
-pnpm build
-
-# Verify build output in .next/ directory
-ls -la .next/
+aws lambda update-function-configuration \
+  --function-name figma-portfolio-api \
+  --environment "Variables={KEY=value,...}" \
+  --region us-east-1
 ```
 
-#### Step 2: Create Deployment Archive
+### Update Lambda Code
 
 ```bash
-# Create ZIP file from build output
-zip -r portfolio-deployment.zip .next/ public/ package.json
+# Package and deploy new Lambda code
+zip -r lambda.zip index.js node_modules/
+aws lambda update-function-code \
+  --function-name figma-portfolio-api \
+  --zip-file fileb://lambda.zip \
+  --region us-east-1
 ```
 
-#### Step 3: Deploy via AWS Console
-
-1. **AWS Amplify Console** → **"Create app"** → **"Host web app"**
-2. **Choose "Deploy without Git provider"**
-3. **Upload ZIP file**: Select `portfolio-deployment.zip`
-4. **Configure and deploy**
-
-**⚠️ Note**: Manual uploads don't support automatic CI/CD. Use GitHub integration for ongoing development.
-
-## 🔧 Configuration Files
-
-### amplify.yml (Build Configuration)
-
-```yaml
-version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm install -g pnpm
-        - pnpm install --frozen-lockfile
-    build:
-      commands:
-        - pnpm run build
-  artifacts:
-    baseDirectory: .next
-    files:
-      - "**/*"
-  cache:
-    paths:
-      - node_modules/**/*
-      - .next/cache/**/*
-  environment:
-    NODE_OPTIONS: "--max-old-space-size=2048"
-```
-
-> No separate `backend` section needed — API routes (`src/app/api/`) are bundled into the Next.js standalone build and deployed as Lambda compute by Amplify.
-
-### Environment Variables
-
-Set these in AWS Amplify Console → App → Environment variables:
+### Verify Backend
 
 ```bash
-# Client-side
-NEXT_PUBLIC_SITE_URL=https://baltzakis.dev
-NEXT_PUBLIC_GA_ID=G-FT79QM66D3
+# Health check
+curl https://baltzakisthemis.com/api/ping
 
-# Server-side (API routes)
-RECAPTCHA_SECRET_KEY=your_secret
-GITHUB_TOKEN=your_token
-HF_TOKEN=your_huggingface_token
-CAL_API_KEY=your_cal_api_key
-CAL_EVENT_TYPE_ID=your_event_type_id
+# Contact endpoint
+curl -X POST https://baltzakisthemis.com/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"test@test.com","message":"Test"}'
 ```
 
-## 🔄 CI/CD Pipeline
+## CloudFront Configuration
 
-### Automatic Deployments
+CloudFront distribution `E134SCTR0QGQKJ` has two cache behaviors:
 
-Once connected to GitHub, deployments happen automatically:
+| Pattern | Origin | Purpose |
+|---|---|---|
+| `/api/*` | Lambda Function URL | Backend API requests |
+| `Default (*)` | S3 bucket | Static frontend assets |
 
-- **Push to `main`**: Production deployment
-- **Push to `develop`**: Staging deployment (if configured)
-- **Pull Requests**: CI testing without deployment
+> **Note**: No custom error responses (SPA fallback) — this ensures Lambda JSON errors pass through correctly.
 
-### Manual Deployments
+## Local Development
 
 ```bash
-# Trigger production deployment
-gh workflow run "Deploy to Production"
+# Terminal 1: Next.js dev server (frontend on port 8082)
+pnpm dev
 
-# Trigger staging deployment
-gh workflow run "Deploy to Staging"
+# Terminal 2: Express API server (backend on port 3001)
+npx tsx server/index.ts
 ```
 
-### Rollback Deployments
-
-```bash
-# Rollback to previous version
-gh workflow run rollback.yml -f environment=production
-
-# Rollback to specific commit
-gh workflow run rollback.yml -f environment=production -f target_commit=abc123
-```
-
-## 🧪 Testing Deployment
-
-### 1. Check Build Logs
-
-- AWS Amplify Console → Your App → Build runs
-- Check for any build errors or warnings
-
-### 2. Test Application
-
-- Visit your Amplify domain (e.g., `https://abc123.amplifyapp.com`)
-- Test all functionality:
-  - ✅ Page navigation
-  - ✅ Form submissions
-  - ✅ PWA features
-  - ✅ No JavaScript errors
-
-### 3. Performance Testing
-
-```bash
-# Test Lighthouse scores
-# Check Core Web Vitals in Chrome DevTools
-# Verify mobile responsiveness
-```
-
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Build Failures
 
-```bash
-# Check build logs in Amplify Console
-# Common issues:
-# - Missing dependencies
-# - Build timeout (increase timeout in amplify.yml)
-# - Environment variable issues
-```
+- Check `pnpm build` output for TypeScript errors
+- Ensure `output: "export"` is compatible with your routes (no dynamic server-side routes)
+- Run `pnpm typecheck` separately for detailed TS errors
 
-### Runtime Errors
+### Lambda Issues
 
-```bash
-# Check browser console for JavaScript errors
-# Verify environment variables are set correctly
-# Check network requests in DevTools
-```
+- Check CloudWatch logs: `aws logs tail /aws/lambda/figma-portfolio-api --follow`
+- Verify env vars: `aws lambda get-function-configuration --function-name figma-portfolio-api --query Environment.Variables`
+- Test Lambda directly: `curl https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws/api/ping`
 
-### Deployment Issues
+### CloudFront Issues
 
-```bash
-# Verify AWS credentials have correct permissions
-# Check GitHub repository access
-# Ensure amplify.yml is in repository root
-```
+- Check invalidation status: `aws cloudfront list-invalidations --distribution-id E134SCTR0QGQKJ`
+- Verify S3 bucket contents: `aws s3 ls s3://figma-portfolio-static/`
 
-### MIME Type Issues
+## Quick Deploy Checklist
 
-If you see JavaScript loading errors:
-
-- ✅ Custom headers are configured in `amplify.yml`
-- ✅ Rebuild and redeploy to apply headers
-- ✅ Clear browser cache after deployment
-
-## 📊 Monitoring & Maintenance
-
-### Health Checks
-
-- Set up uptime monitoring (e.g., Pingdom, UptimeRobot)
-- Monitor AWS Amplify metrics in CloudWatch
-- Check error rates and performance metrics
-
-### Updates
-
-```bash
-# Update dependencies
-pnpm update
-
-# Test changes locally
-pnpm build && pnpm start
-
-# Commit and push to trigger deployment
-git add .
-git commit -m "Update dependencies"
-git push origin main
-```
-
-### Backup Strategy
-
-- Code is safely stored in GitHub
-- AWS Amplify provides deployment history
-- Consider AWS Backup for additional data protection
-
-## 🚀 Advanced Configuration
-
-### Custom Domain
-
-1. **Purchase domain** (Route 53 or external provider)
-2. **AWS Amplify Console** → Your App → Domain management
-3. **Add custom domain** and configure DNS
-
-### SSL Certificate
-
-- AWS Amplify provides free SSL certificates
-- Automatic renewal and management
-
-### Environment Branches
-
-```bash
-# Create staging branch
-git checkout -b develop
-git push origin develop
-
-# Configure in Amplify Console
-# Add branch → Connect to develop
-```
-
-## 📞 Support
-
-### AWS Amplify Resources
-
-- **Documentation**: https://docs.amplify.aws/
-- **Console**: https://console.aws.amazon.com/amplify/
-- **Support**: AWS Support Center
-
-### Common Issues
-
-- **Build timeouts**: Increase build timeout in amplify.yml
-- **Large builds**: Use build cache and optimize bundle size
-- **Environment variables**: Ensure all required vars are set
-
----
-
-## 🎯 Quick Deployment Checklist
-
-- [ ] Local build successful (`pnpm build`)
-- [ ] Tests passing (`pnpm test`)
-- [ ] AWS CLI configured
-- [ ] GitHub repository accessible
-- [ ] Amplify app created
-- [ ] Repository connected
-- [ ] Environment variables set
-- [ ] Custom domain configured (optional)
-- [ ] SSL certificate active
-- [ ] First deployment successful
-- [ ] Application tested in production
-
-**Your portfolio is now deployed and ready for the world! 🌟**
+- [ ] `pnpm build` succeeds
+- [ ] `aws s3 sync out/ s3://figma-portfolio-static --delete`
+- [ ] `aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"`
+- [ ] All routes return 200
+- [ ] `/api/ping` returns health check
+- [ ] Contact form works end-to-end
