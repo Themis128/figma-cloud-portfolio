@@ -24,6 +24,7 @@ export default function Navigation() {
     { name: "Contact", href: "/contact" },
     { name: "Performance", href: "/performance" },
     { name: "Agents", href: "/agents" },
+    { name: "Admin", href: "/admin" },
   ];
 
   const isActive = (path: string) => pathname === path;
