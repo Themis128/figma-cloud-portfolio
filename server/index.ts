@@ -3,6 +3,7 @@ import express from "express";
 import playwrightAutofix from "./routes/playwrightAutofix";
 import resume from "./routes/resume";
 import apiKeys from "./routes/apiKeys";
+import chat from "./routes/chat";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use("/api/playwright-autofix", playwrightAutofix);
 app.use("/api/resume", resume);
 app.use("/api/organizations/api_keys", apiKeys);
+app.use("/api/chat", chat);
 
 app.get("/", (req, res) => res.send("API Root"));
 
