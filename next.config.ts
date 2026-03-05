@@ -178,6 +178,9 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
 
+  // Generate /about/index.html instead of /about.html for clean URL support on S3
+  trailingSlash: true,
+
   // Static export for S3 + CloudFront hosting (production builds only)
   // Dev server needs full Next.js features (rewrites, headers, etc.)
   ...(process.env.NODE_ENV === "production" && { output: "export" as const }),
