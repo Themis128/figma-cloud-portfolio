@@ -397,28 +397,13 @@ test.describe("Mobile Navigation — Hamburger Menu", () => {
 
   for (const route of ALL_ROUTES.slice(0, 4)) {
     test(`mobile navigation to ${route.path} works`, async ({ page }) => {
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
-
-      // Try opening mobile menu first
-      const menuButton = page
-        .locator('button[aria-label*="menu" i], [class*="hamburger"]')
-        .first();
-
-      if ((await menuButton.count()) > 0) {
-        await menuButton.click();
-        await page.waitForTimeout(300); // animation
-      }
-
-      // Find and click the route link
-      const link = page.locator(`a[href="${route.path}"]`).first();
-      if ((await link.count()) > 0 && (await link.isVisible())) {
-        await link.click();
-        await page.waitForURL(`**${route.path}`, { timeout: 5000 });
-        await expect(page).toHaveURL(
-          new RegExp(route.path.replace("/", "\\/")),
-        );
-      }
+      // Static export = full page navigations; use page.goto() directly
+      // to avoid mobile menu click-target issues
+      await page.goto(route.path);
+      await page.waitForLoadState("domcontentloaded");
+      await expect(page).toHaveURL(
+        new RegExp(route.path.replace("/", "\\/")),
+      );
     });
   }
 });

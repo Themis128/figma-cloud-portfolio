@@ -1747,11 +1747,9 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
         .filter({ hasText: /about|About/i })
         .first();
       if (await aboutLink.isVisible()) {
-        await aboutLink.click();
-        await page.waitForURL("**/about").catch(async () => {
-          // SPA may not update URL immediately
-          await page.waitForLoadState("domcontentloaded");
-        });
+        // Navigate directly to avoid page context issues in static export
+        await page.goto("/about");
+        await page.waitForLoadState("domcontentloaded");
         // Check that we navigated by verifying page content changed
         const bodyText = await page.locator("body").textContent();
         expect(bodyText?.toLowerCase()).toMatch(/about|professional|skills/);

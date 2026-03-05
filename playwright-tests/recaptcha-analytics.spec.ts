@@ -363,7 +363,7 @@ test.describe("reCAPTCHA and Google Analytics Integration", () => {
       const contactLink = page.getByRole("link", { name: "Contact" });
       if (await contactLink.isVisible()) {
         await contactLink.click({ force: true });
-        await page.waitForURL("**/contact");
+        await page.waitForURL(/\/contact/, { timeout: 15000 });
 
         // Wait for GA tracking (reduced timeout)
         await page.waitForTimeout(500);

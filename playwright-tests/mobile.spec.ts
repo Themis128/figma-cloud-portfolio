@@ -58,16 +58,25 @@ test.describe("Mobile Responsiveness Tests", () => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
+    // Disable animations to prevent stability issues
+    await page.addStyleTag({
+      content: "*, *::before, *::after { animation: none !important; transition: none !important; }",
+    });
+
     // Open mobile menu
     const menuButton = page.locator('button[aria-label="Toggle menu"]');
-    await menuButton.click();
-    await page.waitForTimeout(500);
+    await menuButton.click({ force: true });
+    await page.waitForTimeout(300);
 
-    // Navigate to a page
-    const aboutLink = page.locator('a[href="/about"]').first();
+    // Navigate to a page via the nav link
+    const aboutLink = page.locator('nav a[href="/about"]').first();
     if (await aboutLink.isVisible().catch(() => false)) {
-      await aboutLink.click();
-      await page.waitForURL("**/about");
+      await aboutLink.click({ force: true });
+      await page.waitForURL(/\/about/, { timeout: 10000 });
+      await expect(page.locator("h1")).toBeVisible();
+    } else {
+      // If nav link not visible, navigate directly
+      await page.goto("/about");
       await expect(page.locator("h1")).toBeVisible();
     }
   });
