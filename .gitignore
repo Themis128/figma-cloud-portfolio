@@ -27,6 +27,9 @@ build/
 .env.backup
 .env*.backup
 
+# Firebase service account keys
+*-firebase-adminsdk-*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

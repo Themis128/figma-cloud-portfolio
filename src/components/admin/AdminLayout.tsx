@@ -9,9 +9,14 @@ import { Button } from "@/components/ui/button";
 interface AdminLayoutProps {
   children: ReactNode;
   onLogout: () => void;
+  userEmail?: string | undefined;
 }
 
-export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
+export default function AdminLayout({
+  children,
+  onLogout,
+  userEmail,
+}: AdminLayoutProps) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
       <div className="flex items-center justify-between mb-2">
@@ -19,6 +24,11 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
           Admin Dashboard
         </h1>
         <div className="flex items-center gap-3">
+          {userEmail && (
+            <span className="hidden sm:inline text-foreground/40 font-mono text-xs">
+              {userEmail}
+            </span>
+          )}
           <Badge
             variant="outline"
             className="border-green-500/40 text-green-400 text-[10px] uppercase tracking-wider"

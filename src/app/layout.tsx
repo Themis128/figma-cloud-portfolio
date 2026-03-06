@@ -7,6 +7,7 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { Providers } from "@/components/providers";
 import { DefaultStructuredData } from "@/components/StructuredData";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -131,12 +132,14 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
-          <MotionProvider>
-            <DefaultStructuredData />
-            <AccessibilityEnhancer />
-            {children}
-            <ChatbotWidget />
-          </MotionProvider>
+          <AuthProvider>
+            <MotionProvider>
+              <DefaultStructuredData />
+              <AccessibilityEnhancer />
+              {children}
+              <ChatbotWidget />
+            </MotionProvider>
+          </AuthProvider>
         </Providers>
         <GoogleAnalytics />
       </body>

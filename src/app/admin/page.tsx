@@ -13,7 +13,8 @@ import { useAdminAuth } from "@/components/admin/useAdminAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AdminPage() {
-  const { isAuthenticated, isLoading, login, logout } = useAdminAuth();
+  const { isAuthenticated, isLoading, login, logout, loginError, user } =
+    useAdminAuth();
 
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
@@ -29,9 +30,12 @@ export default function AdminPage() {
             <div className="w-8 h-8 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
           </div>
         ) : !isAuthenticated ? (
-          <AdminLogin onLogin={login} />
+          <AdminLogin onLogin={login} errorMessage={loginError} />
         ) : (
-          <AdminLayout onLogout={logout}>
+          <AdminLayout
+            onLogout={() => void logout()}
+            {...(user?.email !== undefined && user?.email !== null && { userEmail: user.email })}
+          >
             <Tabs defaultValue="health" className="space-y-6">
               <TabsList className="bg-card/40 backdrop-blur-sm border border-border/20 p-1">
                 <TabsTrigger
