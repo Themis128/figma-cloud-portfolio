@@ -35,6 +35,7 @@ export interface ContactFormRequest {
   email: string;
   subject?: string;
   message: string;
+  recaptchaToken?: string;
 }
 
 export interface ResumeData {

@@ -13,7 +13,8 @@ import {
   FolderGit2,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import Script from "next/script";
+import { useCallback, useState } from "react";
 
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
@@ -114,6 +115,18 @@ const stats = [
   { value: "5+", label: "Certifications", icon: Award },
 ];
 
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+
+// Extend window for reCAPTCHA v3
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (cb: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    };
+  }
+}
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -133,13 +146,31 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const getRecaptchaToken = useCallback(async (): Promise<string | undefined> => {
+    if (!RECAPTCHA_SITE_KEY || !window.grecaptcha) return undefined;
+    return new Promise((resolve) => {
+      window.grecaptcha!.ready(async () => {
+        try {
+          const token = await window.grecaptcha!.execute(RECAPTCHA_SITE_KEY, { action: "contact" });
+          resolve(token);
+        } catch {
+          resolve(undefined);
+        }
+      });
+    });
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
     try {
-      await submitContactForm(formData);
+      const recaptchaToken = await getRecaptchaToken();
+      await submitContactForm({
+        ...formData,
+        ...(recaptchaToken !== undefined && { recaptchaToken }),
+      });
       setSubmitStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch {
@@ -151,6 +182,12 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      {RECAPTCHA_SITE_KEY && (
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`}
+          strategy="lazyOnload"
+        />
+      )}
       <CircuitBackground />
       <Navigation />
 
