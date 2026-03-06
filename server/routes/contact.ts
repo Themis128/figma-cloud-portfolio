@@ -7,7 +7,7 @@ const router = Router();
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY ?? "";
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL ?? "";
 const SES_VERIFIED_EMAIL = process.env.SES_VERIFIED_EMAIL ?? "";
-const AWS_REGION = process.env.AWS_REGION ?? "eu-central-1";
+const AWS_REGION = process.env.AWS_REGION ?? "us-east-1";
 
 // Minimum reCAPTCHA score to accept (0.0–1.0, higher = more likely human)
 const RECAPTCHA_THRESHOLD = 0.5;
