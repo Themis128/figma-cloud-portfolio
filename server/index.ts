@@ -1,6 +1,6 @@
-// Load environment variables BEFORE any other imports read process.env
-import dotenv from "dotenv";
-dotenv.config();
+// Load environment variables BEFORE any other imports read process.env.
+// This MUST be the first import — ESM evaluates imports in declaration order.
+import "./env";
 
 // Main server setup (express config + routes)
 import express from "express";
