@@ -9,7 +9,9 @@
     "esModuleInterop": true,
     "allowJs": false,
     "declaration": false,
-    "noEmit": false
+    "noEmit": false,
+    "allowImportingTsExtensions": false
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts"],
+  "exclude": []
 }
