@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import BookingCard from "@/components/BookingCard";
+import { sendChatMessage } from "@/lib/api";
 
 type MessageAction = "start_booking";
 
@@ -97,11 +98,7 @@ export default function ChatbotWidget() {
       .map((m) => ({ role: m.role, content: m.content }));
 
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageText, history }),
-      });
+      const res = await sendChatMessage(messageText, history);
 
       if (!res.ok || !res.body) {
         const errData = (await res

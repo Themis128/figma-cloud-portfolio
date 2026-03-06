@@ -145,13 +145,14 @@ const nextConfig: NextConfig = {
     return [];
   },
 
-  // Proxy Express-only routes to the backend dev server (port 3001)
+  // Proxy all /api/* routes to the Express backend dev server (port 3001)
+  // In production, Amplify CloudFront rewrite rules handle this proxying to Lambda
   async rewrites() {
     if (process.env.NODE_ENV !== "production") {
       return [
         {
-          source: "/api/playwright-autofix/:path*",
-          destination: "http://localhost:3001/api/playwright-autofix/:path*",
+          source: "/api/:path*",
+          destination: "http://localhost:3001/api/:path*",
         },
       ];
     }
