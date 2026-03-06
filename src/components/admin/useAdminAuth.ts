@@ -1,33 +1,49 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-
-const STORAGE_KEY = "admin_auth";
-const VALID_EMAIL = "tbaltzakis@cloudless.com";
-const VALID_PASS = "TH!123789th!";
+import { useCallback, useState } from "react";
+import { auth, signInWithEmailAndPassword, signOut } from "@/lib/firebase";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function useAdminAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading } = useAuth();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setIsAuthenticated(sessionStorage.getItem(STORAGE_KEY) === "1");
-    setIsLoading(false);
+  const login = useCallback(
+    async (email: string, password: string): Promise<boolean> => {
+      try {
+        setLoginError(null);
+        await signInWithEmailAndPassword(auth, email, password);
+        return true;
+      } catch (err: unknown) {
+        const code =
+          err instanceof Error && "code" in err
+            ? (err as { code: string }).code
+            : "";
+        const messages: Record<string, string> = {
+          "auth/invalid-credential": "Invalid email or password",
+          "auth/user-not-found": "No account found with this email",
+          "auth/wrong-password": "Incorrect password",
+          "auth/too-many-requests":
+            "Too many failed attempts. Please try again later.",
+          "auth/user-disabled": "This account has been disabled",
+        };
+        setLoginError(messages[code] ?? "Login failed. Please try again.");
+        return false;
+      }
+    },
+    [],
+  );
+
+  const logout = useCallback(async () => {
+    await signOut(auth);
   }, []);
 
-  const login = useCallback((email: string, password: string): boolean => {
-    if (email === VALID_EMAIL && password === VALID_PASS) {
-      sessionStorage.setItem(STORAGE_KEY, "1");
-      setIsAuthenticated(true);
-      return true;
-    }
-    return false;
-  }, []);
-
-  const logout = useCallback(() => {
-    sessionStorage.removeItem(STORAGE_KEY);
-    setIsAuthenticated(false);
-  }, []);
-
-  return { isAuthenticated, isLoading, login, logout };
+  return {
+    isAuthenticated: !!user,
+    isLoading: loading,
+    user,
+    login,
+    logout,
+    loginError,
+  };
 }

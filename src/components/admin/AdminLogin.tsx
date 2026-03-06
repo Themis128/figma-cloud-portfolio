@@ -9,20 +9,22 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 interface AdminLoginProps {
-  onLogin: (email: string, password: string) => boolean;
+  onLogin: (email: string, password: string) => Promise<boolean>;
+  errorMessage?: string | null;
 }
 
-export default function AdminLogin({ onLogin }: AdminLoginProps) {
+export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
-    if (!onLogin(email, password)) {
-      setError("Invalid credentials");
+    setSubmitting(true);
+    const ok = await onLogin(email, password);
+    setSubmitting(false);
+    if (!ok) {
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -56,6 +58,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
                 className="font-mono text-sm bg-background/50 border-border/30 focus:border-cyan-500/50"
                 autoComplete="email"
                 required
+                disabled={submitting}
               />
               <Input
                 type="password"
@@ -65,20 +68,22 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
                 className="font-mono text-sm bg-background/50 border-border/30 focus:border-cyan-500/50"
                 autoComplete="current-password"
                 required
+                disabled={submitting}
               />
             </div>
 
-            {error && (
+            {errorMessage && (
               <p className="text-destructive text-xs text-center font-mono">
-                {error}
+                {errorMessage}
               </p>
             )}
 
             <Button
               type="submit"
+              disabled={submitting}
               className="w-full bg-cyan-500/10 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/60"
             >
-              Authenticate
+              {submitting ? "Authenticating..." : "Authenticate"}
             </Button>
 
             <p className="text-foreground/30 text-[10px] text-center uppercase tracking-wider">

@@ -6,17 +6,25 @@ import apiKeys from "./routes/apiKeys";
 import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
+import { requireAuth } from "./middleware/requireAuth";
+
+// Load environment variables
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
 app.use(express.json());
 
+// Public routes
 app.use("/api/playwright-autofix", playwrightAutofix);
 app.use("/api/resume", resume);
-app.use("/api/organizations/api_keys", apiKeys);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
+
+// Protected routes (require Firebase Auth)
+app.use("/api/organizations/api_keys", requireAuth, apiKeys);
 
 app.get("/", (req, res) => res.send("API Root"));
 

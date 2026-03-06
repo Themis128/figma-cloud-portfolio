@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -34,5 +41,9 @@ export const onMessageListener = () =>
       resolve(payload);
     });
   });
+
+// Initialize Firebase Auth
+export const auth = getAuth(app);
+export { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User };
 
 export default app;
