@@ -19,6 +19,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard, HoverButton } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
+import { submitContactForm } from "@/lib/api";
 import {
   Card,
   CardContent,
@@ -138,18 +139,9 @@ export default function ContactPage() {
     setSubmitStatus("idle");
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setSubmitStatus("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-      } else {
-        setSubmitStatus("error");
-      }
+      await submitContactForm(formData);
+      setSubmitStatus("success");
+      setFormData({ name: "", email: "", subject: "", message: "" });
     } catch {
       setSubmitStatus("error");
     } finally {

@@ -64,3 +64,21 @@ export interface CreateAPIKeyRequest {
   name: string;
   workspace_id?: string | null;
 }
+
+export interface BookingSlotsResponse {
+  slots: { [date: string]: string[] };
+}
+
+export interface BookingCreateRequest {
+  start: string;
+  name: string;
+  email: string;
+  timeZone: string;
+}
+
+export interface BookingCreateResponse {
+  uid?: string;
+  meetingUrl?: string | null;
+  status?: string;
+  error?: string;
+}

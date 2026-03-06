@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getBookingSlots, createBooking } from "@/lib/api";
 
 interface BookingCardProps {
   onComplete: () => void;
@@ -50,12 +51,7 @@ export default function BookingCard({ onComplete }: BookingCardProps) {
   useEffect(() => {
     async function fetchSlots() {
       try {
-        const res = await fetch("/api/booking/slots");
-        if (!res.ok) {
-          const data = (await res.json()) as { error?: string };
-          throw new Error(data.error ?? `HTTP ${res.status}`);
-        }
-        const data = (await res.json()) as { slots: SlotsByDate };
+        const data = await getBookingSlots();
         const hasSlots = Object.values(data.slots).some((s) => s.length > 0);
         if (!hasSlots) {
           setErrorMsg(
@@ -81,22 +77,12 @@ export default function BookingCard({ onComplete }: BookingCardProps) {
     setStep("confirming");
     setErrorMsg("");
     try {
-      const res = await fetch("/api/booking/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          start: selectedSlot,
-          name: name.trim(),
-          email: email.trim(),
-          timeZone,
-        }),
+      const data = await createBooking({
+        start: selectedSlot,
+        name: name.trim(),
+        email: email.trim(),
+        timeZone,
       });
-      const data = (await res.json()) as {
-        uid?: string;
-        meetingUrl?: string | null;
-        error?: string;
-      };
-      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
       setMeetingUrl(data.meetingUrl ?? null);
       setStep("done");
     } catch (err) {
