@@ -1,3 +1,7 @@
+// Load environment variables BEFORE any other imports read process.env
+import dotenv from "dotenv";
+dotenv.config();
+
 // Main server setup (express config + routes)
 import express from "express";
 import playwrightAutofix from "./routes/playwrightAutofix";
@@ -7,10 +11,6 @@ import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
 import { requireAuth } from "./middleware/requireAuth";
-
-// Load environment variables
-import dotenv from "dotenv";
-dotenv.config();
 
 const app = express();
 
