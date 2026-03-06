@@ -5,21 +5,20 @@ import crypto from "crypto";
 
 const router = Router();
 
-// Slack webhook configuration (from environment)
-const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL || "";
-const SLACK_CHANNEL = process.env.SLACK_CHANNEL || "#personal-website";
-
 // Helper function to send Slack notifications
 async function sendSlackNotification(message: string, apiKey: APIKey): Promise<void> {
-  // Check if Slack webhook URL is configured
-  if (!SLACK_WEBHOOK_URL || SLACK_WEBHOOK_URL.trim() === "") {
+  // Read env vars at call time (not module load time) so dotenv has loaded
+  const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+  const channel = process.env.SLACK_CHANNEL || "#personal-website";
+
+  if (!webhookUrl || webhookUrl.trim() === "") {
     console.warn("Slack webhook URL not configured, skipping notification");
     return;
   }
 
   try {
     const payload = {
-      channel: SLACK_CHANNEL,
+      channel,
       username: "API Key Manager",
       text: message,
       icon_emoji: ":key:",
@@ -54,7 +53,7 @@ async function sendSlackNotification(message: string, apiKey: APIKey): Promise<v
       ]
     };
 
-    await fetch(SLACK_WEBHOOK_URL, {
+    await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
