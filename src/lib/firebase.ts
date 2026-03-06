@@ -1,11 +1,11 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { initializeApp, type FirebaseApp } from "firebase/app";
 import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   type User,
+  type Auth,
 } from "firebase/auth";
 
 // Firebase configuration
@@ -18,32 +18,64 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Lazy-init: Firebase app only initializes once, on first access
+let _app: FirebaseApp | undefined;
+function getApp(): FirebaseApp {
+  if (!_app) {
+    _app = initializeApp(firebaseConfig);
+  }
+  return _app;
+}
 
-// Initialize Firebase Cloud Messaging
-export const messaging = getMessaging(app);
+// Auth can run in Node.js — safe to init eagerly on first import in browser,
+// but lazy-init to avoid issues during static page generation.
+let _auth: Auth | undefined;
+function getFirebaseAuth(): Auth {
+  if (!_auth) {
+    _auth = getAuth(getApp());
+  }
+  return _auth;
+}
 
-// Function to get FCM token
-export const getFCMToken = async (vapidKey?: string) => {
+// Proxy object so `auth.currentUser` etc. works transparently
+export const auth: Auth = new Proxy({} as Auth, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getFirebaseAuth(), prop, receiver);
+  },
+});
+
+export { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User };
+
+// Messaging requires browser APIs — lazy-load only when called
+export async function getMessagingInstance() {
+  if (typeof window === "undefined") return null;
+  const { getMessaging } = await import("firebase/messaging");
+  return getMessaging(getApp());
+}
+
+export async function getFCMToken(vapidKey?: string) {
+  const messaging = await getMessagingInstance();
+  if (!messaging) return null;
+  const { getToken } = await import("firebase/messaging");
   const resolvedKey = vapidKey ?? process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
-  const token = await getToken(
+  return getToken(
     messaging,
     resolvedKey !== undefined ? { vapidKey: resolvedKey } : {},
   );
-  return token;
-};
+}
 
-// Function to handle foreground messages
-export const onMessageListener = () =>
-  new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
-      resolve(payload);
+export function onMessageListener() {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return;
+    void getMessagingInstance().then((messaging) => {
+      if (!messaging) return;
+      void import("firebase/messaging").then(({ onMessage }) => {
+        onMessage(messaging, (payload) => {
+          resolve(payload);
+        });
+      });
     });
   });
+}
 
-// Initialize Firebase Auth
-export const auth = getAuth(app);
-export { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User };
-
-export default app;
+export { getApp as getFirebaseApp };
