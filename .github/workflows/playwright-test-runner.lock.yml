@@ -25,7 +25,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"0c385918af3b9beb0e73d2b8ae90fc50d47d7c8318213e93f9d13c591a68b072","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"7c6ed6bb3e743a42f887b7fb32ca9fbfba5c683b814b010042349bd269485a24","compiler_version":"v0.55.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
@@ -306,10 +306,10 @@ jobs:
           echo "Backend is running on http://localhost:3001"
         shell: bash
       - name: Start Next.js dev server
-        run: "# Next.js dev server proxies /api/* to backend via rewrite rules\npnpm dev &\necho \"Waiting for frontend on port 8082...\"\ntimeout 120 bash -c 'until curl -s http://localhost:8082 > /dev/null 2>&1; do sleep 3; done'\necho \"Frontend is running on http://localhost:8082\"\n"
+        run: "# Next.js dev server proxies /api/* to backend via rewrite rules\npnpm dev &\necho \"Waiting for frontend on port 3000...\"\ntimeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'\necho \"Frontend is running on http://localhost:3000\"\n"
         shell: bash
       - name: Run Playwright tests
-        run: "echo \"Running Playwright E2E tests (chromium, fast config)...\"\nPLAYWRIGHT_BASE_URL=http://localhost:8082 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
+        run: "echo \"Running Playwright E2E tests (chromium, fast config)...\"\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below
