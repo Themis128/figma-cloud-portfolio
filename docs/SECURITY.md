@@ -15,55 +15,29 @@ The portfolio implements a multi-layered security approach covering:
 
 ## Security Headers
 
-### Next.js Configuration
+### Amplify Configuration (CloudFront Level)
 
-```typescript
-// next.config.ts
-async headers() {
-  return [
-    {
-      source: "/(.*)",
-      headers: [
-        { key: "X-DNS-Prefetch-Control", value: "on" },
-        { key: "X-Content-Type-Options", value: "nosniff" },
-        { key: "Referrer-Policy", value: "origin-when-cross-origin" },
-        { key: "X-Frame-Options", value: "SAMEORIGIN" },
-        { key: "X-XSS-Protection", value: "1; mode=block" },
-      ],
-    },
-    {
-      source: "/fonts/(.*)",
-      headers: [
-        {
-          key: "Cache-Control",
-          value: "public, max-age=31536000, immutable",
-        },
-        {
-          key: "Access-Control-Allow-Origin",
-          value: "*",
-        },
-      ],
-    },
-    {
-      source: "/images/(.*)",
-      headers: [
-        {
-          key: "Cache-Control",
-          value: "public, max-age=31536000, immutable",
-        },
-      ],
-    },
-    {
-      source: "/api/(.*)",
-      headers: [
-        {
-          key: "Cache-Control",
-          value: "public, max-age=0, must-revalidate",
-        },
-      ],
-    },
-  ];
-}
+Security and caching headers are configured in `amplify.yml` under `customHeaders` because the app uses `output: "export"` (static export), which is incompatible with Next.js runtime `headers()`.
+
+```yaml
+# amplify.yml — HTML security headers
+- pattern: "**/*.html"
+  headers:
+    - key: "Cache-Control"
+      value: "public, max-age=0, must-revalidate"
+    - key: "X-DNS-Prefetch-Control"
+      value: "on"
+    - key: "X-Content-Type-Options"
+      value: "nosniff"
+    - key: "Referrer-Policy"
+      value: "origin-when-cross-origin"
+    - key: "X-Frame-Options"
+      value: "SAMEORIGIN"
+    - key: "X-XSS-Protection"
+      value: "1; mode=block"
+
+# JS/CSS/images/fonts get Cache-Control + X-Content-Type-Options
+# Fonts also get Access-Control-Allow-Origin: *
 ```
 
 ### Security Headers Explained

@@ -18,19 +18,47 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 ### Workflow Structure
 
 ```
-├── .github/workflows/
-│   ├── ci.yml                    # Continuous Integration
-│   ├── deploy-staging.yml        # Staging deployment
-│   ├── deploy-production.yml     # Production deployment
-│   ├── rollback.yml             # Rollback workflows
-│   └── deployment-status.yml    # Status tracking & badges
+├── .github/
+│   ├── workflows/
+│   │   ├── daily-repo-status.md       # AI-powered daily repo status reports
+│   │   ├── daily-repo-status.lock.yml # Compiled workflow (auto-generated)
+│   │   ├── ci-doctor.md               # AI-powered CI failure diagnostics
+│   │   └── ci-doctor.lock.yml         # Compiled workflow (auto-generated)
+│   ├── agents/
+│   │   └── agentic-workflows.agent.md # Dispatcher agent for gh-aw
+│   └── aw/
+│       └── actions-lock.json          # Pinned action versions
 ```
 
-### Deployment Environments
+### GitHub Agentic Workflows (gh-aw)
 
-- **Staging**: Deployed from `develop` branch
-- **Production**: Deployed from `main` branch
-- **Rollback**: Manual rollback capability for both environments
+The project uses [GitHub Agentic Workflows](https://github.github.com/gh-aw/) with the **Copilot engine** for AI-powered automation. Workflows are authored as Markdown files and compiled to GitHub Actions YAML.
+
+| Workflow | Trigger | Description |
+|---|---|---|
+| Daily Repo Status | Scheduled / manual | Creates daily activity reports as GitHub issues |
+| CI Doctor | On monitored workflow failure | Analyzes CI failures, identifies root causes, suggests fixes |
+
+**Required secret**: `COPILOT_GITHUB_TOKEN` — fine-grained PAT with "Copilot Requests" Account permission (Read).
+
+```bash
+# Compile workflows after editing markdown
+gh aw compile
+
+# Trigger a workflow manually
+gh aw run daily-repo-status
+
+# Debug a failed run
+gh aw audit <run-id>
+
+# Check workflow health
+gh aw health
+```
+
+### Deployment
+
+- **Frontend**: AWS Amplify auto-deploys from `production` branch
+- **Backend**: AWS Lambda (manual deployment)
 
 ## Workflows
 
@@ -99,14 +127,13 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 ### Required GitHub Secrets
 
 ```bash
-# AWS Credentials
+# GitHub Agentic Workflows
+COPILOT_GITHUB_TOKEN=github_pat_...  # Fine-grained PAT with "Copilot Requests" Account permission
+
+# AWS Credentials (for deployment workflows, if added)
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 AWS_REGION=your_aws_region
-
-# Amplify App IDs
-AMPLIFY_STAGING_APP_ID=your_staging_app_id
-AMPLIFY_PRODUCTION_APP_ID=your_production_app_id
 ```
 
 ### Environment Variables
@@ -317,4 +344,4 @@ When modifying CI/CD workflows:
 
 ---
 
-_Last Updated: January 22, 2026_
+_Last Updated: March 7, 2026_
