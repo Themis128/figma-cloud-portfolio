@@ -173,6 +173,10 @@ safe-outputs:
 **Safe-Outputs**:
 ```yaml
 safe-outputs:
+  update-project:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 10
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
   create-discussion:
     title-prefix: "${{ github.workflow }}"
     category: "q-a"
@@ -182,6 +186,12 @@ safe-outputs:
   create-pull-request:
     draft: true
     labels: [automation, qa]
+  create-issue:
+    title-prefix: "[failed] "
+    labels: [automation, failed]
+  group-reports: true
+  noop:
+    report-as-issue: false
 ```
 
 ### 2. Daily Repo Status Workflow
@@ -203,10 +213,24 @@ safe-outputs:
 **Safe-Outputs**:
 ```yaml
 safe-outputs:
+  update-project:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 10
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
+  create-project-status-update:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 1
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
   create-issue:
     title-prefix: "[repo-status] "
     labels: [report, daily-status]
     close-older-issues: true
+  create-issue:
+    title-prefix: "[failed] "
+    labels: [automation, failed]
+  group-reports: true
+  noop:
+    report-as-issue: false
 ```
 
 ### 3. Daily Accessibility Review
@@ -228,12 +252,22 @@ safe-outputs:
 **Safe-Outputs**:
 ```yaml
 safe-outputs:
+  update-project:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 10
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
   create-discussion:
     title-prefix: "${{ github.workflow }}"
     category: "q-a"
     max: 5
   add-comment:
     max: 5
+  create-issue:
+    title-prefix: "[failed] "
+    labels: [automation, failed]
+  group-reports: true
+  noop:
+    report-as-issue: false
 ```
 
 ### 4. Daily Malicious Code Scan
@@ -255,9 +289,19 @@ safe-outputs:
 **Safe-Outputs**:
 ```yaml
 safe-outputs:
+  update-project:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 10
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
   create-code-scanning-alert:
     driver: "Malicious Code Scanner"
   threat-detection: false
+  create-issue:
+    title-prefix: "[failed] "
+    labels: [automation, failed]
+  group-reports: true
+  noop:
+    report-as-issue: false
 ```
 
 ### 5. Link Checker Workflow
@@ -279,12 +323,21 @@ safe-outputs:
 **Safe-Outputs**:
 ```yaml
 safe-outputs:
+  update-project:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 10
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
   create-pull-request:
     title-prefix: "[link-checker] "
     labels: [documentation, automated]
     draft: false
     if-no-changes: "warn"
+  create-issue:
+    title-prefix: "[failed] "
+    labels: [automation, failed]
+  group-reports: true
   noop:
+    report-as-issue: false
 ```
 
 ### 6. Playwright Test Runner
@@ -306,6 +359,10 @@ safe-outputs:
 **Safe-Outputs**:
 ```yaml
 safe-outputs:
+  update-project:
+    project: https://github.com/orgs/themis128/projects/123
+    max: 10
+    github-token: ${{ secrets.GH_AW_PROJECT_GITHUB_TOKEN }}
   create-discussion:
     title-prefix: "${{ github.workflow }}"
     category: "q-a"
@@ -313,7 +370,12 @@ safe-outputs:
   create-issue:
     labels: [bug, automated, test-failure]
     max: 5
+  create-issue:
+    title-prefix: "[failed] "
+    labels: [automation, failed]
+  group-reports: true
   noop:
+    report-as-issue: false
 ```
 
 ---
