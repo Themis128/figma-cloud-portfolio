@@ -123,7 +123,7 @@ test.describe("Code Quality", () => {
     });
 
     await page.goto("/");
-    await waitForAppReady(page);
+    await page.waitForLoadState("domcontentloaded");
 
     // Wait for page to load
     await page.waitForTimeout(1000);
@@ -282,7 +282,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper loading states", async ({ page }) => {
     await page.goto("/");
-    await waitForAppReady(page);
+    await page.waitForLoadState("domcontentloaded");
 
     // Check for loading indicators
     const loadingIndicators = await page
@@ -331,8 +331,8 @@ test.describe("Code Quality", () => {
     }
 
     // Navigate to different pages
-    await page.locator('a[href="/about"]').first().click();
-    await page.waitForURL("**/about");
+    await page.locator('a[href="/about/"]').first().click();
+    await page.waitForURL("**/about/");
 
     const aboutUrl = page.url();
     expect(aboutUrl).toContain("/about");
@@ -418,7 +418,7 @@ test.describe("Code Quality", () => {
 
   test("should have proper testing utilities", async ({ page }) => {
     await page.goto("/");
-    await waitForAppReady(page);
+    await page.waitForLoadState("domcontentloaded");
 
     // Testing is done via Playwright — verify page is testable
     await expect(page.locator("body")).toBeVisible();

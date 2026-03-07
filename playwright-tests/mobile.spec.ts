@@ -69,7 +69,7 @@ test.describe("Mobile Responsiveness Tests", () => {
     await page.waitForTimeout(300);
 
     // Navigate to a page via the nav link
-    const aboutLink = page.locator('nav a[href="/about"]').first();
+    const aboutLink = page.locator('nav a[href="/about/"]').first();
     if (await aboutLink.isVisible().catch(() => false)) {
       await aboutLink.click({ force: true });
       await page.waitForURL(/\/about/, { timeout: 10000 });

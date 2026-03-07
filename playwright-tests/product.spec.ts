@@ -131,8 +131,8 @@ test.describe("Product / Work Experience Page", () => {
 
     if ((await homeLink.count()) > 0) {
       await homeLink.click();
-      await page.waitForURL("**/");
-      // Should no longer be on /product
+      // Wait until we're no longer on /product
+      await page.waitForFunction(() => !window.location.pathname.includes("/product"));
       expect(page.url()).not.toContain("/product");
     } else {
       // Fallback: navigate directly
@@ -292,11 +292,11 @@ test.describe("Product / Work Experience Page", () => {
     });
 
     // Find and click the "Product" or "Experience" link in navigation
-    const productLink = page.locator('nav a[href="/product"]');
+    const productLink = page.locator('nav a[href="/product/"]');
     if ((await productLink.count()) > 0) {
       _fullReload = false; // Reset — frame navigated fires on initial goto
       await productLink.click();
-      await page.waitForURL("**/product").catch(() => {
+      await page.waitForURL("**/product/").catch(() => {
         // URL may not change in SPA
       });
 

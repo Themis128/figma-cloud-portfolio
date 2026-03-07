@@ -102,7 +102,7 @@ test.describe("Performance Monitoring", () => {
       await page.waitForLoadState("domcontentloaded");
     } else {
       // Desktop navigation - try clicking links, fall back to direct navigation
-      const aboutLink = page.locator('a[href="/about"]').first();
+      const aboutLink = page.locator('a[href="/about/"]').first();
       if (await aboutLink.isVisible({ timeout: 2000 }).catch(() => false)) {
         await aboutLink.click();
         await page.waitForLoadState("domcontentloaded");
@@ -116,7 +116,7 @@ test.describe("Performance Monitoring", () => {
       await page.waitForLoadState("domcontentloaded");
 
       // Navigate to contact page
-      const contactLink = page.locator('a[href="/contact"]').first();
+      const contactLink = page.locator('a[href="/contact/"]').first();
       if (await contactLink.isVisible({ timeout: 2000 }).catch(() => false)) {
         await contactLink.click();
         await page.waitForLoadState("domcontentloaded");
@@ -257,7 +257,8 @@ test.describe("Performance Monitoring", () => {
     const routeChanges: string[] = [];
     page.on("framenavigated", (frame) => {
       if (frame === page.mainFrame()) {
-        routeChanges.push(frame.url().split("/").pop() || "/");
+        const segments = frame.url().split("/").filter(Boolean);
+        routeChanges.push(segments.pop() || "/");
       }
     });
 
@@ -270,7 +271,7 @@ test.describe("Performance Monitoring", () => {
     ) {
       // Navigate to about page
       await page.goto("/about");
-      await page.waitForURL("**/about");
+      await page.waitForURL("**/about/");
 
       // Navigate back to home
       await page.goto("/");
@@ -278,7 +279,7 @@ test.describe("Performance Monitoring", () => {
 
       // Navigate to contact page
       await page.goto("/contact");
-      await page.waitForURL("**/contact");
+      await page.waitForURL("**/contact/");
     } else {
       // Desktop navigation
       // Open mobile menu if present
@@ -290,8 +291,8 @@ test.describe("Performance Monitoring", () => {
       }
 
       // Navigate to about page
-      await page.locator('a[href="/about"]').first().click();
-      await page.waitForURL("**/about");
+      await page.locator('a[href="/about/"]').first().click();
+      await page.waitForURL("**/about/");
 
       // Navigate back to home
       await page.goto("/");
@@ -304,8 +305,8 @@ test.describe("Performance Monitoring", () => {
       }
 
       // Navigate to contact page
-      await page.locator('a[href="/contact"]').first().click();
-      await page.waitForURL("**/contact");
+      await page.locator('a[href="/contact/"]').first().click();
+      await page.waitForURL("**/contact/");
     }
 
     // Check that we navigated to the expected routes

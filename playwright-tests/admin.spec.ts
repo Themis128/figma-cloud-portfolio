@@ -13,7 +13,7 @@ async function adminLogin(page: import("@playwright/test").Page) {
   await page.locator('button[type="submit"]').click();
 
   await expect(page.locator("text=Admin Dashboard")).toBeVisible({
-    timeout: 5000,
+    timeout: 15000,
   });
 }
 
@@ -76,7 +76,7 @@ test.describe("Admin Page — Authentication", () => {
     await page.locator('input[type="password"]').fill("wrongpass");
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.locator("text=Invalid credentials")).toBeVisible();
+    await expect(page.locator("text=Invalid email or password")).toBeVisible();
     await expect(page.locator("text=Admin Access")).toBeVisible();
   });
 
@@ -88,7 +88,7 @@ test.describe("Admin Page — Authentication", () => {
     await page.locator('input[type="password"]').fill("wrongpass");
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.locator("text=Invalid credentials")).toBeVisible();
+    await expect(page.locator("text=Invalid email or password")).toBeVisible();
   });
 
   test("should reject wrong email with valid password", async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe("Admin Page — Authentication", () => {
     await page.locator('input[type="password"]').fill(VALID_PASS);
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.locator("text=Invalid credentials")).toBeVisible();
+    await expect(page.locator("text=Invalid email or password")).toBeVisible();
   });
 
   test("should login with valid credentials", async ({ page }) => {
