@@ -27,7 +27,10 @@ export default function Navigation() {
     { name: "Admin", href: "/admin" },
   ];
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => {
+    if (path === "/") return pathname === "/";
+    return pathname === path || pathname === `${path}/`;
+  };
 
   return (
     <nav className="relative z-50">
