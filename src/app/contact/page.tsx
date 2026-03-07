@@ -450,7 +450,7 @@ export default function ContactPage() {
                 <div className="flex flex-wrap justify-center gap-4">
                   <HoverButton>
                     <Link
-                      href="/about"
+                      href="/about/"
                       className="px-6 py-2 bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-all duration-300 border border-border"
                     >
                       Learn More About Me
@@ -458,7 +458,7 @@ export default function ContactPage() {
                   </HoverButton>
                   <HoverButton>
                     <Link
-                      href="/resume"
+                      href="/resume/"
                       className="px-6 py-2 bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-all duration-300 border border-border"
                     >
                       View Resume

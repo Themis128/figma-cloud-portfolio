@@ -13,7 +13,7 @@ test.describe("Main Pages", () => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
     // Click About link in nav
-    await page.locator('a[href="/about"]').first().click();
+    await page.locator('a[href="/about/"]').first().click();
     await expect(page).toHaveURL(/\/about/);
     // About page heading is "About Me"
     const headingText = await page.locator("h1").textContent();
@@ -33,7 +33,7 @@ test.describe("Main Pages", () => {
   test("should navigate to Resume page", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
-    await page.locator('a[href="/resume"]').first().click();
+    await page.locator('a[href="/resume/"]').first().click();
     await expect(page).toHaveURL(/\/resume/);
     // Resume page heading is "Resume Builder"
     const headingText = await page.locator("h1").textContent();
@@ -43,7 +43,7 @@ test.describe("Main Pages", () => {
   test("should navigate to Contact page", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
-    await page.locator('a[href="/contact"]').first().click();
+    await page.locator('a[href="/contact/"]').first().click();
     await expect(page).toHaveURL(/\/contact/);
     // Contact page heading is "Get In Touch"
     const headingText = await page.locator("h1").textContent();

@@ -5,7 +5,7 @@ import Navigation from "@/components/Navigation";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
+      <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
       <CircuitBackground />
       <Navigation />
 
@@ -23,7 +23,7 @@ export default function NotFound() {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
               Oops! Page not found
             </h1>
-            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
+            <div className="w-16 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
             <p className="text-white/60 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
               The page you&apos;re looking for doesn&apos;t exist or has been
               moved.

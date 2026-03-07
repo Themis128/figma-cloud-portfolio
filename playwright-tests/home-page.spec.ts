@@ -46,7 +46,7 @@ test.describe("Home Page — CTA Buttons", () => {
   test("should have 'Learn More' button linking to /about", async ({
     page,
   }) => {
-    const learnMore = page.locator('a[href="/about"]').filter({
+    const learnMore = page.locator('a[href="/about/"]').filter({
       hasText: "Learn More",
     });
     await expect(learnMore).toBeVisible();
@@ -55,23 +55,23 @@ test.describe("Home Page — CTA Buttons", () => {
   test("should have 'Build Resume' button linking to /resume", async ({
     page,
   }) => {
-    const buildResume = page.locator('a[href="/resume"]').filter({
-      hasText: /Resume/i,
-    });
+    const buildResume = page
+      .locator('main a[href="/resume/"]')
+      .filter({ hasText: "Build Resume" });
     await expect(buildResume).toBeVisible();
   });
 
   test("should have 'Get In Touch' button linking to /contact", async ({
     page,
   }) => {
-    const getInTouch = page.locator('a[href="/contact"]').filter({
-      hasText: /Get In Touch/i,
-    });
+    const getInTouch = page
+      .locator('main a[href="/contact/"]')
+      .filter({ hasText: "Get In Touch" });
     await expect(getInTouch).toBeVisible();
   });
 
   test("CTA buttons navigate correctly", async ({ page }) => {
-    const learnMore = page.locator('a[href="/about"]').filter({
+    const learnMore = page.locator('a[href="/about/"]').filter({
       hasText: "Learn More",
     });
     await learnMore.click();

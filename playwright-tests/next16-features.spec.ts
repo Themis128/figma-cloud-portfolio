@@ -32,7 +32,7 @@ test.describe("React SPA Features", () => {
     const aboutLink = page.getByRole("link", { name: "About" }).first();
     if (await aboutLink.isVisible()) {
       await aboutLink.click();
-      await page.waitForURL("**/about", { timeout: 5000 }).catch(() => {
+      await page.waitForURL("**/about/", { timeout: 5000 }).catch(() => {
         // SPA routing may not update URL in all cases
       });
     }

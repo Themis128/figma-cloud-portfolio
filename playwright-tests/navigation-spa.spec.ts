@@ -96,7 +96,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // On mobile, open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -105,10 +105,10 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     }
 
     // Try clicking the "About" link if it exists and is visible in nav
-    const aboutLink = page.locator('nav a[href="/about"]').first();
+    const aboutLink = page.locator('nav a[href="/about/"]').first();
     if (await aboutLink.isVisible()) {
       await aboutLink.click();
-      await page.waitForURL("**/about", { timeout: 5000 });
+      await page.waitForURL("**/about/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/about/);
     }
   });
@@ -126,7 +126,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // On mobile, open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -135,10 +135,10 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     }
 
     // Use .first() to avoid strict mode violation
-    const productLink = page.locator('nav a[href="/product"]').first();
+    const productLink = page.locator('nav a[href="/product/"]').first();
     if (await productLink.isVisible()) {
       await productLink.click();
-      await page.waitForURL("**/product", { timeout: 5000 });
+      await page.waitForURL("**/product/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/product/);
       // Content should update
       const body = await page.locator("body").textContent();
@@ -151,7 +151,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     await page.waitForLoadState("networkidle");
 
     // Use .first() to avoid strict mode violation
-    const link = page.locator('nav a[href="/projects"]').first();
+    const link = page.locator('nav a[href="/projects/"]').first();
 
     // On mobile, desktop nav links are hidden - need to open mobile menu first
     const viewport = page.viewportSize();
@@ -160,7 +160,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // Open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -171,7 +171,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     // Now check if the link is visible (not just present in DOM)
     if (await link.isVisible()) {
       await link.click();
-      await page.waitForURL("**/projects", { timeout: 5000 });
+      await page.waitForURL("**/projects/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/projects/);
     }
   });
@@ -187,7 +187,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // On mobile, open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -196,10 +196,10 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     }
 
     // Use .first() to avoid strict mode violation
-    const link = page.locator('nav a[href="/resume"]').first();
+    const link = page.locator('nav a[href="/resume/"]').first();
     if (await link.isVisible()) {
       await link.click();
-      await page.waitForURL("**/resume", { timeout: 5000 });
+      await page.waitForURL("**/resume/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/resume/);
     }
   });
@@ -215,7 +215,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // On mobile, open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -224,10 +224,10 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     }
 
     // Use .first() to avoid strict mode violation
-    const link = page.locator('nav a[href="/settings"]').first();
+    const link = page.locator('nav a[href="/settings/"]').first();
     if (await link.isVisible()) {
       await link.click();
-      await page.waitForURL("**/settings", { timeout: 5000 });
+      await page.waitForURL("**/settings/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/settings/);
     }
   });
@@ -243,7 +243,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // On mobile, open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -252,10 +252,10 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     }
 
     // Use .first() to avoid strict mode violation
-    const link = page.locator('nav a[href="/performance"]').first();
+    const link = page.locator('nav a[href="/performance/"]').first();
     if (await link.isVisible()) {
       await link.click();
-      await page.waitForURL("**/performance", { timeout: 5000 });
+      await page.waitForURL("**/performance/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/performance/);
     }
   });
@@ -271,7 +271,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     if (isMobile) {
       // On mobile, open mobile menu first
       const menuButton = page.getByRole("button", {
-        name: "Toggle mobile menu",
+        name: "Toggle menu",
       });
       if (await menuButton.isVisible()) {
         await menuButton.click();
@@ -280,10 +280,10 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     }
 
     // Use .first() to avoid strict mode violation
-    const link = page.locator('nav a[href="/agents"]').first();
+    const link = page.locator('nav a[href="/agents/"]').first();
     if (await link.isVisible()) {
       await link.click();
-      await page.waitForURL("**/agents", { timeout: 5000 });
+      await page.waitForURL("**/agents/", { timeout: 5000 });
       await expect(page).toHaveURL(/\/agents/);
     }
   });
@@ -307,32 +307,38 @@ test.describe("Browser History — Back / Forward", () => {
 
   test("browser forward button advances to next route", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     await page.goto("/about");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     await page.goBack();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
-    await page.goForward();
-    await page.waitForLoadState("networkidle");
+    // goForward may throw ERR_ABORTED with SPA routing as client-side
+    // navigation intercepts the browser navigation
+    try {
+      await page.goForward({ waitUntil: "commit" });
+    } catch {
+      // ERR_ABORTED is expected when SPA routing intercepts goForward
+    }
+    await page.waitForLoadState("domcontentloaded");
 
-    await expect(page).toHaveURL("/about");
+    await expect(page).toHaveURL(/\/about/);
   });
 
   test("multi-step navigation history works correctly", async ({ page }) => {
-    const steps = ["/", "/about", "/product", "/projects"];
+    const steps = ["/", "/about/", "/product/", "/projects/"];
 
     for (const step of steps) {
       await page.goto(step);
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
     }
 
     // Go back through history
     for (let i = steps.length - 2; i >= 0; i--) {
       await page.goBack();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
       await expect(page).toHaveURL(steps[i]);
     }
   });
@@ -362,7 +368,7 @@ test.describe("Mobile Navigation — Hamburger Menu", () => {
     await page.waitForLoadState("networkidle");
 
     // Find and click the mobile menu button by aria-label
-    const menuButton = page.getByRole("button", { name: "Toggle mobile menu" });
+    const menuButton = page.getByRole("button", { name: "Toggle menu" });
 
     if ((await menuButton.count()) > 0) {
       await menuButton.click();
@@ -370,9 +376,9 @@ test.describe("Mobile Navigation — Hamburger Menu", () => {
       // Wait for menu animation
       await page.waitForTimeout(500);
 
-      // Check that the mobile menu container is visible using testid
-      const mobileMenu = page.getByTestId("mobile-menu");
-      await expect(mobileMenu).toBeVisible();
+      // Check that mobile nav links are now visible
+      const mobileLinks = page.locator("nav a.block");
+      await expect(mobileLinks.first()).toBeVisible();
     }
   });
 

@@ -19,17 +19,18 @@ export default function Navigation() {
 
   const navigationItems = [
     { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Resume", href: "/resume" },
-    { name: "Contact", href: "/contact" },
-    { name: "Performance", href: "/performance" },
-    { name: "Agents", href: "/agents" },
-    { name: "Admin", href: "/admin" },
+    { name: "About", href: "/about/" },
+    { name: "Resume", href: "/resume/" },
+    { name: "Contact", href: "/contact/" },
+    { name: "Performance", href: "/performance/" },
+    { name: "Agents", href: "/agents/" },
+    { name: "Admin", href: "/admin/" },
   ];
 
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/";
-    return pathname === path || pathname === `${path}/`;
+    const normalized = path.endsWith("/") ? path.slice(0, -1) : path;
+    return pathname === normalized || pathname === `${normalized}/`;
   };
 
   return (
@@ -117,7 +118,7 @@ export default function Navigation() {
           <div className="pt-2">
             <HoverButton>
               <Link
-                href="/contact"
+                href="/contact/"
                 onClick={() => setIsOpen(false)}
                 className="w-full px-6 py-3 bg-cyan-400 hover:bg-cyan-500 text-foreground rounded-lg transition-all duration-300 text-center font-medium block"
               >

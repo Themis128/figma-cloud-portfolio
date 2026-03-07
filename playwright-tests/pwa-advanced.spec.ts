@@ -356,7 +356,7 @@ test.describe("Advanced PWA Features", () => {
       const aboutLink = page.getByRole("link", { name: "About" });
       if (await aboutLink.isVisible()) {
         await aboutLink.click();
-        await page.waitForURL("**/about");
+        await page.waitForURL("**/about/");
 
         // Go offline
         await context.setOffline(true);

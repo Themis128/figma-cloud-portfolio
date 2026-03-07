@@ -265,7 +265,7 @@ export default function AboutPage() {
             <AnimatedSection delay={0.5}>
               <div className="text-center mt-16">
                 <Link
-                  href="/contact"
+                  href="/contact/"
                   className="inline-block px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-background rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium"
                 >
                   Get In Touch

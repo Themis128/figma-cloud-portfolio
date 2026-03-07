@@ -70,7 +70,7 @@ export default function HomePage() {
               >
                 <HoverButton>
                   <a
-                    href="/about"
+                    href="/about/"
                     className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/60 hover:border-cyan-400 text-foreground/90 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
                   >
                     <span className="relative z-10">Learn More</span>
@@ -79,7 +79,7 @@ export default function HomePage() {
                 </HoverButton>
                 <HoverButton>
                   <a
-                    href="/resume"
+                    href="/resume/"
                     className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-border/30 hover:border-border/60 text-foreground/80 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-foreground/10 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
                   >
                     <span className="relative z-10">Build Resume</span>
@@ -88,7 +88,7 @@ export default function HomePage() {
                 </HoverButton>
                 <HoverButton>
                   <a
-                    href="/contact"
+                    href="/contact/"
                     className="group relative px-6 sm:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
                   >
                     <span className="relative z-10">Get In Touch</span>

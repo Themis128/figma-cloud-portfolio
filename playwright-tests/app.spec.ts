@@ -484,7 +484,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     if (await aboutLink.isVisible({ timeout: 2000 })) {
       await aboutLink.click();
       // Wait for navigation or URL change (SPA may not always update URL immediately)
-      await page.waitForURL("**/about", { timeout: 5000 }).catch(async () => {
+      await page.waitForURL("**/about/", { timeout: 5000 }).catch(async () => {
         // If URL doesn't change, wait for content to appear
         await page.waitForLoadState("domcontentloaded");
       });
@@ -500,7 +500,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     const contactLink = page.getByRole("link", { name: "Contact" });
     if (await contactLink.isVisible({ timeout: 2000 })) {
       await contactLink.click();
-      await page.waitForURL("**/contact", { timeout: 5000 }).catch(async () => {
+      await page.waitForURL("**/contact/", { timeout: 5000 }).catch(async () => {
         // If URL doesn't change, wait for content to appear
         await page.waitForLoadState("domcontentloaded");
       });

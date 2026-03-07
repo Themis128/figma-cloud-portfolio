@@ -162,13 +162,13 @@ export default function ProductPage() {
           <AnimatedSection delay={0.6}>
             <div className="text-center mt-16 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/resume"
+                href="/resume/"
                 className="inline-block px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium"
               >
                 Build Resume
               </Link>
               <Link
-                href="/contact"
+                href="/contact/"
                 className="inline-block px-8 py-3 border-2 border-cyan-400/60 hover:border-cyan-400 text-white rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium"
               >
                 Get In Touch
