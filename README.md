@@ -228,6 +228,11 @@ AI-powered automation using [GitHub Agentic Workflows (gh-aw)](https://github.gi
 |---|---|---|---|
 | Daily Repo Status | `daily-repo-status.md` | Scheduled / manual | Creates daily repo activity reports as GitHub issues |
 | CI Doctor | `ci-doctor.md` | On CI failure | Analyzes CI failures and provides diagnostic reports |
+| Daily QA | `daily-qa.md` | Daily / manual | Validates builds, tests, docs, and code quality |
+| Accessibility Review | `daily-accessibility-review.md` | Daily / manual | WCAG 2.2 compliance checks via Playwright |
+| Malicious Code Scan | `daily-malicious-code-scan.md` | Daily / manual | Reviews recent code for suspicious patterns |
+| Link Checker | `link-checker.md` | Weekdays / manual | Finds and fixes broken documentation links |
+| Playwright Test Runner | `playwright-test-runner.md` | Weekdays / manual | Runs full E2E test suite and reports results |
 
 ### Setup
 
