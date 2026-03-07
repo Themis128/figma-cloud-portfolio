@@ -218,6 +218,34 @@ Single Lambda function (`figma-portfolio-api`) fronted by CloudFront at `/api/*`
 | Security | [docs/SECURITY_SUMMARY.md](docs/SECURITY_SUMMARY.md) |
 | Performance | [docs/PERFORMANCE.md](docs/PERFORMANCE.md) |
 
+## GitHub Agentic Workflows
+
+AI-powered automation using [GitHub Agentic Workflows (gh-aw)](https://github.github.com/gh-aw/) with the Copilot engine.
+
+### Active Workflows
+
+| Workflow | File | Trigger | Description |
+|---|---|---|---|
+| Daily Repo Status | `daily-repo-status.md` | Scheduled / manual | Creates daily repo activity reports as GitHub issues |
+| CI Doctor | `ci-doctor.md` | On CI failure | Analyzes CI failures and provides diagnostic reports |
+
+### Setup
+
+Workflows live in `.github/workflows/` as Markdown files compiled to `.lock.yml` by `gh aw compile`.
+
+**Required secret**: `COPILOT_GITHUB_TOKEN` — fine-grained PAT with "Copilot Requests" Account permission (Read).
+
+```bash
+# Compile workflows after editing
+gh aw compile
+
+# Trigger a workflow manually
+gh aw run daily-repo-status
+
+# Debug a failed run
+gh aw audit <run-id>
+```
+
 ## Development Workflow
 
 ### Code Quality
@@ -230,7 +258,7 @@ Single Lambda function (`figma-portfolio-api`) fronted by CloudFront at `/api/*`
 
 ### Git Workflow
 
-1. Create feature branch from `main`
+1. Create feature branch from `production`
 2. Make changes with descriptive commits
 3. Run tests locally: `pnpm test:e2e`
 4. Push to GitHub and create PR

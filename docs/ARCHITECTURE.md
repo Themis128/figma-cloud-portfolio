@@ -238,8 +238,10 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | ------------------ | ------------------------------------------------------------------- |
 | reCAPTCHA v3       | Applied to contact form submissions                                 |
 | Input sanitisation | XSS, SQL injection patterns blocked in API routes                   |
-| Security headers   | X-Content-Type-Options, X-Frame-Options, Referrer-Policy via next.config.ts |
-| CloudFront headers | Cache-Control, CORS via amplify.yml customHeaders                   |
+| Security headers   | X-DNS-Prefetch-Control, X-Content-Type-Options, Referrer-Policy, X-Frame-Options, X-XSS-Protection via `amplify.yml` customHeaders (`**/*.html` pattern) |
+| Cache headers      | Cache-Control, CORS for JS/CSS/images/fonts via `amplify.yml` customHeaders |
+
+> **Note**: Security headers were moved from `next.config.ts headers()` to `amplify.yml customHeaders` because `output: "export"` is incompatible with runtime headers configuration.
 
 ---
 

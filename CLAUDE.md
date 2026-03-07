@@ -74,3 +74,11 @@ docs/               # Documentation
 - Use feature branches for development
 - Write meaningful commit messages
 - Default branch: `production`
+
+## GitHub Agentic Workflows (gh-aw)
+
+- AI engine: Copilot (requires `COPILOT_GITHUB_TOKEN` secret — fine-grained PAT with "Copilot Requests" Account permission)
+- Workflows in `.github/workflows/` as Markdown → compiled to `.lock.yml`
+- Active: `daily-repo-status` (repo activity reports), `ci-doctor` (CI failure analysis)
+- CLI: `gh aw compile`, `gh aw run <name>`, `gh aw audit <run-id>`
+- Agent dispatcher: `.github/agents/agentic-workflows.agent.md`
