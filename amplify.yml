@@ -16,7 +16,6 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-      - .next/cache/**/*
   environment:
     NODE_OPTIONS: "--max-old-space-size=2048"
 
