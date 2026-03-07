@@ -1,0 +1,644 @@
+# Deployment Guide
+
+This document provides comprehensive deployment instructions for the portfolio project across different environments and platforms.
+
+## Deployment Overview
+
+The portfolio uses a **static export** architecture with **S3 + CloudFront** for frontend hosting and **AWS Lambda** for backend API functionality.
+
+### Architecture Diagram
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   CloudFront    │    │   S3 Static      │    │   Lambda        │
+│   CDN           │    │   Assets         │    │   API           │
+│                 │    │                  │    │                 │
+│ • Edge Caching  │◄──►│ • HTML, CSS, JS  │    │ • Express API   │
+│ • SSL/TLS       │    │ • Images, Fonts  │    │ • reCAPTCHA     │
+│ • WAF           │    │ • PWA Files      │    │ • Email (SES)   │
+│ • Custom Domain │    │ • Fallback HTML  │    │ • Analytics     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌──────────────────┐
+                    │   Route 53       │
+                    │   DNS            │
+                    │                  │
+                    │ • Domain         │
+                    │ • SSL Certs      │
+                    │ • Health Checks  │
+                    └──────────────────┘
+```
+
+## Prerequisites
+
+### AWS Account Setup
+
+1. **Create AWS Account** (if not already done)
+2. **Configure IAM User** with required permissions:
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": [
+           "s3:*",
+           "cloudfront:*",
+           "lambda:*",
+           "iam:*",
+           "route53:*",
+           "acm:*"
+         ],
+         "Resource": "*"
+       }
+     ]
+   }
+   ```
+
+3. **Install AWS CLI** and configure credentials:
+   ```bash
+   aws configure
+   # Enter Access Key ID, Secret Access Key, Region, Output Format
+   ```
+
+### Required Services
+
+- **Amazon S3** - Static file hosting
+- **Amazon CloudFront** - CDN and SSL termination
+- **AWS Lambda** - Serverless API backend
+- **Amazon Route 53** - DNS management (optional)
+- **AWS Certificate Manager** - SSL certificates (optional)
+
+## Environment Setup
+
+### Environment Variables
+
+#### Production Environment (.env.production)
+
+```env
+# Client-side variables (bundled into JS)
+NEXT_PUBLIC_SITE_URL=https://baltzakis.dev
+NEXT_PUBLIC_GA_ID=GA_MEASUREMENT_ID
+NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
+
+# Server-side variables (for Lambda)
+NODE_ENV=production
+RECAPTCHA_SECRET_KEY=your-recaptcha-secret-key
+SES_VERIFIED_EMAIL=your-verified-email@domain.com
+SENTRY_DSN=https://your-sentry-dsn@sentry.io/project
+SENTRY_ENVIRONMENT=production
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
+SLACK_CHANNEL=#personal-website
+ANTHROPIC_API_KEY=your-anthropic-api-key
+VAPID_PUBLIC_KEY=your-vapid-public-key
+VAPID_PRIVATE_KEY=your-vapid-private-key
+VAPID_EMAIL=mailto:your-email@domain.com
+GOOGLE_ANALYTICS_MEASUREMENT_ID=GA_MEASUREMENT_ID
+GOOGLE_ANALYTICS_API_SECRET=GA_API_SECRET
+```
+
+#### Local Development (.env.local)
+
+```env
+# Use development values
+NEXT_PUBLIC_SITE_URL=http://localhost:8082
+NEXT_PUBLIC_GA_ID=GA_MEASUREMENT_ID
+NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+
+# Test reCAPTCHA keys (for development)
+RECAPTCHA_SECRET_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+```
+
+## Frontend Deployment (S3 + CloudFront)
+
+### 1. Create S3 Bucket
+
+```bash
+# Create bucket (replace with your domain)
+aws s3 mb s3://figma-portfolio-static
+
+# Configure bucket for static website hosting
+aws s3 website s3://figma-portfolio-static \
+  --index-document index.html \
+  --error-document 404.html
+
+# Set bucket policy for public read access
+aws s3api put-bucket-policy \
+  --bucket figma-portfolio-static \
+  --policy '{
+    "Version":"2012-10-17",
+    "Statement":[{
+      "Sid":"PublicReadGetObject",
+      "Effect":"Allow",
+      "Principal":"*",
+      "Action":["s3:GetObject"],
+      "Resource":["arn:aws:s3:::figma-portfolio-static/*"]
+    }]
+  }'
+```
+
+### 2. Build and Deploy Frontend
+
+```bash
+# Build for production
+pnpm build
+
+# Sync files to S3
+aws s3 sync out/ s3://figma-portfolio-static --delete
+
+# Set cache headers for static assets
+aws s3 sync out/ s3://figma-portfolio-static \
+  --delete \
+  --cache-control "public, max-age=31536000, immutable" \
+  --exclude "*.html" \
+  --exclude "sw.js" \
+  --exclude "workbox-*.js"
+
+# Set cache headers for HTML files
+aws s3 sync out/ s3://figma-portfolio-static \
+  --delete \
+  --cache-control "no-cache, no-store, must-revalidate" \
+  --include "*.html"
+```
+
+### 3. Create CloudFront Distribution
+
+```bash
+# Create CloudFront distribution
+aws cloudfront create-distribution \
+  --origin-domain-name figma-portfolio-static.s3.amazonaws.com \
+  --default-root-object index.html \
+  --default-cache-behavior TargetOriginId=figma-portfolio-static,ViewerProtocolPolicy=redirect-to-https,ForwardedValues={QueryString=false,Cookies={Forward=all}} \
+  --comment "Portfolio Frontend" \
+  --enabled true \
+  --price-class PriceClass_100 \
+  --viewer-certificate "ACMCertificateArn=arn:aws:acm:us-east-1:account:certificate/xxxx-xxxx-xxxx,SSLSupportMethod=SNI-only"
+```
+
+### 4. Configure Custom Domain (Optional)
+
+```bash
+# Create SSL certificate in ACM (us-east-1 for CloudFront)
+aws acm request-certificate \
+  --domain-name baltzakis.dev \
+  --validation-method DNS \
+  --region us-east-1
+
+# Update CloudFront to use custom domain and SSL certificate
+aws cloudfront update-distribution \
+  --id E134SCTR0QGQKJ \
+  --distribution-config file://cloudfront-config.json
+```
+
+**cloudfront-config.json:**
+```json
+{
+  "CallerReference": "portfolio-frontend",
+  "Aliases": {
+    "Quantity": 1,
+    "Items": ["baltzakis.dev"]
+  },
+  "DefaultRootObject": "index.html",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [{
+      "Id": "figma-portfolio-static",
+      "DomainName": "figma-portfolio-static.s3.amazonaws.com",
+      "S3OriginConfig": {}
+    }]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "figma-portfolio-static",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "ForwardedValues": {
+      "QueryString": false,
+      "Cookies": { "Forward": "all" }
+    }
+  },
+  "Comment": "Portfolio Frontend",
+  "Enabled": true,
+  "ViewerCertificate": {
+    "ACMCertificateArn": "arn:aws:acm:us-east-1:account:certificate/xxxx-xxxx-xxxx",
+    "SSLSupportMethod": "sni-only",
+    "MinimumProtocolVersion": "TLSv1.2_2021"
+  },
+  "PriceClass": "PriceClass_100"
+}
+```
+
+## Backend Deployment (AWS Lambda)
+
+### 1. Create Lambda Function
+
+```bash
+# Create deployment package
+pnpm build:server
+
+# Create Lambda function
+aws lambda create-function \
+  --function-name figma-portfolio-api \
+  --runtime nodejs20.x \
+  --role arn:aws:iam::account:role/lambda-execution-role \
+  --handler index.handler \
+  --zip-file fileb://dist/server.zip \
+  --environment Variables="{NODE_ENV=production,RECAPTCHA_SECRET_KEY=your-secret-key}"
+
+# Create API Gateway trigger
+aws lambda add-permission \
+  --function-name figma-portfolio-api \
+  --action lambda:InvokeFunction \
+  --principal apigateway.amazonaws.com \
+  --statement-id apigateway-invoke
+```
+
+### 2. Configure Environment Variables
+
+```bash
+# Update environment variables
+aws lambda update-function-configuration \
+  --function-name figma-portfolio-api \
+  --environment Variables="{
+    \"NODE_ENV\":\"production\",
+    \"RECAPTCHA_SECRET_KEY\":\"your-secret-key\",
+    \"SES_VERIFIED_EMAIL\":\"your-email@domain.com\",
+    \"SENTRY_DSN\":\"https://your-sentry-dsn@sentry.io/project\",
+    \"SLACK_WEBHOOK_URL\":\"https://hooks.slack.com/services/your/webhook/url\",
+    \"ANTHROPIC_API_KEY\":\"your-anthropic-key\",
+    \"VAPID_PUBLIC_KEY\":\"your-vapid-public-key\",
+    \"VAPID_PRIVATE_KEY\":\"your-vapid-private-key\",
+    \"VAPID_EMAIL\":\"mailto:your-email@domain.com\",
+    \"GOOGLE_ANALYTICS_MEASUREMENT_ID\":\"GA_MEASUREMENT_ID\",
+    \"GOOGLE_ANALYTICS_API_SECRET\":\"GA_API_SECRET\"
+  }"
+```
+
+### 3. Create Lambda Function URL
+
+```bash
+# Create function URL for direct HTTP access
+aws lambda create-function-url-config \
+  --function-name figma-portfolio-api \
+  --auth-type NONE \
+  --cors '{"AllowOrigins":["https://baltzakis.dev"],"AllowMethods":["GET","POST","PUT","DELETE"],"AllowHeaders":["*"]}'
+
+# Get function URL
+aws lambda get-function-url-config --function-name figma-portfolio-api
+```
+
+### 4. Configure CloudFront to Route API Requests
+
+```bash
+# Update CloudFront distribution to route /api/* to Lambda
+aws cloudfront update-distribution \
+  --id E134SCTR0QGQKJ \
+  --distribution-config file://cloudfront-with-api.json
+```
+
+**cloudfront-with-api.json:**
+```json
+{
+  "Origins": {
+    "Quantity": 2,
+    "Items": [
+      {
+        "Id": "figma-portfolio-static",
+        "DomainName": "figma-portfolio-static.s3.amazonaws.com",
+        "S3OriginConfig": {}
+      },
+      {
+        "Id": "figma-portfolio-api",
+        "DomainName": "oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws",
+        "CustomOriginConfig": {
+          "HTTPPort": 80,
+          "HTTPSPort": 443,
+          "OriginProtocolPolicy": "https-only"
+        }
+      }
+    ]
+  },
+  "CacheBehaviors": {
+    "Quantity": 1,
+    "Items": [{
+      "PathPattern": "/api/*",
+      "TargetOriginId": "figma-portfolio-api",
+      "ViewerProtocolPolicy": "redirect-to-https",
+      "ForwardedValues": {
+        "QueryString": true,
+        "Cookies": { "Forward": "all" }
+      }
+    }]
+  }
+}
+```
+
+## Python Chatbot Backend Deployment
+
+### 1. Create Python Lambda Function
+
+```bash
+# Create deployment package for Python
+cd server/bot
+pip install -r requirements.txt -t .
+
+# Create zip package
+zip -r ../lambda-chatbot.zip .
+
+# Create Lambda function
+aws lambda create-function \
+  --function-name figma-portfolio-chatbot \
+  --runtime python3.10 \
+  --role arn:aws:iam::account:role/lambda-execution-role \
+  --handler main:app \
+  --zip-file fileb://lambda-chatbot.zip \
+  --environment Variables="{HF_TOKEN=your-hf-token,PORTFOLIO_ORIGIN=https://baltzakis.dev}"
+
+# Create function URL
+aws lambda create-function-url-config \
+  --function-name figma-portfolio-chatbot \
+  --auth-type NONE \
+  --cors '{"AllowOrigins":["https://baltzakis.dev"],"AllowMethods":["GET","POST"],"AllowHeaders":["*"]}'
+```
+
+## CI/CD Pipeline
+
+### GitHub Actions Workflow
+
+**.github/workflows/deploy.yml:**
+```yaml
+name: Deploy Portfolio
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+        
+    - name: Install dependencies
+      run: pnpm install
+      
+    - name: Build frontend
+      run: pnpm build
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Deploy frontend to S3
+      run: |
+        aws s3 sync out/ s3://figma-portfolio-static --delete
+        aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"
+        
+    - name: Deploy backend to Lambda
+      run: |
+        pnpm build:server
+        aws lambda update-function-code \
+          --function-name figma-portfolio-api \
+          --zip-file fileb://dist/server.zip
+```
+
+### Environment Secrets
+
+Add these secrets to your GitHub repository:
+
+```
+AWS_ACCESS_KEY_ID=your-aws-access-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+```
+
+## Alternative Deployment Platforms
+
+### Vercel Deployment
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy to Vercel
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+**vercel.json:**
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "next.config.ts",
+      "use": "@vercel/next"
+    }
+  ],
+  "functions": {
+    "server/index.ts": {
+      "runtime": "nodejs20.x"
+    }
+  }
+}
+```
+
+### Netlify Deployment
+
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Deploy to Netlify
+netlify deploy
+
+# Deploy to production
+netlify deploy --prod
+```
+
+**netlify.toml:**
+```toml
+[build]
+  command = "pnpm build"
+  publish = "out"
+
+[functions]
+  directory = "server"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server"
+  status = 200
+```
+
+## Monitoring and Maintenance
+
+### Health Checks
+
+```bash
+# Check frontend health
+curl -I https://baltzakis.dev
+
+# Check API health
+curl https://baltzakis.dev/api/health
+
+# Check chatbot health
+curl https://baltzakis.dev/api/chat/health
+```
+
+### Performance Monitoring
+
+```bash
+# Check CloudFront metrics
+aws cloudfront get-distribution-metrics \
+  --distribution-id E134SCTR0QGQKJ \
+  --metric-name Requests \
+  --start-time $(date -d '1 hour ago' --iso-8601) \
+  --end-time $(date --iso-8601)
+
+# Check Lambda metrics
+aws lambda get-function-metrics \
+  --function-name figma-portfolio-api
+```
+
+### Log Monitoring
+
+```bash
+# View CloudFront logs
+aws cloudfront get-distribution-log \
+  --distribution-id E134SCTR0QGQKJ
+
+# View Lambda logs
+aws logs filter-log-events \
+  --log-group-name "/aws/lambda/figma-portfolio-api" \
+  --start-time $(date -d '1 hour ago' +%s)000
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **CORS Errors**
+   - Check CloudFront CORS configuration
+   - Verify Lambda function URL CORS settings
+
+2. **SSL/TLS Issues**
+   - Ensure SSL certificate is valid
+   - Check CloudFront SSL configuration
+
+3. **Lambda Timeout**
+   - Increase timeout to 15 seconds
+   - Check memory allocation (256MB recommended)
+
+4. **S3 Access Issues**
+   - Verify bucket policy allows public read
+   - Check IAM permissions
+
+### Debug Commands
+
+```bash
+# Test S3 access
+aws s3 ls s3://figma-portfolio-static
+
+# Test Lambda function
+aws lambda invoke \
+  --function-name figma-portfolio-api \
+  --payload '{"httpMethod":"GET","path":"/api/health"}' \
+  response.json
+
+# Test CloudFront invalidation
+aws cloudfront create-invalidation \
+  --distribution-id E134SCTR0QGQKJ \
+  --paths "/*"
+```
+
+## Cost Optimization
+
+### S3 Cost Reduction
+
+```bash
+# Enable S3 Intelligent-Tiering
+aws s3api put-bucket-intelligent-tiering-configuration \
+  --bucket figma-portfolio-static \
+  --id "intelligent-tiering" \
+  --intelligent-tiering-configuration '{
+    "Id": "intelligent-tiering",
+    "Status": "Enabled",
+    "Filter": {},
+    "Rules": [
+      {
+        "Name": "IntelligentTiering",
+        "Status": "Enabled",
+        "Days": 1
+      }
+    ]
+  }'
+```
+
+### CloudFront Cost Optimization
+
+- Use Price Class 100 (US, Canada, Europe)
+- Enable compression
+- Set appropriate cache TTLs
+
+### Lambda Cost Optimization
+
+- Use appropriate memory allocation
+- Set timeout to minimum required
+- Enable provisioned concurrency for predictable traffic
+
+## Security Considerations
+
+### IAM Best Practices
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::figma-portfolio-static/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:CreateInvalidation",
+        "cloudfront:GetDistribution"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Security Headers
+
+Ensure all security headers are properly configured:
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
+- X-XSS-Protection: 1; mode=block
+- Content-Security-Policy: configured appropriately
+
+This comprehensive deployment guide ensures your portfolio is deployed securely, efficiently, and with proper monitoring in place.
