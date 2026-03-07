@@ -59,15 +59,15 @@ steps:
     run: |
       # Next.js dev server proxies /api/* to backend via rewrite rules
       pnpm dev &
-      echo "Waiting for frontend on port 8082..."
-      timeout 120 bash -c 'until curl -s http://localhost:8082 > /dev/null 2>&1; do sleep 3; done'
-      echo "Frontend is running on http://localhost:8082"
+      echo "Waiting for frontend on port 3000..."
+      timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
+      echo "Frontend is running on http://localhost:3000"
     shell: bash
 
   - name: Run Playwright tests
     run: |
       echo "Running Playwright E2E tests (chromium, fast config)..."
-      PLAYWRIGHT_BASE_URL=http://localhost:8082 \
+      PLAYWRIGHT_BASE_URL=http://localhost:3000 \
       npx playwright test --config=playwright.config.fast.ts \
         --reporter=list \
         2>&1 | tee /tmp/playwright-results.txt || true
