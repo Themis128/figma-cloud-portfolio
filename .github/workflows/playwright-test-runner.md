@@ -39,14 +39,21 @@ steps:
 
   - name: Start Express backend
     run: |
-      # Start Express API server on port 3001 with minimal test env vars
-      # Firebase auth routes won't work but server won't crash
-      export NODE_ENV=test
       npx tsx server/index.ts &
       echo "Waiting for backend on port 3001..."
       timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
       echo "Backend is running on http://localhost:3001"
     shell: bash
+    env:
+      NODE_ENV: test
+      FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+      FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+      RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
+      CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
 
   - name: Start Next.js dev server
     run: |

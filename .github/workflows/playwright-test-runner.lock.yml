@@ -25,7 +25,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"e38d01876498095bb5a6d59dbf3f5ebd35d6e34df2972cde527f1e4e40daaa46","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"0c385918af3b9beb0e73d2b8ae90fc50d47d7c8318213e93f9d13c591a68b072","compiler_version":"v0.55.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
@@ -288,8 +288,22 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
         shell: bash
-      - name: Start Express backend
-        run: "# Start Express API server on port 3001 with minimal test env vars\n# Firebase auth routes won't work but server won't crash\nexport NODE_ENV=test\nnpx tsx server/index.ts &\necho \"Waiting for backend on port 3001...\"\ntimeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'\necho \"Backend is running on http://localhost:3001\"\n"
+      - env:
+          CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
+          CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          NODE_ENV: test
+          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        name: Start Express backend
+        run: |
+          npx tsx server/index.ts &
+          echo "Waiting for backend on port 3001..."
+          timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
+          echo "Backend is running on http://localhost:3001"
         shell: bash
       - name: Start Next.js dev server
         run: "# Next.js dev server proxies /api/* to backend via rewrite rules\npnpm dev &\necho \"Waiting for frontend on port 8082...\"\ntimeout 120 bash -c 'until curl -s http://localhost:8082 > /dev/null 2>&1; do sleep 3; done'\necho \"Frontend is running on http://localhost:8082\"\n"
@@ -837,11 +851,19 @@ jobs:
             const { main } = require('/opt/gh-aw/actions/redact_secrets.cjs');
             await main();
         env:
-          GH_AW_SECRET_NAMES: 'COPILOT_GITHUB_TOKEN,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN'
+          GH_AW_SECRET_NAMES: 'CAL_API_KEY,CAL_EVENT_TYPE_ID,COPILOT_GITHUB_TOKEN,FIREBASE_CLIENT_EMAIL,FIREBASE_PRIVATE_KEY,FIREBASE_PROJECT_ID,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN,HF_TOKEN,RECAPTCHA_SECRET_KEY,SLACK_WEBHOOK_URL'
+          SECRET_CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
+          SECRET_CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
           SECRET_COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          SECRET_FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          SECRET_FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          SECRET_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           SECRET_GH_AW_GITHUB_MCP_SERVER_TOKEN: ${{ secrets.GH_AW_GITHUB_MCP_SERVER_TOKEN }}
           SECRET_GH_AW_GITHUB_TOKEN: ${{ secrets.GH_AW_GITHUB_TOKEN }}
           SECRET_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SECRET_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SECRET_RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          SECRET_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Append agent step summary
         if: always()
         run: bash /opt/gh-aw/actions/append_agent_step_summary.sh
