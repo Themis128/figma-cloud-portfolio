@@ -37,13 +37,31 @@ steps:
     run: npx playwright install chromium --with-deps
     shell: bash
 
-  - name: Build and serve the app
+  - name: Start Express backend
     run: |
-      pnpm build
-      npx serve out/ -l 8082 &
-      echo "Waiting for server to be ready..."
-      timeout 60 bash -c 'until curl -s http://localhost:8082 > /dev/null 2>&1; do sleep 2; done'
-      echo "App is running on http://localhost:8082"
+      # Start Express API server on port 3001 with test env vars
+      export NODE_ENV=test
+      export RECAPTCHA_SECRET_KEY=test-secret
+      export SLACK_WEBHOOK_URL=https://hooks.slack.com/test
+      export HF_TOKEN=test-token
+      export CAL_API_KEY=test-cal-key
+      export CAL_EVENT_TYPE_ID=0
+      export FIREBASE_PROJECT_ID=test-project
+      export FIREBASE_CLIENT_EMAIL=test@test.iam.gserviceaccount.com
+      export FIREBASE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----"
+      npx tsx server/index.ts &
+      echo "Waiting for backend on port 3001..."
+      timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
+      echo "Backend is running on http://localhost:3001"
+    shell: bash
+
+  - name: Start Next.js dev server
+    run: |
+      # Next.js dev server proxies /api/* to backend via rewrite rules
+      pnpm dev &
+      echo "Waiting for frontend on port 8082..."
+      timeout 120 bash -c 'until curl -s http://localhost:8082 > /dev/null 2>&1; do sleep 3; done'
+      echo "Frontend is running on http://localhost:8082"
     shell: bash
 
   - name: Run Playwright tests
