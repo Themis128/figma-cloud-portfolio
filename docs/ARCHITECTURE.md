@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a **Next.js 15 application** with the App Router, deployed as a **static export** on **S3 + CloudFront** (frontend) with an **AWS Lambda** function (backend). It serves as the personal portfolio of Themistoklis Baltzakis — a Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise.
+This is a **Next.js 16 application** with the App Router, deployed as a **static export** on **S3 + CloudFront** (frontend) with an **AWS Lambda** function (backend). It serves as the personal portfolio of Themistoklis Baltzakis — a Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise.
 
 ---
 
@@ -10,7 +10,7 @@ This is a **Next.js 15 application** with the App Router, deployed as a **static
 
 | Layer                  | Technology               |
 | ---------------------- | ------------------------ |
-| Framework              | Next.js 15 (App Router)                          |
+| Framework              | Next.js 16 (App Router)                          |
 | Language               | TypeScript 5                                      |
 | Styling                | Tailwind CSS v4                                   |
 | UI components          | Radix UI, shadcn/ui                               |
@@ -18,10 +18,14 @@ This is a **Next.js 15 application** with the App Router, deployed as a **static
 | PWA                    | Workbox (service worker)                          |
 | Backend (production)   | AWS Lambda (`figma-portfolio-api`)                |
 | Backend (local dev)    | Express.js on port 3001                           |
+| Chatbot backend        | Python FastAPI on port 8001                       |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
 | Security               | reCAPTCHA v3, security headers via next.config.ts |
 | Performance monitoring | web-vitals library                                |
+| Real-time features     | Socket.IO                                         |
+| 3D visualizations      | Three.js + @react-three/fiber                     |
+| Testing                | Playwright 1.57+ E2E, Vitest unit tests           |
 
 ---
 

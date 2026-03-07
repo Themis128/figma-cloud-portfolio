@@ -1,91 +1,85 @@
-# Index Page (Home)
+# Documentation Index
 
-## Overview
+Welcome to the portfolio documentation. This section contains comprehensive guides and references for the project.
 
-The Index page serves as the main landing page of the Baltzakis Themistoklis portfolio application. It provides an introduction to the professional, showcases key information, and offers navigation to other sections of the site.
+## Getting Started
+
+- [README](README.md) - Project overview and quick start guide
+- [Architecture](ARCHITECTURE.md) - Technical architecture and design decisions
+- [API Reference](API_REFERENCE.md) - Complete API documentation
+
+## Development
+
+- [Development Workflow](DEVELOPMENT_WORKFLOW.md) - Development practices and conventions
+- [Testing](TESTING.md) - Testing strategies and guidelines
+- [Performance](PERFORMANCE.md) - Performance optimization and monitoring
+- [Security](SECURITY.md) - Security measures and best practices
+
+## Deployment
+
+- [Deployment Guide](DEPLOYMENT.md) - Production deployment instructions
+- [Deployment Checklist](DEPLOYMENT_CHECKLIST.md) - Pre-deployment verification steps
+- [Deployment Issues Guide](DEPLOYMENT_ISSUES_GUIDE.md) - Troubleshooting deployment problems
 
 ## Features
 
-### Hero Section
+- [Integrations](INTEGRATIONS.md) - Third-party service integrations
+- [Real-time Features](REALTIME_FEATURES_README.md) - WebSocket and real-time functionality
+- [PWA Features](PWA_README.md) - Progressive Web App capabilities
+- [AI Agents](AGENTS.md) - AI agent system documentation
 
-- **Name Display**: Prominently displays "Themistoklis Baltzakis" with animated text effects
-- **Professional Title**: Shows "Cloud Architect & Cybersecurity Specialist"
-- **Description**: Brief overview of professional expertise and experience
-- **Visual Separator**: Gradient line element for visual appeal
+## Advanced Topics
 
-### Call-to-Action Buttons
+- [AWS Amplify GraphQL API](AWS_AMPLIFY_GRAPHQL_API.md) - Database and API configuration
+- [MCP Servers](MCP_SERVERS.md) - Model Context Protocol server setup
+- [Security Summary](SECURITY_SUMMARY.md) - Security overview and compliance
 
-- **Learn More**: Links to the About page for detailed professional information
-- **Build Resume**: Directs to the Resume builder page
-- **Get In Touch**: Links to the Contact page for communication
+## Reference
 
-### Social Media Links
+- [Comprehensive Documentation](COMPREHENSIVE_DOCUMENTATION.md) - Complete project reference
+- [Usage Examples](USAGE_EXAMPLES.md) - Code examples and patterns
+- [Quick Start Free APIs](QUICK_START_FREE_APIS.md) - Free API services setup
 
-- **LinkedIn**: External link to professional LinkedIn profile
-- **Email**: Direct mailto link for contact
-- **Portfolio Website**: External link to personal website
+## Support
 
-### Interactive Elements
+- [Post Deployment Verification](POST_DEPLOYMENT_VERIFICATION.md) - Post-deployment checks
+- [Pre Deployment Checklist](PRE_DEPLOYMENT_CHECKLIST.md) - Pre-deployment preparation
+- [Token Rotation Schedule](TOKEN_ROTATION_SCHEDULE.md) - API token management
 
-- **AI Brain Visualization**: Animated 3D brain component representing AI/technology focus
-- **Hover Animations**: Interactive button and icon hover effects
-- **Circuit Background**: Animated circuit pattern background for tech aesthetic
+## Documentation Updates
 
-## Components Used
+This documentation has been recently updated to reflect:
 
-- `Navigation`: Site navigation component
-- `AIBrain`: Custom 3D brain visualization component
-- `AnimatedSection`: Animation wrapper for staggered content reveals
-- `CircuitBackground`: Animated background component
-- `HoverButton`: Interactive button with hover effects
-- `HoverIcon`: Interactive icon with hover effects
+- **Next.js 16** upgrade from Next.js 15
+- **React 19** compatibility
+- **Playwright 1.57** testing framework
+- **Vitest** unit testing integration
+- **Python FastAPI** chatbot backend
+- **Three.js** 3D visualization components
+- **Socket.IO** real-time features
+- **Enhanced security measures** and best practices
+- **Comprehensive performance optimization** strategies
+- **Updated deployment procedures** for AWS services
 
-## Accessibility Features
+## Quick Links
 
-- Semantic HTML structure with proper headings
-- ARIA labels for screen readers
-- Keyboard navigation support
-- High contrast color scheme
-- Responsive design for all screen sizes
+### Development Commands
+```bash
+pnpm dev:all          # Start all development servers
+pnpm test:e2e         # Run E2E tests
+pnpm build            # Build for production
+pnpm lint             # Code linting
+pnpm format           # Code formatting
+```
 
-## Responsive Design
+### Key Directories
+- `src/` - Frontend source code (Next.js)
+- `server/` - Backend API server (Express)
+- `playwright-tests/` - E2E test suite
+- `docs/` - Documentation files
+- `public/` - Static assets
 
-- **Mobile**: Stacked layout with centered content
-- **Tablet**: Adjusted spacing and font sizes
-- **Desktop**: Two-column grid layout with side-by-side content
+### Environment Variables
+See `.env.example` for required environment variables and configuration options.
 
-## Performance Considerations
-
-- Lazy loading of components (commented out in current implementation)
-- Optimized animations using CSS transforms
-- Efficient re-renders with React hooks
-
-## SEO Features
-
-- Proper heading hierarchy (H1 for main title)
-- Semantic HTML structure
-- Descriptive alt texts and ARIA labels
-- Meta information through page structure
-
-## User Experience
-
-- **First Impression**: Professional and modern design
-- **Clear Navigation**: Obvious paths to key sections
-- **Engaging Visuals**: AI brain animation draws attention
-- **Social Proof**: Direct links to professional profiles
-- **Call-to-Actions**: Multiple ways to engage with content
-
-## Technical Implementation
-
-- **React Functional Component**: Uses modern React patterns
-- **TypeScript**: Full type safety
-- **Tailwind CSS**: Utility-first styling
-- **Lucide Icons**: Consistent iconography
-- **Responsive Grid**: CSS Grid for layout flexibility
-
-## Future Enhancements
-
-- Add loading states for dynamic content
-- Implement A/B testing for button variations
-- Add scroll-triggered animations
-- Integrate with analytics for user behavior tracking
+For questions or support, please refer to the specific documentation sections or create an issue in the repository.
