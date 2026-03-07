@@ -10,8 +10,9 @@ This project uses **Playwright** for end-to-end (E2E) testing, targeting 100% co
 
 | Tool             | Version | Purpose                           |
 | ---------------- | ------- | --------------------------------- |
-| Playwright       | ^1.49   | Browser automation & E2E testing  |
-| @playwright/test | ^1.49   | Test runner, assertions, fixtures |
+| Playwright       | ^1.57   | Browser automation & E2E testing  |
+| @playwright/test | ^1.57   | Test runner, assertions, fixtures |
+| Vitest           | ^3.2.4  | Unit testing framework            |
 
 ### Configuration
 

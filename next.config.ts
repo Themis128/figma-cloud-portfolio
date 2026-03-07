@@ -93,71 +93,18 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // Headers for security, performance, and caching
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          { key: "X-DNS-Prefetch-Control", value: "on" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "origin-when-cross-origin" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "X-XSS-Protection", value: "1; mode=block" },
-        ],
-      },
-      {
-        source: "/fonts/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-        ],
-      },
-      {
-        source: "/images/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/api/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=0, must-revalidate",
-          },
-        ],
-      },
-    ];
-  },
-
-  // Redirects for old routes (if any)
-  async redirects() {
-    return [];
-  },
-
-  // Proxy all /api/* routes to the Express backend dev server (port 3001)
-  // In production, Amplify CloudFront rewrite rules handle this proxying to Lambda
-  async rewrites() {
-    if (process.env.NODE_ENV !== "production") {
+  // Security & cache headers are in amplify.yml customHeaders (CloudFront level)
+  // Rewrites for local dev only — not used in production static export
+  ...(process.env.NODE_ENV !== "production" && {
+    async rewrites() {
       return [
         {
           source: "/api/:path*",
           destination: "http://localhost:3001/api/:path*",
         },
       ];
-    }
-    return [];
-  },
+    },
+  }),
 
   // Environment variables exposed to client
   env: {
