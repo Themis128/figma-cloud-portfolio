@@ -25,7 +25,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"5e89e604c0e4ca63b7b3f49190c04208b0eae91fb68fd67e339c14ad752d18ea","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"8efe22ab8d5e76c7ddd8509f15d8b55ae43668ac12cf5ee81febbf30a57e1164","compiler_version":"v0.55.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
@@ -282,8 +282,6 @@ jobs:
           node-version: 20
       - name: Install pnpm
         uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
-        with:
-          version: 10
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         shell: bash

@@ -28,8 +28,6 @@ steps:
 
   - name: Install pnpm
     uses: pnpm/action-setup@v4
-    with:
-      version: 10
 
   - name: Install dependencies
     run: pnpm install --frozen-lockfile
