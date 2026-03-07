@@ -1,12 +1,16 @@
 import { expect, test } from "@playwright/test";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+const hasApiServer = !!process.env.API_BASE_URL;
 
 // Lambda-only endpoints (contact, github) are not available on the local Express dev server.
 // These tests target the Express dev server on port 3001.
 // For Lambda endpoint tests, set API_BASE_URL to the Lambda function URL.
 
 test.describe("API Endpoints — Express Dev Server", () => {
+  // Skip all tests when no API server is explicitly configured
+  test.skip(!hasApiServer, "Requires API_BASE_URL env var");
+
   test("GET /api/organizations/api_keys — should return array", async ({
     request,
   }) => {

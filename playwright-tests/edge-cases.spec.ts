@@ -39,7 +39,7 @@ test.describe("Edge Case Tests", () => {
     await page.waitForLoadState("domcontentloaded");
 
     await page.goBack();
-    await expect(page).toHaveURL(/localhost/);
+    await expect(page).toHaveURL(/\/$/); // Back to root URL
 
     await page.goForward();
     await expect(page).toHaveURL(/about/);

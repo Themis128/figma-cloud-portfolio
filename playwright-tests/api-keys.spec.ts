@@ -3,6 +3,13 @@ import { expect, test } from "@playwright/test";
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
 
 test.describe("API Keys CRUD", () => {
+  // These tests require the local Express dev server (API_BASE_URL env var).
+  // On production, API keys are protected by Firebase Auth and return 401.
+  test.skip(
+    !process.env.API_BASE_URL,
+    "Requires API_BASE_URL pointing to local Express dev server",
+  );
+
   test("GET /api/organizations/api_keys - should list API keys", async ({
     request,
   }) => {
