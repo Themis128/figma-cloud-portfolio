@@ -39,16 +39,9 @@ steps:
 
   - name: Start Express backend
     run: |
-      # Start Express API server on port 3001 with test env vars
+      # Start Express API server on port 3001 with minimal test env vars
+      # Firebase auth routes won't work but server won't crash
       export NODE_ENV=test
-      export RECAPTCHA_SECRET_KEY=test-secret
-      export SLACK_WEBHOOK_URL=https://hooks.slack.com/test
-      export HF_TOKEN=test-token
-      export CAL_API_KEY=test-cal-key
-      export CAL_EVENT_TYPE_ID=0
-      export FIREBASE_PROJECT_ID=test-project
-      export FIREBASE_CLIENT_EMAIL=test@test.iam.gserviceaccount.com
-      export FIREBASE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----"
       npx tsx server/index.ts &
       echo "Waiting for backend on port 3001..."
       timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
