@@ -221,7 +221,7 @@ test.describe("Admin Page — Health Tab", () => {
     await page.waitForTimeout(3000);
 
     await expect(page.locator("text=Total")).toBeVisible();
-    await expect(page.locator("text=Healthy")).toBeVisible();
+    await expect(page.locator("text=Healthy").first()).toBeVisible();
   });
 
   test("should display total endpoint count of 9", async ({ page }) => {
