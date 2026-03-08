@@ -148,7 +148,11 @@ export default function ContactPage() {
 
   const getRecaptchaToken = useCallback(async (): Promise<string | undefined> => {
     if (!RECAPTCHA_SITE_KEY || !window.grecaptcha) return undefined;
-    return new Promise((resolve) => {
+
+    // Race the reCAPTCHA call against a timeout so the form never hangs
+    const RECAPTCHA_TIMEOUT_MS = 5000;
+
+    const tokenPromise = new Promise<string | undefined>((resolve) => {
       window.grecaptcha!.ready(async () => {
         try {
           const token = await window.grecaptcha!.execute(RECAPTCHA_SITE_KEY, { action: "contact" });
@@ -158,6 +162,12 @@ export default function ContactPage() {
         }
       });
     });
+
+    const timeoutPromise = new Promise<undefined>((resolve) => {
+      setTimeout(() => resolve(undefined), RECAPTCHA_TIMEOUT_MS);
+    });
+
+    return Promise.race([tokenPromise, timeoutPromise]);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

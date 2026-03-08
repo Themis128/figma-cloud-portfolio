@@ -21,13 +21,13 @@ const config = createPlaywrightConfig("fast", {
   // Reuse running dev server with correct URL
   webServer: {
     command: "pnpm dev",
-    url: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082",
+    url: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 30000,
   },
   // Use environment-aware base URL
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Updated for current app architecture
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
   },
 });
 

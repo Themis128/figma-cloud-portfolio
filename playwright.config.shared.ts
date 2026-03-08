@@ -307,7 +307,7 @@ export function createPlaywrightConfig(
       ["list"],
     ],
     use: {
-      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Updated for current app architecture
+      baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
       trace: environmentSettings[environment]?.trace ?? "off",
       video: environmentSettings[environment]?.video ?? "off",
       screenshot: environmentSettings[environment]?.screenshot ?? "off",
@@ -331,7 +331,7 @@ export function createPlaywrightConfig(
 
       return {
         command: "pnpm dev",
-        url: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Updated for current app architecture
+        url: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
         reuseExistingServer: !!(
           environment === "development" || environment === "isolated"
         ),

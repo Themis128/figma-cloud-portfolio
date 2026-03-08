@@ -3,18 +3,6 @@ import { expect, test } from "@playwright/test";
 test.describe("Contact Form Submission with Analytics", () => {
   test.describe("Form Submission and Analytics Integration", () => {
     test("should submit contact form successfully", async ({ page }) => {
-      // Mock contact API to return success response
-      await page.route("**/api/contact", (route) => {
-        route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            success: true,
-            message: "Message sent successfully!",
-          }),
-        });
-      });
-
       await page.goto("/contact");
       await page.waitForLoadState("domcontentloaded");
 
@@ -34,17 +22,11 @@ test.describe("Contact Form Submission with Analytics", () => {
       const submitButton = page.getByRole("button", { name: "Send Message" });
       await submitButton.click();
 
-      // Wait for form processing
-      await page.waitForTimeout(2000);
+      // Wait for response — success or error (reCAPTCHA timeout is 5s, plus API call time)
+      const successLocator = page.locator("text=/Message sent successfully/i");
+      const errorLocator = page.locator("text=/Something went wrong|error|failed/i");
 
-      // Check if success message appears
-      const successMessage = page.locator("text=/Message sent successfully/i");
-      const isSuccessVisible = await successMessage.isVisible().catch(() => false);
-
-      // Either success or error message should appear (form submission was attempted)
-      const hasResponse = isSuccessVisible ||
-        (await page.locator("text=/Something went wrong/i").isVisible().catch(() => false));
-      expect(hasResponse).toBe(true);
+      await expect(successLocator.or(errorLocator)).toBeVisible({ timeout: 10000 });
     });
 
     test("should prevent duplicate submissions via disabled button", async ({ page }) => {
@@ -111,13 +93,10 @@ test.describe("Contact Form Submission with Analytics", () => {
 
       await page.getByRole("button", { name: "Send Message" }).click();
 
-      // Wait for error response
-      await page.waitForTimeout(2000);
-
-      // Should show error message
+      // Should show error message (reCAPTCHA timeout is 5s, then mock returns 500)
       await expect(
         page.locator("text=/Something went wrong/i"),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: 10000 });
     });
 
     test("should track page views correctly on navigation", async ({ page }) => {
@@ -141,8 +120,8 @@ test.describe("Contact Form Submission with Analytics", () => {
     });
 
     test("should handle reCAPTCHA failures gracefully", async ({ page }) => {
-      // The actual contact form doesn't use reCAPTCHA —
-      // it submits directly to /api/contact. Verify form works without it.
+      // The contact form uses reCAPTCHA v3 with a timeout fallback.
+      // If reCAPTCHA fails/times out, the form still submits without a token.
       await page.goto("/contact");
       await page.waitForLoadState("domcontentloaded");
       await page.waitForSelector("form", { timeout: 10000 });
@@ -157,8 +136,10 @@ test.describe("Contact Form Submission with Analytics", () => {
       await page.getByRole("button", { name: "Send Message" }).click();
 
       // Form should remain functional regardless of outcome
-      await page.waitForTimeout(2000);
-      await expect(page.locator("form")).toBeVisible();
+      // reCAPTCHA timeout is 5s, then form submits
+      const successLocator = page.locator("text=/Message sent successfully/i");
+      const errorLocator = page.locator("text=/Something went wrong/i");
+      await expect(successLocator.or(errorLocator).or(page.locator("form"))).toBeVisible({ timeout: 10000 });
     });
 
     test("should validate email format", async ({ page }) => {
@@ -187,13 +168,10 @@ test.describe("Contact Form Submission with Analytics", () => {
 
       await page.getByRole("button", { name: "Send Message" }).click();
 
-      // Wait for network error
-      await page.waitForTimeout(3000);
-
-      // Should show error message
+      // Should show error message (reCAPTCHA timeout is 5s, then network error)
       await expect(
         page.locator("text=/Something went wrong/i"),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: 10000 });
     });
 
     test("should maintain form state during submission", async ({ page }) => {
@@ -249,15 +227,6 @@ test.describe("Contact Form Submission with Analytics", () => {
         });
       });
 
-      // Mock contact API to succeed
-      await page.route("**/api/contact", (route) => {
-        route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ success: true, message: "Message sent successfully!" }),
-        });
-      });
-
       await page.goto("/contact");
       await page.waitForLoadState("domcontentloaded");
       await page.waitForSelector("form", { timeout: 10000 });
@@ -270,14 +239,11 @@ test.describe("Contact Form Submission with Analytics", () => {
 
       await page.getByRole("button", { name: "Send Message" }).click();
 
-      // Wait for processing
-      await page.waitForTimeout(2000);
-
       // Form submission should still work despite analytics failure
-      const hasResponse =
-        (await page.locator("text=/Message sent successfully/i").isVisible().catch(() => false)) ||
-        (await page.locator("text=/Something went wrong/i").isVisible().catch(() => false));
-      expect(hasResponse).toBe(true);
+      // reCAPTCHA timeout is 5s, then real API call
+      const successLocator = page.locator("text=/Message sent successfully/i");
+      const errorLocator = page.locator("text=/Something went wrong/i");
+      await expect(successLocator.or(errorLocator)).toBeVisible({ timeout: 10000 });
 
       // Page should remain functional
       await expect(page.locator("form")).toBeVisible();
