@@ -16,7 +16,7 @@ import { TechStackRationale } from "@/components/performance/TechStackRationale"
 export const metadata: Metadata = {
   title: "Performance",
   description:
-    "Real-time performance metrics, Core Web Vitals, and an interactive speed test for baltzakis.dev — built for speed.",
+    "Real-time performance metrics, Core Web Vitals, and an interactive speed test for baltzakisthemis.com — built for speed.",
   openGraph: {
     title: "Performance | Themistoklis Baltzakis",
     description:
