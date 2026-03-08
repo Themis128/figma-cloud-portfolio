@@ -25,7 +25,7 @@ frontend:
       - node_modules/**/*
       - .next/cache/**/*
   environment:
-    NODE_OPTIONS: "--max-old-space-size=4096"
+    NODE_OPTIONS: "--max-old-space-size=1536"
 
 # Custom headers for security and caching (CloudFront level)
 customHeaders:
