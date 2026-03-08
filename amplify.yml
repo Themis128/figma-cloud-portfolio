@@ -15,7 +15,8 @@ frontend:
     build:
       commands:
         - npx ampx generate outputs --branch $AWS_BRANCH --app-id $AWS_APP_ID
-        - pnpm run build
+        - node --version
+        - pnpm run build; echo "EXIT_CODE=$?"; dmesg 2>/dev/null | tail -20 || true
   artifacts:
     baseDirectory: out
     files:
