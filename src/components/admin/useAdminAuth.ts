@@ -12,7 +12,17 @@ export function useAdminAuth() {
     async (email: string, password: string): Promise<boolean> => {
       try {
         setLoginError(null);
-        await signInWithEmailAndPassword(auth, email, password);
+
+        const AUTH_TIMEOUT_MS = 15000;
+        const authPromise = signInWithEmailAndPassword(auth, email, password);
+        const timeoutPromise = new Promise<never>((_resolve, reject) => {
+          setTimeout(
+            () => reject(new Error("Authentication timed out. Please try again.")),
+            AUTH_TIMEOUT_MS,
+          );
+        });
+
+        await Promise.race([authPromise, timeoutPromise]);
         return true;
       } catch (err: unknown) {
         const code =
@@ -26,8 +36,15 @@ export function useAdminAuth() {
           "auth/too-many-requests":
             "Too many failed attempts. Please try again later.",
           "auth/user-disabled": "This account has been disabled",
+          "auth/network-request-failed":
+            "Network error. Please check your connection.",
+          "auth/operation-not-allowed":
+            "Email/password sign-in is not enabled. Enable it in Firebase Console.",
         };
-        setLoginError(messages[code] ?? "Login failed. Please try again.");
+        setLoginError(
+          messages[code] ??
+            (err instanceof Error ? err.message : "Login failed. Please try again."),
+        );
         return false;
       }
     },

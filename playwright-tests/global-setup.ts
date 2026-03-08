@@ -22,7 +22,7 @@ export default async function globalSetup(config: FullConfig) {
 
   const startTime = Date.now();
   const environment = process.env.NODE_ENV || "development";
-  const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082"; // Updated for current app architecture
+  const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
 
   try {
     // 1. Setup global functions

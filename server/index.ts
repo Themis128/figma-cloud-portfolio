@@ -4,27 +4,35 @@ import "./env";
 
 // Main server setup (express config + routes)
 import express from "express";
+import cors from "cors";
 import playwrightAutofix from "./routes/playwrightAutofix";
 import resume from "./routes/resume";
 import apiKeys from "./routes/apiKeys";
 import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
+import github from "./routes/github";
+import general from "./routes/general";
+import admin from "./routes/admin";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 // Public routes
+app.use("/api", general);
 app.use("/api/playwright-autofix", playwrightAutofix);
 app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
+app.use("/api/github", github);
 
 // Protected routes (require Firebase Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);
+app.use("/api/admin", requireAuth, admin);
 
 app.get("/", (req, res) => res.send("API Root"));
 

@@ -43,7 +43,7 @@ const config = createPlaywrightConfig("ci", {
   ],
   // Use environment-aware base URL
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Updated for current app architecture
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
   },
   // No webServer in CI - assumes application is already running
   webServer: undefined,

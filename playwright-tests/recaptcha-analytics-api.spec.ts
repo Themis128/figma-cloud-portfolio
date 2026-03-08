@@ -370,12 +370,15 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
 
   test.describe("Performance and Reliability Tests", () => {
     test("should handle rapid page navigation", async ({ page }) => {
-      // Rapidly navigate between pages
-      await page.goto("/");
-      await page.goto("/contact");
-      await page.goto("/about");
-      await page.goto("/");
-      await page.goto("/contact");
+      // Rapidly navigate between pages, waiting for each to start loading
+      await page.goto("/", { waitUntil: "commit" });
+      await page.goto("/contact/", { waitUntil: "commit" });
+      await page.goto("/about/", { waitUntil: "commit" });
+      await page.goto("/", { waitUntil: "commit" });
+      await page.goto("/contact/", { waitUntil: "commit" });
+
+      // Wait for the final page to fully load
+      await page.waitForLoadState("domcontentloaded");
 
       // Should handle all navigation without issues
       await expect(page.locator("body")).toBeVisible();

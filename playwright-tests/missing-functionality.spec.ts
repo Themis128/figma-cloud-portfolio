@@ -224,7 +224,7 @@ test.describe("Missing Functionality Detection", () => {
     await waitForAppReady(page);
 
     // Check for meta title
-    const title = page.locator('title');
+    const title = page.locator('head title');
     await expect(title).toBeAttached();
 
     // Check for meta description

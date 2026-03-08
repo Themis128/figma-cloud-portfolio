@@ -1,49 +1,87 @@
 import { createPlaywrightConfig } from "./playwright.config.shared";
+import { 
+  createViewportConfig, 
+  VIEWPORTS, 
+  DEVICE_PRESETS 
+} from "./playwright.config.viewport";
 
-// Main development configuration
-const config = createPlaywrightConfig("development", {
+// Main development configuration with viewport support
+const config = createViewportConfig("development", {
   // Custom overrides for development environment
   testMatch: [
     "**/*.spec.ts",
     "**/*.accessibility.spec.ts",
     "**/*.performance.spec.ts",
     "**/*.e2e.spec.ts",
+    "**/*.viewport.spec.ts",
+    "**/*.responsive.spec.ts",
   ],
   // Add custom projects for specific testing needs
   projects: [
     // Default browser projects from shared config
     ...createPlaywrightConfig("development").projects,
-    // Additional mobile device projects
+    
+    // Viewport-specific projects for the requested sizes
     {
-      name: "mobile-ios",
+      name: "large-desktop-1280x800",
       use: {
+        viewport: VIEWPORTS.LARGE_DESKTOP,
         launchOptions: {
           args: ["--disable-web-security", "--allow-running-insecure-content"],
-        },
-        // Add environment-specific viewport if needed
-        viewport: {
-          width: 375,
-          height: 667,
         },
       },
     },
     {
-      name: "mobile-android",
+      name: "small-desktop-900x600",
       use: {
+        viewport: VIEWPORTS.SMALL_DESKTOP,
         launchOptions: {
           args: ["--disable-web-security", "--allow-running-insecure-content"],
         },
-        // Add environment-specific viewport if needed
-        viewport: {
-          width: 360,
-          height: 640,
+      },
+    },
+    {
+      name: "tablet-768x1024",
+      use: {
+        viewport: VIEWPORTS.TABLET_PORTRAIT,
+        launchOptions: {
+          args: ["--disable-web-security", "--allow-running-insecure-content"],
+        },
+      },
+    },
+    {
+      name: "mobile-360x640",
+      use: {
+        viewport: VIEWPORTS.MOBILE_SMALL,
+        launchOptions: {
+          args: ["--disable-web-security", "--allow-running-insecure-content"],
+        },
+      },
+    },
+    
+    // Additional common device presets
+    {
+      name: "iphone-se",
+      use: {
+        viewport: VIEWPORTS.IPHONE_SE,
+        launchOptions: {
+          args: ["--disable-web-security", "--allow-running-insecure-content"],
+        },
+      },
+    },
+    {
+      name: "ipad-pro",
+      use: {
+        viewport: VIEWPORTS.IPAD_PRO,
+        launchOptions: {
+          args: ["--disable-web-security", "--allow-running-insecure-content"],
         },
       },
     },
   ],
   // Use environment-aware base URL
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Next.js dev server (matches NEXT_PUBLIC_SITE_URL in .env.local)
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
   },
 });
 

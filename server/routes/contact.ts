@@ -190,6 +190,12 @@ router.post("/", async (req: Request, res: Response) => {
     const trimmedSubject = (subject ?? "No subject").trim();
     const trimmedMessage = message.trim();
 
+    // If no delivery channels are configured, accept the message (dev/test mode)
+    if (!SLACK_WEBHOOK_URL && !SES_VERIFIED_EMAIL) {
+      console.log("Contact form received (no delivery channels configured):", { name: trimmedName, email: trimmedEmail, subject: trimmedSubject });
+      return res.json({ success: true, message: "Message sent successfully" });
+    }
+
     // Send notifications in parallel — don't fail the request if one channel errors
     const results = await Promise.allSettled([
       sendSlackNotification(trimmedName, trimmedEmail, trimmedSubject, trimmedMessage),

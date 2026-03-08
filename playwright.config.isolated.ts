@@ -38,7 +38,7 @@ const config = createPlaywrightConfig("isolated", {
     trace: "on",
     video: "retain-on-failure",
     screenshot: "only-on-failure",
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8082", // Updated for current app architecture
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
   },
 });
 
