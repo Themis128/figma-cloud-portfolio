@@ -34,7 +34,7 @@ app.use("/api/github", github);
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);
 app.use("/api/admin", requireAuth, admin);
 
-app.get("/", (req, res) => res.send("API Root"));
+app.get("/", (_req, res) => res.send("API Root"));
 
 const server = app.listen(3001, () => console.log("Server running on port 3001"));
 

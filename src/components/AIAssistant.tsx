@@ -123,7 +123,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
       <div className={`fixed bottom-6 right-6 ${className}`}>
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg"
+          className="rounded-full w-16 h-16 bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg"
           aria-label="Open AI Assistant"
         >
           <Bot className="h-6 w-6" />
@@ -137,7 +137,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
       className={`fixed bottom-6 right-6 w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl overflow-hidden ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      <div className="flex items-center justify-between p-4 bg-linear-to-r from-blue-500 to-purple-600 text-white">
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src="/api/placeholder/40/40" alt="AI Assistant" />

@@ -195,11 +195,11 @@ export function SpeedTestRunner() {
       })
       .join("\n");
 
-    const text = `Portfolio performance results:\n${lines}\nbaltzakis.dev`;
+    const text = `Portfolio performance results:\n${lines}\nbaltzakisthemis.com`;
 
     if (navigator.share) {
       void navigator.share({
-        title: "baltzakis.dev — Performance Results",
+        title: "baltzakisthemis.com — Performance Results",
         text,
       });
     } else {

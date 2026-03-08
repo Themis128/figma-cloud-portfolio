@@ -34,7 +34,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://baltzakis.dev",
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.baltzakisthemis.com",
   ),
   title: {
     default: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     "Web Development",
     "Portfolio",
   ],
-  authors: [{ name: "Themistoklis Baltzakis", url: "https://baltzakis.dev" }],
+  authors: [{ name: "Themistoklis Baltzakis", url: "https://www.baltzakisthemis.com" }],
   creator: "Themistoklis Baltzakis",
   publisher: "Themistoklis Baltzakis",
   formatDetection: {
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://baltzakis.dev",
+    url: "https://www.baltzakisthemis.com",
     title: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
     description:
       "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
@@ -104,9 +104,9 @@ export const metadata: Metadata = {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
   },
   alternates: {
-    canonical: "https://baltzakis.dev",
+    canonical: "https://www.baltzakisthemis.com",
     languages: {
-      "en-US": "https://baltzakis.dev",
+      "en-US": "https://www.baltzakisthemis.com",
     },
   },
   manifest: "/manifest.webmanifest",

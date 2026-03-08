@@ -55,12 +55,12 @@ export function DefaultStructuredData() {
       name: "Themistoklis Baltzakis - Portfolio",
       description:
         "Cloud Architect & Full-Stack Developer portfolio showcasing modern web applications, cloud solutions, and technical expertise",
-      url: "https://baltzakis.dev",
+      url: "https://www.baltzakisthemis.com",
       author: {
         "@type": "Person",
         name: "Themistoklis Baltzakis",
         jobTitle: "Cloud Architect & Full-Stack Developer",
-        url: "https://baltzakis.dev",
+        url: "https://www.baltzakisthemis.com",
         sameAs: [
           "https://github.com/Themis128",
           "https://linkedin.com/in/baltzakis-themis",
@@ -68,7 +68,7 @@ export function DefaultStructuredData() {
       },
       potentialAction: {
         "@type": "SearchAction",
-        target: "https://baltzakis.dev/projects?search={search_term_string}",
+        target: "https://www.baltzakisthemis.com/projects?search={search_term_string}",
         "query-input": "required name=search_term_string",
       },
     };
@@ -81,7 +81,7 @@ export function DefaultStructuredData() {
       jobTitle: "Cloud Architect & Full-Stack Developer",
       description:
         "Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments",
-      url: "https://baltzakis.dev",
+      url: "https://www.baltzakisthemis.com",
       email: "baltzakis.themis@gmail.com",
       sameAs: [
         "https://github.com/Themis128",
