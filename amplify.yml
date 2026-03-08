@@ -1,4 +1,11 @@
 version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - npm install -g pnpm
+        - pnpm install --frozen-lockfile
+        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
   phases:
     preBuild:
@@ -8,8 +15,7 @@ frontend:
     build:
       commands:
         - npx ampx generate outputs --branch $AWS_BRANCH --app-id $AWS_APP_ID
-        - node -e "console.log('Memory:', JSON.stringify(process.memoryUsage()), 'CPUs:', require('os').cpus().length)"
-        - pnpm run build 2>/tmp/build-stderr.log || (echo "=== BUILD STDERR ===" && cat /tmp/build-stderr.log && echo "=== EXIT CODE $? ===" && exit 1)
+        - pnpm run build
   artifacts:
     baseDirectory: out
     files:
@@ -20,7 +26,6 @@ frontend:
       - .next/cache/**/*
   environment:
     NODE_OPTIONS: "--max-old-space-size=4096"
-    NEXT_PRIVATE_WORKER_THREADS: "1"
 
 # Custom headers for security and caching (CloudFront level)
 customHeaders:
