@@ -46,6 +46,8 @@ const nextConfig: NextConfig = {
     },
     // Limit build workers to avoid OOM on Amplify (8 vCPU / 16GB)
     cpus: 2,
+    // Disable build traces (not needed for static export, prevents OOM in CI)
+    outputFileTracingExcludes: { "**/*": ["**/*"] },
   },
 
   // TypeScript typed routes (stable in Next.js 15.5+)
