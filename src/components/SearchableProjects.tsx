@@ -284,7 +284,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, index) => (
               <m.div
                 key={project.id}
