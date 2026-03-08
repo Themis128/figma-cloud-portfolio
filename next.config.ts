@@ -45,9 +45,7 @@ const nextConfig: NextConfig = {
       static: 180,
     },
     // Limit build workers to avoid OOM on Amplify (8 vCPU / 16GB)
-    cpus: 2,
-    // Disable build traces (not needed for static export, prevents OOM in CI)
-    outputFileTracingExcludes: { "**/*": ["**/*"] },
+    cpus: 1,
   },
 
   // TypeScript typed routes (stable in Next.js 15.5+)
@@ -136,6 +134,9 @@ const nextConfig: NextConfig = {
   // Static export for S3 + CloudFront hosting (production builds only)
   // Dev server needs full Next.js features (rewrites, headers, etc.)
   ...(process.env.NODE_ENV === "production" && { output: "export" as const }),
+
+  // Skip build traces (not needed for static export, prevents OOM in CI)
+  outputFileTracingExcludes: { "**/*": ["**/*"] },
 
   // Compression and optimization settings
   compress: true,
