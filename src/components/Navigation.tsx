@@ -34,7 +34,8 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="relative z-50">
+    <header className="relative z-50">
+    <nav>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -83,7 +84,7 @@ export default function Navigation() {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-md text-foreground hover:text-cyan-400 hover:bg-foreground/10 transition-colors"
+            className="md:hidden p-2 min-w-11 min-h-11 flex items-center justify-center rounded-md text-foreground hover:text-cyan-400 hover:bg-foreground/10 transition-colors"
             aria-label="Toggle menu"
             aria-expanded={isOpen}
           >
@@ -129,5 +130,6 @@ export default function Navigation() {
         </div>
       </div>
     </nav>
+    </header>
   );
 }
