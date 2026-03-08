@@ -40,6 +40,11 @@
       "version": "v7",
       "sha": "bbbca2ddaa5d8feaa63e36b76fdaad77386f024f"
     },
+    "aws-actions/configure-aws-credentials@v4": {
+      "repo": "aws-actions/configure-aws-credentials",
+      "version": "v4",
+      "sha": "ff717079ee2060e4bcee96c4779b553acc87447c"
+    },
     "github/gh-aw/actions/setup@v0.55.0": {
       "repo": "github/gh-aw/actions/setup",
       "version": "v0.55.0",
