@@ -8,7 +8,8 @@ frontend:
     build:
       commands:
         - npx ampx generate outputs --branch $AWS_BRANCH --app-id $AWS_APP_ID
-        - pnpm run build
+        - node -e "console.log('Memory:', JSON.stringify(process.memoryUsage()), 'CPUs:', require('os').cpus().length)"
+        - pnpm run build 2>/tmp/build-stderr.log || (echo "=== BUILD STDERR ===" && cat /tmp/build-stderr.log && echo "=== EXIT CODE $? ===" && exit 1)
   artifacts:
     baseDirectory: out
     files:
