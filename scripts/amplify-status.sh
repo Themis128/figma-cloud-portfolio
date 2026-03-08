@@ -17,7 +17,7 @@ NC='\033[0m'
 
 # ─── Header ────────────────────────────────────────────
 echo ""
-echo -e "${CYAN}${BOLD}  baltzakis.dev — Dev Environment${NC}"
+echo -e "${CYAN}${BOLD}  baltzakisthemis.com — Dev Environment${NC}"
 echo -e "${DIM}  ════════════════════════════════════════════${NC}"
 
 # ─── System Info ───────────────────────────────────────
@@ -96,7 +96,7 @@ echo -e ""
 echo -e "  ${BOLD}Production${NC}"
 echo -e "  ${DIM}────────────────────────────────────────────${NC}"
 echo -e "  App:        ${DIM}d1zjif7pi1h3om (us-east-1)${NC}"
-echo -e "  Domain:     ${CYAN}https://baltzakis.dev${NC}"
+echo -e "  Domain:     ${CYAN}https://www.baltzakisthemis.com${NC}"
 echo -e "  API:        ${DIM}${PRODUCTION_API}${NC}"
 
 echo -e ""
