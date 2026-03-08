@@ -44,6 +44,9 @@ const nextConfig: NextConfig = {
       dynamic: 30,
       static: 180,
     },
+    // Limit workers during static generation to avoid OOM in CI
+    staticGenerationMaxConcurrency: 4,
+    staticGenerationMinPagesPerWorker: 25,
   },
 
   // TypeScript typed routes (stable in Next.js 15.5+)
