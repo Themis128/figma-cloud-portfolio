@@ -7,6 +7,7 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { Providers } from "@/components/providers";
 import { DefaultStructuredData } from "@/components/StructuredData";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import AmplifyProvider from "@/components/AmplifyProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
@@ -132,6 +133,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
+          <AmplifyProvider>
           <AuthProvider>
             <MotionProvider>
               <DefaultStructuredData />
@@ -140,6 +142,7 @@ export default function RootLayout({
               <ChatbotWidget />
             </MotionProvider>
           </AuthProvider>
+          </AmplifyProvider>
         </Providers>
         <GoogleAnalytics />
       </body>
