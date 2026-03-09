@@ -52,6 +52,12 @@ jobs:
 
       - name: Invalidate CloudFront
         run: |
-          aws cloudfront create-invalidation \
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
             --distribution-id E134SCTR0QGQKJ \
-            --paths "/*"
+            --paths "/*" \
+            --query 'Invalidation.Id' --output text)
+          echo "CloudFront invalidation: ${INVALIDATION_ID}"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id E134SCTR0QGQKJ \
+            --id "${INVALIDATION_ID}"
+          echo "Invalidation completed"
