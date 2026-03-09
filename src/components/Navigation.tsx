@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { HoverButton } from "@/components/HoverAnimations";
+import { NotificationButton } from "@/components/NotificationButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
@@ -64,8 +65,9 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Theme and accessibility toggles */}
-          <div className="flex items-center gap-2">
+          {/* Theme, notifications and accessibility toggles */}
+          <div className="hidden md:flex items-center gap-2">
+            <NotificationButton />
             <ThemeToggle />
             <Button
               variant="outline"

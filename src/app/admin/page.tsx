@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ExternalLink, Terminal } from "lucide-react";
+import { Activity, Bell, ExternalLink, Terminal } from "lucide-react";
 
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
@@ -9,6 +9,7 @@ import AdminLogin from "@/components/admin/AdminLogin";
 import ApiConsole from "@/components/admin/ApiConsole";
 import ApiHealthDashboard from "@/components/admin/ApiHealthDashboard";
 import GoogleAnalyticsExplainer from "@/components/admin/GoogleAnalyticsExplainer";
+import { PushNotificationTester } from "@/components/PushNotificationTester";
 import { useAdminAuth } from "@/components/admin/useAdminAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -53,6 +54,13 @@ export default function AdminPage() {
                   Console
                 </TabsTrigger>
                 <TabsTrigger
+                  value="notifications"
+                  className="data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-400 font-mono text-xs"
+                >
+                  <Bell className="w-3.5 h-3.5 mr-1.5" />
+                  Push
+                </TabsTrigger>
+                <TabsTrigger
                   value="analytics"
                   className="data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-400 font-mono text-xs"
                 >
@@ -67,6 +75,10 @@ export default function AdminPage() {
 
               <TabsContent value="console">
                 <ApiConsole />
+              </TabsContent>
+
+              <TabsContent value="notifications">
+                <PushNotificationTester />
               </TabsContent>
 
               <TabsContent value="analytics">
