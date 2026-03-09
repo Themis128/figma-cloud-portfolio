@@ -372,8 +372,9 @@ Delete an API key.
 
 ### Push Notifications API
 
+**Source**: [`server/routes/pushNotifications.ts`](../server/routes/pushNotifications.ts)
 **External Service**: Web Push protocol
-**Env Vars Required**: VAPID keys (configured in Lambda)
+**Env Vars**: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (auto-generated if not set)
 
 #### `GET /api/push-notifications?action=vapid-public-key`
 
@@ -533,6 +534,8 @@ These rules proxy frontend `/api/*` requests to the Lambda backend.
 | `CAL_EVENT_TYPE_ID` | Booking API | Cal.com event type ID |
 | `SLACK_WEBHOOK_URL` | API Keys | Slack incoming webhook URL |
 | `SLACK_CHANNEL` | API Keys | Slack channel (default: `#personal-website`) |
+| `VAPID_PUBLIC_KEY` | Push Notifications | VAPID public key (auto-generated if not set) |
+| `VAPID_PRIVATE_KEY` | Push Notifications | VAPID private key (auto-generated if not set) |
 
 ### Frontend Environment Variables
 
