@@ -17,6 +17,7 @@ import apiKeys from "./routes/apiKeys";
 import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
+import pushNotifications from "./routes/pushNotifications";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
+app.use("/api/push-notifications", pushNotifications);
 
 // Protected routes (require Firebase Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);
