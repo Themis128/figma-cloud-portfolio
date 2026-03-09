@@ -17,6 +17,17 @@ chmod +x scripts/verify-deployment.sh
 scripts\verify-deployment.bat
 ```
 
+### Option 3: Playwright Production Smoke Tests
+
+```bash
+# Run API-level smoke tests against both production domains
+pnpm exec playwright test playwright-tests/production-smoke.spec.ts
+```
+
+Tests both `www.baltzakisthemis.com` and `baltzakisthemis.com` — covers all 9 pages, API health endpoints, contact form, chat API, booking slots, HTTPS, and 404 handling. See [`TESTING.md`](./TESTING.md) for details.
+
+---
+
 ## Manual Testing Checklist
 
 ### ✅ Frontend Tests

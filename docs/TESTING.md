@@ -336,6 +336,30 @@ Shared helpers used across spec files:
 
 ---
 
+### Production Smoke Tests
+
+#### `playwright-tests/production-smoke.spec.ts`
+
+Tests both `https://www.baltzakisthemis.com` and `https://baltzakisthemis.com` across 9 browser configs (Chromium, Firefox, WebKit × desktop + mobile viewports).
+
+- ✅ All 9 frontend pages return 200 (`/`, `/about/`, `/contact/`, `/resume/`, `/projects/`, `/performance/`, `/agents/`, `/settings/`, `/product/`)
+- ✅ API health endpoints (`/api/ping`, `/api/health`)
+- ✅ Contact form POST (accepts 200, 400, or 403 for reCAPTCHA rejection)
+- ✅ Chat API responds (SSE stream)
+- ✅ Booking slots API
+- ✅ HTTPS enforcement
+- ✅ Non-existent page handling (S3 returns 403 for missing keys)
+
+**Run production smoke tests:**
+
+```bash
+pnpm exec playwright test playwright-tests/production-smoke.spec.ts
+```
+
+> **Note**: These are API-level tests (using `request` context, not browser rendering) designed for fast post-deployment verification.
+
+---
+
 ## Coverage Map
 
 | Page/Feature               | Spec File(s)                                                               | Status     |
@@ -363,6 +387,7 @@ Shared helpers used across spec files:
 | SEO                        | `seo.spec.ts`                                                              | ✅ Covered |
 | Image Optimization         | `image-optimization.spec.ts`                                               | ✅ Covered |
 | Performance Metrics        | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
+| Production Smoke Tests     | `production-smoke.spec.ts`                                                 | ✅ Covered |
 | Theme Switching            | `app.spec.ts`, `theme-provider.integration.spec.ts`                        | ✅ Covered |
 | Cookie Consent             | `tests/cookie-consent.spec.ts`                                             | ✅ Covered |
 | Accessibility Button       | `tests/accessibility-button.spec.ts`                                       | ✅ Covered |

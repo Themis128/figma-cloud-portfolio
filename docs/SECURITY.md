@@ -51,6 +51,21 @@ Security and caching headers are configured in `amplify.yml` under `customHeader
 | **X-XSS-Protection** | Enables XSS filtering | `1; mode=block` |
 | **Cache-Control** | Controls caching behavior | Varies by content type |
 
+## Firebase Graceful Degradation
+
+Production uses Amplify Cognito for authentication — Firebase SDK is not configured. To prevent `auth/invalid-api-key` errors:
+
+- **`src/lib/firebase.ts`**: All `NEXT_PUBLIC_FIREBASE_*` env vars default to `""` via `??` (no `!` non-null assertions). An `isFirebaseConfigured` check gates all Firebase initialization. The exported `auth` object is a `Proxy` that returns safe defaults when Firebase is unconfigured:
+  - `currentUser` → `null`
+  - `onAuthStateChanged` → calls callback with `null`, returns no-op unsubscribe
+  - All other properties → `undefined`
+- **`src/contexts/AuthContext.tsx`**: `useEffect` wraps `onAuthStateChanged` in try/catch — catches any Firebase errors and sets `loading: false`
+- **Messaging functions** (`getMessagingInstance`, `getFCMToken`) return `null` when `isFirebaseConfigured` is `false`
+
+This ensures zero console errors in production while preserving full Firebase functionality in environments where credentials are provided.
+
+---
+
 ## Input Validation & Sanitization
 
 ### Contact Form Security
