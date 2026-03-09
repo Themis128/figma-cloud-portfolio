@@ -22,7 +22,8 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Auth + Data backend    | AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)  |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
-| Security               | reCAPTCHA v3, security headers via next.config.ts |
+| Auth (production)      | AWS Amplify Gen 2 Cognito (Firebase SDK disabled) |
+| Security               | reCAPTCHA v3, security headers via amplify.yml    |
 | Performance monitoring | web-vitals library                                |
 | Real-time features     | Socket.IO                                         |
 | 3D visualizations      | Three.js + @react-three/fiber                     |
@@ -157,7 +158,8 @@ The page is a **Server Component shell** with **Client Component islands** for l
 | `Navigation`                              | Top navbar with active link highlighting                   |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot (lazy-loaded)                            |
+| `ChatbotWidget`                           | Global AI chatbot (lazy-loaded, `inert` when collapsed)    |
+| `AuthProvider`                            | Firebase auth context (graceful fallback when unconfigured)|
 | `AccessibilityEnhancer`                   | Keyboard navigation and focus management                   |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
 | `StructuredData`                          | Schema.org JSON-LD for SEO                                 |
@@ -327,10 +329,28 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
 
 ---
 
+## Authentication
+
+### Production — Amplify Cognito
+
+Production uses **AWS Amplify Gen 2 Cognito** for authentication. Firebase is not configured in production — the Firebase SDK initialises with empty credentials and degrades gracefully:
+
+- `src/lib/firebase.ts` — Proxy object returns safe defaults (`currentUser: null`, no-op `onAuthStateChanged`) when `NEXT_PUBLIC_FIREBASE_API_KEY` is unset
+- `src/contexts/AuthContext.tsx` — `AuthProvider` wraps Firebase calls in try/catch; sets `loading: false` immediately when Firebase is unavailable
+
+This prevents the `auth/invalid-api-key` error that would otherwise appear in production console.
+
+### Local Development — Firebase (optional)
+
+Set `NEXT_PUBLIC_FIREBASE_*` environment variables in `.env.local` to enable Firebase auth during local development. When these are absent, the auth proxy silently returns null user — no crashes.
+
+---
+
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 69 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/` — 74 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
+- **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts` — API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
 
 See [`docs/TESTING.md`](./TESTING.md) for the complete testing guide.

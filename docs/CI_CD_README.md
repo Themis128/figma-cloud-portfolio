@@ -43,7 +43,7 @@ The project uses [GitHub Agentic Workflows](https://github.github.com/gh-aw/) wi
 | Workflow | Trigger | Description |
 |---|---|---|
 | Deploy to Production | Push to `production` / manual | S3 sync + CloudFront invalidation (standard Actions) |
-| Production Deployment (Agentic) | Push to `production` / manual | S3 deploy + smoke tests + deployment report (Copilot) |
+| Production Deployment (Agentic) | Push to `production` / manual | S3 deploy + Playwright smoke tests (`production-smoke.spec.ts`) + deployment report (Copilot) |
 | Daily Repo Status | Scheduled / manual | Creates daily activity reports as GitHub issues |
 | CI Doctor | On monitored workflow failure | Analyzes CI failures, identifies root causes, suggests fixes |
 | Daily QA | Scheduled / manual | Validates builds, tests, docs, code quality |

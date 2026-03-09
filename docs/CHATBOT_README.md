@@ -138,6 +138,16 @@ data: {"error": "HF API error 503: ..."}\n\n
 
 The frontend `ChatbotWidget.tsx` reads `response.body` with `getReader()`, splits on `\n`, and appends each `token` to the last assistant message in state.
 
+## Accessibility
+
+The chatbot widget follows WCAG 2.2 guidelines:
+
+- **ARIA labels**: Toggle button has dynamic `aria-label` ("Open chat" when closed, "Chat is open" when open)
+- **`inert` attribute**: When the chat panel is open, the floating toggle button is marked `inert` to remove it from the accessibility tree and prevent focus conflicts (replaces the previous `aria-hidden` approach which caused warnings when focus was retained on a hidden element)
+- **`tabIndex`**: Toggle button gets `tabIndex={-1}` when the panel is open to prevent keyboard focus
+- **Keyboard navigation**: Chat input is focusable, Enter sends messages, Escape does not close (preserves conversation)
+- **Focus management**: When chat opens, the panel receives visual focus; when closed, the toggle button becomes interactive again
+
 ## Troubleshooting
 
 | Symptom                              | Likely cause                  | Fix                                                             |

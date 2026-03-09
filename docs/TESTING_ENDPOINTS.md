@@ -245,4 +245,17 @@ echo "  GET /api/github/stats → ${GH}"
 
 ---
 
+## Playwright Production Smoke Tests
+
+The `playwright-tests/production-smoke.spec.ts` file automates verification of all critical endpoints above against both production domains (`www.baltzakisthemis.com` and `baltzakisthemis.com`).
+
+```bash
+# Run smoke tests (9 browser configs × 2 domains × 15 tests = 288 test cases)
+pnpm exec playwright test playwright-tests/production-smoke.spec.ts
+```
+
+These tests also run automatically as part of the agentic deploy workflow (`deploy-production.md`).
+
+---
+
 _Last Updated: March 9, 2026_
