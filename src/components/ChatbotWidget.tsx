@@ -232,7 +232,7 @@ export default function ChatbotWidget() {
         inert={isOpen || undefined}
         suppressHydrationWarning
         className={[
-          "fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3",
+          "fixed bottom-6 left-6 z-50 flex items-center gap-2 px-4 py-3",
           "rounded-full border border-cyan-500/60 bg-black/80 backdrop-blur-md",
           "text-cyan-400 font-mono text-sm font-medium",
           "shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]",
@@ -252,11 +252,11 @@ export default function ChatbotWidget() {
       {/* Chat panel */}
       <div
         className={[
-          "fixed bottom-6 right-6 z-50 flex flex-col",
+          "fixed bottom-6 left-6 z-50 flex flex-col",
           "w-88 sm:w-96 h-150",
           "rounded-xl border border-cyan-500/30 bg-black/85 backdrop-blur-xl",
           "shadow-[0_0_40px_rgba(34,211,238,0.15)]",
-          "transition-all duration-300 origin-bottom-right",
+          "transition-all duration-300 origin-bottom-left",
           isOpen
             ? "opacity-100 scale-100 pointer-events-auto"
             : "opacity-0 scale-90 pointer-events-none",
