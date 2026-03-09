@@ -20,14 +20,20 @@ The CI/CD pipeline provides automated testing, building, and deployment with the
 ```
 ├── .github/
 │   ├── workflows/
-│   │   ├── daily-repo-status.md       # AI-powered daily repo status reports
-│   │   ├── daily-repo-status.lock.yml # Compiled workflow (auto-generated)
-│   │   ├── ci-doctor.md               # AI-powered CI failure diagnostics
-│   │   └── ci-doctor.lock.yml         # Compiled workflow (auto-generated)
+│   │   ├── deploy.yml                         # Standard GitHub Actions deploy workflow
+│   │   ├── deploy-production.md               # Agentic deploy workflow (Copilot)
+│   │   ├── deploy-production.lock.yml         # Compiled agentic workflow (auto-generated)
+│   │   ├── daily-repo-status.md               # AI-powered daily repo status reports
+│   │   ├── daily-repo-status.lock.yml         # Compiled workflow (auto-generated)
+│   │   ├── ci-doctor.md                       # AI-powered CI failure diagnostics
+│   │   ├── ci-doctor.lock.yml                 # Compiled workflow (auto-generated)
+│   │   └── ...                                # Additional agentic workflows
 │   ├── agents/
-│   │   └── agentic-workflows.agent.md # Dispatcher agent for gh-aw
+│   │   └── agentic-workflows.agent.md         # Dispatcher agent for gh-aw
 │   └── aw/
-│       └── actions-lock.json          # Pinned action versions
+│       └── actions-lock.json                  # Pinned action versions
+├── scripts/
+│   └── deploy.sh                              # Local deploy script (S3 + CloudFront)
 ```
 
 ### GitHub Agentic Workflows (gh-aw)
@@ -36,8 +42,15 @@ The project uses [GitHub Agentic Workflows](https://github.github.com/gh-aw/) wi
 
 | Workflow | Trigger | Description |
 |---|---|---|
+| Deploy to Production | Push to `production` / manual | S3 sync + CloudFront invalidation (standard Actions) |
+| Production Deployment (Agentic) | Push to `production` / manual | S3 deploy + smoke tests + deployment report (Copilot) |
 | Daily Repo Status | Scheduled / manual | Creates daily activity reports as GitHub issues |
 | CI Doctor | On monitored workflow failure | Analyzes CI failures, identifies root causes, suggests fixes |
+| Daily QA | Scheduled / manual | Validates builds, tests, docs, code quality |
+| Daily Accessibility Review | Scheduled / manual | WCAG 2.2 compliance checks |
+| Daily Malicious Code Scan | Scheduled / manual | Reviews recent code for suspicious patterns |
+| Link Checker | Scheduled / manual | Finds/fixes broken documentation links |
+| Playwright Test Runner | Scheduled / manual | Full E2E suite with regression detection |
 
 **Required secret**: `COPILOT_GITHUB_TOKEN` — fine-grained PAT with "Copilot Requests" Account permission (Read).
 
@@ -57,8 +70,11 @@ gh aw health
 
 ### Deployment
 
-- **Frontend**: AWS Amplify auto-deploys from `production` branch
-- **Backend**: AWS Lambda (manual deployment)
+- **Frontend**: S3 sync + CloudFront invalidation (via GitHub Actions or `scripts/deploy.sh`)
+- **Amplify Gen 2 Backend**: Cognito + AppSync + DynamoDB (deployed via `ampx pipeline-deploy` in Amplify backend phase)
+- **Lambda Backend**: AWS Lambda `figma-portfolio-api` (manual deployment)
+
+> **Note**: Amplify Hosting auto-build is bypassed for the frontend (Next.js 16 OOMs on the build instance). The deploy workflows sync directly to S3.
 
 ## Workflows
 
@@ -130,10 +146,12 @@ gh aw health
 # GitHub Agentic Workflows
 COPILOT_GITHUB_TOKEN=github_pat_...  # Fine-grained PAT with "Copilot Requests" Account permission
 
-# AWS Credentials (for deployment workflows, if added)
+# AWS Credentials (for S3 + CloudFront deployment)
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-AWS_REGION=your_aws_region
+
+# Amplify Gen 2 Backend
+AMPLIFY_PRODUCTION_APP_ID=d1zjif7pi1h3om
 ```
 
 ### Environment Variables
@@ -167,11 +185,14 @@ NODE_ENV=staging|production
 ### Manual Deployments
 
 ```bash
-# Trigger staging deployment
-gh workflow run "Deploy to Staging"
-
-# Trigger production deployment
+# Trigger production deployment (standard)
 gh workflow run "Deploy to Production"
+
+# Trigger production deployment (agentic — with smoke tests + report)
+gh workflow run "Production Deployment Workflow (S3 + CloudFront)"
+
+# Local deploy (requires AWS CLI configured)
+./scripts/deploy.sh
 ```
 
 ### Rollback Procedures
@@ -330,7 +351,7 @@ curl https://yourdomain.com/deployment-status-production.json
 - **External Tools**:
   - Trivy (security scanning)
   - pnpm (package management)
-  - Node.js 20.x
+  - Node.js 22.x
 
 ## Contributing
 
@@ -344,4 +365,4 @@ When modifying CI/CD workflows:
 
 ---
 
-_Last Updated: March 7, 2026_
+_Last Updated: March 9, 2026_

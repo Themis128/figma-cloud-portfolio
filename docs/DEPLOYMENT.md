@@ -4,7 +4,7 @@ This document provides comprehensive deployment instructions for the portfolio p
 
 ## Deployment Overview
 
-The portfolio uses a **static export** architecture with **S3 + CloudFront** for frontend hosting and **AWS Lambda** for backend API functionality.
+The portfolio uses a **static export** architecture with **S3 + CloudFront** for frontend hosting, **AWS Lambda** for backend API functionality, and **AWS Amplify Gen 2** for auth + data (Cognito + AppSync + DynamoDB).
 
 ### Architecture Diagram
 
@@ -21,15 +21,19 @@ The portfolio uses a **static export** architecture with **S3 + CloudFront** for
          │                       │                       │
          └───────────────────────┼───────────────────────┘
                                  │
-                    ┌──────────────────┐
-                    │   Route 53       │
-                    │   DNS            │
-                    │                  │
-                    │ • Domain         │
-                    │ • SSL Certs      │
-                    │ • Health Checks  │
-                    └──────────────────┘
+              ┌──────────────────┼──────────────────┐
+              │                  │                  │
+    ┌──────────────────┐  ┌────────────┐  ┌────────────────┐
+    │   Amplify Gen 2  │  │  Route 53  │  │  CloudFormation│
+    │   Backend        │  │  DNS       │  │                │
+    │                  │  │            │  │  • CDK Stacks  │
+    │ • Cognito Auth   │  │ • Domain   │  │  • Backend     │
+    │ • AppSync GQL    │  │ • SSL      │  │    resources   │
+    │ • DynamoDB       │  │ • Health   │  │                │
+    └──────────────────┘  └────────────┘  └────────────────┘
 ```
+
+> **Note**: Amplify Hosting's build system cannot handle the Next.js 16 build within its memory limits (OOM at "Collecting build traces"). Frontend deployment bypasses Amplify Hosting entirely — using direct S3 sync + CloudFront invalidation instead.
 
 ## Prerequisites
 
@@ -79,7 +83,7 @@ The portfolio uses a **static export** architecture with **S3 + CloudFront** for
 
 ```env
 # Client-side variables (bundled into JS)
-NEXT_PUBLIC_SITE_URL=https://baltzakis.dev
+NEXT_PUBLIC_SITE_URL=https://www.baltzakisthemis.com
 NEXT_PUBLIC_GA_ID=GA_MEASUREMENT_ID
 NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
@@ -184,7 +188,7 @@ aws cloudfront create-distribution \
 ```bash
 # Create SSL certificate in ACM (us-east-1 for CloudFront)
 aws acm request-certificate \
-  --domain-name baltzakis.dev \
+  --domain-name baltzakisthemis.com \
   --validation-method DNS \
   --region us-east-1
 
@@ -200,7 +204,7 @@ aws cloudfront update-distribution \
   "CallerReference": "portfolio-frontend",
   "Aliases": {
     "Quantity": 1,
-    "Items": ["baltzakis.dev"]
+    "Items": ["baltzakisthemis.com"]
   },
   "DefaultRootObject": "index.html",
   "Origins": {
@@ -283,7 +287,7 @@ aws lambda update-function-configuration \
 aws lambda create-function-url-config \
   --function-name figma-portfolio-api \
   --auth-type NONE \
-  --cors '{"AllowOrigins":["https://baltzakis.dev"],"AllowMethods":["GET","POST","PUT","DELETE"],"AllowHeaders":["*"]}'
+  --cors '{"AllowOrigins":["https://baltzakisthemis.com"],"AllowMethods":["GET","POST","PUT","DELETE"],"AllowHeaders":["*"]}'
 
 # Get function URL
 aws lambda get-function-url-config --function-name figma-portfolio-api
@@ -354,78 +358,59 @@ aws lambda create-function \
   --role arn:aws:iam::account:role/lambda-execution-role \
   --handler main:app \
   --zip-file fileb://lambda-chatbot.zip \
-  --environment Variables="{HF_TOKEN=your-hf-token,PORTFOLIO_ORIGIN=https://baltzakis.dev}"
+  --environment Variables="{HF_TOKEN=your-hf-token,PORTFOLIO_ORIGIN=https://baltzakisthemis.com}"
 
 # Create function URL
 aws lambda create-function-url-config \
   --function-name figma-portfolio-chatbot \
   --auth-type NONE \
-  --cors '{"AllowOrigins":["https://baltzakis.dev"],"AllowMethods":["GET","POST"],"AllowHeaders":["*"]}'
+  --cors '{"AllowOrigins":["https://baltzakisthemis.com"],"AllowMethods":["GET","POST"],"AllowHeaders":["*"]}'
 ```
 
 ## CI/CD Pipeline
 
-### GitHub Actions Workflow
+### Deployment Workflows
 
-**.github/workflows/deploy.yml:**
-```yaml
-name: Deploy Portfolio
+The project uses two deployment mechanisms that trigger on push to `production` branch or manual dispatch:
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+| Workflow | File | Description |
+|---|---|---|
+| Deploy to Production | `.github/workflows/deploy.yml` | Standard GitHub Actions — builds, syncs to S3, invalidates CloudFront |
+| Production Deployment (Agentic) | `.github/workflows/deploy-production.md` | Copilot-powered agentic workflow — same deployment + smoke tests + deployment report |
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment: production
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'pnpm'
-        
-    - name: Install dependencies
-      run: pnpm install
-      
-    - name: Build frontend
-      run: pnpm build
-      
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-        
-    - name: Deploy frontend to S3
-      run: |
-        aws s3 sync out/ s3://figma-portfolio-static --delete
-        aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"
-        
-    - name: Deploy backend to Lambda
-      run: |
-        pnpm build:server
-        aws lambda update-function-code \
-          --function-name figma-portfolio-api \
-          --zip-file fileb://dist/server.zip
+Both workflows:
+1. Generate `amplify_outputs.json` from the Amplify Gen 2 backend (`ampx generate outputs`)
+2. Build the Next.js static export (`pnpm build`)
+3. Sync `out/` to S3 (`aws s3 sync`)
+4. Invalidate CloudFront cache
+
+The agentic workflow additionally runs Playwright smoke tests and creates a GitHub discussion with the deployment report.
+
+### Local Deploy Script
+
+```bash
+# Full deploy: build → S3 sync → CloudFront invalidation (with wait)
+./scripts/deploy.sh
 ```
 
-### Environment Secrets
-
-Add these secrets to your GitHub repository:
+### Required GitHub Secrets
 
 ```
-AWS_ACCESS_KEY_ID=your-aws-access-key
-AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+AWS_ACCESS_KEY_ID           # IAM user with S3 + CloudFront permissions
+AWS_SECRET_ACCESS_KEY       # IAM user secret key
+AMPLIFY_PRODUCTION_APP_ID   # Amplify App ID (d1zjif7pi1h3om)
+COPILOT_GITHUB_TOKEN        # Fine-grained PAT for agentic workflows
 ```
+
+### Amplify Gen 2 Backend
+
+The Amplify Gen 2 backend (Cognito + AppSync + DynamoDB) is deployed separately:
+
+- **Production**: Deployed via `ampx pipeline-deploy` in `amplify.yml` backend phase (triggered by Amplify Hosting)
+- **Development**: `pnpm amplify:dev` runs a local sandbox
+- **Client config**: `amplify_outputs.json` is generated per environment and gitignored
+
+> **Important**: Amplify Hosting auto-build should be disabled for the frontend (it OOMs). The backend phase still runs successfully.
 
 ## Alternative Deployment Platforms
 
@@ -494,13 +479,13 @@ netlify deploy --prod
 
 ```bash
 # Check frontend health
-curl -I https://baltzakis.dev
+curl -I https://baltzakisthemis.com
 
 # Check API health
-curl https://baltzakis.dev/api/health
+curl https://baltzakisthemis.com/api/health
 
 # Check chatbot health
-curl https://baltzakis.dev/api/chat/health
+curl https://baltzakisthemis.com/api/chat/health
 ```
 
 ### Performance Monitoring
