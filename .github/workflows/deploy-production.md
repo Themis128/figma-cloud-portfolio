@@ -54,6 +54,9 @@ steps:
     env:
       NODE_ENV: production
       NEXT_PUBLIC_SITE_URL: https://www.baltzakisthemis.com
+      NEXT_PUBLIC_API_BASE_URL: /api
+      NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
+      NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
 
   - name: Deploy to S3
     run: |

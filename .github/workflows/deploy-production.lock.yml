@@ -25,7 +25,7 @@
 # Generates Amplify backend outputs, builds Next.js static export,
 # syncs to S3, invalidates CloudFront, and validates with smoke tests.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"ef312467bb9a117f5165c90b3850e40f02efd07995a060fcfbe53aa81e4f335e","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"9a2f67c05ce35128c35b50d2454a43fa17055a7dd2472116683a5c8ed44fdc9d","compiler_version":"v0.55.0","strict":true}
 
 name: "Production Deployment Workflow (S3 + CloudFront)"
 "on":
@@ -296,6 +296,9 @@ jobs:
         run: npx ampx generate outputs --branch production --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
         shell: bash
       - env:
+          NEXT_PUBLIC_API_BASE_URL: /api
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
           NEXT_PUBLIC_SITE_URL: https://www.baltzakisthemis.com
           NODE_ENV: production
         name: Build application
@@ -777,7 +780,7 @@ jobs:
             const { main } = require('/opt/gh-aw/actions/redact_secrets.cjs');
             await main();
         env:
-          GH_AW_SECRET_NAMES: 'AMPLIFY_PRODUCTION_APP_ID,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,COPILOT_GITHUB_TOKEN,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN'
+          GH_AW_SECRET_NAMES: 'AMPLIFY_PRODUCTION_APP_ID,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,COPILOT_GITHUB_TOKEN,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN,NEXT_PUBLIC_GA_ID,NEXT_PUBLIC_RECAPTCHA_SITE_KEY'
           SECRET_AMPLIFY_PRODUCTION_APP_ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
           SECRET_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           SECRET_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -785,6 +788,8 @@ jobs:
           SECRET_GH_AW_GITHUB_MCP_SERVER_TOKEN: ${{ secrets.GH_AW_GITHUB_MCP_SERVER_TOKEN }}
           SECRET_GH_AW_GITHUB_TOKEN: ${{ secrets.GH_AW_GITHUB_TOKEN }}
           SECRET_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SECRET_NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+          SECRET_NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
       - name: Append agent step summary
         if: always()
         run: bash /opt/gh-aw/actions/append_agent_step_summary.sh
