@@ -5,6 +5,7 @@ import Script from "next/script";
 import { useCallback, useState } from "react";
 
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { trackLead } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,6 +72,7 @@ export default function QuickContactForm() {
       if (result.success) {
         setStatus("success");
         setFormData({ name: "", email: "", message: "" });
+        trackLead("quick_contact", "homepage");
       } else {
         setStatus("error");
         setErrorMsg(result.message || "Something went wrong. Please try again.");

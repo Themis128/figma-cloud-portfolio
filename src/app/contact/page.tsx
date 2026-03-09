@@ -20,6 +20,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard, HoverButton } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
+import { trackLead, trackOutboundClick } from "@/components/GoogleAnalytics";
 import { submitContactForm } from "@/lib/api";
 import {
   Card,
@@ -183,6 +184,7 @@ export default function ContactPage() {
       });
       setSubmitStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
+      trackLead("contact_form", formData.subject);
     } catch {
       setSubmitStatus("error");
     } finally {
@@ -238,6 +240,7 @@ export default function ContactPage() {
                             rel={
                               info.external ? "noopener noreferrer" : undefined
                             }
+                            onClick={() => trackOutboundClick(info.href!, info.label)}
                             className="block"
                           >
                             <ContactCard info={info} index={index} />

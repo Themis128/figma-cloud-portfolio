@@ -66,6 +66,61 @@ export function PerformanceMonitor() {
     setTimeout(reportNavigation, NAVIGATION_CHECK_DELAY_MS);
   }, []);
 
+  // Track scroll depth milestones (25%, 50%, 75%, 100%)
+  useEffect(() => {
+    const milestones = new Set<number>();
+    const thresholds = [25, 50, 75, 100];
+
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return;
+      const percent = Math.round((scrollTop / docHeight) * 100);
+
+      for (const threshold of thresholds) {
+        if (percent >= threshold && !milestones.has(threshold)) {
+          milestones.add(threshold);
+          if (window.gtag) {
+            window.gtag("event", "scroll_depth", {
+              percent_scrolled: threshold,
+              page_path: window.location.pathname,
+            });
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track engaged time (30s, 60s, 120s, 300s milestones)
+  useEffect(() => {
+    const startTime = Date.now();
+    const engagementMilestones = [30, 60, 120, 300];
+    let milestoneIndex = 0;
+
+    const interval = setInterval(() => {
+      if (milestoneIndex >= engagementMilestones.length) {
+        clearInterval(interval);
+        return;
+      }
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const nextMilestone = engagementMilestones[milestoneIndex];
+      if (nextMilestone !== undefined && elapsed >= nextMilestone) {
+        if (window.gtag) {
+          window.gtag("event", "engaged_time", {
+            engagement_seconds: nextMilestone,
+            page_path: window.location.pathname,
+          });
+        }
+        milestoneIndex++;
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Track memory usage (Chrome only)
   useEffect(() => {
     const trackMemory = () => {
