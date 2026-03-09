@@ -3,14 +3,15 @@
 ## Architecture
 
 - **Frontend**: Static export (`next build` with `output: "export"`) → S3 bucket → CloudFront CDN
-- **Backend**: Single AWS Lambda function (`figma-portfolio-api`) → CloudFront `/api/*` routing
-- **Domain**: `baltzakisthemis.com` via CloudFront
+- **Lambda Backend**: Single AWS Lambda function (`figma-portfolio-api`) → CloudFront `/api/*` routing
+- **Amplify Gen 2 Backend**: Cognito auth + AppSync GraphQL + DynamoDB (App ID: `d1zjif7pi1h3om`)
+- **Domain**: `www.baltzakisthemis.com` / `baltzakisthemis.com` via CloudFront
 
 ## Prerequisites
 
 ### Local Environment
 
-- **Node.js**: Version 20.x or higher
+- **Node.js**: Version 22.x or higher
 - **PNPM**: Package manager (`npm install -g pnpm`)
 - **AWS CLI**: Configured with your AWS credentials
 
@@ -182,8 +183,43 @@ npx tsx server/index.ts
 - Check invalidation status: `aws cloudfront list-invalidations --distribution-id E134SCTR0QGQKJ`
 - Verify S3 bucket contents: `aws s3 ls s3://figma-portfolio-static/`
 
+## CI/CD Deployment
+
+### Automated (GitHub Actions)
+
+Two workflows trigger on push to `production` branch or manual dispatch:
+
+| Workflow | File | Description |
+|---|---|---|
+| Deploy to Production | `.github/workflows/deploy.yml` | Standard Actions — build, S3 sync, CloudFront invalidation |
+| Production Deployment (Agentic) | `.github/workflows/deploy-production.md` | Copilot-powered — deploy + smoke tests + deployment report |
+
+Both generate `amplify_outputs.json` before building to ensure the Amplify Gen 2 backend config is included.
+
+```bash
+# Trigger manually
+gh workflow run "Deploy to Production"
+```
+
+### Local Deploy Script
+
+```bash
+# Full deploy: amplify outputs → build → S3 sync → CloudFront invalidation (with wait)
+./scripts/deploy.sh
+```
+
+### Required GitHub Secrets
+
+| Secret | Description |
+|---|---|
+| `AWS_ACCESS_KEY_ID` | IAM user with S3 + CloudFront permissions |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key |
+| `AMPLIFY_PRODUCTION_APP_ID` | Amplify App ID (`d1zjif7pi1h3om`) |
+| `COPILOT_GITHUB_TOKEN` | Fine-grained PAT for agentic workflows |
+
 ## Quick Deploy Checklist
 
+- [ ] `npx ampx generate outputs --branch production --app-id d1zjif7pi1h3om`
 - [ ] `pnpm build` succeeds
 - [ ] `aws s3 sync out/ s3://figma-portfolio-static --delete`
 - [ ] `aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"`

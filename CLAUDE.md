@@ -3,7 +3,7 @@
 ## Project Overview
 
 Next.js portfolio for Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist.
-Deployed as static export on AWS Amplify (S3 + CloudFront) with Lambda backend.
+Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen 2 (auth + data).
 
 ## Tech Stack
 
@@ -13,7 +13,7 @@ Deployed as static export on AWS Amplify (S3 + CloudFront) with Lambda backend.
 - **Animation**: Framer Motion
 - **3D**: Three.js + @react-three/fiber
 - **State**: TanStack Query v5
-- **Backend**: AWS Lambda (production), Express dev server (local, port 3001)
+- **Backend**: AWS Lambda (production), Amplify Gen 2 (Cognito + AppSync + DynamoDB), Express dev server (local, port 3001)
 - **Testing**: Playwright 1.57+ E2E, Vitest unit tests
 - **Package Manager**: pnpm
 

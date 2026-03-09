@@ -19,6 +19,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Backend (production)   | AWS Lambda (`figma-portfolio-api`)                |
 | Backend (local dev)    | Express.js on port 3001                           |
 | Chatbot backend        | Python FastAPI on port 8001                       |
+| Auth + Data backend    | AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)  |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
 | Security               | reCAPTCHA v3, security headers via next.config.ts |
@@ -238,7 +239,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | ------------------ | ------------------------------------------------------------------- |
 | reCAPTCHA v3       | Applied to contact form submissions                                 |
 | Input sanitisation | XSS, SQL injection patterns blocked in API routes                   |
-| Security headers   | X-DNS-Prefetch-Control, X-Content-Type-Options, Referrer-Policy, X-Frame-Options, X-XSS-Protection via `amplify.yml` customHeaders (`**/*.html` pattern) |
+| Security headers   | X-DNS-Prefetch-Control, X-Content-Type-Options, Referrer-Policy, X-Frame-Options, X-XSS-Protection via `amplify.yml` `customHeaders` (`**/*.html` pattern) |
 | Cache headers      | Cache-Control, CORS for JS/CSS/images/fonts via `amplify.yml` customHeaders |
 
 > **Note**: Security headers were moved from `next.config.ts headers()` to `amplify.yml customHeaders` because `output: "export"` is incompatible with runtime headers configuration.
@@ -253,9 +254,26 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | ------------ | ------------------------------------------------------- |
 | S3 bucket    | `figma-portfolio-static`                                |
 | CloudFront   | Distribution `E134SCTR0QGQKJ`                          |
+| Domain       | `www.baltzakisthemis.com` / `baltzakisthemis.com`       |
 | Build        | `pnpm build` → `out/` directory (static export)         |
 | Deploy       | `aws s3 sync out/ s3://figma-portfolio-static --delete` |
 | Invalidation | `aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"` |
+| CI/CD        | GitHub Actions (`deploy.yml`) + Agentic Workflow (`deploy-production.md`) |
+| Local deploy | `./scripts/deploy.sh`                                   |
+
+> **Note**: Amplify Hosting auto-build is bypassed — Next.js 16 OOMs on the Amplify build instance. Frontend deploys directly to S3.
+
+### Amplify Gen 2 Backend
+
+| Item         | Detail                                                  |
+| ------------ | ------------------------------------------------------- |
+| App ID       | `d1zjif7pi1h3om`                                        |
+| Region       | `us-east-1`                                             |
+| Auth         | Cognito (email login)                                   |
+| API          | AppSync GraphQL                                         |
+| Database     | DynamoDB                                                |
+| Deploy       | `ampx pipeline-deploy` (CI) / `ampx sandbox` (local)   |
+| Client config| `amplify_outputs.json` (gitignored, generated per env)  |
 
 ### Backend (Lambda)
 
@@ -289,7 +307,7 @@ GOOGLE_ANALYTICS_API_SECRET       # GA4 Measurement Protocol secret
 ### Client-side Environment Variables (bundled into JS)
 
 ```
-NEXT_PUBLIC_SITE_URL              # Canonical URL (https://baltzakis.dev)
+NEXT_PUBLIC_SITE_URL              # Canonical URL (https://www.baltzakisthemis.com)
 NEXT_PUBLIC_GA_ID                 # Google Analytics GA4 measurement ID
 NEXT_PUBLIC_SENTRY_DSN            # Sentry error tracking
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
