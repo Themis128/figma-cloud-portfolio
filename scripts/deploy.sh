@@ -20,7 +20,11 @@ npx ampx generate outputs --branch production --app-id d1zjif7pi1h3om
 
 # Build frontend
 echo "🔨 Building Next.js (static export)..."
-NEXT_PUBLIC_SITE_URL="${SITE_URL}" pnpm run build
+NEXT_PUBLIC_SITE_URL="${SITE_URL}" \
+NEXT_PUBLIC_API_BASE_URL="/api" \
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}" \
+NEXT_PUBLIC_GA_ID="${NEXT_PUBLIC_GA_ID:-}" \
+pnpm run build
 
 # Sync to S3
 echo "☁  Syncing to s3://${S3_BUCKET}..."
