@@ -119,6 +119,7 @@ router.get("/docs", (_req: Request, res: Response) => {
   <li><strong>GET /api/monitor</strong> — Server monitoring</li>
   <li><strong>GET /api/docs</strong> — This documentation</li>
   <li><strong>POST /api/upload</strong> — File upload</li>
+  <li><strong>GET /api/push-notifications?action=subscriptions</strong> — Push notification subscriptions</li>
   <li><strong>GET /api/admin/stats</strong> — Admin statistics (requires auth)</li>
 </ul>
 </body>

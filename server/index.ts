@@ -14,6 +14,7 @@ import contact from "./routes/contact";
 import github from "./routes/github";
 import general from "./routes/general";
 import admin from "./routes/admin";
+import pushNotifications from "./routes/pushNotifications";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
+app.use("/api/push-notifications", pushNotifications);
 app.use("/api/github", github);
 
 // Protected routes (require Firebase Auth)
