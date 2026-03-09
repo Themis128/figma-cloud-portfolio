@@ -8,20 +8,29 @@ import {
   type Auth,
 } from "firebase/auth";
 
-// Firebase configuration
+// Firebase configuration — all env vars are optional; Firebase features
+// degrade gracefully when credentials are not provided (e.g. production
+// where Amplify Cognito is used instead).
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
 };
+
+const isFirebaseConfigured = Boolean(firebaseConfig.apiKey);
 
 // Lazy-init: Firebase app only initializes once, on first access
 let _app: FirebaseApp | undefined;
 function getApp(): FirebaseApp {
   if (!_app) {
+    if (!isFirebaseConfigured) {
+      throw new Error(
+        "Firebase is not configured — set NEXT_PUBLIC_FIREBASE_* env vars",
+      );
+    }
     _app = initializeApp(firebaseConfig);
   }
   return _app;
@@ -30,17 +39,31 @@ function getApp(): FirebaseApp {
 // Auth can run in Node.js — safe to init eagerly on first import in browser,
 // but lazy-init to avoid issues during static page generation.
 let _auth: Auth | undefined;
-function getFirebaseAuth(): Auth {
+function getFirebaseAuth(): Auth | null {
+  if (!isFirebaseConfigured) return null;
   if (!_auth) {
     _auth = getAuth(getApp());
   }
   return _auth;
 }
 
-// Proxy object so `auth.currentUser` etc. works transparently
+// Proxy object so `auth.currentUser` etc. works transparently.
+// Returns null/undefined for properties when Firebase is not configured.
 export const auth: Auth = new Proxy({} as Auth, {
   get(_target, prop, receiver) {
-    return Reflect.get(getFirebaseAuth(), prop, receiver);
+    const realAuth = getFirebaseAuth();
+    if (!realAuth) {
+      // Return safe defaults when Firebase is not configured
+      if (prop === "currentUser") return null;
+      if (prop === "onAuthStateChanged") {
+        return (_cb: (user: User | null) => void) => {
+          _cb(null);
+          return () => {};
+        };
+      }
+      return undefined;
+    }
+    return Reflect.get(realAuth, prop, receiver);
   },
 });
 
@@ -48,7 +71,7 @@ export { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User };
 
 // Messaging requires browser APIs — lazy-load only when called
 export async function getMessagingInstance() {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined" || !isFirebaseConfigured) return null;
   const { getMessaging } = await import("firebase/messaging");
   return getMessaging(getApp());
 }

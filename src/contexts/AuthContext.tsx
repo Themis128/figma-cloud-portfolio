@@ -22,11 +22,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    try {
+      const unsubscribe = onAuthStateChanged(auth, (u) => {
+        setUser(u);
+        setLoading(false);
+      });
+      return unsubscribe;
+    } catch {
+      // Firebase not configured (e.g. production uses Amplify Cognito)
       setLoading(false);
-    });
-    return unsubscribe;
+      return undefined;
+    }
   }, []);
 
   return (

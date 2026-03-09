@@ -219,9 +219,9 @@ export default function ChatbotWidget() {
       {/* Floating toggle button */}
       <button
         onClick={() => setIsOpen((o) => !o)}
-        aria-label="Open chat"
-        aria-hidden={isOpen || undefined}
+        aria-label={isOpen ? "Chat is open" : "Open chat"}
         tabIndex={isOpen ? -1 : undefined}
+        inert={isOpen || undefined}
         suppressHydrationWarning
         className={[
           "fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3",
