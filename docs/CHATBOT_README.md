@@ -65,7 +65,7 @@ Start the dev server:
 pnpm dev
 ```
 
-Open the portfolio in your browser and click **Chat with AI** in the bottom-right corner.
+Open the portfolio in your browser and click **Chat with AI** in the bottom-left corner.
 
 ## Environment Variables
 
