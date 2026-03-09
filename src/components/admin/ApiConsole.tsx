@@ -3,6 +3,7 @@
 import { Play, RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 
+import { auth } from "@/lib/firebase";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -88,9 +89,15 @@ export default function ApiConsole() {
     const start = performance.now();
 
     try {
-      const opts: RequestInit = { method, redirect: "follow" };
+      const headers: Record<string, string> = {};
+      const user = auth.currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const opts: RequestInit = { method, redirect: "follow", headers };
       if (["POST", "PUT", "DELETE"].includes(method) && body.trim()) {
-        opts.headers = { "Content-Type": "application/json" };
+        headers["Content-Type"] = "application/json";
         opts.body = body;
       }
 
