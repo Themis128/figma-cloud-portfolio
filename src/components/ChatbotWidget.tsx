@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { trackGA4, trackLead } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -56,6 +57,7 @@ export default function ChatbotWidget() {
   }, [isOpen]);
 
   function handleBookingComplete(assistantId: string) {
+    trackLead("booking", "chatbot");
     // Replace the booking card message with a completion note.
     // Use destructuring to drop the `action` key (exactOptionalPropertyTypes requirement).
     setMessages((prev) =>
@@ -91,6 +93,7 @@ export default function ChatbotWidget() {
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setInput("");
     setIsStreaming(true);
+    trackGA4("chat_message", { message_length: messageText.length });
 
     // Build history (exclude welcome message)
     const history = messages
@@ -218,7 +221,12 @@ export default function ChatbotWidget() {
     <>
       {/* Floating toggle button */}
       <button
-        onClick={() => setIsOpen((o) => !o)}
+        onClick={() => {
+          setIsOpen((o) => {
+            if (!o) trackGA4("chat_open", { method: "fab_button" });
+            return !o;
+          });
+        }}
         aria-label={isOpen ? "Chat is open" : "Open chat"}
         tabIndex={isOpen ? -1 : undefined}
         inert={isOpen || undefined}

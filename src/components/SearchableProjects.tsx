@@ -3,6 +3,7 @@
 import { AnimatePresence, m } from "framer-motion";
 import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
 import React, { useDeferredValue, useMemo, useState } from "react";
+import { trackContentClick, trackGA4 } from "@/components/GoogleAnalytics";
 import { LinkPreview } from "@/components/LinkPreview";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -245,7 +246,10 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
                   selectedCategory === category.key ? "default" : "outline"
                 }
                 className="cursor-pointer hover:bg-gray-100"
-                onClick={() => setSelectedCategory(category.key)}
+                onClick={() => {
+                  setSelectedCategory(category.key);
+                  trackGA4("project_filter", { filter_category: category.label });
+                }}
               >
                 {category.label} ({category.count})
               </Badge>
@@ -360,6 +364,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
                           href={project.demoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => trackContentClick("project_demo", project.title)}
                           className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors text-sm"
                         >
                           <ExternalLink className="h-3 w-3" />
@@ -371,6 +376,7 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
                           href={project.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => trackContentClick("project_code", project.title)}
                           className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm"
                         >
                           <Github className="h-3 w-3" />

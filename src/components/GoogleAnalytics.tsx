@@ -68,7 +68,7 @@ export function GoogleAnalytics() {
   );
 }
 
-// Event tracking helper
+// Legacy event tracking helper (kept for backward compat)
 export function trackEvent(
   action: string,
   category: string,
@@ -81,6 +81,35 @@ export function trackEvent(
     event_category: category,
     event_label: label,
     value: value,
+  });
+}
+
+// GA4-native event helper — sends custom parameters that surface in the mobile app
+export function trackGA4(
+  eventName: string,
+  params?: Record<string, string | number | boolean>,
+) {
+  if (!GA_TRACKING_ID || typeof window === "undefined") return;
+
+  window.gtag?.("event", eventName, params);
+}
+
+// GA4 recommended event: generate_lead (contact form submissions)
+export function trackLead(method: string, source: string) {
+  trackGA4("generate_lead", { method, source });
+}
+
+// GA4 recommended event: select_content (project clicks, link clicks)
+export function trackContentClick(contentType: string, contentId: string) {
+  trackGA4("select_content", { content_type: contentType, item_id: contentId });
+}
+
+// GA4 recommended event: share (social/outbound links)
+export function trackOutboundClick(linkUrl: string, linkText: string) {
+  trackGA4("click", {
+    link_url: linkUrl,
+    link_text: linkText,
+    outbound: true,
   });
 }
 
