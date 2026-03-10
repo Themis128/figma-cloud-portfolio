@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
  * Tests for React 19 specific features including concurrent rendering,
  * automatic batching, Suspense, and error boundaries.
  *
- * Updated for Next.js 15 App Router (no #root element — uses __next or body).
+ * Updated for Next.js 16 App Router (no #root element — uses __next or body).
  */
 
 test.describe("React 19 Features", () => {

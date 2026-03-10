@@ -22,20 +22,15 @@ This project now includes Progressive Web App functionality, allowing users to i
 
 ### Dependencies
 
-```json
-{
-  "vite-plugin-pwa": "^1.2.0"
-}
-```
+PWA functionality is built into Next.js — no additional plugin required. The manifest and service worker are served from the `public/` directory.
 
 ### Configuration
 
-The PWA is configured in `vite.config.ts` with:
+The PWA is configured via:
 
-- Auto-updating service worker
-- Comprehensive caching strategies
-- App manifest with branding and icons
-- Runtime caching for API calls
+- `public/manifest.json` — app manifest with branding and icons
+- `public/sw.js` — service worker with caching strategies
+- Next.js static export deploys both files automatically
 
 ### Manifest Configuration
 
@@ -78,9 +73,9 @@ The PWA is configured in `vite.config.ts` with:
 
 ### Production
 
-- Build the app with `pnpm run build`
-- The service worker and manifest are automatically generated
-- Deploy the `dist/spa` folder to your hosting service
+- Build the app with `pnpm build`
+- The service worker and manifest are included in the static export
+- Deploy the `out/` folder to S3 + CloudFront
 
 ## Browser Support
 
@@ -141,7 +136,7 @@ Run a Lighthouse audit in Chrome DevTools to check PWA compliance:
 
 ### Updating the Manifest
 
-Edit the manifest configuration in `vite.config.ts`:
+Edit the manifest in `public/manifest.json`:
 
 - Change app name, description, colors
 - Update icons (place in `public/` directory)
@@ -149,7 +144,7 @@ Edit the manifest configuration in `vite.config.ts`:
 
 ### Service Worker Configuration
 
-Modify the `workbox` configuration in `vite.config.ts`:
+Modify the service worker in `public/sw.js`:
 
 - Add custom caching rules
 - Configure runtime caching strategies
@@ -186,21 +181,19 @@ Customize the `PWAInstallButton` component:
 ## File Structure
 
 ```
-project/
-├── client/
-│   ├── index.html          # PWA entry point
+portfolio-nextjs/
+├── src/
 │   ├── components/
-│   │   └── PWAInstallButton.tsx  # Install button component
+│   │   ├── PWAUpdateNotification.tsx  # PWA update notification component
+│   │   └── NotificationButton.tsx     # Site announcements toggle
 │   └── hooks/
-│       └── usePWA.ts       # PWA state management hook
+│       └── usePWA.ts                  # PWA state management hook
 ├── public/
-│   ├── logo.jpg            # App icon
-│   └── ...                 # Other static assets
-├── vite.config.ts          # PWA plugin configuration
-└── dist/spa/               # Build output with PWA files
-    ├── manifest.webmanifest
-    ├── sw.js
-    └── workbox-*.js
+│   ├── manifest.json                  # Web App Manifest
+│   ├── sw.js                          # Service worker
+│   ├── logo.jpg                       # App icon
+│   └── ...                            # Other static assets
+└── out/                               # Static export output
 ```
 
 ## Next Steps
@@ -238,7 +231,7 @@ Push notifications are implemented using the Web Push API with VAPID keys.
 ### Architecture
 
 - **Frontend**: `usePushNotifications` hook handles subscription management
-- **Backend**: Express API server on port 3000 handles VAPID keys and notification sending
+- **Backend**: Express API server on port 3001 (dev) / AWS Lambda (production) handles VAPID keys and notification sending
 - **Service Worker**: Receives and displays push notifications
 
 ### Development Setup
@@ -246,14 +239,14 @@ Push notifications are implemented using the Web Push API with VAPID keys.
 Push notifications require the Express API server to be running:
 
 ```bash
-# Terminal 1: Start Vite dev server (frontend on port 8082)
+# Terminal 1: Start Next.js dev server (frontend on port 3000)
 pnpm dev
 
-# Terminal 2: Start Express API server (backend on port 3000)
-npx tsx server/node-build.ts
+# Terminal 2: Start Express API server (backend on port 3001)
+pnpm dev:server
 ```
 
-The Vite config includes a proxy that forwards `/api` requests to the Express server.
+The Next.js dev server proxies `/api` requests to the Express server.
 
 ### API Endpoints
 
@@ -278,7 +271,7 @@ Update the keys in the server configuration and set a proper contact email.
 
 ### Testing Push Notifications
 
-1. Start both servers (Vite + Express)
+1. Start both servers (Next.js + Express)
 2. Click "Enable notifications" button in the app
 3. Grant notification permission when prompted
-4. Test with: `curl http://localhost:3000/api/push-notifications`
+4. Test with: `curl http://localhost:3001/api/push-notifications`

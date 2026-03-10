@@ -73,7 +73,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     await expect(viewport).toBeAttached();
     console.log("Meta tags verified");
 
-    // Check for script tags (React/Vite)
+    // Check for script tags (React/Next.js)
     const scripts = page.locator("script[src]");
     await expect(scripts.first()).toBeAttached();
     console.log("Script tags verified");
@@ -261,7 +261,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     await waitForAppReady(page);
 
     // Skip PWA manifest/meta tags test in development
-    // Vite PWA only injects these during production build
+    // PWA service worker only injects these during production build
     // Check for basic meta tags that should be present
     const viewport = page.locator('meta[name="viewport"]');
     await expect(viewport).toBeAttached();
@@ -1938,7 +1938,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       await page.goto("/");
       await waitForAppReady(page);
 
-      // Wait for the main content to be visible (React SPA loading)
+      // Wait for the main content to be visible (Next.js App Router loading)
       await page.waitForSelector("main", { timeout: 10000 });
 
       // Check for ARIA landmarks (may not all be present)

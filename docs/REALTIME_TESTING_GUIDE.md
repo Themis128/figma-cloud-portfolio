@@ -22,18 +22,18 @@ npx tsx server/node-build.ts
 
 **Critical**: Both servers must be running for real-time features to work.
 
-- Frontend: `http://localhost:8082` (Vite dev server)
-- Backend: `http://localhost:3000` (Express + Socket.IO)
+- Frontend: `http://localhost:3000` (Next.js dev server)
+- Backend: `http://localhost:3001` (Express + Socket.IO)
 
 ## Testing Socket.IO Server
 
 ### 1. Manual Socket.IO Connection Test
 
-Open browser console on `http://localhost:8082` and run:
+Open browser console on `http://localhost:3000` and run:
 
 ```javascript
 // Test Socket.IO connection
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3001");
 
 socket.on("connect", () => {
   console.log("✅ Socket.IO connected:", socket.id);
@@ -79,13 +79,13 @@ socket.emit("room:leave", "project:123");
 
 ### 3. Multi-tab Testing
 
-1. Open 2+ browser tabs to `http://localhost:8082`
+1. Open 2+ browser tabs to `http://localhost:3000`
 2. Open browser console in each tab
 3. Join the same room from different tabs:
 
 ```javascript
 // Tab 1
-window.socket = io("http://localhost:3000");
+window.socket = io("http://localhost:3001");
 window.socket.emit("presence:join", {
   userId: "user1",
   username: "Alice",
@@ -93,7 +93,7 @@ window.socket.emit("presence:join", {
 });
 
 // Tab 2
-window.socket = io("http://localhost:3000");
+window.socket = io("http://localhost:3001");
 window.socket.emit("presence:join", {
   userId: "user2",
   username: "Bob",
@@ -107,7 +107,7 @@ Expected: Both tabs should see presence updates for each other.
 
 ### 1. useEnhancedSocket Hook
 
-Create test component in `client/pages/TestPage.tsx`:
+Create test component in `src/app/test-realtime/page.tsx`:
 
 ```typescript
 import React from 'react';
@@ -324,7 +324,7 @@ import { EnhancedAgentsPage } from './examples/RealtimeExamples';
 <Route path="/test-realtime" element={<EnhancedAgentsPage />} />
 ```
 
-Visit `http://localhost:8082/test-realtime`
+Visit `http://localhost:3000/test-realtime`
 
 ### 2. Multi-user Scenario Testing
 
@@ -401,8 +401,8 @@ test("real-time features integration", async ({ browser }) => {
   const page2 = await context2.newPage();
 
   // Navigate both pages
-  await page1.goto("http://localhost:8082/test-realtime");
-  await page2.goto("http://localhost:8082/test-realtime");
+  await page1.goto("http://localhost:3000/test-realtime");
+  await page2.goto("http://localhost:3000/test-realtime");
 
   // Test presence
   await page1.click('[data-testid="join-room"]');
@@ -427,7 +427,7 @@ test("real-time features integration", async ({ browser }) => {
 // Simple load test
 const connections = [];
 for (let i = 0; i < 50; i++) {
-  const socket = io("http://localhost:3000");
+  const socket = io("http://localhost:3001");
   connections.push(socket);
 
   socket.emit("presence:join", {

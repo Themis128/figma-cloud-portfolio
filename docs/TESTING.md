@@ -18,7 +18,7 @@ This project uses **Playwright** for end-to-end (E2E) testing, targeting 100% co
 
 **File:** `playwright.config.ts`
 
-- Base URL (local dev): `http://localhost:8082` (Next.js dev server) — backend: `http://localhost:3001` (Express dev server)
+- Base URL (local dev): `http://localhost:3000` (Next.js dev server) — backend: `http://localhost:3001` (Express dev server)
 - Override with `PLAYWRIGHT_BASE_URL` for CI or production testing.
 - Browsers: Chromium, Firefox, WebKit (desktop + mobile viewports)
 - Test timeout: 30 seconds
@@ -190,6 +190,42 @@ Shared helpers used across spec files:
 - ✅ Agent cards render
 - ✅ AI integration demos
 - ✅ Links to demos/source
+
+---
+
+#### `playwright-tests/legal-pages.spec.ts` — Legal Pages Suite
+
+**Coverage:** Cookie Policy, Privacy Policy, Terms of Service, Cross Navigation
+
+- ✅ Cookie Policy: page title, meta description, effective date
+- ✅ Cookie Policy: essential, analytics, functional, third-party cookie sections
+- ✅ Cookie Policy: manage cookies button, privacy link, GA opt-out link
+- ✅ Privacy Policy: page title, meta description, data controller section
+- ✅ Privacy Policy: GDPR legal bases, data collected, third parties table
+- ✅ Privacy Policy: GDPR rights, CCPA rights, data retention
+- ✅ Privacy Policy: cookie policy link, external privacy links, Hellenic DPA link
+- ✅ Terms of Service: page title, meta description, acceptance section
+- ✅ Terms of Service: services, responsibilities, IP, disclaimer, AI chat sections
+- ✅ Terms of Service: Cal.com booking links, governing law (Greek), contact section
+- ✅ Cross navigation: cookies→privacy, privacy→cookies, terms→privacy links
+- ✅ All legal pages use trailing slashes in URLs
+
+#### `playwright-tests/settings-page.spec.ts` — Settings Page Suite
+
+**Coverage:** Appearance, Accessibility, Notifications, Privacy, Persistence
+
+- ✅ Settings page heading and navigation
+- ✅ Appearance: three theme options (Light, Dark, System) with aria-pressed
+- ✅ Appearance: theme toggle on click
+- ✅ Accessibility: animations toggle, reduced motion toggle
+- ✅ Notifications: push notifications toggle
+- ✅ Privacy: analytics toggle
+- ✅ Action buttons: Reset to Defaults, Save Settings
+- ✅ Save confirmation: "Saved!" text appears after save
+- ✅ Theme persistence to localStorage (portfolio-theme key)
+- ✅ Animation persistence to localStorage (portfolio-animations key)
+- ✅ Reset to defaults functionality
+- ✅ Responsive layout on mobile viewport (375×812)
 
 ---
 
@@ -404,8 +440,11 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Projects (/projects)       | `projects.spec.ts`, `routing-test.spec.ts`                                 | ✅ Covered |
 | Resume (/resume)           | `resume.spec.ts`, `app.spec.ts`                                            | ✅ Covered |
 | Agents (/agents)           | `agents.spec.ts`, `ai-agents.spec.ts`                                      | ✅ Covered |
-| Settings (/settings)       | `app.spec.ts`                                                              | ✅ Covered |
+| Settings (/settings)       | `settings-page.spec.ts`, `app.spec.ts`                                     | ✅ Covered |
 | Performance (/performance) | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
+| Cookies (/cookies)         | `legal-pages.spec.ts`                                                      | ✅ Covered |
+| Privacy (/privacy)         | `legal-pages.spec.ts`                                                      | ✅ Covered |
+| Terms (/terms)             | `legal-pages.spec.ts`                                                      | ✅ Covered |
 | 404 Page                   | `navigation-spa.spec.ts`, `app.spec.ts`                                    | ✅ Covered |
 | SPA Routing                | `navigation-spa.spec.ts`, `routing-test.spec.ts`                           | ✅ Covered |
 | Contact API                | `api-integration.spec.ts`, `contact-form-analytics.spec.ts`                | ✅ Covered |
