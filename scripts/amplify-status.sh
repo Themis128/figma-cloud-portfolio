@@ -46,6 +46,24 @@ else
   echo -e "  .env.local: ${RED}not found${NC}"
 fi
 
+# ─── Port Cleanup ─────────────────────────────────────
+PORTS=(3000 3001 8001)
+KILLED=()
+for port in "${PORTS[@]}"; do
+  pids=$(lsof -ti :"$port" -sTCP:LISTEN 2>/dev/null)
+  if [ -n "$pids" ]; then
+    echo "$pids" | xargs kill 2>/dev/null
+    KILLED+=("$port")
+  fi
+done
+# Remove stale Next.js lock file
+rm -f .next/dev/lock
+
+if [ ${#KILLED[@]} -gt 0 ]; then
+  echo -e "  ${YELLOW}⚠ Killed stale processes on port(s): ${KILLED[*]}${NC}"
+  echo -e ""
+fi
+
 # ─── Services ──────────────────────────────────────────
 echo -e ""
 echo -e "  ${BOLD}Services${NC}"

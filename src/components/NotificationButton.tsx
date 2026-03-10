@@ -100,7 +100,9 @@ export function NotificationButton() {
       } else if (result === "denied") {
         setShowPrompt(false);
       }
-    } catch (_error) {}
+    } catch (error) {
+      console.error("Failed to request notification permission:", error);
+    }
   };
 
   const showNotification = (title: string, body: string) => {
