@@ -210,8 +210,8 @@ Currently, the system operates client-side with local data. Future phases will i
 
 ## Dependencies
 
-- React 18 with TypeScript
-- React Router 6 for navigation
+- React 19 with TypeScript
+- Next.js 16 App Router for navigation
 - Lucide React for icons
 - Tailwind CSS for styling
 - Custom UI component library

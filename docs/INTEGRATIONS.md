@@ -394,7 +394,7 @@ pnpm test:e2e:continuous
 
 ---
 
-### Vitest (v3.2.4)
+### Vitest (v4.0.18)
 
 **Purpose**: Unit and component testing
 **Files**: `/vitest-setup.ts`, `/tests/*`
@@ -995,7 +995,7 @@ import { motion } from 'framer-motion';
 />
 ```
 
-**Toasts**: Sonner (v1.7.4)
+**Toasts**: Sonner (v2.0.7)
 
 ```typescript
 import { toast } from "sonner";

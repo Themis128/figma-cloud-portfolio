@@ -26,8 +26,8 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Security               | reCAPTCHA v3, security headers via amplify.yml    |
 | Performance monitoring | web-vitals library                                |
 | Real-time features     | Socket.IO                                         |
-| 3D visualizations      | Three.js + @react-three/fiber                     |
-| Testing                | Playwright 1.57+ E2E, Vitest unit tests           |
+| 3D visualizations      | Three.js + @react-three/fiber v9 + @react-three/drei v10 |
+| Testing                | Playwright 1.58+ E2E, Vitest 4 unit tests         |
 
 ---
 
@@ -276,6 +276,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | Database     | DynamoDB                                                |
 | Deploy       | `ampx pipeline-deploy` (CI) / `ampx sandbox` (local)   |
 | Client config| `amplify_outputs.json` (gitignored, generated per env)  |
+| Init mode    | Auth-only on startup; call `configureAmplifyData()` for AppSync |
 
 ### Backend (Lambda)
 
