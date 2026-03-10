@@ -7,6 +7,9 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { Providers } from "@/components/providers";
 import { DefaultStructuredData } from "@/components/StructuredData";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import SentryInit from "@/components/SentryInit";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
+import Footer from "@/components/Footer";
 import AmplifyProvider from "@/components/AmplifyProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -139,12 +142,15 @@ export default function RootLayout({
               <DefaultStructuredData />
               <AccessibilityEnhancer />
               {children}
+              <Footer />
               <ChatbotWidget />
             </MotionProvider>
           </AuthProvider>
           </AmplifyProvider>
         </Providers>
         <GoogleAnalytics />
+        <SentryInit />
+        <CookieConsentBanner />
       </body>
     </html>
   );
