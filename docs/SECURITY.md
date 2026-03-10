@@ -59,6 +59,7 @@ Production uses Amplify Cognito for authentication — Firebase SDK is not confi
   - `currentUser` → `null`
   - `onAuthStateChanged` → calls callback with `null`, returns no-op unsubscribe
   - All other properties → `undefined`
+- **`initializeAuth` fix (Mar 2026)**: Firebase v12+ enforces reCAPTCHA verification for email/password sign-in. Using `getAuth()` auto-initializes with all default providers (including reCAPTCHA), which fails with `_getRecaptchaConfig is not a function` when reCAPTCHA Enterprise isn't configured. The fix uses `initializeAuth()` with explicit `browserLocalPersistence` and `browserPopupRedirectResolver` dependencies in the browser, bypassing the reCAPTCHA auto-setup. Server-side (SSR/SSG) still uses `getAuth()`.
 - **`src/contexts/AuthContext.tsx`**: `useEffect` wraps `onAuthStateChanged` in try/catch — catches any Firebase errors and sets `loading: false`
 - **Messaging functions** (`getMessagingInstance`, `getFCMToken`) return `null` when `isFirebaseConfigured` is `false`
 

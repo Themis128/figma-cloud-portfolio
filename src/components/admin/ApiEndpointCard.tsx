@@ -19,6 +19,7 @@ export interface EndpointDef {
   path: string;
   service: string;
   description: string;
+  requiresAuth?: boolean;
   healthCheck: {
     method: string;
     path: string;
