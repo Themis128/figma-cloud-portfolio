@@ -29,6 +29,7 @@ export function useAdminAuth() {
           err instanceof Error && "code" in err
             ? (err as { code: string }).code
             : "";
+        const errMsg = err instanceof Error ? err.message : "";
         const messages: Record<string, string> = {
           "auth/invalid-credential": "Invalid email or password",
           "auth/user-not-found": "No account found with this email",
@@ -41,10 +42,19 @@ export function useAdminAuth() {
           "auth/operation-not-allowed":
             "Email/password sign-in is not enabled. Enable it in Firebase Console.",
         };
-        setLoginError(
-          messages[code] ??
-            (err instanceof Error ? err.message : "Login failed. Please try again."),
-        );
+
+        // Handle reCAPTCHA config error (Firebase Email Enumeration Protection)
+        const isRecaptchaError = errMsg.includes("_getRecaptchaConfig");
+        if (isRecaptchaError) {
+          setLoginError(
+            "Firebase reCAPTCHA not configured. Disable Email Enumeration Protection in Firebase Console → Authentication → Settings.",
+          );
+        } else {
+          setLoginError(
+            messages[code] ??
+              (errMsg || "Login failed. Please try again."),
+          );
+        }
         return false;
       }
     },
