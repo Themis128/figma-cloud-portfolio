@@ -84,7 +84,7 @@ export default function ApiEndpointCard({ endpoint, status, onRefresh }: Props) 
             >
               {endpoint.method}
             </Badge>
-            <span className="font-mono text-xs text-foreground/80 truncate max-w-[180px]">
+            <span className="font-mono text-xs text-foreground/80 truncate max-w-45">
               {endpoint.path}
             </span>
           </div>
@@ -105,7 +105,7 @@ export default function ApiEndpointCard({ endpoint, status, onRefresh }: Props) 
 
       <div className="flex items-center gap-2 mb-2">
         <span
-          className={`w-2 h-2 rounded-full flex-shrink-0 ${STATUS_DOT[status.state] ?? ""}`}
+          className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[status.state] ?? ""}`}
         />
         <span
           className={`text-xs font-mono ${STATUS_TEXT_COLOR[status.state] ?? ""}`}
