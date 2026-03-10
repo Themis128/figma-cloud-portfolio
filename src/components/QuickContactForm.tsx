@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle, Loader2, Send } from "lucide-react";
+import Link from "next/link";
 import Script from "next/script";
 import { useCallback, useState } from "react";
 
@@ -182,6 +183,35 @@ export default function QuickContactForm() {
             </>
           )}
         </Button>
+
+        <p className="text-xs text-foreground/40 mt-2 leading-relaxed">
+          This site is protected by reCAPTCHA and the Google{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground/60"
+          >
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://policies.google.com/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground/60"
+          >
+            Terms of Service
+          </a>{" "}
+          apply. By submitting, you agree to our{" "}
+          <Link
+            href="/privacy/"
+            className="underline underline-offset-2 hover:text-foreground/60"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </form>
     </AnimatedSection>
   );

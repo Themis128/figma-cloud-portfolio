@@ -2,9 +2,13 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+
+import type { ConsentState } from "@/hooks/useConsent";
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
+const STORAGE_KEY = "cookie-consent";
+const CONSENT_EVENT = "consent-updated";
 
 // Initialize gtag
 declare global {
@@ -14,12 +18,58 @@ declare global {
   }
 }
 
+/** Read analytics consent from localStorage */
+function hasAnalyticsConsent(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return false;
+    const parsed = JSON.parse(stored) as ConsentState;
+    return parsed.analytics === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Bootstrap the dataLayer + gtag function + consent-mode defaults */
+function bootstrapGtag(): void {
+  if (typeof window === "undefined") return;
+  window.dataLayer = window.dataLayer || [];
+  // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
+  window.gtag = function gtag() {
+    // dataLayer.push expects the arguments object, not an array
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer!.push(arguments as unknown as Record<string, unknown>);
+  };
+  window.gtag("js", new Date());
+  // Consent Mode v2: default to denied
+  window.gtag("consent", "default", {
+    analytics_storage: "denied",
+    ad_storage: "denied",
+  });
+}
+
+/** Grant analytics consent via Consent Mode v2 */
+function grantAnalyticsConsent(): void {
+  window.gtag?.("consent", "update", {
+    analytics_storage: "granted",
+  });
+}
+
+/** Deny analytics consent via Consent Mode v2 */
+function denyAnalyticsConsent(): void {
+  window.gtag?.("consent", "update", {
+    analytics_storage: "denied",
+  });
+}
+
 function GoogleAnalyticsInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!GA_TRACKING_ID) return;
+    if (!hasAnalyticsConsent()) return;
 
     const url =
       pathname +
@@ -41,29 +91,69 @@ export function GoogleAnalytics() {
 
   return (
     <>
-      <Script
-        strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-      />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', {
-              page_path: window.location.pathname,
-              anonymize_ip: true,
-              cookie_flags: 'SameSite=None;Secure',
-            });
-          `,
-        }}
-      />
+      <ConsentAwareGA />
       <Suspense fallback={null}>
         <GoogleAnalyticsInner />
       </Suspense>
+    </>
+  );
+}
+
+/** Manages GA script loading based on consent */
+function ConsentAwareGA() {
+  const [consentGranted, setConsentGranted] = useState(false);
+  const scriptLoadedRef = useRef(false);
+
+  // Bootstrap gtag with denied defaults on first render
+  useEffect(() => {
+    bootstrapGtag();
+
+    // Check initial consent
+    if (hasAnalyticsConsent()) {
+      setConsentGranted(true);
+    }
+
+    // Listen for consent changes
+    const handleConsentUpdate = (e: Event) => {
+      const detail = (e as CustomEvent<ConsentState>).detail;
+      if (detail.analytics) {
+        setConsentGranted(true);
+        grantAnalyticsConsent();
+      } else {
+        setConsentGranted(false);
+        denyAnalyticsConsent();
+      }
+    };
+
+    window.addEventListener(CONSENT_EVENT, handleConsentUpdate);
+    return () => {
+      window.removeEventListener(CONSENT_EVENT, handleConsentUpdate);
+    };
+  }, []);
+
+  // When consent is granted and scripts haven't loaded, configure GA
+  const handleScriptLoad = useCallback(() => {
+    if (scriptLoadedRef.current) return;
+    scriptLoadedRef.current = true;
+    grantAnalyticsConsent();
+    window.gtag?.("config", GA_TRACKING_ID!, {
+      page_path: window.location.pathname,
+      anonymize_ip: true,
+      cookie_flags: "SameSite=None;Secure",
+    });
+  }, []);
+
+  if (!consentGranted) {
+    return null;
+  }
+
+  return (
+    <>
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        onLoad={handleScriptLoad}
+      />
     </>
   );
 }
