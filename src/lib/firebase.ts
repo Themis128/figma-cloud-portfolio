@@ -66,8 +66,10 @@ function getFirebaseAuth(): Auth | null {
 
 // Proxy object so `auth.currentUser` etc. works transparently.
 // Returns null/undefined for properties when Firebase is not configured.
+// Uses realAuth (not proxy) as receiver so internal Firebase methods
+// like _getRecaptchaConfig resolve correctly via prototype chain.
 export const auth: Auth = new Proxy({} as Auth, {
-  get(_target, prop, receiver) {
+  get(_target, prop) {
     const realAuth = getFirebaseAuth();
     if (!realAuth) {
       // Return safe defaults when Firebase is not configured
@@ -80,7 +82,12 @@ export const auth: Auth = new Proxy({} as Auth, {
       }
       return undefined;
     }
-    return Reflect.get(realAuth, prop, receiver);
+    const value = Reflect.get(realAuth, prop, realAuth);
+    // Bind functions to the real auth instance so `this` works correctly
+    if (typeof value === "function") {
+      return value.bind(realAuth);
+    }
+    return value;
   },
 });
 
