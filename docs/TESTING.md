@@ -130,6 +130,39 @@ Shared helpers used across spec files:
 - ✅ No broken links
 - ✅ Text is readable (contrast)
 
+#### `playwright-tests/admin.spec.ts` — Admin Dashboard Suite
+
+**Coverage:** Authentication, Health Tab, Console Tab, Push Tab, Analytics Tab, Tab Navigation, SEO
+
+- ✅ Login form rendering (email, password, submit, lock icon, divider)
+- ✅ Input attributes (autocomplete, placeholder, required)
+- ✅ Invalid credentials rejection (wrong email, wrong password, both wrong)
+- ✅ Valid credentials login (dashboard, online status, logout button)
+- ✅ Dashboard subtitle and user email display
+- ✅ Logout and re-login flow
+- ✅ Session persistence across page reload
+- ✅ Health tab: endpoint cards, refresh all, individual refresh, response times, service labels
+- ✅ Console tab: request builder, GET/POST/PUT/DELETE/OPTIONS/HEAD methods
+- ✅ Console tab: preset buttons (Ping, Health, Slots, API Keys, Subscriptions)
+- ✅ Console tab: request execution, response viewer (status badge, timing), history
+- ✅ Console tab: body textarea toggle for POST, disable Send when URL empty
+- ✅ Push tab: Web Push API Tester heading and description
+- ✅ Push tab: notification permission status (Granted/Denied/Not Requested)
+- ✅ Push tab: service worker status (Active/Inactive/Not Registered)
+- ✅ Push tab: active subscriptions display and Check Subscriptions button
+- ✅ Push tab: Send Test / Send Custom Notification buttons
+- ✅ Push tab: custom notification form (title, URL, body) with defaults and editing
+- ✅ Push tab: requirements checklist (5 items)
+- ✅ Push tab: form labels (Title, URL, Message Body)
+- ✅ Analytics tab: Measurement ID, GA detection badge, copy button
+- ✅ Analytics tab: NEXT_PUBLIC_GA_ID, afterInteractive, Configuration details
+- ✅ Analytics tab: Event Helpers (trackEvent, trackConversion parameters/descriptions)
+- ✅ Analytics tab: code snippets, gtag internals, GA4 Dashboard link
+- ✅ Analytics tab: Implementation Reference, route tracking details
+- ✅ Tab navigation: switch between all 4 tabs, correct content isolation
+- ✅ Tab navigation: exactly 4 tabs, active state tracking, icons in labels
+- ✅ SEO: noindex meta tag, login gate for unauthenticated users
+
 ---
 
 ### Page-Specific Tests
@@ -364,6 +397,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 
 | Page/Feature               | Spec File(s)                                                               | Status     |
 | -------------------------- | -------------------------------------------------------------------------- | ---------- |
+| Admin (/admin)             | `admin.spec.ts`                                                            | ✅ Covered |
 | Home (/)                   | `app.spec.ts`                                                              | ✅ Covered |
 | About (/about)             | `app.spec.ts`                                                              | ✅ Covered |
 | Product (/product)         | `product.spec.ts`                                                          | ✅ Covered |

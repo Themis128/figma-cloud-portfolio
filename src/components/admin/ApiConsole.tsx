@@ -166,7 +166,7 @@ export default function ApiConsole() {
               if (!["POST", "PUT", "DELETE"].includes(v)) setShowBody(false);
             }}
           >
-            <SelectTrigger className="w-[120px] font-mono text-sm bg-background/50 border-border/30">
+            <SelectTrigger className="w-30 font-mono text-sm bg-background/50 border-border/30">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -226,7 +226,7 @@ export default function ApiConsole() {
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 placeholder='{"key": "value"}'
-                className="font-mono text-xs bg-background/50 border-border/30 min-h-[80px]"
+                className="font-mono text-xs bg-background/50 border-border/30 min-h-20"
               />
             )}
           </div>
@@ -250,9 +250,9 @@ export default function ApiConsole() {
               {response.timing}ms
             </span>
           </div>
-          <div className="p-4 max-h-[400px] overflow-auto">
+          <div className="p-4 max-h-100 overflow-auto">
             <pre
-              className="font-mono text-xs text-foreground/80 whitespace-pre-wrap break-words"
+              className="font-mono text-xs text-foreground/80 whitespace-pre-wrap wrap-break-word"
               dangerouslySetInnerHTML={{
                 __html: response.body.startsWith("{") || response.body.startsWith("[")
                   ? syntaxHighlight(response.body)
@@ -277,7 +277,7 @@ export default function ApiConsole() {
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="space-y-1 max-h-[200px] overflow-auto">
+          <div className="space-y-1 max-h-50 overflow-auto">
             {history.map((entry) => (
               <button
                 key={entry.id}

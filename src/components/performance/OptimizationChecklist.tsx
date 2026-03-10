@@ -31,9 +31,9 @@ const OPTIMIZATIONS: OptimizationItem[] = [
   },
   {
     icon: "☁️",
-    title: "AWS Amplify Edge CDN",
+    title: "S3 + CloudFront Edge CDN",
     detail:
-      "Static assets are distributed to edge nodes worldwide. Your browser fetches from the nearest server — not a distant origin.",
+      "Static export deployed to S3 and distributed via CloudFront edge nodes worldwide. Your browser fetches from the nearest server — not a distant origin.",
     tag: "Infrastructure",
   },
   {
@@ -59,9 +59,9 @@ const OPTIMIZATIONS: OptimizationItem[] = [
   },
   {
     icon: "🔒",
-    title: "Security Headers via Helmet.js",
+    title: "Security Headers via CloudFront",
     detail:
-      "CSP, HSTS, and X-Frame-Options headers are set server-side — security hardening with no client performance cost.",
+      "CSP, HSTS, and X-Frame-Options headers are configured in the deployment pipeline — security hardening with no client performance cost.",
     tag: "Security",
   },
 ];

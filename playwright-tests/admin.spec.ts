@@ -763,6 +763,170 @@ test.describe("Admin Page — Console Tab", () => {
   });
 });
 
+// ─── Push Tab ────────────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Push Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "Push" }).click();
+  });
+
+  test("should switch to Push tab and show Web Push API Tester", async ({
+    page,
+  }) => {
+    await expect(page.getByText("Web Push API Tester")).toBeVisible();
+    await expect(
+      page.getByText(
+        "Test push notifications using native Web Push API with VAPID keys.",
+      ),
+    ).toBeVisible();
+  });
+
+  test("should display notification permission status", async ({ page }) => {
+    await expect(
+      page.getByText("Notification Permission:"),
+    ).toBeVisible();
+    // Should show one of: Granted, Denied, Not Requested
+    const granted = page.getByText("Granted", { exact: true });
+    const denied = page.getByText("Denied", { exact: true });
+    const notRequested = page.getByText("Not Requested", { exact: true });
+    const count =
+      (await granted.count()) +
+      (await denied.count()) +
+      (await notRequested.count());
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should display service worker status", async ({ page }) => {
+    await expect(page.getByText("Service Worker:")).toBeVisible();
+    // Should show one of: Active, Registered (Inactive), Not Registered
+    const active = page.getByText(/Active \(/);
+    const inactive = page.getByText("Registered (Inactive)");
+    const notRegistered = page.getByText("Not Registered");
+    const count =
+      (await active.count()) +
+      (await inactive.count()) +
+      (await notRegistered.count());
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should display active subscriptions section", async ({ page }) => {
+    await expect(
+      page.getByText("Active Subscriptions:"),
+    ).toBeVisible();
+    // Initially shows "Unknown" before checking
+    await expect(page.getByText("Unknown")).toBeVisible();
+  });
+
+  test("should have Check Subscriptions button", async ({ page }) => {
+    const checkButton = page.getByRole("button", {
+      name: "Check Subscriptions",
+    });
+    await expect(checkButton).toBeVisible();
+    await expect(checkButton).toBeEnabled();
+  });
+
+  test("should have Send Test Notification button", async ({ page }) => {
+    const sendButton = page.getByRole("button", {
+      name: "Send Test Notification",
+    });
+    await expect(sendButton).toBeVisible();
+  });
+
+  test("should have Send Custom Notification button", async ({ page }) => {
+    const customButton = page.getByRole("button", {
+      name: "Send Custom Notification",
+    });
+    await expect(customButton).toBeVisible();
+  });
+
+  test("should display Custom Notification Settings form", async ({
+    page,
+  }) => {
+    await expect(
+      page.getByText("Custom Notification Settings"),
+    ).toBeVisible();
+  });
+
+  test("should have title input with default value", async ({ page }) => {
+    const titleInput = page.locator("#title");
+    await expect(titleInput).toBeVisible();
+    await expect(titleInput).toHaveValue("Custom Test Notification");
+  });
+
+  test("should have URL input with default value", async ({ page }) => {
+    const urlInput = page.locator("#url");
+    await expect(urlInput).toBeVisible();
+    await expect(urlInput).toHaveValue("/about");
+  });
+
+  test("should have message body textarea with default value", async ({
+    page,
+  }) => {
+    const bodyInput = page.locator("#body");
+    await expect(bodyInput).toBeVisible();
+    await expect(bodyInput).toHaveValue(
+      "This is a custom push notification using Web Push API!",
+    );
+  });
+
+  test("should allow editing custom notification fields", async ({
+    page,
+  }) => {
+    const titleInput = page.locator("#title");
+    await titleInput.clear();
+    await titleInput.fill("My Custom Title");
+    await expect(titleInput).toHaveValue("My Custom Title");
+
+    const urlInput = page.locator("#url");
+    await urlInput.clear();
+    await urlInput.fill("/projects");
+    await expect(urlInput).toHaveValue("/projects");
+
+    const bodyInput = page.locator("#body");
+    await bodyInput.clear();
+    await bodyInput.fill("Custom body text");
+    await expect(bodyInput).toHaveValue("Custom body text");
+  });
+
+  test("should display requirements checklist", async ({ page }) => {
+    await expect(
+      page.getByText("Requirements for notifications to appear:"),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Notification permission must be granted"),
+    ).toBeVisible();
+    await expect(
+      page.getByText("App must be running in background or another tab"),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Must be subscribed using the Notification Button"),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Web Push API must be configured with VAPID keys"),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Service Worker must be registered and active"),
+    ).toBeVisible();
+  });
+
+  test("should have bell icon in header", async ({ page }) => {
+    const panel = page.locator('[role="tabpanel"]');
+    const bellIcon = panel.locator("svg").first();
+    await expect(bellIcon).toBeVisible();
+  });
+
+  test("should show form labels for all inputs", async ({ page }) => {
+    await expect(page.getByText("Title", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("URL (optional)", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Message Body", { exact: true }),
+    ).toBeVisible();
+  });
+});
+
 // ─── Analytics Tab ───────────────────────────────────────────────────────────
 
 test.describe("Admin Page — Analytics Tab", () => {
@@ -981,6 +1145,9 @@ test.describe("Admin Page — Tab Navigation", () => {
     await page.locator('[role="tab"]', { hasText: "Console" }).click();
     await expect(page.locator("text=Request")).toBeVisible();
 
+    await page.locator('[role="tab"]', { hasText: "Push" }).click();
+    await expect(page.getByText("Web Push API Tester")).toBeVisible();
+
     await page.locator('[role="tab"]', { hasText: "Analytics" }).click();
     await expect(page.getByText("Measurement ID").first()).toBeVisible();
 
@@ -988,9 +1155,9 @@ test.describe("Admin Page — Tab Navigation", () => {
     await expect(page.locator("text=Refresh All")).toBeVisible();
   });
 
-  test("should have exactly 3 tabs", async ({ page }) => {
+  test("should have exactly 4 tabs", async ({ page }) => {
     const tabs = page.locator('[role="tab"]');
-    await expect(tabs).toHaveCount(3);
+    await expect(tabs).toHaveCount(4);
   });
 
   test("should mark only the active tab with data-state active", async ({
@@ -999,24 +1166,35 @@ test.describe("Admin Page — Tab Navigation", () => {
     // Health tab active by default
     const healthTab = page.locator('[role="tab"]', { hasText: "Health" });
     const consoleTab = page.locator('[role="tab"]', { hasText: "Console" });
+    const pushTab = page.locator('[role="tab"]', { hasText: "Push" });
     const analyticsTab = page.locator('[role="tab"]', {
       hasText: "Analytics",
     });
 
     await expect(healthTab).toHaveAttribute("data-state", "active");
     await expect(consoleTab).toHaveAttribute("data-state", "inactive");
+    await expect(pushTab).toHaveAttribute("data-state", "inactive");
     await expect(analyticsTab).toHaveAttribute("data-state", "inactive");
 
     // Switch to Console
     await consoleTab.click();
     await expect(healthTab).toHaveAttribute("data-state", "inactive");
     await expect(consoleTab).toHaveAttribute("data-state", "active");
+    await expect(pushTab).toHaveAttribute("data-state", "inactive");
+    await expect(analyticsTab).toHaveAttribute("data-state", "inactive");
+
+    // Switch to Push
+    await pushTab.click();
+    await expect(healthTab).toHaveAttribute("data-state", "inactive");
+    await expect(consoleTab).toHaveAttribute("data-state", "inactive");
+    await expect(pushTab).toHaveAttribute("data-state", "active");
     await expect(analyticsTab).toHaveAttribute("data-state", "inactive");
 
     // Switch to Analytics
     await analyticsTab.click();
     await expect(healthTab).toHaveAttribute("data-state", "inactive");
     await expect(consoleTab).toHaveAttribute("data-state", "inactive");
+    await expect(pushTab).toHaveAttribute("data-state", "inactive");
     await expect(analyticsTab).toHaveAttribute("data-state", "active");
   });
 
@@ -1029,16 +1207,21 @@ test.describe("Admin Page — Tab Navigation", () => {
     await expect(page.locator("text=Request")).toBeVisible();
     await expect(page.locator("text=Refresh All")).not.toBeVisible();
 
-    // Switch to Analytics — should show GA info, not console
+    // Switch to Push — should show push tester, not console
+    await page.locator('[role="tab"]', { hasText: "Push" }).click();
+    await expect(page.getByText("Web Push API Tester")).toBeVisible();
+    await expect(page.locator("text=Request")).not.toBeVisible();
+
+    // Switch to Analytics — should show GA info, not push
     await page.locator('[role="tab"]', { hasText: "Analytics" }).click();
     await expect(page.getByText("Measurement ID").first()).toBeVisible();
-    await expect(page.locator("text=Request")).not.toBeVisible();
+    await expect(page.getByText("Web Push API Tester")).not.toBeVisible();
   });
 
   test("should have icons in tab labels", async ({ page }) => {
     // Each tab has an SVG icon (lucide icons)
     const tabs = page.locator('[role="tab"]');
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       const tab = tabs.nth(i);
       const svg = tab.locator("svg");
       await expect(svg).toBeVisible();

@@ -70,9 +70,9 @@ export function PWAUpdateNotification() {
 
   return (
     <div className="fixed top-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50">
-      <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-sm border border-cyan-400/30 rounded-lg p-4 shadow-2xl">
+      <div className="bg-linear-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-sm border border-cyan-400/30 rounded-lg p-4 shadow-2xl">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
               <RefreshCw className="w-5 h-5 text-cyan-400" />
             </div>
@@ -106,7 +106,7 @@ export function PWAUpdateNotification() {
           <button
             type="button"
             onClick={handleDismiss}
-            className="flex-shrink-0 text-slate-400 hover:text-slate-300 p-1"
+            className="shrink-0 text-slate-400 hover:text-slate-300 p-1"
             aria-label="Dismiss update notification"
           >
             <X className="w-4 h-4" />

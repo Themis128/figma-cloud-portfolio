@@ -8,7 +8,7 @@ interface StackItem {
 
 const STACK: StackItem[] = [
   {
-    name: "Next.js 15",
+    name: "Next.js 16",
     role: "Framework",
     icon: "▲",
     reason:
@@ -40,11 +40,11 @@ const STACK: StackItem[] = [
     impact: "Smooth 60fps, no jank",
   },
   {
-    name: "AWS Amplify",
+    name: "S3 + CloudFront",
     role: "Deployment",
     icon: "☁️",
     reason:
-      "Global edge CDN distributes assets to 300+ locations worldwide, serving every visitor from the closest node.",
+      "Static export served from S3, distributed via CloudFront edge CDN to 600+ locations worldwide — every visitor fetches from the closest node.",
     impact: "TTFB < 100ms globally",
   },
   {
