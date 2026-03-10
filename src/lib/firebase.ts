@@ -48,10 +48,15 @@ function getFirebaseAuth(): Auth | null {
     if (typeof window !== "undefined") {
       // Use initializeAuth with explicit dependencies to avoid
       // the _getRecaptchaConfig error in Firebase v10+.
-      _auth = initializeAuth(getApp(), {
-        persistence: browserLocalPersistence,
-        popupRedirectResolver: browserPopupRedirectResolver,
-      });
+      // Falls back to getAuth if auth was already initialized elsewhere.
+      try {
+        _auth = initializeAuth(getApp(), {
+          persistence: browserLocalPersistence,
+          popupRedirectResolver: browserPopupRedirectResolver,
+        });
+      } catch {
+        _auth = getAuth(getApp());
+      }
     } else {
       _auth = getAuth(getApp());
     }
