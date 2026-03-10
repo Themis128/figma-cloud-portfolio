@@ -340,9 +340,15 @@ Production uses **AWS Amplify Gen 2 Cognito** for authentication. Firebase is no
 
 This prevents the `auth/invalid-api-key` error that would otherwise appear in production console.
 
-### Local Development — Firebase (optional)
+### Local Development / Admin — Firebase
 
 Set `NEXT_PUBLIC_FIREBASE_*` environment variables in `.env.local` to enable Firebase auth during local development. When these are absent, the auth proxy silently returns null user — no crashes.
+
+**Firebase Auth Initialization (Mar 2026)**: Uses `initializeAuth()` with explicit `browserLocalPersistence` and `browserPopupRedirectResolver` instead of `getAuth()`. This prevents the `_getRecaptchaConfig is not a function` error introduced in Firebase v12+ where reCAPTCHA verification is enforced by default for email/password sign-in.
+
+### API Health Dashboard Authentication
+
+The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Firebase Bearer tokens in health check requests for endpoints marked with `requiresAuth: true`. Currently the `/api/organizations/api_keys` endpoint requires auth — the health check sends the logged-in user's Firebase ID token in the `Authorization` header to avoid 401 responses.
 
 ---
 

@@ -1,6 +1,9 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import {
+  initializeAuth,
   getAuth,
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
@@ -42,7 +45,16 @@ let _auth: Auth | undefined;
 function getFirebaseAuth(): Auth | null {
   if (!isFirebaseConfigured) return null;
   if (!_auth) {
-    _auth = getAuth(getApp());
+    if (typeof window !== "undefined") {
+      // Use initializeAuth with explicit dependencies to avoid
+      // the _getRecaptchaConfig error in Firebase v10+.
+      _auth = initializeAuth(getApp(), {
+        persistence: browserLocalPersistence,
+        popupRedirectResolver: browserPopupRedirectResolver,
+      });
+    } else {
+      _auth = getAuth(getApp());
+    }
   }
   return _auth;
 }

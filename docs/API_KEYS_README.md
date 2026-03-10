@@ -2,6 +2,18 @@
 
 This document describes the API Keys endpoints implemented in the portfolio application.
 
+## Authentication
+
+All API Keys endpoints require Firebase authentication. Requests must include a valid Firebase ID token in the `Authorization` header:
+
+```
+Authorization: Bearer <firebase-id-token>
+```
+
+The admin dashboard's API Health Dashboard automatically includes this header when checking the API Keys endpoint (endpoints marked `requiresAuth: true` in `ApiHealthDashboard.tsx`).
+
+**401 Unauthorized**: Returned when the `Authorization` header is missing or contains an invalid/expired token.
+
 ## Endpoints
 
 ### GET /api/organizations/api_keys/{api_key_id}

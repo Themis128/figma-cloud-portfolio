@@ -106,6 +106,10 @@ ENV/
 aws/
 awscliv2.zip
 
+# Google Cloud SDK
+google-cloud-sdk/
+google-cloud-cli-*.tar.gz
+
 # Misc
 *.local
 .config/

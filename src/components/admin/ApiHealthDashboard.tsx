@@ -4,6 +4,7 @@ import { RefreshCcw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/firebase";
 import ApiEndpointCard, {
   type EndpointDef,
   type EndpointStatus,
@@ -79,6 +80,7 @@ const ENDPOINTS: EndpointDef[] = [
     path: "/api/organizations/api_keys",
     service: "Lambda",
     description: "API key management (CRUD)",
+    requiresAuth: true,
     healthCheck: { method: "GET", path: "/api/organizations/api_keys" },
   },
   {
@@ -137,12 +139,23 @@ export default function ApiHealthDashboard() {
 
     const start = performance.now();
     try {
+      const headers: Record<string, string> = {};
+      if (ep.healthCheck.body) {
+        headers["Content-Type"] = "application/json";
+      }
+      if (ep.requiresAuth) {
+        const user = auth.currentUser;
+        if (user) {
+          const token = await user.getIdToken();
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+      }
       const opts: RequestInit = {
         method: ep.healthCheck.method,
         redirect: "follow",
+        headers,
       };
       if (ep.healthCheck.body) {
-        opts.headers = { "Content-Type": "application/json" };
         opts.body = ep.healthCheck.body;
       }
       const res = await fetch(ep.healthCheck.path, opts);

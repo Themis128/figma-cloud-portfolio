@@ -1,6 +1,6 @@
 # 🔌 Integrations Guide
 
-**Last Updated**: 2026-02-01
+**Last Updated**: 2026-03-10
 **Project**: Baltzakis Portfolio
 **Status**: ✅ All integrations active and documented
 
@@ -25,17 +25,20 @@
 
 ## 🌐 External Services & APIs
 
-### Firebase (v12.8.0)
+### Firebase (v12.10.0)
 
-**Purpose**: Cloud Messaging & Push Notifications
-**Files**: `src/lib/firebase.ts`, `src/hooks/usePushNotifications.ts`
+**Purpose**: Authentication (admin panel) & Cloud Messaging & Push Notifications
+**Files**: `src/lib/firebase.ts`, `src/hooks/usePushNotifications.ts`, `src/components/admin/useAdminAuth.ts`
 
 **Features**:
 
+- Email/password authentication for the admin panel (`/admin`)
 - FCM token generation and management
 - Foreground message handling
 - Cloud messaging integration
 - VAPID key authentication
+
+**Auth Initialization (Mar 2026)**: Uses `initializeAuth()` with explicit `browserLocalPersistence` and `browserPopupRedirectResolver` instead of `getAuth()` to avoid the `_getRecaptchaConfig is not a function` error in Firebase v12+ (which enforces reCAPTCHA for email/password sign-in by default).
 
 **Configuration**:
 
@@ -1354,6 +1357,12 @@ AMPLIFY_STAGING_APP_ID=
 - Check Firebase console for project status
 - Ensure domain is allowlisted
 
+**Firebase `_getRecaptchaConfig` error**:
+
+- This occurs in Firebase v12+ when email/password auth uses `getAuth()` which auto-configures reCAPTCHA
+- Fix: `src/lib/firebase.ts` uses `initializeAuth()` with explicit persistence/resolver dependencies
+- Alternative: Disable "Email Enumeration Protection" in Firebase Console → Authentication → Settings
+
 **reCAPTCHA failing**:
 
 - Verify site key matches domain
@@ -1389,8 +1398,8 @@ AMPLIFY_STAGING_APP_ID=
 
 ---
 
-**Last Updated**: 2026-02-22
-**Version**: 1.1.0
+**Last Updated**: 2026-03-10
+**Version**: 1.2.0
 **Maintainer**: Themistoklis Baltzakis
 
 ## 🆕 Latest Updates - February 22, 2026
