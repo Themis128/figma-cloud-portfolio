@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { auth, signInWithEmailAndPassword, signOut } from "@/lib/firebase";
+import { getRealAuth, signInWithEmailAndPassword, signOut } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function useAdminAuth() {
@@ -14,7 +14,8 @@ export function useAdminAuth() {
         setLoginError(null);
 
         const AUTH_TIMEOUT_MS = 15000;
-        const authPromise = signInWithEmailAndPassword(auth, email, password);
+        const realAuth = getRealAuth();
+        const authPromise = signInWithEmailAndPassword(realAuth, email, password);
         const timeoutPromise = new Promise<never>((_resolve, reject) => {
           setTimeout(
             () => reject(new Error("Authentication timed out. Please try again.")),
@@ -62,7 +63,7 @@ export function useAdminAuth() {
   );
 
   const logout = useCallback(async () => {
-    await signOut(auth);
+    await signOut(getRealAuth());
   }, []);
 
   return {
