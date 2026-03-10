@@ -91,6 +91,19 @@ export const auth: Auth = new Proxy({} as Auth, {
   },
 });
 
+// Export the real Auth instance getter so callers that need the unwrapped
+// auth (e.g. signInWithEmailAndPassword which accesses internal reCAPTCHA
+// methods) can bypass the Proxy.
+export function getRealAuth(): Auth {
+  const real = getFirebaseAuth();
+  if (!real) {
+    throw new Error(
+      "Firebase is not configured — set NEXT_PUBLIC_FIREBASE_* env vars",
+    );
+  }
+  return real;
+}
+
 export { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User };
 
 // Messaging requires browser APIs — lazy-load only when called
