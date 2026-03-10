@@ -8,15 +8,15 @@ The image optimization system provides:
 
 - **Responsive Images**: Automatic format selection (WebP/AVIF with PNG/JPEG fallbacks)
 - **Lazy Loading**: Intersection Observer-based loading for performance
-- **Build-time Optimization**: Vite plugin for automatic compression
-- **Runtime Optimization**: Custom React components with loading states
+- **Build-time Optimization**: Next.js Image component with automatic optimization
+- **Runtime Optimization**: `next/image` component with loading states
 
 ## 🛠️ Implementation Details
 
-### 1. Build-time Optimization (Vite Plugin)
+### 1. Build-time Optimization (Next.js Image)
 
-**Plugin**: `vite-plugin-image-optimizer`
-**Location**: `vite.config.ts`
+**Component**: `next/image`
+**Config**: `next.config.ts` (image optimization settings)
 
 ```typescript
 ViteImageOptimizer({
@@ -152,7 +152,7 @@ The Navigation component has been updated to use the OptimizedImage component:
 1. **Run optimization script**:
 
    ```bash
-   npm run optimize-images
+   pnpm optimize-images
    ```
 
 2. **Check image sizes**:
@@ -164,7 +164,7 @@ The Navigation component has been updated to use the OptimizedImage component:
 Images are automatically optimized during the Vite build process:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 The Vite Image Optimizer plugin will:
@@ -175,9 +175,9 @@ The Vite Image Optimizer plugin will:
 
 ## 🔧 Configuration
 
-### Vite Plugin Settings
+### Image Optimization Settings
 
-Located in `vite.config.ts`:
+Located in `next.config.ts` (image settings) and build pipeline:
 
 ```typescript
 ViteImageOptimizer({
@@ -231,7 +231,7 @@ The implementation includes:
 Use the bundle analyzer to monitor image sizes:
 
 ```bash
-npm run build:analyze
+pnpm build:analyze
 ```
 
 ## 🚀 Future Enhancements
@@ -279,13 +279,13 @@ npm run build:analyze
 
 ```bash
 # Check current image sizes
-npm run optimize-images
+pnpm optimize-images
 
 # Analyze bundle with images
-npm run build:analyze
+pnpm build:analyze
 
 # Test in development
-npm run dev
+pnpm dev
 ```
 
 ## 📚 Resources

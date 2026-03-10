@@ -94,15 +94,14 @@ test.describe("Performance Page — Tech Stack", () => {
     await page.goto("/performance");
     await page.waitForLoadState("domcontentloaded");
 
-    // Tech stack rationale mentions technologies
+    // Tech stack rationale mentions technologies used in the site
     const techTerms = [
       "Next.js",
-      "React",
       "Tailwind",
-      "TypeScript",
-      "AWS",
-      "Vercel",
-      "Amplify",
+      "Radix UI",
+      "Framer Motion",
+      "CloudFront",
+      "web-vitals",
     ];
 
     let found = 0;

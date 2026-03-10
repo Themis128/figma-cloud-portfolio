@@ -6,7 +6,7 @@
 - No sensitive data is sent to Builder.io; only user attributes for targeting (ID, role, country, A/B group, etc.).
 - All environment variables are managed via `.env` and `.env.local` and documented in `.env.example`.
 - reCAPTCHA v3 is enabled on all forms for bot/spam protection.
-- HTTP security headers (Helmet.js) and rate limiting are enforced on the backend.
+- HTTP security headers (configured via CloudFront/deployment pipeline) and rate limiting are enforced on the backend.
 - XSS, SQL injection, and command injection protections are in place throughout the stack.
 - Builder.io preview/editing mode is visually indicated and can be exited by users.
 - Analytics and A/B test events are tracked only with non-sensitive metadata.

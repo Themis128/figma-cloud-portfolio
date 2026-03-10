@@ -58,22 +58,22 @@ Create `.env.development`:
 
 ```env
 # Real-time Configuration
-VITE_REALTIME_ENABLED=true
-VITE_SOCKET_URL=http://localhost:3000
-VITE_SOCKET_RECONNECT_ATTEMPTS=5
-VITE_SOCKET_RECONNECT_DELAY=1000
+NEXT_PUBLIC_REALTIME_ENABLED=true
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
+NEXT_PUBLIC_SOCKET_RECONNECT_ATTEMPTS=5
+NEXT_PUBLIC_SOCKET_RECONNECT_DELAY=1000
 
 # Debug Settings
-VITE_SOCKET_DEBUG=true
-VITE_REALTIME_DEBUG=true
+NEXT_PUBLIC_SOCKET_DEBUG=true
+NEXT_PUBLIC_REALTIME_DEBUG=true
 
 # Server Configuration
 PORT=3000
 NODE_ENV=development
-CORS_ORIGINS=http://localhost:8082
+CORS_ORIGINS=http://localhost:3000
 
 # Performance Tuning
-VITE_SOCKET_MAX_LISTENERS=50
+NEXT_PUBLIC_SOCKET_MAX_LISTENERS=50
 SOCKET_PRESENCE_CLEANUP_INTERVAL=30000
 SOCKET_MAX_CONNECTIONS=1000
 ```
@@ -84,22 +84,22 @@ Create `.env.production`:
 
 ```env
 # Real-time Configuration
-VITE_REALTIME_ENABLED=true
-VITE_SOCKET_URL=https://your-domain.com
-VITE_SOCKET_RECONNECT_ATTEMPTS=3
-VITE_SOCKET_RECONNECT_DELAY=2000
+NEXT_PUBLIC_REALTIME_ENABLED=true
+NEXT_PUBLIC_SOCKET_URL=https://your-domain.com
+NEXT_PUBLIC_SOCKET_RECONNECT_ATTEMPTS=3
+NEXT_PUBLIC_SOCKET_RECONNECT_DELAY=2000
 
 # Security
-VITE_SOCKET_DEBUG=false
-VITE_REALTIME_DEBUG=false
+NEXT_PUBLIC_SOCKET_DEBUG=false
+NEXT_PUBLIC_REALTIME_DEBUG=false
 
 # Performance
-VITE_SOCKET_MAX_LISTENERS=100
+NEXT_PUBLIC_SOCKET_MAX_LISTENERS=100
 SOCKET_PRESENCE_CLEANUP_INTERVAL=60000
 SOCKET_MAX_CONNECTIONS=10000
 
 # AWS Lambda Configuration (if deploying to Amplify)
-VITE_LAMBDA_REALTIME_URL=https://your-api-gateway-url/realtime
+NEXT_PUBLIC_LAMBDA_REALTIME_URL=https://your-api-gateway-url/realtime
 ```
 
 ## Development Setup
@@ -119,7 +119,7 @@ const server = createServer(app);
 // Socket.IO configuration
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(",") || ["http://localhost:8082"],
+    origin: process.env.CORS_ORIGINS?.split(",") || ["http://localhost:3000"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -166,61 +166,23 @@ root.render(
 );
 ```
 
-### 3. Vite Configuration
+### 3. Next.js Configuration
 
-Update `vite.config.ts`:
+Socket.IO proxy is handled in `next.config.ts` or via the Express dev server. The backend runs on port 3001 and handles Socket.IO connections directly.
 
 ```typescript
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-
-export default defineConfig({
-  plugins: [
-    react({
-      // Enable React 19 features
-      include: "**/*.{jsx,tsx}",
-    }),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./client"),
-      "@shared": path.resolve(__dirname, "./shared"),
+// next.config.ts — relevant rewrites for dev proxy
+async rewrites() {
+  return [
+    {
+      source: "/socket.io/:path*",
+      destination: "http://localhost:3001/socket.io/:path*",
     },
-  },
-  server: {
-    port: 8082,
-    proxy: {
-      // Proxy API requests to backend
-      "/api": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-        secure: false,
-      },
-      // Proxy Socket.IO requests
-      "/socket.io": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-    },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "socket-io": ["socket.io-client"],
-          realtime: [
-            "./client/hooks/useEnhancedRealtime.ts",
-            "./client/components/realtime/RealtimeIntegration.tsx",
-          ],
-        },
-      },
-    },
-  },
-});
+  ];
+}
 ```
+
+> **Note**: In production, Socket.IO connects directly to the Lambda/Express backend URL.
 
 ## Production Configuration
 

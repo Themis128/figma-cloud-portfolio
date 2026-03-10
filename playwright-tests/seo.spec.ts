@@ -112,7 +112,7 @@ test.describe("SEO & Metadata", () => {
       if (response.ok()) {
         const content = await response.text();
 
-        // In development, Vite serves index.html for unknown routes
+        // In development, Next.js handles unknown routes
         const isDevelopment =
           content.includes("<!doctype html>") ||
           content.includes('<div id="root">');
@@ -177,7 +177,7 @@ test.describe("SEO & Metadata", () => {
       await waitForAppReady(page);
       await page.waitForLoadState("networkidle");
 
-      // Wait for the title to be set (React Helmet might set it asynchronously)
+      // Wait for the title to be set (Next.js metadata API might set it asynchronously)
       await page.waitForFunction(
         () => document.title && document.title.length > 10,
         {

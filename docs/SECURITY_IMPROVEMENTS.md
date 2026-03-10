@@ -185,7 +185,7 @@ const testCases = [
 
 ```bash
 # Safe command execution
-node scripts/run-with-secrets.js npm run build
+node scripts/run-with-secrets.js pnpm build
 
 # Safe command with arguments
 node scripts/run-with-secrets.js echo "Hello World"

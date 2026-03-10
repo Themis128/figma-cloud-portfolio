@@ -2,12 +2,11 @@ import { expect, test } from "@playwright/test";
 import { waitForAppReady } from "./test-utils";
 
 /**
- * React + Vite SPA Features Test Suite
- * Tests for React SPA specific features including routing,
+ * Next.js 16 Features Test Suite
+ * Tests for Next.js 16 App Router specific features including routing,
  * lazy loading, and client-side rendering.
  *
- * Note: This project is a React + Vite SPA, not Next.js.
- * Tests have been updated to reflect the actual architecture.
+ * Tests have been updated to reflect the Next.js 16 App Router architecture.
  */
 
 test.describe("React SPA Features", () => {

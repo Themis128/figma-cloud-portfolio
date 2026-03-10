@@ -1,6 +1,6 @@
 # Baltzakis Themistoklis Portfolio
 
-A production-ready full-stack React application for a professional portfolio, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod, PWA capabilities, and Web Push API notifications.
+A production-ready full-stack React application for a professional portfolio, featuring Next.js 16 App Router, TypeScript, Tailwind CSS v4, PWA capabilities, and Web Push API notifications.
 
 ## 🛠️ Tech Stack
 
@@ -15,36 +15,30 @@ A production-ready full-stack React application for a professional portfolio, fe
 ## 📁 Project Structure
 
 ```
-client/                   # React SPA frontend
-├── pages/                # Route components (Index.tsx = home)
-├── components/ui/        # Pre-built UI component library
-├── App.tsx               # App entry point with SPA routing setup
-└── global.css            # TailwindCSS 3 theming and global styles
+src/
+├── app/              # Next.js App Router pages and layouts
+├── components/       # React components (ui/, sections/, performance/, admin/)
+├── hooks/            # Custom React hooks
+├── lib/              # Utilities, helpers, constants
+├── types/            # TypeScript type definitions
+└── styles/           # Global CSS
 
-server/                   # Express API backend
-├── index.ts              # Main server setup (express config + routes)
-└── routes/               # API handlers
-
-shared/                   # Types used by both client & server
-└── api.ts                # Shared API interfaces
-
-amplify/                  # AWS Amplify Gen 2 backend
-├── functions/            # Lambda functions
-└── backend/              # Amplify backend configuration
-
-public/                   # Static assets and PWA files
-scripts/                  # Build and utility scripts
+server/               # Express backend (tsx)
+amplify/              # AWS Amplify Gen 2 backend
+playwright-tests/     # E2E tests
+public/               # Static assets and PWA files
+docs/                 # Documentation
 ```
 
 ## ⚡ Key Features
 
-- **SPA Routing**: React Router 6 with clean URL structure
+- **App Router**: Next.js 16 file-based routing with trailing slashes
 - **PWA Ready**: Offline caching, installable, push notifications
 - **Type Safety**: Full TypeScript throughout client, server, and shared code
 - **Modern UI**: Radix UI components with TailwindCSS styling
 - **Performance**: Optimized images, lazy loading, performance monitoring
 - **Testing**: Comprehensive test suite with Vitest and Playwright
-- **Deployment**: Multiple deployment options (Netlify, Vercel, AWS Amplify)
+- **Deployment**: S3 + CloudFront (production), GitHub Actions CI/CD
 - **Theme System**: Light/dark/system theme toggle with persistence
 - **Cookie Consent**: GDPR-compliant cookie consent banner
 - **Accessibility**: Accessibility button with quick settings
@@ -72,20 +66,20 @@ pnpm install
 ### Running Development Servers
 
 ```bash
-# Terminal 1: Start Vite dev server (frontend - default: http://localhost:8082)
+# Terminal 1: Start Next.js dev server (frontend - default: http://localhost:3000)
 pnpm dev
 
-# Terminal 2: Start Express API server (backend - default: http://localhost:3002)
-npx tsx server/node-build.ts
+# Terminal 2: Start Express API server (backend - default: http://localhost:3001)
+pnpm dev:server
 ```
 
-> **Note**: For push notifications to work in development, you need both servers running. The Vite dev server proxies `/api` requests to the Express server.
+> **Note**: For push notifications to work in development, you need both servers running. The Next.js dev server proxies `/api` requests to the Express server.
 
 ## 📋 Available Scripts
 
 ```bash
-pnpm dev                        # Start Vite dev server (frontend)
-npx tsx server/node-build.ts    # Start Express API server (backend)
+pnpm dev                        # Start Next.js dev server (frontend)
+pnpm dev:server                 # Start Express API server (backend)
 pnpm build                      # Production build
 pnpm start                      # Start production server
 pnpm typecheck                  # TypeScript validation
@@ -115,19 +109,18 @@ pnpm build
 pnpm start
 ```
 
-### Cloud Deployment Options
+### Production Deployment
 
-- **Netlify**: See [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md) for comprehensive guide
-- **Vercel**: Deploy with zero configuration
-- **AWS Amplify**: See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for full instructions
+- **Frontend**: S3 + CloudFront via `./scripts/deploy.sh` or GitHub Actions
+- **Backend**: Amplify Gen 2 via `ampx pipeline-deploy`
 
 ### Deployment Documentation
 
-| Platform       | Documentation                                    | Use Case                           |
-| -------------- | ------------------------------------------------ | ---------------------------------- |
-| Netlify        | [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md) | Static sites, serverless functions |
-| AWS Amplify    | [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)     | Full-stack with backend            |
-| GitHub Actions | [CI_CD_README.md](./CI_CD_README.md)             | CI/CD pipeline setup               |
+| Component      | Documentation                                | Use Case                     |
+| -------------- | -------------------------------------------- | ---------------------------- |
+| Frontend       | [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) | S3 + CloudFront deploy       |
+| Backend        | [DEPLOYMENT.md](./DEPLOYMENT.md)             | Amplify Gen 2 backend deploy |
+| GitHub Actions | [CI_CD_README.md](./CI_CD_README.md)         | CI/CD pipeline setup         |
 
 ## 🤝 Contributing
 

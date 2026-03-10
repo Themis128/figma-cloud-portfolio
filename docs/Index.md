@@ -36,7 +36,7 @@ Welcome to the portfolio documentation. This section contains comprehensive guid
 
 ## Reference
 
-- [Comprehensive Documentation](COMPREHENSIVE_DOCUMENTATION.md) - Complete project reference
+- [Architecture](ARCHITECTURE.md) - Complete project architecture reference
 - [Usage Examples](USAGE_EXAMPLES.md) - Code examples and patterns
 - [Quick Start Free APIs](QUICK_START_FREE_APIS.md) - Free API services setup
 

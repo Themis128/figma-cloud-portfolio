@@ -1014,7 +1014,7 @@ toast.success("Success!");
 
 **Packages**:
 
-- `vite-plugin-image-optimizer` (v1.1.9)
+- `next/image` (built-in Next.js Image component)
 - `sharp` (v0.34.5)
 
 **Configuration**:
@@ -1058,13 +1058,13 @@ Opens visual bundle analysis showing:
 
 ### PWA (Progressive Web App)
 
-**Package**: `vite-plugin-pwa` (v1.2.0)
+**Implementation**: Native service worker + `public/manifest.json`
 
 **Features**:
 
-- Auto-update service workers
-- Manifest generation
-- Workbox integration
+- Service worker with offline caching (`public/sw.js`)
+- Web App Manifest (`public/manifest.json`)
+- PWA update notification component
 - Offline support
 - SPA navigation fallback
 - App installation prompts
