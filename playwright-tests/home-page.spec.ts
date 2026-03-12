@@ -13,8 +13,8 @@ test.describe("Home Page — Hero Section", () => {
   });
 
   test("should display owner name in heading", async ({ page }) => {
-    await expect(page.getByText("Themistoklis")).toBeVisible();
-    await expect(page.getByText("Baltzakis")).toBeVisible();
+    await expect(page.getByText("Themistoklis", { exact: true })).toBeVisible();
+    await expect(page.getByText("Baltzakis", { exact: true })).toBeVisible();
   });
 
   test("should display role title", async ({ page }) => {
@@ -108,7 +108,7 @@ test.describe("Home Page — Layout", () => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     const logo = page.locator('a[aria-label="Home"]');
     await expect(logo).toBeVisible();
     await expect(logo).toContainText("TB");

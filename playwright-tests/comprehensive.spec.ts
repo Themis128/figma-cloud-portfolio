@@ -8,7 +8,7 @@ test.describe("Comprehensive Tests", () => {
 
   test("should load homepage with navigation", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
   });
 
   test("should navigate to projects page", async ({ page }) => {
@@ -20,19 +20,25 @@ test.describe("Comprehensive Tests", () => {
 
   test("should navigate to about page", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
     await page.click("text=About");
+    await page.waitForURL(/\/about/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/about/);
   });
 
   test("should navigate to contact page", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
     await page.click("text=Contact");
+    await page.waitForURL(/\/contact/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/contact/);
   });
 
   test("should navigate to resume page", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
     await page.click("text=Resume");
+    await page.waitForURL(/\/resume/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/resume/);
   });
 

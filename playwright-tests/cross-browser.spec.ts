@@ -22,7 +22,7 @@ test.describe("Cross-browser Tests", () => {
   test("should have navigation working", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
   });
 
   test("should handle CSS correctly", async ({ page }) => {

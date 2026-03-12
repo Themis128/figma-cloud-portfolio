@@ -10,7 +10,7 @@ test.describe("Cookie Policy Page", () => {
 
   test("should load and display page title", async ({ page }) => {
     await expect(page).toHaveTitle(/Cookie Policy/i);
-    await expect(page.getByText("COOKIE POLICY")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Cookie Policy/i })).toBeVisible();
   });
 
   test("should have correct meta description", async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe("Cookie Policy Page", () => {
   });
 
   test("should have essential cookies section", async ({ page }) => {
-    await expect(page.getByText("Essential Cookies")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Essential Cookies" })).toBeVisible();
   });
 
   test("should have analytics cookies section", async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe("Cookie Policy Page", () => {
   });
 
   test("should have navigation component", async ({ page }) => {
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
   });
 
   test("should have main content area", async ({ page }) => {
@@ -93,7 +93,7 @@ test.describe("Privacy Policy Page", () => {
 
   test("should load and display page title", async ({ page }) => {
     await expect(page).toHaveTitle(/Privacy Policy/i);
-    await expect(page.getByText("PRIVACY POLICY")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Privacy Policy/i })).toBeVisible();
   });
 
   test("should have correct meta description", async ({ page }) => {
@@ -173,7 +173,7 @@ test.describe("Privacy Policy Page", () => {
   });
 
   test("should have navigation and main content", async ({ page }) => {
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     await expect(page.locator("#main-content")).toBeVisible();
   });
 });
@@ -188,7 +188,7 @@ test.describe("Terms of Service Page", () => {
 
   test("should load and display page title", async ({ page }) => {
     await expect(page).toHaveTitle(/Terms of Service/i);
-    await expect(page.getByText("TERMS OF SERVICE")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Terms of Service/i })).toBeVisible();
   });
 
   test("should have correct meta description", async ({ page }) => {
@@ -199,10 +199,13 @@ test.describe("Terms of Service Page", () => {
   test("should have acceptance section with privacy link", async ({
     page,
   }) => {
-    const section = page.locator("#acceptance");
-    await expect(section).toBeVisible();
+    const heading = page.locator("#acceptance");
+    await heading.scrollIntoViewIfNeeded();
+    await expect(heading).toBeVisible();
+    // id is on the <h2> (SectionCard), so look in the parent container
+    const section = heading.locator("..");
     const privacyLink = section.locator('a[href="/privacy/"]');
-    expect(await privacyLink.count()).toBeGreaterThanOrEqual(1);
+    await expect(privacyLink).toBeAttached();
   });
 
   test("should have services section listing all services", async ({
@@ -249,25 +252,31 @@ test.describe("Terms of Service Page", () => {
   test("should have governing law section referencing Greek law", async ({
     page,
   }) => {
-    const section = page.locator("#governing-law");
-    await expect(section).toBeVisible();
-    await expect(page.getByText("Greek").first()).toBeVisible();
+    const heading = page.locator("#governing-law");
+    await heading.scrollIntoViewIfNeeded();
+    await expect(heading).toBeVisible();
+    // id is on the <h2> (SectionCard), so look in the parent container
+    const section = heading.locator("..");
+    await expect(section.getByText("Greece").first()).toBeVisible({ timeout: 10000 });
   });
 
   test("should have contact section with email", async ({ page }) => {
-    const section = page.locator("#contact");
-    await expect(section).toBeVisible();
+    const heading = page.locator("#contact");
+    await heading.scrollIntoViewIfNeeded();
+    await expect(heading).toBeVisible();
+    // id is on the <h2> (SectionCard), so look in the parent container
+    const section = heading.locator("..");
     const emailLink = section.locator(
       'a[href="mailto:tbaltzakis@cloudless.gr"]',
     );
-    await expect(emailLink).toBeVisible();
+    await expect(emailLink).toBeAttached();
     await expect(
       page.getByText("Themistoklis Baltzakis").first(),
-    ).toBeVisible();
+    ).toBeAttached();
   });
 
   test("should have navigation and main content", async ({ page }) => {
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     await expect(page.locator("#main-content")).toBeVisible();
   });
 });

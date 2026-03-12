@@ -16,7 +16,7 @@ test("homepage loads and displays content", async ({ page }) => {
   expect(headingText?.toLowerCase()).toContain("themistoklis");
 
   // Check navigation exists
-  const nav = page.locator("nav");
+  const nav = page.locator("nav").first();
   await expect(nav).toBeVisible();
 });
 

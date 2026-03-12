@@ -167,7 +167,7 @@ test.describe("Test Optimization and Reliability", () => {
 
     // Use specific, fast assertions
     await expect(page.locator("h1")).toBeVisible();
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     await expect(page.locator("main")).toBeVisible();
 
     // Avoid expensive assertions
@@ -204,7 +204,7 @@ test.describe("Test Optimization and Reliability", () => {
       () => page.goto("/"),
       () => waitForAppReady(page),
       () => expect(page.locator("h1")).toBeVisible(),
-      () => expect(page.locator("nav")).toBeVisible()
+      () => expect(page.locator("nav").first()).toBeVisible()
     ];
 
     for (const test of tests) {
@@ -376,7 +376,7 @@ test.describe("Test Optimization and Reliability", () => {
     console.log(`Page load time: ${loadTime}ms`);
 
     await expect(page.locator("h1")).toBeVisible();
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
 
     // Performance should be acceptable
     expect(loadTime).toBeLessThan(10000); // 10 seconds max

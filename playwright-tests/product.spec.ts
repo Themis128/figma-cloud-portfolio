@@ -121,7 +121,7 @@ test.describe("Product / Work Experience Page", () => {
   // ─── Navigation ───────────────────────────────────────────────────────────────
 
   test("has navigation component visible", async ({ page }) => {
-    const nav = page.locator("nav");
+    const nav = page.locator("nav").first();
     await expect(nav).toBeVisible();
   });
 

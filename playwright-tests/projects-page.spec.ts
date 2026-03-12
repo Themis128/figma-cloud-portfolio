@@ -31,7 +31,7 @@ test.describe("Projects Page — Content", () => {
   test("should display navigation with Projects highlighted", async ({
     page,
   }) => {
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
   });
 
   test("should render project cards", async ({ page }) => {

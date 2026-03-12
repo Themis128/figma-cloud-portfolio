@@ -373,7 +373,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     await waitForAppReady(page);
 
     // Check navigation landmark exists
-    const nav = page.locator("nav");
+    const nav = page.locator("nav").first();
     await expect(nav).toBeVisible();
 
     // Check that the home link has proper aria-label
@@ -471,7 +471,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     await expect(page.locator("h1")).toBeVisible();
 
     // Desktop navigation should be visible
-    const desktopNav = page.locator("nav");
+    const desktopNav = page.locator("nav").first();
     await expect(desktopNav).toBeVisible();
   });
 
@@ -1523,7 +1523,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
       // Check that normal content is visible
       await expect(page.locator("h1")).toBeVisible();
-      await expect(page.locator("nav")).toBeVisible();
+      await expect(page.locator("nav").first()).toBeVisible();
     });
   });
 
@@ -1695,7 +1695,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       await page.goto("/");
       await waitForAppReady(page);
 
-      await expect(page.locator("nav")).toBeVisible();
+      await expect(page.locator("nav").first()).toBeVisible();
       await expect(page.locator("main")).toBeVisible();
     });
   });

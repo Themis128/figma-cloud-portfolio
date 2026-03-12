@@ -263,6 +263,7 @@ test.describe("Performance Monitoring", () => {
     });
 
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
 
     // For mobile browsers, navigate directly
     if (
