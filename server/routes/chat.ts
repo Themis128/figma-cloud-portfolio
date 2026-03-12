@@ -4,8 +4,10 @@ import { Router, Request, Response } from "express";
 const router = Router();
 
 const HF_TOKEN = process.env.HF_TOKEN ?? "";
-const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct";
-const HF_API_URL = "https://router.huggingface.co/v1/chat/completions";
+// Zephyr-7b-beta is a free, ungated chat model on HF's standard inference API
+// (no paid provider routing, no gated license required).
+const HF_MODEL = "HuggingFaceH4/zephyr-7b-beta";
+const HF_API_URL = `https://api-inference.huggingface.co/models/${HF_MODEL}/v1/chat/completions`;
 
 const PORTFOLIO_CONTEXT = `You are an AI assistant for Themistoklis Baltzakis's portfolio website.
 Answer questions about Themis professionally and helpfully. Be concise and friendly.
