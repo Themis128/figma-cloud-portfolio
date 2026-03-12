@@ -13,7 +13,7 @@ export function useAdminAuth() {
       try {
         setLoginError(null);
 
-        const AUTH_TIMEOUT_MS = 15000;
+        const AUTH_TIMEOUT_MS = 10000;
         const realAuth = getRealAuth();
         const authPromise = signInWithEmailAndPassword(realAuth, email, password);
         const timeoutPromise = new Promise<never>((_resolve, reject) => {
