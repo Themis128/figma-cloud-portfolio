@@ -13,7 +13,7 @@ This project implements a comprehensive, maintainable Playwright testing configu
 3. **Duplicate Browser Arguments** - Consolidated into reusable constants
 4. **Inconsistent Timeout Strategies** - Environment-aware timeout scaling
 5. **Missing Global Setup** - Proper test isolation and cleanup implemented
-6. **Outdated Base URLs** - Updated to match current app architecture (frontend: 8082, backend: 3002)
+6. **Outdated Base URLs** - Updated to match current app architecture (frontend: 3000 via `npx serve out`)
 7. **AI Agent Templates Testing** - Added comprehensive test coverage for the new `/agents` feature
 
 ### 🚀 New Features
