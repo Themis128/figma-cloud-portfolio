@@ -96,7 +96,7 @@ test.describe("Portfolio Viewport Testing", () => {
     expect(viewport?.height).toBe(1024);
 
     // Test tablet-specific behavior
-    await expect(page.locator('nav')).toBeVisible();
+    await expect(page.locator('nav').first()).toBeVisible();
 
     // Test that content is readable on tablet
     const headings = page.locator('h1, h2, h3');

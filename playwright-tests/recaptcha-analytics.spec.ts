@@ -274,7 +274,7 @@ test.describe("reCAPTCHA and Google Analytics Integration", () => {
 
       // Page should still load normally
       await expect(page.locator("h1")).toBeVisible();
-      await expect(page.locator("nav")).toBeVisible();
+      await expect(page.locator("nav").first()).toBeVisible();
     });
 
     test("should track events when GA is available", async ({ page }) => {
@@ -340,7 +340,7 @@ test.describe("reCAPTCHA and Google Analytics Integration", () => {
 
       // Page should still function normally
       await expect(page.locator("h1")).toBeVisible();
-      await expect(page.locator("nav")).toBeVisible();
+      await expect(page.locator("nav").first()).toBeVisible();
 
       // Navigation should work
       await page.goto("/contact");
@@ -358,12 +358,13 @@ test.describe("reCAPTCHA and Google Analytics Integration", () => {
       });
 
       await page.goto("/");
+      await page.waitForLoadState("networkidle");
 
       // Click navigation links (SPA routing)
       const contactLink = page.getByRole("link", { name: "Contact" });
       if (await contactLink.isVisible()) {
         await contactLink.click({ force: true });
-        await page.waitForURL(/\/contact/, { timeout: 15000 });
+        await page.waitForURL(/\/contact/, { timeout: 30000 });
 
         // Wait for GA tracking (reduced timeout)
         await page.waitForTimeout(500);

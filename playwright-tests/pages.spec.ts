@@ -5,15 +5,16 @@ test.describe("Main Pages", () => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
     await expect(page.locator("h1")).toBeVisible();
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     // Home page may not have a visible footer element
   });
 
   test("should navigate to About page", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
     // Click About link in nav
     await page.locator('a[href="/about/"]').first().click();
+    await page.waitForURL(/\/about/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/about/);
     // About page heading is "About Me"
     const headingText = await page.locator("h1").textContent();
@@ -32,8 +33,9 @@ test.describe("Main Pages", () => {
 
   test("should navigate to Resume page", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
     await page.locator('a[href="/resume/"]').first().click();
+    await page.waitForURL(/\/resume/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/resume/);
     // Resume page heading is "Resume Builder"
     const headingText = await page.locator("h1").textContent();
@@ -42,8 +44,9 @@ test.describe("Main Pages", () => {
 
   test("should navigate to Contact page", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
     await page.locator('a[href="/contact/"]').first().click();
+    await page.waitForURL(/\/contact/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/contact/);
     // Contact page heading is "Get In Touch"
     const headingText = await page.locator("h1").textContent();

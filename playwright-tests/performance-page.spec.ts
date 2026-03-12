@@ -13,13 +13,13 @@ test.describe("Performance Page — Structure", () => {
   });
 
   test("should load without errors", async ({ page }) => {
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     await expect(page.locator("#main-content")).toBeAttached();
   });
 
   test("should display navigation with active link", async ({ page }) => {
     await page.waitForLoadState("networkidle");
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
     const perfLink = page.locator('nav a[href*="/performance"]').first();
     await expect(perfLink).toHaveClass(/border-cyan-400/);
   });

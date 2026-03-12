@@ -192,13 +192,16 @@ test.describe("Code Quality", () => {
       expect(alt).toBeDefined();
     }
 
-    // Check for proper form labels
+    // Check for proper form labels (label[for], aria-label, or aria-labelledby)
     const inputs = await page.locator("input").all();
     for (const input of inputs) {
       const id = await input.getAttribute("id");
+      const ariaLabel = await input.getAttribute("aria-label");
+      const ariaLabelledBy = await input.getAttribute("aria-labelledby");
       if (id) {
         const label = await page.locator(`label[for="${id}"]`).count();
-        expect(label).toBeGreaterThan(0);
+        const hasAccessibleName = label > 0 || !!ariaLabel || !!ariaLabelledBy;
+        expect(hasAccessibleName).toBe(true);
       }
     }
   });

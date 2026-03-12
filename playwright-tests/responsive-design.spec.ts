@@ -36,7 +36,7 @@ test.describe("Comprehensive Responsive Design", () => {
       customTests: [
         async (page) => {
           // Desktop-specific test: navigation should be visible
-          const nav = page.locator('nav');
+          const nav = page.locator('nav').first();
           await expect(nav).toBeVisible();
           
           // Mobile menu button should be hidden
@@ -59,7 +59,7 @@ test.describe("Comprehensive Responsive Design", () => {
       customTests: [
         async (page) => {
           // Test that content adapts to smaller width
-          const nav = page.locator('nav');
+          const nav = page.locator('nav').first();
           const navBox = await nav.boundingBox();
           expect(navBox?.width).toBeLessThanOrEqual(900);
         }
@@ -135,7 +135,7 @@ test.describe("Comprehensive Responsive Design", () => {
       await setViewportAndWait(page, viewport);
       
       // Test that the page adapts correctly to each viewport
-      await expect(page.locator('nav')).toBeVisible();
+      await expect(page.locator('nav').first()).toBeVisible();
       await expect(page.locator('main')).toBeVisible();
       
       // Test navigation adapts correctly
@@ -190,7 +190,7 @@ test.describe("Comprehensive Responsive Design", () => {
       await setViewportAndWait(page, viewport);
       
       // Test that content is still accessible
-      await expect(page.locator('nav')).toBeVisible();
+      await expect(page.locator('nav').first()).toBeVisible();
       await expect(page.locator('main')).toBeVisible();
       
       // Test that navigation works
@@ -242,15 +242,15 @@ test.describe("Comprehensive Responsive Design", () => {
   test("should handle orientation changes", async ({ page }) => {
     // Start in portrait
     await setViewportAndWait(page, DEVICE_PRESETS["tablet"].viewport);
-    await expect(page.locator('nav')).toBeVisible();
+    await expect(page.locator('nav').first()).toBeVisible();
 
     // Switch to landscape
     await setViewportAndWait(page, { width: 1024, height: 768 });
-    await expect(page.locator('nav')).toBeVisible();
+    await expect(page.locator('nav').first()).toBeVisible();
 
     // Switch back to portrait
     await setViewportAndWait(page, DEVICE_PRESETS["tablet"].viewport);
-    await expect(page.locator('nav')).toBeVisible();
+    await expect(page.locator('nav').first()).toBeVisible();
     
     // Test that navigation adapts correctly in both orientations
     await testResponsiveNavigation(page);

@@ -7,11 +7,11 @@ test.describe("Settings Page", () => {
   });
 
   test("should load and display page heading", async ({ page }) => {
-    await expect(page.getByText("SETTINGS")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Settings/i })).toBeVisible();
   });
 
   test("should have navigation component", async ({ page }) => {
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
   });
 
   test("should have main content area", async ({ page }) => {
@@ -82,7 +82,7 @@ test.describe("Settings Page", () => {
 
   test("should have push notifications toggle", async ({ page }) => {
     await expect(
-      page.getByText("Push Notifications", { exact: false }),
+      page.getByText("Push Notifications", { exact: true }),
     ).toBeVisible();
   });
 
@@ -191,7 +191,7 @@ test.describe("Settings Page", () => {
   test("should be responsive on mobile viewport", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
 
-    await expect(page.getByText("SETTINGS")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Settings/i })).toBeVisible();
     await expect(page.getByText("Light", { exact: true })).toBeVisible();
     await expect(page.getByText("Dark", { exact: true })).toBeVisible();
     await expect(page.getByText("System", { exact: true })).toBeVisible();

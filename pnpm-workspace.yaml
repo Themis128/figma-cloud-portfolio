@@ -1,5 +1,6 @@
 ignoredBuiltDependencies:
   - "@sentry/cli"
   - esbuild
+  - isolated-vm
   - sharp
   - unrs-resolver

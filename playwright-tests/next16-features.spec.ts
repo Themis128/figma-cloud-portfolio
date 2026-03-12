@@ -83,7 +83,7 @@ test.describe("React SPA Features", () => {
     await waitForAppReady(page);
 
     // Test navigation to different pages
-    const nav = page.locator("nav");
+    const nav = page.locator("nav").first();
     await expect(nav).toBeVisible();
 
     // Navigate to projects page if available
