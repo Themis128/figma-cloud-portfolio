@@ -1,65 +1,50 @@
 # Portfolio Chatbot
 
-An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using `mistralai/Mistral-7B-Instruct-v0.3` via the HuggingFace Inference API.
+An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using `Qwen/Qwen2.5-7B-Instruct` via the HuggingFace Inference API.
 
 ## Architecture
 
 ```
 Browser (ChatbotWidget.tsx)
-  └─ POST /api/chat  ←── Next.js Route (src/app/api/chat/route.ts)
-       └─ POST http://<PYTHON_BOT_URL>/api/chat/stream  ←── Python FastAPI (server/bot/main.py)
-            └─ HuggingFace Inference API  (Mistral-7B-Instruct-v0.3)
+  └─ POST /api/chat  ←── Express server (server/routes/chat.ts)
+       └─ POST https://router.huggingface.co/v1/chat/completions
+            └─ Qwen/Qwen2.5-7B-Instruct (HuggingFace Router — free tier)
 ```
 
-Responses stream token-by-token using **Server-Sent Events (SSE)**. The Next.js proxy pipes the stream through so the browser reads tokens as they arrive.
+Responses are **buffered** server-side and delivered to the browser as a single Server-Sent Events batch once the model completes. The client reads the SSE stream and renders the full reply in one shot.
 
 ## Features
 
-- **Streaming responses** — tokens appear in real time
+- **Streaming-compatible SSE** — token-by-token delivery ready; currently full-response buffering for reliability
 - **Conversation history** — multi-turn context preserved per session
 - **Portfolio RAG** — full resume context injected as system prompt (no external vector DB)
 - **Cyberpunk UI** — dark glass-morphism panel, cyan accent, `font-mono`
 - **Suggested questions** — clickable prompts shown on first open
-- **Graceful errors** — connection failures displayed inline without crashing
+- **Booking flow** — `[BOOK_CALL]` token triggers the booking card
+- **Graceful errors** — API failures displayed inline without crashing
 
 ## Files
 
-| File                               | Purpose                                                |
-| ---------------------------------- | ------------------------------------------------------ |
-| `src/components/ChatbotWidget.tsx` | React UI component (floating button + chat panel)      |
-| `src/app/api/chat/route.ts`        | Next.js API route — proxies to Python backend          |
-| `server/bot/main.py`               | Python FastAPI — calls HuggingFace, returns SSE stream |
-| `server/bot/requirements.txt`      | Python dependencies                                    |
-| `server/bot/.env.example`          | Environment variable template for the Python service   |
+| File                               | Purpose                                                        |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `src/components/ChatbotWidget.tsx` | React UI component (floating button + chat panel)              |
+| `server/routes/chat.ts`            | Express route — calls HuggingFace router, returns SSE stream   |
 
 ## Local Development
 
-### 1. Python backend
+### 1. Set `HF_TOKEN` in `.env`
+
+```
+HF_TOKEN=hf_your_token_here
+```
+
+### 2. Start the Express dev server
 
 ```bash
-cd server/bot
-cp .env.example .env
-# Edit .env — set HF_TOKEN to your HuggingFace token
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8001
+pnpm dev:server
 ```
 
-Verify it's up:
-
-```bash
-curl http://localhost:8001/api/health
-# {"status":"ok","model":"mistralai/Mistral-7B-Instruct-v0.3"}
-```
-
-### 2. Next.js app
-
-Add to `.env.local`:
-
-```
-PYTHON_BOT_URL=http://localhost:8001
-```
-
-Start the dev server:
+### 3. Start the Next.js app
 
 ```bash
 pnpm dev
@@ -69,71 +54,56 @@ Open the portfolio in your browser and click **Chat with AI** in the bottom-left
 
 ## Environment Variables
 
-### Next.js app (`.env.local`)
+| Variable   | Required | Default | Description                                   |
+| ---------- | -------- | ------- | --------------------------------------------- |
+| `HF_TOKEN` | **Yes**  | —       | HuggingFace API token with Inference API access |
 
-| Variable         | Required | Default                 | Description                       |
-| ---------------- | -------- | ----------------------- | --------------------------------- |
-| `PYTHON_BOT_URL` | No       | `http://localhost:8001` | URL of the Python FastAPI backend |
+## Model
 
-### Python backend (`server/bot/.env`)
+| Property   | Value                                                     |
+| ---------- | --------------------------------------------------------- |
+| Model ID   | `Qwen/Qwen2.5-7B-Instruct`                                |
+| Provider   | HuggingFace Router (`router.huggingface.co`)              |
+| Tier       | Free (no gated license, no paid provider routing required) |
+| Max tokens | 512                                                       |
+| Temp       | 0.7                                                       |
 
-| Variable           | Required | Default | Description                                            |
-| ------------------ | -------- | ------- | ------------------------------------------------------ |
-| `HF_TOKEN`         | **Yes**  | —       | HuggingFace API token with Inference API access        |
-| `PORTFOLIO_ORIGIN` | No       | `*`     | CORS allowed origin — set to your domain in production |
-| `PORT`             | No       | `8001`  | Port to listen on                                      |
-
-## Deployment
-
-The Next.js app is deployed on **AWS Amplify** (or S3 + CloudFront). The Python service needs separate hosting since it is a long-running process. Recommended options:
-
-| Option                        | Notes                                                                |
-| ----------------------------- | -------------------------------------------------------------------- |
-| **AWS App Runner**            | Easy container deployment, scales to zero                            |
-| **AWS ECS Fargate**           | Full container control, suits production workloads                   |
-| **AWS EC2**                   | Direct VM hosting, most control                                      |
-| **AWS Lambda + Function URL** | Works for short requests; streaming requires response streaming mode |
-
-Set `PYTHON_BOT_URL` in Amplify's environment variable settings to the deployed Python service URL.
+The model is selected because it is freely available on the HuggingFace router without requiring a gated license agreement or a paid subscription. The chat completions endpoint (`/v1/chat/completions`) follows the OpenAI-compatible format — no model-specific prompt template required.
 
 ## Prompt Engineering
 
-The system prompt is hardcoded in `server/bot/main.py` (`PORTFOLIO_CONTEXT`). It includes:
+The system prompt is hardcoded in `server/routes/chat.ts` (`PORTFOLIO_CONTEXT`). It includes:
 
 - Name, title, location, contact
 - Work experience (3 roles)
-- Education (Bachelor's + Master's)
 - Certifications (AWS, Cisco, Azure, CISSP, CEH, ITIL)
 - Skill categories (Cloud, Security, Networking, Development, Tools)
 - Languages and honors
+- Booking instructions (emit `[BOOK_CALL]` token)
 
-To update the portfolio context, edit `PORTFOLIO_CONTEXT` in `server/bot/main.py` and redeploy the Python service.
-
-## Chat Template
-
-Mistral-7B-Instruct uses a specific prompt format. The `build_mistral_prompt()` function in `main.py` constructs:
-
-```
-<s>[INST] {system_context}\n\n{first_user_message} [/INST] {assistant_response} </s>
-[INST] {next_user_message} [/INST] ...
-```
-
-The system context is injected into the first user turn (Mistral-7B-Instruct-v0.3 does not have a native `<system>` token).
+To update the portfolio context, edit `PORTFOLIO_CONTEXT` in `server/routes/chat.ts` and redeploy the Express server.
 
 ## SSE Protocol
 
-The Python backend yields lines in this format:
+The Express route yields events in this format:
 
 ```
-data: {"token": "Hello"}\n\n
-data: {"token": " there"}\n\n
+data: {"token": "Full assistant reply here"}\n\n
+data: [DONE]\n\n
+```
+
+On booking intent:
+
+```
+data: {"action": "start_booking"}\n\n
 data: [DONE]\n\n
 ```
 
 On error:
 
 ```
-data: {"error": "HF API error 503: ..."}\n\n
+data: {"error": "HF API error 429: ..."}\n\n
+data: [DONE]\n\n
 ```
 
 The frontend `ChatbotWidget.tsx` reads `response.body` with `getReader()`, splits on `\n`, and appends each `token` to the last assistant message in state.
@@ -143,17 +113,18 @@ The frontend `ChatbotWidget.tsx` reads `response.body` with `getReader()`, split
 The chatbot widget follows WCAG 2.2 guidelines:
 
 - **ARIA labels**: Toggle button has dynamic `aria-label` ("Open chat" when closed, "Chat is open" when open)
-- **`inert` attribute**: When the chat panel is open, the floating toggle button is marked `inert` to remove it from the accessibility tree and prevent focus conflicts (replaces the previous `aria-hidden` approach which caused warnings when focus was retained on a hidden element)
+- **`inert` attribute**: When the chat panel is open, the floating toggle button is marked `inert` to remove it from the accessibility tree
 - **`tabIndex`**: Toggle button gets `tabIndex={-1}` when the panel is open to prevent keyboard focus
-- **Keyboard navigation**: Chat input is focusable, Enter sends messages, Escape does not close (preserves conversation)
-- **Focus management**: When chat opens, the panel receives visual focus; when closed, the toggle button becomes interactive again
+- **Keyboard navigation**: Chat input is focusable, Enter sends messages
+- **Focus management**: When chat opens, the input is auto-focused
 
 ## Troubleshooting
 
-| Symptom                              | Likely cause                  | Fix                                                             |
-| ------------------------------------ | ----------------------------- | --------------------------------------------------------------- |
-| "Failed to connect to chat backend"  | Python service not running    | Start `uvicorn main:app --port 8001`                            |
-| "HF API error 401"                   | Invalid or missing `HF_TOKEN` | Check `.env` in `server/bot/`                                   |
-| "HF API error 503"                   | Model loading (cold start)    | Wait ~30 seconds and retry; HF free tier loads models on demand |
-| Tokens appear then stop mid-sentence | `max_new_tokens` limit hit    | Increase `max_new_tokens` in `main.py` (currently 512)          |
-| CORS error in browser                | `PORTFOLIO_ORIGIN` mismatch   | Set `PORTFOLIO_ORIGIN` to your frontend URL in Python `.env`    |
+| Symptom                             | Likely cause                  | Fix                                                              |
+| ----------------------------------- | ----------------------------- | ---------------------------------------------------------------- |
+| "Chat service is not configured"    | `HF_TOKEN` not set            | Add `HF_TOKEN` to `.env`                                         |
+| "HF API error 401"                  | Invalid `HF_TOKEN`            | Regenerate token at huggingface.co/settings/tokens               |
+| "HF API error 429"                  | Free-tier rate limit hit      | Wait and retry; free tier allows ~1000 req/day                   |
+| "model_not_supported" error         | Model not available on router | Change `HF_MODEL` in `server/routes/chat.ts` to a supported one  |
+| Tokens appear then stop mid-reply   | `max_tokens` limit hit        | Increase `max_tokens` in `server/routes/chat.ts` (currently 512) |
+| No reply, no error                  | Express server not running    | Start with `pnpm dev:server`                                     |

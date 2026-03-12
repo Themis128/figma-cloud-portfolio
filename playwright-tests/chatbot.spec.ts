@@ -8,11 +8,11 @@ import { waitForAppReady } from "./test-utils";
  * message sending, streaming UI, booking-flow trigger,
  * keyboard interaction, and accessibility.
  *
- * These tests hit the real /api/chat → HuggingFace Inference API,
- * so they require a valid HF_TOKEN in the environment.
+ * These tests hit the real /api/chat → HuggingFace Router API
+ * (model: Qwen/Qwen2.5-7B-Instruct), so they require a valid HF_TOKEN.
  */
 
-// HF can be slow (cold starts, model loading) — generous per-test timeout
+// HF router can be slow on cold starts — generous per-test timeout
 const API_TIMEOUT = 60_000;
 
 // ---------------------------------------------------------------------------
