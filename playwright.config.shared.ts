@@ -321,20 +321,23 @@ export function createPlaywrightConfig(
     },
     projects,
     webServer: (() => {
-      // Check if we should skip web server startup
+      // Only skip if explicitly told to (e.g. pointing at a live remote URL)
       const skipWebServer = process.env.PLAYWRIGHT_SKIP_WEBSERVER === "true";
-      const hasWebServer = process.env.PLAYWRIGHT_HAS_WEBSERVER === "true";
-      
-      if (skipWebServer || hasWebServer) {
-        return undefined; // No web server needed
+
+      if (skipWebServer) {
+        return undefined;
       }
 
       return {
-        command: "pnpm dev",
+        // Serve the pre-built static export rather than the Next.js dev server.
+        // The dev server hot-reloads on every request and crashes under parallel
+        // test load; a static file server is stable and starts in ~1 second.
+        // Run `pnpm build` before the test suite to refresh the static output.
+        command: "npx serve out -l 3000",
         url: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
-        reuseExistingServer: !!(
-          environment === "development" || environment === "isolated"
-        ),
+        // Always reuse an existing server when one is already running;
+        // start one automatically when none is available.
+        reuseExistingServer: true,
         timeout: timeouts.webServer,
       };
     })(),
