@@ -18,12 +18,25 @@ if (workbox) {
   // Clean up old caches
   workbox.precaching.cleanupOutdatedCaches();
 
-  // Precache resources injected by Vite PWA plugin
+  // Precache critical resources
   workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
 
-  // Enhanced SPA navigation routes - using navigateFallback from Vite PWA config
-  // No need to manually register NavigationRoute when using injectManifest strategy
-  // The Vite PWA plugin handles this with navigateFallback: '/index.html'
+  // Handle navigation requests with NetworkFirst (serve cached pages offline)
+  workbox.routing.registerRoute(
+    ({ request }) => request.mode === "navigate",
+    new workbox.strategies.NetworkFirst({
+      cacheName: "pages-cache",
+      plugins: [
+        new workbox.cacheableResponse.CacheableResponsePlugin({
+          statuses: [0, 200],
+        }),
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+        }),
+      ],
+    }),
+  );
 
   // Enhanced API caching with background sync
   const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
