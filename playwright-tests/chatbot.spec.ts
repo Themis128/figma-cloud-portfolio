@@ -2,30 +2,58 @@ import { expect, test } from "@playwright/test";
 import { waitForAppReady } from "./test-utils";
 
 /**
- * AI Chatbot Widget — end-to-end tests (live HuggingFace API)
+ * AI Chatbot Widget — end-to-end tests (local RAG + LLM)
  *
  * Covers: toggle behaviour, welcome message, suggested questions,
  * message sending, streaming UI, booking-flow trigger,
  * keyboard interaction, and accessibility.
  *
- * These tests hit the real /api/chat → HuggingFace Router API
- * (model: meta-llama/Llama-3.3-70B-Instruct), so they require a valid HF_TOKEN.
+ * These tests hit the real /api/chat → Express proxy → FastAPI bot
+ * (RAG: ChromaDB + sentence-transformers, LLM: Llama 3.2 3B Instruct via llama-cpp-python).
+ * The bot runs fully offline — no API keys or internet required.
  */
 
-// HF router can be slow on cold starts — generous per-test timeout
-const API_TIMEOUT = 60_000;
+// Local LLM can be slow on first load (model loading + inference) — generous per-test timeout
+const API_TIMEOUT = 90_000;
+
+// Bot server URL — tests that require the LLM backend will skip when unavailable
+const BOT_URL = process.env.BOT_URL ?? "http://localhost:8001";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/** Check if the FastAPI bot server is reachable */
+async function isBotAvailable(): Promise<boolean> {
+  try {
+    const res = await fetch(`${BOT_URL}/api/health`, { signal: AbortSignal.timeout(3000) });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
 
 /** Locate the chat panel container (the fixed panel, not the toggle) */
 function chatPanel(page: import("@playwright/test").Page) {
   return page.locator("div.fixed").filter({ hasText: "AI Assistant" });
 }
 
+/** Dismiss the cookie consent banner if present (it overlaps the chat toggle) */
+async function dismissCookieConsent(page: import("@playwright/test").Page) {
+  const acceptBtn = page.locator('button[aria-label="Accept all cookies"]');
+  try {
+    await acceptBtn.waitFor({ state: "visible", timeout: 3000 });
+    await acceptBtn.click();
+    // Wait for the banner to disappear
+    await page.locator('div[aria-label="Cookie consent"]').waitFor({ state: "hidden", timeout: 3000 });
+  } catch {
+    // No cookie consent banner — already dismissed or not shown
+  }
+}
+
 /** Open the chatbot panel and wait for it to be visible */
 async function openChat(page: import("@playwright/test").Page) {
+  await dismissCookieConsent(page);
   const toggle = page.locator('button[aria-label="Open chat"]');
   await toggle.waitFor({ state: "visible", timeout: 10000 });
   await toggle.click();
@@ -90,10 +118,10 @@ test.describe("AI Chatbot Widget", () => {
         panel.locator("text=Themis's Portfolio Bot").first(),
       ).toBeVisible();
 
-      // The floating toggle keeps aria-label="Open chat" but becomes hidden
-      // (opacity-0 + pointer-events-none + aria-hidden).
-      const toggle = page.locator('button[aria-label="Open chat"]');
-      await expect(toggle).toHaveAttribute("aria-hidden", "true");
+      // The floating toggle changes aria-label to "Chat is open" and becomes
+      // hidden (opacity-0 + pointer-events-none + inert).
+      const toggle = page.locator('button[aria-label="Chat is open"]');
+      await expect(toggle).toHaveAttribute("inert", "");
       await expect(toggle).toHaveCSS("opacity", "0");
     });
 
@@ -142,12 +170,14 @@ test.describe("AI Chatbot Widget", () => {
     });
   });
 
-  // ── Sending messages (live HuggingFace API) ─────────────────────────────
+  // ── Sending messages (local RAG + LLM) ─────────────────────────────────
+  // These tests require the FastAPI bot server (pnpm dev:bot) to be running.
 
   test.describe("Sending messages", () => {
     test("should send a typed message and receive a response", async ({
       page,
     }) => {
+      test.skip(!(await isBotAvailable()), "FastAPI bot not running (start with pnpm dev:bot)");
       test.setTimeout(API_TIMEOUT);
 
       await openChat(page);
@@ -163,7 +193,7 @@ test.describe("AI Chatbot Widget", () => {
       // User message should appear
       await expect(panel.locator("text=Who is Themis?").first()).toBeVisible();
 
-      // Wait for a real assistant response from HuggingFace
+      // Wait for a real assistant response from the local LLM
       await waitForAssistantReply(page);
 
       // Suggested questions should disappear after the first user message
@@ -173,6 +203,7 @@ test.describe("AI Chatbot Widget", () => {
     });
 
     test("should send a suggested question when clicked", async ({ page }) => {
+      test.skip(!(await isBotAvailable()), "FastAPI bot not running (start with pnpm dev:bot)");
       test.setTimeout(API_TIMEOUT);
 
       await openChat(page);
@@ -192,6 +223,7 @@ test.describe("AI Chatbot Widget", () => {
     });
 
     test("should send message on Enter key press", async ({ page }) => {
+      test.skip(!(await isBotAvailable()), "FastAPI bot not running (start with pnpm dev:bot)");
       test.setTimeout(API_TIMEOUT);
 
       await openChat(page);
@@ -225,6 +257,7 @@ test.describe("AI Chatbot Widget", () => {
     test("should disable input and show loading indicator while streaming", async ({
       page,
     }) => {
+      test.skip(!(await isBotAvailable()), "FastAPI bot not running (start with pnpm dev:bot)");
       test.setTimeout(API_TIMEOUT);
 
       await openChat(page);
@@ -238,7 +271,7 @@ test.describe("AI Chatbot Widget", () => {
 
       // Either the input is disabled during streaming (loading state)
       // or the response already arrived and re-enabled it.
-      // Race condition: if the API responds instantly, we may miss the disabled state.
+      // Race condition: if the LLM responds instantly, we may miss the disabled state.
       try {
         await expect(input).toBeDisabled({ timeout: 2000 });
         // If we caught the disabled state, bouncing dots should be visible
@@ -246,10 +279,10 @@ test.describe("AI Chatbot Widget", () => {
           panel.locator(".animate-bounce").first(),
         ).toBeVisible({ timeout: 2000 });
       } catch {
-        // API responded too fast to catch loading state — acceptable
+        // LLM responded too fast to catch loading state — acceptable
       }
 
-      // After HF response arrives, input should be re-enabled
+      // After LLM response arrives, input should be re-enabled
       await expect(input).toBeEnabled({ timeout: API_TIMEOUT });
     });
   });
@@ -258,6 +291,7 @@ test.describe("AI Chatbot Widget", () => {
 
   test.describe("Booking flow", () => {
     test("should respond to booking request", async ({ page }) => {
+      test.skip(!(await isBotAvailable()), "FastAPI bot not running (start with pnpm dev:bot)");
       test.setTimeout(API_TIMEOUT);
 
       await openChat(page);
@@ -267,7 +301,7 @@ test.describe("AI Chatbot Widget", () => {
       // Click the booking suggested question
       await panel.locator("text=Book a call with Themis.").click();
 
-      // The model may either:
+      // The local LLM may either:
       // 1. Return [BOOK_CALL] → triggers BookingCard ("Loading available slots…")
       // 2. Respond with a natural-language message about booking
       // Either outcome means the chatbot handled the booking intent.
@@ -304,6 +338,7 @@ test.describe("AI Chatbot Widget", () => {
 
   test.describe("Accessibility", () => {
     test("toggle button should have proper aria-label", async ({ page }) => {
+      await dismissCookieConsent(page);
       const toggle = page.locator('button[aria-label="Open chat"]');
       await expect(toggle).toBeVisible();
       await expect(toggle).toHaveAttribute("aria-label", "Open chat");

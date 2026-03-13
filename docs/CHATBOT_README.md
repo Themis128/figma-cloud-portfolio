@@ -1,91 +1,139 @@
 # Portfolio Chatbot
 
-An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using `meta-llama/Llama-3.3-70B-Instruct` via the HuggingFace Inference API.
+An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using a **fully offline RAG pipeline** with a local LLM — no internet or API keys required after initial setup.
 
 ## Architecture
 
 ```
 Browser (ChatbotWidget.tsx)
-  └─ POST /api/chat  ←── Express server (server/routes/chat.ts)
-       └─ POST https://router.huggingface.co/v1/chat/completions
-            └─ meta-llama/Llama-3.3-70B-Instruct (HuggingFace Router — free tier)
+  └─ POST /api/chat  ←── Express server (server/routes/chat.ts, port 3001)
+       └─ POST http://localhost:8001/api/chat/stream
+            └─ FastAPI (server/bot/main.py)
+                 ├─ RAG: ChromaDB + sentence-transformers (all-MiniLM-L6-v2)
+                 └─ LLM: llama-cpp-python (Llama 3.2 3B Instruct Q4_K_M GGUF)
 ```
 
-Responses are **buffered** server-side and delivered to the browser as a single Server-Sent Events batch once the model completes. The client reads the SSE stream and renders the full reply in one shot.
+The Express server acts as a **proxy** — it forwards requests to the FastAPI bot and streams SSE responses back to the browser unchanged. All AI logic (retrieval, generation) runs in the FastAPI process.
 
 ## Features
 
-- **Streaming-compatible SSE** — token-by-token delivery ready; currently full-response buffering for reliability
+- **Fully offline** — no internet, API keys, or external services needed after setup
+- **RAG (Retrieval-Augmented Generation)** — 10 knowledge files indexed into ChromaDB vector store
+- **Local LLM** — Llama 3.2 3B Instruct (Q4_K_M quantization, ~1.9 GB) via llama-cpp-python
+- **GPU acceleration** — automatic GPU offloading when CUDA is available (`N_GPU_LAYERS=-1`)
 - **Conversation history** — multi-turn context preserved per session
-- **Portfolio RAG** — full resume context injected as system prompt (no external vector DB)
+- **SSE streaming** — Server-Sent Events delivery to the browser
 - **Cyberpunk UI** — dark glass-morphism panel, cyan accent, `font-mono`
 - **Suggested questions** — clickable prompts shown on first open
-- **Booking flow** — `[BOOK_CALL]` token triggers the booking card
-- **Graceful errors** — API failures displayed inline without crashing
+- **Booking flow** — `[BOOK_CALL]` token triggers the BookingCard component (Cal.com integration)
+- **Graceful errors** — failures displayed inline without crashing
 
 ## Files
 
-| File                               | Purpose                                                        |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `src/components/ChatbotWidget.tsx` | React UI component (floating button + chat panel)              |
-| `server/routes/chat.ts`            | Express route — calls HuggingFace router, returns SSE stream   |
+| File | Purpose |
+| --- | --- |
+| `src/components/ChatbotWidget.tsx` | React UI component (floating button + chat panel) |
+| `src/components/BookingCard.tsx` | Booking UI triggered by `[BOOK_CALL]` action |
+| `server/routes/chat.ts` | Express proxy — forwards to FastAPI bot, streams SSE back |
+| `server/bot/main.py` | FastAPI app — RAG retrieval + local LLM generation |
+| `server/bot/indexer.py` | Builds ChromaDB vector index from knowledge markdown files |
+| `server/bot/download_model.py` | One-time download of GGUF model from HuggingFace Hub |
+| `server/bot/setup.sh` | Automated setup script (venv, dependencies, model, index) |
+| `server/bot/requirements.txt` | Python dependencies |
+| `server/bot/knowledge/*.md` | 10 knowledge base files (identity, experience, skills, etc.) |
+
+## Knowledge Base
+
+The RAG knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
+
+| File | Content |
+| --- | --- |
+| `01_identity.md` | Name, title, location, contact info |
+| `02_professional_summary.md` | Career overview, key strengths |
+| `03_work_experience.md` | 8 roles: Printec, Germanos (14yr), INFORM, Vodafone, airport, etc. |
+| `04_education.md` | 6 entries: University of Greater Manchester, Hellenic Open University, Cisco Academy, etc. |
+| `05_certifications_skills.md` | 11 certifications (AWS, CISSP, CEH, Okta, CCNA) + skill categories |
+| `06_projects.md` | 6 portfolio projects |
+| `07_website_tech.md` | Portfolio tech stack details (Next.js, Tailwind, Three.js, etc.) |
+| `08_ai_agents.md` | AI agent implementations |
+| `09_services.md` | Professional services and offerings |
+| `10_booking_faq.md` | Booking instructions, FAQ |
+
+The indexer chunks these files (500 chars, 100 char overlap) and embeds them using `all-MiniLM-L6-v2` into ChromaDB. At query time, the top 5 most relevant chunks are retrieved and injected into the system prompt.
 
 ## Local Development
 
-### 1. Set `HF_TOKEN` in `.env`
-
-```
-HF_TOKEN=hf_your_token_here
-```
-
-### 2. Start the Express dev server
+### 1. Run the setup script (one-time)
 
 ```bash
-pnpm dev:server
+cd server/bot && bash setup.sh
 ```
 
-### 3. Start the Next.js app
+This creates a Python venv, installs dependencies, downloads the LLM model (~1.9 GB), and builds the ChromaDB index (~70 chunks).
+
+### 2. Start all services
 
 ```bash
-pnpm dev
+pnpm dev:all
+```
+
+This starts:
+- Next.js dev server (port 3000)
+- Express dev server (port 3001)
+- FastAPI bot server (port 8001)
+
+Or start services individually:
+
+```bash
+pnpm dev          # Next.js
+pnpm dev:server   # Express
+pnpm dev:bot      # FastAPI bot
 ```
 
 Open the portfolio in your browser and click **Chat with AI** in the bottom-left corner.
 
 ## Environment Variables
 
-| Variable   | Required | Default | Description                                   |
-| ---------- | -------- | ------- | --------------------------------------------- |
-| `HF_TOKEN` | **Yes**  | —       | HuggingFace API token with Inference API access |
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `BOT_URL` | No | `http://localhost:8001` | FastAPI bot URL (Express proxy target) |
+| `N_GPU_LAYERS` | No | `-1` | GPU layers to offload (-1 = all, 0 = CPU only) |
+| `PORT` | No | `8001` | FastAPI server port |
+| `PORTFOLIO_ORIGIN` | No | `*` | CORS allowed origin |
+
+No API keys required — the chatbot runs fully offline.
 
 ## Model
 
-| Property   | Value                                                     |
-| ---------- | --------------------------------------------------------- |
-| Model ID   | `meta-llama/Llama-3.3-70B-Instruct`                        |
-| Provider   | HuggingFace Router (`router.huggingface.co`)              |
-| Tier       | Free (no gated license, no paid provider routing required) |
-| Max tokens | 512                                                       |
-| Temp       | 0.7                                                       |
+| Property | Value |
+| --- | --- |
+| Model | Llama 3.2 3B Instruct |
+| Quantization | Q4_K_M (~1.9 GB) |
+| Source | `bartowski/Llama-3.2-3B-Instruct-GGUF` (HuggingFace Hub) |
+| Runtime | llama-cpp-python (CPU + optional GPU) |
+| Context window | 4096 tokens |
+| Max output tokens | 512 |
+| Temperature | 0.7 |
+| Top-p | 0.9 |
+| Stop token | `<\|eot_id\|>` |
 
-Llama 3.3 70B Instruct is a 70-billion-parameter model available on the HuggingFace router free tier. It offers significantly better reasoning and instruction-following than smaller models. The chat completions endpoint (`/v1/chat/completions`) follows the OpenAI-compatible format — no model-specific prompt template required.
+The model runs locally via llama-cpp-python. On systems with CUDA-capable GPUs, layers are automatically offloaded for faster inference. CPU-only inference works but is slower (~5-15s per response vs ~1-3s with GPU).
 
-## Prompt Engineering
+## RAG Pipeline
 
-The system prompt is hardcoded in `server/routes/chat.ts` (`PORTFOLIO_CONTEXT`). It includes:
+1. **Indexing** (`indexer.py`): Knowledge markdown files → chunked (500 chars, 100 overlap) → embedded with `all-MiniLM-L6-v2` → stored in ChromaDB (cosine similarity)
+2. **Retrieval** (`main.py`): User query → embedded → top 5 chunks retrieved from ChromaDB
+3. **Generation** (`main.py`): System prompt + retrieved context + conversation history → local LLM → streamed response
 
-- Name, title, location, contact
-- Work experience (3 roles)
-- Certifications (AWS, Cisco, Azure, CISSP, CEH, ITIL)
-- Skill categories (Cloud, Security, Networking, Development, Tools)
-- Languages and honors
-- Booking instructions (emit `[BOOK_CALL]` token)
+To rebuild the knowledge base after editing knowledge files:
 
-To update the portfolio context, edit `PORTFOLIO_CONTEXT` in `server/routes/chat.ts` and redeploy the Express server.
+```bash
+cd server/bot && ./venv/bin/python indexer.py
+```
 
 ## SSE Protocol
 
-The Express route yields events in this format:
+The FastAPI bot yields events in this format:
 
 ```
 data: {"token": "Full assistant reply here"}\n\n
@@ -102,11 +150,35 @@ data: [DONE]\n\n
 On error:
 
 ```
-data: {"error": "HF API error 429: ..."}\n\n
+data: {"error": "LLM error: ..."}\n\n
 data: [DONE]\n\n
 ```
 
 The frontend `ChatbotWidget.tsx` reads `response.body` with `getReader()`, splits on `\n`, and appends each `token` to the last assistant message in state.
+
+## Health Check
+
+```bash
+curl http://localhost:8001/api/health
+```
+
+Returns:
+
+```json
+{
+  "status": "ok",
+  "model": {
+    "name": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+    "loaded": true,
+    "local": true,
+    "gpu_layers": -1
+  },
+  "rag": {
+    "indexed": true,
+    "chunks": 70
+  }
+}
+```
 
 ## Accessibility
 
@@ -120,11 +192,12 @@ The chatbot widget follows WCAG 2.2 guidelines:
 
 ## Troubleshooting
 
-| Symptom                             | Likely cause                  | Fix                                                              |
-| ----------------------------------- | ----------------------------- | ---------------------------------------------------------------- |
-| "Chat service is not configured"    | `HF_TOKEN` not set            | Add `HF_TOKEN` to `.env`                                         |
-| "HF API error 401"                  | Invalid `HF_TOKEN`            | Regenerate token at huggingface.co/settings/tokens               |
-| "HF API error 429"                  | Free-tier rate limit hit      | Wait and retry; free tier allows ~1000 req/day                   |
-| "model_not_supported" error         | Model not available on router | Change `HF_MODEL` in `server/routes/chat.ts` to a supported one  |
-| Tokens appear then stop mid-reply   | `max_tokens` limit hit        | Increase `max_tokens` in `server/routes/chat.ts` (currently 512) |
-| No reply, no error                  | Express server not running    | Start with `pnpm dev:server`                                     |
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| "Chat request failed" | FastAPI bot not running | Start with `pnpm dev:bot` |
+| "Model not found" error in bot logs | GGUF model not downloaded | Run `cd server/bot && ./venv/bin/python download_model.py` |
+| "Collection not found" warning | ChromaDB index not built | Run `cd server/bot && ./venv/bin/python indexer.py` |
+| `ModuleNotFoundError` | Wrong Python (system vs venv) | Use `./venv/bin/python` or `./venv/bin/uvicorn` directly |
+| Slow responses (>10s) | CPU-only inference | Set `N_GPU_LAYERS=-1` if GPU available, or accept slower CPU speed |
+| Port 8001 already in use | Old bot process still running | `kill $(lsof -t -i :8001)` then restart |
+| No response, no error | Express server not running | Start with `pnpm dev:server` |

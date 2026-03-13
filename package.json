@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:server": "tsx server/index.ts",
-    "dev:bot": "cd server/bot && uvicorn main:app --reload --host 0.0.0.0 --port 8001",
+    "dev:bot": "cd server/bot && ./venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8001",
     "predev:all": "bash scripts/amplify-status.sh",
     "dev:all": "concurrently -n \"next,server,bot\" -c \"cyan,yellow,magenta\" \"next dev\" \"tsx server/index.ts\" \"pnpm dev:bot\"",
     "amplify:status": "bash scripts/amplify-status.sh",
