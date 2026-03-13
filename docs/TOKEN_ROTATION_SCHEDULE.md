@@ -358,7 +358,7 @@ jobs:
   check-rotation-dates:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check Codacy token (due Feb, Apr, Jun, Aug, Oct, Dec)
         if: |
