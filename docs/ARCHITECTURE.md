@@ -18,7 +18,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | PWA                    | Workbox (service worker)                          |
 | Backend (production)   | AWS Lambda (`figma-portfolio-api`)                |
 | Backend (local dev)    | Express.js on port 3001                           |
-| Chatbot backend        | Python FastAPI on port 8001                       |
+| Chatbot backend        | Python FastAPI on port 8001 (RAG + local LLM, fully offline) |
 | Auth + Data backend    | AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)  |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
@@ -47,8 +47,13 @@ portfolio-nextjs/
 │   │   ├── projects/         # Projects gallery
 │   │   ├── resume/           # Interactive resume builder
 │   │   ├── settings/         # App preferences
+│   │   ├── admin/            # Admin dashboard
+│   │   ├── cookies/          # Cookie policy
+│   │   ├── privacy/          # Privacy policy
+│   │   ├── terms/            # Terms of service
 │   │   └── builder/          # Builder.io page (optional)
 │   ├── components/           # Reusable UI components
+│   │   ├── admin/            # Admin dashboard components (10 tab panels)
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
 │   ├── hooks/                # Custom React hooks
@@ -87,6 +92,10 @@ The app uses the Next.js App Router Server/Client component model:
 | `/contact`     | `contact/page.tsx`     | Contact form with reCAPTCHA v3                  |
 | `/settings`    | `settings/page.tsx`    | App preferences (theme, notifications, privacy) |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |
+| `/admin`       | `admin/page.tsx`       | Admin dashboard (10 tabs — see below)           |
+| `/cookies`     | `cookies/page.tsx`     | Cookie policy                                   |
+| `/privacy`     | `privacy/page.tsx`     | Privacy policy                                   |
+| `/terms`       | `terms/page.tsx`       | Terms of service                                 |
 | `*`            | `not-found.tsx`        | 404 fallback                                    |
 
 ---
@@ -149,6 +158,62 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 ---
 
+## Admin Dashboard (`/admin`)
+
+A Firebase-authenticated internal dashboard for site monitoring and management. Protected by `noindex, nofollow` and a login gate.
+
+### Tabs (10)
+
+| Tab            | Component                  | Type       | Purpose                                                                                    |
+| -------------- | -------------------------- | ---------- | ------------------------------------------------------------------------------------------ |
+| **Health**     | `ApiHealthDashboard`       | Client     | 9 API endpoint health checks with 30s auto-refresh polling, SVG sparkline response history |
+| **Console**    | `ApiConsole`               | Client     | Interactive HTTP request builder with presets, syntax-highlighted JSON, request history     |
+| **Deploy**     | `DeploymentStatus`         | Client     | Production health checks (frontend + API), Lambda uptime/memory, infrastructure details    |
+| **Errors**     | `ErrorLogViewer`           | Client     | Real-time capture of browser errors, unhandled rejections, console.error, 5xx network fails|
+| **Perf**       | `PerformanceBudget`        | Client     | Live Core Web Vitals (LCP/FCP/CLS/TTFB) from `web-vitals` with budget bars and grades     |
+| **SEO**        | `SeoAudit`                 | Client     | Scans all pages for title, description, og:image, canonical, JSON-LD; shows pass/warn/error|
+| **Push**       | `PushNotificationTester`   | Client     | Web Push API tester — permission, service worker, subscriptions, send test/custom messages |
+| **Analytics**  | `GoogleAnalyticsExplainer` | Client     | Live session info (time on page, referrer), GA4 config reference, event helper docs        |
+| **Auth**       | `AuthManagement`           | Client     | Current session details (UID, token expiry), Firebase + Amplify Cognito config status      |
+| **Env**        | `EnvironmentInfo`          | Client     | Build version, Node env, site URL, integrations (GA/Sentry/reCAPTCHA), client device info  |
+
+### Features
+
+- **Keyboard shortcuts**: `R` refreshes Health tab, `Ctrl+Enter` sends Console request
+- **Auto-refresh**: Health tab polls every 30s with pause/resume toggle and poll counter
+- **Response time sparklines**: Inline SVG charts on endpoint cards and summary bar
+- **Theme toggle**: Dark/light mode switch in admin header
+- **Cyberpunk styling**: All tabs use consistent glass morphism cards, cyan accents, mono fonts
+
+### Components (all in `src/components/admin/`)
+
+- `AdminLayout` — Header bar with logout, theme toggle, online badge
+- `AdminLogin` — Firebase email/password login gate with error handling
+- `useAdminAuth` — Auth hook wrapping Firebase sign-in with timeout and error mapping
+- `ApiEndpointCard` — Individual endpoint status card with sparkline and auto-refresh timestamps
+
+### Testing (`playwright-tests/admin.spec.ts` — 138 tests)
+
+| Section           | Tests | Auth-gated | Coverage                                                                   |
+| ----------------- | ----- | ---------- | -------------------------------------------------------------------------- |
+| Authentication    | 10    | Partial    | Login form, input attributes, invalid credentials, login/logout/reload     |
+| Health Tab        | 16    | Yes        | Endpoints, stats, refresh, service labels, method badges, sparklines       |
+| Console Tab       | 18    | Yes        | Request builder, presets, HTTP methods, body toggle, history, Send/replay  |
+| Deploy Tab        | 7     | Yes        | Production status, infrastructure, health checks, Check button             |
+| Errors Tab        | 6     | Yes        | Error count, Live/Paused toggle, Clear, capture status, empty state        |
+| Perf Tab          | 8     | Yes        | Grade, score, Within Budget, CWV metrics, descriptions, budget thresholds  |
+| SEO Audit Tab     | 5     | Yes        | Pages count, Re-scan, page paths, status labels, metadata badges           |
+| Push Tab          | 15    | Yes        | Permission status, service worker, subscriptions, custom notification form |
+| Analytics Tab     | 20    | Yes        | GA4 config, event helpers, code snippets, dashboard link, session info     |
+| Auth Tab          | 9     | Yes        | Session details, Firebase config, Amplify Cognito, ID Token                |
+| Env Tab           | 9     | Yes        | Build info, integrations, Git, client device info                          |
+| Tab Navigation    | 5     | Yes        | 10-tab switching, active state, content isolation, icons                   |
+| SEO (noindex)     | 2     | No         | noindex meta tag, login gate for unauthenticated users                     |
+
+> Auth-gated tests skip gracefully via `adminLoginOrSkip()` when Firebase Email/Password auth is not enabled in the test environment.
+
+---
+
 ## Shared Page Components
 
 | Component                                 | Purpose                                                    |
@@ -158,7 +223,7 @@ The page is a **Server Component shell** with **Client Component islands** for l
 | `Navigation`                              | Top navbar with active link highlighting                   |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot (lazy-loaded, `inert` when collapsed)    |
+| `ChatbotWidget`                           | Global AI chatbot — RAG + local LLM (lazy-loaded, `inert` when collapsed) |
 | `AuthProvider`                            | Firebase auth context (graceful fallback when unconfigured)|
 | `AccessibilityEnhancer`                   | Keyboard navigation and focus management                   |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
@@ -211,6 +276,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | Route                             | Handler                        |
 | --------------------------------- | ------------------------------ |
 | `/api/resume`                     | `server/routes/resume.ts`      |
+| `/api/chat`                       | `server/routes/chat.ts` (proxy → FastAPI bot on port 8001) |
 | `/api/organizations/api_keys`     | `server/routes/apiKeys.ts`     |
 | `/api/playwright-autofix`         | `server/routes/playwrightAutofix.ts` |
 
@@ -355,7 +421,7 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Fireb
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 74 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/` — 83 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts` — API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages

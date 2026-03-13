@@ -130,10 +130,11 @@ Shared helpers used across spec files:
 - ✅ No broken links
 - ✅ Text is readable (contrast)
 
-#### `playwright-tests/admin.spec.ts` — Admin Dashboard Suite
+#### `playwright-tests/admin.spec.ts` — Admin Dashboard Suite (138 tests)
 
-**Coverage:** Authentication, Health Tab, Console Tab, Push Tab, Analytics Tab, Tab Navigation, SEO
+**Coverage:** Authentication, all 10 tabs (Health, Console, Deploy, Errors, Perf, SEO, Push, Analytics, Auth, Env), Tab Navigation, SEO
 
+**Authentication (10 tests)**
 - ✅ Login form rendering (email, password, submit, lock icon, divider)
 - ✅ Input attributes (autocomplete, placeholder, required)
 - ✅ Invalid credentials rejection (wrong email, wrong password, both wrong)
@@ -141,27 +142,81 @@ Shared helpers used across spec files:
 - ✅ Dashboard subtitle and user email display
 - ✅ Logout and re-login flow
 - ✅ Session persistence across page reload
-- ✅ Health tab: endpoint cards, refresh all, individual refresh, response times, service labels
-- ✅ Console tab: request builder, GET/POST/PUT/DELETE/OPTIONS/HEAD methods
-- ✅ Console tab: preset buttons (Ping, Health, Slots, API Keys, Subscriptions)
-- ✅ Console tab: request execution, response viewer (status badge, timing), history
-- ✅ Console tab: body textarea toggle for POST, disable Send when URL empty
-- ✅ Push tab: Web Push API Tester heading and description
-- ✅ Push tab: notification permission status (Granted/Denied/Not Requested)
-- ✅ Push tab: service worker status (Active/Inactive/Not Registered)
-- ✅ Push tab: active subscriptions display and Check Subscriptions button
-- ✅ Push tab: Send Test / Send Custom Notification buttons
-- ✅ Push tab: custom notification form (title, URL, body) with defaults and editing
-- ✅ Push tab: requirements checklist (5 items)
-- ✅ Push tab: form labels (Title, URL, Message Body)
-- ✅ Analytics tab: Measurement ID, GA detection badge, copy button
-- ✅ Analytics tab: NEXT_PUBLIC_GA_ID, afterInteractive, Configuration details
-- ✅ Analytics tab: Event Helpers (trackEvent, trackConversion parameters/descriptions)
-- ✅ Analytics tab: code snippets, gtag internals, GA4 Dashboard link
-- ✅ Analytics tab: Implementation Reference, route tracking details
-- ✅ Tab navigation: switch between all 4 tabs, correct content isolation
-- ✅ Tab navigation: exactly 4 tabs, active state tracking, icons in labels
-- ✅ SEO: noindex meta tag, login gate for unauthenticated users
+
+**Health Tab (16 tests)**
+- ✅ Endpoint cards (9 endpoints), refresh all, individual refresh buttons
+- ✅ Summary stats (total, healthy count), average response time with sparkline
+- ✅ Service labels (Lambda, Cal.com, HuggingFace, Web Push, reCAPTCHA + SES)
+- ✅ Method badges (GET, POST), endpoint descriptions
+- ✅ Auto-run health checks, response times in ms, status labels (Healthy/Degraded/Down)
+- ✅ "Checked" timestamps, auth header for API Keys endpoint
+
+**Console Tab (18 tests)**
+- ✅ Request builder, GET/POST/PUT/DELETE/OPTIONS/HEAD methods
+- ✅ Preset buttons (Ping, Health, Slots, API Keys, Subscriptions)
+- ✅ Request execution, response viewer (status badge, timing), history
+- ✅ Body textarea toggle for POST, disable Send when URL empty
+
+**Deploy Tab (7 tests)**
+- ✅ Production Deployment header, Check button
+- ✅ Frontend and API (Lambda) sections
+- ✅ Infrastructure (S3 Bucket, CloudFront, Region, Amplify App)
+- ✅ Health Checks (frontend reachable, API responding, latency < 2s)
+- ✅ Hosting details (S3 + CloudFront), deployment check execution
+
+**Errors Tab (6 tests)**
+- ✅ Error count (Captured), Live/Paused toggle, Clear button
+- ✅ Capture status message, empty state ("No errors captured yet")
+- ✅ Toggle capturing on/off (Live ↔ Paused)
+
+**Perf Tab (8 tests)**
+- ✅ Performance grade, score, Within Budget count
+- ✅ "Live from web-vitals" badge
+- ✅ All 4 CWV metrics (LCP, FCP, CLS, TTFB) with descriptions
+- ✅ Budget thresholds section with values (2500ms, 1800ms, 800ms)
+
+**SEO Audit Tab (5 tests)**
+- ✅ Pages count, Re-scan button
+- ✅ Scan results with page paths, status labels (Pass/Warn/Error)
+- ✅ Metadata badges (og:image, canonical, JSON-LD, og:title)
+
+**Push Tab (15 tests)**
+- ✅ Web Push API Tester heading and description
+- ✅ Notification permission status (Granted/Denied/Not Requested)
+- ✅ Service worker status (Active/Inactive/Not Registered)
+- ✅ Active subscriptions display and Check Subscriptions button
+- ✅ Send Test / Send Custom Notification buttons
+- ✅ Custom notification form (title, URL, body) with defaults and editing
+- ✅ Requirements checklist (5 items), form labels
+
+**Analytics Tab (20 tests)**
+- ✅ Measurement ID, GA detection badge, copy button
+- ✅ NEXT_PUBLIC_GA_ID, afterInteractive, Configuration details
+- ✅ Event Helpers (trackEvent, trackConversion parameters/descriptions)
+- ✅ Code snippets, gtag internals, GA4 Dashboard link
+- ✅ Implementation Reference, route tracking details
+
+**Auth Tab (9 tests)**
+- ✅ Current Session section with user details (Email, UID, Email Verified, Provider)
+- ✅ Firebase Auth section with config status badge (configured/disabled)
+- ✅ Amplify Cognito section with production badge
+- ✅ Firebase Project and Auth Domain fields
+- ✅ Amplify Region, App ID, Auth Method fields
+- ✅ ID Token section (Expires, Issuer) when logged in
+
+**Env Tab (9 tests)**
+- ✅ Build Info (App Version, Environment, Site URL, Framework: Next.js 16)
+- ✅ Integrations (Google Analytics, Sentry, reCAPTCHA v3) with status badges
+- ✅ Git section (Branch), Client section (Viewport, Language, Platform)
+
+**Tab Navigation (5 tests)**
+- ✅ Switch between all 10 tabs, correct content isolation
+- ✅ Exactly 10 tabs, active state tracking, icons in labels
+
+**SEO (2 tests)**
+- ✅ noindex meta tag, login gate for unauthenticated users
+
+> All auth-gated tests skip gracefully via `adminLoginOrSkip()` when Firebase Email/Password auth is not enabled.
 
 ---
 
@@ -226,6 +281,37 @@ Shared helpers used across spec files:
 - ✅ Animation persistence to localStorage (portfolio-animations key)
 - ✅ Reset to defaults functionality
 - ✅ Responsive layout on mobile viewport (375×812)
+
+#### `playwright-tests/chatbot.spec.ts` — AI Chatbot Widget (12 tests)
+
+**Coverage:** Toggle behaviour, welcome message, suggested questions, message sending, streaming UI, booking flow, accessibility
+
+The chatbot uses a **local RAG + LLM pipeline** (ChromaDB + Llama 3.2 3B Instruct via llama-cpp-python) — fully offline, no API keys required. Tests that require the FastAPI bot server (port 8001) skip gracefully when it's not running.
+
+**Toggle behaviour (3 tests)**
+- ✅ Floating toggle button visible on page load with "Chat with AI" text
+- ✅ Panel opens on click (header, subtitle visible; toggle becomes aria-hidden)
+- ✅ Panel closes via close button (toggle reappears)
+
+**Welcome message & suggested questions (2 tests)**
+- ✅ Welcome message displayed on open
+- ✅ 4 suggested questions visible (skills, cloud experience, certifications, booking)
+
+**Sending messages (4 tests)**
+- ✅ Typed message sent and local LLM response received
+- ✅ Suggested question click sends message and gets response
+- ✅ Enter key sends message
+- ✅ Empty messages cannot be sent (Send button disabled)
+
+**Streaming UI (1 test)**
+- ✅ Input disabled and loading indicator shown during LLM inference
+
+**Booking flow (1 test)**
+- ✅ Booking intent triggers either BookingCard or text response
+
+**Accessibility (2 tests)**
+- ✅ Toggle and close buttons have proper aria-labels
+- ✅ Input auto-focused when chat opens
 
 ---
 
@@ -452,6 +538,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Analytics GA4              | `analytics-integration.spec.ts`, `recaptcha-analytics.spec.ts`             | ✅ Covered |
 | reCAPTCHA v3               | `recaptcha-analytics.spec.ts`, `comprehensive-recaptcha-analytics.spec.ts` | ✅ Covered |
 | Push Notifications         | `push-notifications.spec.ts`, `app.spec.ts`                                | ✅ Covered |
+| AI Chatbot                 | `chatbot.spec.ts`                                                          | ✅ Covered |
 | PWA / Service Worker       | `pwa-advanced.spec.ts`                                                     | ✅ Covered |
 | Socket.IO                  | `socketio-realtime.spec.ts`                                                | ✅ Covered |
 | Three.js 3D                | `3d-demos.spec.ts`                                                         | ✅ Covered |

@@ -1,7 +1,17 @@
 import { createPlaywrightConfig } from "./playwright.config.shared";
 
 // Isolated configuration for debugging and single-worker testing
-const config = createPlaywrightConfig("isolated", {
+const baseConfig = createPlaywrightConfig("isolated", {
+  trace: "on",
+  video: "retain-on-failure",
+  screenshot: "only-on-failure",
+  use: {
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
+  },
+});
+
+const config = {
+  ...baseConfig,
   // Custom overrides for isolated testing
   testMatch: [
     "**/*.spec.ts",
@@ -33,14 +43,7 @@ const config = createPlaywrightConfig("isolated", {
     ["list"],
     ["line"],
   ],
-  // Enhanced tracing for debugging
-  use: {
-    trace: "on",
-    video: "retain-on-failure",
-    screenshot: "only-on-failure",
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
-  },
-});
+};
 
 // Export the configuration
 export default config;

@@ -4,3 +4,7 @@ pydantic
 httpx
 python-dotenv
 sse-starlette
+chromadb
+sentence-transformers
+llama-cpp-python
+huggingface-hub
