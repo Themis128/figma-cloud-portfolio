@@ -24,7 +24,7 @@
 # Perform automated code review for pull requests. This workflow runs linting,
 # type checking, and basic security scans on PR changes.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"c1a362d214d4ab8565125f9cf94f80d8de508a6dcc78f836eb1b502829a32c82","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"ee6035011bb9e5ed236ff9b3ca44f8c81259a6d211560d48141f09a063a11869","compiler_version":"v0.55.0","strict":true}
 
 name: "Automated Code Review"
 "on":
@@ -297,16 +297,16 @@ jobs:
       - name: Create gh-aw temp directory
         run: bash /opt/gh-aw/actions/create_gh_aw_tmp_dir.sh
       - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 20
       - name: Install pnpm
-        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         shell: bash
