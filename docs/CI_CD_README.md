@@ -342,10 +342,10 @@ curl https://yourdomain.com/deployment-status-production.json
 ## Dependencies
 
 - **GitHub Actions**:
-  - `actions/checkout@v4`
-  - `actions/setup-node@v4`
+  - `actions/checkout@v6`
+  - `actions/setup-node@v6`
   - `pnpm/action-setup@v4`
-  - `aws-actions/configure-aws-credentials@v4`
+  - `aws-actions/configure-aws-credentials@v6`
   - `aws-actions/amplify-cli-wrapper@1.2.0`
 
 - **External Tools**:
