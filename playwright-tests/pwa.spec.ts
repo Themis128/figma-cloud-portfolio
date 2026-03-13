@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("PWA Features", () => {
-  // Service worker may not be registered in dev mode
-  test.skip("should have valid service worker", async () => {
-    // Service worker registration is typically only active in production builds
-  });
-
   test("should have valid manifest file", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
@@ -35,23 +30,23 @@ test.describe("PWA Features", () => {
     }
   });
 
-  // Offline mode requires service worker which may not be active in dev
-  test.skip("should work offline with cached content", async () => {
-    // Service worker caching is not available in dev mode
+  test("should serve offline.html fallback page", async ({ page }) => {
+    // Verify the offline page is accessible
+    const response = await page.request.get("http://localhost:3000/offline.html");
+    expect(response.status()).toBe(200);
+
+    const body = await response.text();
+    expect(body).toContain("You're Offline");
+    expect(body).toContain("Try Again");
   });
 
-  // PWA install prompt is not a visible UI component
-  test.skip("should install PWA successfully", async () => {
-    // PWA install UI is not implemented as a visible component
-  });
+  test("should serve sw.js service worker file", async ({ page }) => {
+    const response = await page.request.get("http://localhost:3000/sw.js");
+    expect(response.status()).toBe(200);
 
-  // Push notifications are not implemented
-  test.skip("should handle push notifications", async () => {
-    // Push notification UI is not implemented
-  });
-
-  // Background sync is not implemented
-  test.skip("should support background sync", async () => {
-    // Background sync is not implemented
+    const body = await response.text();
+    expect(body).toContain("workbox");
+    expect(body).toContain("offline-fallback");
+    expect(body).toContain("sw-store");
   });
 });

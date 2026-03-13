@@ -9,7 +9,7 @@ import { waitForAppReady } from "./test-utils";
  * keyboard interaction, and accessibility.
  *
  * These tests hit the real /api/chat → HuggingFace Router API
- * (model: Qwen/Qwen2.5-7B-Instruct), so they require a valid HF_TOKEN.
+ * (model: meta-llama/Llama-3.3-70B-Instruct), so they require a valid HF_TOKEN.
  */
 
 // HF router can be slow on cold starts — generous per-test timeout

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline — T. Baltzakis</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#1e293b);font-family:system-ui,-apple-system,sans-serif;color:#fff}
+    .container{text-align:center;padding:2rem;max-width:28rem}
+    .icon{width:4rem;height:4rem;margin:0 auto 1.5rem;background:rgba(34,211,238,.15);border-radius:.75rem;display:flex;align-items:center;justify-content:center}
+    .icon svg{width:2rem;height:2rem;color:#22d3ee}
+    h1{font-size:1.5rem;font-weight:700;margin-bottom:.5rem}
+    .divider{width:4rem;height:.25rem;background:linear-gradient(90deg,#22d3ee,#3b82f6);border-radius:9999px;margin:.75rem auto}
+    p{color:rgba(255,255,255,.6);font-size:.95rem;line-height:1.6;margin-bottom:1.5rem}
+    .btn{display:inline-block;padding:.625rem 1.5rem;background:#22d3ee;color:#000;font-weight:600;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;border-radius:.375rem;text-decoration:none;transition:background .2s}
+    .btn:hover{background:#06b6d4}
+    .status{margin-top:2rem;font-size:.75rem;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+      </svg>
+    </div>
+    <h1>You're Offline</h1>
+    <div class="divider"></div>
+    <p>It looks like you've lost your internet connection. Some cached pages may still be available.</p>
+    <a href="/" class="btn" onclick="window.location.reload();return false;">Try Again</a>
+    <div class="status" id="status">offline</div>
+  </div>
+  <script>
+    window.addEventListener('online', function() {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

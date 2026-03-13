@@ -4,8 +4,8 @@ import { Router, Request, Response } from "express";
 const router = Router();
 
 const HF_TOKEN = process.env.HF_TOKEN ?? "";
-// Qwen2.5-7B-Instruct is available on the free tier of HF router (no gated license).
-const HF_MODEL = "Qwen/Qwen2.5-7B-Instruct";
+// Llama 3.3 70B: best free-tier model on HF router — 10x larger than Qwen 7B
+const HF_MODEL = "meta-llama/Llama-3.3-70B-Instruct";
 const HF_API_URL = "https://router.huggingface.co/v1/chat/completions";
 
 const PORTFOLIO_CONTEXT = `You are an AI assistant for Themistoklis Baltzakis's portfolio website.

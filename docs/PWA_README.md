@@ -1,277 +1,173 @@
 # Progressive Web App (PWA) Setup
 
-This project now includes Progressive Web App functionality, allowing users to install the application on their devices for a native app-like experience.
+This project includes full Progressive Web App functionality — installable, offline-capable, with push notifications and background sync.
 
-## Features Added
+## Features
 
-### PWA Capabilities
+- **Installable** — users can add the app to their home screen / desktop
+- **Offline fallback** — dedicated `/offline.html` page served when the network is unavailable and no cached page exists
+- **Offline indicator** — banner at the top of the page warns users when they lose connectivity
+- **Service worker caching** — Workbox 7 with NetworkFirst (pages, API), CacheFirst (images, CDN), StaleWhileRevalidate (JS/CSS/fonts)
+- **Background sync** — failed API requests are queued in IndexedDB and retried when connectivity returns
+- **Offline analytics** — analytics events stored in IndexedDB and synced when back online
+- **Push notifications** — Web Push API with VAPID keys, notification actions, and click handling
+- **Update notifications** — users are prompted when a new service worker version is available
+- **App shortcuts** — manifest shortcuts to /about/, /projects/, /contact/
 
-- **Installable**: Users can install the app on their desktop or mobile devices
-- **Offline Support**: Service worker caches essential resources for offline functionality
-- **App-like Experience**: Runs in standalone mode without browser UI
-- **Fast Loading**: Cached resources load instantly on subsequent visits
+## Architecture
 
-### Components Added
+```
+Browser
+  ├─ ServiceWorkerRegistration.tsx   registers /sw.js, checks for updates every 60 min
+  ├─ OfflineIndicator.tsx            listens to online/offline events, shows banner
+  ├─ PWAUpdateNotification.tsx       detects waiting SW, prompts user to update
+  ├─ PWAInstallButton.tsx            deferred install prompt with 30s delay
+  ├─ usePWA.ts hook                  tracks installability, standalone mode
+  └─ usePushNotifications.ts hook    subscription management
 
-- `usePWA` hook: Manages PWA installation state and functionality
-- `PWAInstallButton` component: Provides an install button in the navigation
-- Web App Manifest: Defines app metadata for installation
-- Service Worker: Handles caching and offline functionality
+Service Worker (public/sw.js)
+  ├─ Workbox 7 (CDN)                caching strategies
+  ├─ offline-fallback cache          precaches /offline.html on install
+  ├─ IndexedDB (sw-store)            failed-requests + offline-analytics stores
+  ├─ Background sync                 retries queued requests on connectivity
+  ├─ Push handler                    shows notifications with actions
+  └─ Periodic sync                   cache stats, prefetch, cleanup
+```
 
-## Technical Implementation
+## Files
 
-### Dependencies
+| File | Purpose |
+| --- | --- |
+| `public/manifest.webmanifest` | Web App Manifest (name, icons, shortcuts, display) |
+| `public/sw.js` | Service worker — Workbox caching, offline fallback, IndexedDB sync |
+| `public/offline.html` | Static offline fallback page (self-contained HTML/CSS) |
+| `src/components/ServiceWorkerRegistration.tsx` | Registers SW in production, auto-update checks |
+| `src/components/OfflineIndicator.tsx` | Amber banner shown when `navigator.onLine` is false |
+| `src/components/PWAUpdateNotification.tsx` | Update prompt when new SW version is waiting |
+| `src/components/PWAInstallButton.tsx` | Install prompt with smart timing and dismissal |
+| `src/hooks/usePWA.ts` | PWA state: installability, standalone detection |
+| `src/hooks/usePushNotifications.ts` | Web Push subscription management |
+| `src/components/DynamicMetadata.tsx` | Client-side apple-mobile-web-app-capable meta tags |
 
-PWA functionality is built into Next.js — no additional plugin required. The manifest and service worker are served from the `public/` directory.
+## Caching Strategies
 
-### Configuration
+| Content | Strategy | Cache Name | TTL |
+| --- | --- | --- | --- |
+| Navigation (pages) | NetworkFirst + offline fallback | `pages-cache` | 7 days |
+| API requests | NetworkFirst + background sync | `enhanced-api-cache` | 5 min |
+| Images (png/jpg/svg/webp/avif) | CacheFirst | `enhanced-images-cache` | 30 days |
+| Static (JS/CSS/fonts) | StaleWhileRevalidate | `enhanced-static-resources` | 7 days |
+| CDN resources | CacheFirst | `cdn-resources` | 30 days |
+| Analytics | NetworkFirst | `analytics-cache` | 1 day |
+| Offline page | Precached on install | `offline-fallback` | Permanent |
 
-The PWA is configured via:
+## IndexedDB Storage (sw-store)
 
-- `public/manifest.json` — app manifest with branding and icons
-- `public/sw.js` — service worker with caching strategies
-- Next.js static export deploys both files automatically
+The service worker uses IndexedDB database `sw-store` (version 1) with two object stores:
 
-### Manifest Configuration
+| Store | Purpose |
+| --- | --- |
+| `failed-requests` | Queued API requests for retry on reconnect |
+| `offline-analytics` | Analytics events collected while offline |
+
+Expired entries (older than 7 days) are cleaned up during periodic sync.
+
+## Offline Behaviour
+
+1. **Navigation to cached page** — served from `pages-cache` (NetworkFirst)
+2. **Navigation to uncached page while offline** — `/offline.html` is served from `offline-fallback` cache
+3. **Offline indicator** — amber banner with "You are currently offline" appears at the top of the page (uses `online`/`offline` events)
+4. **Auto-reconnect** — `offline.html` listens for the `online` event and reloads automatically
+
+## Manifest
 
 ```json
 {
-  "name": "Themistoklis Baltzakis - Cloud Architect",
+  "name": "T. Baltzakis - Cloud Architect",
   "short_name": "T. Baltzakis",
-  "description": "Cloud Architect & Cybersecurity Specialist Portfolio",
+  "display": "standalone",
   "theme_color": "#1e293b",
   "background_color": "#0f172a",
-  "display": "standalone",
   "start_url": "/",
-  "icons": [
-    {
-      "src": "logo.jpg",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "logo.jpg",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "scope": "/",
+  "shortcuts": ["/about/", "/projects/", "/contact/"]
 }
 ```
 
-## Usage
-
-### Installation
-
-1. **Desktop**: Click the "Install App" button in the navigation or use browser's install prompt
-2. **Mobile**: The browser will show an install banner or use the "Install App" button
-
-### Development
-
-- The PWA features are automatically enabled in development
-- Service worker updates automatically when the app is rebuilt
-- Use browser dev tools to inspect service worker and cache status
-
-### Production
-
-- Build the app with `pnpm build`
-- The service worker and manifest are included in the static export
-- Deploy the `out/` folder to S3 + CloudFront
-
-## Browser Support
-
-PWA features are supported in:
-
-- Chrome/Chromium-based browsers (recommended)
-- Firefox (partial support)
-- Safari (iOS 11.3+, macOS 10.14.5+)
-- Edge (Chromium-based)
-
-## Testing PWA Features
-
-### Playwright E2E Tests
-
-The PWA implementation includes comprehensive end-to-end testing:
-
-```bash
-# Run all PWA tests
-pnpm exec playwright test tests/app.spec.ts --project=chromium --project=webkit --project="Mobile Chrome" --project="Mobile Safari"
-
-# Results: ✅ 40/40 tests passing
-```
-
-**Test Coverage:**
-
-- ✅ Page loading and navigation
-- ✅ PWA install button functionality
-- ✅ Accessibility features (skip links, ARIA labels)
-- ✅ Mobile menu interactions
-- ✅ Keyboard navigation
-- ✅ Responsive design
-- ✅ Cross-browser compatibility
-
-### Lighthouse Audit
-
-Run a Lighthouse audit in Chrome DevTools to check PWA compliance:
-
-1. Open DevTools → Lighthouse
-2. Select "Progressive Web App" category
-3. Run the audit
-
-**Expected Scores:**
-
-- Performance: 90+
-- Accessibility: 95+
-- Best Practices: 95+
-- SEO: 90+
-- PWA: 100 (when served over HTTPS)
-
-### Manual Testing
-
-- **Installability**: Check if the install prompt appears
-- **Offline**: Disable network and refresh the page
-- **Performance**: Use Network tab to verify caching
-- **Manifest**: Check Application tab in DevTools
-
-## Customization
-
-### Updating the Manifest
-
-Edit the manifest in `public/manifest.json`:
-
-- Change app name, description, colors
-- Update icons (place in `public/` directory)
-- Modify display mode or orientation
-
-### Service Worker Configuration
-
-Modify the service worker in `public/sw.js`:
-
-- Add custom caching rules
-- Configure runtime caching strategies
-- Set cache expiration policies
-
-### Install Button Styling
-
-Customize the `PWAInstallButton` component:
-
-- Change button appearance
-- Add custom install logic
-- Modify responsive behavior
-
-## Troubleshooting
-
-### Install Button Not Showing
-
-- Check browser compatibility
-- Ensure HTTPS in production
-- Verify service worker registration
-
-### Service Worker Issues
-
-- Clear browser cache and service workers
-- Check console for registration errors
-- Verify build output includes sw.js
-
-### Offline Not Working
-
-- Check network tab for cached resources
-- Verify workbox configuration
-- Test with different caching strategies
-
-## File Structure
-
-```
-portfolio-nextjs/
-├── src/
-│   ├── components/
-│   │   ├── PWAUpdateNotification.tsx  # PWA update notification component
-│   │   └── NotificationButton.tsx     # Site announcements toggle
-│   └── hooks/
-│       └── usePWA.ts                  # PWA state management hook
-├── public/
-│   ├── manifest.json                  # Web App Manifest
-│   ├── sw.js                          # Service worker
-│   ├── logo.jpg                       # App icon
-│   └── ...                            # Other static assets
-└── out/                               # Static export output
-```
-
-## Next Steps
-
-- ~~Add push notifications for real-time updates~~ ✅ Implemented
-- ~~Add PWA update notification UI~~ ✅ Implemented
-- Implement background sync for offline actions
-- Add app shortcuts for quick actions
-- Configure different caching strategies per route
-- Add PWA-specific analytics tracking
-
----
-
-## PWA Update Notifications
-
-The application includes a PWA update notification system that alerts users when a new version is available.
-
-### Features
-
-- **Update Detection**: Automatically detects when a new service worker version is available
-- **User Notification**: Shows a non-intrusive notification banner prompting users to update
-- **One-Click Update**: Users can update with a single click
-- **Dismiss Option**: Users can dismiss the notification if they prefer to update later
-
-### Component
-
-- `tests/pwa-update-notification.spec.ts` - Tests for PWA update notification functionality
-
----
-
 ## Push Notifications
-
-Push notifications are implemented using the Web Push API with VAPID keys.
 
 ### Architecture
 
 - **Frontend**: `usePushNotifications` hook handles subscription management
-- **Backend**: Express API server on port 3001 (dev) / AWS Lambda (production) handles VAPID keys and notification sending
-- **Service Worker**: Receives and displays push notifications
-
-### Development Setup
-
-Push notifications require the Express API server to be running:
-
-```bash
-# Terminal 1: Start Next.js dev server (frontend on port 3000)
-pnpm dev
-
-# Terminal 2: Start Express API server (backend on port 3001)
-pnpm dev:server
-```
-
-The Next.js dev server proxies `/api` requests to the Express server.
+- **Backend**: Express API server on port 3001 (dev) / AWS Lambda (production)
+- **Service Worker**: Receives and displays push notifications with actions
 
 ### API Endpoints
 
-| Endpoint                                          | Method | Description                                 |
-| ------------------------------------------------- | ------ | ------------------------------------------- |
-| `/api/push-notifications?action=vapid-public-key` | GET    | Get VAPID public key                        |
-| `/api/push-notifications?action=subscriptions`    | GET    | List all subscriptions                      |
-| `/api/push-notifications`                         | GET    | Send test notification to all subscribers   |
-| `/api/push-notifications`                         | PUT    | Store a new subscription                    |
-| `/api/push-notifications`                         | POST   | Send notification to specific subscriptions |
-| `/api/push-notifications?endpoint=...`            | DELETE | Remove a subscription                       |
+| Endpoint | Method | Description |
+| --- | --- | --- |
+| `/api/push-notifications?action=vapid-public-key` | GET | Get VAPID public key |
+| `/api/push-notifications?action=subscriptions` | GET | List all subscriptions |
+| `/api/push-notifications` | GET | Send test notification |
+| `/api/push-notifications` | PUT | Store a new subscription |
+| `/api/push-notifications` | POST | Send custom notification |
+| `/api/push-notifications?endpoint=...` | DELETE | Remove a subscription |
 
 ### VAPID Keys
 
-VAPID keys are configured in `server/routes/push-notifications.ts`. For production, generate new keys:
+Generate new keys for production:
 
 ```bash
 npx web-push generate-vapid-keys
 ```
 
-Update the keys in the server configuration and set a proper contact email.
+Update the keys in `server/routes/push-notifications.ts`.
 
-### Testing Push Notifications
+## Local Development
 
-1. Start both servers (Next.js + Express)
-2. Click "Enable notifications" button in the app
-3. Grant notification permission when prompted
-4. Test with: `curl http://localhost:3001/api/push-notifications`
+```bash
+# Start Next.js dev server (port 3000)
+pnpm dev
+
+# Start Express API server (port 3001)
+pnpm dev:server
+```
+
+Service worker registration only activates in production (`NODE_ENV === "production"`). To test SW locally, build and serve the static export.
+
+## Testing
+
+### Playwright E2E Tests
+
+```bash
+# Run PWA-specific tests
+pnpm exec playwright test playwright-tests/pwa.spec.ts playwright-tests/pwa-features.spec.ts
+
+# Run all tests
+pnpm test:e2e
+```
+
+**Test coverage**: manifest validation, meta tags, service worker registration, offline fallback, offline indicator, update notifications, install prompt, theme colors, icons, shortcuts, accessibility.
+
+### Lighthouse Audit
+
+Run in Chrome DevTools → Lighthouse → Progressive Web App category.
+
+### Manual Testing
+
+1. **Installability** — check install prompt in browser
+2. **Offline** — DevTools → Network → Offline, then navigate
+3. **Caching** — DevTools → Application → Cache Storage
+4. **Service Worker** — DevTools → Application → Service Workers
+5. **IndexedDB** — DevTools → Application → IndexedDB → sw-store
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Install button not showing | Not served over HTTPS | Deploy to production or use localhost |
+| Offline page not appearing | SW not installed | Build and serve production build |
+| No offline indicator | Component not rendered | Verify `OfflineIndicator` in layout.tsx |
+| SW not registering | Dev mode | SW only registers when `NODE_ENV === "production"` |
+| Push notifications not working | Express server not running | Start with `pnpm dev:server` |
+| Stale content after deploy | Old SW cached | Click "Update Now" in update notification |

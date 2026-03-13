@@ -129,33 +129,27 @@ test.describe("PWA Features", () => {
     }
   });
 
-  test("should handle PWA offline functionality", async ({ page }) => {
-    // Test offline mode
+  test("should show offline indicator when network is lost", async ({ page }) => {
+    // Go offline — the OfflineIndicator component listens for the offline event
     await page.context().setOffline(true);
 
-    // Should still load cached content
-    await page.reload().catch(() => {
-      // Reload may fail when offline if no service worker cache — that's expected
-    });
-    await page.waitForTimeout(2000);
+    // Dispatch the offline event since Playwright's setOffline doesn't always fire it
+    await page.evaluate(() => window.dispatchEvent(new Event("offline")));
 
-    // Should show offline indicator or cached content
+    // The OfflineIndicator should appear with data-testid="offline-indicator"
     const offlineIndicator = page.locator('[data-testid="offline-indicator"]');
-    const cachedContent = page.locator('[data-testid="cached-content"]');
+    await expect(offlineIndicator).toBeVisible({ timeout: 5000 });
+    await expect(offlineIndicator).toContainText("offline", { ignoreCase: true });
 
-    if (await offlineIndicator.isVisible().catch(() => false)) {
-      await expect(offlineIndicator).toBeVisible();
-    } else if (await cachedContent.isVisible().catch(() => false)) {
-      await expect(cachedContent).toBeVisible();
-    } else {
-      // Should still have some content
-      await expect(page.locator("body")).toBeVisible();
-    }
+    // Verify it has proper accessibility attributes
+    await expect(offlineIndicator).toHaveAttribute("role", "status");
 
-    // Restore online
+    // Go back online
     await page.context().setOffline(false);
-    await page.reload();
-    await page.waitForLoadState("domcontentloaded");
+    await page.evaluate(() => window.dispatchEvent(new Event("online")));
+
+    // Indicator should disappear
+    await expect(offlineIndicator).toBeHidden({ timeout: 5000 });
   });
 
   test("should handle PWA update notifications", async ({ page }) => {
