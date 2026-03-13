@@ -12,6 +12,8 @@ import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
 import AmplifyProvider from "@/components/AmplifyProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -151,6 +153,8 @@ export default function RootLayout({
         <GoogleAnalytics />
         <SentryInit />
         <CookieConsentBanner />
+        <ServiceWorkerRegistration />
+        <PWAUpdateNotification />
       </body>
     </html>
   );
