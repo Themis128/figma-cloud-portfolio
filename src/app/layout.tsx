@@ -14,6 +14,7 @@ import AmplifyProvider from "@/components/AmplifyProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -155,6 +156,7 @@ export default function RootLayout({
         <CookieConsentBanner />
         <ServiceWorkerRegistration />
         <PWAUpdateNotification />
+        <OfflineIndicator />
       </body>
     </html>
   );

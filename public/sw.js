@@ -21,21 +21,36 @@ if (workbox) {
   // Precache critical resources
   workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
 
-  // Handle navigation requests with NetworkFirst (serve cached pages offline)
+  // Handle navigation requests with NetworkFirst + offline fallback
+  const navigationHandler = new workbox.strategies.NetworkFirst({
+    cacheName: "pages-cache",
+    plugins: [
+      new workbox.cacheableResponse.CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+      }),
+    ],
+  });
+
   workbox.routing.registerRoute(
     ({ request }) => request.mode === "navigate",
-    new workbox.strategies.NetworkFirst({
-      cacheName: "pages-cache",
-      plugins: [
-        new workbox.cacheableResponse.CacheableResponsePlugin({
-          statuses: [0, 200],
-        }),
-        new workbox.expiration.ExpirationPlugin({
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-        }),
-      ],
-    }),
+    async (args) => {
+      try {
+        return await navigationHandler.handle(args);
+      } catch (error) {
+        // Network failed and no cache — serve the offline page
+        const offlineCache = await caches.open("offline-fallback");
+        const offlinePage = await offlineCache.match("/offline.html");
+        if (offlinePage) return offlinePage;
+        return new Response("You are offline", {
+          status: 503,
+          headers: { "Content-Type": "text/plain" },
+        });
+      }
+    },
   );
 
   // Enhanced API caching with background sync
@@ -166,9 +181,12 @@ if (workbox) {
   console.log("Workbox failed to load");
 }
 
-// Install event
+// Install event — precache the offline fallback page
 self.addEventListener("install", (event) => {
   console.log("Service Worker: Install event");
+  event.waitUntil(
+    caches.open("offline-fallback").then((cache) => cache.add("/offline.html")),
+  );
   self.skipWaiting();
 });
 
@@ -733,6 +751,8 @@ async function cleanupOldCaches() {
   try {
     const cacheNames = await caches.keys();
     const currentCaches = [
+      "pages-cache",
+      "offline-fallback",
       "enhanced-api-cache",
       "google-fonts-stylesheets", // Keep for backward compatibility
       "google-fonts-webfonts", // Keep for backward compatibility
@@ -764,34 +784,126 @@ async function cleanupOldCaches() {
   }
 }
 
-// Offline storage helpers
+// ---------------------------------------------------------------------------
+// IndexedDB helpers — "sw-store" database with two object stores
+// ---------------------------------------------------------------------------
+
+const DB_NAME = "sw-store";
+const DB_VERSION = 1;
+const STORE_FAILED_REQUESTS = "failed-requests";
+const STORE_OFFLINE_ANALYTICS = "offline-analytics";
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE_FAILED_REQUESTS)) {
+        db.createObjectStore(STORE_FAILED_REQUESTS, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+      }
+      if (!db.objectStoreNames.contains(STORE_OFFLINE_ANALYTICS)) {
+        db.createObjectStore(STORE_OFFLINE_ANALYTICS, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function idbGetAll(storeName) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, "readonly");
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      }),
+  );
+}
+
+function idbPut(storeName, value) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, "readwrite");
+        const store = tx.objectStore(storeName);
+        const req = store.put(value);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      }),
+  );
+}
+
+function idbDelete(storeName, key) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, "readwrite");
+        const store = tx.objectStore(storeName);
+        const req = store.delete(key);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      }),
+  );
+}
+
+// Offline storage helpers — backed by IndexedDB
 async function getFailedRequests() {
-  // Placeholder - would implement IndexedDB access
-  return [];
+  try {
+    return await idbGetAll(STORE_FAILED_REQUESTS);
+  } catch (error) {
+    console.error("Failed to read failed requests from IndexedDB:", error);
+    return [];
+  }
 }
 
 async function removeFailedRequest(id) {
-  // Placeholder - would implement IndexedDB removal
-  console.log("Removing failed request:", id);
+  try {
+    await idbDelete(STORE_FAILED_REQUESTS, id);
+  } catch (error) {
+    console.error("Failed to remove failed request:", error);
+  }
 }
 
 async function getOfflineAnalytics() {
-  // Placeholder - would implement IndexedDB access for analytics
-  return [];
+  try {
+    return await idbGetAll(STORE_OFFLINE_ANALYTICS);
+  } catch (error) {
+    console.error("Failed to read offline analytics from IndexedDB:", error);
+    return [];
+  }
 }
 
 async function storeOfflineAnalytics(event) {
-  // Placeholder - would implement IndexedDB storage
-  console.log("Storing offline analytics:", event);
+  try {
+    await idbPut(STORE_OFFLINE_ANALYTICS, {
+      ...event,
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error("Failed to store offline analytics:", error);
+  }
 }
 
 async function removeOfflineEvent(id) {
-  // Placeholder - would implement IndexedDB removal
-  console.log("Removing offline event:", id);
+  try {
+    await idbDelete(STORE_OFFLINE_ANALYTICS, id);
+  } catch (error) {
+    console.error("Failed to remove offline event:", error);
+  }
 }
 
 async function sendAnalyticsEvent(event) {
-  // Placeholder - would send to analytics service
+  // Send to Google Analytics Measurement Protocol or custom endpoint
+  // For now, log and remove — extend when an analytics endpoint exists
   console.log("Sending analytics event:", event);
 }
 
@@ -823,7 +935,24 @@ async function prefetchPopularContent() {
 async function cleanupExpiredData() {
   try {
     console.log("Cleaning up expired data...");
-    // Would implement cleanup of expired IndexedDB data
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - ONE_WEEK_MS;
+
+    // Clean expired analytics events
+    const events = await getOfflineAnalytics();
+    for (const event of events) {
+      if (event.timestamp && event.timestamp < cutoff) {
+        await removeOfflineEvent(event.id);
+      }
+    }
+
+    // Clean expired failed requests
+    const requests = await getFailedRequests();
+    for (const req of requests) {
+      if (req.timestamp && req.timestamp < cutoff) {
+        await removeFailedRequest(req.id);
+      }
+    }
   } catch (error) {
     console.error("Failed to cleanup expired data:", error);
   }

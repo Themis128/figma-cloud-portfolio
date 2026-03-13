@@ -1,6 +1,6 @@
 # Portfolio Chatbot
 
-An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using `Qwen/Qwen2.5-7B-Instruct` via the HuggingFace Inference API.
+An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using `meta-llama/Llama-3.3-70B-Instruct` via the HuggingFace Inference API.
 
 ## Architecture
 
@@ -8,7 +8,7 @@ An AI-powered chat assistant embedded in the portfolio site. It answers visitor 
 Browser (ChatbotWidget.tsx)
   └─ POST /api/chat  ←── Express server (server/routes/chat.ts)
        └─ POST https://router.huggingface.co/v1/chat/completions
-            └─ Qwen/Qwen2.5-7B-Instruct (HuggingFace Router — free tier)
+            └─ meta-llama/Llama-3.3-70B-Instruct (HuggingFace Router — free tier)
 ```
 
 Responses are **buffered** server-side and delivered to the browser as a single Server-Sent Events batch once the model completes. The client reads the SSE stream and renders the full reply in one shot.
@@ -62,13 +62,13 @@ Open the portfolio in your browser and click **Chat with AI** in the bottom-left
 
 | Property   | Value                                                     |
 | ---------- | --------------------------------------------------------- |
-| Model ID   | `Qwen/Qwen2.5-7B-Instruct`                                |
+| Model ID   | `meta-llama/Llama-3.3-70B-Instruct`                        |
 | Provider   | HuggingFace Router (`router.huggingface.co`)              |
 | Tier       | Free (no gated license, no paid provider routing required) |
 | Max tokens | 512                                                       |
 | Temp       | 0.7                                                       |
 
-The model is selected because it is freely available on the HuggingFace router without requiring a gated license agreement or a paid subscription. The chat completions endpoint (`/v1/chat/completions`) follows the OpenAI-compatible format — no model-specific prompt template required.
+Llama 3.3 70B Instruct is a 70-billion-parameter model available on the HuggingFace router free tier. It offers significantly better reasoning and instruction-following than smaller models. The chat completions endpoint (`/v1/chat/completions`) follows the OpenAI-compatible format — no model-specific prompt template required.
 
 ## Prompt Engineering
 
