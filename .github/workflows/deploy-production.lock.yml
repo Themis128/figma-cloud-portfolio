@@ -25,7 +25,7 @@
 # Generates Amplify backend outputs, builds Next.js static export,
 # syncs to S3, invalidates CloudFront, and validates with smoke tests.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"9a2f67c05ce35128c35b50d2454a43fa17055a7dd2472116683a5c8ed44fdc9d","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"c9c7330f2031a11e16c65b7754756c8719ead3a8ca3e27ff5933e93def511595","compiler_version":"v0.55.0","strict":true}
 
 name: "Production Deployment Workflow (S3 + CloudFront)"
 "on":
@@ -273,21 +273,21 @@ jobs:
       - name: Create gh-aw temp directory
         run: bash /opt/gh-aw/actions/create_gh_aw_tmp_dir.sh
       - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 22
       - name: Install pnpm
-        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         shell: bash
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@ff717079ee2060e4bcee96c4779b553acc87447c # v4
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: us-east-1

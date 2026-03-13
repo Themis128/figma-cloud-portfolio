@@ -25,7 +25,7 @@
 #
 # Source: githubnext/agentics/workflows/link-checker.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"4299da6a689c1a7fdc1f7fd8b677d43775c00aa38dbc32299da174d234d41f41","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"cd8925748f300536a291c83af91762c3ce73c9ad8d22449e6b659ee22548f6f4","compiler_version":"v0.55.0","strict":true}
 
 name: "Daily Link Checker & Fixer"
 "on":
@@ -271,7 +271,7 @@ jobs:
       - name: Create gh-aw temp directory
         run: bash /opt/gh-aw/actions/create_gh_aw_tmp_dir.sh
       - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
           persist-credentials: false

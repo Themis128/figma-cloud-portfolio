@@ -11,7 +11,7 @@ network:
     - github
 steps:
   - name: Checkout repository
-    uses: actions/checkout@v4
+    uses: actions/checkout@v6
     with:
       fetch-depth: 0
       persist-credentials: false

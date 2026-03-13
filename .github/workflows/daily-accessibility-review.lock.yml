@@ -29,7 +29,7 @@
 #
 # Source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"d75eb291385d4c6b9a7630c1f356c8d59704096f22c4cc28ec5b3a7d3c673985","compiler_version":"v0.55.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"6d39f501f18a2def202326a29a763011a854b45dcf762871543f556483fa9a02","compiler_version":"v0.55.0","strict":true}
 
 name: "Daily Accessibility Review"
 "on":
@@ -269,7 +269,7 @@ jobs:
       - name: Create gh-aw temp directory
         run: bash /opt/gh-aw/actions/create_gh_aw_tmp_dir.sh
       - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
           persist-credentials: false
