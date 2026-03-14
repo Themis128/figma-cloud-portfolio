@@ -472,57 +472,52 @@ test('renders component', () => {
 
 ### Sentry
 
-**Purpose**: Error tracking and performance monitoring
-**Files**: `src/lib/sentry.ts`
+**Purpose**: Error tracking, performance monitoring, and session replay
+**Project**: `javascript-nextjs` on `baltzakisthemiscom` org (DE region)
 
-**Packages**:
+**Files**:
 
-- `@sentry/node` (v10.36.0) - Backend
-- `@sentry/nextjs` (v10.36.0) - Frontend
-- `@sentry/tracing` (v7.120.4) - Performance
+- `sentry.client.config.ts` — Client-side Sentry initialization (auto-loaded by `@sentry/nextjs`)
+- `instrumentation.ts` — Next.js instrumentation hook for server-side Sentry (dev only)
+- `src/lib/sentry.ts` — Consent-aware enable/disable + helper functions
+- `src/components/SentryInit.tsx` — Client component that sets up consent listener
+- `next.config.ts` — Wrapped with `withSentryConfig` (webpack plugins disabled for static export)
+
+**Package**: `@sentry/nextjs` (v10.43.0)
 
 **Features**:
 
-- HTTP request tracking
-- Performance monitoring:
-  - 10% trace rate (production)
-  - 100% trace rate (development)
-- Custom error filtering
-- API request breadcrumbs
-- Database operation tracking
-- User context and identification
-- Release tracking
+- `browserTracingIntegration` with INP tracking (`enableInp: true`)
+- Session Replay (10% production, 100% dev; 100% on error)
+- GDPR-compliant consent-based enable/disable (not init/no-init)
+- Custom error filtering (network errors, chunk load failures, script errors)
+- `allowUrls` filter for `baltzakisthemis.com` and `localhost`
+- 100% trace sampling (low-traffic site ~127 txns/week)
+- Performance helpers: `measurePerformance`, `reportError`, `trackPageView`, `trackInteraction`
+- User context: `setUser`, `setTag`, `setContext`
 
 **Configuration**:
 
 ```env
-# Client-side
-NEXT_PUBLIC_SENTRY_DSN=https://your_key@o123456.ingest.sentry.io/123456
-
-# Server-side
-SENTRY_DSN=https://your_key@o123456.ingest.sentry.io/123456
-
-# API access
-SENTRY_ACCESS_TOKEN=sntrys_your_token_here
-SENTRY_ORG_SLUG=your_org_name
-
-# Release tracking
+NEXT_PUBLIC_SENTRY_DSN=https://your_key@o123456.ingest.de.sentry.io/123456
+SENTRY_ENVIRONMENT=production
 NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
-**Setup**:
+**Architecture**:
 
-1. Create project: https://sentry.io/
-2. Get DSN from project settings
-3. Add to `.env` file
-4. Initialize in application
+1. `sentry.client.config.ts` runs at page load — initializes Sentry with full config
+2. `SentryInit` component (in layout) calls `setupSentryConsentListener()` — checks localStorage for analytics consent and enables/disables accordingly
+3. When consent changes, a `consent-updated` CustomEvent toggles `client.getOptions().enabled`
+4. Static export: `withSentryConfig` wraps `next.config.ts` with all webpack/server plugins disabled
 
 **Custom Error Filtering**:
 
 ```typescript
 beforeSend(event, hint) {
-  // Suppress non-actionable errors
-  if (event.message?.includes('ECONNRESET')) {
+  const message = String(error.message).toLowerCase();
+  if (message.includes("network error") || message.includes("failed to fetch") ||
+      message.includes("load chunk") || message.includes("script error")) {
     return null;
   }
   return event;

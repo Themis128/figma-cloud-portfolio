@@ -72,9 +72,46 @@ function getGrade(
   return { label: "D", color: "text-red-400", ring: "border-red-400/40" };
 }
 
+function GradeBadge({
+  grade,
+}: {
+  grade: { label: string; color: string; ring: string };
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Trigger the CSS transition after mount (avoids SSR hydration mismatch)
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const hasGrade = grade.label !== "...";
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div
+        className={`w-24 h-24 rounded-full border-2 ${grade.ring} flex items-center justify-center bg-card/30 backdrop-blur-sm transition-all duration-700 ease-out ${
+          mounted ? "scale-100 opacity-100" : "scale-[0.6] opacity-0"
+        }`}
+        style={{
+          boxShadow:
+            mounted && hasGrade ? "0 0 30px rgba(34,211,238,0.15)" : "none",
+        }}
+      >
+        <span className={`text-5xl font-bold font-mono ${grade.color}`}>
+          {grade.label}
+        </span>
+      </div>
+      <p className="text-xs text-foreground/50 uppercase tracking-widest font-mono">
+        Performance Grade
+      </p>
+    </div>
+  );
+}
+
 export function LiveLoadHero() {
   const { metrics } = usePerformanceMonitoring();
-  const { lcp, fcp, cls, ttfb } = metrics;
+  const { lcp, fcp, cls, ttfb, inp } = metrics;
 
   const lcpCountUp = useCountUp(lcp ?? null);
   const grade = getGrade(lcp, fcp, cls);
@@ -142,6 +179,24 @@ export function LiveLoadHero() {
               : "poor"
           : null,
     },
+    {
+      label: "INP",
+      value:
+        inp !== undefined
+          ? inp >= 1000
+            ? `${(inp / 1000).toFixed(2)}s`
+            : `${Math.round(inp)}ms`
+          : "—",
+      sublabel: "Responsiveness",
+      status:
+        inp !== undefined
+          ? inp < 200
+            ? "good"
+            : inp < 500
+              ? "warn"
+              : "poor"
+          : null,
+    },
   ];
 
   const lcpSeconds = lcp !== undefined ? (lcpCountUp / 1000).toFixed(2) : "—";
@@ -183,23 +238,12 @@ export function LiveLoadHero() {
 
       {/* Grade badge */}
       <AnimatedSection delay={0.25}>
-        <div className="flex flex-col items-center gap-3">
-          <div
-            className={`w-24 h-24 rounded-full border-2 ${grade.ring} flex items-center justify-center bg-card/30 backdrop-blur-sm`}
-          >
-            <span className={`text-5xl font-bold font-mono ${grade.color}`}>
-              {grade.label}
-            </span>
-          </div>
-          <p className="text-xs text-foreground/50 uppercase tracking-widest font-mono">
-            Performance Grade
-          </p>
-        </div>
+        <GradeBadge grade={grade} />
       </AnimatedSection>
 
       {/* 3 stat chips */}
       <AnimatedSection delay={0.35}>
-        <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-md mx-auto">
           {stats.map((stat) => (
             <div
               key={stat.label}

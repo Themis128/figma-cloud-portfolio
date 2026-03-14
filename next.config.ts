@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 // Constants for image optimization - device sizes
@@ -207,4 +208,19 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Suppress Sentry CLI source map upload warnings (no auth token in static export)
+  silent: true,
+
+  // Disable source map upload — static export has no build-time server
+  disableServerWebpackPlugin: true,
+  disableClientWebpackPlugin: true,
+
+  // Automatically tree-shake Sentry logger in production
+  disableLogger: true,
+
+  // Don't widen the scope of the Next.js instrumentation
+  autoInstrumentServerFunctions: false,
+  autoInstrumentMiddleware: false,
+  autoInstrumentAppDirectory: false,
+});

@@ -2,9 +2,10 @@
 
 import { CheckCircle2, Circle, Play, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { type Metric, onCLS, onFCP, onLCP, onTTFB } from "web-vitals";
+import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 type Phase = "idle" | "running" | "done";
 type MetricStatus = "good" | "warn" | "poor";
@@ -13,7 +14,7 @@ interface TestItem {
   id: string;
   label: string;
   description: string;
-  metricKey: "lcp" | "fcp" | "cls" | "ttfb";
+  metricKey: "lcp" | "fcp" | "cls" | "ttfb" | "inp";
   goodThreshold: number;
   poorThreshold: number;
   unit: string;
@@ -55,6 +56,15 @@ const TEST_SEQUENCE: TestItem[] = [
     goodThreshold: 0.1,
     poorThreshold: 0.25,
     unit: "",
+  },
+  {
+    id: "inp",
+    label: "Interaction to Next Paint",
+    description: "Input responsiveness",
+    metricKey: "inp",
+    goodThreshold: 200,
+    poorThreshold: 500,
+    unit: "ms",
   },
 ];
 
@@ -130,6 +140,7 @@ const STATUS_COLORS: Record<
 };
 
 export function SpeedTestRunner() {
+  const { toast } = useToast();
   const [phase, setPhase] = useState<Phase>("idle");
   const [progress, setProgress] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
@@ -151,6 +162,9 @@ export function SpeedTestRunner() {
     });
     onTTFB((m: Metric) => {
       metricsRef.current.ttfb = m.value;
+    });
+    onINP((m: Metric) => {
+      metricsRef.current.inp = m.value;
     });
   }, []);
 
@@ -178,11 +192,9 @@ export function SpeedTestRunner() {
     }
   };
 
-  const reset = () => {
-    setPhase("idle");
-    setProgress(0);
-    setRevealedCount(0);
-    setCapturedMetrics({});
+  const rerun = () => {
+    // Reload the page for a fresh measurement — web-vitals only reports once per page load
+    window.location.reload();
   };
 
   const shareResults = () => {
@@ -203,7 +215,12 @@ export function SpeedTestRunner() {
         text,
       });
     } else {
-      void navigator.clipboard.writeText(text);
+      void navigator.clipboard.writeText(text).then(() => {
+        toast({
+          title: "Copied to clipboard",
+          description: "Performance results ready to paste.",
+        });
+      });
     }
   };
 
@@ -345,11 +362,11 @@ export function SpeedTestRunner() {
                   Share
                 </button>
                 <button
-                  onClick={reset}
+                  onClick={rerun}
                   className="flex items-center gap-2 px-4 py-2 border border-border/20 hover:border-cyan-400/40 rounded-md text-sm text-foreground/60 hover:text-foreground transition-all"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  Run Again
+                  Re-measure
                 </button>
               </div>
             </div>

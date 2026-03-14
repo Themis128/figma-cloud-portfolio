@@ -1,12 +1,13 @@
 "use client";
 
+import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
 
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 
 interface VitalInfo {
-  key: "lcp" | "fcp" | "cls" | "ttfb";
+  key: "lcp" | "fcp" | "cls" | "ttfb" | "inp";
   label: string;
   fullName: string;
   icon: string;
@@ -65,6 +66,18 @@ const VITALS: VitalInfo[] = [
     whatItMeans:
       "How fast the server responded to the initial request. This reflects server infrastructure, CDN placement, and backend efficiency.",
     tip: "Reduced by AWS Amplify global edge CDN deployment",
+  },
+  {
+    key: "inp",
+    label: "INP",
+    fullName: "Interaction to Next Paint",
+    icon: "👆",
+    goodThreshold: 200,
+    poorThreshold: 500,
+    industryAvg: 350,
+    whatItMeans:
+      "How quickly the page responds after you click, tap, or type. INP replaced FID as a Core Web Vital in March 2024 — it measures every interaction, not just the first.",
+    tip: "Kept low with event delegation and non-blocking React transitions",
   },
 ];
 
@@ -229,16 +242,26 @@ export function WebVitalsExplainer() {
                 )}
 
                 {/* Expanded detail */}
-                {isActive && (
-                  <div className="mt-4 pt-4 border-t border-border/15 space-y-2 text-left">
-                    <p className="text-xs text-foreground/60 leading-relaxed">
-                      {vital.whatItMeans}
-                    </p>
-                    <p className="text-[11px] text-cyan-400/70 font-mono">
-                      → {vital.tip}
-                    </p>
-                  </div>
-                )}
+                <AnimatePresence>
+                  {isActive && (
+                    <m.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-4 pt-4 border-t border-border/15 space-y-2 text-left">
+                        <p className="text-xs text-foreground/60 leading-relaxed">
+                          {vital.whatItMeans}
+                        </p>
+                        <p className="text-[11px] text-cyan-400/70 font-mono">
+                          → {vital.tip}
+                        </p>
+                      </div>
+                    </m.div>
+                  )}
+                </AnimatePresence>
               </button>
             </AnimatedSection>
           );

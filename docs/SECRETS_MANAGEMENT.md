@@ -201,10 +201,11 @@ Reference in workflows:
 
 ### Sentry (Error Tracking)
 
-- **VITE_SENTRY_DSN**: Client DSN
+- **NEXT_PUBLIC_SENTRY_DSN**: Client DSN (exposed to browser)
 - **SENTRY_DSN**: Server DSN
-- **SENTRY_ACCESS_TOKEN**: API token
-- Get: https://sentry.io/settings/account/api-tokens/
+- **SENTRY_ACCESS_TOKEN**: API token (for source map uploads)
+- Get DSN: sentry.io → Project → Settings → Client Keys
+- Get token: https://sentry.io/settings/account/api/auth-tokens/
 
 ## Development Workflow
 

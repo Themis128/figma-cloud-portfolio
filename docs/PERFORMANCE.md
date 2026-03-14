@@ -260,16 +260,18 @@ getTTFB(sendToAnalytics);
 ### 2. Performance Dashboard
 
 **Live Metrics** (`/performance` page):
-- Real-time Web Vitals display
-- Performance grade calculation
-- Industry benchmark comparisons
-- Optimization checklist
+- Real-time Web Vitals display (LCP, FCP, CLS, TTFB, INP)
+- Performance grade calculation (A+ → D)
+- Lighthouse audit scores (Performance, Accessibility, Best Practices, SEO)
+- Industry benchmark comparisons (live LCP vs. Web Almanac 2024 data)
+- Interactive speed test with share/re-measure
+- Tabbed "How It's Built" section (Techniques + Tech Stack)
 
 **Key Metrics Displayed**:
-- LCP, FID, CLS, TTFB values
-- Performance score (A+ to F)
-- Loading progress indicators
-- Historical performance trends
+- LCP, FCP, CLS, TTFB, INP values (INP replaced FID as Core Web Vital in March 2024)
+- Performance score (A+ to D)
+- Lighthouse score rings with animated count-up
+- Industry comparison bars with live LCP positioning
 
 ### 3. Bundle Analysis
 

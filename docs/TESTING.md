@@ -413,11 +413,13 @@ The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests 
 
 #### `playwright-tests/performance-monitoring.spec.ts`
 
-- ✅ Performance dashboard renders
-- ✅ Metrics display (memory, CPU, network)
-- ✅ Run tests button triggers benchmark
-- ✅ JSON report download
-- ✅ Lighthouse scores displayed
+- ✅ Core Web Vitals tracking (LCP, FCP, CLS, TTFB, INP)
+- ✅ Performance dashboard renders with heading
+- ✅ Analytics data endpoint integration
+- ✅ Navigation timing measurement
+- ✅ Resource loading performance tracking
+- ✅ Interaction responsiveness measurement (Speed Test button)
+- ✅ Error handling for unsupported environments
 
 #### `playwright-tests/push-notifications.spec.ts`
 
@@ -613,7 +615,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Resume (/resume)           | `resume.spec.ts`, `app.spec.ts`                                            | ✅ Covered |
 | Agents (/agents)           | `agents.spec.ts`, `agent-builder.spec.ts`, `ai-agents.spec.ts`             | ✅ Covered |
 | Settings (/settings)       | `settings-page.spec.ts`, `app.spec.ts`                                     | ✅ Covered |
-| Performance (/performance) | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
+| Performance (/performance) | `performance-page.spec.ts`, `performance-dashboard.spec.ts`, `performance-monitoring.spec.ts`, `app.spec.ts` | ✅ Covered |
 | Cookies (/cookies)         | `legal-pages.spec.ts`                                                      | ✅ Covered |
 | Privacy (/privacy)         | `legal-pages.spec.ts`                                                      | ✅ Covered |
 | Terms (/terms)             | `legal-pages.spec.ts`                                                      | ✅ Covered |

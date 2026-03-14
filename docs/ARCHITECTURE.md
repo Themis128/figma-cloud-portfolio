@@ -106,55 +106,71 @@ A public-facing showcase demonstrating real performance metrics and technical op
 
 ### Architecture
 
-The page is a **Server Component shell** with **Client Component islands** for live data.
+The page is a **Server Component shell** with **Client Component islands** for live data. A sticky dot-nav (`SectionNav`) on the right edge (desktop only) tracks the active section via IntersectionObserver.
 
-| Component               | Type       | Purpose                                                                                         |
-| ----------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| `performance/page.tsx`  | Server     | Layout shell, metadata, `Suspense` wrappers                                                     |
-| `LiveLoadHero`          | Client     | Animated counter showing the visitor's actual LCP + performance grade                           |
-| `SpeedTestRunner`       | Client     | Interactive test — reveals live Web Vitals sequentially with share/retry                        |
-| `WebVitalsExplainer`    | Client     | 4 interactive cards (LCP, FCP, CLS, TTFB) with live values + plain-English tooltips             |
-| `IndustryComparison`    | Client     | Animated bar chart comparing this site vs. industry benchmarks (IntersectionObserver triggered) |
-| `OptimizationChecklist` | **Server** | Static checklist of 8 performance optimisations — zero client JS                                |
-| `TechStackRationale`    | **Server** | 6 tech cards with performance rationale — zero client JS                                        |
+| Component                 | Type       | Purpose                                                                                                  |
+| ------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| `performance/page.tsx`    | Server     | Layout shell, metadata, `Suspense` wrappers, section IDs for nav                                        |
+| `SectionNav`              | Client     | Sticky right-side dot navigation with smooth-scroll and active-section tracking                          |
+| `LiveLoadHero`            | Client     | Animated LCP counter + spring-animated grade badge + 4 stat chips (LCP, FCP, CLS, INP)                  |
+| `SpeedTestRunner`         | Client     | Interactive test — reveals 5 live Web Vitals sequentially with share (toast feedback) / re-measure       |
+| `WebVitalsExplainer`      | Client     | 5 interactive cards (LCP, FCP, CLS, TTFB, INP) with AnimatePresence expand/collapse + live values       |
+| `LighthouseScore`         | Client     | Animated SVG score rings for Performance, Accessibility, Best Practices, SEO (count-up on scroll)        |
+| `IndustryComparison`      | Client     | Animated bar chart with live LCP vs. industry benchmarks + Top 10% + Google threshold (sorted by value)  |
+| `PerformanceMethodology`  | Client     | Tabbed section ("Techniques" / "Tech Stack") merging the former OptimizationChecklist + TechStackRationale |
 
 ### Data Sources
 
-| Data                | Source                                                                |
-| ------------------- | --------------------------------------------------------------------- |
-| LCP, FCP, CLS, TTFB | `web-vitals` library — real-user measurement in the visitor's browser |
-| Performance grade   | Computed from live vitals thresholds (Google CWV standards)           |
-| Industry benchmarks | HTTP Archive Web Almanac 2024 — desktop median LCP values             |
-| Stack rationale     | Static content in component file                                      |
+| Data                       | Source                                                                |
+| -------------------------- | --------------------------------------------------------------------- |
+| LCP, FCP, CLS, TTFB, INP  | `web-vitals` library — real-user measurement in the visitor's browser |
+| Performance grade          | Computed from live vitals thresholds (Google CWV standards)           |
+| Industry benchmarks        | HTTP Archive Web Almanac 2024 — desktop median LCP values             |
+| Lighthouse scores          | Latest lab audit (hardcoded, update after each audit)                 |
+| Stack / technique content  | Static content in component file                                      |
 
 ### Key Components
 
 #### `LiveLoadHero`
 
-- Uses `usePerformanceMonitoring` hook which wraps `web-vitals` `onLCP/onFCP/onCLS/onTTFB`
+- Uses `usePerformanceMonitoring` hook which wraps `web-vitals` `onLCP/onFCP/onCLS/onTTFB/onINP`
 - Animated count-up to the visitor's actual LCP value (ease-out cubic via `requestAnimationFrame`)
-- Circular grade badge (A+ → D) computed from combined metric scores
-- 3 stat chips: LCP, FCP, CLS — colour-coded green/yellow/red by threshold
+- Spring-animated circular grade badge (A+ → D) with cyan glow, computed from combined metric scores
+- 4 stat chips: LCP, FCP, CLS, INP — colour-coded green/yellow/red by threshold (responsive 2-col mobile / 4-col desktop)
 
 #### `SpeedTestRunner`
 
-- Collects Web Vitals passively on mount via `useEffect`
+- Collects Web Vitals passively on mount via `useEffect` (LCP, FCP, CLS, TTFB, INP)
 - "Start Speed Test" button triggers a 3-second animated progress bar
-- Snapshots collected metrics, then reveals results one-by-one with a 450ms stagger
+- Snapshots collected metrics, then reveals 5 results one-by-one with a 450ms stagger
 - Overall grade (A+ → C) computed from revealed results
-- Share button uses `navigator.share` (with clipboard fallback) for native sharing
+- Share button uses `navigator.share` (with clipboard fallback + toast notification)
+- "Re-measure" button reloads the page for fresh metrics (web-vitals only reports once per page load)
 
 #### `WebVitalsExplainer`
 
 - Live metric values from `usePerformanceMonitoring` hook
-- Click-to-expand cards showing plain-English explanations per metric
+- 5 click-to-expand cards (LCP, FCP, CLS, TTFB, INP) with AnimatePresence height/opacity transitions
 - Mini progress bar showing "% faster than industry average"
+
+#### `LighthouseScore`
+
+- 4 animated SVG score rings (Performance, Accessibility, Best Practices, SEO)
+- Count-up animation triggered by IntersectionObserver on scroll-in
+- Scores are hardcoded from latest Lighthouse 12 audit — update after each audit
 
 #### `IndustryComparison`
 
 - Animated horizontal bars triggered by `IntersectionObserver` (fires once on scroll-in)
-- Benchmarks: e-commerce (5.1s) → news (4.2s) → avg portfolio (3.1s) → this site (0.8s LCP)
-- CSS `transition` with staggered delays — no Framer Motion needed
+- Uses live LCP from `usePerformanceMonitoring` (shows "(measuring…)" until captured)
+- Benchmarks: e-commerce (5.1s) → news (4.2s) → avg portfolio (3.1s) → Google "Good" (2.5s) → Top 10% (1.2s) → this site (live LCP)
+- Bars sorted longest-first; CSS `transition` with staggered delays
+
+#### `PerformanceMethodology`
+
+- Tabbed UI using shadcn/ui Tabs component ("Techniques" / "Tech Stack")
+- Techniques tab: 8-item optimization checklist with icons and tags
+- Tech Stack tab: 6 technology cards with performance rationale and impact metrics
 
 ---
 

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { type Metric, onCLS, onFCP, onLCP, onTTFB } from "web-vitals";
+import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 
 interface PerformanceMetrics {
   cls?: number;
   fcp?: number;
+  inp?: number;
   lcp?: number;
   ttfb?: number;
 }
@@ -63,6 +64,10 @@ export function usePerformanceMonitoring(
     onTTFB((metric: Metric) => {
       updateMetrics({ ttfb: metric.value });
     });
+
+    onINP((metric: Metric) => {
+      updateMetrics({ inp: metric.value });
+    });
   }, [enabled, onMetricsUpdate]);
 
   // Get performance score based on Core Web Vitals
@@ -96,6 +101,9 @@ export function usePerformanceMonitoring(
         : "Not measured",
       "Time to First Byte (TTFB)": metrics.ttfb
         ? `${metrics.ttfb.toFixed(0)}ms`
+        : "Not measured",
+      "Interaction to Next Paint (INP)": metrics.inp
+        ? `${metrics.inp.toFixed(0)}ms`
         : "Not measured",
     };
   };
