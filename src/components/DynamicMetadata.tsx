@@ -295,13 +295,36 @@ export const metadataConfigs = {
   },
 
   resume: {
-    title: "Resume - Themistoklis Baltzakis",
+    title: "Resume & Career Guide - Beat ATS Systems",
     description:
-      "Download my professional resume showcasing 15+ years of experience in network infrastructure and IT engineering.",
-    keywords: ["Resume", "CV", "Experience", "Skills", "Professional"],
+      "How to write a resume that beats ATS systems. Practical tips for IT professionals, network engineers, and cybersecurity specialists.",
+    keywords: [
+      "Resume Guide",
+      "ATS Optimization",
+      "IT Resume",
+      "Network Engineer Resume",
+      "Career Tips",
+    ],
     type: "article" as const,
     author: "Themistoklis Baltzakis",
-    tags: ["Resume", "CV", "Professional", "Experience"],
+    tags: ["Resume", "ATS", "Career", "IT", "Networking"],
+  },
+
+  agents: {
+    title: "Understanding AI Agents - Educational Guide",
+    description:
+      "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
+    keywords: [
+      "AI Agents",
+      "LLM",
+      "RAG",
+      "Multi-Agent",
+      "MCP",
+      "Agentic Loop",
+    ],
+    type: "article" as const,
+    author: "Themistoklis Baltzakis",
+    tags: ["AI", "Agents", "LLM", "Automation", "Education"],
   },
 
   contact: {
