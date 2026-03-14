@@ -67,8 +67,8 @@ test.describe("Agent Builder (Interactive Section)", () => {
     const templateName = await cards.first().locator("h3").textContent();
     await cards.first().click();
 
-    // Should show the builder view with the template name
-    await expect(page.locator("h1")).toContainText(templateName ?? "");
+    // Should show the builder view with the template name (second h1 inside builder)
+    await expect(page.locator("h1").nth(1)).toContainText(templateName ?? "");
 
     // Should show Workflow Builder and Agent Configuration sections
     await expect(page.getByText("Workflow Builder")).toBeVisible();

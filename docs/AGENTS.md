@@ -1,294 +1,121 @@
-# AI Agents Showcase
+# AI Agents Educational Guide
 
 ## Overview
 
-This section showcases the AI agents and intelligent features integrated into the portfolio, demonstrating advanced capabilities in automation, content generation, and interactive experiences.
+The `/agents` page is an **educational guide** that teaches visitors how AI agents work — from LLM fundamentals to multi-agent architectures. It combines static educational content (Server Component) with an interactive agent builder (Client Component) for hands-on learning.
 
-## 🤖 AI-Powered Features
+## Page Architecture
 
-### 1. AI Brain Visualization
+| Section | Type | Purpose |
+| --- | --- | --- |
+| Educational content | **Server Component** | Static sections covering concepts, terminology, patterns |
+| `AgentPlayground` | **Client Component** | Interactive builder with templates, workflow visualization |
 
-**Location**: Home page (`/`)
-**Purpose**: Interactive AI brain visualization demonstrating neural network concepts
+### File Structure
 
-#### Features
-- Animated 3D neural network visualization
-- Real-time connection animations
-- Interactive node exploration
-- Performance-optimized rendering with Three.js
+```
+src/
+  app/agents/page.tsx              # Server Component — educational content + metadata
+  components/agents/
+    AgentPlayground.tsx             # Client Component — interactive template builder
+```
 
-### 2. AI-Powered Resume Builder
+## Educational Sections
 
-**Location**: Resume page (`/resume`)
-**Purpose**: Intelligent resume creation and management
+### 1. What Is an AI Agent?
 
-#### Features
-- AI-assisted content generation
-- Smart formatting suggestions
-- Industry-specific optimization
-- PDF export with professional layouts
+Explains the difference between a chatbot (stateless Q&A) and an AI agent (autonomous, tool-using system). Lists core agent capabilities:
+- Break complex tasks into steps
+- Call external tools and APIs
+- Maintain memory and context
+- Self-correct and iterate
 
-### 3. AI Content Generation
+### 2. The Agentic Loop
 
-**Location**: Various pages
-**Purpose**: Intelligent content creation and optimization
+Four-phase cycle that all AI agents follow:
 
-#### Features
-- Automated text generation
-- SEO optimization suggestions
-- Tone and style adaptation
-- Content personalization
+| Phase | Description |
+| --- | --- |
+| **Observe** | Receive input or observe environment state |
+| **Think** | LLM reasons about next action using goal, tools, and context |
+| **Act** | Execute chosen action — call tool, generate response, update memory |
+| **Evaluate** | Check result; loop back to Observe if goal not met |
 
-### 4. AI-Powered Testing
+### 3. Core Components
 
-**Location**: Testing infrastructure
-**Purpose**: Intelligent test generation and analysis
+Four building blocks of any AI agent:
 
-#### Features
-- AI-powered test case generation
-- Automated test failure analysis
-- Intelligent test suggestions
-- Performance optimization recommendations
+- **LLM (The Brain)** — Foundation model that processes language and generates responses
+- **Tools & APIs** — External services the agent can invoke (search, databases, code execution)
+- **Memory & Retrieval** — Short-term conversation history + long-term knowledge via RAG
+- **Planning & Reasoning** — Chain-of-thought, ReAct, task decomposition strategies
 
-## 🧠 AI Agent Templates System
+### 4. Architecture Patterns
 
-**Location**: Agents page (`/agents`)
-**Purpose**: Comprehensive AI agent template management and creation
+Three progressively complex patterns with difficulty levels, pros/cons, and data flow diagrams:
 
-### Available Templates
+| Pattern | Difficulty | Description |
+| --- | --- | --- |
+| **Single Agent** | Beginner | One LLM + tools in an agentic loop |
+| **Router Agent** | Intermediate | Orchestrator routes tasks to specialized sub-agents |
+| **Multi-Agent Collaboration** | Advanced | Peer agents with shared memory and negotiation |
 
-1. **Basic Chatbot** - Simple conversational AI for customer support
-2. **Code Reviewer** - Automated code analysis and feedback system
-3. **Data Analyzer** - Intelligent data processing and insights generation
-4. **Content Writer** - AI-powered content creation and editing
-5. **Task Automator** - Workflow automation and task management
+### 5. Key Terminology
 
-### Template Categories
+Six key terms with abbreviations and full names:
 
-- **Basic**: Beginner-friendly templates for simple use cases
-- **Advanced**: Intermediate templates with complex workflows
-- **Specialized**: Expert-level templates for specific domains
+| Term | Full Name | Description |
+| --- | --- | --- |
+| **RAG** | Retrieval-Augmented Generation | Ground LLM in external knowledge |
+| **ReAct** | Reasoning + Acting | Interleave reasoning steps with tool actions |
+| **Tool Use** | Function Calling | LLM outputs structured calls to external tools |
+| **MCP** | Model Context Protocol | Standard protocol for connecting LLMs to tools |
+| **Guardrails** | Safety & Validation | Input/output filtering, rate limiting, content policies |
+| **Agentic Loop** | Observe → Think → Act → Repeat | Core execution cycle of autonomous agents |
 
-### Template System Features
+### 6. Use Cases in Network Engineering
 
-- **Visual Template Browser**: Interactive cards with icons, descriptions, and metadata
-- **Search & Filtering**: Find templates by name, tags, or category
-- **Template Cloning**: Deep copy existing templates with unique IDs
-- **Custom Creation**: Comprehensive form for building templates from scratch
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation and screen reader support
+Four practical applications relevant to the portfolio owner's domain:
 
-### Usage
+- **Security Monitoring Agent** — SIEM analysis, Fortinet/Splunk integration
+- **Network Troubleshooting Agent** — Cisco IOS diagnostics, SNMP monitoring
+- **Infrastructure Automation Agent** — Ansible/Terraform, DevNet, compliance checking
+- **Documentation Agent** — Auto-generate network diagrams, change logs, runbooks
 
-Navigate to `/agents` to access the template system. The interface provides three main views:
+## Interactive Agent Builder
 
-1. **Select Template**: Browse and choose from available templates
-2. **Create Template**: Build custom templates with full configuration
-3. **Configure Agent**: Review selected template details and start building
+The `AgentPlayground` Client Component provides hands-on learning:
 
-### Integration
+### Features
 
-The template system integrates with the main navigation and is accessible via the "Agents" link in both desktop and mobile menus. Templates include workflow data structures that can be extended for future agent building features.
+- **Template browser** — Predefined agent templates (chatbot, code reviewer, data analyzer, etc.)
+- **Category filtering** — Filter templates by category (All, Basic, Advanced, Specialized)
+- **Template search** — Search templates by name or description
+- **Workflow builder** — SVG-based visual workflow with draggable nodes and connections
+- **Agent configuration** — Form to edit name, description, category
+- **Test & simulate** — Run agent in test mode with simulated responses
+- **Save & export** — Save agent configurations, export as JSON
 
-## 🔧 AI Infrastructure
+### Template System
 
-### 1. MCP (Model Context Protocol) Servers
+Templates include:
+- Basic Chatbot, Code Reviewer, Data Analyzer, Content Writer, Task Automator
+- Each template has predefined workflow nodes and connections
+- Templates can be cloned and customized
 
-**Purpose**: Standardized AI tool integration
+## Testing
 
-#### Configured MCP Servers
+See [TESTING.md](./TESTING.md) for complete test coverage:
 
-1. **21st.dev Magic MCP** - AI UI component generation
-2. **Playwright MCP** - Browser automation and testing
-3. **Ollama MCP** - Local LLM integration
-4. **AWS MCP Servers** - Cloud resource management
+- `playwright-tests/agents.spec.ts` — 18 tests (educational content + builder + accessibility)
+- `playwright-tests/agent-builder.spec.ts` — 13 tests (interactive builder functionality)
+- `playwright-tests/ai-agents.spec.ts` — 3 tests (basic page load verification)
 
-### 2. AI Model Integration
+## Metadata
 
-**Purpose**: Multiple AI model support
-
-#### Available Models
-- **Claude 3.5 Sonnet** - Advanced reasoning and analysis
-- **GPT-4** - General-purpose AI capabilities
-- **Local LLMs** - Privacy-focused local processing
-
-### 3. AI-Powered Development Tools
-
-**Purpose**: Enhanced development experience
-
-#### Features
-- **AI Code Generation**: Intelligent code suggestions
-- **Automated Testing**: AI-powered test generation
-- **Performance Optimization**: AI-driven performance improvements
-- **Security Analysis**: AI-powered security scanning
-
-## 🎯 AI Agent Capabilities
-
-### 1. Natural Language Processing
-
-**Purpose**: Advanced language understanding
-
-#### Features
-- Intent recognition
-- Entity extraction
-- Sentiment analysis
-- Context preservation
-
-### 2. Computer Vision
-
-**Purpose**: Visual data processing
-
-#### Features
-- Image analysis
-- Object detection
-- Visual search
-- Content moderation
-
-### 3. Data Analysis
-
-**Purpose**: Intelligent data processing
-
-#### Features
-- Statistical analysis
-- Pattern recognition
-- Anomaly detection
-- Predictive analytics
-
-### 4. Automation
-
-**Purpose**: Workflow automation
-
-#### Features
-- Task scheduling
-- Process optimization
-- Error handling
-- Performance monitoring
-
-## 🚀 AI Integration Architecture
-
-### 1. API Integration
-
-**Purpose**: Standardized AI service access
-
-#### Features
-- REST API endpoints
-- WebSocket connections
-- Real-time updates
-- Error handling
-
-### 2. Security
-
-**Purpose**: AI security and privacy
-
-#### Features
-- Data encryption
-- Access control
-- Audit logging
-- Compliance management
-
-### 3. Performance
-
-**Purpose**: Optimized AI performance
-
-#### Features
-- Caching strategies
-- Load balancing
-- Resource management
-- Monitoring and analytics
-
-## 📊 AI Analytics and Monitoring
-
-### 1. Usage Analytics
-
-**Purpose**: AI usage tracking
-
-#### Features
-- Request tracking
-- Performance metrics
-- Cost analysis
-- User behavior analysis
-
-### 2. Quality Monitoring
-
-**Purpose**: AI quality assurance
-
-#### Features
-- Accuracy tracking
-- Response quality
-- Error rates
-- User satisfaction
-
-### 3. Optimization
-
-**Purpose**: Continuous improvement
-
-#### Features
-- Model performance
-- Resource utilization
-- Cost optimization
-- Feature enhancement
-
-## 🔮 Future AI Features
-
-### Planned Enhancements
-
-1. **Advanced Personalization**: Context-aware AI experiences
-2. **Multi-modal AI**: Combined text, image, and audio processing
-3. **Edge AI**: Local processing for privacy
-4. **Federated Learning**: Privacy-preserving model training
-
-### Research Areas
-
-1. **AI Ethics**: Responsible AI development
-2. **Explainable AI**: Transparent decision-making
-3. **AI Safety**: Robust and secure AI systems
-4. **AI Accessibility**: Inclusive AI experiences
-
----
-
-**Note**: This AI showcase demonstrates the integration of modern AI technologies into a production-ready portfolio, highlighting both current capabilities and future potential.
-
-## 🆕 Latest Updates - February 22, 2026
-
-### **Major New Features & Components**
-
-#### **✅ New UI Components**
-
-- **CookieConsentBar**: GDPR-compliant cookie consent banner with accept/decline options
-- **ThemeToggleButton**: Compact theme toggle button with sun/moon icons and smooth transitions
-- **AccessibilityButton**: Quick access accessibility settings button
-- **SkillsMatrix**: Skills visualization grid for the About page
-- **Timeline**: Career timeline component for the About page
-- **ContactForm**: Reusable contact form with validation
-- **ProjectShowcase**: Project gallery display component
-
-#### **✅ AI-Powered Playwright Autofix System**
-
-- **Lambda Function**: Deploy Playwright autofix as AWS Lambda for cloud-based analysis
-- **Local Server Route**: Built-in Express endpoint for local development
-- **Offline Mode**: Built-in analysis without external dependencies
-- **Real-time Configuration**: Dynamic configuration updates without redeployment
-- **Intelligent Suggestions**: AI-powered test failure analysis with confidence scores
-
-#### **✅ DistilGPT2 Lambda Integration**
-
-- **Text Generation**: Serverless text generation using HuggingFace Transformers
-- **Deployment Scripts**: Automated deployment scripts for AWS Lambda
-- **Layer Packaging**: Instructions for packaging ML dependencies
-
-#### **✅ Enhanced Test Coverage**
-
-- **theme-provider.integration.spec.ts**: Theme provider integration tests
-- **cookie-consent.spec.ts**: Cookie consent bar tests
-- **accessibility-button.spec.ts**: Accessibility button tests
-- **pwa-update-notification.spec.ts**: PWA update notification tests
-- **performance-monitoring.spec.ts**: Performance monitoring tests
-- **push-notifications.spec.ts**: Push notification tests
-
-#### **✅ New API Endpoints**
-
-- `GET /api/playwright-autofix/config` - Get Playwright autofix configuration
-- `POST /api/playwright-autofix/config` - Update Playwright autofix configuration
-- `POST /api/playwright-autofix/analyze` - Analyze test failure and get AI suggestions
-- `GET /api/playwright-autofix/patterns` - Get common error patterns for autofix
-- `GET /api/playwright-autofix/health` - Health check for autofix service
+```typescript
+title: "Understanding AI Agents - Educational Guide"
+description: "Learn how AI agents work — from LLM fundamentals to multi-agent architectures."
+keywords: ["AI Agents", "LLM", "RAG", "Multi-Agent", "MCP", "Agentic Loop"]
+type: "article"
+```

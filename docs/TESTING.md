@@ -97,7 +97,7 @@ Shared helpers used across spec files:
 - ✅ Push notification tester
 - ✅ Error boundary rendering
 - ✅ AnimatedSection intersections
-- ✅ Resume generation flow
+- ✅ Resume & career guide page
 - ✅ Navigation component isolated tests
 - ✅ Skeleton loading states
 - ✅ OptimizedImage rendering
@@ -230,21 +230,71 @@ Shared helpers used across spec files:
 - ✅ Filter/category buttons work
 - ✅ Responsive grid layout
 
-#### `playwright-tests/resume.spec.ts`
+#### `playwright-tests/resume.spec.ts` — Resume & Career Guide (12 tests)
 
-- ✅ Resume builder loads with default data
-- ✅ Tab switching (Personal, Experience, Education, Certifications, Skills)
-- ✅ Field editing updates live preview
-- ✅ Auto-save to localStorage (2s debounce)
-- ✅ PDF download button triggers download
-- ✅ Responsive layout (editor + preview)
+**Coverage:** Educational resume guide with ATS tips, keyword categories, and career advice
 
-#### `playwright-tests/agents.spec.ts` / `playwright-tests/ai-agents.spec.ts`
+- ✅ Hero heading ("Resume & Career Guide") and ATS subtitle
+- ✅ How ATS Systems Work section (4 pipeline steps: Parsing, Keyword Matching, Ranking, Human Review)
+- ✅ Anatomy of a Strong IT Resume (4 sections: Professional Summary, Work Experience, Certifications, Technical Skills)
+- ✅ Good and bad examples (≥4 "Good Example" and ≥4 "Avoid This" labels)
+- ✅ Common mistakes section ("6 Mistakes That Get Resumes Rejected")
+- ✅ ATS Keywords for IT Professionals (4 categories: Network Infrastructure, Network Security, Cloud & Identity, DevOps & Automation)
+- ✅ Specific IT keywords visible (Cisco IOS, Fortinet, Azure AD, Kubernetes)
+- ✅ Career Tips for Network Engineers (Build a Home Lab, Stack Certifications Strategically)
+- ✅ Pre-Submission Checklist (Single-column layout, PDF format)
+- ✅ Navigation links to About (/about/) and Work Experience (/product/)
+- ✅ Responsive layout on mobile viewport (375×667)
 
-- ✅ Agents page loads
-- ✅ Agent cards render
-- ✅ AI integration demos
-- ✅ Links to demos/source
+#### `playwright-tests/agents.spec.ts` — AI Agents Educational Page (18 tests)
+
+**Coverage:** Educational AI agents guide with concepts, architectures, terminology, use cases, and interactive builder
+
+**Educational Content (12 tests)**
+- ✅ Page heading ("Understanding AI Agents") and subtitle ("From Language Models to Autonomous Systems")
+- ✅ What Is an AI Agent section (agent capabilities: break tasks into steps, call external tools)
+- ✅ The Agentic Loop section with 4 phases (Observe, Think, Act, Evaluate) — scrolls into view on mobile
+- ✅ Core Components section (LLM, Tools & APIs, Memory & Retrieval, Planning & Reasoning)
+- ✅ Architecture Patterns (Single Agent, Router Agent, Multi-Agent Collaboration)
+- ✅ Difficulty levels for patterns (Beginner, Intermediate, Advanced)
+- ✅ Pros and cons (Advantages, Trade-offs) for each pattern
+- ✅ Key Terminology section (RAG, ReAct, Tool Use, MCP, Guardrails) with full names
+- ✅ Use Cases in Network Engineering (Security Monitoring, Network Troubleshooting, Infrastructure Automation, Documentation)
+- ✅ Networking-relevant tags (Fortinet, Cisco, SNMP, DevNet)
+
+**Interactive Agent Builder (3 tests)**
+- ✅ Interactive Agent Builder section heading and subtitle
+- ✅ Template cards render in builder
+- ✅ Search functionality in builder
+
+**Accessibility & Responsiveness (3 tests)**
+- ✅ Keyboard accessible (Tab navigation)
+- ✅ Mobile responsive (375×667 viewport)
+- ✅ Screen reader support (sr-only, aria-label, aria-labelledby)
+
+#### `playwright-tests/agent-builder.spec.ts` — Agent Builder Interactive Section (13 tests)
+
+**Coverage:** Interactive agent builder embedded in the educational agents page
+
+- ✅ Builder section loads with heading and search input
+- ✅ Template cards with categorization (All Templates filter, h3 names, descriptions)
+- ✅ Template selection navigates to builder view (Workflow Builder, Agent Configuration)
+- ✅ Workflow SVG visualization with ARIA roles
+- ✅ Workflow nodes (rect role="button") clickable → Node Details
+- ✅ Agent configuration form (Agent Name, Description, Category fields)
+- ✅ Test Agent button triggers "Running..." state
+- ✅ Save Agent navigates back to template selection
+- ✅ Agent Stats display (Nodes, Connections counts)
+- ✅ Quick Actions (Export Configuration, Duplicate Agent)
+- ✅ Workflow connections (SVG paths, arrow markers)
+- ✅ Responsive design (mobile 375×667, desktop 1920×1080)
+- ✅ Accessibility (SVG aria-label, rect aria-label attributes)
+
+#### `playwright-tests/ai-agents.spec.ts` — AI Agent Functionality (3 tests)
+
+- ✅ Page loads successfully (document.readyState === "complete")
+- ✅ Window object available
+- ✅ Async operations supported
 
 ---
 
@@ -561,7 +611,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Product (/product)         | `product.spec.ts`                                                          | ✅ Covered |
 | Projects (/projects)       | `projects.spec.ts`, `routing-test.spec.ts`                                 | ✅ Covered |
 | Resume (/resume)           | `resume.spec.ts`, `app.spec.ts`                                            | ✅ Covered |
-| Agents (/agents)           | `agents.spec.ts`, `ai-agents.spec.ts`                                      | ✅ Covered |
+| Agents (/agents)           | `agents.spec.ts`, `agent-builder.spec.ts`, `ai-agents.spec.ts`             | ✅ Covered |
 | Settings (/settings)       | `settings-page.spec.ts`, `app.spec.ts`                                     | ✅ Covered |
 | Performance (/performance) | `performance-monitoring.spec.ts`, `app.spec.ts`                            | ✅ Covered |
 | Cookies (/cookies)         | `legal-pages.spec.ts`                                                      | ✅ Covered |
