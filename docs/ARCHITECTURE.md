@@ -40,12 +40,12 @@ portfolio-nextjs/
 │   │   ├── layout.tsx        # Root layout (providers, Navigation, ChatbotWidget)
 │   │   ├── page.tsx          # Home page
 │   │   ├── about/            # About page
-│   │   ├── agents/           # AI Agents showcase
+│   │   ├── agents/           # AI Agents educational guide
 │   │   ├── contact/          # Contact form
 │   │   ├── performance/      # Performance page (public-facing)
 │   │   ├── product/          # Work experience timeline
 │   │   ├── projects/         # Projects gallery
-│   │   ├── resume/           # Interactive resume builder
+│   │   ├── resume/           # Resume & career guide
 │   │   ├── settings/         # App preferences
 │   │   ├── admin/            # Admin dashboard
 │   │   ├── cookies/          # Cookie policy
@@ -87,8 +87,8 @@ The app uses the Next.js App Router Server/Client component model:
 | `/about`       | `about/page.tsx`       | Professional bio, skills, career timeline       |
 | `/product`     | `product/page.tsx`     | Work experience timeline                        |
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery                      |
-| `/resume`      | `resume/page.tsx`      | Interactive resume builder with PDF export      |
-| `/agents`      | `agents/page.tsx`      | AI agents showcase                              |
+| `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
+| `/agents`      | `agents/page.tsx`      | Educational AI agents guide with interactive builder    |
 | `/contact`     | `contact/page.tsx`     | Contact form with reCAPTCHA v3                  |
 | `/settings`    | `settings/page.tsx`    | App preferences (theme, notifications, privacy) |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |

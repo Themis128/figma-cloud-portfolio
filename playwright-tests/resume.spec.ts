@@ -1,71 +1,132 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Resume Page", () => {
-  test("should load resume page with hero section", async ({ page }) => {
+test.describe("Resume & Career Guide Page", () => {
+  test.beforeEach(async ({ page }) => {
     await page.goto("/resume");
     await page.waitForLoadState("domcontentloaded");
+  });
 
-    // The resume page shows "Resume Builder" as the h1 heading
+  test("should load resume page with educational hero section", async ({
+    page,
+  }) => {
+    const h1 = page.locator("h1");
+    await expect(h1).toBeVisible();
+    const headingText = await h1.textContent();
+    expect(headingText).toContain("Resume & Career Guide");
+  });
+
+  test("should display ATS subtitle", async ({ page }) => {
+    await expect(
+      page.getByText("Beat ATS Systems & Land IT Interviews"),
+    ).toBeVisible();
+  });
+
+  test("should have How ATS Systems Work section", async ({ page }) => {
+    await expect(page.getByText("How ATS Systems Work")).toBeVisible();
+    // Should show the 4 ATS pipeline steps
+    await expect(page.getByText("Parsing").first()).toBeVisible();
+    await expect(page.getByText("Keyword Matching").first()).toBeVisible();
+    await expect(page.getByText("Ranking").first()).toBeVisible();
+    await expect(page.getByText("Human Review").first()).toBeVisible();
+  });
+
+  test("should have Anatomy of a Strong IT Resume section", async ({
+    page,
+  }) => {
+    await expect(
+      page.getByText("Anatomy of a Strong IT Resume"),
+    ).toBeVisible();
+    // Should show the 4 resume sections
+    await expect(page.getByText("Professional Summary").first()).toBeVisible();
+    await expect(page.getByText("Work Experience").first()).toBeVisible();
+    await expect(page.getByText("Certifications").first()).toBeVisible();
+    await expect(page.getByText("Technical Skills").first()).toBeVisible();
+  });
+
+  test("should show good and bad examples for resume sections", async ({
+    page,
+  }) => {
+    // Should have Good Example and Avoid This labels
+    const goodExamples = page.getByText("Good Example");
+    const badExamples = page.getByText("Avoid This");
+    expect(await goodExamples.count()).toBeGreaterThanOrEqual(4);
+    expect(await badExamples.count()).toBeGreaterThanOrEqual(4);
+  });
+
+  test("should have common mistakes section", async ({ page }) => {
+    await expect(
+      page.getByText("6 Mistakes That Get Resumes Rejected"),
+    ).toBeVisible();
+    // Should show numbered mistakes
+    await expect(
+      page.getByText("Using graphics-heavy templates"),
+    ).toBeVisible();
+    await expect(
+      page.getByText("No quantified achievements"),
+    ).toBeVisible();
+  });
+
+  test("should have ATS Keywords section with IT categories", async ({
+    page,
+  }) => {
+    await expect(
+      page.getByText("ATS Keywords for IT Professionals"),
+    ).toBeVisible();
+    // Should show keyword categories
+    await expect(page.getByText("Network Infrastructure").first()).toBeVisible();
+    await expect(page.getByText("Network Security").first()).toBeVisible();
+    await expect(page.getByText("Cloud & Identity").first()).toBeVisible();
+    await expect(page.getByText("DevOps & Automation").first()).toBeVisible();
+  });
+
+  test("should show specific IT keywords", async ({ page }) => {
+    // Should contain specific technology keywords
+    await expect(page.getByText("Cisco IOS").first()).toBeVisible();
+    await expect(page.getByText("Fortinet").first()).toBeVisible();
+    await expect(page.getByText("Azure AD").first()).toBeVisible();
+    await expect(page.getByText("Kubernetes").first()).toBeVisible();
+  });
+
+  test("should have Career Tips for Network Engineers section", async ({
+    page,
+  }) => {
+    await expect(
+      page.getByText("Career Tips for Network Engineers"),
+    ).toBeVisible();
+    await expect(page.getByText("Build a Home Lab").first()).toBeVisible();
+    await expect(
+      page.getByText("Stack Certifications Strategically").first(),
+    ).toBeVisible();
+  });
+
+  test("should have Pre-Submission Checklist", async ({ page }) => {
+    await expect(page.getByText("Pre-Submission Checklist")).toBeVisible();
+    // Should have checklist items
+    await expect(
+      page.getByText("Single-column layout").first(),
+    ).toBeVisible();
+    await expect(
+      page.getByText("PDF format").first(),
+    ).toBeVisible();
+  });
+
+  test("should have navigation links to About and Work Experience", async ({
+    page,
+  }) => {
+    const profileLink = page.getByRole("link", { name: "View My Profile" });
+    await expect(profileLink).toBeVisible();
+    await expect(profileLink).toHaveAttribute("href", "/about/");
+
+    const experienceLink = page.getByRole("link", {
+      name: "Work Experience",
+    });
+    await expect(experienceLink).toBeVisible();
+    await expect(experienceLink).toHaveAttribute("href", "/product/");
+  });
+
+  test("should be responsive on mobile viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
     await expect(page.locator("h1")).toBeVisible();
-    const headingText = await page.locator("h1").textContent();
-    expect(headingText).toContain("Resume Builder");
-  });
-
-  test("should display Coming Soon badge", async ({ page }) => {
-    await page.goto("/resume");
-    await page.waitForLoadState("domcontentloaded");
-
-    // Should show "Coming Soon" badge (use .first() — text appears in badge and may repeat)
-    await expect(page.getByText("Coming Soon").first()).toBeVisible();
-  });
-
-  test("should display subtitle description", async ({ page }) => {
-    await page.goto("/resume");
-    await page.waitForLoadState("domcontentloaded");
-
-    // Should show the subtitle
-    await expect(
-      page.getByText("Interactive resume builder coming soon"),
-    ).toBeVisible();
-  });
-
-  test("should display feature preview tags", async ({ page }) => {
-    await page.goto("/resume");
-    await page.waitForLoadState("domcontentloaded");
-
-    // Should show feature tags (use exact match to avoid matching headings/descriptions)
-    // The tags are rendered as styled <span> elements in the hero section
-    const featureTags = page.locator("span").filter({ hasText: /^(AI-Powered|ATS-Optimized|Multiple Templates|Real-time Preview)$/ });
-    const count = await featureTags.count();
-    expect(count).toBeGreaterThanOrEqual(4);
-  });
-
-  test("should have email signup form", async ({ page }) => {
-    await page.goto("/resume");
-    await page.waitForLoadState("domcontentloaded");
-
-    // Should have email input and notify button
-    const emailInput = page.locator('input[type="email"]');
-    await expect(emailInput).toBeVisible();
-
-    const notifyButton = page.getByRole("button", { name: "Notify Me" });
-    await expect(notifyButton).toBeVisible();
-  });
-
-  test("should handle email signup submission", async ({ page }) => {
-    await page.goto("/resume");
-    await page.waitForLoadState("domcontentloaded");
-
-    // Fill in email
-    await page.fill('input[type="email"]', "test@example.com");
-
-    // Submit
-    await page.getByRole("button", { name: "Notify Me" }).click();
-
-    // Should show confirmation (text includes a checkmark prefix)
-    await page.waitForTimeout(500);
-    await expect(
-      page.getByText("notify you when it launches", { exact: false }),
-    ).toBeVisible();
+    await expect(page.getByText("How ATS Systems Work")).toBeVisible();
   });
 });
