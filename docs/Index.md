@@ -26,7 +26,8 @@ Welcome to the portfolio documentation. This section contains comprehensive guid
 - [Integrations](INTEGRATIONS.md) - Third-party service integrations
 - [Real-time Features](REALTIME_FEATURES_README.md) - WebSocket and real-time functionality
 - [PWA Features](PWA_README.md) - Progressive Web App capabilities
-- [AI Agents](AGENTS.md) - AI agent system documentation
+- [AI Agents](AGENTS.md) - AI agents educational guide & interactive builder
+- [Chatbot](CHATBOT_README.md) - AWS Bedrock chatbot (Claude 3 Haiku)
 
 ## Advanced Topics
 
@@ -54,7 +55,7 @@ This documentation has been recently updated to reflect:
 - **React 19** compatibility
 - **Playwright 1.58** testing framework
 - **Vitest** unit testing integration
-- **Python FastAPI** chatbot backend
+- **AWS Bedrock** chatbot backend (Claude 3 Haiku via Express)
 - **Three.js** 3D visualization components
 - **Socket.IO** real-time features
 - **Enhanced security measures** and best practices
