@@ -1,130 +1,227 @@
 "use client";
 
 import { AnimatePresence, m } from "framer-motion";
-import { Code, ExternalLink, Filter, Github, Search } from "lucide-react";
+import {
+  Code,
+  ExternalLink,
+  Filter,
+  Github,
+  Globe,
+  Lock,
+  Network,
+  Search,
+  Server,
+  Shield,
+} from "lucide-react";
+import Image from "next/image";
 import React, { useDeferredValue, useMemo, useState } from "react";
 import { trackContentClick, trackGA4 } from "@/components/GoogleAnalytics";
-import { LinkPreview } from "@/components/LinkPreview";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 interface Project {
   id: string;
   title: string;
   description: string;
+  comment: string;
   technologies: string[];
-  category: "web" | "mobile" | "ai" | "tools" | "game";
-  image?: string;
-  demoUrl?: string;
+  category: "web" | "infrastructure" | "ai" | "devops" | "tools";
   githubUrl?: string;
+  liveUrl?: string;
   year: number;
   featured?: boolean;
+  isPrivate?: boolean;
+  logo: string;
 }
 
-const sampleProjects: Project[] = [
+const projects: Project[] = [
   {
-    id: "1",
-    title: "E-Commerce Dashboard",
+    id: "figma-cloud-portfolio",
+    title: "Portfolio Website",
     description:
-      "A comprehensive admin dashboard for e-commerce platforms with real-time analytics and inventory management.",
+      "Personal portfolio built with Next.js 16, deployed on AWS S3 + CloudFront with Amplify Gen 2 backend. Features AI chatbot (AWS Bedrock), PWA support, and admin dashboard.",
+    comment:
+      "My flagship project — a fully serverless portfolio with AI-powered chatbot, 10-tab admin dashboard, CI/CD via GitHub Actions, and Playwright E2E testing. Static export bypasses Amplify Hosting OOM limits.",
     technologies: [
-      "React",
+      "Next.js",
       "TypeScript",
-      "TailwindCSS",
-      "Node.js",
-      "PostgreSQL",
+      "Tailwind CSS",
+      "AWS Bedrock",
+      "Amplify Gen 2",
+      "Lambda",
     ],
     category: "web",
-    image: "/api/placeholder/400/300",
-    demoUrl: "https://demo.example.com",
-    githubUrl: "https://github.com/example/project",
-    year: 2024,
+    liveUrl: "https://www.baltzakisthemis.com",
+    year: 2026,
     featured: true,
+    isPrivate: true,
+    logo: "/projects/logos/nextjs.svg",
   },
   {
-    id: "2",
-    title: "AI Content Generator",
+    id: "raspberry-pi-monitoring",
+    title: "Network Monitoring Stack",
     description:
-      "AI-powered content generation tool that creates blog posts, social media content, and marketing copy.",
-    technologies: ["Next.js", "OpenAI API", "React Query", "Prisma"],
+      "Comprehensive monitoring solution for home/SOHO networks featuring security monitoring, network performance tracking, and infrastructure observability.",
+    comment:
+      "Built on a Raspberry Pi — collects SNMP metrics from switches and APs, visualizes network health in Grafana, and alerts on anomalies. Great for learning observability in a real network environment.",
+    technologies: [
+      "Raspberry Pi",
+      "Prometheus",
+      "Grafana",
+      "Docker",
+      "SNMP",
+    ],
+    category: "infrastructure",
+    year: 2025,
+    featured: true,
+    isPrivate: true,
+    logo: "/projects/logos/grafana.svg",
+  },
+  {
+    id: "ap-pinpoint",
+    title: "AP Pinpoint",
+    description:
+      "Access point mapping and visualization tool for network infrastructure planning and wireless coverage analysis.",
+    comment:
+      "Helps map wireless AP locations onto floor plans for coverage planning. Useful for enterprise Wi-Fi site surveys and identifying dead zones before deployment.",
+    technologies: ["Network Mapping", "Wireless", "Infrastructure"],
+    category: "infrastructure",
+    year: 2026,
+    isPrivate: true,
+    logo: "/projects/logos/cisco.svg",
+  },
+  {
+    id: "llm-dev-agent",
+    title: "Network Automation Lab",
+    description:
+      "Network automation and containerlab project for enterprise network management. Uses containerized network devices for testing and development.",
+    comment:
+      "Uses Containerlab to spin up virtual Cisco/Arista topologies for testing automation scripts. Integrates with Python and Ansible to simulate enterprise network changes safely before production.",
+    technologies: ["Containerlab", "Network Automation", "Docker", "Python"],
+    category: "infrastructure",
+    year: 2025,
+    isPrivate: true,
+    logo: "/projects/logos/docker.svg",
+  },
+  {
+    id: "stable-diffusion-webui",
+    title: "Stable Diffusion Web UI",
+    description:
+      "Self-hosted Stable Diffusion web interface for AI image generation with custom models and configurations.",
+    comment:
+      "Fork of AUTOMATIC1111's web UI with custom model configs and optimized for local GPU inference. Used for generating project visuals and exploring generative AI capabilities.",
+    technologies: ["Python", "Stable Diffusion", "PyTorch", "Gradio"],
     category: "ai",
-    image: "/api/placeholder/400/300",
-    demoUrl: "https://ai-demo.example.com",
-    githubUrl: "https://github.com/example/ai-project",
-    year: 2024,
+    githubUrl: "https://github.com/Themis128/stable-diffusion-webui",
+    year: 2026,
+    logo: "/projects/logos/pytorch.svg",
   },
   {
-    id: "3",
-    title: "Mobile Fitness Tracker",
+    id: "telegram-web-app",
+    title: "Telegram Web App",
     description:
-      "Cross-platform mobile application for tracking fitness activities, nutrition, and health metrics.",
-    technologies: ["React Native", "Expo", "Firebase", "Redux"],
-    category: "mobile",
-    image: "/api/placeholder/400/300",
-    demoUrl: "https://fitness.example.com",
-    githubUrl: "https://github.com/example/fitness-app",
-    year: 2023,
-  },
-  {
-    id: "4",
-    title: "Code Collaboration Tool",
-    description:
-      "Real-time collaborative code editor with version control integration and team management features.",
-    technologies: ["Vue.js", "Socket.io", "Express", "MongoDB"],
-    category: "tools",
-    image: "/api/placeholder/400/300",
-    demoUrl: "https://collab.example.com",
-    githubUrl: "https://github.com/example/collab-tool",
-    year: 2023,
-  },
-  {
-    id: "5",
-    title: "3D Portfolio Showcase",
-    description:
-      "Interactive 3D portfolio website built with Three.js and React, showcasing projects in an immersive environment.",
-    technologies: ["React", "Three.js", "GSAP", "TailwindCSS"],
+      "Modern Telegram Web App with PWA support — full MTProto API access via Telethon for messaging and automation.",
+    comment:
+      "Full-featured Telegram client built as a PWA. Uses Telethon for direct MTProto protocol access, enabling custom bots, message automation, and channel management from a web browser.",
+    technologies: ["Python", "Telethon", "MTProto", "PWA"],
     category: "web",
-    image: "/api/placeholder/400/300",
-    demoUrl: "https://3d-portfolio.example.com",
-    githubUrl: "https://github.com/example/3d-portfolio",
-    year: 2024,
-    featured: true,
+    githubUrl: "https://github.com/Themis128/telegram-web-app",
+    year: 2025,
+    logo: "/projects/logos/telegram.svg",
   },
   {
-    id: "6",
-    title: "Task Management Game",
+    id: "my-portfolio-aws",
+    title: "Portfolio on AWS Amplify",
     description:
-      "Gamified task management application that turns productivity into an RPG experience.",
-    technologies: ["React", "TypeScript", "D3.js", "Node.js"],
-    category: "game",
-    image: "/api/placeholder/400/300",
-    demoUrl: "https://game.example.com",
-    githubUrl: "https://github.com/example/task-game",
-    year: 2023,
+      "Portfolio website deployed with AWS Amplify, featuring CI/CD pipeline, authentication, and serverless backend.",
+    comment:
+      "Earlier iteration of my portfolio using AWS Amplify's full hosting. Includes Cognito auth, DynamoDB data layer, and automatic deployments from GitHub pushes.",
+    technologies: ["Python", "AWS Amplify", "S3", "CloudFront"],
+    category: "devops",
+    githubUrl: "https://github.com/Themis128/my-portfolio-aws",
+    year: 2026,
+    logo: "/projects/logos/aws.svg",
+  },
+  {
+    id: "dockerlabs",
+    title: "Docker Labs",
+    description:
+      "Collection of Docker-based lab environments for learning containerization, networking, and microservices architecture.",
+    comment:
+      "Hands-on lab exercises covering Docker networking, multi-container apps with Compose, volume management, and container security best practices. Built as a learning resource.",
+    technologies: ["Docker", "Docker Compose", "Python", "Networking"],
+    category: "devops",
+    githubUrl: "https://github.com/Themis128/dockerlabs",
+    year: 2025,
+    logo: "/projects/logos/docker.svg",
+  },
+  {
+    id: "matlab-nuxt-app",
+    title: "MATLAB Capabilities Checker",
+    description:
+      "Nuxt 4 application for checking and verifying MATLAB capabilities, featuring a modern web interface for data analysis tools.",
+    comment:
+      "Built during my MSc in Data Analytics — provides a web frontend for running MATLAB toolbox checks and capability verification without needing the MATLAB desktop.",
+    technologies: ["Nuxt.js", "Python", "MATLAB", "Vue.js"],
+    category: "tools",
+    githubUrl: "https://github.com/Themis128/matlab-nuxt-app",
+    year: 2025,
+    logo: "/projects/logos/matlab.svg",
+  },
+  {
+    id: "cloudless-ecommerce",
+    title: "Cloudless E-Commerce",
+    description:
+      "Full-stack e-commerce platform with product management, cart functionality, and payment integration.",
+    comment:
+      "Complete e-commerce solution for cloudless.gr — features product catalog, shopping cart, Stripe checkout, and an admin panel for inventory management.",
+    technologies: ["TypeScript", "React", "Node.js", "Stripe"],
+    category: "web",
+    year: 2025,
+    isPrivate: true,
+    logo: "/projects/logos/react.svg",
+  },
+  {
+    id: "supabase-master",
+    title: "Supabase Monorepo",
+    description:
+      "Monorepo for Supabase-based apps and UI, including Next.js, Tailwind, Payload CMS, and more.",
+    comment:
+      "Experimental monorepo exploring Supabase as a Firebase alternative. Includes auth flows, real-time subscriptions, row-level security policies, and Payload CMS integration.",
+    technologies: ["TypeScript", "Supabase", "Next.js", "Tailwind CSS"],
+    category: "devops",
+    githubUrl: "https://github.com/Themis128/supabase-master",
+    year: 2025,
+    logo: "/projects/logos/supabase.svg",
+  },
+  {
+    id: "infographics",
+    title: "Data Infographics",
+    description:
+      "Python-based data visualization and infographic generation tool for creating professional charts and reports.",
+    comment:
+      "Automates the creation of publication-quality infographics from raw datasets. Uses Matplotlib and Pandas for data processing, with customizable templates for different report styles.",
+    technologies: ["Python", "Matplotlib", "Pandas", "Data Viz"],
+    category: "ai",
+    year: 2026,
+    isPrivate: true,
+    logo: "/projects/logos/python.svg",
   },
 ];
 
-const categoryIcons = {
-  web: Code,
-  mobile: Code,
+const categoryIcons: Record<Project["category"], React.ElementType> = {
+  web: Globe,
+  infrastructure: Network,
   ai: Code,
-  tools: Code,
-  game: Code,
+  devops: Server,
+  tools: Shield,
 };
 
-const categoryColors = {
-  web: "bg-blue-100 text-blue-800",
-  mobile: "bg-green-100 text-green-800",
-  ai: "bg-purple-100 text-purple-800",
-  tools: "bg-orange-100 text-orange-800",
-  game: "bg-red-100 text-red-800",
+const categoryLabels: Record<Project["category"], string> = {
+  web: "Web",
+  infrastructure: "Infrastructure",
+  ai: "AI / Data",
+  devops: "DevOps",
+  tools: "Tools",
 };
 
 interface SearchableProjectsProps {
@@ -134,19 +231,17 @@ interface SearchableProjectsProps {
 const SearchableProjects: React.FC<SearchableProjectsProps> = ({
   className,
 }) => {
-  // Animation and display constants
-  const ANIMATION_STAGGER_DELAY = 0.1; // seconds
+  const ANIMATION_STAGGER_DELAY = 0.1;
   const MAX_TECHNOLOGIES_DISPLAYED = 4;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"year" | "title">("year");
 
-  // Use useDeferredValue for smooth search experience
   const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const filteredProjects = useMemo(() => {
-    const filtered = sampleProjects.filter((project) => {
+    const filtered = projects.filter((project) => {
       const matchesSearch =
         project.title
           .toLowerCase()
@@ -164,7 +259,6 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
       return matchesSearch && matchesCategory;
     });
 
-    // Sort projects
     filtered.sort((a, b) => {
       if (sortBy === "year") {
         return b.year - a.year;
@@ -177,32 +271,12 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
   }, [deferredSearchQuery, selectedCategory, sortBy]);
 
   const categories = [
-    { key: "all", label: "All Projects", count: sampleProjects.length },
-    {
-      key: "web",
-      label: "Web Applications",
-      count: sampleProjects.filter((p) => p.category === "web").length,
-    },
-    {
-      key: "mobile",
-      label: "Mobile Apps",
-      count: sampleProjects.filter((p) => p.category === "mobile").length,
-    },
-    {
-      key: "ai",
-      label: "AI & ML",
-      count: sampleProjects.filter((p) => p.category === "ai").length,
-    },
-    {
-      key: "tools",
-      label: "Developer Tools",
-      count: sampleProjects.filter((p) => p.category === "tools").length,
-    },
-    {
-      key: "game",
-      label: "Games",
-      count: sampleProjects.filter((p) => p.category === "game").length,
-    },
+    { key: "all", label: "All Projects", count: projects.length },
+    ...Object.entries(categoryLabels).map(([key, label]) => ({
+      key,
+      label,
+      count: projects.filter((p) => p.category === key).length,
+    })),
   ];
 
   const motionVariants = {
@@ -212,76 +286,76 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
   };
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-6 ${className ?? ""}`}>
       {/* Search and Filter Controls */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <Search className="h-5 w-5 text-blue-600" />
-            Find Projects
-          </CardTitle>
-          <CardDescription>
-            Search through {sampleProjects.length} projects by title,
-            description, or technologies
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+      <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Search className="h-5 w-5 text-cyan-400" />
+          <h2 className="text-lg font-bold text-white">Find Projects</h2>
+          <span className="text-white/40 text-sm font-mono">
+            {projects.length} repos
+          </span>
+        </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <Badge
-                key={category.key}
-                variant={
-                  selectedCategory === category.key ? "default" : "outline"
-                }
-                className="cursor-pointer hover:bg-gray-100"
-                onClick={() => {
-                  setSelectedCategory(category.key);
-                  trackGA4("project_filter", { filter_category: category.label });
-                }}
-              >
-                {category.label} ({category.count})
-              </Badge>
-            ))}
-          </div>
+        {/* Search Input */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-cyan-500/40" />
+          <input
+            placeholder="Search projects..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 font-mono text-sm focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
+          />
+        </div>
 
-          {/* Sort Options */}
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Filter className="h-4 w-4" />
-            <span>Sort by:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "year" | "title")}
-              className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        {/* Category Filters */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {categories.map((category) => (
+            <button
+              key={category.key}
+              onClick={() => {
+                setSelectedCategory(category.key);
+                trackGA4("project_filter", {
+                  filter_category: category.label,
+                });
+              }}
+              className={[
+                "px-3 py-1.5 rounded-lg text-xs font-mono transition-all",
+                selectedCategory === category.key
+                  ? "bg-cyan-500/20 border border-cyan-500/50 text-cyan-300"
+                  : "bg-white/5 border border-white/10 text-white/50 hover:border-white/20 hover:text-white/70",
+              ].join(" ")}
             >
-              <option value="year">Year</option>
-              <option value="title">Title</option>
-            </select>
-          </div>
-        </CardContent>
-      </Card>
+              {category.label} ({category.count})
+            </button>
+          ))}
+        </div>
+
+        {/* Sort */}
+        <div className="flex items-center gap-2 text-sm text-white/40 font-mono">
+          <Filter className="h-4 w-4" />
+          <span>Sort:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as "year" | "title")}
+            className="bg-white/5 border border-white/10 rounded px-2 py-1 text-sm text-white/70 focus:outline-none focus:border-cyan-500/50"
+          >
+            <option value="year">Year</option>
+            <option value="title">Title</option>
+          </select>
+        </div>
+      </div>
 
       {/* Results */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">
+          <h2 className="text-lg font-semibold text-white font-mono">
             {filteredProjects.length} Project
-            {filteredProjects.length !== 1 ? "s" : ""} Found
+            {filteredProjects.length !== 1 ? "s" : ""}
           </h2>
           {deferredSearchQuery && (
-            <p className="text-sm text-gray-600">
-              Showing results for "{deferredSearchQuery}"
+            <p className="text-sm text-white/40 font-mono">
+              &quot;{deferredSearchQuery}&quot;
             </p>
           )}
         </div>
@@ -302,110 +376,122 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
                 }}
                 className="h-full"
               >
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <div className="relative overflow-hidden">
+                <div className="h-full bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300 overflow-hidden flex flex-col">
+                  {/* Logo Banner */}
+                  <div className="flex items-center justify-center py-5 bg-white/3 border-b border-white/5">
+                    <Image
+                      src={project.logo}
+                      alt={`${project.title} logo`}
+                      width={48}
+                      height={48}
+                      className="opacity-80 group-hover:opacity-100 transition-opacity"
+                      unoptimized
+                    />
+                  </div>
+
+                  {/* Card Header */}
+                  <div className="p-5 pb-0 flex-1">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        {React.createElement(
+                          categoryIcons[project.category],
+                          {
+                            className: "h-4 w-4 text-cyan-400",
+                          },
+                        )}
+                        <span className="text-[10px] uppercase tracking-wider text-cyan-400/70 font-mono">
+                          {categoryLabels[project.category]}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {project.isPrivate && (
+                          <Lock className="h-3 w-3 text-white/30" />
+                        )}
+                        <span className="text-xs text-white/40 font-mono">
+                          {project.year}
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 className="text-base font-bold text-white mb-2 leading-tight">
+                      {project.title}
+                    </h3>
+
                     {project.featured && (
-                      <Badge className="absolute top-3 left-3 bg-linear-to-r from-yellow-400 to-orange-500 text-white">
+                      <Badge className="mb-2 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[10px] font-mono">
                         Featured
                       </Badge>
                     )}
-                    <div className="aspect-video bg-linear-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                      <Code className="h-16 w-16 text-gray-400" />
-                    </div>
-                  </div>
 
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <Badge className={categoryColors[project.category]}>
-                        {React.createElement(categoryIcons[project.category], {
-                          className: "h-3 w-3 mr-1",
-                        })}
-                        {project.category}
-                      </Badge>
-                      <span className="text-sm text-gray-500">
-                        {project.year}
-                      </span>
-                    </div>
-                    <CardTitle className="line-clamp-2">
-                      {project.title}
-                    </CardTitle>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <CardDescription className="line-clamp-3">
+                    <p className="text-white/50 text-xs leading-relaxed mb-2 line-clamp-2">
                       {project.description}
-                    </CardDescription>
+                    </p>
 
-                    <div className="flex flex-wrap gap-2">
+                    <p className="text-cyan-400/50 text-[11px] leading-relaxed mb-4 italic line-clamp-2">
+                      {project.comment}
+                    </p>
+
+                    {/* Technologies */}
+                    <div className="flex flex-wrap gap-1.5 mb-4">
                       {project.technologies
                         .slice(0, MAX_TECHNOLOGIES_DISPLAYED)
                         .map((tech) => (
-                          <Badge
+                          <span
                             key={tech}
-                            variant="secondary"
-                            className="text-xs"
+                            className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-white/60 font-mono"
                           >
                             {tech}
-                          </Badge>
+                          </span>
                         ))}
                       {project.technologies.length >
                         MAX_TECHNOLOGIES_DISPLAYED && (
-                        <Badge variant="secondary" className="text-xs">
+                        <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-white/40 font-mono">
                           +
                           {project.technologies.length -
                             MAX_TECHNOLOGIES_DISPLAYED}
-                        </Badge>
+                        </span>
                       )}
                     </div>
+                  </div>
 
-                    <div className="flex gap-2">
-                      {project.demoUrl && (
-                        <a
-                          href={project.demoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => trackContentClick("project_demo", project.title)}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                          Live Demo
-                        </a>
-                      )}
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => trackContentClick("project_code", project.title)}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm"
-                        >
-                          <Github className="h-3 w-3" />
-                          Code
-                        </a>
-                      )}
-                    </div>
-
-                    {/* Link Previews */}
-                    {(project.demoUrl || project.githubUrl) && (
-                      <div className="space-y-2 pt-2 border-t">
-                        {project.demoUrl && (
-                          <LinkPreview
-                            url={project.demoUrl}
-                            compact
-                            className="text-xs"
-                          />
-                        )}
-                        {project.githubUrl && (
-                          <LinkPreview
-                            url={project.githubUrl}
-                            compact
-                            className="text-xs"
-                          />
-                        )}
-                      </div>
+                  {/* Card Footer */}
+                  <div className="px-5 py-3 border-t border-white/5 flex gap-2">
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() =>
+                          trackContentClick("project_demo", project.title)
+                        }
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg hover:bg-cyan-500/20 transition-colors text-xs font-mono"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Live
+                      </a>
                     )}
-                  </CardContent>
-                </Card>
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() =>
+                          trackContentClick("project_code", project.title)
+                        }
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 text-white/60 rounded-lg hover:bg-white/10 hover:text-white/80 transition-colors text-xs font-mono"
+                      >
+                        <Github className="h-3 w-3" />
+                        Code
+                      </a>
+                    )}
+                    {project.isPrivate && !project.liveUrl && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-white/30 text-xs font-mono">
+                        <Lock className="h-3 w-3" />
+                        Private Repository
+                      </span>
+                    )}
+                  </div>
+                </div>
               </m.div>
             ))}
           </AnimatePresence>
@@ -417,15 +503,14 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-12"
           >
-            <div className="text-gray-400 mb-4">
+            <div className="text-white/20 mb-4">
               <Search className="h-16 w-16 mx-auto" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            <h3 className="text-lg font-semibold text-white/50 mb-2">
               No projects found
             </h3>
-            <p className="text-gray-500">
-              Try adjusting your search terms or filters to find what you're
-              looking for.
+            <p className="text-white/30 text-sm">
+              Try adjusting your search terms or filters.
             </p>
           </m.div>
         )}

@@ -51,15 +51,15 @@ export default function HomePage() {
                 </AnimatedSection>
                 <AnimatedSection delay={0.2}>
                   <p className="text-cyan-400 text-base sm:text-lg md:text-xl font-semibold tracking-wide">
-                    Cloud Architect & Cybersecurity Specialist
+                    IT Network Engineer
                   </p>
                   <div className="w-12 sm:w-16 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mb-3 md:mb-4" />
                 </AnimatedSection>
                 <AnimatedSection delay={0.3}>
                   <p className="text-foreground/80 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl">
-                    Technical Leadership and Cloud Innovation with 15+ years of
-                    IT expertise, specializing in Azure AD, Microsoft 365, and
-                    multi-cloud environments.
+                    IT Network Engineer with over 15 years of extensive
+                    experience in network infrastructure, Cisco systems, and
+                    Fortinet security solutions.
                   </p>
                 </AnimatedSection>
               </div>

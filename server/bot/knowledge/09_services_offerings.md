@@ -3,27 +3,33 @@
 ## Core Services
 Based on Themis's expertise and experience, he can help organizations with:
 
-### Cloud Architecture & Migration
-- Azure and AWS cloud architecture design
+### Network Infrastructure & Cisco Systems
+- Enterprise network design, maintenance, and troubleshooting
+- Cisco-based infrastructure (UCS, HyperFlex, ACI, Nexus)
+- Data center management and optimization
+- LAN/WAN architecture and TCP/IP, DNS/DHCP
+- High-availability network topologies
+- VMware vSphere virtualization
+
+### Network Security & Fortinet
+- Fortinet firewall deployment and management
+- Critical infrastructure protection
+- Firewall policy management and network segmentation
+- Network security assessments
+
+### Cloud & Identity Management
+- Azure Active Directory administration and troubleshooting
+- Microsoft 365 deployment and support
+- AWS cloud architecture
 - Multi-cloud migration strategies
-- Infrastructure as Code (IaC) implementation
-- Hybrid cloud environment optimization
-- Cloud cost optimization
+- Identity and Access Management (IAM)
 
 ### Cybersecurity
 - Zero-trust security architecture design and implementation
-- Identity and access management (Azure AD, CyberArk PAM)
-- Security assessments and audits
-- Compliance and risk management
-- Microsoft Sentinel SIEM setup and monitoring
+- CyberArk Privileged Access Management (PAM)
+- Okta IAM, SSO, MFA implementation
+- Conditional Access policies and RBAC
 - Endpoint security with Microsoft Intune
-
-### Network Infrastructure
-- Enterprise network design and implementation
-- Cisco ACI and UCS platform administration
-- VMware vSphere virtualization
-- High-availability network topologies (99.99% uptime)
-- Firewall management and network security
 
 ### IT Consulting
 - Technology roadmap development

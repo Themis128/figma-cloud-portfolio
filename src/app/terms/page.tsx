@@ -342,7 +342,7 @@ export default function TermsOfServicePage() {
               </p>
               <div className="bg-background/50 rounded-lg p-4 border border-border/10 font-mono text-sm mt-2">
                 <p className="text-foreground">Themistoklis Baltzakis</p>
-                <p>Cloud Architect & Cybersecurity Specialist</p>
+                <p>IT Network Engineer</p>
                 <p>Athens, Greece</p>
                 <p className="mt-2">
                   <Mail className="w-4 h-4 inline-block mr-2 text-cyan-400" />

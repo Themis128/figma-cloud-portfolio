@@ -8,7 +8,7 @@ import SearchableProjects from "@/components/SearchableProjects";
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Portfolio of projects by Themistoklis Baltzakis - Cloud architecture, cybersecurity, full-stack web applications, and AI/ML integrations.",
+    "Portfolio of projects by Themistoklis Baltzakis - Network infrastructure, DevOps, web applications, and AI/data tools.",
 };
 
 export default function ProjectsPage() {
@@ -32,8 +32,8 @@ export default function ProjectsPage() {
                 Portfolio & Open Source Work
               </p>
               <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
-                A collection of projects spanning cloud architecture, full-stack
-                web development, AI/ML integrations, and automation tooling.
+                A collection of projects spanning network infrastructure, web
+                development, DevOps, and AI/data tools.
               </p>
             </AnimatedSection>
           </AnimatedSection>
