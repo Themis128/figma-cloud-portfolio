@@ -1,7 +1,7 @@
 "use client";
 
-import { Play, RotateCcw, Trash2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { Keyboard, Play, RotateCcw, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { auth } from "@/lib/firebase";
 import { Badge } from "@/components/ui/badge";
@@ -148,6 +148,20 @@ export default function ApiConsole() {
     setUrl(entry.url);
   }
 
+  // Keyboard shortcut: Ctrl/Cmd+Enter to execute
+  const executeRef = useRef(execute);
+  executeRef.current = execute;
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        void executeRef.current();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const needsBody = ["POST", "PUT", "DELETE"].includes(method);
 
   return (
@@ -197,6 +211,10 @@ export default function ApiConsole() {
             )}
             <span className="ml-1.5 hidden sm:inline">Send</span>
           </Button>
+          <span className="hidden sm:flex items-center gap-1 text-[9px] text-foreground/20 font-mono shrink-0">
+            <Keyboard className="w-3 h-3" />
+            Ctrl+Enter
+          </span>
         </div>
 
         {/* Quick Presets */}

@@ -52,7 +52,7 @@ This documentation has been recently updated to reflect:
 
 - **Next.js 16** upgrade from Next.js 15
 - **React 19** compatibility
-- **Playwright 1.57** testing framework
+- **Playwright 1.58** testing framework
 - **Vitest** unit testing integration
 - **Python FastAPI** chatbot backend
 - **Three.js** 3D visualization components

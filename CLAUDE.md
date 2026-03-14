@@ -14,7 +14,8 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 - **3D**: Three.js + @react-three/fiber
 - **State**: TanStack Query v5
 - **Backend**: AWS Lambda (production), Amplify Gen 2 (Cognito + AppSync + DynamoDB), Express dev server (local, port 3001)
-- **Testing**: Playwright 1.57+ E2E, Vitest unit tests
+- **Chatbot**: AWS Bedrock (Claude 3 Haiku) via Express route — knowledge base in `server/bot/knowledge/`
+- **Testing**: Playwright 1.58+ E2E, Vitest unit tests
 - **Package Manager**: pnpm
 
 ## Project Structure
@@ -23,6 +24,7 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 src/
   app/              # App Router pages and layouts
   components/
+    admin/          # Admin dashboard components (10 tabs)
     ui/             # shadcn/ui primitives (Radix-based)
     sections/       # Page section components
     performance/    # Performance page components
@@ -31,7 +33,7 @@ src/
   types/            # TypeScript type definitions
   styles/           # Global CSS
 server/             # Express backend (tsx)
-playwright-tests/   # E2E tests (74 spec files)
+playwright-tests/   # E2E tests (83 spec files)
 public/             # Static assets and PWA files
 docs/               # Documentation
 ```

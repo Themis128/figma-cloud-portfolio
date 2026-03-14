@@ -18,7 +18,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | PWA                    | Workbox (service worker)                          |
 | Backend (production)   | AWS Lambda (`figma-portfolio-api`)                |
 | Backend (local dev)    | Express.js on port 3001                           |
-| Chatbot backend        | Python FastAPI on port 8001 (RAG + local LLM, fully offline) |
+| Chatbot backend        | AWS Bedrock (Claude 3 Haiku) via Express route |
 | Auth + Data backend    | AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)  |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
@@ -223,7 +223,7 @@ A Firebase-authenticated internal dashboard for site monitoring and management. 
 | `Navigation`                              | Top navbar with active link highlighting                   |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot — RAG + local LLM (lazy-loaded, `inert` when collapsed) |
+| `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded, `inert` when collapsed) |
 | `AuthProvider`                            | Firebase auth context (graceful fallback when unconfigured)|
 | `AccessibilityEnhancer`                   | Keyboard navigation and focus management                   |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
@@ -276,7 +276,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | Route                             | Handler                        |
 | --------------------------------- | ------------------------------ |
 | `/api/resume`                     | `server/routes/resume.ts`      |
-| `/api/chat`                       | `server/routes/chat.ts` (proxy → FastAPI bot on port 8001) |
+| `/api/chat`                       | `server/routes/chat.ts` (AWS Bedrock — Claude 3 Haiku) |
 | `/api/organizations/api_keys`     | `server/routes/apiKeys.ts`     |
 | `/api/playwright-autofix`         | `server/routes/playwrightAutofix.ts` |
 

@@ -12,9 +12,9 @@ CHROMA_DIR = Path(__file__).parent / "chroma_db"
 COLLECTION_NAME = "portfolio_knowledge"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # Fast, free, 384-dim
 
-# Chunk size tuned for RAG: small enough for precision, large enough for context
-CHUNK_SIZE = 500  # characters
-CHUNK_OVERLAP = 100
+# Chunk size tuned for RAG: large enough to keep markdown sections intact
+CHUNK_SIZE = 800  # characters
+CHUNK_OVERLAP = 150
 
 
 def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:

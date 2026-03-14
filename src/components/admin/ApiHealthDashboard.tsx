@@ -1,14 +1,19 @@
 "use client";
 
-import { RefreshCcw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Keyboard, Pause, Play, RefreshCcw } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/firebase";
 import ApiEndpointCard, {
   type EndpointDef,
   type EndpointStatus,
 } from "./ApiEndpointCard";
+
+const AUTO_REFRESH_INTERVAL_MS = 30_000;
+const MAX_HISTORY_POINTS = 20;
 
 const ENDPOINTS: EndpointDef[] = [
   {
@@ -121,6 +126,40 @@ const defaultStatus = (): EndpointStatus => ({
   lastChecked: null,
 });
 
+/** Tiny inline SVG sparkline */
+function Sparkline({ points, className }: { points: number[]; className?: string }) {
+  if (points.length < 2) return null;
+  const width = 80;
+  const height = 20;
+  const max = Math.max(...points, 1);
+  const min = Math.min(...points, 0);
+  const range = max - min || 1;
+
+  const coords = points.map((v, i) => {
+    const x = (i / (points.length - 1)) * width;
+    const y = height - ((v - min) / range) * (height - 2) - 1;
+    return `${x},${y}`;
+  });
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      className={className}
+      viewBox={`0 0 ${width} ${height}`}
+    >
+      <polyline
+        points={coords.join(" ")}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function ApiHealthDashboard() {
   const [statuses, setStatuses] = useState<Record<string, EndpointStatus>>(
     () => {
@@ -129,6 +168,19 @@ export default function ApiHealthDashboard() {
       return s;
     },
   );
+
+  // Response time history per endpoint
+  const [history, setHistory] = useState<Record<string, number[]>>(() => {
+    const h: Record<string, number[]> = {};
+    for (const ep of ENDPOINTS) h[ep.id] = [];
+    return h;
+  });
+
+  // Average response time history (overall)
+  const [avgHistory, setAvgHistory] = useState<number[]>([]);
+
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [refreshCount, setRefreshCount] = useState(0);
 
   const checkEndpoint = useCallback(async (ep: EndpointDef) => {
     setStatuses((prev) => {
@@ -170,6 +222,12 @@ export default function ApiHealthDashboard() {
           lastChecked: new Date(),
         },
       }));
+
+      // Record history
+      setHistory((prev) => ({
+        ...prev,
+        [ep.id]: [...(prev[ep.id] ?? []).slice(-(MAX_HISTORY_POINTS - 1)), time],
+      }));
     } catch (err) {
       const time = Math.round(performance.now() - start);
       setStatuses((prev) => ({
@@ -182,16 +240,63 @@ export default function ApiHealthDashboard() {
           error: err instanceof Error ? err.message : "Network error",
         },
       }));
+
+      setHistory((prev) => ({
+        ...prev,
+        [ep.id]: [...(prev[ep.id] ?? []).slice(-(MAX_HISTORY_POINTS - 1)), time],
+      }));
     }
   }, []);
 
   const refreshAll = useCallback(() => {
+    setRefreshCount((c) => c + 1);
     for (const ep of ENDPOINTS) void checkEndpoint(ep);
   }, [checkEndpoint]);
 
+  // Initial load
   useEffect(() => {
     refreshAll();
   }, [refreshAll]);
+
+  // Auto-refresh polling
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const id = setInterval(refreshAll, AUTO_REFRESH_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [autoRefresh, refreshAll]);
+
+  // Update average history when statuses change
+  useEffect(() => {
+    const times = Object.values(statuses)
+      .map((s) => s.responseTime)
+      .filter((t): t is number => t !== null);
+    if (times.length > 0) {
+      const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+      setAvgHistory((prev) => [...prev.slice(-(MAX_HISTORY_POINTS - 1)), avg]);
+    }
+  }, [statuses]);
+
+  // Keyboard shortcut: R to refresh all (when not typing in an input)
+  const refreshAllRef = useRef(refreshAll);
+  refreshAllRef.current = refreshAll;
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.isContentEditable
+      )
+        return;
+      if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        refreshAllRef.current();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const statusValues = Object.values(statuses);
   const healthy = statusValues.filter((s) => s.state === "healthy").length;
@@ -205,6 +310,7 @@ export default function ApiHealthDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Stats Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <div className="text-center">
@@ -245,27 +351,78 @@ export default function ApiHealthDashboard() {
           )}
           {avgTime > 0 && (
             <div className="text-center">
-              <p className="text-2xl font-mono font-bold text-cyan-400">
-                {avgTime}
-                <span className="text-sm text-foreground/40">ms</span>
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-2xl font-mono font-bold text-cyan-400">
+                  {avgTime}
+                  <span className="text-sm text-foreground/40">ms</span>
+                </p>
+                <Sparkline points={avgHistory} className="text-cyan-400/60" />
+              </div>
               <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
                 Avg
               </p>
             </div>
           )}
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={refreshAll}
-          className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
-        >
-          <RefreshCcw className="w-3.5 h-3.5 mr-1.5" />
-          Refresh All
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Auto-refresh toggle */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            className={`border-border/30 font-mono text-xs ${
+              autoRefresh
+                ? "text-green-400 border-green-500/30"
+                : "text-foreground/40 border-border/20"
+            }`}
+          >
+            {autoRefresh ? (
+              <Pause className="w-3 h-3 mr-1.5" />
+            ) : (
+              <Play className="w-3 h-3 mr-1.5" />
+            )}
+            {autoRefresh ? "Auto" : "Paused"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refreshAll}
+            className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+          >
+            <RefreshCcw className="w-3.5 h-3.5 mr-1.5" />
+            Refresh All
+          </Button>
+          <span className="hidden sm:flex items-center gap-1 text-[9px] text-foreground/20 font-mono">
+            <Keyboard className="w-3 h-3" />
+            R
+          </span>
+        </div>
       </div>
 
+      {/* Auto-refresh status line */}
+      {autoRefresh && (
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-[10px] font-mono text-foreground/30">
+              Auto-refreshing every {AUTO_REFRESH_INTERVAL_MS / 1000}s
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-mono text-foreground/20">
+              Polls: {refreshCount}
+            </span>
+            <Badge
+              variant="outline"
+              className="border-foreground/10 text-foreground/20 text-[9px] font-mono"
+            >
+              {ENDPOINTS.length} endpoints
+            </Badge>
+          </div>
+        </Card>
+      )}
+
+      {/* Endpoint Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {ENDPOINTS.map((ep) => (
           <ApiEndpointCard
@@ -273,6 +430,7 @@ export default function ApiHealthDashboard() {
             endpoint={ep}
             status={statuses[ep.id] ?? defaultStatus()}
             onRefresh={() => void checkEndpoint(ep)}
+            {...(history[ep.id] !== undefined && { responseHistory: history[ep.id] })}
           />
         ))}
       </div>

@@ -1,27 +1,25 @@
 # Portfolio Chatbot
 
-An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using a **fully offline RAG pipeline** with a local LLM — no internet or API keys required after initial setup.
+An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using **AWS Bedrock** (Claude 3 Haiku) with the full knowledge base loaded into the system prompt — fast, accurate, and cost-effective.
 
 ## Architecture
 
 ```
 Browser (ChatbotWidget.tsx)
   └─ POST /api/chat  ←── Express server (server/routes/chat.ts, port 3001)
-       └─ POST http://localhost:8001/api/chat/stream
-            └─ FastAPI (server/bot/main.py)
-                 ├─ RAG: ChromaDB + sentence-transformers (all-MiniLM-L6-v2)
-                 └─ LLM: llama-cpp-python (Llama 3.2 3B Instruct Q4_K_M GGUF)
+       └─ ConverseStream API
+            └─ AWS Bedrock (Claude 3 Haiku)
+                 └─ System prompt includes full knowledge base (~25 KB, 10 markdown files)
 ```
 
-The Express server acts as a **proxy** — it forwards requests to the FastAPI bot and streams SSE responses back to the browser unchanged. All AI logic (retrieval, generation) runs in the FastAPI process.
+The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock-runtime` SDK. All 10 knowledge files are loaded into the system prompt at startup — no separate vector database or RAG pipeline needed.
 
 ## Features
 
-- **Fully offline** — no internet, API keys, or external services needed after setup
-- **RAG (Retrieval-Augmented Generation)** — 10 knowledge files indexed into ChromaDB vector store
-- **Local LLM** — Llama 3.2 3B Instruct (Q4_K_M quantization, ~1.9 GB) via llama-cpp-python
-- **GPU acceleration** — automatic GPU offloading when CUDA is available (`N_GPU_LAYERS=-1`)
-- **Conversation history** — multi-turn context preserved per session
+- **Fast responses** — ~1-3 seconds per query via AWS Bedrock
+- **Grounded answers** — full knowledge base in the system prompt prevents hallucination
+- **Low cost** — Claude 3 Haiku: ~$0.002 per query (~$1.60/month for 1,000 queries)
+- **Conversation history** — multi-turn context preserved per session (last 6 messages)
 - **SSE streaming** — Server-Sent Events delivery to the browser
 - **Cyberpunk UI** — dark glass-morphism panel, cyan accent, `font-mono`
 - **Suggested questions** — clickable prompts shown on first open
@@ -34,44 +32,31 @@ The Express server acts as a **proxy** — it forwards requests to the FastAPI b
 | --- | --- |
 | `src/components/ChatbotWidget.tsx` | React UI component (floating button + chat panel) |
 | `src/components/BookingCard.tsx` | Booking UI triggered by `[BOOK_CALL]` action |
-| `server/routes/chat.ts` | Express proxy — forwards to FastAPI bot, streams SSE back |
-| `server/bot/main.py` | FastAPI app — RAG retrieval + local LLM generation |
-| `server/bot/indexer.py` | Builds ChromaDB vector index from knowledge markdown files |
-| `server/bot/download_model.py` | One-time download of GGUF model from HuggingFace Hub |
-| `server/bot/setup.sh` | Automated setup script (venv, dependencies, model, index) |
-| `server/bot/requirements.txt` | Python dependencies |
+| `server/routes/chat.ts` | Express route — calls AWS Bedrock, streams SSE back |
 | `server/bot/knowledge/*.md` | 10 knowledge base files (identity, experience, skills, etc.) |
 
 ## Knowledge Base
 
-The RAG knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
+The knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
 
 | File | Content |
 | --- | --- |
 | `01_identity.md` | Name, title, location, contact info |
 | `02_professional_summary.md` | Career overview, key strengths |
-| `03_work_experience.md` | 8 roles: Printec, Germanos (14yr), INFORM, Vodafone, airport, etc. |
-| `04_education.md` | 6 entries: University of Greater Manchester, Hellenic Open University, Cisco Academy, etc. |
-| `05_certifications_skills.md` | 11 certifications (AWS, CISSP, CEH, Okta, CCNA) + skill categories |
+| `03_work_experience.md` | 8 roles across 15+ years |
+| `04_education.md` | Degrees, certifications, academy programs |
+| `05_certifications_skills.md` | 11 certifications + technical skill categories |
 | `06_projects.md` | 6 portfolio projects |
-| `07_website_tech.md` | Portfolio tech stack details (Next.js, Tailwind, Three.js, etc.) |
-| `08_ai_agents.md` | AI agent implementations |
-| `09_services.md` | Professional services and offerings |
+| `07_portfolio_website.md` | Portfolio tech stack details |
+| `08_ai_agents.md` | AI agent templates |
+| `09_services_offerings.md` | Professional services and offerings |
 | `10_booking_faq.md` | Booking instructions, FAQ |
 
-The indexer chunks these files (500 chars, 100 char overlap) and embeds them using `all-MiniLM-L6-v2` into ChromaDB. At query time, the top 5 most relevant chunks are retrieved and injected into the system prompt.
+All files are loaded into the system prompt at startup (~25 KB, ~6,300 tokens). To update the chatbot's knowledge, edit the markdown files and restart the Express server.
 
 ## Local Development
 
-### 1. Run the setup script (one-time)
-
-```bash
-cd server/bot && bash setup.sh
-```
-
-This creates a Python venv, installs dependencies, downloads the LLM model (~1.9 GB), and builds the ChromaDB index (~70 chunks).
-
-### 2. Start all services
+### Start development servers
 
 ```bash
 pnpm dev:all
@@ -79,61 +64,41 @@ pnpm dev:all
 
 This starts:
 - Next.js dev server (port 3000)
-- Express dev server (port 3001)
-- FastAPI bot server (port 8001)
-
-Or start services individually:
-
-```bash
-pnpm dev          # Next.js
-pnpm dev:server   # Express
-pnpm dev:bot      # FastAPI bot
-```
+- Express dev server (port 3001) — handles `/api/chat` via Bedrock
 
 Open the portfolio in your browser and click **Chat with AI** in the bottom-left corner.
+
+### Prerequisites
+
+- AWS credentials configured (`~/.aws/credentials` or environment variables)
+- Bedrock model access enabled for Claude 3 Haiku in `us-east-1`
 
 ## Environment Variables
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
-| `BOT_URL` | No | `http://localhost:8001` | FastAPI bot URL (Express proxy target) |
-| `N_GPU_LAYERS` | No | `-1` | GPU layers to offload (-1 = all, 0 = CPU only) |
-| `PORT` | No | `8001` | FastAPI server port |
-| `PORTFOLIO_ORIGIN` | No | `*` | CORS allowed origin |
-
-No API keys required — the chatbot runs fully offline.
+| `BEDROCK_REGION` | No | `us-east-1` | AWS region for Bedrock API calls |
+| `BEDROCK_MODEL_ID` | No | `anthropic.claude-3-haiku-20240307-v1:0` | Bedrock model identifier |
+| `AWS_ACCESS_KEY_ID` | Yes | (from AWS config) | AWS credentials |
+| `AWS_SECRET_ACCESS_KEY` | Yes | (from AWS config) | AWS credentials |
 
 ## Model
 
 | Property | Value |
 | --- | --- |
-| Model | Llama 3.2 3B Instruct |
-| Quantization | Q4_K_M (~1.9 GB) |
-| Source | `bartowski/Llama-3.2-3B-Instruct-GGUF` (HuggingFace Hub) |
-| Runtime | llama-cpp-python (CPU + optional GPU) |
-| Context window | 4096 tokens |
+| Model | Claude 3 Haiku |
+| Provider | AWS Bedrock |
+| Model ID | `anthropic.claude-3-haiku-20240307-v1:0` |
 | Max output tokens | 512 |
-| Temperature | 0.7 |
+| Temperature | 0.3 |
 | Top-p | 0.9 |
-| Stop token | `<\|eot_id\|>` |
-
-The model runs locally via llama-cpp-python. On systems with CUDA-capable GPUs, layers are automatically offloaded for faster inference. CPU-only inference works but is slower (~5-15s per response vs ~1-3s with GPU).
-
-## RAG Pipeline
-
-1. **Indexing** (`indexer.py`): Knowledge markdown files → chunked (500 chars, 100 overlap) → embedded with `all-MiniLM-L6-v2` → stored in ChromaDB (cosine similarity)
-2. **Retrieval** (`main.py`): User query → embedded → top 5 chunks retrieved from ChromaDB
-3. **Generation** (`main.py`): System prompt + retrieved context + conversation history → local LLM → streamed response
-
-To rebuild the knowledge base after editing knowledge files:
-
-```bash
-cd server/bot && ./venv/bin/python indexer.py
-```
+| Cost (input) | $0.25 / 1M tokens |
+| Cost (output) | $1.25 / 1M tokens |
+| Typical response time | 1-3 seconds |
 
 ## SSE Protocol
 
-The FastAPI bot yields events in this format:
+The Express route yields events in this format:
 
 ```
 data: {"token": "Full assistant reply here"}\n\n
@@ -150,35 +115,11 @@ data: [DONE]\n\n
 On error:
 
 ```
-data: {"error": "LLM error: ..."}\n\n
+data: {"error": "Chat request failed: ..."}\n\n
 data: [DONE]\n\n
 ```
 
 The frontend `ChatbotWidget.tsx` reads `response.body` with `getReader()`, splits on `\n`, and appends each `token` to the last assistant message in state.
-
-## Health Check
-
-```bash
-curl http://localhost:8001/api/health
-```
-
-Returns:
-
-```json
-{
-  "status": "ok",
-  "model": {
-    "name": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
-    "loaded": true,
-    "local": true,
-    "gpu_layers": -1
-  },
-  "rag": {
-    "indexed": true,
-    "chunks": 70
-  }
-}
-```
 
 ## Accessibility
 
@@ -194,10 +135,8 @@ The chatbot widget follows WCAG 2.2 guidelines:
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| "Chat request failed" | FastAPI bot not running | Start with `pnpm dev:bot` |
-| "Model not found" error in bot logs | GGUF model not downloaded | Run `cd server/bot && ./venv/bin/python download_model.py` |
-| "Collection not found" warning | ChromaDB index not built | Run `cd server/bot && ./venv/bin/python indexer.py` |
-| `ModuleNotFoundError` | Wrong Python (system vs venv) | Use `./venv/bin/python` or `./venv/bin/uvicorn` directly |
-| Slow responses (>10s) | CPU-only inference | Set `N_GPU_LAYERS=-1` if GPU available, or accept slower CPU speed |
-| Port 8001 already in use | Old bot process still running | `kill $(lsof -t -i :8001)` then restart |
-| No response, no error | Express server not running | Start with `pnpm dev:server` |
+| "Chat request failed" | Express server not running | Start with `pnpm dev:all` |
+| "Access denied" from Bedrock | Missing model access | Enable Claude 3 Haiku in AWS Bedrock console |
+| "Invalid payment instrument" | AWS billing not set up | Add payment method in AWS Billing console |
+| "Credentials not found" | AWS not configured | Run `aws configure` or set `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` |
+| Empty responses | Knowledge base not found | Verify `server/bot/knowledge/*.md` files exist |
