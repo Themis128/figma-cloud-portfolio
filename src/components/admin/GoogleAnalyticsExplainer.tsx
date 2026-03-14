@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, ExternalLink, X } from "lucide-react";
+import { Check, Copy, ExternalLink, Radio, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "Not configured";
 
 function CodeBlock({ code }: { code: string }) {
   return (
-    <pre className="font-mono text-[11px] bg-black/60 p-3 rounded border border-border/10 text-foreground/70 overflow-x-auto whitespace-pre-wrap">
+    <pre className="font-mono text-[10px] sm:text-[11px] bg-black/60 p-2.5 sm:p-3 rounded border border-border/10 text-foreground/70 overflow-x-auto whitespace-pre wrap-break-word">
       {code}
     </pre>
   );
@@ -36,10 +36,10 @@ function ConfigItem({
 }) {
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
         <span className="font-mono text-xs text-cyan-400">{title}</span>
         {value && (
-          <span className="font-mono text-[10px] text-foreground/40">
+          <span className="font-mono text-[10px] text-foreground/40 break-all">
             {value}
           </span>
         )}
@@ -49,12 +49,49 @@ function ConfigItem({
   );
 }
 
+interface SessionInfo {
+  pageViews: number;
+  timeOnPage: string;
+  referrer: string;
+  entryPage: string;
+}
+
 export default function GoogleAnalyticsExplainer() {
   const [gaActive, setGaActive] = useState<boolean | null>(null);
   const [copied, setCopied] = useState(false);
+  const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null);
 
   useEffect(() => {
     setGaActive(typeof window.gtag === "function");
+
+    // Gather real-time session info from browser APIs
+    const entries = performance.getEntriesByType("navigation");
+    const navEntry = entries[0] as PerformanceNavigationTiming | undefined;
+
+    const elapsed = Math.round((Date.now() - performance.timeOrigin) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+
+    setSessionInfo({
+      pageViews: performance.getEntriesByType("navigation").length,
+      timeOnPage: `${minutes}m ${seconds}s`,
+      referrer: document.referrer || "Direct",
+      entryPage: navEntry?.name
+        ? new URL(navEntry.name).pathname
+        : window.location.pathname,
+    });
+
+    // Update time on page every 10 seconds
+    const interval = setInterval(() => {
+      const e = Math.round((Date.now() - performance.timeOrigin) / 1000);
+      const m = Math.floor(e / 60);
+      const s = e % 60;
+      setSessionInfo((prev) =>
+        prev ? { ...prev, timeOnPage: `${m}m ${s}s` } : prev,
+      );
+    }, 10_000);
+
+    return () => clearInterval(interval);
   }, []);
 
   function copyId() {
@@ -65,11 +102,45 @@ export default function GoogleAnalyticsExplainer() {
 
   return (
     <div className="space-y-6">
+      {/* Live Session Card */}
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 sm:p-4">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <Radio className="w-3.5 h-3.5 text-green-400 animate-pulse" />
+          <p className="text-[10px] uppercase tracking-wider text-green-400 font-mono">
+            Live Session
+          </p>
+        </div>
+        {sessionInfo && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+            {[
+              { label: "Time on Page", value: sessionInfo.timeOnPage },
+              { label: "Entry Page", value: sessionInfo.entryPage },
+              { label: "Referrer", value: sessionInfo.referrer },
+              { label: "Page Views", value: String(sessionInfo.pageViews) },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="p-2.5 sm:p-3 rounded-lg bg-background/30 border border-border/10"
+              >
+                <p className="text-[10px] text-foreground/40 uppercase tracking-wider font-mono">
+                  {item.label}
+                </p>
+                <p className="text-xs font-mono text-foreground/80 truncate mt-1">
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
       {/* Card 1: Measurement ID */}
-      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-6">
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 sm:p-6">
         <SectionHeading>Measurement ID</SectionHeading>
-        <div className="flex items-center gap-3 mb-3">
-          <span className="font-mono text-lg text-cyan-400">{GA_ID}</span>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+          <span className="font-mono text-sm sm:text-lg text-cyan-400 break-all">
+            {GA_ID}
+          </span>
           <button
             onClick={copyId}
             className="p-1.5 rounded hover:bg-foreground/5 text-foreground/40 hover:text-cyan-400 transition-colors"
@@ -118,7 +189,7 @@ export default function GoogleAnalyticsExplainer() {
       </Card>
 
       {/* Card 2: Configuration Details */}
-      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-6 space-y-5">
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 sm:p-6 space-y-4 sm:space-y-5">
         <SectionHeading>Configuration</SectionHeading>
 
         <ConfigItem title="page_path" value="tracking">
@@ -165,11 +236,11 @@ export default function GoogleAnalyticsExplainer() {
       </Card>
 
       {/* Card 3: Event Helpers */}
-      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-6 space-y-5">
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 sm:p-6 space-y-4 sm:space-y-5">
         <SectionHeading>Event Helpers</SectionHeading>
 
         <div className="space-y-3">
-          <ConfigItem title="trackEvent" value="(action, category, label?, value?)">
+          <ConfigItem title="trackEvent" value="(action, category, label?, value?)" >
             Fires a custom GA4 event. Use this for tracking user interactions
             like link clicks, form submissions, chatbot messages, and resume
             downloads.
@@ -211,7 +282,7 @@ gtag("event", "conversion", {
       </Card>
 
       {/* Card 4: Implementation Reference */}
-      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-6">
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 sm:p-6">
         <SectionHeading>Implementation Reference</SectionHeading>
         <div className="space-y-2 text-xs text-foreground/50 font-mono">
           <p>

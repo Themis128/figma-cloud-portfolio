@@ -8,7 +8,7 @@
     "dev:server": "tsx server/index.ts",
     "dev:bot": "cd server/bot && ./venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8001",
     "predev:all": "bash scripts/amplify-status.sh",
-    "dev:all": "concurrently -n \"next,server,bot\" -c \"cyan,yellow,magenta\" \"next dev\" \"tsx server/index.ts\" \"pnpm dev:bot\"",
+    "dev:all": "concurrently -n \"next,server\" -c \"cyan,yellow\" \"next dev\" \"tsx server/index.ts\"",
     "amplify:status": "bash scripts/amplify-status.sh",
     "amplify:dev": "pnpm --package=@aws-amplify/backend-cli dlx ampx sandbox",
     "amplify:deploy": "pnpm --package=@aws-amplify/backend-cli dlx ampx pipeline-deploy --branch production --app-id d1zjif7pi1h3om",
@@ -18,7 +18,7 @@
     "build": "next build",
     "build:server": "tsc --project server/tsconfig.server.json && mv dist/server/index.js dist/server/node-build.mjs",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src/",
     "test": "vitest run",
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
@@ -36,6 +36,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1009.0",
     "@aws-sdk/client-ses": "^3.1007.0",
     "@builder.io/react": "^9.1.2",
     "@radix-ui/react-accordion": "^1.2.12",
