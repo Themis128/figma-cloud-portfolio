@@ -9,7 +9,7 @@ This document outlines the development workflow, best practices, and conventions
 - **Node.js**: Version 20 or higher
 - **PNPM**: Package manager (version 10.14.0+)
 - **Git**: Version control
-- **Python**: For chatbot backend (version 3.10+)
+- **AWS CLI**: Configured with credentials for Bedrock access
 
 ### Initial Setup
 
@@ -47,10 +47,9 @@ VAPID_PUBLIC_KEY=your-vapid-public-key
 VAPID_PRIVATE_KEY=your-vapid-private-key
 VAPID_EMAIL=mailto:your-email@example.com
 
-# Python chatbot backend (.env in server/bot/)
-HF_TOKEN=your-huggingface-token
-PORTFOLIO_ORIGIN=http://localhost:8082
-PORT=8001
+# AWS Bedrock chatbot (uses AWS credentials from ~/.aws/credentials or env vars)
+BEDROCK_REGION=us-east-1
+BEDROCK_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
 ```
 
 ## Development Servers
@@ -59,9 +58,8 @@ PORT=8001
 
 The project uses three separate development servers:
 
-1. **Frontend Server** (port 8082): Next.js development server
-2. **Backend API Server** (port 3001): Express.js API server
-3. **Chatbot Server** (port 8001): Python FastAPI chatbot backend
+1. **Frontend Server** (port 3000): Next.js development server
+2. **Backend API Server** (port 3001): Express.js API server (includes chatbot via AWS Bedrock)
 
 ### Running Servers
 
@@ -71,18 +69,13 @@ pnpm dev:all
 
 # Option 2: Run servers individually
 pnpm dev              # Frontend only
-pnpm dev:server       # Backend API only
-pnpm dev:bot          # Chatbot only
-
-# Option 3: Run with specific configurations
-pnpm dev -- --port 3000    # Custom frontend port
-pnpm dev:server --port 3002  # Custom backend port
+pnpm dev:server       # Backend API only (includes chatbot)
 ```
 
 ### Server Communication
 
 - **Frontend ↔ Backend**: API calls to `/api/*` are proxied to `http://localhost:3001` in development
-- **Frontend ↔ Chatbot**: Chat requests go through Next.js API proxy to `http://localhost:8001`
+- **Chatbot**: Chat requests go to Express `/api/chat`, which calls AWS Bedrock directly
 - **CORS**: Properly configured for local development
 
 ## Code Organization
@@ -106,9 +99,9 @@ src/
 └── styles/               # Global styles
 
 server/
-├── routes/               # Express route handlers
+├── routes/               # Express route handlers (includes chat.ts for Bedrock)
 ├── middleware/           # Express middleware
-├── bot/                  # Python FastAPI chatbot
+├── bot/knowledge/        # Chatbot knowledge base (10 markdown files)
 └── lib/                  # Server utilities
 
 playwright-tests/         # E2E test suite

@@ -35,7 +35,7 @@ MAX_TOKENS = 512
 CHROMA_DIR = Path(__file__).parent / "chroma_db"
 COLLECTION_NAME = "portfolio_knowledge"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-TOP_K = 5
+TOP_K = 7
 
 origins = [PORTFOLIO_ORIGIN] if PORTFOLIO_ORIGIN != "*" else ["*"]
 
@@ -129,22 +129,19 @@ def retrieve_context(query: str, top_k: int = TOP_K) -> str:
 
 # ── System prompt ────────────────────────────────────────────────────────────
 
-SYSTEM_PROMPT_TEMPLATE = """You are an AI assistant for Themistoklis Baltzakis's portfolio website.
-Answer questions about Themis professionally and helpfully. Be concise and friendly.
+SYSTEM_PROMPT_TEMPLATE = """You are an AI assistant on Themistoklis Baltzakis's portfolio website (baltzakisthemis.com).
+Your job is to answer visitor questions about Themis using ONLY the context provided below.
 
-Use the RETRIEVED CONTEXT below to answer the user's question accurately.
-If the context doesn't contain the answer, say you're not sure but suggest they contact Themis directly.
-Do NOT make up information that isn't in the context.
-
-RETRIEVED CONTEXT:
+CONTEXT:
 {context}
 
-RULES:
-- Answer based on the retrieved context above.
-- Be concise — 2-4 sentences for simple questions, more for detailed ones.
-- If asked about topics unrelated to Themis or his portfolio, politely redirect to portfolio-related questions.
-- If the user wants to book, schedule, or arrange a meeting or call, respond ONLY with the exact token: [BOOK_CALL]
-- Do not add any other text when emitting [BOOK_CALL]."""
+INSTRUCTIONS:
+1. Answer ONLY from the context above. Never invent facts, certifications, job titles, dates, or skills not listed.
+2. If the context does not contain enough information to answer, say: "I don't have that information, but you can ask Themis directly at baltzakis.themis@gmail.com or through the contact form."
+3. Keep answers concise: 2-4 sentences for simple questions, up to a short paragraph for detailed ones.
+4. Use a professional, friendly tone. Refer to him as "Themis".
+5. If asked about topics unrelated to Themis or his portfolio, politely say you can only help with questions about Themis's background, skills, and services.
+6. If the user wants to book, schedule, or arrange a meeting or call, respond ONLY with the exact token: [BOOK_CALL] — no other text."""
 
 
 # ── Models ───────────────────────────────────────────────────────────────────
@@ -161,17 +158,22 @@ class ChatRequest(BaseModel):
 
 # ── Chat logic ───────────────────────────────────────────────────────────────
 
+MAX_HISTORY_TURNS = 6  # Keep last 6 messages (3 user + 3 assistant) to stay within context window
+
+
 def build_messages(message: str, history: list[HistoryMessage]) -> list[dict[str, str]]:
     """Build the message array with RAG-enhanced system prompt."""
     context = retrieve_context(message)
 
     system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
-        context=context if context else "No specific context retrieved. Use your general knowledge about Themis."
+        context=context if context else "No context was retrieved. You must tell the user you don't have that information and suggest they contact Themis directly."
     )
 
     messages: list[dict[str, str]] = [{"role": "system", "content": system_prompt}]
 
-    for entry in history:
+    # Only keep recent history to avoid overflowing the context window
+    recent_history = history[-MAX_HISTORY_TURNS:]
+    for entry in recent_history:
         if entry.role in ("user", "assistant"):
             messages.append({"role": entry.role, "content": entry.content})
 
@@ -188,8 +190,9 @@ def generate_response(messages: list[dict[str, str]]) -> str:
     response = llm.create_chat_completion(
         messages=messages,
         max_tokens=MAX_TOKENS,
-        temperature=0.7,
+        temperature=0.3,
         top_p=0.9,
+        repeat_penalty=1.1,
         stop=["<|eot_id|>"],
     )
 

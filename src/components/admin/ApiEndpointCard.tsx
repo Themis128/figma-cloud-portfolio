@@ -1,6 +1,7 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -31,6 +32,7 @@ interface Props {
   endpoint: EndpointDef;
   status: EndpointStatus;
   onRefresh: () => void;
+  responseHistory?: number[] | undefined;
 }
 
 const METHOD_COLORS: Record<string, string> = {
@@ -72,7 +74,66 @@ function timeAgo(date: Date): string {
   return `${minutes}m ago`;
 }
 
-export default function ApiEndpointCard({ endpoint, status, onRefresh }: Props) {
+/** Tiny inline SVG sparkline for response time history */
+function MiniSparkline({ points }: { points: number[] }) {
+  if (points.length < 2) return null;
+  const width = 60;
+  const height = 16;
+  const max = Math.max(...points, 1);
+  const min = Math.min(...points, 0);
+  const range = max - min || 1;
+
+  const coords = points.map((v, i) => {
+    const x = (i / (points.length - 1)) * width;
+    const y = height - ((v - min) / range) * (height - 2) - 1;
+    return `${x},${y}`;
+  });
+
+  // Color based on latest value trend
+  const latest = points[points.length - 1] ?? 0;
+  const avg = points.reduce((a, b) => a + b, 0) / points.length;
+  const color =
+    latest <= avg * 1.2
+      ? "text-cyan-400/50"
+      : latest <= avg * 2
+        ? "text-yellow-400/50"
+        : "text-red-400/50";
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      className={color}
+      viewBox={`0 0 ${width} ${height}`}
+    >
+      <polyline
+        points={coords.join(" ")}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+const TICK_INTERVAL_MS = 10_000;
+
+export default function ApiEndpointCard({
+  endpoint,
+  status,
+  onRefresh,
+  responseHistory,
+}: Props) {
+  // Re-render every 10s so the "timeAgo" label stays fresh
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!status.lastChecked) return;
+    const id = setInterval(() => setTick((t) => t + 1), TICK_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [status.lastChecked]);
+
   return (
     <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 hover:border-cyan-400/20 hover:bg-card/50 transition-all duration-300">
       <div className="flex items-start justify-between mb-3">
@@ -123,6 +184,13 @@ export default function ApiEndpointCard({ endpoint, status, onRefresh }: Props) 
           </span>
         )}
       </div>
+
+      {/* Sparkline */}
+      {responseHistory && responseHistory.length >= 2 && (
+        <div className="mb-2">
+          <MiniSparkline points={responseHistory} />
+        </div>
+      )}
 
       <p className="text-[10px] text-foreground/40">{endpoint.description}</p>
       {status.error && (

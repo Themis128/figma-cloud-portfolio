@@ -245,7 +245,7 @@ pnpm build:server
 # Create Lambda function
 aws lambda create-function \
   --function-name figma-portfolio-api \
-  --runtime nodejs20.x \
+  --runtime nodejs22.x \
   --role arn:aws:iam::account:role/lambda-execution-role \
   --handler index.handler \
   --zip-file fileb://dist/server.zip \
@@ -439,7 +439,7 @@ vercel --prod
   ],
   "functions": {
     "server/index.ts": {
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs22.x"
     }
   }
 }

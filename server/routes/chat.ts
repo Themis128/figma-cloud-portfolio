@@ -1,16 +1,85 @@
-// Chat API endpoint — proxies to the local RAG chatbot (FastAPI on port 8001)
+// Chat API endpoint — uses AWS Bedrock (Claude 3 Haiku) with full knowledge base
 import { Router, Request, Response } from "express";
+import {
+  BedrockRuntimeClient,
+  ConverseStreamCommand,
+} from "@aws-sdk/client-bedrock-runtime";
+import { readFileSync, readdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const router = Router();
 
-const BOT_URL = process.env.BOT_URL ?? "http://localhost:8001";
+const BEDROCK_REGION = process.env.BEDROCK_REGION ?? "us-east-1";
+const BEDROCK_MODEL_ID =
+  process.env.BEDROCK_MODEL_ID ?? "anthropic.claude-3-haiku-20240307-v1:0";
+const MAX_HISTORY_TURNS = 6;
 
 interface HistoryMessage {
   role: string;
   content: string;
 }
 
-// POST /api/chat — proxy to the local RAG + LLM chatbot
+// ── Knowledge base (loaded once at startup) ─────────────────────────────────
+
+let _knowledgeBase: string | null = null;
+
+function getKnowledgeBase(): string {
+  if (_knowledgeBase !== null) return _knowledgeBase;
+
+  const knowledgeDir = join(__dirname, "..", "bot", "knowledge");
+  try {
+    const files = readdirSync(knowledgeDir)
+      .filter((f) => f.endsWith(".md"))
+      .sort();
+
+    _knowledgeBase = files
+      .map((f) => readFileSync(join(knowledgeDir, f), "utf-8"))
+      .join("\n\n---\n\n");
+
+    console.log(
+      `Loaded knowledge base: ${files.length} files, ${_knowledgeBase.length} chars`,
+    );
+  } catch {
+    _knowledgeBase = "";
+    console.warn(
+      `WARNING: Knowledge base not found at ${knowledgeDir}. Chatbot will have no context.`,
+    );
+  }
+
+  return _knowledgeBase;
+}
+
+// ── System prompt ───────────────────────────────────────────────────────────
+
+function buildSystemPrompt(): string {
+  const knowledge = getKnowledgeBase();
+
+  return `You are an AI assistant on Themistoklis Baltzakis's portfolio website (baltzakisthemis.com).
+Your job is to answer visitor questions about Themis using ONLY the knowledge base provided below.
+
+KNOWLEDGE BASE:
+${knowledge}
+
+INSTRUCTIONS:
+1. Answer ONLY from the knowledge base above. Never invent facts, certifications, job titles, dates, or skills not listed.
+2. If the knowledge base does not contain enough information to answer, say: "I don't have that information, but you can ask Themis directly at baltzakis.themis@gmail.com or through the contact form."
+3. Keep answers concise: 2-4 sentences for simple questions, up to a short paragraph for detailed ones.
+4. Use a professional, friendly tone. Refer to him as "Themis".
+5. If asked about topics unrelated to Themis or his portfolio, politely say you can only help with questions about Themis's background, skills, and services.
+6. If the user wants to book, schedule, or arrange a meeting or call, respond ONLY with the exact token: [BOOK_CALL] — no other text.`;
+}
+
+// ── Bedrock client (reused across requests) ─────────────────────────────────
+
+const bedrockClient = new BedrockRuntimeClient({ region: BEDROCK_REGION });
+
+// ── Route ───────────────────────────────────────────────────────────────────
+
+// POST /api/chat
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body as {
@@ -23,43 +92,70 @@ router.post("/", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    // Forward to the FastAPI bot
-    const botResponse = await fetch(`${BOT_URL}/api/chat/stream`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: trimmedMessage, history: history ?? [] }),
+    // Build messages array with recent history (Converse API format)
+    const messages: Array<{
+      role: string;
+      content: Array<{ text: string }>;
+    }> = [];
+
+    const recentHistory = (history ?? []).slice(-MAX_HISTORY_TURNS);
+    for (const entry of recentHistory) {
+      if (entry.role === "user" || entry.role === "assistant") {
+        messages.push({
+          role: entry.role,
+          content: [{ text: entry.content }],
+        });
+      }
+    }
+    messages.push({ role: "user", content: [{ text: trimmedMessage }] });
+
+    const command = new ConverseStreamCommand({
+      modelId: BEDROCK_MODEL_ID,
+      system: [{ text: buildSystemPrompt() }],
+      messages,
+      inferenceConfig: {
+        maxTokens: 512,
+        temperature: 0.3,
+        topP: 0.9,
+      },
     });
 
-    if (!botResponse.ok) {
-      const errorText = await botResponse.text();
-      return res.status(botResponse.status).json({
-        error: `Bot error ${botResponse.status}: ${errorText}`,
-      });
-    }
+    const response = await bedrockClient.send(command);
 
-    if (!botResponse.body) {
-      return res.status(502).json({ error: "No response body from bot" });
-    }
-
-    // Stream SSE events through to the frontend
+    // Stream SSE events to the frontend
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no");
 
-    const reader = (botResponse.body as ReadableStream<Uint8Array>).getReader();
-    const decoder = new TextDecoder();
+    let accumulated = "";
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(decoder.decode(value, { stream: true }));
+    if (response.stream) {
+      for await (const event of response.stream) {
+        if (event.contentBlockDelta?.delta?.text) {
+          accumulated += event.contentBlockDelta.delta.text;
+        }
+      }
     }
 
+    // Check for booking action
+    if (accumulated.includes("[BOOK_CALL]")) {
+      res.write(`data: ${JSON.stringify({ action: "start_booking" })}\n\n`);
+    } else if (accumulated) {
+      res.write(`data: ${JSON.stringify({ token: accumulated })}\n\n`);
+    } else {
+      res.write(
+        `data: ${JSON.stringify({ error: "No response generated" })}\n\n`,
+      );
+    }
+
+    res.write("data: [DONE]\n\n");
     res.end();
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
-    res.status(500).json({ error: `Chat request failed: ${msg}` });
+    if (!res.headersSent) {
+      res.status(500).json({ error: `Chat request failed: ${msg}` });
+    }
   }
 });
 

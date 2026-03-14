@@ -47,7 +47,7 @@ else
 fi
 
 # ─── Port Cleanup ─────────────────────────────────────
-PORTS=(3000 3001 8001)
+PORTS=(3000 3001)
 KILLED=()
 for port in "${PORTS[@]}"; do
   pids=$(lsof -ti :"$port" -sTCP:LISTEN 2>/dev/null)
@@ -69,8 +69,7 @@ echo -e ""
 echo -e "  ${BOLD}Services${NC}"
 echo -e "  ${DIM}────────────────────────────────────────────${NC}"
 echo -e "  Next.js:    ${CYAN}http://localhost:3000${NC}  ${DIM}(Turbopack)${NC}"
-echo -e "  Express:    ${CYAN}http://localhost:3001${NC}  ${DIM}(API backend)${NC}"
-echo -e "  Bot:        ${CYAN}http://localhost:8001${NC}  ${DIM}(FastAPI/Uvicorn)${NC}"
+echo -e "  Express:    ${CYAN}http://localhost:3001${NC}  ${DIM}(API + Bedrock chatbot)${NC}"
 
 # ─── Amplify Backend ──────────────────────────────────
 echo -e ""

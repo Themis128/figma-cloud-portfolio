@@ -1131,6 +1131,345 @@ test.describe("Admin Page — Analytics Tab", () => {
   });
 });
 
+// ─── Deploy Tab ─────────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Deploy Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "Deploy" }).click();
+  });
+
+  test("should display Production Deployment header", async ({ page }) => {
+    await expect(page.getByText("Production Deployment")).toBeVisible();
+  });
+
+  test("should have Check button", async ({ page }) => {
+    const checkButton = page.getByRole("button", { name: "Check" });
+    await expect(checkButton).toBeVisible();
+    await expect(checkButton).toBeEnabled();
+  });
+
+  test("should show Frontend and API sections", async ({ page }) => {
+    await expect(page.getByText("Frontend").first()).toBeVisible();
+    await expect(page.getByText("API (Lambda)").first()).toBeVisible();
+  });
+
+  test("should display Infrastructure section", async ({ page }) => {
+    await expect(page.getByText("Infrastructure").first()).toBeVisible();
+    await expect(page.getByText("S3 Bucket").first()).toBeVisible();
+    await expect(page.getByText("CloudFront").first()).toBeVisible();
+    await expect(page.getByText("Region").first()).toBeVisible();
+    await expect(page.getByText("Amplify App").first()).toBeVisible();
+  });
+
+  test("should display Health Checks section", async ({ page }) => {
+    await expect(page.getByText("Health Checks").first()).toBeVisible();
+    await expect(page.getByText("Frontend reachable")).toBeVisible();
+    await expect(page.getByText("API responding")).toBeVisible();
+    await expect(page.getByText("API latency < 2s")).toBeVisible();
+  });
+
+  test("should show hosting details", async ({ page }) => {
+    await expect(
+      page.getByText("S3 + CloudFront", { exact: false }),
+    ).toBeVisible();
+  });
+
+  test("should run deployment checks when Check button is clicked", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "Check" }).click();
+    // Wait for checks to complete
+    await page.waitForTimeout(5000);
+
+    // After checking, should show status labels
+    const panel = page.locator('[role="tabpanel"]');
+    const statusLabels = panel.getByText(/healthy|degraded|down|unknown/i);
+    expect(await statusLabels.count()).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ─── Errors Tab ─────────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Errors Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "Errors" }).click();
+  });
+
+  test("should display error count", async ({ page }) => {
+    await expect(page.getByText("Captured")).toBeVisible();
+  });
+
+  test("should have Live/Paused toggle button", async ({ page }) => {
+    const liveButton = page.locator("button", { hasText: /Live|Paused/ });
+    await expect(liveButton).toBeVisible();
+  });
+
+  test("should have Clear button", async ({ page }) => {
+    const clearButton = page.locator("button", { hasText: "Clear" });
+    await expect(clearButton).toBeVisible();
+  });
+
+  test("should show capture status when live", async ({ page }) => {
+    await expect(
+      page.getByText("Capturing browser errors", { exact: false }),
+    ).toBeVisible();
+  });
+
+  test("should show empty state when no errors captured", async ({ page }) => {
+    await expect(page.getByText("No errors captured yet")).toBeVisible();
+    await expect(
+      page.getByText("Errors will appear here in real time"),
+    ).toBeVisible();
+  });
+
+  test("should toggle capturing on/off", async ({ page }) => {
+    // Initially Live
+    const toggleButton = page.locator("button", { hasText: /Live|Paused/ });
+    await expect(toggleButton).toContainText("Live");
+
+    // Click to pause
+    await toggleButton.click();
+    await expect(toggleButton).toContainText("Paused");
+
+    // Click to resume
+    await toggleButton.click();
+    await expect(toggleButton).toContainText("Live");
+  });
+});
+
+// ─── Perf Tab ───────────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Perf Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "Perf" }).click();
+  });
+
+  test("should display performance grade", async ({ page }) => {
+    await expect(page.getByText("Grade")).toBeVisible();
+  });
+
+  test("should display score", async ({ page }) => {
+    await expect(page.getByText("Score")).toBeVisible();
+  });
+
+  test("should display Within Budget count", async ({ page }) => {
+    await expect(page.getByText("Within Budget")).toBeVisible();
+  });
+
+  test("should show Live from web-vitals badge", async ({ page }) => {
+    await expect(page.getByText("Live from web-vitals")).toBeVisible();
+  });
+
+  test("should display all 4 Core Web Vital metrics", async ({ page }) => {
+    const panel = page.locator('[role="tabpanel"]');
+    await expect(panel.getByText("LCP").first()).toBeVisible();
+    await expect(panel.getByText("FCP").first()).toBeVisible();
+    await expect(panel.getByText("CLS").first()).toBeVisible();
+    await expect(panel.getByText("TTFB").first()).toBeVisible();
+  });
+
+  test("should show metric descriptions", async ({ page }) => {
+    await expect(
+      page.getByText("Largest Contentful Paint", { exact: false }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("First Contentful Paint", { exact: false }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Cumulative Layout Shift", { exact: false }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Time to First Byte", { exact: false }),
+    ).toBeVisible();
+  });
+
+  test("should show budget thresholds section", async ({ page }) => {
+    await expect(
+      page.getByText("Budget Thresholds", { exact: false }),
+    ).toBeVisible();
+  });
+
+  test("should show budget values", async ({ page }) => {
+    await expect(page.getByText("2500ms", { exact: false })).toBeVisible();
+    await expect(page.getByText("1800ms", { exact: false })).toBeVisible();
+    await expect(page.getByText("800ms", { exact: false })).toBeVisible();
+  });
+});
+
+// ─── SEO Audit Tab ──────────────────────────────────────────────────────────
+
+test.describe("Admin Page — SEO Audit Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "SEO" }).click();
+  });
+
+  test("should display Pages count", async ({ page }) => {
+    await expect(page.getByText("Pages").first()).toBeVisible();
+  });
+
+  test("should have Re-scan button", async ({ page }) => {
+    const rescanButton = page.locator("button", { hasText: /Re-scan|Scanning/ });
+    await expect(rescanButton).toBeVisible();
+  });
+
+  test("should show scan results with page paths", async ({ page }) => {
+    // Wait for initial scan to complete
+    await page.waitForTimeout(8000);
+
+    const panel = page.locator('[role="tabpanel"]');
+    // Should show at least the homepage path
+    await expect(panel.getByText("/", { exact: true }).first()).toBeVisible();
+  });
+
+  test("should show status labels (Pass/Warn/Error)", async ({ page }) => {
+    await page.waitForTimeout(8000);
+
+    // At least one of these status labels should appear
+    const pass = page.getByText("Pass", { exact: true });
+    const warn = page.getByText("Warn", { exact: true });
+    const error = page.getByText("Error", { exact: true });
+    const count =
+      (await pass.count()) + (await warn.count()) + (await error.count());
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should show metadata badges after scan", async ({ page }) => {
+    await page.waitForTimeout(8000);
+
+    const panel = page.locator('[role="tabpanel"]');
+    // At least some metadata badges should be visible
+    const badges = panel.getByText(
+      /og:image|canonical|JSON-LD|og:title/,
+    );
+    expect(await badges.count()).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ─── Auth Tab ───────────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Auth Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "Auth" }).click();
+  });
+
+  test("should display Current Session section", async ({ page }) => {
+    await expect(page.getByText("Current Session")).toBeVisible();
+  });
+
+  test("should show user session details", async ({ page }) => {
+    // Since we're logged in, should show user info
+    await expect(page.getByText("Email").first()).toBeVisible();
+    await expect(page.getByText("UID").first()).toBeVisible();
+    await expect(page.getByText("Email Verified").first()).toBeVisible();
+    await expect(page.getByText("Provider").first()).toBeVisible();
+  });
+
+  test("should display Firebase Auth section", async ({ page }) => {
+    await expect(page.getByText("Firebase Auth")).toBeVisible();
+  });
+
+  test("should show Firebase config status badge", async ({ page }) => {
+    const configured = page.getByText("configured", { exact: true });
+    const disabled = page.getByText("disabled", { exact: true });
+    const count = (await configured.count()) + (await disabled.count());
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should display Amplify Cognito section", async ({ page }) => {
+    await expect(page.getByText("Amplify Cognito")).toBeVisible();
+  });
+
+  test("should show Amplify production badge", async ({ page }) => {
+    await expect(page.getByText("production", { exact: true })).toBeVisible();
+  });
+
+  test("should display Firebase Project and Auth Domain fields", async ({
+    page,
+  }) => {
+    await expect(page.getByText("Project").first()).toBeVisible();
+    await expect(page.getByText("Auth Domain").first()).toBeVisible();
+  });
+
+  test("should display Amplify Region and App ID fields", async ({
+    page,
+  }) => {
+    await expect(page.getByText("Region").first()).toBeVisible();
+    await expect(page.getByText("App ID").first()).toBeVisible();
+    await expect(page.getByText("Auth Method").first()).toBeVisible();
+  });
+
+  test("should show ID Token section when logged in", async ({ page }) => {
+    // Token section appears when user has an active token
+    const tokenSection = page.getByText("ID Token");
+    const count = await tokenSection.count();
+    if (count > 0) {
+      await expect(page.getByText("Expires").first()).toBeVisible();
+      await expect(page.getByText("Issuer").first()).toBeVisible();
+    }
+  });
+});
+
+// ─── Env Tab ────────────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Env Tab", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminLoginOrSkip(page);
+    await page.locator('[role="tab"]', { hasText: "Env" }).click();
+  });
+
+  test("should display Build Info section", async ({ page }) => {
+    await expect(page.getByText("Build Info")).toBeVisible();
+  });
+
+  test("should show build info fields", async ({ page }) => {
+    await expect(page.getByText("App Version").first()).toBeVisible();
+    await expect(page.getByText("Environment").first()).toBeVisible();
+    await expect(page.getByText("Site URL").first()).toBeVisible();
+    await expect(page.getByText("Framework").first()).toBeVisible();
+  });
+
+  test("should show Next.js framework value", async ({ page }) => {
+    await expect(
+      page.getByText("Next.js 16 (App Router)", { exact: false }),
+    ).toBeVisible();
+  });
+
+  test("should display Integrations section", async ({ page }) => {
+    await expect(page.getByText("Integrations")).toBeVisible();
+  });
+
+  test("should show integration items", async ({ page }) => {
+    await expect(page.getByText("Google Analytics").first()).toBeVisible();
+    await expect(page.getByText("Sentry").first()).toBeVisible();
+    await expect(page.getByText("reCAPTCHA v3").first()).toBeVisible();
+  });
+
+  test("should show integration status badges", async ({ page }) => {
+    // Each integration should show "active" or "inactive"
+    const active = page.getByText("active", { exact: true });
+    const inactive = page.getByText("inactive", { exact: true });
+    const count = (await active.count()) + (await inactive.count());
+    expect(count).toBeGreaterThanOrEqual(3);
+  });
+
+  test("should display Git section", async ({ page }) => {
+    await expect(page.getByText("Git").first()).toBeVisible();
+    await expect(page.getByText("Branch").first()).toBeVisible();
+  });
+
+  test("should display Client section with device info", async ({ page }) => {
+    await expect(page.getByText("Client").first()).toBeVisible();
+    await expect(page.getByText("Viewport").first()).toBeVisible();
+    await expect(page.getByText("Language").first()).toBeVisible();
+    await expect(page.getByText("Platform").first()).toBeVisible();
+  });
+});
+
 // ─── Tab Navigation ──────────────────────────────────────────────────────────
 
 test.describe("Admin Page — Tab Navigation", () => {
@@ -1145,19 +1484,37 @@ test.describe("Admin Page — Tab Navigation", () => {
     await page.locator('[role="tab"]', { hasText: "Console" }).click();
     await expect(page.locator("text=Request")).toBeVisible();
 
+    await page.locator('[role="tab"]', { hasText: "Deploy" }).click();
+    await expect(page.getByText("Production Deployment")).toBeVisible();
+
+    await page.locator('[role="tab"]', { hasText: "Errors" }).click();
+    await expect(page.getByText("Captured")).toBeVisible();
+
+    await page.locator('[role="tab"]', { hasText: "Perf" }).click();
+    await expect(page.getByText("Grade")).toBeVisible();
+
+    await page.locator('[role="tab"]', { hasText: "SEO" }).click();
+    await expect(page.getByText("Pages").first()).toBeVisible();
+
     await page.locator('[role="tab"]', { hasText: "Push" }).click();
     await expect(page.getByText("Web Push API Tester")).toBeVisible();
 
     await page.locator('[role="tab"]', { hasText: "Analytics" }).click();
     await expect(page.getByText("Measurement ID").first()).toBeVisible();
 
+    await page.locator('[role="tab"]', { hasText: "Auth" }).click();
+    await expect(page.getByText("Current Session")).toBeVisible();
+
+    await page.locator('[role="tab"]', { hasText: "Env" }).click();
+    await expect(page.getByText("Build Info")).toBeVisible();
+
     await page.locator('[role="tab"]', { hasText: "Health" }).click();
     await expect(page.locator("text=Refresh All")).toBeVisible();
   });
 
-  test("should have exactly 4 tabs", async ({ page }) => {
+  test("should have exactly 10 tabs", async ({ page }) => {
     const tabs = page.locator('[role="tab"]');
-    await expect(tabs).toHaveCount(4);
+    await expect(tabs).toHaveCount(10);
   });
 
   test("should mark only the active tab with data-state active", async ({
@@ -1165,37 +1522,21 @@ test.describe("Admin Page — Tab Navigation", () => {
   }) => {
     // Health tab active by default
     const healthTab = page.locator('[role="tab"]', { hasText: "Health" });
-    const consoleTab = page.locator('[role="tab"]', { hasText: "Console" });
-    const pushTab = page.locator('[role="tab"]', { hasText: "Push" });
-    const analyticsTab = page.locator('[role="tab"]', {
-      hasText: "Analytics",
-    });
-
     await expect(healthTab).toHaveAttribute("data-state", "active");
-    await expect(consoleTab).toHaveAttribute("data-state", "inactive");
-    await expect(pushTab).toHaveAttribute("data-state", "inactive");
-    await expect(analyticsTab).toHaveAttribute("data-state", "inactive");
 
-    // Switch to Console
-    await consoleTab.click();
-    await expect(healthTab).toHaveAttribute("data-state", "inactive");
-    await expect(consoleTab).toHaveAttribute("data-state", "active");
-    await expect(pushTab).toHaveAttribute("data-state", "inactive");
-    await expect(analyticsTab).toHaveAttribute("data-state", "inactive");
+    // All other tabs should be inactive
+    const tabNames = ["Console", "Deploy", "Errors", "Perf", "SEO", "Push", "Analytics", "Auth", "Env"];
+    for (const name of tabNames) {
+      const tab = page.locator('[role="tab"]', { hasText: name });
+      await expect(tab).toHaveAttribute("data-state", "inactive");
+    }
 
-    // Switch to Push
-    await pushTab.click();
+    // Switch to Deploy and verify
+    await page.locator('[role="tab"]', { hasText: "Deploy" }).click();
     await expect(healthTab).toHaveAttribute("data-state", "inactive");
-    await expect(consoleTab).toHaveAttribute("data-state", "inactive");
-    await expect(pushTab).toHaveAttribute("data-state", "active");
-    await expect(analyticsTab).toHaveAttribute("data-state", "inactive");
-
-    // Switch to Analytics
-    await analyticsTab.click();
-    await expect(healthTab).toHaveAttribute("data-state", "inactive");
-    await expect(consoleTab).toHaveAttribute("data-state", "inactive");
-    await expect(pushTab).toHaveAttribute("data-state", "inactive");
-    await expect(analyticsTab).toHaveAttribute("data-state", "active");
+    await expect(
+      page.locator('[role="tab"]', { hasText: "Deploy" }),
+    ).toHaveAttribute("data-state", "active");
   });
 
   test("should show correct content for each tab", async ({ page }) => {
@@ -1207,21 +1548,23 @@ test.describe("Admin Page — Tab Navigation", () => {
     await expect(page.locator("text=Request")).toBeVisible();
     await expect(page.locator("text=Refresh All")).not.toBeVisible();
 
-    // Switch to Push — should show push tester, not console
-    await page.locator('[role="tab"]', { hasText: "Push" }).click();
-    await expect(page.getByText("Web Push API Tester")).toBeVisible();
+    // Switch to Deploy
+    await page.locator('[role="tab"]', { hasText: "Deploy" }).click();
+    await expect(page.getByText("Production Deployment")).toBeVisible();
     await expect(page.locator("text=Request")).not.toBeVisible();
 
-    // Switch to Analytics — should show GA info, not push
-    await page.locator('[role="tab"]', { hasText: "Analytics" }).click();
-    await expect(page.getByText("Measurement ID").first()).toBeVisible();
-    await expect(page.getByText("Web Push API Tester")).not.toBeVisible();
+    // Switch to Env
+    await page.locator('[role="tab"]', { hasText: "Env" }).click();
+    await expect(page.getByText("Build Info")).toBeVisible();
+    await expect(page.getByText("Production Deployment")).not.toBeVisible();
   });
 
   test("should have icons in tab labels", async ({ page }) => {
     // Each tab has an SVG icon (lucide icons)
     const tabs = page.locator('[role="tab"]');
-    for (let i = 0; i < 4; i++) {
+    const count = await tabs.count();
+    expect(count).toBe(10);
+    for (let i = 0; i < count; i++) {
       const tab = tabs.nth(i);
       const svg = tab.locator("svg");
       await expect(svg).toBeVisible();

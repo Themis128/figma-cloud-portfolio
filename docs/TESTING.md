@@ -282,36 +282,72 @@ Shared helpers used across spec files:
 - ✅ Reset to defaults functionality
 - ✅ Responsive layout on mobile viewport (375×812)
 
-#### `playwright-tests/chatbot.spec.ts` — AI Chatbot Widget (12 tests)
+#### `playwright-tests/chatbot.spec.ts` — AI Chatbot Widget (41 tests)
 
-**Coverage:** Toggle behaviour, welcome message, suggested questions, message sending, streaming UI, booking flow, accessibility
+**Coverage:** Toggle behaviour, panel structure, welcome message, suggested questions, message sending, streaming UI, multi-turn conversation, booking flow, keyboard interaction, accessibility, state persistence
 
-The chatbot uses a **local RAG + LLM pipeline** (ChromaDB + Llama 3.2 3B Instruct via llama-cpp-python) — fully offline, no API keys required. Tests that require the FastAPI bot server (port 8001) skip gracefully when it's not running.
+The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests that require the Bedrock backend skip gracefully when AWS credentials are not configured or the Express server is not running.
 
-**Toggle behaviour (3 tests)**
+**Toggle behaviour (7 tests)**
 - ✅ Floating toggle button visible on page load with "Chat with AI" text
-- ✅ Panel opens on click (header, subtitle visible; toggle becomes aria-hidden)
-- ✅ Panel closes via close button (toggle reappears)
+- ✅ Pulsing status indicator (animated ping dot + solid cyan dot)
+- ✅ Cyberpunk styling (fixed position, font-mono)
+- ✅ Panel opens on click (header, subtitle visible; toggle becomes inert with opacity-0 + pointer-events-none)
+- ✅ Toggle gets tabIndex -1 when panel is open
+- ✅ Panel closes via close button (toggle reappears with full opacity)
+- ✅ Multiple open/close cycles work correctly
 
-**Welcome message & suggested questions (2 tests)**
-- ✅ Welcome message displayed on open
-- ✅ 4 suggested questions visible (skills, cloud experience, certifications, booking)
+**Panel structure (5 tests)**
+- ✅ Header displays "TB" avatar initials with green online indicator
+- ✅ Glass-morphism styling (backdrop-blur)
+- ✅ Input field with correct placeholder ("Ask about Themis…")
+- ✅ Send button visible with "Send" text
+- ✅ Input and Send button both interactive in bottom bar
 
-**Sending messages (4 tests)**
-- ✅ Typed message sent and local LLM response received
-- ✅ Suggested question click sends message and gets response
-- ✅ Enter key sends message
+**Welcome message & suggested questions (5 tests)**
+- ✅ Full welcome message displayed (including "book a teleconference call")
+- ✅ Welcome message styled as assistant bubble (bg-white/5)
+- ✅ All 4 suggested questions visible (skills, cloud experience, certifications, booking)
+- ✅ Suggested questions are clickable `<button>` elements
+- ✅ Suggested questions disappear after sending a message (bot-dependent, skips)
+
+**Sending messages (8 tests)**
+- ✅ Typed message sent and local LLM response received (bot-dependent)
+- ✅ User messages have distinct styling from assistant (cyan vs white, bot-dependent)
+- ✅ Suggested question click sends message and gets response (bot-dependent)
+- ✅ Enter key sends message (bot-dependent)
+- ✅ Input field cleared after sending (bot-dependent)
 - ✅ Empty messages cannot be sent (Send button disabled)
+- ✅ Whitespace-only messages cannot be sent
+- ✅ Enter key does not send empty message (no user bubble created)
 
-**Streaming UI (1 test)**
-- ✅ Input disabled and loading indicator shown during LLM inference
+**Streaming UI (3 tests)**
+- ✅ Input disabled and bouncing dots shown during LLM inference; Send text hidden (bot-dependent)
+- ✅ Typing cursor (animated pulse) shown during streaming (bot-dependent)
+- ✅ Send button re-enables with "Send" text after response completes (bot-dependent)
 
-**Booking flow (1 test)**
-- ✅ Booking intent triggers either BookingCard or text response
+**Multi-turn conversation (1 test)**
+- ✅ Two sequential messages sent and both receive responses; both user messages visible (bot-dependent)
 
-**Accessibility (2 tests)**
+**Booking flow (2 tests)**
+- ✅ Booking intent triggers either BookingCard or text response (bot-dependent)
+- ✅ Booking suggested question appears as user message bubble (bot-dependent)
+
+**Keyboard interaction (3 tests)**
+- ✅ Shift+Enter does not send the message
+- ✅ Typing in the input field updates its value
+- ✅ Send button enables/disables reactively as input text changes
+
+**Accessibility (5 tests)**
 - ✅ Toggle and close buttons have proper aria-labels
-- ✅ Input auto-focused when chat opens
+- ✅ Aria-label toggles between "Open chat" and "Chat is open" states
+- ✅ Input auto-focused when chat opens (after 100ms delay)
+- ✅ Close button visible and clickable
+- ✅ Input is enabled and editable
+
+**State persistence (2 tests)**
+- ✅ Messages preserved after close and reopen (bot-dependent)
+- ✅ Welcome message and suggested questions persist after close/reopen (no messages sent)
 
 ---
 

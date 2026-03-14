@@ -80,9 +80,6 @@ pnpm dev
 # Terminal 2: Start Express API server (backend on port 3001)
 npx tsx server/index.ts
 
-# Terminal 3: Start Python chatbot backend (port 8001)
-pnpm dev:bot
-
 # Or run all servers concurrently
 pnpm dev:all
 ```
@@ -92,8 +89,7 @@ pnpm dev:all
 ```bash
 pnpm dev                        # Start Next.js dev server
 pnpm dev:server               # Start Express API server
-pnpm dev:bot                  # Start Python chatbot backend
-pnpm dev:all                  # Start all development servers
+pnpm dev:all                  # Start all development servers (Next.js + Express)
 pnpm build                      # Production static export (out/)
 pnpm build:server             # Build server for Lambda deployment
 pnpm typecheck                  # TypeScript validation

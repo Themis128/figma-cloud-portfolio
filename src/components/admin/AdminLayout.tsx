@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ export default function AdminLayout({
               {userEmail}
             </span>
           )}
+          <ThemeToggle />
           <Badge
             variant="outline"
             className="border-green-500/40 text-green-400 text-[10px] uppercase tracking-wider"
