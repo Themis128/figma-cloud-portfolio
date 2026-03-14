@@ -32,16 +32,16 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
 
     // Default values
     const defaultTitle =
-      "Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist";
+      "Themistoklis Baltzakis - IT Network Engineer";
     const defaultDescription =
-      "Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments.";
+      "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.";
     const defaultImage = `${baseURL}/logo.svg`;
     const defaultKeywords = [
-      "Cloud Architecture",
-      "Cybersecurity",
-      "Azure",
-      "Microsoft 365",
-      "DevOps",
+      "IT Network Engineer",
+      "Cisco Systems",
+      "Fortinet",
+      "Network Security",
+      "Azure AD",
       "Portfolio",
     ];
 
@@ -239,66 +239,65 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
 export const metadataConfigs = {
   home: {
     title:
-      "Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist",
+      "Themistoklis Baltzakis - IT Network Engineer",
     description:
-      "Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments.",
+      "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
     keywords: [
-      "Cloud Architecture",
-      "Cybersecurity",
-      "Azure",
-      "Microsoft 365",
-      "DevOps",
+      "IT Network Engineer",
+      "Cisco Systems",
+      "Fortinet",
+      "Network Security",
+      "Azure AD",
       "Portfolio",
-      "Cloud Security",
     ],
     type: "website" as const,
     author: "Themistoklis Baltzakis",
     tags: [
-      "Cloud",
+      "Networking",
+      "Cisco",
+      "Fortinet",
       "Security",
-      "Architecture",
-      "DevOps",
       "Azure",
       "Microsoft 365",
     ],
   },
 
   about: {
-    title: "About Themistoklis Baltzakis - Cloud & Security Expert",
+    title: "About Themistoklis Baltzakis - IT Network Engineer",
     description:
-      "Learn more about my journey in cloud architecture and cybersecurity, with 15+ years of experience in IT leadership and innovation.",
+      "Learn more about my journey in network engineering and IT infrastructure, with 15+ years of experience in Cisco systems and security solutions.",
     keywords: [
       "About",
       "Experience",
       "Background",
-      "Cloud Expert",
-      "Security Specialist",
+      "Network Engineer",
+      "IT Infrastructure",
     ],
     type: "profile" as const,
     author: "Themistoklis Baltzakis",
-    tags: ["Experience", "Background", "Expertise", "Leadership"],
+    tags: ["Experience", "Background", "Expertise", "Networking"],
   },
 
   projects: {
-    title: "Projects & Portfolio - Cloud Architecture & Cybersecurity",
+    title: "Projects & Portfolio - Network Infrastructure & Security",
     description:
-      "Explore my latest work and technical projects in cloud architecture, cybersecurity, and modern web development.",
+      "Explore my latest work and technical projects in network infrastructure, security, and enterprise IT.",
     keywords: [
       "Projects",
       "Portfolio",
-      "Cloud Projects",
+      "Network Projects",
       "Security Projects",
-      "Web Development",
+      "IT Infrastructure",
     ],
     type: "website" as const,
     author: "Themistoklis Baltzakis",
-    tags: ["Projects", "Portfolio", "Cloud", "Security", "Development"],
+    tags: ["Projects", "Portfolio", "Networking", "Security", "Infrastructure"],
   },
 
   resume: {
     title: "Resume - Themistoklis Baltzakis",
     description:
-      "Download my professional resume showcasing 15+ years of experience in cloud architecture and cybersecurity.",
+      "Download my professional resume showcasing 15+ years of experience in network infrastructure and IT engineering.",
     keywords: ["Resume", "CV", "Experience", "Skills", "Professional"],
     type: "article" as const,
     author: "Themistoklis Baltzakis",

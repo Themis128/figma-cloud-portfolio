@@ -9,73 +9,69 @@ import Navigation from "@/components/Navigation";
 export const metadata: Metadata = {
   title: "Work Experience",
   description:
-    "Professional work experience of Themistoklis Baltzakis - Cloud Architect & Cybersecurity Specialist with expertise in Cisco virtualization, Azure AD, and enterprise IT infrastructure.",
+    "Professional work experience of Themistoklis Baltzakis - IT Network Engineer with expertise in Cisco systems, Fortinet security, Azure AD, and enterprise IT infrastructure.",
 };
 
 const experiences = [
   {
+    company: "Skaramangas Shipyards",
+    position: "IT Network Engineer",
+    period: "2025 – Present",
+    location: "Skaramangas, Attiki, Greece",
+    responsibilities: [
+      "Design, maintain, and troubleshoot Cisco-based network infrastructure for a maritime transportation company managing 8.1M+ deadweight tonnes fleet",
+      "Manage and secure Fortinet firewall environments to protect critical data center infrastructure",
+      "Ensure high availability of core network systems supporting global operations across 1,000+ ports",
+      "Provide technical support for internal users and implement infrastructure improvements",
+      "Collaborate with IT teams for infrastructure planning and modernization of fleet management systems",
+    ],
+  },
+  {
     company: "Estarta Solutions",
-    position: "Systems and Network Engineer",
-    period: "Dec 2024 – Mar 2025",
-    location: "Remote",
+    position: "Network and Systems Engineer",
+    period: "Recent",
+    location: "Greece",
     responsibilities: [
-      "Administered Cisco virtualization platforms including UCS, HyperFlex, and ACI fabric infrastructure",
-      "Managed VMware vSphere and ESXi environments for enterprise virtualization workloads",
-      "Implemented network virtualization solutions using Cisco ACI and Nexus switching platforms",
-      "Monitored and optimized infrastructure performance across hybrid cloud environments",
-      "Collaborated with cross-functional teams to deliver scalable datacenter solutions",
+      "Resolved over 90% of Cisco infrastructure issues in data centers, ensuring 100% SLA compliance",
+      "Streamlined RMA process, enhancing logistics communication efficiency by 30%",
+      "Proactively monitored delivery statuses and resolved logistics challenges, minimizing downtime",
     ],
   },
   {
-    company: "Cosmos Business Systems Group",
-    position: "IT Support Engineer",
-    period: "Mar 2023 – May 2024",
-    location: "Athens, Greece",
+    company: "Cosmos Business Systems",
+    position: "IT Consultant Analyst",
+    period: "Recent",
+    location: "Greece",
     responsibilities: [
-      "Managed Azure Active Directory tenant administration, user provisioning, and identity governance",
-      "Delivered Microsoft 365 support services including Exchange Online, Teams, and SharePoint",
-      "Deployed and administered Microsoft Intune for mobile device management and endpoint security",
-      "Configured conditional access policies and MFA to enforce zero-trust security principles",
-      "Provided Level 2/3 support for enterprise IT incidents and service requests",
+      "Specialized in managing and troubleshooting Azure Active Directory services",
+      "Maintained robust security protocols including RBAC and conditional access policies",
+      "Delivered comprehensive support for Microsoft 365 services",
+      "Specialized in MDM and MAM using Microsoft Intune",
+      "Gained experience in network security and troubleshooting Cisco networking issues",
     ],
   },
   {
-    company: "CPI SA (Nielsen Greece)",
-    position: "IT Consultant",
-    period: "Feb 2023 – Mar 2023",
-    location: "Athens, Greece",
+    company: "CPI SA (outsourced @ Nielsen Hellas)",
+    position: "IT Consultant Analyst",
+    period: "Mar 2023",
+    location: "Greece",
     responsibilities: [
-      "Contributed to technology roadmap development and IT strategy planning",
-      "Administered on-premises and cloud-based Active Directory environments",
-      "Managed IT service delivery through ServiceNow ITSM platform",
-      "Operated CyberArk privileged access management (PAM) solution for credential vaulting",
-      "Assessed existing infrastructure and provided recommendations for modernization",
+      "Provided strategic guidance aligning technology initiatives with business goals",
+      "Managed and maintained Active Directory environments",
+      "Utilized ServiceNow to manage and track IT service requests, incidents, and inventory",
+      "Ensured robust Privileged Access Management (PAM) using CyberArk",
     ],
   },
   {
-    company: "Athens International Airport",
-    position: "Network & Infrastructure Engineer",
-    period: "Jun 2021 – Jan 2023",
-    location: "Athens, Greece",
+    company: "Printec Hellas",
+    position: "Technical Engineer",
+    period: "Jan 2022 – Sep 2022",
+    location: "Greece",
     responsibilities: [
-      "Rebuilt and upgraded critical airport network infrastructure to support post-COVID operations",
-      "Designed and implemented redundant network topologies ensuring 99.99% uptime",
-      "Managed firewall policies, VLANs, and inter-VLAN routing across the campus network",
-      "Supported biometric and access-control system integrations for terminal security",
-      "Coordinated with vendors and stakeholders during major infrastructure upgrade projects",
-    ],
-  },
-  {
-    company: "Cosmote / OTE Group",
-    position: "Telecommunications Engineer",
-    period: "Mar 2020 – May 2021",
-    location: "Athens, Greece",
-    responsibilities: [
-      "Provided technical telecommunications support to vulnerable communities during COVID-19",
-      "Maintained and troubleshot DSL, VDSL, and fiber broadband infrastructure",
-      "Configured customer-premise equipment and resolved last-mile connectivity issues",
-      "Collaborated with field teams to improve service restoration SLAs",
-      "Documented network incidents and contributed to knowledge base improvements",
+      "Specialized use of Windows and Cisco Systems, servers, switches, routers, firewalls, LAN, WAN",
+      "Installed and upgraded hardware-based networks, network services, and equipment",
+      "Performed troubleshooting analysis of network, servers, workstations, and associated systems",
+      "Diagnosed and troubleshot technical issues including account setup and network configuration",
     ],
   },
 ];
@@ -98,7 +94,7 @@ export default function ProductPage() {
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
               <p className="text-cyan-400 text-lg sm:text-xl font-semibold tracking-wide">
-                Cloud Architecture · Cybersecurity · Network Infrastructure
+                Network Infrastructure · Cisco Systems · Fortinet Security
               </p>
               <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
                 15+ years of hands-on IT expertise across enterprise

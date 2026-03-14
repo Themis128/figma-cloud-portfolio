@@ -1,70 +1,104 @@
 # Certifications & Skills
 
-## Professional Certifications
-- **AWS Certified Solutions Architect — Associate (SAA-C02)** — AWS cloud architecture certification
-- **AWS Cloud Practitioner** — Amazon Web Services foundational certification
+## Professional Certifications (from CV)
+- **AWS Certified Cloud Practitioner** — Amazon Web Services foundational certification
 - **Cisco DevNet Associate** — Cisco software development and automation certification
 - **Cisco CCNA** — Cisco Certified Network Associate (Networking and Telecommunications)
-- **Microsoft Azure Solutions Architect** — Expert-level Azure architecture certification
-- **CISSP** (Certified Information Systems Security Professional) — Premier cybersecurity certification
-- **CEH** (Certified Ethical Hacker) — Ethical hacking and penetration testing certification
-- **ITIL Foundation** — IT service management framework certification
 - **Windows Server 2016: Installation and Configuration** — Microsoft server administration
-- **Communication within Teams** — Professional collaboration certification
-- **Mastering Common Interview Questions** — Professional development
 
-## Certification Areas
-- Zero Trust Security Architecture
-- Multi-Cloud Migration & Management
-- Microsoft 365 Security Implementation
-- Compliance & Risk Management
-- Enterprise Infrastructure Design
+## Credly Verified Badges & Micro-Credentials (16 badges)
+Themis has 16 verified digital badges on Credly (https://www.credly.com/users/themistoklis-baltzakis):
 
-## Top Skills (LinkedIn Profile)
-- Didactics of Informatics
-- Information Technology and Education
-- Educational Software Design
-- Microsoft Azure Solutions Architect Expert
-- Certified Information Systems Security Professional (CISSP)
-- Certified Ethical Hacker (CEH)
-- ITIL Foundation Certification
-- Azure AD & Identity Management
+### Cisco Networking Academy (14 badges)
+1. **Career Preparation Workshop** — Issued Jul 2025. Completed Career Preparation Workshop and enrolled in Talent Bridge Matching Engine.
+2. **CyberOps Associate** — Issued Apr 2025. Completed CyberOps Associate course with 30+ hands-on labs in security monitoring and threat detection.
+3. **CCNA: Introduction to Networks** — Issued Nov 2024. IP addressing, networking fundamentals, 54 labs completed.
+4. **Networking Basics** — Issued Jul 2024. Types of networks, how they work, 13 Packet Tracer activities.
+5. **Data Analytics Essentials** — Issued Feb 2024. Understanding how data analytics creates value from data.
+6. **Introduction to Data Science** — Issued Feb 2024. Basic concepts of Data Analytics, Data Engineering, Data Science and AI/ML.
+7. **DevNet Associate** — Issued Apr 2023. Python coding, Linux, APIs, Network Fundamentals, software development and automation.
+8. **Python Essentials 2** — Issued Dec 2022. Intermediate Python programming, OOP, exception handling.
+9. **Python Essentials 1** — Issued Jul 2022. Computer programming concepts and Python language syntax.
+10. **Networking Devices and Initial Configuration** — Issued Jul 2022. Cloud and virtualization, IP addressing schemes.
+11. **CCNA: Enterprise Networking, Security, and Automation** — Issued Jul 2022. Scalable network architectures, dynamic routing, security threats, automation.
+12. **Cyber Threat Management** — Issued Jul 2022. Cybersecurity policies, network vulnerability assessment, risk management.
+13. **Junior Cybersecurity Analyst Career Path** — Issued Jul 2022. Monitor and protect networks; firewalls, cloud security, cryptography.
+14. **Endpoint Security** — Issued Jul 2022. Network security, operating systems, endpoint security fundamentals.
+
+### Other Credentials (2 badges)
+15. **Basic Proficiency in KNIME Analytics Platform** (KNIME) — Issued Dec 2023. Passed L1 examination for data cleaning, transformation, and visualization.
+16. **LFS258: Kubernetes Fundamentals** (The Linux Foundation) — Issued Dec 2022. Strong operating knowledge of Kubernetes deployment and containerized applications.
+
+## Skills (from CV)
+- Cisco Systems
+- Azure Active Directory
+- Microsoft 365
+- AWS Cloud Practitioner
+- Network Security
+- Microsoft Intune
+- ServiceNow
+- CyberArk PAM
+- Windows Server
+- TCP/IP
+- DNS/DHCP
+- Virtualization
+- Cloud Migration
+- Project Management
+- DevNet Associate
+- Network Troubleshooting
+- Fortinet Firewalls
+- Python
+- Kubernetes
 
 ## Technical Skills
 
-### Cloud Platforms
-- Microsoft Azure (Azure AD, Azure Solutions Architecture)
-- Amazon Web Services (AWS Solutions Architect Associate certified)
-- Multi-cloud Migration and Management
-- Infrastructure as Code (IaC)
+### Networking & Infrastructure
+- Cisco Systems (ACI, UCS, HyperFlex, Nexus, B-Series/C-Series servers)
+- Fortinet Firewalls and security solutions
+- VMware vSphere & ESXi
+- LAN/WAN architecture
+- TCP/IP, DNS, DHCP
+- VLAN Configuration & Inter-VLAN Routing
+- Network Infrastructure Design (high availability)
+- Switches, Routers, Hubs, Firewalls
+- Data center management
+- Cisco CCNA certified
 
 ### Cybersecurity
-- Zero-Trust Security Architecture
+- CyberOps Associate (Cisco verified)
+- Cyber Threat Management
+- Junior Cybersecurity Analyst Career Path
+- Endpoint Security
+- Fortinet firewall environments
 - Azure Active Directory & Identity Governance
 - CyberArk Privileged Access Management (PAM)
 - Okta Identity and Access Management (IAM), SSO, MFA
-- Microsoft Sentinel (SIEM)
 - Conditional Access & Multi-Factor Authentication (MFA)
-- Firewall Management & Network Security
 - RBAC (Role-Based Access Control) and PoLP (Principle of Least Privilege)
+- Network Security
 
-### Networking
-- Cisco ACI (Application Centric Infrastructure)
-- Cisco UCS (Unified Computing System) — B-Series and C-Series servers
-- Cisco HyperFlex hyperconverged infrastructure
-- VMware vSphere & ESXi
-- Nexus Switching Platforms
-- VLAN Configuration & Inter-VLAN Routing
-- Network Infrastructure Design (99.99% uptime)
-- Cisco CCNA certified
+### Cloud & Identity
+- Microsoft Azure (Azure AD, Identity Governance)
+- Amazon Web Services (AWS Cloud Practitioner certified)
+- Microsoft 365 (Exchange Online, Teams, SharePoint, Outlook, Word, Excel)
+- Kubernetes Fundamentals (Linux Foundation verified)
+- Multi-cloud environments
+- Cloud Migration
+
+### Data & Analytics
+- Data Analytics Essentials (Cisco verified)
+- Introduction to Data Science (Cisco verified)
+- KNIME Analytics Platform (L1 certified)
+- Python (Essentials 1 & 2 — Cisco verified)
 
 ### Software Development
 - React & Next.js
 - TypeScript
 - Node.js
-- Python
+- Python (Cisco verified — Essentials 1 & 2)
 - Android App Development (iOS and Android)
 - Full-stack Web Development
+- DevNet Associate (Cisco verified — APIs, automation)
 
 ### Tools & Platforms
 - Microsoft 365 (Exchange Online, Teams, SharePoint, Outlook, Word, Excel)
@@ -73,6 +107,9 @@
 - Okta (SSO, IAM)
 - CyberArk (PAM, Vault Management)
 - GitHub Actions (CI/CD)
+- Windows Server
+- Kubernetes
+- KNIME Analytics Platform
 
 ### Hardware & Infrastructure
 - Cisco UCS B-Series and C-Series servers, fabric interconnects

@@ -27,7 +27,7 @@ const WELCOME_MESSAGE: Message = {
 
 const SUGGESTED_QUESTIONS = [
   "What are your top skills?",
-  "Tell me about your cloud experience.",
+  "Tell me about your networking experience.",
   "What certifications do you hold?",
   "Book a call with Themis.",
 ];
