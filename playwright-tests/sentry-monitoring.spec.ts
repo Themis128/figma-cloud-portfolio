@@ -8,7 +8,7 @@ import {
 /**
  * Sentry Error Tracking and Performance Monitoring Testing Suite
  * Tests for error tracking, performance monitoring, and Sentry integration
- * Integration: @sentry/node v10.36.0, @sentry/react v10.36.0, @sentry/tracing v7.120.4
+ * Integration: @sentry/nextjs v10.43.0 with browserTracingIntegration + replayIntegration
  */
 
 test.describe("Sentry Error Tracking", () => {
@@ -72,9 +72,9 @@ test.describe("Sentry Error Tracking", () => {
 
       const dsnValidation = await page.evaluate(() => {
         const validateDSN = (dsn: string): boolean => {
-          // Sentry DSN format: https://<key>@<organization>.ingest.sentry.io/<project>
+          // Sentry DSN format: https://<key>@<organization>.ingest[.<region>].sentry.io/<project>
           const dsnPattern =
-            /^https:\/\/[a-f0-9]{32}@[a-z0-9]+\.ingest\.sentry\.io\/\d+$/;
+            /^https:\/\/[a-f0-9]{32}@[a-z0-9]+\.ingest(?:\.[a-z]{2})?\.sentry\.io\/\d+$/;
           return dsnPattern.test(dsn);
         };
 

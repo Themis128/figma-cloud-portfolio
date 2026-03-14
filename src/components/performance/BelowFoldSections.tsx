@@ -40,4 +40,17 @@ const IndustryComparison = dynamic(
   { ssr: false, loading: () => <SectionSkeleton rows={4} /> },
 );
 
-export { SpeedTestRunner, WebVitalsExplainer, IndustryComparison };
+const LighthouseScore = dynamic(
+  () =>
+    import("@/components/performance/LighthouseScore").then((m) => ({
+      default: m.LighthouseScore,
+    })),
+  { ssr: false, loading: () => <SectionSkeleton rows={2} /> },
+);
+
+export {
+  SpeedTestRunner,
+  WebVitalsExplainer,
+  IndustryComparison,
+  LighthouseScore,
+};

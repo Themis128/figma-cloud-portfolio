@@ -6,12 +6,13 @@ import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import {
   IndustryComparison,
+  LighthouseScore,
   SpeedTestRunner,
   WebVitalsExplainer,
 } from "@/components/performance/BelowFoldSections";
 import { LiveLoadHero } from "@/components/performance/LiveLoadHero";
-import { OptimizationChecklist } from "@/components/performance/OptimizationChecklist";
-import { TechStackRationale } from "@/components/performance/TechStackRationale";
+import { PerformanceMethodology } from "@/components/performance/PerformanceMethodology";
+import { SectionNav } from "@/components/performance/SectionNav";
 
 export const metadata: Metadata = {
   title: "Performance",
@@ -29,8 +30,8 @@ function MetricSkeleton() {
     <div className="space-y-6 animate-pulse">
       <div className="h-32 bg-muted/20 rounded-lg mx-auto max-w-xs" />
       <div className="h-24 w-24 bg-muted/10 rounded-full mx-auto" />
-      <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
-        {[0, 1, 2].map((i) => (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-md mx-auto">
+        {[0, 1, 2, 3].map((i) => (
           <div key={i} className="h-20 bg-muted/20 rounded-lg" />
         ))}
       </div>
@@ -38,15 +39,27 @@ function MetricSkeleton() {
   );
 }
 
+const SECTIONS = [
+  { id: "hero", label: "Live Metrics" },
+  { id: "speed-test", label: "Speed Test" },
+  { id: "vitals", label: "Web Vitals" },
+  { id: "lighthouse", label: "Lighthouse" },
+  { id: "comparison", label: "Comparison" },
+  { id: "methodology", label: "How It's Built" },
+] as const;
+
 export default function PerformancePage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
       <CircuitBackground />
       <Navigation />
 
+      <SectionNav sections={SECTIONS} />
+
       <main id="main-content" className="relative z-10">
         {/* ── SECTION 1: Hero — Your Load Experience ── */}
         <section
+          id="hero"
           aria-labelledby="perf-hero-heading"
           className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20"
         >
@@ -79,6 +92,7 @@ export default function PerformancePage() {
 
         {/* ── SECTION 2: Interactive Speed Test ── */}
         <section
+          id="speed-test"
           aria-labelledby="speed-test-heading"
           className="container mx-auto px-4 sm:px-6 lg:px-8 py-20"
         >
@@ -89,6 +103,7 @@ export default function PerformancePage() {
 
         {/* ── SECTION 3: Core Web Vitals Explained ── */}
         <section
+          id="vitals"
           aria-labelledby="vitals-heading"
           className="container mx-auto px-4 sm:px-6 lg:px-8 py-20"
         >
@@ -97,8 +112,20 @@ export default function PerformancePage() {
 
         <div className="border-t border-border/10" />
 
-        {/* ── SECTION 4: Industry Comparison ── */}
+        {/* ── SECTION 4: Lighthouse Audit ── */}
         <section
+          id="lighthouse"
+          aria-labelledby="lighthouse-heading"
+          className="container mx-auto px-4 sm:px-6 lg:px-8 py-20"
+        >
+          <LighthouseScore />
+        </section>
+
+        <div className="border-t border-border/10" />
+
+        {/* ── SECTION 5: Industry Comparison ── */}
+        <section
+          id="comparison"
           aria-labelledby="comparison-heading"
           className="container mx-auto px-4 sm:px-6 lg:px-8 py-20"
         >
@@ -107,22 +134,13 @@ export default function PerformancePage() {
 
         <div className="border-t border-border/10" />
 
-        {/* ── SECTION 5: What Makes This Site Fast ── */}
+        {/* ── SECTION 6: How It's Built (merged checklist + stack) ── */}
         <section
-          aria-labelledby="checklist-heading"
-          className="container mx-auto px-4 sm:px-6 lg:px-8 py-20"
-        >
-          <OptimizationChecklist />
-        </section>
-
-        <div className="border-t border-border/10" />
-
-        {/* ── SECTION 6: Tech Stack Rationale ── */}
-        <section
-          aria-labelledby="stack-heading"
+          id="methodology"
+          aria-labelledby="methodology-heading"
           className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32"
         >
-          <TechStackRationale />
+          <PerformanceMethodology />
         </section>
       </main>
     </div>

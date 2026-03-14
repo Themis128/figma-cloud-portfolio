@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
+
 interface ComparisonItem {
   label: string;
   lcp: number; // in ms
@@ -11,7 +13,7 @@ interface ComparisonItem {
 }
 
 // Benchmarks based on HTTP Archive Web Almanac 2024 (desktop median values)
-const COMPARISONS: ComparisonItem[] = [
+const INDUSTRY_BENCHMARKS: ComparisonItem[] = [
   {
     label: "Average E-Commerce Site",
     lcp: 5100,
@@ -25,16 +27,22 @@ const COMPARISONS: ComparisonItem[] = [
     source: "Web Almanac 2024",
   },
   {
+    label: "Top 10% of All Sites",
+    lcp: 1200,
+    color: "bg-emerald-400/50",
+    source: "Web Almanac 2024",
+  },
+  {
     label: "Average Portfolio Site",
     lcp: 3100,
     color: "bg-yellow-400/50",
     source: "Web Almanac 2024",
   },
   {
-    label: "This Portfolio",
-    lcp: 800,
-    color: "bg-cyan-400",
-    highlight: true,
+    label: "Google \"Good\" Threshold",
+    lcp: 2500,
+    color: "bg-green-400/40",
+    source: "web.dev",
   },
 ];
 
@@ -47,6 +55,21 @@ function formatLcp(ms: number): string {
 export function IndustryComparison() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const { metrics } = usePerformanceMonitoring();
+
+  // Build comparison list: industry benchmarks + live "This Portfolio" entry
+  const liveLcp = metrics.lcp;
+  const comparisons: ComparisonItem[] = [
+    ...INDUSTRY_BENCHMARKS,
+    {
+      label: "This Portfolio",
+      lcp: liveLcp ?? 800, // fallback until measured
+      color: "bg-cyan-400",
+      highlight: true,
+    },
+  ].sort((a, b) => b.lcp - a.lcp); // longest bar first
+
+  const avgPortfolioLcp = 3100;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -80,7 +103,7 @@ export function IndustryComparison() {
       </div>
 
       <div ref={containerRef} className="space-y-5 max-w-2xl mx-auto">
-        {COMPARISONS.map((item, i) => {
+        {comparisons.map((item, i) => {
           const targetWidth = (item.lcp / MAX_LCP) * 100;
           const delayMs = i * 150;
 
@@ -95,6 +118,11 @@ export function IndustryComparison() {
                   }
                 >
                   {item.label}
+                  {item.highlight && liveLcp === undefined && (
+                    <span className="text-foreground/30 text-xs ml-2">
+                      (measuring…)
+                    </span>
+                  )}
                 </span>
                 <span
                   className={`font-mono text-xs ${
@@ -123,10 +151,13 @@ export function IndustryComparison() {
                 />
               </div>
 
-              {item.highlight && (
+              {item.highlight && liveLcp !== undefined && (
                 <p className="text-[10px] text-cyan-400/50 font-mono">
-                  ↑ {Math.round(((3100 - item.lcp) / 3100) * 100)}% faster than
-                  avg portfolio
+                  ↑{" "}
+                  {Math.round(
+                    ((avgPortfolioLcp - item.lcp) / avgPortfolioLcp) * 100,
+                  )}
+                  % faster than avg portfolio
                 </p>
               )}
             </div>

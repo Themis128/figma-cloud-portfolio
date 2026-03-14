@@ -5,18 +5,15 @@ import type { ConsentState } from "@/hooks/useConsent";
 const STORAGE_KEY = "cookie-consent";
 const CONSENT_EVENT = "consent-updated";
 
-// Constants for Sentry configuration
-const SENTRY_CONFIG = {
-  SAMPLING_RATES: {
-    PRODUCTION_TRACE: 0.1,
-    DEVELOPMENT_TRACE: 1.0,
-    PRODUCTION_REPLAY: 0.1,
-    ERROR_REPLAY: 1.0,
-  },
-  DEFAULT_VERSION: "1.0.0",
-} as const;
-
-let sentryInitialized = false;
+/**
+ * Sentry is initialized automatically by sentry.client.config.ts at page load.
+ * This module provides:
+ *  - Consent-aware enabling/disabling of Sentry (GDPR compliance)
+ *  - Helper functions for custom error reporting, user tracking, etc.
+ *
+ * When analytics consent is revoked, we disable the Sentry client.
+ * When granted, the client was already initialized — we just enable it.
+ */
 
 /** Check localStorage for analytics consent */
 function hasAnalyticsConsent(): boolean {
@@ -31,86 +28,36 @@ function hasAnalyticsConsent(): boolean {
   }
 }
 
-/** Initialize Sentry (only runs once, only if consent is granted) */
-export function initSentry(): void {
-  if (sentryInitialized) return;
+/** Enable or disable the Sentry client based on consent */
+function applySentryConsent(): void {
   if (typeof window === "undefined") return;
 
-  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
-  if (!dsn) return;
+  const client = Sentry.getClient();
+  if (!client) return;
 
-  Sentry.init({
-    dsn,
-    environment: process.env.NODE_ENV,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate:
-      process.env.NODE_ENV === "production"
-        ? SENTRY_CONFIG.SAMPLING_RATES.PRODUCTION_TRACE
-        : SENTRY_CONFIG.SAMPLING_RATES.DEVELOPMENT_TRACE,
-    // Session Replay
-    replaysSessionSampleRate:
-      process.env.NODE_ENV === "production"
-        ? SENTRY_CONFIG.SAMPLING_RATES.PRODUCTION_REPLAY
-        : SENTRY_CONFIG.SAMPLING_RATES.DEVELOPMENT_TRACE,
-    replaysOnErrorSampleRate: SENTRY_CONFIG.SAMPLING_RATES.ERROR_REPLAY,
-    // Release tracking
-    release:
-      process.env.NEXT_PUBLIC_APP_VERSION || SENTRY_CONFIG.DEFAULT_VERSION,
-    // Error filtering
-    beforeSend(event, hint) {
-      const error = hint.originalException;
-      if (error && typeof error === "object" && "message" in error) {
-        const message = String(error.message).toLowerCase();
-
-        if (
-          message.includes("network error") ||
-          message.includes("failed to fetch") ||
-          message.includes("load chunk") ||
-          message.includes("loading chunk") ||
-          message.includes("script error")
-        ) {
-          return null;
-        }
-      }
-
-      return event;
-    },
-  });
-
-  sentryInitialized = true;
-}
-
-/**
- * Check consent and initialize Sentry if analytics consent is granted.
- * Safe to call multiple times — Sentry.init only runs once.
- */
-export function checkAndInitSentry(): void {
-  if (sentryInitialized) return;
   if (hasAnalyticsConsent()) {
-    initSentry();
+    // Client was already initialized by sentry.client.config.ts — just ensure enabled
+    client.getOptions().enabled = true;
+  } else {
+    // Disable sending events when consent is not granted
+    client.getOptions().enabled = false;
   }
 }
 
 /**
- * Set up a listener for consent changes and initialize Sentry when appropriate.
- * Call this once from a client component (e.g., layout).
+ * Set up a listener for consent changes and enable/disable Sentry accordingly.
+ * Call this once from a client component (e.g., SentryInit in layout).
  * Returns a cleanup function to remove the event listener.
  */
 export function setupSentryConsentListener(): () => void {
-  // Check current consent on setup
-  checkAndInitSentry();
+  // Apply current consent state
+  applySentryConsent();
 
   const handleConsentUpdate = (e: Event) => {
     const detail = (e as CustomEvent<ConsentState>).detail;
-    if (detail.analytics && !sentryInitialized) {
-      initSentry();
+    const client = Sentry.getClient();
+    if (client) {
+      client.getOptions().enabled = detail.analytics === true;
     }
   };
 
@@ -120,9 +67,9 @@ export function setupSentryConsentListener(): () => void {
   };
 }
 
-/** Whether Sentry has been initialized */
+/** Whether Sentry has been initialized (client config loaded) */
 export function isSentryInitialized(): boolean {
-  return sentryInitialized;
+  return Sentry.getClient() !== undefined;
 }
 
 // Performance monitoring helper

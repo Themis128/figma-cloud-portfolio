@@ -124,7 +124,7 @@ public/                   # Static assets
 
 ```typescript
 // Good
-components/Performance/SpeedTestRunner.tsx
+components/performance/SpeedTestRunner.tsx
 components/Chatbot/MessageBubble.tsx
 
 // Avoid
