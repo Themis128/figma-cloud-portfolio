@@ -9,6 +9,7 @@ const DIGITS = '0123456789';
 const CHARS = KATAKANA + LATIN + DIGITS;
 
 const AUTO_DISABLE_MS = 15_000;
+const FADE_DURATION_MS = 1_000;
 const FONT_SIZE = 14;
 const FADE_ALPHA = 0.05;
 const CYAN = '#22d3ee';
@@ -19,17 +20,44 @@ export default function MatrixRain() {
   const rafRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [active, setActive] = useState(false);
+  const [fadingOut, setFadingOut] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const fadeStartRef = useRef<number>(0);
 
-  const stop = useCallback(() => {
-    setActive(false);
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
 
+  const stop = useCallback(() => {
+    setFadingOut(true);
+    fadeStartRef.current = performance.now();
+  }, []);
+
+  // Handle fade-out completion
   useEffect(() => {
-    if (!active) {
-      cancelAnimationFrame(rafRef.current);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      return;
-    }
+    if (!fadingOut) return;
+
+    const checkFade = () => {
+      const elapsed = performance.now() - fadeStartRef.current;
+      if (elapsed >= FADE_DURATION_MS) {
+        setFadingOut(false);
+        setActive(false);
+      } else {
+        rafRef.current = requestAnimationFrame(checkFade);
+      }
+    };
+    rafRef.current = requestAnimationFrame(checkFade);
+
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [fadingOut]);
+
+  useEffect(() => {
+    if (!active || fadingOut) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -87,7 +115,7 @@ export default function MatrixRain() {
 
     rafRef.current = requestAnimationFrame(draw);
 
-    // Auto-disable after 15 seconds
+    // Auto-disable after 15 seconds (with fade-out)
     timerRef.current = setTimeout(stop, AUTO_DISABLE_MS);
 
     return () => {
@@ -95,30 +123,85 @@ export default function MatrixRain() {
       if (timerRef.current) clearTimeout(timerRef.current);
       window.removeEventListener('resize', resize);
     };
-  }, [active, stop]);
+  }, [active, fadingOut, stop]);
+
+  // Don't render anything if user prefers reduced motion
+  if (prefersReducedMotion) return null;
+
+  // Canvas opacity for fade-out
+  const canvasOpacity = fadingOut
+    ? Math.max(0, 1 - (performance.now() - fadeStartRef.current) / FADE_DURATION_MS)
+    : 1;
 
   return (
     <>
-      {active && (
+      {(active || fadingOut) && (
         <canvas
           ref={canvasRef}
-          className="fixed inset-0 z-30 pointer-events-none"
+          className="fixed inset-0 z-30 pointer-events-none transition-opacity duration-1000"
+          style={{ opacity: fadingOut ? canvasOpacity : 1 }}
           aria-hidden="true"
         />
       )}
 
       <button
         type="button"
-        onClick={() => setActive((prev) => !prev)}
-        className="fixed z-30 flex h-10 w-10 items-center justify-center rounded-full bg-card/60 backdrop-blur-sm border border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-colors"
+        onClick={() => {
+          if (fadingOut) return;
+          if (active) {
+            stop();
+          } else {
+            setActive(true);
+          }
+        }}
+        className={`fixed z-30 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-sm border transition-all duration-300 ${
+          active && !fadingOut
+            ? 'bg-cyan-400/20 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.4)]'
+            : 'bg-card/60 border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50'
+        }`}
         style={{ bottom: 'max(5rem, calc(1rem + var(--safe-area-bottom)))', right: 'max(1rem, var(--safe-area-right))' }}
         aria-label={active ? 'Disable matrix rain effect' : 'Enable matrix rain effect'}
         title={active ? 'Disable matrix rain' : 'Enable matrix rain'}
       >
-        <span className="text-lg leading-none" aria-hidden="true">
+        {/* Countdown ring (SVG circle that depletes over AUTO_DISABLE_MS) */}
+        {active && !fadingOut && (
+          <svg
+            className="absolute inset-0 -rotate-90"
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+          >
+            <circle
+              cx="20"
+              cy="20"
+              r="18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeDasharray={`${2 * Math.PI * 18}`}
+              strokeDashoffset="0"
+              className="text-cyan-400/50"
+              style={{
+                animation: `matrix-countdown ${AUTO_DISABLE_MS}ms linear forwards`,
+              }}
+            />
+          </svg>
+        )}
+        <span className="text-lg leading-none relative z-10" aria-hidden="true">
           {'\u26A1'}
         </span>
       </button>
+
+      {/* Keyframe for countdown ring */}
+      <style jsx>{`
+        @keyframes matrix-countdown {
+          from {
+            stroke-dashoffset: 0;
+          }
+          to {
+            stroke-dashoffset: ${2 * Math.PI * 18};
+          }
+        }
+      `}</style>
     </>
   );
 }
