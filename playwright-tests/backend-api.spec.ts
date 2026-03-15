@@ -134,7 +134,7 @@ test.describe("Backend API — Push Notifications", () => {
 });
 
 // ─── API Keys — Auth Protection ─────────────────────────────────────────────────
-// API Keys endpoints are protected by Firebase Auth (requireAuth middleware).
+// API Keys endpoints are protected by Cognito Auth (requireAuth middleware).
 // All requests without a valid Bearer token should return 401.
 
 test.describe("Backend API — API Keys Auth Protection", () => {

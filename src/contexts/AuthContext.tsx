@@ -1,10 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, onAuthStateChanged, type User } from "@/lib/firebase";
+import { Hub } from "aws-amplify/utils";
+import { getCurrentUser, type AuthUser } from "aws-amplify/auth";
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   loading: boolean;
 }
 
@@ -18,21 +19,38 @@ export function useAuth(): AuthContextType {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const unsubscribe = onAuthStateChanged(auth, (u) => {
-        setUser(u);
+    async function checkUser() {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch {
+        setUser(null);
+      } finally {
         setLoading(false);
-      });
-      return unsubscribe;
-    } catch {
-      // Firebase not configured (e.g. production uses Amplify Cognito)
-      setLoading(false);
-      return undefined;
+      }
     }
+
+    void checkUser();
+
+    const unsubscribe = Hub.listen("auth", ({ payload }) => {
+      switch (payload.event) {
+        case "signedIn":
+          void getCurrentUser().then(setUser).catch(() => setUser(null));
+          break;
+        case "signedOut":
+          setUser(null);
+          break;
+        case "tokenRefresh":
+          void getCurrentUser().then(setUser).catch(() => setUser(null));
+          break;
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   return (

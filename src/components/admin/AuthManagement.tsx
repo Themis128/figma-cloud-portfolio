@@ -3,37 +3,29 @@
 import { useEffect, useState } from "react";
 import {
   Key,
-  Lock,
   Shield,
   User,
 } from "lucide-react";
+import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { auth } from "@/lib/firebase";
 
 interface AuthInfo {
   currentUser: {
-    email: string | null;
-    uid: string;
-    emailVerified: boolean;
-    createdAt: string | null;
-    lastSignIn: string | null;
-    provider: string;
+    username: string;
+    userId: string;
+    signInMethod: string;
   } | null;
-  firebaseConfig: {
-    projectId: string | null;
-    authDomain: string | null;
-    configured: boolean;
-  };
-  amplifyConfig: {
-    configured: boolean;
+  cognitoConfig: {
+    userPoolId: string | null;
     region: string;
     appId: string;
   };
   token: {
     expiresAt: string | null;
     issuer: string | null;
+    groups: string[];
   } | null;
 }
 
@@ -42,42 +34,43 @@ export default function AuthManagement() {
 
   useEffect(() => {
     async function gatherAuthInfo() {
-      const user = auth.currentUser;
-
       const info: AuthInfo = {
         currentUser: null,
-        firebaseConfig: {
-          projectId: auth.app?.options?.projectId ?? null,
-          authDomain: auth.app?.options?.authDomain ?? null,
-          configured: !!auth.app?.options?.apiKey,
-        },
-        amplifyConfig: {
-          configured: true,
+        cognitoConfig: {
+          userPoolId: null,
           region: "us-east-1",
           appId: "d1zjif7pi1h3om",
         },
         token: null,
       };
 
-      if (user) {
+      try {
+        const currentUser = await getCurrentUser();
         info.currentUser = {
-          email: user.email,
-          uid: user.uid,
-          emailVerified: user.emailVerified,
-          createdAt: user.metadata.creationTime ?? null,
-          lastSignIn: user.metadata.lastSignInTime ?? null,
-          provider: user.providerData[0]?.providerId ?? "unknown",
+          username: currentUser.username,
+          userId: currentUser.userId,
+          signInMethod: currentUser.signInDetails?.loginId ?? "email",
         };
 
-        try {
-          const tokenResult = await user.getIdTokenResult();
+        const session = await fetchAuthSession();
+        const idToken = session.tokens?.idToken;
+        if (idToken) {
+          const payload = idToken.payload;
           info.token = {
-            expiresAt: tokenResult.expirationTime,
-            issuer: tokenResult.claims["iss"] as string | null ?? null,
+            expiresAt: payload.exp
+              ? new Date(Number(payload.exp) * 1000).toISOString()
+              : null,
+            issuer: (payload.iss as string) ?? null,
+            groups: (payload["cognito:groups"] as string[]) ?? [],
           };
-        } catch {
-          // Token fetch failed
+          // Extract user pool ID from issuer
+          if (typeof payload.iss === "string") {
+            const parts = payload.iss.split("/");
+            info.cognitoConfig.userPoolId = parts[parts.length - 1] ?? null;
+          }
         }
+      } catch {
+        // Not signed in — info stays with defaults
       }
 
       setAuthInfo(info);
@@ -109,24 +102,12 @@ export default function AuthManagement() {
           <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { label: "Email", value: authInfo.currentUser.email ?? "—" },
-                { label: "UID", value: authInfo.currentUser.uid },
+                { label: "Username", value: authInfo.currentUser.username },
+                { label: "User ID", value: authInfo.currentUser.userId },
+                { label: "Sign-in Method", value: authInfo.currentUser.signInMethod },
                 {
-                  label: "Email Verified",
-                  value: authInfo.currentUser.emailVerified ? "Yes" : "No",
-                },
-                { label: "Provider", value: authInfo.currentUser.provider },
-                {
-                  label: "Created",
-                  value: authInfo.currentUser.createdAt
-                    ? new Date(authInfo.currentUser.createdAt).toLocaleDateString()
-                    : "—",
-                },
-                {
-                  label: "Last Sign-in",
-                  value: authInfo.currentUser.lastSignIn
-                    ? new Date(authInfo.currentUser.lastSignIn).toLocaleString()
-                    : "—",
+                  label: "Groups",
+                  value: authInfo.token?.groups.join(", ") || "None",
                 },
               ].map((item) => (
                 <div
@@ -182,88 +163,50 @@ export default function AuthManagement() {
         </Card>
       )}
 
-      {/* Auth Providers */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Firebase */}
-        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-cyan-400" />
-              <p className="text-xs font-mono text-foreground/80 font-bold">
-                Firebase Auth
-              </p>
-            </div>
-            <Badge
-              variant="outline"
-              className={`text-[10px] uppercase tracking-wider font-mono ${
-                authInfo.firebaseConfig.configured
-                  ? "border-green-500/40 text-green-400"
-                  : "border-foreground/20 text-foreground/30"
-              }`}
-            >
-              <span
-                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                  authInfo.firebaseConfig.configured ? "bg-green-400" : "bg-foreground/20"
-                }`}
-              />
-              {authInfo.firebaseConfig.configured ? "configured" : "disabled"}
-            </Badge>
+      {/* Cognito Config */}
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-cyan-400" />
+            <p className="text-xs font-mono text-foreground/80 font-bold">
+              AWS Cognito
+            </p>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-foreground/40">Project</span>
-              <span className="text-[10px] font-mono text-foreground/60">
-                {authInfo.firebaseConfig.projectId ?? "—"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-foreground/40">Auth Domain</span>
-              <span className="text-[10px] font-mono text-foreground/60 truncate max-w-40">
-                {authInfo.firebaseConfig.authDomain ?? "—"}
-              </span>
-            </div>
+          <Badge
+            variant="outline"
+            className="border-green-500/40 text-green-400 text-[10px] uppercase tracking-wider font-mono"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5" />
+            active
+          </Badge>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono text-foreground/40">Region</span>
+            <span className="text-[10px] font-mono text-foreground/60">
+              {authInfo.cognitoConfig.region}
+            </span>
           </div>
-        </Card>
-
-        {/* Amplify Cognito */}
-        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-cyan-400" />
-              <p className="text-xs font-mono text-foreground/80 font-bold">
-                Amplify Cognito
-              </p>
-            </div>
-            <Badge
-              variant="outline"
-              className="border-green-500/40 text-green-400 text-[10px] uppercase tracking-wider font-mono"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5" />
-              production
-            </Badge>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono text-foreground/40">App ID</span>
+            <span className="text-[10px] font-mono text-foreground/60">
+              {authInfo.cognitoConfig.appId}
+            </span>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-foreground/40">Region</span>
-              <span className="text-[10px] font-mono text-foreground/60">
-                {authInfo.amplifyConfig.region}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-foreground/40">App ID</span>
-              <span className="text-[10px] font-mono text-foreground/60">
-                {authInfo.amplifyConfig.appId}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-foreground/40">Auth Method</span>
-              <span className="text-[10px] font-mono text-foreground/60">
-                Email (Cognito User Pool)
-              </span>
-            </div>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono text-foreground/40">User Pool</span>
+            <span className="text-[10px] font-mono text-foreground/60">
+              {authInfo.cognitoConfig.userPoolId ?? "—"}
+            </span>
           </div>
-        </Card>
-      </div>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono text-foreground/40">Auth Method</span>
+            <span className="text-[10px] font-mono text-foreground/60">
+              Email (Cognito User Pool)
+            </span>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

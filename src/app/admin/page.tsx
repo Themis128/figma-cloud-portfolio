@@ -52,7 +52,7 @@ export default function AdminPage() {
         ) : (
           <AdminLayout
             onLogout={() => void logout()}
-            {...(user?.email !== undefined && user?.email !== null && { userEmail: user.email })}
+            {...(user?.signInDetails?.loginId !== undefined && { userEmail: user.signInDetails.loginId })}
           >
             <Tabs defaultValue="health" className="space-y-6">
               <TabsList className="bg-card/40 backdrop-blur-sm border border-border/20 p-1 flex-wrap h-auto gap-1">

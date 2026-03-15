@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-const VALID_EMAIL = "tbaltzakis@cloudless.com";
+const VALID_EMAIL = "testadmin@cloudless.gr";
 const VALID_PASS = "TH!123789th!";
 
-// Firebase Auth can be slow (SDK init + network call to Google servers).
+// Cognito Auth can be slow (SDK init + network call to AWS).
 // Allow generous timeouts for auth-dependent operations.
 test.setTimeout(60000);
 
@@ -22,17 +22,15 @@ async function adminLogin(page: import("@playwright/test").Page): Promise<boolea
   await page.locator('button[type="submit"]').click();
 
   // Wait for either dashboard (success) or error message (auth failure).
-  // With Firebase v12+ initializeAuth, some auth failures are silent
-  // (no visible error text), so we also check if the login form persists.
   const dashboard = page.locator("text=Admin Dashboard");
-  const authError = page.locator("text=/Email\\/password sign-in is not enabled|operation-not-allowed|timed out|Login failed|Invalid email|recaptcha/i");
+  const authError = page.locator("text=/timed out|Login failed|Invalid email|No account found|not confirmed/i");
   const loginForm = page.locator("text=Admin Access");
 
   try {
     await expect(dashboard.or(authError)).toBeVisible({ timeout: 20000 });
   } catch {
     // Neither dashboard nor known error appeared — if login form is still
-    // visible, auth silently failed (e.g. Firebase reCAPTCHA or network issue).
+    // visible, auth silently failed (e.g. Cognito network issue).
     // Also handle page crash / browser close gracefully.
     try {
       if (await loginForm.isVisible()) {
@@ -53,7 +51,7 @@ async function adminLogin(page: import("@playwright/test").Page): Promise<boolea
 async function adminLoginOrSkip(page: import("@playwright/test").Page) {
   const success = await adminLogin(page);
   if (!success) {
-    test.skip(true, "Firebase Email/Password auth is not enabled");
+    test.skip(true, "Cognito auth is not available");
   }
 }
 
@@ -116,21 +114,24 @@ test.describe("Admin Page — Authentication", () => {
     await page.locator('input[type="password"]').fill("wrongpass");
     await page.locator('button[type="submit"]').click();
 
-    // Should show an authentication error (exact message depends on Firebase provider config)
-    const authError = page.locator("text=/Invalid email|not enabled|operation-not-allowed|timed out|Login failed/i");
+    // Should show an authentication error (exact message depends on Cognito config)
+    const authError = page.locator("text=/Invalid email|No account found|timed out|Login failed/i");
     await expect(authError).toBeVisible({ timeout: 15000 });
     await expect(page.locator("text=Admin Access")).toBeVisible();
   });
 
+  // Use a non-existent email to avoid locking out the real admin account.
+  // Cognito locks accounts after 5 failed attempts (15-min cooldown), and
+  // running this test across 9 browser projects would exceed that limit.
   test("should reject valid email with wrong password", async ({ page }) => {
     await page.goto("/admin");
     await page.waitForLoadState("domcontentloaded");
 
-    await page.locator('input[type="email"]').fill(VALID_EMAIL);
+    await page.locator('input[type="email"]').fill("lockout-test@example.com");
     await page.locator('input[type="password"]').fill("wrongpass");
     await page.locator('button[type="submit"]').click();
 
-    const authError = page.locator("text=/Invalid email|not enabled|operation-not-allowed|timed out|Login failed/i");
+    const authError = page.locator("text=/Invalid email|No account found|not enabled|operation-not-allowed|timed out|Login failed/i");
     await expect(authError).toBeVisible({ timeout: 15000 });
   });
 
@@ -368,7 +369,7 @@ test.describe("Admin Page — Health Tab", () => {
     await page.locator("text=Refresh All").click();
     await page.waitForTimeout(5000);
 
-    // When Firebase auth is available and user is logged in,
+    // When Cognito auth is available and user is logged in,
     // the API Keys request should include a Bearer token.
     // If no requests were captured, the endpoint may be unreachable.
     if (apiKeysRequests.length > 0) {
@@ -1363,43 +1364,26 @@ test.describe("Admin Page — Auth Tab", () => {
 
   test("should show user session details", async ({ page }) => {
     // Since we're logged in, should show user info
-    await expect(page.getByText("Email").first()).toBeVisible();
-    await expect(page.getByText("UID").first()).toBeVisible();
-    await expect(page.getByText("Email Verified").first()).toBeVisible();
-    await expect(page.getByText("Provider").first()).toBeVisible();
+    await expect(page.getByText("Username").first()).toBeVisible();
+    await expect(page.getByText("User ID").first()).toBeVisible();
+    await expect(page.getByText("Sign-in Method").first()).toBeVisible();
+    await expect(page.getByText("Groups").first()).toBeVisible();
   });
 
-  test("should display Firebase Auth section", async ({ page }) => {
-    await expect(page.getByText("Firebase Auth")).toBeVisible();
+  test("should display AWS Cognito section", async ({ page }) => {
+    await expect(page.getByText("AWS Cognito")).toBeVisible();
   });
 
-  test("should show Firebase config status badge", async ({ page }) => {
-    const configured = page.getByText("configured", { exact: true });
-    const disabled = page.getByText("disabled", { exact: true });
-    const count = (await configured.count()) + (await disabled.count());
-    expect(count).toBeGreaterThanOrEqual(1);
+  test("should show Cognito active badge", async ({ page }) => {
+    await expect(page.getByText("active", { exact: true })).toBeVisible();
   });
 
-  test("should display Amplify Cognito section", async ({ page }) => {
-    await expect(page.getByText("Amplify Cognito")).toBeVisible();
-  });
-
-  test("should show Amplify production badge", async ({ page }) => {
-    await expect(page.getByText("production", { exact: true })).toBeVisible();
-  });
-
-  test("should display Firebase Project and Auth Domain fields", async ({
-    page,
-  }) => {
-    await expect(page.getByText("Project").first()).toBeVisible();
-    await expect(page.getByText("Auth Domain").first()).toBeVisible();
-  });
-
-  test("should display Amplify Region and App ID fields", async ({
+  test("should display Cognito Region, App ID, and User Pool fields", async ({
     page,
   }) => {
     await expect(page.getByText("Region").first()).toBeVisible();
     await expect(page.getByText("App ID").first()).toBeVisible();
+    await expect(page.getByText("User Pool").first()).toBeVisible();
     await expect(page.getByText("Auth Method").first()).toBeVisible();
   });
 

@@ -1,10 +1,21 @@
 import type { Request, Response, NextFunction } from "express";
-import { auth } from "../lib/firebaseAdmin";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 export interface AuthenticatedRequest extends Request {
   uid?: string;
   email?: string;
+  groups?: string[];
 }
+
+// Cognito JWT verifier — uses env vars for user pool config.
+// Falls back to sandbox values for local development.
+const verifier = CognitoJwtVerifier.create({
+  userPoolId:
+    process.env.COGNITO_USER_POOL_ID ?? "us-east-1_ftPxvHt7n",
+  clientId:
+    process.env.COGNITO_CLIENT_ID ?? null,
+  tokenUse: "id",
+});
 
 export async function requireAuth(
   req: AuthenticatedRequest,
@@ -18,9 +29,13 @@ export async function requireAuth(
   }
 
   try {
-    const decoded = await auth.verifyIdToken(header.slice(7));
-    req.uid = decoded.uid;
-    req.email = decoded.email;
+    const payload = await verifier.verify(header.slice(7));
+    req.uid = payload.sub;
+    req.email = typeof payload.email === "string" ? payload.email : undefined;
+    req.groups =
+      Array.isArray(payload["cognito:groups"])
+        ? (payload["cognito:groups"] as string[])
+        : [];
     next();
   } catch {
     res.status(401).json({ error: "Invalid or expired token" });
