@@ -25,16 +25,16 @@ Themis has worked across multiple industries including:
 Yes, Themis has experience working remotely (e.g., Estarta Solutions) and is open to both remote and on-site engagements.
 
 ### What certifications does Themis hold?
-Themis holds 6 major certifications: AWS Cloud Practitioner, Cisco DevNet Associate, Microsoft Azure Solutions Architect, CISSP, CEH, and ITIL Foundation.
+Themis holds 4 professional certifications (AWS Cloud Practitioner, Cisco DevNet Associate, Cisco CCNA, Windows Server 2016) plus 16 verified Credly badges spanning networking, cybersecurity, Python, Kubernetes, data analytics, and DevNet.
 
 ### What is Themis's educational background?
-Themis holds a BSc in Computer Science from the University of Piraeus and is currently pursuing a Master's in Informatics and Telematics (specializing in data-driven agricultural innovations) at Harokopio University.
+Themis holds a BSc in Computer Science from the Hellenic Open University (2014–2022) and a Master's in Data Analytics and Technologies from Bolton University / New York College (2025). He also completed Cisco Incubator 12.0 EMEA, Cisco DevNet Associate, Cisco CCNA, and Android App Development programs.
 
 ### Does Themis have experience with AI/ML?
 Yes, Themis integrates AI/ML into his work. His Master's research focuses on data-driven agricultural innovations. His portfolio website features an AI chatbot, AI agent templates, and a 3D AI Brain visualization. He has also built an AI Content Generator project.
 
 ### What is Themis's approach to security?
-Themis specializes in zero-trust security architecture, implementing conditional access policies, MFA, identity governance, and privileged access management (CyberArk PAM). He holds CISSP and CEH certifications.
+Themis specializes in zero-trust security architecture, implementing conditional access policies, MFA, identity governance, and privileged access management (CyberArk PAM). He holds Cisco CyberOps Associate, Junior Cybersecurity Analyst, Cyber Threat Management, and Endpoint Security badges from Cisco Networking Academy.
 
 ### Can Themis help with Microsoft 365?
 Yes, Themis has extensive experience with Microsoft 365 including Exchange Online, Teams, SharePoint, Azure AD, and Microsoft Intune for mobile device management.

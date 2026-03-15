@@ -8,7 +8,7 @@
 ## Bachelor's Degree — Computer Science (BCS)
 **Institution**: Hellenic Open University
 **Period**: 2014 – 2022
-**Degree**: BCs in Computer Science
+**Degree**: BSc in Computer Science
 
 ## Cisco Incubator 12.0 EMEA — Customer Experience and CCNA
 **Institution**: Cisco Networking Academy

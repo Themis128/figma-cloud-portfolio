@@ -189,29 +189,46 @@ Be helpful, professional, and engaging. Keep responses concise but informative. 
   }
 
   private getFallbackResponse(message: string): string {
-    // Simple keyword-based fallback responses
+    // Keyword-based fallback responses when AI provider is unavailable
     const lowerMessage = message.toLowerCase();
 
-    if (lowerMessage.includes("react") || lowerMessage.includes("frontend")) {
-      return "Themistoklis specializes in modern React development with TypeScript, using the latest patterns and best practices for scalable web applications.";
+    if (lowerMessage.includes("cisco") || lowerMessage.includes("network")) {
+      return "Themis is an IT Network Engineer with 15+ years of experience in Cisco infrastructure (UCS, HyperFlex, ACI, Nexus), Fortinet security, and enterprise networking. He holds Cisco CCNA, DevNet Associate, and CyberOps Associate credentials. Check out the About page for more details.";
     }
 
-    if (lowerMessage.includes("azure") || lowerMessage.includes("cloud")) {
-      return "With extensive experience in Azure and multi-cloud environments, Themistoklis designs and implements robust cloud architectures for enterprise solutions.";
+    if (lowerMessage.includes("azure") || lowerMessage.includes("cloud") || lowerMessage.includes("aws")) {
+      return "Themis has extensive experience with Azure AD, Microsoft 365, and AWS cloud environments. He's an AWS Certified Cloud Practitioner and specializes in multi-cloud migration, identity management, and zero-trust architecture. Visit the About page for his full skill set.";
     }
 
-    if (
-      lowerMessage.includes("security") ||
-      lowerMessage.includes("cybersecurity")
-    ) {
-      return "Themistoklis brings 15+ years of cybersecurity expertise, focusing on Azure AD, identity management, and secure cloud deployments.";
+    if (lowerMessage.includes("security") || lowerMessage.includes("cybersecurity") || lowerMessage.includes("fortinet")) {
+      return "Themis specializes in cybersecurity with expertise in Fortinet firewalls, zero-trust architecture, CyberArk PAM, conditional access policies, and identity governance. He holds multiple Cisco cybersecurity badges including CyberOps Associate and Cyber Threat Management.";
     }
 
-    if (lowerMessage.includes("project") || lowerMessage.includes("work")) {
-      return "Themistoklis has worked on numerous projects involving cloud architecture, DevOps automation, and full-stack web development. Check out the Projects section for detailed examples.";
+    if (lowerMessage.includes("project") || lowerMessage.includes("work") || lowerMessage.includes("portfolio")) {
+      return "Themis has 12 projects on his portfolio including a Network Monitoring Stack (Prometheus/Grafana), AP Pinpoint tool, Network Automation Lab, Docker Labs, and this portfolio website (Next.js 16 on AWS). Visit the Projects page to explore them all.";
     }
 
-    return "I'd be happy to help you learn more about Themistoklis' experience and work. Feel free to ask about specific technologies, projects, or his background in cloud architecture and cybersecurity.";
+    if (lowerMessage.includes("resume") || lowerMessage.includes("cv") || lowerMessage.includes("builder")) {
+      return "The Resume page features an interactive CV builder with 7 professional templates (Classic, Modern, Minimal, Executive, Creative, Bold, Emerald), live preview, PDF download, and JSON export. There's also an ATS optimization guide. Try it at /resume/.";
+    }
+
+    if (lowerMessage.includes("contact") || lowerMessage.includes("email") || lowerMessage.includes("hire")) {
+      return "You can reach Themis via email at baltzakis.themis@gmail.com, connect on LinkedIn (linkedin.com/in/baltzakis-themis), or use the contact form on the Contact page. He's based in Koropi/Athens, Greece and is open to both remote and on-site work.";
+    }
+
+    if (lowerMessage.includes("certification") || lowerMessage.includes("badge") || lowerMessage.includes("credential")) {
+      return "Themis holds 4 professional certifications (AWS Cloud Practitioner, Cisco DevNet Associate, Cisco CCNA, Windows Server 2016) and 16 verified Credly badges spanning networking, cybersecurity, Python, Kubernetes, and data analytics. See the About page for the full list.";
+    }
+
+    if (lowerMessage.includes("education") || lowerMessage.includes("degree") || lowerMessage.includes("university")) {
+      return "Themis holds a Master's in Data Analytics and Technologies (Bolton University / New York College, 2025) and a BSc in Computer Science (Hellenic Open University, 2014-2022). He also completed Cisco Incubator 12.0, DevNet Associate, and CCNA programs.";
+    }
+
+    if (lowerMessage.includes("agent") || lowerMessage.includes("ai")) {
+      return "The AI Agents page at /agents/ is an educational guide covering agent concepts, architecture patterns (Single, Router, Multi-Agent), key terminology (RAG, ReAct, MCP), network engineering use cases, 5 agent templates, and a Blockly drag-and-drop agent builder for kids.";
+    }
+
+    return "I'm Themis's portfolio assistant. I can help you learn about his 15+ years of experience in network engineering, Cisco/Fortinet infrastructure, cloud architecture, and cybersecurity. Ask about his projects, certifications, skills, or how to get in touch!";
   }
 
   getAvailableModels(): string[] {
