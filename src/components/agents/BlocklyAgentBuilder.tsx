@@ -402,6 +402,7 @@ export default function BlocklyAgentBuilder() {
   const [ready, setReady] = useState(false);
   const [running, setRunning] = useState(false);
   const [output, setOutput] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize Blockly
   useEffect(() => {
@@ -410,67 +411,72 @@ export default function BlocklyAgentBuilder() {
     async function init() {
       if (!blocklyDiv.current) return;
 
-      // Dynamic import to avoid SSR
-      const BlocklyModule = await import("blockly");
-      const { pythonGenerator } = await import("blockly/python");
+      try {
+        // Dynamic import to avoid SSR
+        const BlocklyModule = await import("blockly");
+        const { pythonGenerator } = await import("blockly/python");
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      Blockly = BlocklyModule;
+        Blockly = BlocklyModule;
 
-      // Define custom blocks and register Python generators
-      defineAgentBlocks(BlocklyModule, pythonGenerator as unknown as PythonGen);
+        // Define custom blocks and register Python generators
+        defineAgentBlocks(BlocklyModule, pythonGenerator as unknown as PythonGen);
 
-      // Create theme
-      const theme = BlocklyModule.Theme.defineTheme(
-        CYBERPUNK_THEME_DEF.name,
-        CYBERPUNK_THEME_DEF,
-      );
+        // Create theme
+        const theme = BlocklyModule.Theme.defineTheme(
+          CYBERPUNK_THEME_DEF.name,
+          CYBERPUNK_THEME_DEF,
+        );
 
-      // Inject workspace
-      const workspace = BlocklyModule.inject(blocklyDiv.current!, {
-        toolbox: TOOLBOX,
-        theme,
-        renderer: "zelos",
-        grid: {
-          spacing: 25,
-          length: 3,
-          colour: "#22d3ee15",
-          snap: true,
-        },
-        zoom: {
-          controls: true,
-          wheel: true,
-          startScale: 0.85,
-          maxScale: 2,
-          minScale: 0.4,
-          scaleSpeed: 1.1,
-        },
-        trashcan: true,
-        move: {
-          scrollbars: true,
-          drag: true,
-          wheel: true,
-        },
-      });
+        // Inject workspace
+        const workspace = BlocklyModule.inject(blocklyDiv.current!, {
+          toolbox: TOOLBOX,
+          theme,
+          renderer: "zelos",
+          grid: {
+            spacing: 25,
+            length: 3,
+            colour: "#22d3ee15",
+            snap: true,
+          },
+          zoom: {
+            controls: true,
+            wheel: true,
+            startScale: 0.85,
+            maxScale: 2,
+            minScale: 0.4,
+            scaleSpeed: 1.1,
+          },
+          trashcan: true,
+          move: {
+            scrollbars: true,
+            drag: true,
+            wheel: true,
+          },
+        });
 
-      workspaceRef.current = workspace;
+        workspaceRef.current = workspace;
 
-      // Load starter blocks
-      const xml = BlocklyModule.utils.xml.textToDom(STARTER_XML);
-      BlocklyModule.Xml.domToWorkspace(xml, workspace);
+        // Load starter blocks
+        const xml = BlocklyModule.utils.xml.textToDom(STARTER_XML);
+        BlocklyModule.Xml.domToWorkspace(xml, workspace);
 
-      // Generate code on change
-      workspace.addChangeListener(() => {
-        try {
-          const generated = pythonGenerator.workspaceToCode(workspace);
-          setCode(generated || "# Empty workspace — drag some blocks!");
-        } catch {
-          setCode("# Drag blocks to build your agent!");
-        }
-      });
+        // Generate code on change
+        workspace.addChangeListener(() => {
+          try {
+            const generated = pythonGenerator.workspaceToCode(workspace);
+            setCode(generated || "# Empty workspace — drag some blocks!");
+          } catch {
+            setCode("# Drag blocks to build your agent!");
+          }
+        });
 
-      setReady(true);
+        setReady(true);
+      } catch (err) {
+        if (!mounted) return;
+        setError(err instanceof Error ? err.message : "Failed to load block editor");
+      }
     }
 
     init();
@@ -531,6 +537,17 @@ export default function BlocklyAgentBuilder() {
 
     return () => clearInterval(timer);
   }, [code]);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-3 text-center">
+        <Bot className="w-10 h-10 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground font-mono">
+          Block editor couldn&apos;t load. Try refreshing the page.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
