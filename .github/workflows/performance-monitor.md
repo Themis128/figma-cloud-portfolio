@@ -4,7 +4,7 @@ description: |
   performance tests, analyzes bundle size, and tracks Web Vitals metrics.
 
 on:
-  schedule: daily at 6 AM UTC
+  schedule: daily around 6 AM UTC
   workflow_dispatch:
 
 timeout-minutes: 20

@@ -4,7 +4,7 @@ description: |
   packages, runs tests with updates, and creates pull requests for safe updates.
 
 on:
-  schedule: weekly on Sunday at 3 AM UTC
+  schedule: weekly on Sunday around 3 AM UTC
   workflow_dispatch:
 
 timeout-minutes: 25
