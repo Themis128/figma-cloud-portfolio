@@ -39,15 +39,17 @@ const CYBERPUNK_THEME_DEF = {
   },
 };
 
+// Python generator type
+type PythonGen = {
+  forBlock: Record<string, (block: unknown) => string>;
+  valueToCode: (block: unknown, name: string, order: number) => string;
+  statementToCode: (block: unknown, name: string) => string;
+  ORDER_NONE: number;
+};
+
 // Custom block definitions for agent concepts
-function defineAgentBlocks(BlocklyModule: typeof import("blockly")) {
-  const { Blocks, pythonGenerator } = BlocklyModule as typeof import("blockly") & {
-    pythonGenerator: {
-      forBlock: Record<string, (block: unknown) => string>;
-      valueToCode: (block: unknown, name: string, order: number) => string;
-      ORDER_NONE: number;
-    };
-  };
+function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenerator?: PythonGen) {
+  const { Blocks } = BlocklyModule;
 
   // --- OBSERVE blocks ---
   Blocks["agent_see"] = {
@@ -266,7 +268,7 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly")) {
 
     pythonGenerator.forBlock["agent_decide"] = (block: unknown) => {
       const condition = pythonGenerator.valueToCode(block, "CONDITION", pythonGenerator.ORDER_NONE) || '"something"';
-      const body = (BlocklyModule as unknown as { pythonGenerator: { statementToCode: (b: unknown, n: string) => string } }).pythonGenerator.statementToCode(block, "DO") || "  pass\n";
+      const body = pythonGenerator.statementToCode(block, "DO") || "  pass\n";
       return `if ${condition}:\n${body}`;
     };
 
@@ -291,16 +293,14 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly")) {
     };
 
     pythonGenerator.forBlock["agent_check"] = (block: unknown) => {
-      const gen = (BlocklyModule as unknown as { pythonGenerator: { statementToCode: (b: unknown, n: string) => string } }).pythonGenerator;
-      const yes = gen.statementToCode(block, "YES") || "  pass\n";
-      const no = gen.statementToCode(block, "NO") || "  pass\n";
+      const yes = pythonGenerator.statementToCode(block, "YES") || "  pass\n";
+      const no = pythonGenerator.statementToCode(block, "NO") || "  pass\n";
       return `if agent.check_result():\n${yes}else:\n${no}`;
     };
 
     pythonGenerator.forBlock["agent_loop"] = (block: unknown) => {
       const until = (block as { getFieldValue: (n: string) => string }).getFieldValue("UNTIL");
-      const gen = (BlocklyModule as unknown as { pythonGenerator: { statementToCode: (b: unknown, n: string) => string } }).pythonGenerator;
-      const body = gen.statementToCode(block, "BODY") || "  pass\n";
+      const body = pythonGenerator.statementToCode(block, "BODY") || "  pass\n";
       return `while not agent.is_done("${until}"):\n${body}`;
     };
   }
@@ -418,11 +418,8 @@ export default function BlocklyAgentBuilder() {
 
       Blockly = BlocklyModule;
 
-      // Attach pythonGenerator to module for our code generators
-      (BlocklyModule as unknown as Record<string, unknown>).pythonGenerator = pythonGenerator;
-
-      // Define custom blocks
-      defineAgentBlocks(BlocklyModule);
+      // Define custom blocks and register Python generators
+      defineAgentBlocks(BlocklyModule, pythonGenerator as unknown as PythonGen);
 
       // Create theme
       const theme = BlocklyModule.Theme.defineTheme(

@@ -36,6 +36,17 @@ test.describe("Home Page — Hero Section", () => {
     );
     await expect(divider.first()).toBeVisible();
   });
+
+  test("should display availability badge", async ({ page }) => {
+    await expect(
+      page.getByText("Available for Consulting", { exact: true }),
+    ).toBeVisible();
+  });
+
+  test("availability badge has pulsing green dot", async ({ page }) => {
+    const pulseDot = page.locator(".animate-ping.bg-emerald-400");
+    await expect(pulseDot).toBeAttached();
+  });
 });
 
 test.describe("Home Page — CTA Buttons", () => {

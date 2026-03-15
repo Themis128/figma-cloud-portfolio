@@ -100,12 +100,70 @@ test.describe("MatrixRain — Toggle Button", () => {
     const canvas = page.locator("canvas.fixed");
     await expect(canvas).toBeAttached();
 
-    // Click to disable
+    // Click to disable — triggers fade-out
     await disableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+
+    // Wait for the 1-second fade-out to complete
+    await page.waitForTimeout(1500);
+
+    // Enable button should reappear after fade-out
+    await expect(enableBtn).toBeVisible();
+  });
+
+  test("shows countdown ring SVG when active", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const enableBtn = page.locator(
+      'button[aria-label="Enable matrix rain effect"]',
+    );
+    await enableBtn.evaluate((el) => (el as HTMLButtonElement).click());
     await page.waitForTimeout(500);
 
-    // Enable button should reappear
-    await expect(enableBtn).toBeVisible();
+    // SVG countdown ring should be visible inside the button
+    const countdownSvg = page.locator(
+      'button[aria-label="Disable matrix rain effect"] svg circle',
+    );
+    await expect(countdownSvg).toBeAttached();
+
+    // Disable to clean up
+    const disableBtn = page.locator(
+      'button[aria-label="Disable matrix rain effect"]',
+    );
+    await disableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+  });
+
+  test("active button has cyan glow styling", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const enableBtn = page.locator(
+      'button[aria-label="Enable matrix rain effect"]',
+    );
+    await enableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+    await page.waitForTimeout(500);
+
+    const disableBtn = page.locator(
+      'button[aria-label="Disable matrix rain effect"]',
+    );
+    const cls = await disableBtn.getAttribute("class");
+    expect(cls).toContain("shadow-");
+
+    // Clean up
+    await disableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+  });
+
+  test("hides entirely when prefers-reduced-motion is set", async ({
+    page,
+  }) => {
+    // Emulate reduced motion preference
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // The toggle button should not render at all
+    const btn = page.locator('button[aria-label="Enable matrix rain effect"]');
+    await expect(btn).toHaveCount(0);
   });
 });
 
