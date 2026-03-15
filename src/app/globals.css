@@ -154,12 +154,6 @@ body {
   --safe-area-left: env(safe-area-inset-left, 0px);
 }
 
-/* Prevent iOS rubber-band scrolling on fixed overlays */
-.overflow-hidden {
-  position: fixed;
-  width: 100%;
-}
-
 /* Prevent iOS tap highlight color */
 a,
 button,
