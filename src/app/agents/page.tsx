@@ -21,6 +21,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
 import AgentPlayground from "@/components/agents/AgentPlayground";
+import BlocklyAgentBuilderWrapper from "@/components/agents/BlocklyAgentBuilderWrapper";
 
 export const metadata: Metadata = {
   title: "Understanding AI Agents",
@@ -494,6 +495,26 @@ export default function AgentsPage() {
                     </div>
                   </HoverCard>
                 ))}
+              </div>
+            </AnimatedSection>
+
+            {/* Kids Block Builder (Blockly) */}
+            <AnimatedSection delay={0.38}>
+              <div className="space-y-6">
+                <div className="text-center space-y-3">
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center justify-center gap-3">
+                    <Bot className="w-8 h-8 text-cyan-400" />
+                    Build Your Own Agent
+                  </h2>
+                  <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
+                    Drag and drop colorful blocks to build an AI agent — no
+                    typing needed! See how agents observe, think, act, and
+                    learn. Perfect for beginners of all ages.
+                  </p>
+                </div>
+                <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-border">
+                  <BlocklyAgentBuilderWrapper />
+                </div>
               </div>
             </AnimatedSection>
 
