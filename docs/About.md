@@ -49,12 +49,23 @@ Two-column layout displaying:
 
 - **Get In Touch**: Link to contact page
 
+### Skills Radar
+
+An interactive SVG radar chart (`SkillsRadar` component) positioned between the Key Focus Areas and Skills & Certifications sections:
+
+- **6 skill axes**: Networking (95%), Security (88%), Cloud (82%), DevOps (75%), Programming (78%), Systems (90%)
+- **Click-to-expand**: Clicking a skill label reveals a detail panel with proficiency bar, certifications, and years of experience
+- **Scroll-triggered animation**: Radar polygon animates in via IntersectionObserver with spring easing
+- **Proficiency levels**: Expert (≥90), Advanced (≥80), Proficient (≥70), Intermediate (≥50)
+- **Accessible**: SVG has `role="img"` + `aria-label`, skill labels are `role="button"` with `aria-label` showing percentage
+
 ## Components Used
 
 - `Navigation`: Site navigation
 - `AnimatedSection`: Staggered content animations
 - `CircuitBackground`: Animated tech background
 - `HoverCard`: Interactive card hover effects
+- `SkillsRadar`: Interactive SVG radar chart with clickable skill labels
 - Lucide React icons: Briefcase, Cloud, Shield, Cpu, Award, GraduationCap
 
 ## Design Features

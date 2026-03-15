@@ -37,7 +37,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 portfolio-nextjs/
 ├── src/
 │   ├── app/                  # Next.js App Router
-│   │   ├── layout.tsx        # Root layout (providers, Navigation, ChatbotWidget)
+│   │   ├── layout.tsx        # Root layout (providers, Navigation, ChatbotWidget, interactive components)
 │   │   ├── page.tsx          # Home page
 │   │   ├── about/            # About page
 │   │   ├── agents/           # AI Agents educational guide
@@ -54,6 +54,7 @@ portfolio-nextjs/
 │   │   └── builder/          # Builder.io page (optional)
 │   ├── components/           # Reusable UI components
 │   │   ├── admin/            # Admin dashboard components (10 tab panels)
+│   │   ├── interactive/      # Interactive engagement components (7)
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
 │   ├── hooks/                # Custom React hooks
@@ -83,9 +84,9 @@ The app uses the Next.js App Router Server/Client component model:
 
 | Path           | Component              | Description                                     |
 | -------------- | ---------------------- | ----------------------------------------------- |
-| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation       |
-| `/about`       | `about/page.tsx`       | Professional bio, skills, career timeline       |
-| `/product`     | `product/page.tsx`     | Work experience timeline                        |
+| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation + TypeWriter hero |
+| `/about`       | `about/page.tsx`       | Professional bio, skills, SkillsRadar chart, career timeline |
+| `/product`     | `product/page.tsx`     | Work experience InteractiveTimeline              |
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery                      |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
 | `/agents`      | `agents/page.tsx`      | Educational AI agents guide with interactive builder    |
@@ -227,6 +228,29 @@ A Firebase-authenticated internal dashboard for site monitoring and management. 
 | SEO (noindex)     | 2     | No         | noindex meta tag, login gate for unauthenticated users                     |
 
 > Auth-gated tests skip gracefully via `adminLoginOrSkip()` when Firebase Email/Password auth is not enabled in the test environment.
+
+---
+
+## Interactive Engagement Components
+
+Seven interactive components enhance user engagement across the site. All are Client Components (`'use client'`) located in `src/components/interactive/`.
+
+### Global Components (in Root Layout)
+
+| Component        | Type   | Purpose                                                                                  |
+| ---------------- | ------ | ---------------------------------------------------------------------------------------- |
+| `ScrollProgress` | Client | Fixed top-of-page progress bar — tracks scroll position via `requestAnimationFrame`, cyan gradient, `role="progressbar"` with ARIA attributes |
+| `MatrixRain`     | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s, Katakana + Latin + digit characters in cyan |
+| `CyberTerminal`  | Client | Full-screen terminal easter egg — opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
+| `CursorTrail`    | Client | 10-particle trailing cursor effect — desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
+
+### Page-Specific Components
+
+| Component            | Page      | Purpose                                                                                  |
+| -------------------- | --------- | ---------------------------------------------------------------------------------------- |
+| `TypeWriter`         | Home (`/`) | Cycling text animation in hero — types/deletes through `['IT Network Engineer', 'Cloud Architect', 'Cybersecurity Specialist', 'DevOps Engineer']` with blinking cursor |
+| `SkillsRadar`        | About (`/about`) | SVG radar chart with 6 skill axes (Networking, Security, Cloud, DevOps, Programming, Systems) — click labels for detail panel with proficiency bar, certifications, and years of experience |
+| `InteractiveTimeline`| Product (`/product`) | Vertical timeline with animated line, clickable expand/collapse nodes (desktop), all-expanded cards (mobile) — renders both desktop (`hidden md:block`) and mobile (`md:hidden`) views |
 
 ---
 
@@ -437,7 +461,7 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Fireb
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 83 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/` — 84 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts` — API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages

@@ -25,6 +25,7 @@ src/
   app/              # App Router pages and layouts
   components/
     admin/          # Admin dashboard components (10 tabs)
+    interactive/    # Interactive engagement components (7)
     ui/             # shadcn/ui primitives (Radix-based)
     sections/       # Page section components
     performance/    # Performance page components
@@ -33,7 +34,7 @@ src/
   types/            # TypeScript type definitions
   styles/           # Global CSS
 server/             # Express backend (tsx)
-playwright-tests/   # E2E tests (83 spec files)
+playwright-tests/   # E2E tests (84 spec files)
 public/             # Static assets and PWA files
 docs/               # Documentation
 ```
