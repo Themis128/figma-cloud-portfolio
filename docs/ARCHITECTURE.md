@@ -54,7 +54,8 @@ portfolio-nextjs/
 │   │   └── builder/          # Builder.io page (optional)
 │   ├── components/           # Reusable UI components
 │   │   ├── admin/            # Admin dashboard components (10 tab panels)
-│   │   ├── interactive/      # Interactive engagement components (7)
+│   │   ├── agents/           # Agent builder components (Blockly drag-and-drop)
+│   │   ├── interactive/      # Interactive engagement components (7 in folder)
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
 │   ├── hooks/                # Custom React hooks
@@ -84,12 +85,12 @@ The app uses the Next.js App Router Server/Client component model:
 
 | Path           | Component              | Description                                     |
 | -------------- | ---------------------- | ----------------------------------------------- |
-| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation + TypeWriter hero |
+| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation, TypeWriter hero, AvailabilityBadge |
 | `/about`       | `about/page.tsx`       | Professional bio, skills, SkillsRadar chart, career timeline |
 | `/product`     | `product/page.tsx`     | Work experience InteractiveTimeline              |
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery                      |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
-| `/agents`      | `agents/page.tsx`      | Educational AI agents guide with interactive builder    |
+| `/agents`      | `agents/page.tsx`      | Educational AI agents guide with Blockly drag-and-drop builder + interactive builder |
 | `/contact`     | `contact/page.tsx`     | Contact form with reCAPTCHA v3                  |
 | `/settings`    | `settings/page.tsx`    | App preferences (theme, notifications, privacy) |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |
@@ -233,16 +234,17 @@ A Firebase-authenticated internal dashboard for site monitoring and management. 
 
 ## Interactive Engagement Components
 
-Seven interactive components enhance user engagement across the site. All are Client Components (`'use client'`) located in `src/components/interactive/`.
+Eight interactive components enhance user engagement across the site. Seven are Client Components (`'use client'`) in `src/components/interactive/`, plus `CommandPalette` in `src/components/`.
 
 ### Global Components (in Root Layout)
 
 | Component        | Type   | Purpose                                                                                  |
 | ---------------- | ------ | ---------------------------------------------------------------------------------------- |
 | `ScrollProgress` | Client | Fixed top-of-page progress bar — tracks scroll position via `requestAnimationFrame`, cyan gradient, `role="progressbar"` with ARIA attributes |
-| `MatrixRain`     | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s, Katakana + Latin + digit characters in cyan |
+| `MatrixRain`     | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s with 1s fade-out, SVG countdown ring on button, respects `prefers-reduced-motion` (hidden entirely), cyan glow on active state, Katakana + Latin + digit characters |
 | `CyberTerminal`  | Client | Full-screen terminal easter egg — opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
 | `CursorTrail`    | Client | 10-particle trailing cursor effect — desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
+| `CommandPalette` | Client | Ctrl+K / Cmd+K command palette — search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility), cyberpunk glass panel |
 
 ### Page-Specific Components
 
@@ -260,12 +262,15 @@ Seven interactive components enhance user engagement across the site. All are Cl
 | ----------------------------------------- | ---------------------------------------------------------- |
 | `CircuitBackground`                       | Animated SVG circuit board background (used on most pages) |
 | `AnimatedSection`                         | Framer Motion scroll-triggered reveal wrapper              |
-| `Navigation`                              | Top navbar with active link highlighting                   |
+| `Navigation`                              | Top navbar with active link highlighting + mobile accessibility button |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
 | `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded, `inert` when collapsed) |
 | `AuthProvider`                            | Firebase auth context (graceful fallback when unconfigured)|
-| `AccessibilityEnhancer`                   | Keyboard navigation and focus management                   |
+| `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
+| `NotificationButton`                      | Bell icon with dropdown announcement panel, read/unread tracking via localStorage, auto-expire support |
+| `AvailabilityBadge`                       | Hero section badge with pulsing green dot — "Available for Consulting" |
+| `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
 | `StructuredData`                          | Schema.org JSON-LD for SEO                                 |
 | `OptimizedImage`                          | Wrapper around `next/image` with lazy loading              |
@@ -461,7 +466,7 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Fireb
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 84 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/` — 88 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts` — API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
