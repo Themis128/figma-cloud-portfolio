@@ -140,7 +140,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
       <div className="flex items-center justify-between p-4 bg-linear-to-r from-blue-500 to-purple-600 text-white">
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="/api/placeholder/40/40" alt="AI Assistant" />
+            <AvatarImage src="" alt="AI Assistant" />
             <AvatarFallback>
               <Sparkles className="h-6 w-6" />
             </AvatarFallback>
@@ -201,7 +201,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
               >
                 {message.sender === "ai" && (
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/api/placeholder/32/32" alt="AI" />
+                    <AvatarImage src="" alt="AI" />
                     <AvatarFallback>
                       <Bot className="h-4 w-4" />
                     </AvatarFallback>
@@ -223,7 +223,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
 
                 {message.sender === "user" && (
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/api/placeholder/32/32" alt="You" />
+                    <AvatarImage src="" alt="You" />
                     <AvatarFallback>
                       <User className="h-4 w-4" />
                     </AvatarFallback>
@@ -235,7 +235,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ className }) => {
             {isTyping && (
               <div className="flex gap-3 mb-4 justify-start">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/api/placeholder/32/32" alt="AI" />
+                  <AvatarImage src="" alt="AI" />
                   <AvatarFallback>
                     <Bot className="h-4 w-4" />
                   </AvatarFallback>

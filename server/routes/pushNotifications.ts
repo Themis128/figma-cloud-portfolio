@@ -4,7 +4,7 @@ import webpush from "web-push";
 
 const router = Router();
 
-// In-memory subscription store (replace with DynamoDB in production)
+// In-memory subscription store — sufficient for the dev server; production would use DynamoDB
 interface StoredSubscription {
   endpoint: string;
   keys: {
