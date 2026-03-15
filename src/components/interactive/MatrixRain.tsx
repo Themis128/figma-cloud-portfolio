@@ -110,7 +110,8 @@ export default function MatrixRain() {
       <button
         type="button"
         onClick={() => setActive((prev) => !prev)}
-        className="fixed bottom-20 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-card/60 backdrop-blur-sm border border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-colors"
+        className="fixed z-30 flex h-10 w-10 items-center justify-center rounded-full bg-card/60 backdrop-blur-sm border border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-colors"
+        style={{ bottom: 'max(5rem, calc(1rem + var(--safe-area-bottom)))', right: 'max(1rem, var(--safe-area-right))' }}
         aria-label={active ? 'Disable matrix rain effect' : 'Enable matrix rain effect'}
         title={active ? 'Disable matrix rain' : 'Enable matrix rain'}
       >

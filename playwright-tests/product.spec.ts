@@ -129,7 +129,8 @@ test.describe("Product / Work Experience Page", () => {
     const homeLink = page.locator('nav a[href="/"]').first();
 
     if ((await homeLink.count()) > 0) {
-      await homeLink.click();
+      // Use JS click to avoid interception by overlapping elements (chatbot widget)
+      await homeLink.evaluate((el) => (el as HTMLElement).click());
       // Wait until we're no longer on /product
       await page.waitForFunction(() => !window.location.pathname.includes("/product"));
       expect(page.url()).not.toContain("/product");

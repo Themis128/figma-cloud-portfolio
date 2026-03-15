@@ -6,7 +6,7 @@ import { ManageCookiesButton } from "@/components/CookieConsentBanner";
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t border-border/10 bg-background/50 backdrop-blur-sm">
+    <footer className="relative z-10 border-t border-border/10 bg-background/50 backdrop-blur-sm" style={{ paddingBottom: 'var(--safe-area-bottom)' }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-foreground/40 font-mono">
