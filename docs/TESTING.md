@@ -120,8 +120,8 @@ Shared helpers used across spec files:
 #### `playwright-tests/product.spec.ts` — Work Experience Page
 
 - ✅ Page loads at /product
-- ✅ Experience cards render with required fields
-- ✅ Company names, positions, periods, locations visible
+- ✅ Experience cards render via InteractiveTimeline (dual desktop/mobile views)
+- ✅ Company names, positions, periods, locations visible (`.first()` for dual-view)
 - ✅ Responsibilities lists render
 - ✅ Navigation back to home works
 - ✅ CircuitBackground renders
@@ -129,6 +129,48 @@ Shared helpers used across spec files:
 - ✅ Accessibility (headings, lists, ARIA)
 - ✅ No broken links
 - ✅ Text is readable (contrast)
+
+#### `playwright-tests/interactive-components.spec.ts` — Interactive Engagement Components (28 tests)
+
+**Coverage:** All 7 interactive components — ScrollProgress, MatrixRain, CyberTerminal, TypeWriter, SkillsRadar, InteractiveTimeline, CursorTrail
+
+**ScrollProgress (2 tests)**
+- ✅ Progressbar element with ARIA attributes (aria-label, aria-valuemin, aria-valuemax)
+- ✅ Progress value updates on scroll (0 at top, >50 after scrolling)
+
+**MatrixRain (2 tests)**
+- ✅ Toggle button renders with proper aria-label
+- ✅ Click enables canvas, updates label to "Disable"; click again disables
+
+**CyberTerminal (11 tests)**
+- ✅ Opens with backtick key, displays CYBER_TERMINAL header
+- ✅ Shows boot messages (Initializing, Secure connection)
+- ✅ Input field with "Enter command..." placeholder
+- ✅ Close button with aria-label, closes with Escape key
+- ✅ `help` command shows available commands list
+- ✅ `whoami` command shows identity (THEMISTOKLIS BALTZAKIS)
+- ✅ Unknown command shows error message
+- ✅ Input disabled during typing animation
+
+**TypeWriter (2 tests)**
+- ✅ Cursor element renders with blinking animation
+- ✅ Types "IT Network Engineer" within 10s timeout
+
+**SkillsRadar (6 tests)**
+- ✅ "Skills Radar" heading visible
+- ✅ SVG radar chart with role="img" and aria-label
+- ✅ All 6 skill labels (Networking, Security, Cloud, DevOps, Programming, Systems)
+- ✅ Skill labels are clickable buttons (role="button")
+- ✅ Clicking label shows detail panel (proficiency, certifications, experience)
+- ✅ Clicking same label again hides detail panel
+
+**InteractiveTimeline (4 tests)**
+- ✅ Renders all 5 companies (Skaramangas, Estarta, Cosmos, CPI SA, Printec)
+- ✅ Responsibilities render as list items
+- ✅ Mobile view shows all experiences expanded (375px viewport)
+
+**CursorTrail (1 test)**
+- ✅ Trail container has aria-hidden="true" (graceful on CI/mobile)
 
 #### `playwright-tests/admin.spec.ts` — Admin Dashboard Suite (138 tests)
 
@@ -629,6 +671,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | AI Chatbot                 | `chatbot.spec.ts`                                                          | ✅ Covered |
 | PWA / Service Worker       | `pwa-advanced.spec.ts`                                                     | ✅ Covered |
 | Socket.IO                  | `socketio-realtime.spec.ts`                                                | ✅ Covered |
+| Interactive Components     | `interactive-components.spec.ts`                                            | ✅ Covered |
 | Three.js 3D                | `3d-demos.spec.ts`                                                         | ✅ Covered |
 | Accessibility              | `accessibility.spec.ts`, `app.spec.ts`                                     | ✅ Covered |
 | Security                   | `security-privacy.spec.ts`                                                 | ✅ Covered |

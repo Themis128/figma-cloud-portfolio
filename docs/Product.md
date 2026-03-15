@@ -6,24 +6,36 @@ The Product page showcases Themistoklis Baltzakis' professional work experience 
 
 ## Features
 
+### InteractiveTimeline Component
+
+The work experience data is rendered via the `InteractiveTimeline` component (`src/components/interactive/InteractiveTimeline.tsx`), which provides:
+
+- **Desktop view** (`hidden md:block`): Vertical animated timeline line, clickable nodes to expand/collapse individual experiences, pulse-glow keyframes on active node
+- **Mobile view** (`md:hidden`): All experiences expanded by default in a card layout
+- **Dual rendering**: Both views are in the DOM; CSS visibility toggles based on viewport width
+
 ### Work Experience Timeline
 
-- **Estarta Solutions**: Systems and Network Engineer (Dec 2024 - Mar 2025)
-  - Cisco virtualization platforms (UCS, HyperFlex, ACI)
-  - VMware vSphere and ESXi management
-  - Network virtualization with Cisco ACI and Nexus
-  - Infrastructure performance monitoring and optimization
+- **Skaramangas Shipyards**: IT Network Engineer (2025 – Present)
+  - Cisco-based network infrastructure for maritime operations
+  - Fortinet firewall environments for data center security
+  - High availability of core network systems across 1,000+ ports
 
-- **Cosmos Business Systems Group**: IT Support Engineer (Mar 2023 - May 2024)
-  - Azure Active Directory management
-  - Microsoft 365 support services
-  - Microsoft Intune for mobile device management
+- **Estarta Solutions**: Network and Systems Engineer (Recent)
+  - Cisco infrastructure issues in data centers, 100% SLA compliance
+  - Streamlined RMA process, 30% logistics efficiency improvement
 
-- **CPI SA (Nielsen Greece)**: IT Consultant (Feb 2023 - Mar 2023)
-  - Technology roadmap development
-  - Active Directory management
-  - ServiceNow IT service management
-  - CyberArk privileged access management
+- **Cosmos Business Systems**: IT Consultant Analyst (Recent)
+  - Azure Active Directory management and troubleshooting
+  - Microsoft 365 services and Intune MDM/MAM
+
+- **CPI SA (outsourced @ Nielsen Hellas)**: IT Consultant Analyst (Mar 2023)
+  - Active Directory environments and ServiceNow ITSM
+  - CyberArk Privileged Access Management
+
+- **Printec Hellas**: Technical Engineer (Jan 2022 – Sep 2022)
+  - Windows and Cisco Systems — servers, switches, routers, firewalls
+  - Hardware-based network installation and troubleshooting
 
 ### Experience Details
 
@@ -39,22 +51,24 @@ Each position includes:
 
 - **Navigation**: Site navigation
 - **CircuitBackground**: Animated background
-- **Icons**: Building, Calendar, MapPin (Lucide React)
-- **Link**: React Router navigation
+- **InteractiveTimeline**: Interactive vertical timeline with expand/collapse
+- **AnimatedSection**: Framer Motion scroll-reveal wrapper
+- **Link** (Next.js): Internal navigation for CTA buttons
 
 ## Technical Implementation
 
 ### Data Structure
 
-- **Experience Array**: Structured work history data
-- **Responsibility Lists**: Detailed task descriptions
-- **Location Information**: Geographic work locations
+- **Experience Array**: Structured work history data (5 positions)
+- **Responsibility Lists**: Detailed task descriptions per position
+- **Location Information**: Geographic work locations (Greece)
 
 ### Layout Design
 
-- **Timeline Format**: Chronological experience presentation
-- **Card-based Layout**: Organized information blocks
-- **Responsive Design**: Mobile-friendly layout
+- **InteractiveTimeline**: Vertical timeline with animated line and clickable nodes (desktop) / all-expanded cards (mobile)
+- **Hero Section**: Page title, subtitle, and cyan gradient divider
+- **CTA Section**: "Build Resume" and "Get In Touch" buttons
+- **Responsive Design**: Mobile-first layout with dual-view rendering
 
 ## Content Organization
 
@@ -89,9 +103,8 @@ Each position includes:
 - **Professional Content**: Career-focused information
 - **Structured Data**: Clear information hierarchy
 
-## Future Enhancements
+## Recent Enhancements
 
-- **Interactive Timeline**: Visual career progression
-- **Skill Filtering**: Filter by technology or role type
-- **Achievement Highlights**: Key accomplishment emphasis
-- **Download Resume**: Direct resume generation
+- **InteractiveTimeline**: Replaced static cards with animated vertical timeline (Mar 2026)
+- **Dual-view rendering**: Desktop expand/collapse + mobile all-expanded views
+- **CTA buttons**: "Build Resume" and "Get In Touch" links added below timeline
