@@ -117,6 +117,19 @@ export default function Navigation() {
             </Link>
           ))}
 
+          {/* Accessibility Settings */}
+          <button
+            type="button"
+            onClick={() => {
+              openAccessibilityPanel();
+              setIsOpen(false);
+            }}
+            className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg text-foreground/80 hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <Accessibility className="h-5 w-5" />
+            Accessibility Settings
+          </button>
+
           {/* CTA Button */}
           <div className="pt-2">
             <HoverButton>

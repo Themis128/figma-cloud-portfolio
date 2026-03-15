@@ -8,7 +8,6 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Settings,
   Text,
 } from "lucide-react";
 import type React from "react";
@@ -195,18 +194,7 @@ const AccessibilityEnhancer: React.FC = () => {
   };
 
   if (!isOpen) {
-    return (
-      <div className="fixed bottom-24 right-6 z-50">
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant="outline"
-          className="rounded-full w-14 h-14 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-          aria-label="Accessibility Settings"
-        >
-          <Settings className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-        </Button>
-      </div>
-    );
+    return null;
   }
 
   return (
