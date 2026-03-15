@@ -11,6 +11,7 @@ import CyberTerminal from "@/components/interactive/CyberTerminal";
 import ScrollProgress from "@/components/interactive/ScrollProgress";
 import MatrixRain from "@/components/interactive/MatrixRain";
 import CursorTrail from "@/components/interactive/CursorTrail";
+import CommandPalette from "@/components/CommandPalette";
 import SentryInit from "@/components/SentryInit";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
@@ -165,6 +166,7 @@ export default function RootLayout({
               <CyberTerminal />
               <MatrixRain />
               <CursorTrail />
+              <CommandPalette />
             </MotionProvider>
           </AuthProvider>
           </AmplifyProvider>
