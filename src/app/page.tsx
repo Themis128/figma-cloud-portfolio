@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import AIBrain from "@/components/AIBrain";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import AvailabilityBadge from "@/components/AvailabilityBadge";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
@@ -37,6 +38,7 @@ export default function HomePage() {
               aria-labelledby="hero-heading"
             >
               <div className="space-y-3 md:space-y-4">
+                <AvailabilityBadge delay={0.05} />
                 <AnimatedSection delay={0.1}>
                   <h1
                     id="hero-heading"
