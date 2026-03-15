@@ -17,63 +17,58 @@ test.describe("Work Experience Page — Content", () => {
   });
 
   test("should display all 5 companies", async ({ page }) => {
-    await expect(page.getByText("Estarta Solutions")).toBeVisible();
-    await expect(page.getByText("Cosmos Business Systems")).toBeVisible();
+    // InteractiveTimeline renders both desktop and mobile views, use .first()
+    await expect(page.getByText("Skaramangas Shipyards").first()).toBeVisible();
+    await expect(page.getByText("Estarta Solutions").first()).toBeVisible();
+    await expect(page.getByText("Cosmos Business Systems").first()).toBeVisible();
     await expect(
-      page.getByText("CPI SA", { exact: false }),
+      page.getByText("CPI SA", { exact: false }).first(),
     ).toBeVisible();
     await expect(
-      page.getByText("Athens International Airport"),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Cosmote", { exact: false }),
+      page.getByText("Printec Hellas").first(),
     ).toBeVisible();
   });
 
   test("should display position titles", async ({ page }) => {
     await expect(
-      page.getByText("Systems and Network Engineer"),
+      page.getByText("IT Network Engineer").first(),
     ).toBeVisible();
-    await expect(page.getByText("IT Support Engineer")).toBeVisible();
-    await expect(page.getByText("IT Consultant")).toBeVisible();
+    await expect(page.getByText("Network and Systems Engineer").first()).toBeVisible();
+    await expect(page.getByText("IT Consultant Analyst").first()).toBeVisible();
     await expect(
-      page.getByText("Network & Infrastructure Engineer"),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Telecommunications Engineer"),
+      page.getByText("Technical Engineer").first(),
     ).toBeVisible();
   });
 
   test("should display time periods", async ({ page }) => {
     await expect(
-      page.getByText("Dec 2024", { exact: false }).first(),
+      page.getByText("2025", { exact: false }).first(),
     ).toBeVisible();
     await expect(
       page.getByText("Mar 2023", { exact: false }).first(),
     ).toBeVisible();
     await expect(
-      page.getByText("Jun 2021", { exact: false }).first(),
+      page.getByText("Jan 2022", { exact: false }).first(),
     ).toBeVisible();
   });
 
   test("should display locations", async ({ page }) => {
-    await expect(page.getByText("Remote")).toBeVisible();
-    const athensLocations = page.getByText("Athens, Greece");
-    expect(await athensLocations.count()).toBeGreaterThanOrEqual(3);
+    const greeceLocations = page.getByText("Greece", { exact: false });
+    expect(await greeceLocations.count()).toBeGreaterThanOrEqual(3);
   });
 
   test("should display responsibility bullet points", async ({ page }) => {
-    // Estarta responsibilities
+    // Skaramangas responsibilities
     await expect(
-      page.getByText("Cisco virtualization", { exact: false }),
+      page.getByText("Cisco-based network infrastructure", { exact: false }).first(),
     ).toBeVisible();
     // Cosmos responsibilities
     await expect(
-      page.getByText("Azure Active Directory", { exact: false }),
+      page.getByText("Azure Active Directory", { exact: false }).first(),
     ).toBeVisible();
-    // Athens Airport
+    // Printec
     await expect(
-      page.getByText("airport network infrastructure", { exact: false }),
+      page.getByText("Windows and Cisco Systems", { exact: false }).first(),
     ).toBeVisible();
   });
 });

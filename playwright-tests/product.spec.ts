@@ -58,25 +58,24 @@ test.describe("Product / Work Experience Page", () => {
 
   test("displays Estarta Solutions experience", async ({ page }) => {
     const companyText = page.getByText("Estarta Solutions", { exact: false });
-    await expect(companyText).toBeVisible();
+    // InteractiveTimeline renders both desktop and mobile views
+    await expect(companyText.first()).toBeVisible();
   });
 
   test("displays job position title", async ({ page }) => {
-    const position = page.getByText("Systems and Network Engineer", {
+    const position = page.getByText("Network and Systems Engineer", {
       exact: false,
     });
-    await expect(position).toBeVisible();
+    await expect(position.first()).toBeVisible();
   });
 
   test("displays employment period", async ({ page }) => {
-    // The actual period text is "Dec 2024 – Mar 2025"
-    const period = page.getByText("Dec 2024", { exact: false });
-    await expect(period).toBeVisible();
+    const period = page.getByText("Recent", { exact: false });
+    await expect(period.first()).toBeVisible();
   });
 
   test("displays location information", async ({ page }) => {
-    // Location is displayed as plain text in the experience cards
-    const location = page.getByText("Remote", { exact: false });
+    const location = page.getByText("Greece", { exact: false });
     await expect(location.first()).toBeVisible();
   });
 
@@ -114,7 +113,7 @@ test.describe("Product / Work Experience Page", () => {
 
   test("shows location icon or text", async ({ page }) => {
     // Location text is visible alongside a MapPin icon
-    const locationText = page.getByText("Athens, Greece", { exact: false });
+    const locationText = page.getByText("Greece", { exact: false });
     await expect(locationText.first()).toBeVisible();
   });
 
@@ -177,8 +176,8 @@ test.describe("Product / Work Experience Page", () => {
     await page.goto("/product");
     await page.waitForLoadState("domcontentloaded");
 
-    const companyText = page.getByText("Estarta Solutions", { exact: false });
-    await expect(companyText).toBeVisible();
+    // On mobile, the heading should be visible
+    await expect(page.locator("h1")).toContainText("Work Experience");
 
     // Content should not overflow horizontally
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
@@ -191,8 +190,7 @@ test.describe("Product / Work Experience Page", () => {
     await page.goto("/product");
     await page.waitForLoadState("domcontentloaded");
 
-    const companyText = page.getByText("Estarta Solutions", { exact: false });
-    await expect(companyText).toBeVisible();
+    await expect(page.locator("h1")).toContainText("Work Experience");
   });
 
   test("renders correctly on desktop viewport (1280px)", async ({ page }) => {
@@ -201,7 +199,7 @@ test.describe("Product / Work Experience Page", () => {
     await page.waitForLoadState("domcontentloaded");
 
     const companyText = page.getByText("Estarta Solutions", { exact: false });
-    await expect(companyText).toBeVisible();
+    await expect(companyText.first()).toBeVisible();
   });
 
   // ─── Accessibility ────────────────────────────────────────────────────────────

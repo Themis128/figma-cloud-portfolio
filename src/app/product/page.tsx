@@ -1,10 +1,10 @@
-import { Building, Calendar, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
+import InteractiveTimeline from "@/components/interactive/InteractiveTimeline";
 
 export const metadata: Metadata = {
   title: "Work Experience",
@@ -104,54 +104,10 @@ export default function ProductPage() {
           </AnimatedSection>
 
           {/* Experience Timeline */}
-          <div className="max-w-4xl mx-auto space-y-8">
-            {experiences.map((exp, index) => (
-              <AnimatedSection key={exp.company} delay={0.1 * (index + 1)}>
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6 md:p-8 hover:border-cyan-400/30 transition-all duration-300">
-                  {/* Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Building className="w-5 h-5 text-cyan-400 shrink-0" />
-                        <h2 className="text-xl md:text-2xl font-bold text-white">
-                          {exp.company}
-                        </h2>
-                      </div>
-                      <p className="text-cyan-400 font-semibold text-base ml-7">
-                        {exp.position}
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-1 sm:text-right ml-7 sm:ml-0">
-                      <div className="flex items-center gap-2 sm:justify-end">
-                        <Calendar className="w-4 h-4 text-white/50" />
-                        <span className="text-white/70 text-sm">
-                          {exp.period}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 sm:justify-end">
-                        <MapPin className="w-4 h-4 text-white/50" />
-                        <span className="text-white/70 text-sm">
-                          {exp.location}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Responsibilities */}
-                  <ul className="space-y-3">
-                    {exp.responsibilities.map((responsibility, rIndex) => (
-                      <li
-                        key={`${exp.company}-resp-${rIndex}`}
-                        className="flex items-start gap-3 text-white/80 text-sm leading-relaxed"
-                      >
-                        <div className="w-2 h-2 bg-cyan-400 rounded-full mt-1.5 shrink-0" />
-                        {responsibility}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </AnimatedSection>
-            ))}
+          <div className="max-w-4xl mx-auto">
+            <AnimatedSection delay={0.3}>
+              <InteractiveTimeline experiences={experiences} />
+            </AnimatedSection>
           </div>
 
           {/* Call to Action */}
