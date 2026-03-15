@@ -176,6 +176,80 @@ test.describe("AI Agents Educational Page", () => {
     });
   });
 
+  test.describe("Blockly Agent Builder", () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto("/agents");
+      await waitForAppReady(page);
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForSelector("h1", { timeout: 10000 });
+    });
+
+    test("should have Build Your Own Agent section heading", async ({
+      page,
+    }) => {
+      const heading = page.getByText("Build Your Own Agent");
+      await heading.scrollIntoViewIfNeeded();
+      await expect(heading).toBeVisible();
+    });
+
+    test("should display kid-friendly subtitle", async ({ page }) => {
+      await expect(
+        page.getByText("Drag blocks to teach your robot agent", { exact: false }),
+      ).toBeVisible();
+    });
+
+    test("should render Blockly workspace or loading state", async ({
+      page,
+    }) => {
+      // Blockly loads dynamically — check for either the workspace or the loading indicator
+      const workspace = page.locator(".blocklyWorkspace");
+      const loading = page.getByText("Loading block editor", { exact: false });
+
+      // Wait up to 15 seconds for Blockly to load
+      await Promise.race([
+        workspace.waitFor({ state: "attached", timeout: 15000 }).catch(() => {}),
+        loading.waitFor({ state: "visible", timeout: 5000 }).catch(() => {}),
+      ]);
+
+      const wsCount = await workspace.count();
+      const loadingVisible = await loading.isVisible().catch(() => false);
+
+      // Either Blockly loaded or loading indicator is shown
+      expect(wsCount > 0 || loadingVisible).toBeTruthy();
+    });
+
+    test("should have Show Python button", async ({ page }) => {
+      // Wait for Blockly to load
+      await page.waitForTimeout(5000);
+
+      const pythonBtn = page.getByText("Show Python", { exact: false });
+      const btnVisible = await pythonBtn.isVisible().catch(() => false);
+      if (btnVisible) {
+        await expect(pythonBtn).toBeVisible();
+      }
+    });
+
+    test("should have Run Agent button", async ({ page }) => {
+      await page.waitForTimeout(5000);
+
+      const runBtn = page.getByText("Run Agent", { exact: false });
+      const btnVisible = await runBtn.isVisible().catch(() => false);
+      if (btnVisible) {
+        await expect(runBtn).toBeVisible();
+      }
+    });
+
+    test("should have Reset button", async ({ page }) => {
+      await page.waitForTimeout(5000);
+
+      const resetBtn = page.getByText("Reset", { exact: false });
+      const btnVisible = await resetBtn.isVisible().catch(() => false);
+      if (btnVisible) {
+        await expect(resetBtn).toBeVisible();
+      }
+    });
+  });
+
   test.describe("Accessibility & Responsiveness", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/agents");

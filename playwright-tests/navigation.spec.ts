@@ -108,6 +108,24 @@ test.describe("Navigation — Mobile", () => {
     await expect(page.locator('a.block', { hasText: "About" })).toBeVisible();
     await expect(page.locator('a.block', { hasText: "Contact" })).toBeVisible();
   });
+
+  test("should show accessibility settings button in mobile menu", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Open mobile menu
+    const menuButton = page.locator('button[aria-label="Toggle menu"]');
+    await menuButton.click();
+    await page.waitForTimeout(500);
+
+    // Accessibility Settings button should be visible in the mobile nav
+    const a11yButton = page.getByText("Accessibility Settings", {
+      exact: true,
+    });
+    await expect(a11yButton).toBeVisible();
+  });
 });
 
 test.describe("Navigation — Utilities", () => {
@@ -122,13 +140,13 @@ test.describe("Navigation — Utilities", () => {
     expect(await themeToggle.count()).toBeGreaterThanOrEqual(1);
   });
 
-  test("should have accessibility button", async ({ page }) => {
+  test("should have accessibility button on desktop", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    const a11yButton = page.locator('button[aria-label="Accessibility options"]');
-    // May or may not have explicit aria-label; check by icon presence
-    const navButtons = page.locator("nav button");
-    expect(await navButtons.count()).toBeGreaterThanOrEqual(2);
+    const a11yButton = page.locator(
+      'button[aria-label="Open accessibility settings"]',
+    );
+    await expect(a11yButton).toBeVisible();
   });
 });
