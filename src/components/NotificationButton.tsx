@@ -1,28 +1,31 @@
 "use client";
 
-import { Bell, BellOff, Megaphone, Sparkles } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { Bell, BellOff, ExternalLink, Megaphone, X } from "lucide-react";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-const STORAGE_KEY = "site-announcements-enabled";
 const LAST_SEEN_KEY = "site-announcements-last-seen";
+const READ_IDS_KEY = "site-announcements-read";
 
-// Site announcements — update this array to show new toasts to visitors.
+// Site announcements — update this array to show new items to visitors.
 // IDs must be chronologically sortable strings (e.g. "YYYY-MM-DD-slug").
+// Optional `href` adds a "View" link. Optional `expires` auto-hides after that date.
 const ANNOUNCEMENTS: readonly Announcement[] = [
   {
     id: "2026-03-10-performance",
     title: "Performance Dashboard Live",
     description:
       "Check out the new /performance page — real-time Web Vitals and industry benchmarks.",
+    href: "/performance/",
   },
   {
     id: "2026-03-10-agents",
     title: "AI Agents Showcase",
     description:
       "Explore the /agents page to see AI-powered automation workflows.",
+    href: "/agents/",
   },
 ];
 
@@ -30,9 +33,13 @@ interface Announcement {
   id: string;
   title: string;
   description: string;
+  /** Optional link to the relevant page */
+  href?: string;
+  /** ISO date string — announcement hidden after this date */
+  expires?: string;
 }
 
-/** Safe localStorage wrapper — returns null on any error (private mode, quota, etc.) */
+/** Safe localStorage wrapper */
 function storageGet(key: string): string | null {
   try {
     return localStorage.getItem(key);
@@ -45,131 +52,210 @@ function storageSet(key: string, value: string): void {
   try {
     localStorage.setItem(key, value);
   } catch {
-    // Silently fail — storage full or unavailable
+    // Silently fail
   }
 }
 
+function getReadIds(): Set<string> {
+  const raw = storageGet(READ_IDS_KEY);
+  if (!raw) return new Set();
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) return new Set(parsed as string[]);
+  } catch {
+    // ignore
+  }
+  return new Set();
+}
+
+function saveReadIds(ids: Set<string>): void {
+  storageSet(READ_IDS_KEY, JSON.stringify([...ids]));
+}
+
+/** Filter out expired announcements */
+function getActiveAnnouncements(): readonly Announcement[] {
+  const now = new Date().toISOString();
+  return ANNOUNCEMENTS.filter((a) => !a.expires || a.expires > now);
+}
+
 export function NotificationButton() {
-  const [enabled, setEnabled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const active = getActiveAnnouncements();
+  const unreadCount = mounted
+    ? active.filter((a) => !readIds.has(a.id)).length
+    : 0;
 
   useEffect(() => {
     setMounted(true);
-    setEnabled(storageGet(STORAGE_KEY) === "true");
+    setReadIds(getReadIds());
   }, []);
 
-  const showUnseenAnnouncements = useCallback(() => {
-    if (ANNOUNCEMENTS.length === 0) return;
-
-    const lastSeen = storageGet(LAST_SEEN_KEY) ?? "";
-    const unseen = ANNOUNCEMENTS.filter((a) => a.id > lastSeen);
-    if (unseen.length === 0) return;
-
-    for (const announcement of unseen) {
-      toast.custom(
-        () => (
-          <div className="w-89 bg-slate-900/95 backdrop-blur-md border border-cyan-400/30 rounded-lg p-4 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-8 h-8 bg-cyan-500/20 rounded-md flex items-center justify-center">
-                <Megaphone className="w-4 h-4 text-cyan-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-cyan-400 font-semibold text-sm font-mono uppercase tracking-wider">
-                  {announcement.title}
-                </p>
-                <p className="text-slate-300 text-xs mt-1 leading-relaxed">
-                  {announcement.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        ),
-        { duration: 8000 },
-      );
-    }
-
-    const latestId = ANNOUNCEMENTS[ANNOUNCEMENTS.length - 1]?.id;
-    if (latestId) {
-      storageSet(LAST_SEEN_KEY, latestId);
-    }
-  }, []);
-
-  // Show unseen announcements on page load when enabled
+  // Close on outside click
   useEffect(() => {
-    if (!mounted || !enabled) return;
-    const timer = setTimeout(showUnseenAnnouncements, 2000);
-    return () => clearTimeout(timer);
-  }, [mounted, enabled, showUnseenAnnouncements]);
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
-  const toggle = () => {
-    if (!mounted) return;
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open]);
 
-    const next = !enabled;
-    setEnabled(next);
-    storageSet(STORAGE_KEY, String(next));
+  const markAllRead = useCallback(() => {
+    const ids = new Set(active.map((a) => a.id));
+    setReadIds(ids);
+    saveReadIds(ids);
+    const latestId = active[active.length - 1]?.id;
+    if (latestId) storageSet(LAST_SEEN_KEY, latestId);
+  }, [active]);
 
-    if (next) {
-      toast.custom(() => (
-        <div className="w-89 bg-slate-900/95 backdrop-blur-md border border-green-400/30 rounded-lg p-4 shadow-[0_0_15px_rgba(74,222,128,0.15)]">
-          <div className="flex items-start gap-3">
-            <div className="shrink-0 w-8 h-8 bg-green-500/20 rounded-md flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-green-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-green-400 font-semibold text-sm font-mono uppercase tracking-wider">
-                Announcements On
-              </p>
-              <p className="text-slate-300 text-xs mt-1">
-                You&apos;ll see site updates when you visit.
-              </p>
-            </div>
-          </div>
-        </div>
-      ));
-      setTimeout(showUnseenAnnouncements, 500);
-    } else {
-      toast.custom(() => (
-        <div className="w-89 bg-slate-900/95 backdrop-blur-md border border-slate-600/30 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <div className="shrink-0 w-8 h-8 bg-slate-700/50 rounded-md flex items-center justify-center">
-              <BellOff className="w-4 h-4 text-slate-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-slate-400 font-semibold text-sm font-mono uppercase tracking-wider">
-                Announcements Off
-              </p>
-              <p className="text-slate-500 text-xs mt-1">
-                You won&apos;t see site update toasts.
-              </p>
-            </div>
-          </div>
-        </div>
-      ));
+  const togglePanel = () => {
+    const next = !open;
+    setOpen(next);
+    // Mark all as read when opening
+    if (next && unreadCount > 0) {
+      markAllRead();
     }
   };
 
   if (!mounted) return null;
 
   return (
-    <Button
-      onClick={toggle}
-      variant="outline"
-      size="sm"
-      className={`gap-2 ${
-        enabled
-          ? "border-green-400/50 text-green-400"
-          : "border-cyan-400/50 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300"
-      }`}
-      aria-label={enabled ? "Disable announcements" : "Enable announcements"}
-    >
-      {enabled ? (
-        <Bell className="h-4 w-4" />
-      ) : (
-        <BellOff className="h-4 w-4" />
+    <div className="relative" ref={panelRef}>
+      {/* Bell button */}
+      <Button
+        onClick={togglePanel}
+        variant="outline"
+        size="icon"
+        className={`relative border-border/40 hover:border-cyan-400/60 hover:bg-transparent ${
+          open ? "border-cyan-400/60 text-cyan-300" : ""
+        }`}
+        aria-label={
+          unreadCount > 0
+            ? `${unreadCount} new announcements`
+            : "Announcements"
+        }
+        aria-expanded={open}
+      >
+        {open ? (
+          <Bell className="h-[1.2rem] w-[1.2rem] text-cyan-400" />
+        ) : (
+          <Bell className="h-[1.2rem] w-[1.2rem]" />
+        )}
+
+        {/* Unseen badge */}
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+            <span className="relative inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-cyan-500 text-[9px] font-bold text-slate-900">
+              {unreadCount}
+            </span>
+          </span>
+        )}
+      </Button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div
+          className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-cyan-400/20 bg-slate-900/95 backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.1)] z-50"
+          role="dialog"
+          aria-label="Announcements"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-cyan-400/10 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Megaphone className="h-4 w-4 text-cyan-400" />
+              <h3 className="text-sm font-semibold font-mono uppercase tracking-wider text-cyan-400">
+                Announcements
+              </h3>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              className="text-slate-400 hover:text-slate-200 transition-colors"
+              aria-label="Close announcements"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Announcement list */}
+          <div className="max-h-72 overflow-y-auto">
+            {active.length === 0 ? (
+              <div className="flex flex-col items-center gap-2 py-8 text-slate-500">
+                <BellOff className="h-6 w-6" />
+                <p className="text-xs">No announcements right now</p>
+              </div>
+            ) : (
+              <ul className="divide-y divide-cyan-400/10">
+                {[...active].reverse().map((announcement) => {
+                  const isRead = readIds.has(announcement.id);
+                  return (
+                    <li
+                      key={announcement.id}
+                      className={`px-4 py-3 transition-colors ${
+                        isRead
+                          ? "opacity-60"
+                          : "bg-cyan-400/5"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Unread dot */}
+                        <div className="mt-1.5 shrink-0">
+                          {!isRead ? (
+                            <span className="block h-2 w-2 rounded-full bg-cyan-400" />
+                          ) : (
+                            <span className="block h-2 w-2 rounded-full bg-slate-600" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-200">
+                            {announcement.title}
+                          </p>
+                          <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                            {announcement.description}
+                          </p>
+                          {announcement.href && (
+                            <Link
+                              href={announcement.href}
+                              onClick={() => setOpen(false)}
+                              className="inline-flex items-center gap-1 mt-2 text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+                            >
+                              Check it out
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-cyan-400/10 px-4 py-2">
+            <p className="text-[10px] text-slate-500 text-center font-mono">
+              {active.length} announcement{active.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+        </div>
       )}
-      <span className="hidden lg:inline">
-        {enabled ? "Announcements on" : "Announcements"}
-      </span>
-    </Button>
+    </div>
   );
 }
