@@ -71,6 +71,20 @@ public/                 # Static assets and PWA files
 pnpm install
 ```
 
+### Amplify Backend Setup
+
+Before running `pnpm build` or `pnpm dev`, generate the Amplify backend configuration:
+
+```bash
+# Generate amplify_outputs.json from the Amplify Gen 2 backend
+pnpm amplify:outputs
+
+# Or for sandbox testing:
+pnpm amplify:dev
+```
+
+See [Deployment Guide](docs/DEPLOYMENT.md#environment-setup) for detailed backend setup instructions.
+
 ### Running Development Servers
 
 ```bash

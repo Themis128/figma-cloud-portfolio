@@ -111,6 +111,7 @@ function ProjectSphere({
   onHover: (id: string | null) => void;
 }) {
   // Use forwardRef to properly handle refs in function components
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const meshRef = React.forwardRef<THREE.Mesh, any>((props, ref) => {
     return <Sphere {...props} ref={ref} />;
   });

@@ -35,10 +35,8 @@ function hasAnalyticsConsent(): boolean {
 function bootstrapGtag(): void {
   if (typeof window === "undefined") return;
   window.dataLayer = window.dataLayer || [];
-  // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
   window.gtag = function gtag() {
     // dataLayer.push expects the arguments object, not an array
-    // eslint-disable-next-line prefer-rest-params
     window.dataLayer!.push(arguments as unknown as Record<string, unknown>);
   };
   window.gtag("js", new Date());
