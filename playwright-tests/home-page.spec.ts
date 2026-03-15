@@ -17,15 +17,16 @@ test.describe("Home Page — Hero Section", () => {
     await expect(page.getByText("Baltzakis", { exact: true })).toBeVisible();
   });
 
-  test("should display role title", async ({ page }) => {
+  test("should display role title via TypeWriter", async ({ page }) => {
+    // TypeWriter cycles through roles — at least one should appear within timeout
     await expect(
-      page.getByText("Cloud Architect & Cybersecurity Specialist"),
-    ).toBeVisible();
+      page.getByText("IT Network Engineer", { exact: false }),
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test("should display description with experience", async ({ page }) => {
     await expect(
-      page.getByText("15+ years", { exact: false }),
+      page.getByText("15 years", { exact: false }),
     ).toBeVisible();
   });
 

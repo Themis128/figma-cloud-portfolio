@@ -7,6 +7,10 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { Providers } from "@/components/providers";
 import { DefaultStructuredData } from "@/components/StructuredData";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import CyberTerminal from "@/components/interactive/CyberTerminal";
+import ScrollProgress from "@/components/interactive/ScrollProgress";
+import MatrixRain from "@/components/interactive/MatrixRain";
+import CursorTrail from "@/components/interactive/CursorTrail";
 import SentryInit from "@/components/SentryInit";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
@@ -143,9 +147,13 @@ export default function RootLayout({
             <MotionProvider>
               <DefaultStructuredData />
               <AccessibilityEnhancer />
+              <ScrollProgress />
               {children}
               <Footer />
               <ChatbotWidget />
+              <CyberTerminal />
+              <MatrixRain />
+              <CursorTrail />
             </MotionProvider>
           </AuthProvider>
           </AmplifyProvider>

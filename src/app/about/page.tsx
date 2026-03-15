@@ -14,6 +14,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
+import SkillsRadar from "@/components/interactive/SkillsRadar";
 
 export const metadata: Metadata = {
   title: "About Me",
@@ -138,6 +139,11 @@ export default function AboutPage() {
                   </div>
                 </HoverCard>
               </div>
+            </AnimatedSection>
+
+            {/* Skills Radar */}
+            <AnimatedSection delay={0.25}>
+              <SkillsRadar />
             </AnimatedSection>
 
             {/* Skills & Certifications */}

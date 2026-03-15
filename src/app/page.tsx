@@ -7,6 +7,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
 import QuickContactForm from "@/components/QuickContactForm";
+import TypeWriter from "@/components/interactive/TypeWriter";
 
 export const metadata: Metadata = {
   title: "Home | Themistoklis Baltzakis",
@@ -51,7 +52,17 @@ export default function HomePage() {
                 </AnimatedSection>
                 <AnimatedSection delay={0.2}>
                   <p className="text-cyan-400 text-base sm:text-lg md:text-xl font-semibold tracking-wide">
-                    IT Network Engineer
+                    <TypeWriter
+                      words={[
+                        'IT Network Engineer',
+                        'Cloud Architect',
+                        'Cybersecurity Specialist',
+                        'DevOps Engineer',
+                      ]}
+                      typingSpeed={80}
+                      deletingSpeed={40}
+                      pauseTime={2500}
+                    />
                   </p>
                   <div className="w-12 sm:w-16 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mb-3 md:mb-4" />
                 </AnimatedSection>
