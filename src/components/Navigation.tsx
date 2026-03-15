@@ -35,7 +35,7 @@ export default function Navigation() {
   };
 
   return (
-    <header className="relative z-50">
+    <header className="relative z-50" style={{ paddingTop: 'var(--safe-area-top)' }}>
     <nav>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
