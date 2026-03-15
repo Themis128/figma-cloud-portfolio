@@ -46,9 +46,7 @@ class AIService {
     // Ollama doesn't require an API key
 
     if (
-      (apiKey &&
-        apiKey !== "test_openai_key" &&
-        apiKey !== "test_together_key") ||
+      (apiKey && apiKey.length > 0) ||
       provider === "ollama"
     ) {
       this.provider = {
@@ -182,7 +180,7 @@ Be helpful, professional, and engaging. Keep responses concise but informative. 
         model: responseModel,
       };
     } catch (_error) {
-      // Fallback to mock response if API fails
+      // Fallback to keyword-based response if API fails
       return {
         content: this.getFallbackResponse(message),
         model: "fallback",

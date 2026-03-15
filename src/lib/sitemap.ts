@@ -74,55 +74,55 @@ const staticPages: SitemapEntry[] = [
   },
 ];
 
-// Sample projects for dynamic sitemap generation
+// Actual portfolio projects for sitemap and RSS generation
 const sampleProjects: Project[] = [
   {
     id: "1",
-    slug: "ecommerce-dashboard",
-    title: "E-Commerce Dashboard",
+    slug: "figma-cloud-portfolio",
+    title: "Portfolio Website",
     description:
-      "A comprehensive admin dashboard for e-commerce platforms with real-time analytics and inventory management.",
-    publishedAt: "2024-03-15T10:00:00Z",
+      "Personal portfolio built with Next.js 16, deployed on AWS S3 + CloudFront with Amplify Gen 2 backend. Features AI chatbot, PWA support, and admin dashboard.",
+    publishedAt: "2026-01-15T10:00:00Z",
   },
   {
     id: "2",
-    slug: "ai-content-generator",
-    title: "AI Content Generator",
+    slug: "raspberry-pi-monitoring",
+    title: "Network Monitoring Stack",
     description:
-      "AI-powered content generation tool that creates blog posts, social media content, and marketing copy.",
-    publishedAt: "2024-02-20T10:00:00Z",
+      "Comprehensive monitoring solution for home/SOHO networks featuring security monitoring, network performance tracking, and infrastructure observability.",
+    publishedAt: "2025-06-20T10:00:00Z",
   },
   {
     id: "3",
-    slug: "mobile-fitness-tracker",
-    title: "Mobile Fitness Tracker",
+    slug: "stable-diffusion-webui",
+    title: "Stable Diffusion Web UI",
     description:
-      "Cross-platform mobile application for tracking fitness activities, nutrition, and health metrics.",
-    publishedAt: "2023-12-10T10:00:00Z",
+      "Self-hosted Stable Diffusion web interface for AI image generation with custom models and configurations.",
+    publishedAt: "2026-02-10T10:00:00Z",
   },
   {
     id: "4",
-    slug: "code-collaboration-tool",
-    title: "Code Collaboration Tool",
+    slug: "telegram-web-app",
+    title: "Telegram Web App",
     description:
-      "Real-time collaborative code editor with version control integration and team management features.",
-    publishedAt: "2023-10-05T10:00:00Z",
+      "Modern Telegram Web App with PWA support — full MTProto API access via Telethon for messaging and automation.",
+    publishedAt: "2025-09-05T10:00:00Z",
   },
   {
     id: "5",
-    slug: "3d-portfolio-showcase",
-    title: "3D Portfolio Showcase",
+    slug: "dockerlabs",
+    title: "Docker Labs",
     description:
-      "Interactive 3D portfolio website built with Three.js and React, showcasing projects in an immersive environment.",
-    publishedAt: "2024-01-25T10:00:00Z",
+      "Collection of Docker-based lab environments for learning containerization, networking, and microservices architecture.",
+    publishedAt: "2025-04-25T10:00:00Z",
   },
   {
     id: "6",
-    slug: "task-management-game",
-    title: "Task Management Game",
+    slug: "cloudless-ecommerce",
+    title: "Cloudless E-Commerce",
     description:
-      "Gamified task management application that turns productivity into an RPG experience.",
-    publishedAt: "2023-08-15T10:00:00Z",
+      "Full-stack e-commerce platform with product management, cart functionality, and payment integration.",
+    publishedAt: "2025-07-15T10:00:00Z",
   },
 ];
 

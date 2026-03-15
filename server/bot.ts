@@ -5,26 +5,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Dummy knowledge base (replace with real info or connect to a vector DB)
+// Knowledge base for the simple chatbot fallback
 const websiteInfo = [
   {
     question: "What is this website about?",
     answer:
-      "This is a modern portfolio built with Next.js, React, and TypeScript.",
+      "This is the portfolio of Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist. Built with Next.js, React, and TypeScript.",
   },
   {
     question: "Who is the creator?",
-    answer: "The portfolio was created by tbaltzakis.",
+    answer:
+      "Themistoklis Baltzakis — a Cloud Architect & Cybersecurity Specialist with 15+ years of experience in network infrastructure, Azure, AWS, and security solutions.",
   },
   {
     question: "How can I contact you?",
     answer:
-      "You can use the contact form on the website or email tbaltzakis@example.com.",
+      "You can use the contact form on the website or visit the Contact page for more details.",
   },
 ];
 
 function findAnswer(userQuestion: string) {
-  // Simple keyword match (replace with LLM or semantic search for production)
+  // Simple keyword match fallback — production chat uses AWS Bedrock via server/routes/chat.ts
   const q = userQuestion.toLowerCase();
   for (const info of websiteInfo) {
     if (q.includes(info.question.toLowerCase().split(" ")[2])) {
