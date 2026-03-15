@@ -4,10 +4,10 @@ This document describes the API Keys endpoints implemented in the portfolio appl
 
 ## Authentication
 
-All API Keys endpoints require Firebase authentication. Requests must include a valid Firebase ID token in the `Authorization` header:
+All API Keys endpoints require Cognito authentication. Requests must include a valid Cognito ID token in the `Authorization` header:
 
 ```
-Authorization: Bearer <firebase-id-token>
+Authorization: Bearer <cognito-id-token>
 ```
 
 The admin dashboard's API Health Dashboard automatically includes this header when checking the API Keys endpoint (endpoints marked `requiresAuth: true` in `ApiHealthDashboard.tsx`).

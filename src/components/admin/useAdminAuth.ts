@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { getRealAuth, signInWithEmailAndPassword, signOut } from "@/lib/firebase";
+import { signIn, signOut } from "aws-amplify/auth";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function useAdminAuth() {
@@ -14,8 +14,13 @@ export function useAdminAuth() {
         setLoginError(null);
 
         const AUTH_TIMEOUT_MS = 10000;
-        const realAuth = getRealAuth();
-        const authPromise = signInWithEmailAndPassword(realAuth, email, password);
+        // Use USER_PASSWORD_AUTH instead of default SRP.
+        // SRP breaks when passwords are set via admin-set-user-password.
+        const authPromise = signIn({
+          username: email,
+          password,
+          options: { authFlowType: "USER_PASSWORD_AUTH" },
+        });
         const timeoutPromise = new Promise<never>((_resolve, reject) => {
           setTimeout(
             () => reject(new Error("Authentication timed out. Please try again.")),
@@ -23,39 +28,34 @@ export function useAdminAuth() {
           );
         });
 
-        await Promise.race([authPromise, timeoutPromise]);
-        return true;
+        const result = await Promise.race([authPromise, timeoutPromise]);
+        if (result.isSignedIn) {
+          return true;
+        }
+
+        // Handle challenges (e.g., NEW_PASSWORD_REQUIRED)
+        if (result.nextStep?.signInStep === "CONFIRM_SIGN_UP") {
+          setLoginError("Account not confirmed. Please check your email.");
+        } else if (result.nextStep?.signInStep) {
+          setLoginError(`Additional step required: ${result.nextStep.signInStep}`);
+        }
+        return false;
       } catch (err: unknown) {
-        const code =
-          err instanceof Error && "code" in err
-            ? (err as { code: string }).code
-            : "";
+        const name =
+          err instanceof Error && "name" in err ? err.name : "";
         const errMsg = err instanceof Error ? err.message : "";
         const messages: Record<string, string> = {
-          "auth/invalid-credential": "Invalid email or password",
-          "auth/user-not-found": "No account found with this email",
-          "auth/wrong-password": "Incorrect password",
-          "auth/too-many-requests":
+          NotAuthorizedException: "Invalid email or password",
+          UserNotFoundException: "No account found with this email",
+          UserNotConfirmedException: "Account not confirmed. Please check your email.",
+          LimitExceededException:
             "Too many failed attempts. Please try again later.",
-          "auth/user-disabled": "This account has been disabled",
-          "auth/network-request-failed":
-            "Network error. Please check your connection.",
-          "auth/operation-not-allowed":
-            "Email/password sign-in is not enabled. Enable it in Firebase Console.",
+          InvalidParameterException: "Invalid email format",
         };
 
-        // Handle reCAPTCHA config error (Firebase Email Enumeration Protection)
-        const isRecaptchaError = errMsg.includes("_getRecaptchaConfig");
-        if (isRecaptchaError) {
-          setLoginError(
-            "Firebase reCAPTCHA not configured. Disable Email Enumeration Protection in Firebase Console → Authentication → Settings.",
-          );
-        } else {
-          setLoginError(
-            messages[code] ??
-              (errMsg || "Login failed. Please try again."),
-          );
-        }
+        setLoginError(
+          messages[name] ?? (errMsg || "Login failed. Please try again."),
+        );
         return false;
       }
     },
@@ -63,7 +63,7 @@ export function useAdminAuth() {
   );
 
   const logout = useCallback(async () => {
-    await signOut(getRealAuth());
+    await signOut();
   }, []);
 
   return {

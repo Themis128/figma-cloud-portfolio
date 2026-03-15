@@ -51,19 +51,13 @@ Security and caching headers are configured in `amplify.yml` under `customHeader
 | **X-XSS-Protection** | Enables XSS filtering | `1; mode=block` |
 | **Cache-Control** | Controls caching behavior | Varies by content type |
 
-## Firebase Graceful Degradation
+## Authentication
 
-Production uses Amplify Cognito for authentication — Firebase SDK is not configured. To prevent `auth/invalid-api-key` errors:
+Authentication uses **AWS Amplify Gen 2 Cognito** for all environments. The admin dashboard requires users to be in the `admin` Cognito group.
 
-- **`src/lib/firebase.ts`**: All `NEXT_PUBLIC_FIREBASE_*` env vars default to `""` via `??` (no `!` non-null assertions). An `isFirebaseConfigured` check gates all Firebase initialization. The exported `auth` object is a `Proxy` that returns safe defaults when Firebase is unconfigured:
-  - `currentUser` → `null`
-  - `onAuthStateChanged` → calls callback with `null`, returns no-op unsubscribe
-  - All other properties → `undefined`
-- **`initializeAuth` fix (Mar 2026)**: Firebase v12+ enforces reCAPTCHA verification for email/password sign-in. Using `getAuth()` auto-initializes with all default providers (including reCAPTCHA), which fails with `_getRecaptchaConfig is not a function` when reCAPTCHA Enterprise isn't configured. The fix uses `initializeAuth()` with explicit `browserLocalPersistence` and `browserPopupRedirectResolver` dependencies in the browser, bypassing the reCAPTCHA auto-setup. Server-side (SSR/SSG) still uses `getAuth()`.
-- **`src/contexts/AuthContext.tsx`**: `useEffect` wraps `onAuthStateChanged` in try/catch — catches any Firebase errors and sets `loading: false`
-- **Messaging functions** (`getMessagingInstance`, `getFCMToken`) return `null` when `isFirebaseConfigured` is `false`
-
-This ensures zero console errors in production while preserving full Firebase functionality in environments where credentials are provided.
+- **`src/contexts/AuthContext.tsx`**: Uses Amplify Hub to listen for auth events (`signedIn`, `signedOut`, `tokenRefresh`) + `getCurrentUser()` on mount
+- **`src/components/admin/useAdminAuth.ts`**: Wraps Amplify `signIn`/`signOut` with timeout and Cognito error code mapping. Uses `USER_PASSWORD_AUTH` flow (not SRP) because admin users are created via `admin-set-user-password`, which breaks SRP's password verifier
+- **`server/middleware/requireAuth.ts`**: Validates Cognito ID tokens using `aws-jwt-verify` — extracts `sub`, `email`, and `cognito:groups` from the JWT payload
 
 ---
 

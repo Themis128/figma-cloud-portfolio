@@ -239,11 +239,9 @@ Shared helpers used across spec files:
 - ✅ Implementation Reference, route tracking details
 
 **Auth Tab (9 tests)**
-- ✅ Current Session section with user details (Email, UID, Email Verified, Provider)
-- ✅ Firebase Auth section with config status badge (configured/disabled)
-- ✅ Amplify Cognito section with production badge
-- ✅ Firebase Project and Auth Domain fields
-- ✅ Amplify Region, App ID, Auth Method fields
+- ✅ Current Session section with user details (Username, User ID, Sign-in Method, Groups)
+- ✅ AWS Cognito section with active badge
+- ✅ Cognito Region, App ID, User Pool, Auth Method fields
 - ✅ ID Token section (Expires, Issuer) when logged in
 
 **Env Tab (9 tests)**
@@ -258,7 +256,7 @@ Shared helpers used across spec files:
 **SEO (2 tests)**
 - ✅ noindex meta tag, login gate for unauthenticated users
 
-> All auth-gated tests skip gracefully via `adminLoginOrSkip()` when Firebase Email/Password auth is not enabled.
+> All auth-gated tests skip gracefully via `adminLoginOrSkip()` when Cognito auth is not available.
 
 ---
 

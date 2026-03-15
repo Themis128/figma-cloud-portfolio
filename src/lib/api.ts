@@ -11,7 +11,7 @@ import type {
   BookingCreateRequest,
   BookingCreateResponse,
 } from "@/types/api";
-import { auth } from "@/lib/firebase";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
@@ -56,14 +56,18 @@ export function resolveApiUrl(endpoint: EndpointKey): string {
 }
 
 /**
- * Get Authorization header with Firebase ID token for the current user.
+ * Get Authorization header with Cognito access token for the current user.
  * Returns empty object if no user is signed in.
  */
 async function getAuthHeaders(): Promise<Record<string, string>> {
-  const user = auth.currentUser;
-  if (!user) return {};
-  const token = await user.getIdToken();
-  return { Authorization: `Bearer ${token}` };
+  try {
+    const session = await fetchAuthSession();
+    const token = session.tokens?.idToken?.toString();
+    if (!token) return {};
+    return { Authorization: `Bearer ${token}` };
+  } catch {
+    return {};
+  }
 }
 
 /**

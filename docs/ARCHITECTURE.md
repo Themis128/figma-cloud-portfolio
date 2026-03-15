@@ -22,7 +22,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Auth + Data backend    | AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)  |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
-| Auth (production)      | AWS Amplify Gen 2 Cognito (Firebase SDK disabled) |
+| Auth                   | AWS Amplify Gen 2 Cognito                         |
 | Security               | reCAPTCHA v3, security headers via amplify.yml    |
 | Performance monitoring | web-vitals library                                |
 | Real-time features     | Socket.IO                                         |
@@ -178,7 +178,7 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 ## Admin Dashboard (`/admin`)
 
-A Firebase-authenticated internal dashboard for site monitoring and management. Protected by `noindex, nofollow` and a login gate.
+A Cognito-authenticated internal dashboard for site monitoring and management. Protected by `noindex, nofollow` and a login gate.
 
 ### Tabs (10)
 
@@ -192,7 +192,7 @@ A Firebase-authenticated internal dashboard for site monitoring and management. 
 | **SEO**        | `SeoAudit`                 | Client     | Scans all pages for title, description, og:image, canonical, JSON-LD; shows pass/warn/error|
 | **Push**       | `PushNotificationTester`   | Client     | Web Push API tester — permission, service worker, subscriptions, send test/custom messages |
 | **Analytics**  | `GoogleAnalyticsExplainer` | Client     | Live session info (time on page, referrer), GA4 config reference, event helper docs        |
-| **Auth**       | `AuthManagement`           | Client     | Current session details (UID, token expiry), Firebase + Amplify Cognito config status      |
+| **Auth**       | `AuthManagement`           | Client     | Current session details (user ID, token expiry), Cognito config status                     |
 | **Env**        | `EnvironmentInfo`          | Client     | Build version, Node env, site URL, integrations (GA/Sentry/reCAPTCHA), client device info  |
 
 ### Features
@@ -206,8 +206,8 @@ A Firebase-authenticated internal dashboard for site monitoring and management. 
 ### Components (all in `src/components/admin/`)
 
 - `AdminLayout` — Header bar with logout, theme toggle, online badge
-- `AdminLogin` — Firebase email/password login gate with error handling
-- `useAdminAuth` — Auth hook wrapping Firebase sign-in with timeout and error mapping
+- `AdminLogin` — Cognito email/password login gate with error handling
+- `useAdminAuth` — Auth hook wrapping Cognito sign-in with timeout and error mapping
 - `ApiEndpointCard` — Individual endpoint status card with sparkline and auto-refresh timestamps
 
 ### Testing (`playwright-tests/admin.spec.ts` — 138 tests)
@@ -223,12 +223,12 @@ A Firebase-authenticated internal dashboard for site monitoring and management. 
 | SEO Audit Tab     | 5     | Yes        | Pages count, Re-scan, page paths, status labels, metadata badges           |
 | Push Tab          | 15    | Yes        | Permission status, service worker, subscriptions, custom notification form |
 | Analytics Tab     | 20    | Yes        | GA4 config, event helpers, code snippets, dashboard link, session info     |
-| Auth Tab          | 9     | Yes        | Session details, Firebase config, Amplify Cognito, ID Token                |
+| Auth Tab          | 9     | Yes        | Session details, Cognito config, ID Token                                  |
 | Env Tab           | 9     | Yes        | Build info, integrations, Git, client device info                          |
 | Tab Navigation    | 5     | Yes        | 10-tab switching, active state, content isolation, icons                   |
 | SEO (noindex)     | 2     | No         | noindex meta tag, login gate for unauthenticated users                     |
 
-> Auth-gated tests skip gracefully via `adminLoginOrSkip()` when Firebase Email/Password auth is not enabled in the test environment.
+> Auth-gated tests skip gracefully via `adminLoginOrSkip()` when Cognito auth is not available in the test environment.
 
 ---
 
@@ -266,7 +266,7 @@ Eight interactive components enhance user engagement across the site. Seven are 
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
 | `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded, `inert` when collapsed) |
-| `AuthProvider`                            | Firebase auth context (graceful fallback when unconfigured)|
+| `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
 | `NotificationButton`                      | Bell icon with dropdown announcement panel, read/unread tracking via localStorage, auto-expire support |
 | `AvailabilityBadge`                       | Hero section badge with pulsing green dot — "Available for Consulting" |
@@ -382,12 +382,11 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | ------------ | ------------------------------------------------------- |
 | App ID       | `d1zjif7pi1h3om`                                        |
 | Region       | `us-east-1`                                             |
-| Auth         | Cognito (email login)                                   |
+| Auth         | Cognito (email login, `admin` group, `USER_PASSWORD_AUTH`) |
 | API          | AppSync GraphQL                                         |
-| Database     | DynamoDB                                                |
+| Database     | DynamoDB (ContactSubmission, Booking, ChatLog)          |
 | Deploy       | `ampx pipeline-deploy` (CI) / `ampx sandbox` (local)   |
 | Client config| `amplify_outputs.json` (gitignored, generated per env)  |
-| Init mode    | Auth-only on startup; call `configureAmplifyData()` for AppSync |
 
 ### Backend (Lambda)
 
@@ -414,6 +413,8 @@ ANTHROPIC_API_KEY                 # Claude API key
 VAPID_PUBLIC_KEY                  # Web push VAPID public key
 VAPID_PRIVATE_KEY                 # Web push VAPID private key
 VAPID_EMAIL                       # VAPID contact email
+COGNITO_USER_POOL_ID              # Cognito user pool ID for JWT verification
+COGNITO_CLIENT_ID                 # Cognito app client ID for JWT verification
 GOOGLE_ANALYTICS_MEASUREMENT_ID   # GA4 measurement ID
 GOOGLE_ANALYTICS_API_SECRET       # GA4 Measurement Protocol secret
 ```
@@ -443,24 +444,25 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
 
 ## Authentication
 
-### Production — Amplify Cognito
+### AWS Cognito (All Environments)
 
-Production uses **AWS Amplify Gen 2 Cognito** for authentication. Firebase is not configured in production — the Firebase SDK initialises with empty credentials and degrades gracefully:
+Authentication is handled by **AWS Amplify Gen 2 Cognito** in all environments (local development and production). A single auth provider simplifies the stack and eliminates the need for dual auth configuration.
 
-- `src/lib/firebase.ts` — Proxy object returns safe defaults (`currentUser: null`, no-op `onAuthStateChanged`) when `NEXT_PUBLIC_FIREBASE_API_KEY` is unset
-- `src/contexts/AuthContext.tsx` — `AuthProvider` wraps Firebase calls in try/catch; sets `loading: false` immediately when Firebase is unavailable
+- `src/contexts/AuthContext.tsx` — `AuthProvider` uses Amplify Hub to listen for `signedIn`/`signedOut` events + `getCurrentUser()` on mount
+- `src/components/admin/useAdminAuth.ts` — Admin login hook wrapping Amplify `signIn`/`signOut` with timeout and error mapping
+- `src/lib/amplify.ts` — Configures Amplify with auth + data from `amplify_outputs.json`
 
-This prevents the `auth/invalid-api-key` error that would otherwise appear in production console.
+### Admin Access
 
-### Local Development / Admin — Firebase
+Admin users must be created in the Cognito User Pool and added to the `admin` group. The admin dashboard login gate uses Amplify `signIn()` with email/password.
 
-Set `NEXT_PUBLIC_FIREBASE_*` environment variables in `.env.local` to enable Firebase auth during local development. When these are absent, the auth proxy silently returns null user — no crashes.
+### Server-Side JWT Verification
 
-**Firebase Auth Initialization (Mar 2026)**: Uses `initializeAuth()` with explicit `browserLocalPersistence` and `browserPopupRedirectResolver` instead of `getAuth()`. This prevents the `_getRecaptchaConfig is not a function` error introduced in Firebase v12+ where reCAPTCHA verification is enforced by default for email/password sign-in.
+The Express backend (`server/middleware/requireAuth.ts`) uses `aws-jwt-verify` to validate Cognito ID tokens. Environment variables `COGNITO_USER_POOL_ID` and `COGNITO_CLIENT_ID` configure the verifier (falls back to sandbox values for local dev).
 
 ### API Health Dashboard Authentication
 
-The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Firebase Bearer tokens in health check requests for endpoints marked with `requiresAuth: true`. Currently the `/api/organizations/api_keys` endpoint requires auth — the health check sends the logged-in user's Firebase ID token in the `Authorization` header to avoid 401 responses.
+The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cognito Bearer tokens in health check requests for endpoints marked with `requiresAuth: true`. Currently the `/api/organizations/api_keys` endpoint requires auth — the health check sends the logged-in user's Cognito ID token in the `Authorization` header to avoid 401 responses.
 
 ---
 

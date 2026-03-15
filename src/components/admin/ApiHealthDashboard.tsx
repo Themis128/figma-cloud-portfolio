@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { auth } from "@/lib/firebase";
+import { fetchAuthSession } from "aws-amplify/auth";
 import ApiEndpointCard, {
   type EndpointDef,
   type EndpointStatus,
@@ -196,10 +196,14 @@ export default function ApiHealthDashboard() {
         headers["Content-Type"] = "application/json";
       }
       if (ep.requiresAuth) {
-        const user = auth.currentUser;
-        if (user) {
-          const token = await user.getIdToken();
-          headers["Authorization"] = `Bearer ${token}`;
+        try {
+          const session = await fetchAuthSession();
+          const token = session.tokens?.idToken?.toString();
+          if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
+        } catch {
+          // Not authenticated
         }
       }
       const opts: RequestInit = {

@@ -3,7 +3,7 @@
 import { Keyboard, Play, RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { auth } from "@/lib/firebase";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -90,10 +90,14 @@ export default function ApiConsole() {
 
     try {
       const headers: Record<string, string> = {};
-      const user = auth.currentUser;
-      if (user) {
-        const token = await user.getIdToken();
-        headers["Authorization"] = `Bearer ${token}`;
+      try {
+        const session = await fetchAuthSession();
+        const token = session.tokens?.idToken?.toString();
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+      } catch {
+        // Not authenticated
       }
       const opts: RequestInit = { method, redirect: "follow", headers };
       if (["POST", "PUT", "DELETE"].includes(method) && body.trim()) {

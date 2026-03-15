@@ -201,11 +201,11 @@ export default function PrivacyPolicyPage() {
               </p>
 
               <h3 className="text-foreground font-semibold text-lg mt-4">
-                3.8 Firebase Authentication
+                3.8 Authentication
               </h3>
               <p>
-                Firebase Authentication is used for admin-only access. No
-                visitor authentication data is collected via Firebase.
+                AWS Cognito is used for admin-only access. No visitor
+                authentication data is collected.
               </p>
 
               <h3 className="text-foreground font-semibold text-lg mt-4">
