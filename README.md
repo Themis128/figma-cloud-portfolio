@@ -68,7 +68,12 @@ public/                 # Static assets and PWA files
 ### Installation
 
 ```bash
+# Install dependencies
 pnpm install
+
+# Generate Amplify backend config (required for build)
+# This generates amplify_outputs.json from the Amplify Gen 2 backend
+pnpm amplify:outputs
 ```
 
 ### Running Development Servers
