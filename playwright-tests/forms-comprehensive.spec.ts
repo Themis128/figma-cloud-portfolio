@@ -920,7 +920,7 @@ test.describe("Contact Page — Contact Information Cards", () => {
   });
 
   test("email card links to mailto:", async ({ page }) => {
-    const link = page.locator('a[href="mailto:baltzakis.themis@gmail.com"]');
+    const link = page.locator('a[href="mailto:baltzakis.themis@gmail.com"]').first();
     await expect(link).toBeAttached();
   });
 
@@ -936,7 +936,7 @@ test.describe("Contact Page — Contact Information Cards", () => {
   });
 
   test("GitHub card opens in new tab with noopener", async ({ page }) => {
-    const link = page.locator('a[href*="github.com/Themis128"]');
+    const link = page.locator('a[href*="github.com/Themis128"]').first();
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", /noopener/);
   });

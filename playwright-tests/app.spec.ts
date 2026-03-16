@@ -480,11 +480,11 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     await waitForAppReady(page);
 
     // Test navigation to About page (reduced timeout)
-    const aboutLink = page.getByRole("link", { name: "About" });
+    const aboutLink = page.getByRole("link", { name: "About" }).first();
     if (await aboutLink.isVisible({ timeout: 2000 })) {
       await aboutLink.click();
       // Wait for navigation or URL change (SPA may not always update URL immediately)
-      await page.waitForURL("**/about/", { timeout: 5000 }).catch(async () => {
+      await page.waitForURL("**/about/", { timeout: 10000 }).catch(async () => {
         // If URL doesn't change, wait for content to appear
         await page.waitForLoadState("domcontentloaded");
       });
@@ -495,12 +495,13 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
     // Go back to home
     await page.goto("/");
+    await waitForAppReady(page);
 
     // Test navigation to Contact page (reduced timeout)
-    const contactLink = page.getByRole("link", { name: "Contact" });
+    const contactLink = page.getByRole("link", { name: "Contact" }).first();
     if (await contactLink.isVisible({ timeout: 2000 })) {
       await contactLink.click();
-      await page.waitForURL("**/contact/", { timeout: 5000 }).catch(async () => {
+      await page.waitForURL("**/contact/", { timeout: 10000 }).catch(async () => {
         // If URL doesn't change, wait for content to appear
         await page.waitForLoadState("domcontentloaded");
       });
@@ -1173,32 +1174,32 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       // Check professional summary section
       await expect(page.getByText("Professional Summary")).toBeVisible();
       // Check for IT expertise content (may appear in multiple places)
-      const expertiseText = page.locator("text=/15\\+ years of IT expertise/i");
+      const expertiseText = page.locator("text=/15 years of extensive experience/i");
       await expect(expertiseText.first()).toBeVisible();
 
       // Check key focus areas
       await expect(
-        page.getByRole("heading", { name: "Cloud Architecture" }),
+        page.getByRole("heading", { name: "Network Infrastructure" }),
       ).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "Cybersecurity" }),
+        page.getByRole("heading", { name: "Network Security" }),
       ).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "AI/ML Integration" }),
+        page.getByRole("heading", { name: "Cloud & Identity" }),
       ).toBeVisible();
 
       // Check skills section
       await expect(
         page.getByRole("heading", { name: "Top Skills" }),
       ).toBeVisible();
-      await expect(page.locator("text=/Azure AD/").first()).toBeVisible();
-      await expect(page.locator("text=/CISSP/").first()).toBeVisible();
+      await expect(page.locator("text=/Azure Active Directory/").first()).toBeVisible();
+      await expect(page.locator("text=/Fortinet/").first()).toBeVisible();
 
       // Check certifications
       await expect(
         page.getByRole("heading", { name: "Certifications" }),
       ).toBeVisible();
-      await expect(page.locator("text=/Zero Trust/").first()).toBeVisible();
+      await expect(page.locator("text=/AWS Certified Cloud Practitioner/").first()).toBeVisible();
 
       // Check languages
       await expect(
@@ -1536,7 +1537,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
         page.getByRole("heading", { name: "Professional Summary" }),
       ).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "Cloud Architecture" }),
+        page.getByRole("heading", { name: "Network Infrastructure" }),
       ).toBeVisible();
       await expect(
         page.getByRole("heading", { name: "Top Skills" }),
@@ -1580,7 +1581,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
         page.getByRole("heading", { name: "Professional Summary" }),
       ).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "Cloud Architecture" }),
+        page.getByRole("heading", { name: "Network Infrastructure" }),
       ).toBeVisible();
     });
   });

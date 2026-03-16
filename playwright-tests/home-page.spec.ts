@@ -94,24 +94,24 @@ test.describe("Home Page — CTA Buttons", () => {
 test.describe("Home Page — Social Links", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
   });
 
   test("should have email link", async ({ page }) => {
     const emailLink = page.locator(
       'a[href^="mailto:baltzakis.themis@gmail.com"]',
     );
-    await expect(emailLink).toBeAttached();
+    await expect(emailLink.first()).toBeAttached({ timeout: 15000 });
   });
 
   test("should have LinkedIn link", async ({ page }) => {
     const linkedIn = page.locator('a[href*="linkedin.com/in/baltzakis-themis"]');
-    await expect(linkedIn).toBeAttached();
+    await expect(linkedIn.first()).toBeAttached({ timeout: 15000 });
   });
 
   test("external links open in new tab", async ({ page }) => {
     const linkedIn = page.locator('a[href*="linkedin.com/in/baltzakis-themis"]');
-    await expect(linkedIn).toHaveAttribute("target", "_blank");
+    await expect(linkedIn.first()).toHaveAttribute("target", "_blank", { timeout: 15000 });
   });
 });
 

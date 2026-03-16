@@ -321,7 +321,7 @@ test.describe("AI Chatbot Widget", () => {
 
       const suggestions = [
         "What are your top skills?",
-        "Tell me about your cloud experience.",
+        "Tell me about your networking experience.",
         "What certifications do you hold?",
         "Book a call with Themis.",
       ];
@@ -340,7 +340,7 @@ test.describe("AI Chatbot Widget", () => {
       // Each suggestion is a <button> element
       for (const q of [
         "What are your top skills?",
-        "Tell me about your cloud experience.",
+        "Tell me about your networking experience.",
         "What certifications do you hold?",
         "Book a call with Themis.",
       ]) {

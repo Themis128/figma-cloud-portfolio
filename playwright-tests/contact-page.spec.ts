@@ -47,7 +47,7 @@ test.describe("Contact Page — Content", () => {
   test("should have email mailto link", async ({ page }) => {
     const emailLink = page.locator(
       'a[href="mailto:baltzakis.themis@gmail.com"]',
-    );
+    ).first();
     await expect(emailLink).toBeAttached();
   });
 
@@ -66,7 +66,7 @@ test.describe("Contact Page — Content", () => {
   });
 
   test("should have GitHub link with external attributes", async ({ page }) => {
-    const githubLink = page.locator('a[href*="github.com/Themis128"]');
+    const githubLink = page.locator('a[href*="github.com/Themis128"]').first();
     await expect(githubLink).toBeAttached();
     await expect(githubLink).toHaveAttribute("target", "_blank");
   });

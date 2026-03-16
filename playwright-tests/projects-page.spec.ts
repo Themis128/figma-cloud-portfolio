@@ -24,7 +24,7 @@ test.describe("Projects Page — Content", () => {
 
   test("should display project description", async ({ page }) => {
     await expect(
-      page.getByText("cloud architecture", { exact: false }),
+      page.getByText("A collection of projects", { exact: false }),
     ).toBeVisible();
   });
 

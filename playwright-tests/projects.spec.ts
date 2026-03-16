@@ -38,8 +38,8 @@ test.describe("Projects Page", () => {
   });
 
   test("should display project results count", async ({ page }) => {
-    // The page shows "X Project(s) Found" heading
-    const resultsHeading = page.locator("text=/\\d+ Projects? Found/");
+    // The page shows "X Project(s)" heading
+    const resultsHeading = page.locator("text=/\\d+ Projects?$/");
     await expect(resultsHeading).toBeVisible();
   });
 
@@ -74,19 +74,20 @@ test.describe("Projects Page", () => {
   });
 
   test("should display category filter badges", async ({ page }) => {
-    // Category badges are rendered as Badge components
-    await expect(page.getByText("All Projects", { exact: false })).toBeVisible();
-    await expect(page.getByText("Web Applications", { exact: false })).toBeVisible();
+    // Category filter buttons show label and count (e.g. "Web (3)")
+    await expect(page.getByRole("button", { name: /All Projects/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Web/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Infrastructure/ })).toBeVisible();
   });
 
   test("should filter projects by category", async ({ page }) => {
-    // Click a specific category badge
-    const mobileCategory = page.getByText("Mobile Apps", { exact: false });
-    await mobileCategory.click();
+    // Click a specific category button
+    const aiCategory = page.getByRole("button", { name: /AI \/ Data/ });
+    await aiCategory.click();
 
-    // Should show filtered results — "1 Project Found" (only 1 mobile app)
+    // Should show filtered results — "X Project(s)" heading
     await page.waitForTimeout(500);
-    const resultsHeading = page.locator("text=/\\d+ Projects? Found/");
+    const resultsHeading = page.locator("text=/\\d+ Projects?$/");
     await expect(resultsHeading).toBeVisible();
   });
 
@@ -102,7 +103,7 @@ test.describe("Projects Page", () => {
     await page.waitForTimeout(500);
 
     // Results count should update
-    const resultsHeading = page.locator("text=/\\d+ Projects? Found/");
+    const resultsHeading = page.locator("text=/\\d+ Projects?$/");
     await expect(resultsHeading).toBeVisible();
   });
 
@@ -119,21 +120,20 @@ test.describe("Projects Page", () => {
   test("should display project cards with proper information", async ({
     page,
   }) => {
-    // Project cards are in a responsive grid
-    // Each card has a title (h-clamped heading) and description
-    const cards = page.locator('[class*="hover:shadow-lg"]');
+    // Project cards are in a responsive grid with rounded-xl styling
+    const cards = page.locator(".rounded-xl").filter({ has: page.locator("h3") });
     const cardCount = await cards.count();
     expect(cardCount).toBeGreaterThan(0);
 
-    // First card should have a title and description
+    // First card should have a title
     const firstCard = cards.first();
-    const title = firstCard.locator("h3, h4, [class*='font-semibold']").first();
+    const title = firstCard.locator("h3").first();
     await expect(title).toBeVisible();
   });
 
   test("should have sort functionality", async ({ page }) => {
     // Sort dropdown should be visible
-    const sortLabel = page.getByText("Sort by:");
+    const sortLabel = page.getByText("Sort:");
     await expect(sortLabel).toBeVisible();
   });
 
@@ -174,13 +174,13 @@ test.describe("Projects Page", () => {
     page,
   }) => {
     // Project cards should contain technology badges
-    const cards = page.locator('[class*="hover:shadow-lg"]');
+    const cards = page.locator(".rounded-xl").filter({ has: page.locator("h3") });
     const firstCard = cards.first();
 
-    // Technology badges are rendered as Badge components inside cards
-    const badges = firstCard.locator('[class*="badge"], [class*="Badge"]');
-    const badgeCount = await badges.count();
-    // Cards should have at least one tech badge or category indicator
-    expect(badgeCount).toBeGreaterThanOrEqual(0);
+    // Technology tags are rendered as spans with font-mono inside cards
+    const techTags = firstCard.locator("span.font-mono");
+    const tagCount = await techTags.count();
+    // Cards should have at least one tech tag or category indicator
+    expect(tagCount).toBeGreaterThanOrEqual(0);
   });
 });
