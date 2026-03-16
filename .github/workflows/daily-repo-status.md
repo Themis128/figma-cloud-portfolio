@@ -22,6 +22,7 @@ tools:
     # reading issues, pull requests and comments from 3rd-parties
     # If in a private repo this has no particular effect.
     lockdown: false
+  cache-memory: true
 
 safe-outputs:
   mentions: false
@@ -30,6 +31,7 @@ safe-outputs:
     title-prefix: "[repo-status] "
     labels: [report, daily-status]
     close-older-issues: true
+    expires: 7d
 source: githubnext/agentics/workflows/daily-repo-status.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 engine: copilot
 ---

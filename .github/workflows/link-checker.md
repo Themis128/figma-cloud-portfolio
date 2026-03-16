@@ -100,6 +100,8 @@ tools:
   web-fetch:
 
 safe-outputs:
+  mentions: false
+  allowed-github-references: []
   create-pull-request:
     title-prefix: "[link-checker] "
     labels: [documentation, automated]

@@ -73,12 +73,9 @@ tools:
 safe-outputs:
   mentions: false
   allowed-github-references: []
-  create-discussion:
-    title-prefix: "Code Review"
-    category: "q-a"
-    max: 1
   create-issue:
-    labels: [security, automated, code-review]
+    title-prefix: "Code Review"
+    labels: [automation, code-review]
     max: 3
   noop:
 
@@ -117,7 +114,7 @@ git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event
 
 ## Step 4: Generate Review Report
 
-Create a discussion with this structure:
+Create an issue with this structure:
 
 ### Title: `Code Review - PR #${{ github.event.pull_request.number }} - [DATE]`
 

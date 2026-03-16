@@ -96,9 +96,11 @@ tools:
 safe-outputs:
   mentions: false
   allowed-github-references: []
-  create-discussion:
+  create-issue:
     title-prefix: "Backup Report"
-    category: "announcements"
+    labels: [automation, backup]
+    close-older-issues: true
+    expires: 7d
     max: 1
   noop:
 
@@ -128,7 +130,7 @@ tar -tzf /tmp/backup-$(date +%Y-%m-%d).tar.gz
 
 ## Step 3: Generate Backup Report
 
-Create a discussion with this structure:
+Create an issue with this structure:
 
 ### Title: `Backup Report - [DATE]`
 
