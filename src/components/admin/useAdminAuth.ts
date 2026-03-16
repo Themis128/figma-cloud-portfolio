@@ -14,6 +14,14 @@ export function useAdminAuth() {
         setLoginError(null);
 
         const AUTH_TIMEOUT_MS = 10000;
+        // Clear any stale Amplify auth session before attempting login.
+        // A previous failed SRP attempt can leave cached state that
+        // causes subsequent USER_PASSWORD_AUTH calls to fail.
+        try {
+          await signOut();
+        } catch {
+          // Ignore — no session to clear
+        }
         // Use USER_PASSWORD_AUTH instead of default SRP.
         // SRP breaks when passwords are set via admin-set-user-password.
         const authPromise = signIn({

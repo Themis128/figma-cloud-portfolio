@@ -3,7 +3,7 @@ import { defineData } from '@aws-amplify/backend';
 export const data = defineData({
   schema: `
     type ContactSubmission @model @auth(rules: [
-      { allow: public, provider: iam, operations: [create] },
+      { allow: public, provider: identityPool, operations: [create] },
       { allow: groups, groups: ["admin"] }
     ]) {
       id: ID!
@@ -17,7 +17,7 @@ export const data = defineData({
     }
 
     type Booking @model @auth(rules: [
-      { allow: public, provider: iam, operations: [create] },
+      { allow: public, provider: identityPool, operations: [create] },
       { allow: groups, groups: ["admin"] }
     ]) {
       id: ID!
@@ -33,7 +33,7 @@ export const data = defineData({
     }
 
     type ChatLog @model @auth(rules: [
-      { allow: public, provider: iam, operations: [create] },
+      { allow: public, provider: identityPool, operations: [create] },
       { allow: groups, groups: ["admin"] }
     ]) {
       id: ID!
