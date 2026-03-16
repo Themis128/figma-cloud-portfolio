@@ -110,6 +110,10 @@ awscliv2.zip
 google-cloud-sdk/
 google-cloud-cli-*.tar.gz
 
+# Personal documents
+*.pdf
+*.pdf:Zone.Identifier
+
 # Misc
 *.local
 .config/

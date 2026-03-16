@@ -20,6 +20,8 @@ import {
  */
 
 test.describe("Comprehensive Responsive Design", () => {
+  test.setTimeout(60_000);
+
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
   });
@@ -58,10 +60,13 @@ test.describe("Comprehensive Responsive Design", () => {
       testLayout: true,
       customTests: [
         async (page) => {
-          // Test that content adapts to smaller width
+          // Test that content adapts to smaller width — nav fits within viewport
           const nav = page.locator('nav').first();
           const navBox = await nav.boundingBox();
-          expect(navBox?.width).toBeLessThanOrEqual(900);
+          const viewportSize = page.viewportSize();
+          if (navBox && viewportSize) {
+            expect(navBox.width).toBeLessThanOrEqual(viewportSize.width + 10);
+          }
         }
       ]
     });

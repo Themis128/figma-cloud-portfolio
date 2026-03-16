@@ -139,6 +139,9 @@ test.describe("NotificationButton — Announcements", () => {
       'button[aria-label*="announcements"], button[aria-label="Announcements"]',
     );
 
+    // Wait for hydration (component returns null until mounted)
+    await bellBtn.waitFor({ state: "visible", timeout: 10000 });
+
     // Should be false initially
     await expect(bellBtn).toHaveAttribute("aria-expanded", "false");
 

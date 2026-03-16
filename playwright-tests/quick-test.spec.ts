@@ -21,14 +21,17 @@ test("homepage loads and displays content", async ({ page }) => {
 });
 
 test("can navigate to Agents page", async ({ page }) => {
+  test.setTimeout(30_000);
   await page.goto("/");
   await page.waitForLoadState("domcontentloaded");
 
   // Click on first Agents link (in nav)
-  await page.locator('a:has-text("Agents")').first().click();
+  const agentsLink = page.locator('a:has-text("Agents")').first();
+  await agentsLink.waitFor({ state: "visible", timeout: 10000 });
+  await agentsLink.click();
 
   // Wait for navigation
-  await page.waitForURL(/agents/);
+  await page.waitForURL(/agents/, { timeout: 15000 });
 
   // Check we're on the agents page
   await expect(page).toHaveURL(/agents/);

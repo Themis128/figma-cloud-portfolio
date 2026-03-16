@@ -79,15 +79,15 @@ test.describe("Navigation — Mobile", () => {
 
   test("should show hamburger menu on mobile", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
 
-    // Desktop nav links should be hidden
+    // Hamburger button should be visible (wait for hydration)
+    const menuButton = page.locator('button[aria-label="Toggle menu"]');
+    await expect(menuButton).toBeVisible({ timeout: 15000 });
+
+    // Desktop nav links should be hidden on mobile
     const desktopNav = page.locator(".hidden.md\\:flex");
-    await expect(desktopNav).not.toBeVisible();
-
-    // Hamburger button should be visible
-    const menuButton = page.locator("button").filter({ has: page.locator("svg") }).first();
-    await expect(menuButton).toBeVisible();
+    await expect(desktopNav.first()).not.toBeVisible();
   });
 
   test("should open mobile menu and show all links", async ({ page }) => {

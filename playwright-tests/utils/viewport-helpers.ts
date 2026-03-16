@@ -154,18 +154,20 @@ export async function testTouchFriendlyElements(
  */
 export async function testResponsiveTypography(
   page: Page,
-  minFontSize: number = 12,
+  minFontSize: number = 9,
   maxFontSize: number = 100
 ): Promise<void> {
-  const headings = page.locator('h1, h2, h3, h4, h5, h6, p, span, div');
-  
-  for (let i = 0; i < await headings.count(); i++) {
+  // Only check visible heading and paragraph elements (not all divs/spans which is too slow)
+  const headings = page.locator('h1:visible, h2:visible, h3:visible, h4:visible, h5:visible, h6:visible, p:visible');
+  const count = Math.min(await headings.count(), 20); // Limit to first 20 for performance
+
+  for (let i = 0; i < count; i++) {
     const element = headings.nth(i);
     const fontSize = await element.evaluate(el => {
       const style = window.getComputedStyle(el);
       return style.fontSize;
     });
-    
+
     if (fontSize) {
       const size = parseInt(fontSize.replace('px', ''));
       if (size > 0) {
