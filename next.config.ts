@@ -216,11 +216,11 @@ export default withSentryConfig(nextConfig, {
   disableServerWebpackPlugin: true,
   disableClientWebpackPlugin: true,
 
-  // Automatically tree-shake Sentry logger in production
-  disableLogger: true,
-
-  // Don't widen the scope of the Next.js instrumentation
-  autoInstrumentServerFunctions: false,
-  autoInstrumentMiddleware: false,
-  autoInstrumentAppDirectory: false,
+  // Tree-shake Sentry logger and disable auto-instrumentation (webpack only, not Turbopack)
+  webpack: {
+    disableLogger: true,
+    autoInstrumentServerFunctions: false,
+    autoInstrumentMiddleware: false,
+    autoInstrumentAppDirectory: false,
+  },
 });

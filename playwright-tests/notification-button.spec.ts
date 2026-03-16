@@ -135,9 +135,7 @@ test.describe("NotificationButton — Announcements", () => {
   });
 
   test("bell button has aria-expanded attribute", async ({ page }) => {
-    const bellBtn = page.locator(
-      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
-    );
+    const bellBtn = page.getByRole("button", { name: "Announcements", exact: true });
 
     // Wait for hydration (component returns null until mounted)
     await bellBtn.waitFor({ state: "visible", timeout: 10000 });
