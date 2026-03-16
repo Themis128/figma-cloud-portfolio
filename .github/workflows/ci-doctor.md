@@ -21,9 +21,13 @@ permissions: read-all
 network: defaults
 
 safe-outputs:
+  mentions: false
+  allowed-github-references: []
   create-issue:
     title-prefix: "${{ github.workflow }}"
     labels: [automation, ci]
+    close-older-issues: true
+    expires: 14d
   add-comment:
 
 tools:

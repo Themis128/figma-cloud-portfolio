@@ -89,12 +89,11 @@ tools:
 safe-outputs:
   mentions: false
   allowed-github-references: []
-  create-discussion:
-    title-prefix: "Performance Report"
-    category: "q-a"
-    max: 1
   create-issue:
-    labels: [performance, automated, monitoring]
+    title-prefix: "Performance Report"
+    labels: [automation, performance]
+    close-older-issues: true
+    expires: 7d
     max: 2
   noop:
 
@@ -145,7 +144,7 @@ Compare current metrics with baseline:
 
 ## Step 4: Generate Performance Report
 
-Create a discussion with this structure:
+Create an issue with this structure:
 
 ### Title: `Performance Report - [DATE] - [STATUS]`
 

@@ -83,12 +83,11 @@ tools:
 safe-outputs:
   mentions: false
   allowed-github-references: []
-  create-discussion:
-    title-prefix: "${{ github.workflow }}"
-    category: "q-a"
-    max: 3
   create-issue:
-    labels: [bug, automated, test-failure]
+    title-prefix: "${{ github.workflow }}"
+    labels: [automation, testing]
+    close-older-issues: true
+    expires: 7d
     max: 5
   noop:
 
@@ -144,11 +143,11 @@ Compare current results with previous:
 - **Fixed tests** = tests that passed now but were in known_failures
 - **Persistent failures** = tests that remain in known_failures
 
-## Step 4: Create Report Discussion
+## Step 4: Create Report Issue
 
-Search for any previous open "${{ github.workflow }}" discussions. Close older ones.
+Search for any previous open "${{ github.workflow }}" issues. Close older ones.
 
-Create a new discussion with this structure:
+Create a new issue with this structure:
 
 ### Title: `${{ github.workflow }} — [DATE] — [X/Y passed]`
 

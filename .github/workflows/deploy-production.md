@@ -109,9 +109,11 @@ tools:
 safe-outputs:
   mentions: false
   allowed-github-references: []
-  create-discussion:
+  create-issue:
     title-prefix: "Deploy Report"
-    category: "announcements"
+    labels: [automation, deployment]
+    close-older-issues: true
+    expires: 7d
     max: 1
   noop:
 
@@ -173,7 +175,7 @@ curl -sI https://www.baltzakisthemis.com | head -15
 
 ## Step 4: Create Deployment Report
 
-Create a discussion with this structure:
+Create an issue with this structure:
 
 ### Title: `Production Deployment - [DATE] - [STATUS]`
 

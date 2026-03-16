@@ -21,6 +21,8 @@ safe-outputs:
   create-issue:
     title-prefix: "${{ github.workflow }}"
     labels: [automation, qa]
+    close-older-issues: true
+    expires: 7d
   add-comment:
     target: "*" # all issues and PRs
     max: 5
@@ -33,6 +35,7 @@ tools:
     toolsets: [all]
   web-fetch:
   bash: true
+  cache-memory: true
 
 source: githubnext/agentics/workflows/daily-qa.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 engine: copilot

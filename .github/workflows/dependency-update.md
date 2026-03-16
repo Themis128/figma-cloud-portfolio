@@ -83,12 +83,11 @@ tools:
 safe-outputs:
   mentions: false
   allowed-github-references: []
-  create-discussion:
-    title-prefix: "Dependency Update"
-    category: "q-a"
-    max: 1
   create-issue:
-    labels: [dependencies, automated, maintenance]
+    title-prefix: "Dependency Update"
+    labels: [automation, dependencies]
+    close-older-issues: true
+    expires: 14d
     max: 3
   noop:
 
@@ -119,7 +118,7 @@ Determine:
 
 ## Step 3: Generate Dependency Report
 
-Create a discussion with this structure:
+Create an issue with this structure:
 
 ### Title: `Dependency Update Report - [DATE]`
 

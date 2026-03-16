@@ -12,7 +12,10 @@ tools:
   github:
     toolsets: [repos, code_security]
   bash: true
+  cache-memory: true
 safe-outputs:
+  mentions: false
+  allowed-github-references: []
   create-code-scanning-alert:
     driver: "Malicious Code Scanner"
   threat-detection: false
