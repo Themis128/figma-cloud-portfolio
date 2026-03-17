@@ -36,6 +36,17 @@ steps:
     run: npx playwright install chromium --with-deps
     shell: bash
 
+  - name: Configure AWS credentials
+    uses: aws-actions/configure-aws-credentials@v6
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: us-east-1
+
+  - name: Generate Amplify outputs
+    run: npx ampx generate outputs --branch production --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
+    shell: bash
+
   - name: Build application
     run: |
       echo "Building application for performance analysis..."
@@ -50,17 +61,15 @@ steps:
     run: |
       echo "Starting development servers..."
       npx tsx server/index.ts &
-      sleep 5
+      echo "Waiting for backend on port 3001..."
+      timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
       pnpm dev &
-      sleep 10
+      echo "Waiting for frontend on port 3000..."
+      timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
       echo "Servers started"
     shell: bash
     env:
       NODE_ENV: test
-      FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-      FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-      FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-      RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
 
   - name: Run performance tests
     run: |
@@ -75,8 +84,17 @@ steps:
 
   - name: Analyze bundle size
     run: |
-      echo "Analyzing bundle size..."
-      npx next build --analyze 2>&1 | tee /tmp/bundle-analysis.txt || true
+      echo "Analyzing bundle size from build output..."
+      if [ -d "out" ]; then
+        echo "## Static Export Size" > /tmp/bundle-analysis.txt
+        du -sh out/ >> /tmp/bundle-analysis.txt
+        echo "" >> /tmp/bundle-analysis.txt
+        echo "## Largest Files" >> /tmp/bundle-analysis.txt
+        find out/ -type f -name "*.js" -o -name "*.css" | xargs du -sh 2>/dev/null | sort -rh | head -20 >> /tmp/bundle-analysis.txt
+      else
+        echo "No build output found" > /tmp/bundle-analysis.txt
+      fi
+      cat /tmp/bundle-analysis.txt
       echo "Bundle analysis completed"
     shell: bash
 
