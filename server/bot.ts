@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
+app.disable("x-powered-by");
 app.use(cors());
 app.use(express.json());
 
@@ -36,8 +37,8 @@ function findAnswer(userQuestion: string) {
 }
 
 app.post("/api/chatbot", (req, res) => {
-  const { message } = req.body;
-  if (!message) return res.status(400).json({ error: "No message provided" });
+  const { message } = req.body as { message?: unknown };
+  if (!message || typeof message !== "string") return res.status(400).json({ error: "No message provided" });
   const reply = findAnswer(message);
   res.json({ reply });
 });

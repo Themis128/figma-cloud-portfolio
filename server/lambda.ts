@@ -21,6 +21,7 @@ import pushNotifications from "./routes/pushNotifications";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
+app.disable("x-powered-by");
 app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));

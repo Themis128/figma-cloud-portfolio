@@ -329,10 +329,17 @@ function recaptchaBadgeClass(score: number | null): string {
 
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { name, email, subject, message, recaptchaToken } = req.body as ContactBody;
+    const body = req.body as ContactBody;
+
+    // Type-guard all user input before calling string methods
+    const name = typeof body.name === "string" ? body.name : "";
+    const email = typeof body.email === "string" ? body.email : "";
+    const subject = typeof body.subject === "string" ? body.subject : undefined;
+    const message = typeof body.message === "string" ? body.message : "";
+    const recaptchaToken = typeof body.recaptchaToken === "string" ? body.recaptchaToken : undefined;
 
     // Validate required fields
-    if (!name?.trim() || !email?.trim() || !message?.trim()) {
+    if (!name.trim() || !email.trim() || !message.trim()) {
       return res.status(400).json({ success: false, message: "Name, email, and message are required" });
     }
 

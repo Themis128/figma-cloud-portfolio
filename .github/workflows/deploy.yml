@@ -29,13 +29,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Snyk security check
-        uses: snyk/actions/node@master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --org=${{ secrets.SNYK_ORG }} --severity-threshold=critical
+        run: snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=critical --all-projects
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6

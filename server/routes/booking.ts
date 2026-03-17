@@ -69,14 +69,13 @@ router.post("/create", async (req: Request, res: Response) => {
         .json({ error: "Booking service is not configured" });
     }
 
-    const { start, name, email, timeZone } = req.body as {
-      start?: string;
-      name?: string;
-      email?: string;
-      timeZone?: string;
-    };
+    const body = req.body as Record<string, unknown>;
+    const start = typeof body.start === "string" ? body.start : "";
+    const name = typeof body.name === "string" ? body.name : "";
+    const email = typeof body.email === "string" ? body.email : "";
+    const timeZone = typeof body.timeZone === "string" ? body.timeZone : undefined;
 
-    if (!start || !name?.trim() || !email?.trim()) {
+    if (!start || !name.trim() || !email.trim()) {
       return res
         .status(400)
         .json({ error: "start, name, and email are required" });

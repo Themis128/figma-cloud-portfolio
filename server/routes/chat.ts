@@ -13,6 +13,30 @@ const __dirname = dirname(__filename);
 
 const router = Router();
 
+// ── Simple in-memory rate limiter ────────────────────────────────────────────
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 15; // max requests per window per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+// Clean up stale entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap) {
+    if (now > entry.resetAt) rateLimitMap.delete(ip);
+  }
+}, 5 * 60_000);
+
 const BEDROCK_REGION = process.env.BEDROCK_REGION ?? "us-east-1";
 const BEDROCK_MODEL_ID =
   process.env.BEDROCK_MODEL_ID ?? "anthropic.claude-3-haiku-20240307-v1:0";
@@ -81,13 +105,19 @@ const bedrockClient = new BedrockRuntimeClient({ region: BEDROCK_REGION });
 
 // POST /api/chat
 router.post("/", async (req: Request, res: Response) => {
-  try {
-    const { message, history } = req.body as {
-      message?: string;
-      history?: HistoryMessage[];
-    };
+  const clientIp = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
+    || req.socket.remoteAddress
+    || "unknown";
+  if (isRateLimited(clientIp)) {
+    return res.status(429).json({ error: "Too many requests. Please try again later." });
+  }
 
-    const trimmedMessage = message?.trim();
+  try {
+    const body = req.body as Record<string, unknown>;
+    const message = typeof body.message === "string" ? body.message : "";
+    const history = Array.isArray(body.history) ? (body.history as HistoryMessage[]) : [];
+
+    const trimmedMessage = message.trim();
     if (!trimmedMessage) {
       return res.status(400).json({ error: "Message is required" });
     }
@@ -98,7 +128,7 @@ router.post("/", async (req: Request, res: Response) => {
       content: Array<{ text: string }>;
     }> = [];
 
-    const recentHistory = (history ?? []).slice(-MAX_HISTORY_TURNS);
+    const recentHistory = history.slice(-MAX_HISTORY_TURNS);
     for (const entry of recentHistory) {
       if (entry.role === "user" || entry.role === "assistant") {
         messages.push({

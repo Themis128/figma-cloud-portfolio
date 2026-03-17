@@ -18,6 +18,7 @@ import pushNotifications from "./routes/pushNotifications";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
+app.disable("x-powered-by");
 
 app.use(express.json());
 app.use(cors());

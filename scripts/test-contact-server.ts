@@ -9,6 +9,7 @@ import cors from "cors";
 import contact from "../server/routes/contact";
 
 const app = express();
+app.disable("x-powered-by");
 app.use(express.json());
 app.use(cors());
 app.use("/api/contact", contact);

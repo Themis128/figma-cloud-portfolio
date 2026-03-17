@@ -377,7 +377,11 @@ self.addEventListener("notificationclick", (event) => {
 
 // Enhanced Message event with React 19 integration features
 self.addEventListener("message", (event) => {
-  console.log("Service Worker: Enhanced message event", event);
+  // Validate message origin — only accept messages from same origin
+  if (event.origin && event.origin !== self.location.origin) {
+    console.warn("Ignoring message from unexpected origin:", event.origin);
+    return;
+  }
 
   if (event.data?.type) {
     switch (event.data.type) {
@@ -489,7 +493,14 @@ async function retryFailedApiCalls() {
 
     for (const request of failedRequests) {
       try {
-        const response = await fetch(request.url, request.options);
+        // Validate URL is same-origin to prevent SSRF
+        const requestUrl = new URL(request.url, self.location.origin);
+        if (requestUrl.origin !== self.location.origin) {
+          console.warn("Skipping cross-origin retry:", request.url);
+          await removeFailedRequest(request.id);
+          continue;
+        }
+        const response = await fetch(requestUrl.href, request.options);
         if (response.ok) {
           await removeFailedRequest(request.id);
           console.log("Successfully retried:", request.url);
