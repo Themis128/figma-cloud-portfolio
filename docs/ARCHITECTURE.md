@@ -54,7 +54,7 @@ portfolio-nextjs/
 │   │   └── builder/          # Builder.io page (optional)
 │   ├── components/           # Reusable UI components
 │   │   ├── admin/            # Admin dashboard components (10 tab panels)
-│   │   ├── agents/           # Agent builder components (Blockly drag-and-drop)
+│   │   ├── agents/           # Agent builder components (Blockly visual builder + template playground)
 │   │   ├── interactive/      # Interactive engagement components (7 in folder)
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
