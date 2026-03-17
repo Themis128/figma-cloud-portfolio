@@ -23,7 +23,16 @@ import { requireAuth } from "./middleware/requireAuth";
 const app = express();
 app.disable("x-powered-by");
 app.use(compression());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://www.baltzakisthemis.com",
+      "https://baltzakisthemis.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -70,6 +79,21 @@ app.use((req, res, next) => {
   next();
   return void 0;
 });
+
+// Global error handler — prevents unhandled errors from crashing Lambda
+app.use(
+  (
+    err: Error,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction,
+  ) => {
+    console.error("Unhandled server error:", err.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+);
 
 // Lambda handler
 const serverlessApp = serverless(app);
