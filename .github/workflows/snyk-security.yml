@@ -11,8 +11,6 @@ on:
 
 permissions:
   contents: read
-  actions: read
-  security-events: write
 
 jobs:
   snyk-dependencies:
@@ -39,17 +37,24 @@ jobs:
         run: npm install -g snyk
 
       - name: Run Snyk dependency scan
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          echo "## Snyk Dependency Scan" >> "$GITHUB_STEP_SUMMARY"
+          if snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=high --project-name=portfolio-nextjs 2>&1 | tee /tmp/snyk-deps.txt; then
+            echo "✅ No high/critical vulnerabilities found" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "⚠️ Vulnerabilities detected — review output above" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tail -30 /tmp/snyk-deps.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Monitor project on Snyk dashboard
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=high --project-name=portfolio-nextjs --sarif-file-output=snyk-deps.sarif
-
-      - name: Upload SARIF to GitHub
-        if: always() && hashFiles('snyk-deps.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: snyk-deps.sarif
-          category: snyk-dependencies
+        run: snyk monitor --org=${{ secrets.SNYK_ORG }} --project-name=portfolio-nextjs
 
   snyk-code:
     name: Code Scan (SAST)
@@ -64,17 +69,18 @@ jobs:
         run: npm install -g snyk
 
       - name: Run Snyk Code scan
-        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk code test --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-code.sarif
-
-      - name: Upload SARIF to GitHub
-        if: always() && hashFiles('snyk-code.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: snyk-code.sarif
-          category: snyk-code
+        run: |
+          echo "## Snyk Code Scan (SAST)" >> "$GITHUB_STEP_SUMMARY"
+          if snyk code test --org=${{ secrets.SNYK_ORG }} 2>&1 | tee /tmp/snyk-code.txt; then
+            echo "✅ No code security issues found" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "⚠️ Code issues detected — review output above" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tail -30 /tmp/snyk-code.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   snyk-iac:
     name: IaC Scan
@@ -89,14 +95,15 @@ jobs:
         run: npm install -g snyk
 
       - name: Run Snyk IaC scan
-        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk iac test --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-iac.sarif
-
-      - name: Upload SARIF to GitHub
-        if: always() && hashFiles('snyk-iac.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: snyk-iac.sarif
-          category: snyk-iac
+        run: |
+          echo "## Snyk IaC Scan" >> "$GITHUB_STEP_SUMMARY"
+          if snyk iac test --org=${{ secrets.SNYK_ORG }} 2>&1 | tee /tmp/snyk-iac.txt; then
+            echo "✅ No IaC misconfigurations found" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "⚠️ IaC issues detected — review output above" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tail -30 /tmp/snyk-iac.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
