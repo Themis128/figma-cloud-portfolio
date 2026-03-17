@@ -84,9 +84,11 @@ Four practical applications relevant to the portfolio owner's domain:
 
 ## Interactive Agent Builder
 
-The `AgentPlayground` Client Component provides hands-on learning:
+The `/agents` page includes two interactive builders:
 
-### Features
+### AgentPlayground (Template Builder)
+
+The `AgentPlayground` Client Component provides hands-on learning:
 
 - **Template browser** — Predefined agent templates (chatbot, code reviewer, data analyzer, etc.)
 - **Category filtering** — Filter templates by category (All, Basic, Advanced, Specialized)
@@ -96,19 +98,75 @@ The `AgentPlayground` Client Component provides hands-on learning:
 - **Test & simulate** — Run agent in test mode with simulated responses
 - **Save & export** — Save agent configurations, export as JSON
 
-### Template System
+#### Template System
 
 Templates include:
 - Basic Chatbot, Code Reviewer, Data Analyzer, Content Writer, Task Automator
 - Each template has predefined workflow nodes and connections
 - Templates can be cloned and customized
 
+### Blockly Agent Builder (Visual Drag-and-Drop)
+
+The `BlocklyAgentBuilder` Client Component provides a visual drag-and-drop programming interface powered by Google Blockly, designed for kids and beginners to learn AI agent concepts.
+
+#### Components
+
+| Component | Purpose |
+| --- | --- |
+| `BlocklyAgentBuilder.tsx` | Main component — Blockly workspace, custom blocks, code generation, runtime |
+| `BlocklyAgentBuilderWrapper.tsx` | Lazy-loading wrapper with `dynamic()` import |
+
+#### Custom Blocks
+
+10 custom agent blocks in a cyberpunk-themed palette:
+
+| Block | Type | Purpose |
+| --- | --- | --- |
+| `agent_loop` | Statement | Repeating observation loop (wraps body) |
+| `agent_scan` | Statement | Scan a data source (inbox, network, room, logs) |
+| `agent_see` | Value | Observe environment — returns `[code, order]` tuple |
+| `agent_listen` | Value | Listen for input — returns `[code, order]` tuple |
+| `agent_decide` | Statement | If-then decision based on a condition value |
+| `agent_remember` | Statement | Store information in memory |
+| `agent_say` | Statement | Speak or output a message |
+| `agent_do` | Statement | Perform an action (email, restart, adjust, deploy) |
+| `agent_use_tool` | Statement | Use a tool (API, database, search, calculator) |
+| `agent_check` | Statement | Verify result with yes/no branches |
+
+#### Prebuilt Agent Templates (6)
+
+Each template is an XML workspace with blocks nested inside loops via `<next>` chains:
+
+1. **My First Agent** — Basic observe → think → act cycle
+2. **Email Assistant** — Inbox scanning → message detection → draft/send reply
+3. **Security Monitor** — Network scanning → threat detection → blocking → escalation
+4. **Smart Home** — Room scanning → temperature/motion detection → adjustments
+5. **DevOps Agent** — Log scanning → error detection → restart → rollback
+6. **Custom Agent** — Empty workspace for free-form building
+
+#### AgentRuntime
+
+A simulated execution engine that walks the Blockly block tree:
+
+- Processes blocks sequentially following `nextConnection` links
+- Handles nested statement blocks (loop body, decide branches, check yes/no)
+- Decision triggers use regex pattern matching to detect meaningful observations vs. "no data" responses
+- Supports cancellation via `AbortController`
+- Produces timestamped execution logs displayed in a cyberpunk-styled console
+
+#### Code Generation
+
+- Uses Blockly's Python generator to produce readable Python pseudocode
+- Value blocks (`agent_see`, `agent_listen`) return `[code, order]` tuples per Blockly convention
+- Statement blocks return code strings
+- Generated code is displayed in a syntax-highlighted panel
+
 ## Testing
 
 See [TESTING.md](./TESTING.md) for complete test coverage:
 
 - `playwright-tests/agents.spec.ts` — 18 tests (educational content + builder + accessibility)
-- `playwright-tests/agent-builder.spec.ts` — 13 tests (interactive builder functionality)
+- `playwright-tests/agent-builder.spec.ts` — 108 tests (Blockly builder + template loading + code generation + runtime)
 - `playwright-tests/ai-agents.spec.ts` — 3 tests (basic page load verification)
 
 ## Metadata
