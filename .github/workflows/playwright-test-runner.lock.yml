@@ -25,7 +25,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"c2e43451be1283d3e327303f8c7211ac046132e8beec2cc5193e36ee5d211b23","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"b4a00dc94b65b9a245d2b49b9a452cb2b94850edd5a4a7e1d8ef97c4c1f84513","compiler_version":"v0.59.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
@@ -291,9 +291,6 @@ jobs:
       - env:
           CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
           CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
-          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           NODE_ENV: test
           RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
@@ -803,13 +800,10 @@ jobs:
             const { main } = require('/opt/gh-aw/actions/redact_secrets.cjs');
             await main();
         env:
-          GH_AW_SECRET_NAMES: 'CAL_API_KEY,CAL_EVENT_TYPE_ID,COPILOT_GITHUB_TOKEN,FIREBASE_CLIENT_EMAIL,FIREBASE_PRIVATE_KEY,FIREBASE_PROJECT_ID,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN,HF_TOKEN,RECAPTCHA_SECRET_KEY,SLACK_WEBHOOK_URL'
+          GH_AW_SECRET_NAMES: 'CAL_API_KEY,CAL_EVENT_TYPE_ID,COPILOT_GITHUB_TOKEN,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN,HF_TOKEN,RECAPTCHA_SECRET_KEY,SLACK_WEBHOOK_URL'
           SECRET_CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
           SECRET_CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
           SECRET_COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-          SECRET_FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          SECRET_FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-          SECRET_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           SECRET_GH_AW_GITHUB_MCP_SERVER_TOKEN: ${{ secrets.GH_AW_GITHUB_MCP_SERVER_TOKEN }}
           SECRET_GH_AW_GITHUB_TOKEN: ${{ secrets.GH_AW_GITHUB_TOKEN }}
           SECRET_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

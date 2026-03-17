@@ -24,7 +24,7 @@
 # Monitor and report on application performance metrics. This workflow runs
 # performance tests, analyzes bundle size, and tracks Web Vitals metrics.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"4afce5c297c8a987ae0e5a71deb5c15b9841dfe83e57900f948ac8878989bb52","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"2eb36d20dc8f4f73cbd00b413a40e553038ceb35bd02757e4c555cd023cf968b","compiler_version":"v0.59.0","strict":true}
 
 name: "Performance Monitoring"
 "on":
@@ -274,6 +274,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@4eb9f110bac952a8b68ecf92e3b5c7a987594ba6 # v1.292.0
+        with:
+          ruby-version: '3.3'
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
@@ -286,6 +290,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
         shell: bash
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: us-east-1
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Generate Amplify outputs
+        run: npx ampx generate outputs --branch production --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
+        shell: bash
       - env:
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
           NODE_ENV: production
@@ -296,28 +309,23 @@ jobs:
           echo "Build completed"
         shell: bash
       - env:
-          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           NODE_ENV: test
-          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
         name: Start development servers
         run: |
           echo "Starting development servers..."
           npx tsx server/index.ts &
-          sleep 5
+          echo "Waiting for backend on port 3001..."
+          timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
           pnpm dev &
-          sleep 10
+          echo "Waiting for frontend on port 3000..."
+          timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
           echo "Servers started"
         shell: bash
       - name: Run performance tests
         run: "echo \"Running performance tests...\"\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  --grep=\"performance\" \\\n  2>&1 | tee /tmp/performance-results.txt || true\necho \"Performance tests completed\"\n"
         shell: bash
       - name: Analyze bundle size
-        run: |
-          echo "Analyzing bundle size..."
-          npx next build --analyze 2>&1 | tee /tmp/bundle-analysis.txt || true
-          echo "Bundle analysis completed"
+        run: "echo \"Analyzing bundle size from build output...\"\nif [ -d \"out\" ]; then\n  echo \"## Static Export Size\" > /tmp/bundle-analysis.txt\n  du -sh out/ >> /tmp/bundle-analysis.txt\n  echo \"\" >> /tmp/bundle-analysis.txt\n  echo \"## Largest Files\" >> /tmp/bundle-analysis.txt\n  find out/ -type f -name \"*.js\" -o -name \"*.css\" | xargs du -sh 2>/dev/null | sort -rh | head -20 >> /tmp/bundle-analysis.txt\nelse\n  echo \"No build output found\" > /tmp/bundle-analysis.txt\nfi\ncat /tmp/bundle-analysis.txt\necho \"Bundle analysis completed\"\n"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below
@@ -811,16 +819,15 @@ jobs:
             const { main } = require('/opt/gh-aw/actions/redact_secrets.cjs');
             await main();
         env:
-          GH_AW_SECRET_NAMES: 'COPILOT_GITHUB_TOKEN,FIREBASE_CLIENT_EMAIL,FIREBASE_PRIVATE_KEY,FIREBASE_PROJECT_ID,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN,NEXT_PUBLIC_SITE_URL,RECAPTCHA_SECRET_KEY'
+          GH_AW_SECRET_NAMES: 'AMPLIFY_PRODUCTION_APP_ID,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,COPILOT_GITHUB_TOKEN,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN,NEXT_PUBLIC_SITE_URL'
+          SECRET_AMPLIFY_PRODUCTION_APP_ID: ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
+          SECRET_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SECRET_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SECRET_COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-          SECRET_FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          SECRET_FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-          SECRET_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           SECRET_GH_AW_GITHUB_MCP_SERVER_TOKEN: ${{ secrets.GH_AW_GITHUB_MCP_SERVER_TOKEN }}
           SECRET_GH_AW_GITHUB_TOKEN: ${{ secrets.GH_AW_GITHUB_TOKEN }}
           SECRET_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SECRET_NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
-          SECRET_RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
       - name: Append agent step summary
         if: always()
         run: bash /opt/gh-aw/actions/append_agent_step_summary.sh
