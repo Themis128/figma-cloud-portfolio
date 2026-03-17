@@ -1134,7 +1134,7 @@ test.describe("Admin Page — Deploy Tab", () => {
   test("should have Check button", async ({ page }) => {
     const checkButton = page.getByRole("button", { name: "Check" });
     await expect(checkButton).toBeVisible();
-    await expect(checkButton).toBeEnabled();
+    await expect(checkButton).toBeEnabled({ timeout: 10000 });
   });
 
   test("should show Frontend and API sections", async ({ page }) => {

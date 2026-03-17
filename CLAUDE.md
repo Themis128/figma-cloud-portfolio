@@ -78,6 +78,14 @@ docs/               # Documentation
 - Write meaningful commit messages
 - Default branch: `production`
 
+## Security Scanning (Snyk)
+
+- Workflow: `.github/workflows/snyk-security.yml` — 2 parallel jobs (dependency scan + combined SAST/IaC scan)
+- Policy: `.snyk` — excludes test files and non-production code
+- Pre-deploy gate: `deploy.yml` runs `snyk test --severity-threshold=critical` (blocking — fails deploy on critical CVEs)
+- Secrets: `SNYK_TOKEN`, `SNYK_ORG`
+- Dashboard monitoring: `snyk monitor` on production pushes
+
 ## GitHub Agentic Workflows (gh-aw)
 
 - AI engine: Copilot (requires `COPILOT_GITHUB_TOKEN` secret — fine-grained PAT with "Copilot Requests" Account permission)
