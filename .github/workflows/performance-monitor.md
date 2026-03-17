@@ -57,24 +57,10 @@ steps:
       NODE_ENV: production
       NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
 
-  - name: Start development servers
+  - name: Run performance tests against production
     run: |
-      echo "Starting development servers..."
-      npx tsx server/index.ts &
-      echo "Waiting for backend on port 3001..."
-      timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
-      pnpm dev &
-      echo "Waiting for frontend on port 3000..."
-      timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
-      echo "Servers started"
-    shell: bash
-    env:
-      NODE_ENV: test
-
-  - name: Run performance tests
-    run: |
-      echo "Running performance tests..."
-      PLAYWRIGHT_BASE_URL=http://localhost:3000 \
+      echo "Running performance tests against production..."
+      PLAYWRIGHT_BASE_URL=https://www.baltzakisthemis.com \
       npx playwright test --config=playwright.config.fast.ts \
         --reporter=list \
         --grep="performance" \
