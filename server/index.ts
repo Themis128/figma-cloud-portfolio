@@ -21,7 +21,19 @@ const app = express();
 app.disable("x-powered-by");
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? [
+            "https://www.baltzakisthemis.com",
+            "https://baltzakisthemis.com",
+          ]
+        : true, // Allow all origins in development
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 // Public routes
 app.use("/api", general);
@@ -38,6 +50,21 @@ app.use("/api/organizations/api_keys", requireAuth, apiKeys);
 app.use("/api/admin", requireAuth, admin);
 
 app.get("/", (_req, res) => res.send("API Root"));
+
+// Global error handler — prevents unhandled errors from crashing the server
+app.use(
+  (
+    err: Error,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction,
+  ) => {
+    console.error("Unhandled server error:", err.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+);
 
 const server = app.listen(3001, () => console.log("Server running on port 3001"));
 
