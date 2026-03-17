@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Code, Play, RotateCcw } from "lucide-react";
+import { Bot, BookOpen, Code, Play, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // Blockly will be dynamically imported to avoid SSR issues
@@ -353,9 +353,24 @@ const TOOLBOX = {
   ],
 };
 
-// Starter blocks XML
-const STARTER_XML = `
-<xml xmlns="https://developers.google.com/blockly/xml">
+// Prebuilt agent templates
+interface PrebuiltAgent {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  xml: string;
+}
+
+const PREBUILT_AGENTS: PrebuiltAgent[] = [
+  {
+    id: "starter",
+    name: "Starter Agent",
+    icon: "🤖",
+    description: "A basic observe-think-act loop. Great starting point!",
+    difficulty: "beginner",
+    xml: `<xml xmlns="https://developers.google.com/blockly/xml">
   <block type="agent_loop" x="30" y="30">
     <field name="UNTIL">done</field>
     <statement name="BODY">
@@ -392,7 +407,339 @@ const STARTER_XML = `
       </block>
     </statement>
   </block>
-</xml>`;
+</xml>`,
+  },
+  {
+    id: "email-assistant",
+    name: "Email Assistant",
+    icon: "📧",
+    description: "Checks your inbox, reads messages, and drafts replies automatically.",
+    difficulty: "beginner",
+    xml: `<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="agent_loop" x="30" y="30">
+    <field name="UNTIL">done</field>
+    <statement name="BODY">
+      <block type="agent_see">
+        <field name="WHAT">inbox</field>
+      </block>
+    </statement>
+  </block>
+  <block type="agent_decide" x="30" y="160">
+    <value name="CONDITION">
+      <block type="agent_listen">
+        <field name="WHAT">message</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="agent_remember">
+        <field name="WHAT">sender and subject</field>
+        <next>
+          <block type="agent_say">
+            <field name="TEXT">I'll draft a reply for you!</field>
+            <next>
+              <block type="agent_do">
+                <field name="ACTION">email</field>
+                <next>
+                  <block type="agent_check">
+                    <statement name="YES">
+                      <block type="agent_say">
+                        <field name="TEXT">Email sent successfully!</field>
+                      </block>
+                    </statement>
+                    <statement name="NO">
+                      <block type="agent_say">
+                        <field name="TEXT">Saving as draft for your review.</field>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>`,
+  },
+  {
+    id: "security-monitor",
+    name: "Security Monitor",
+    icon: "🛡️",
+    description: "Watches the network for threats, investigates alerts, and takes action.",
+    difficulty: "intermediate",
+    xml: `<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="agent_loop" x="30" y="30">
+    <field name="UNTIL">stop</field>
+    <statement name="BODY">
+      <block type="agent_see">
+        <field name="WHAT">network</field>
+      </block>
+    </statement>
+  </block>
+  <block type="agent_decide" x="30" y="160">
+    <value name="CONDITION">
+      <block type="agent_listen">
+        <field name="WHAT">alarm</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="agent_remember">
+        <field name="WHAT">alert type and source IP</field>
+        <next>
+          <block type="agent_use_tool">
+            <field name="TOOL">database</field>
+            <next>
+              <block type="agent_decide">
+                <value name="CONDITION">
+                  <block type="agent_see">
+                    <field name="WHAT">network</field>
+                  </block>
+                </value>
+                <statement name="DO">
+                  <block type="agent_say">
+                    <field name="TEXT">Threat detected! Blocking source.</field>
+                    <next>
+                      <block type="agent_do">
+                        <field name="ACTION">restart</field>
+                        <next>
+                          <block type="agent_check">
+                            <statement name="YES">
+                              <block type="agent_say">
+                                <field name="TEXT">Threat neutralized. Logging incident.</field>
+                              </block>
+                            </statement>
+                            <statement name="NO">
+                              <block type="agent_say">
+                                <field name="TEXT">Escalating to human analyst!</field>
+                              </block>
+                            </statement>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>`,
+  },
+  {
+    id: "research-agent",
+    name: "Research Agent",
+    icon: "🔬",
+    description: "Searches the web, collects data, analyzes findings, and writes a report.",
+    difficulty: "intermediate",
+    xml: `<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="agent_listen" x="30" y="30">
+    <field name="WHAT">question</field>
+  </block>
+  <block type="agent_remember" x="30" y="100">
+    <field name="WHAT">the research question</field>
+    <next>
+      <block type="agent_loop">
+        <field name="UNTIL">tries</field>
+        <statement name="BODY">
+          <block type="agent_use_tool">
+            <field name="TOOL">browser</field>
+            <next>
+              <block type="agent_remember">
+                <field name="WHAT">key findings from search</field>
+                <next>
+                  <block type="agent_check">
+                    <statement name="YES">
+                      <block type="agent_say">
+                        <field name="TEXT">Found enough data. Compiling report...</field>
+                      </block>
+                    </statement>
+                    <statement name="NO">
+                      <block type="agent_do">
+                        <field name="ACTION">search</field>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <next>
+          <block type="agent_use_tool">
+            <field name="TOOL">calculator</field>
+            <next>
+              <block type="agent_do">
+                <field name="ACTION">save</field>
+                <next>
+                  <block type="agent_say">
+                    <field name="TEXT">Research complete! Report saved.</field>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>`,
+  },
+  {
+    id: "smart-home",
+    name: "Smart Home Agent",
+    icon: "🏠",
+    description: "Monitors your home, adjusts settings based on conditions, and alerts you.",
+    difficulty: "beginner",
+    xml: `<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="agent_loop" x="30" y="30">
+    <field name="UNTIL">stop</field>
+    <statement name="BODY">
+      <block type="agent_see">
+        <field name="WHAT">room</field>
+      </block>
+    </statement>
+  </block>
+  <block type="agent_decide" x="30" y="160">
+    <value name="CONDITION">
+      <block type="agent_see">
+        <field name="WHAT">weather</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="agent_do">
+        <field name="ACTION">lights</field>
+        <next>
+          <block type="agent_say">
+            <field name="TEXT">Lights adjusted for the evening!</field>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <next>
+      <block type="agent_decide">
+        <value name="CONDITION">
+          <block type="agent_see">
+            <field name="WHAT">clock</field>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="agent_say">
+            <field name="TEXT">Good morning! Here is your schedule.</field>
+            <next>
+              <block type="agent_check">
+                <statement name="YES">
+                  <block type="agent_say">
+                    <field name="TEXT">All systems normal.</field>
+                  </block>
+                </statement>
+                <statement name="NO">
+                  <block type="agent_say">
+                    <field name="TEXT">Alert: unusual activity detected!</field>
+                  </block>
+                </statement>
+              </block>
+            </next>
+          </block>
+        </statement>
+      </block>
+    </next>
+  </block>
+</xml>`,
+  },
+  {
+    id: "devops-agent",
+    name: "DevOps Agent",
+    icon: "⚙️",
+    description: "Monitors servers, detects issues, runs diagnostics, and auto-remediates.",
+    difficulty: "advanced",
+    xml: `<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="agent_loop" x="30" y="30">
+    <field name="UNTIL">stop</field>
+    <statement name="BODY">
+      <block type="agent_see">
+        <field name="WHAT">network</field>
+      </block>
+    </statement>
+  </block>
+  <block type="agent_decide" x="30" y="160">
+    <value name="CONDITION">
+      <block type="agent_listen">
+        <field name="WHAT">alarm</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="agent_say">
+        <field name="TEXT">Server issue detected. Running diagnostics...</field>
+        <next>
+          <block type="agent_use_tool">
+            <field name="TOOL">ping</field>
+            <next>
+              <block type="agent_use_tool">
+                <field name="TOOL">database</field>
+                <next>
+                  <block type="agent_remember">
+                    <field name="WHAT">diagnostic results</field>
+                    <next>
+                      <block type="agent_check">
+                        <statement name="YES">
+                          <block type="agent_say">
+                            <field name="TEXT">Issue identified. Auto-remediating...</field>
+                            <next>
+                              <block type="agent_do">
+                                <field name="ACTION">restart</field>
+                                <next>
+                                  <block type="agent_check">
+                                    <statement name="YES">
+                                      <block type="agent_say">
+                                        <field name="TEXT">Server recovered! Updating status page.</field>
+                                      </block>
+                                    </statement>
+                                    <statement name="NO">
+                                      <block type="agent_say">
+                                        <field name="TEXT">Auto-fix failed. Paging on-call engineer.</field>
+                                        <next>
+                                          <block type="agent_do">
+                                            <field name="ACTION">email</field>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                        <statement name="NO">
+                          <block type="agent_say">
+                            <field name="TEXT">Cannot determine root cause. Collecting logs.</field>
+                            <next>
+                              <block type="agent_do">
+                                <field name="ACTION">save</field>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>`,
+  },
+];
+
+const DEFAULT_AGENT_ID = "starter";
 
 export default function BlocklyAgentBuilder() {
   const blocklyDiv = useRef<HTMLDivElement>(null);
@@ -403,6 +750,8 @@ export default function BlocklyAgentBuilder() {
   const [running, setRunning] = useState(false);
   const [output, setOutput] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [activeAgent, setActiveAgent] = useState(DEFAULT_AGENT_ID);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   // Initialize Blockly
   useEffect(() => {
@@ -459,8 +808,11 @@ export default function BlocklyAgentBuilder() {
         workspaceRef.current = workspace;
 
         // Load starter blocks
-        const xml = BlocklyModule.utils.xml.textToDom(STARTER_XML);
-        BlocklyModule.Xml.domToWorkspace(xml, workspace);
+        const starterAgent = PREBUILT_AGENTS.find((a) => a.id === DEFAULT_AGENT_ID);
+        if (starterAgent) {
+          const xml = BlocklyModule.utils.xml.textToDom(starterAgent.xml);
+          BlocklyModule.Xml.domToWorkspace(xml, workspace);
+        }
 
         // Generate code on change
         workspace.addChangeListener(() => {
@@ -490,15 +842,22 @@ export default function BlocklyAgentBuilder() {
     };
   }, []);
 
-  const resetWorkspace = useCallback(() => {
+  const loadAgentTemplate = useCallback((agentId: string) => {
     if (!workspaceRef.current || !Blockly) return;
-    const ws = workspaceRef.current as {
-      clear: () => void;
-    };
+    const agent = PREBUILT_AGENTS.find((a) => a.id === agentId);
+    if (!agent) return;
+    const ws = workspaceRef.current as { clear: () => void };
     ws.clear();
-    const xml = Blockly.utils.xml.textToDom(STARTER_XML);
+    const xml = Blockly.utils.xml.textToDom(agent.xml);
     Blockly.Xml.domToWorkspace(xml, workspaceRef.current as Parameters<typeof Blockly.Xml.domToWorkspace>[1]);
+    setActiveAgent(agentId);
+    setShowTemplates(false);
+    setOutput([]);
   }, []);
+
+  const resetWorkspace = useCallback(() => {
+    loadAgentTemplate(activeAgent);
+  }, [activeAgent, loadAgentTemplate]);
 
   const simulateRun = useCallback(() => {
     setRunning(true);
@@ -569,6 +928,18 @@ export default function BlocklyAgentBuilder() {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={() => setShowTemplates(!showTemplates)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors ${
+              showTemplates
+                ? "border-cyan-400/40 text-cyan-400 bg-cyan-400/5"
+                : "border-border/40 text-foreground/70 hover:text-cyan-400 hover:border-cyan-400/40"
+            }`}
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            Templates
+          </button>
+          <button
+            type="button"
             onClick={() => setShowCode(!showCode)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border border-border/40 text-foreground/70 hover:text-cyan-400 hover:border-cyan-400/40 transition-colors"
           >
@@ -594,6 +965,41 @@ export default function BlocklyAgentBuilder() {
           </button>
         </div>
       </div>
+
+      {/* Prebuilt Templates */}
+      {showTemplates && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {PREBUILT_AGENTS.map((agent) => (
+            <button
+              key={agent.id}
+              type="button"
+              onClick={() => loadAgentTemplate(agent.id)}
+              className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                activeAgent === agent.id
+                  ? "border-cyan-400/60 bg-cyan-400/10"
+                  : "border-border/40 bg-foreground/5 hover:border-cyan-400/30 hover:bg-foreground/10"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-lg">{agent.icon}</span>
+                <span className="text-sm font-bold text-foreground">{agent.name}</span>
+                <span
+                  className={`ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded-full border ${
+                    agent.difficulty === "beginner"
+                      ? "text-green-400 border-green-400/30 bg-green-400/10"
+                      : agent.difficulty === "intermediate"
+                        ? "text-yellow-400 border-yellow-400/30 bg-yellow-400/10"
+                        : "text-red-400 border-red-400/30 bg-red-400/10"
+                  }`}
+                >
+                  {agent.difficulty}
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug">{agent.description}</p>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Blockly workspace */}
       <div className="rounded-xl border border-border overflow-hidden">
