@@ -76,6 +76,7 @@
     "playwright-tests",
     "scripts",
     "amplify",
-    "cline-hooks"
+    "cline-hooks",
+    "client"
   ]
 }
