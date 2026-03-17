@@ -41,7 +41,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           echo "## Snyk Dependency Scan" >> "$GITHUB_STEP_SUMMARY"
-          if snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=high --project-name=portfolio-nextjs 2>&1 | tee /tmp/snyk-deps.txt; then
+          if snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=high --all-projects --project-name=portfolio-nextjs 2>&1 | tee /tmp/snyk-deps.txt; then
             echo "✅ No high/critical vulnerabilities found" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "⚠️ Vulnerabilities detected — review output above" >> "$GITHUB_STEP_SUMMARY"
@@ -54,7 +54,7 @@ jobs:
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk monitor --org=${{ secrets.SNYK_ORG }} --project-name=portfolio-nextjs
+        run: snyk monitor --org=${{ secrets.SNYK_ORG }} --all-projects --project-name=portfolio-nextjs
 
   snyk-code:
     name: Code Scan (SAST)

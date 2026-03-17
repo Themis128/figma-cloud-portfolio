@@ -31,7 +31,8 @@ router.get("/health", (_req: Request, res: Response) => {
 
 // GET /api/search — search portfolio content
 router.get("/search", (req: Request, res: Response) => {
-  const query = (req.query.q as string)?.toLowerCase() ?? "";
+  const rawQ = req.query.q;
+  const query = typeof rawQ === "string" ? rawQ.toLowerCase() : "";
 
   if (!query) {
     return res.status(400).json({ error: "Query parameter 'q' is required", results: [] });
@@ -62,13 +63,14 @@ router.get("/search", (req: Request, res: Response) => {
 
 // POST /api/webhook — generic webhook handler
 router.post("/webhook", (req: Request, res: Response) => {
-  const { event, data } = req.body as { event?: string; data?: unknown };
+  const body = req.body as Record<string, unknown>;
+  const event = typeof body.event === "string" ? body.event : "";
 
   if (!event) {
     return res.status(400).json({ error: "Event type is required" });
   }
 
-  console.log(`Webhook received: ${event}`, data);
+  console.log("Webhook received: %s %o", event, body.data);
 
   return res.json({
     status: "received",

@@ -101,6 +101,8 @@ const SidebarProvider = React.forwardRef<
             openState.toString(),
             {
               path: "/",
+              secure: window.location.protocol === "https:",
+              sameSite: "lax",
               expires: new Date(
                 Date.now() + SIDEBAR_COOKIE_MAX_AGE * MILLISECONDS_PER_SECOND,
               ),
@@ -108,8 +110,9 @@ const SidebarProvider = React.forwardRef<
           );
         } else {
           // Fallback to document.cookie for older browsers
+          const secure = globalThis.location?.protocol === "https:" ? "; Secure" : "";
           // biome-ignore lint/suspicious/noDocumentCookie: Necessary fallback for browser compatibility
-          document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+          document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
         }
       },
       [setOpenProp, open],
