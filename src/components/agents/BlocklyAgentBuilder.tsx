@@ -100,6 +100,57 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
     },
   };
 
+  // Statement versions of observe blocks (for use inside loops and sequences)
+  Blocks["agent_scan"] = {
+    init(this: { jsonInit: (json: Record<string, unknown>) => void }) {
+      this.jsonInit({
+        type: "agent_scan",
+        message0: "👀 Scan %1",
+        args0: [
+          {
+            type: "field_dropdown",
+            name: "WHAT",
+            options: [
+              ["the room", "room"],
+              ["the weather", "weather"],
+              ["the clock", "clock"],
+              ["my inbox", "inbox"],
+              ["the network", "network"],
+            ],
+          },
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        style: "observe_blocks",
+        tooltip: "The agent scans and observes something (use inside loops)",
+      });
+    },
+  };
+
+  Blocks["agent_wait_for"] = {
+    init(this: { jsonInit: (json: Record<string, unknown>) => void }) {
+      this.jsonInit({
+        type: "agent_wait_for",
+        message0: "👂 Wait for %1",
+        args0: [
+          {
+            type: "field_dropdown",
+            name: "WHAT",
+            options: [
+              ["a question", "question"],
+              ["an alarm", "alarm"],
+              ["a message", "message"],
+            ],
+          },
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        style: "observe_blocks",
+        tooltip: "The agent waits and listens for input (use inside loops)",
+      });
+    },
+  };
+
   // --- THINK blocks ---
   Blocks["agent_decide"] = {
     init(this: { jsonInit: (json: Record<string, unknown>) => void }) {
@@ -266,6 +317,16 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
       return `agent.listen("${what}")`;
     };
 
+    pythonGenerator.forBlock["agent_scan"] = (block: unknown) => {
+      const what = (block as { getFieldValue: (n: string) => string }).getFieldValue("WHAT");
+      return `agent.observe("${what}")\n`;
+    };
+
+    pythonGenerator.forBlock["agent_wait_for"] = (block: unknown) => {
+      const what = (block as { getFieldValue: (n: string) => string }).getFieldValue("WHAT");
+      return `agent.listen("${what}")\n`;
+    };
+
     pythonGenerator.forBlock["agent_decide"] = (block: unknown) => {
       const condition = pythonGenerator.valueToCode(block, "CONDITION", pythonGenerator.ORDER_NONE) || '"something"';
       const body = pythonGenerator.statementToCode(block, "DO") || "  pass\n";
@@ -317,6 +378,8 @@ const TOOLBOX = {
       contents: [
         { kind: "block", type: "agent_see" },
         { kind: "block", type: "agent_listen" },
+        { kind: "block", type: "agent_scan" },
+        { kind: "block", type: "agent_wait_for" },
       ],
     },
     {
@@ -419,7 +482,7 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
   <block type="agent_loop" x="30" y="30">
     <field name="UNTIL">done</field>
     <statement name="BODY">
-      <block type="agent_see">
+      <block type="agent_scan">
         <field name="WHAT">inbox</field>
       </block>
     </statement>
@@ -472,7 +535,7 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
   <block type="agent_loop" x="30" y="30">
     <field name="UNTIL">stop</field>
     <statement name="BODY">
-      <block type="agent_see">
+      <block type="agent_scan">
         <field name="WHAT">network</field>
       </block>
     </statement>
@@ -536,47 +599,49 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
     description: "Searches the web, collects data, analyzes findings, and writes a report.",
     difficulty: "intermediate",
     xml: `<xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="agent_listen" x="30" y="30">
+  <block type="agent_wait_for" x="30" y="30">
     <field name="WHAT">question</field>
-  </block>
-  <block type="agent_remember" x="30" y="100">
-    <field name="WHAT">the research question</field>
     <next>
-      <block type="agent_loop">
-        <field name="UNTIL">tries</field>
-        <statement name="BODY">
-          <block type="agent_use_tool">
-            <field name="TOOL">browser</field>
-            <next>
-              <block type="agent_remember">
-                <field name="WHAT">key findings from search</field>
+      <block type="agent_remember">
+        <field name="WHAT">the research question</field>
+        <next>
+          <block type="agent_loop">
+            <field name="UNTIL">tries</field>
+            <statement name="BODY">
+              <block type="agent_use_tool">
+                <field name="TOOL">browser</field>
                 <next>
-                  <block type="agent_check">
-                    <statement name="YES">
-                      <block type="agent_say">
-                        <field name="TEXT">Found enough data. Compiling report...</field>
+                  <block type="agent_remember">
+                    <field name="WHAT">key findings from search</field>
+                    <next>
+                      <block type="agent_check">
+                        <statement name="YES">
+                          <block type="agent_say">
+                            <field name="TEXT">Found enough data. Compiling report...</field>
+                          </block>
+                        </statement>
+                        <statement name="NO">
+                          <block type="agent_do">
+                            <field name="ACTION">search</field>
+                          </block>
+                        </statement>
                       </block>
-                    </statement>
-                    <statement name="NO">
-                      <block type="agent_do">
-                        <field name="ACTION">search</field>
-                      </block>
-                    </statement>
+                    </next>
                   </block>
                 </next>
               </block>
-            </next>
-          </block>
-        </statement>
-        <next>
-          <block type="agent_use_tool">
-            <field name="TOOL">calculator</field>
+            </statement>
             <next>
-              <block type="agent_do">
-                <field name="ACTION">save</field>
+              <block type="agent_use_tool">
+                <field name="TOOL">calculator</field>
                 <next>
-                  <block type="agent_say">
-                    <field name="TEXT">Research complete! Report saved.</field>
+                  <block type="agent_do">
+                    <field name="ACTION">save</field>
+                    <next>
+                      <block type="agent_say">
+                        <field name="TEXT">Research complete! Report saved.</field>
+                      </block>
+                    </next>
                   </block>
                 </next>
               </block>
@@ -598,7 +663,7 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
   <block type="agent_loop" x="30" y="30">
     <field name="UNTIL">stop</field>
     <statement name="BODY">
-      <block type="agent_see">
+      <block type="agent_scan">
         <field name="WHAT">room</field>
       </block>
     </statement>
@@ -660,7 +725,7 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
   <block type="agent_loop" x="30" y="30">
     <field name="UNTIL">stop</field>
     <statement name="BODY">
-      <block type="agent_see">
+      <block type="agent_scan">
         <field name="WHAT">network</field>
       </block>
     </statement>
