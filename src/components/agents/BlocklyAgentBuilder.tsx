@@ -41,7 +41,7 @@ const CYBERPUNK_THEME_DEF = {
 
 // Python generator type
 type PythonGen = {
-  forBlock: Record<string, (block: unknown) => string>;
+  forBlock: Record<string, (block: unknown) => string | [string, number]>;
   valueToCode: (block: unknown, name: string, order: number) => string;
   statementToCode: (block: unknown, name: string) => string;
   ORDER_NONE: number;
@@ -309,12 +309,12 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
   if (pythonGenerator) {
     pythonGenerator.forBlock["agent_see"] = (block: unknown) => {
       const what = (block as { getFieldValue: (n: string) => string }).getFieldValue("WHAT");
-      return `agent.observe("${what}")`;
+      return [`agent.observe("${what}")`, pythonGenerator.ORDER_NONE];
     };
 
     pythonGenerator.forBlock["agent_listen"] = (block: unknown) => {
       const what = (block as { getFieldValue: (n: string) => string }).getFieldValue("WHAT");
-      return `agent.listen("${what}")`;
+      return [`agent.listen("${what}")`, pythonGenerator.ORDER_NONE];
     };
 
     pythonGenerator.forBlock["agent_scan"] = (block: unknown) => {
@@ -484,40 +484,42 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
     <statement name="BODY">
       <block type="agent_scan">
         <field name="WHAT">inbox</field>
-      </block>
-    </statement>
-  </block>
-  <block type="agent_decide" x="30" y="160">
-    <value name="CONDITION">
-      <block type="agent_listen">
-        <field name="WHAT">message</field>
-      </block>
-    </value>
-    <statement name="DO">
-      <block type="agent_remember">
-        <field name="WHAT">sender and subject</field>
         <next>
-          <block type="agent_say">
-            <field name="TEXT">I'll draft a reply for you!</field>
-            <next>
-              <block type="agent_do">
-                <field name="ACTION">email</field>
+          <block type="agent_decide">
+            <value name="CONDITION">
+              <block type="agent_listen">
+                <field name="WHAT">message</field>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="agent_remember">
+                <field name="WHAT">sender and subject</field>
                 <next>
-                  <block type="agent_check">
-                    <statement name="YES">
-                      <block type="agent_say">
-                        <field name="TEXT">Email sent successfully!</field>
+                  <block type="agent_say">
+                    <field name="TEXT">I'll draft a reply for you!</field>
+                    <next>
+                      <block type="agent_do">
+                        <field name="ACTION">email</field>
+                        <next>
+                          <block type="agent_check">
+                            <statement name="YES">
+                              <block type="agent_say">
+                                <field name="TEXT">Email sent successfully!</field>
+                              </block>
+                            </statement>
+                            <statement name="NO">
+                              <block type="agent_say">
+                                <field name="TEXT">Saving as draft for your review.</field>
+                              </block>
+                            </statement>
+                          </block>
+                        </next>
                       </block>
-                    </statement>
-                    <statement name="NO">
-                      <block type="agent_say">
-                        <field name="TEXT">Saving as draft for your review.</field>
-                      </block>
-                    </statement>
+                    </next>
                   </block>
                 </next>
               </block>
-            </next>
+            </statement>
           </block>
         </next>
       </block>
@@ -537,54 +539,56 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
     <statement name="BODY">
       <block type="agent_scan">
         <field name="WHAT">network</field>
-      </block>
-    </statement>
-  </block>
-  <block type="agent_decide" x="30" y="160">
-    <value name="CONDITION">
-      <block type="agent_listen">
-        <field name="WHAT">alarm</field>
-      </block>
-    </value>
-    <statement name="DO">
-      <block type="agent_remember">
-        <field name="WHAT">alert type and source IP</field>
         <next>
-          <block type="agent_use_tool">
-            <field name="TOOL">database</field>
-            <next>
-              <block type="agent_decide">
-                <value name="CONDITION">
-                  <block type="agent_see">
-                    <field name="WHAT">network</field>
-                  </block>
-                </value>
-                <statement name="DO">
-                  <block type="agent_say">
-                    <field name="TEXT">Threat detected! Blocking source.</field>
+          <block type="agent_decide">
+            <value name="CONDITION">
+              <block type="agent_listen">
+                <field name="WHAT">alarm</field>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="agent_remember">
+                <field name="WHAT">alert type and source IP</field>
+                <next>
+                  <block type="agent_use_tool">
+                    <field name="TOOL">database</field>
                     <next>
-                      <block type="agent_do">
-                        <field name="ACTION">restart</field>
-                        <next>
-                          <block type="agent_check">
-                            <statement name="YES">
-                              <block type="agent_say">
-                                <field name="TEXT">Threat neutralized. Logging incident.</field>
-                              </block>
-                            </statement>
-                            <statement name="NO">
-                              <block type="agent_say">
-                                <field name="TEXT">Escalating to human analyst!</field>
-                              </block>
-                            </statement>
+                      <block type="agent_decide">
+                        <value name="CONDITION">
+                          <block type="agent_see">
+                            <field name="WHAT">network</field>
                           </block>
-                        </next>
+                        </value>
+                        <statement name="DO">
+                          <block type="agent_say">
+                            <field name="TEXT">Threat detected! Blocking source.</field>
+                            <next>
+                              <block type="agent_do">
+                                <field name="ACTION">restart</field>
+                                <next>
+                                  <block type="agent_check">
+                                    <statement name="YES">
+                                      <block type="agent_say">
+                                        <field name="TEXT">Threat neutralized. Logging incident.</field>
+                                      </block>
+                                    </statement>
+                                    <statement name="NO">
+                                      <block type="agent_say">
+                                        <field name="TEXT">Escalating to human analyst!</field>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
                       </block>
                     </next>
                   </block>
-                </statement>
+                </next>
               </block>
-            </next>
+            </statement>
           </block>
         </next>
       </block>
@@ -665,53 +669,55 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
     <statement name="BODY">
       <block type="agent_scan">
         <field name="WHAT">room</field>
-      </block>
-    </statement>
-  </block>
-  <block type="agent_decide" x="30" y="160">
-    <value name="CONDITION">
-      <block type="agent_see">
-        <field name="WHAT">weather</field>
-      </block>
-    </value>
-    <statement name="DO">
-      <block type="agent_do">
-        <field name="ACTION">lights</field>
         <next>
-          <block type="agent_say">
-            <field name="TEXT">Lights adjusted for the evening!</field>
-          </block>
-        </next>
-      </block>
-    </statement>
-    <next>
-      <block type="agent_decide">
-        <value name="CONDITION">
-          <block type="agent_see">
-            <field name="WHAT">clock</field>
-          </block>
-        </value>
-        <statement name="DO">
-          <block type="agent_say">
-            <field name="TEXT">Good morning! Here is your schedule.</field>
-            <next>
-              <block type="agent_check">
-                <statement name="YES">
+          <block type="agent_decide">
+            <value name="CONDITION">
+              <block type="agent_see">
+                <field name="WHAT">weather</field>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="agent_do">
+                <field name="ACTION">lights</field>
+                <next>
                   <block type="agent_say">
-                    <field name="TEXT">All systems normal.</field>
+                    <field name="TEXT">Lights adjusted for the evening!</field>
                   </block>
-                </statement>
-                <statement name="NO">
+                </next>
+              </block>
+            </statement>
+            <next>
+              <block type="agent_decide">
+                <value name="CONDITION">
+                  <block type="agent_see">
+                    <field name="WHAT">clock</field>
+                  </block>
+                </value>
+                <statement name="DO">
                   <block type="agent_say">
-                    <field name="TEXT">Alert: unusual activity detected!</field>
+                    <field name="TEXT">Good morning! Here is your schedule.</field>
+                    <next>
+                      <block type="agent_check">
+                        <statement name="YES">
+                          <block type="agent_say">
+                            <field name="TEXT">All systems normal.</field>
+                          </block>
+                        </statement>
+                        <statement name="NO">
+                          <block type="agent_say">
+                            <field name="TEXT">Alert: unusual activity detected!</field>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
                   </block>
                 </statement>
               </block>
             </next>
           </block>
-        </statement>
+        </next>
       </block>
-    </next>
+    </statement>
   </block>
 </xml>`,
   },
@@ -727,74 +733,76 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
     <statement name="BODY">
       <block type="agent_scan">
         <field name="WHAT">network</field>
-      </block>
-    </statement>
-  </block>
-  <block type="agent_decide" x="30" y="160">
-    <value name="CONDITION">
-      <block type="agent_listen">
-        <field name="WHAT">alarm</field>
-      </block>
-    </value>
-    <statement name="DO">
-      <block type="agent_say">
-        <field name="TEXT">Server issue detected. Running diagnostics...</field>
         <next>
-          <block type="agent_use_tool">
-            <field name="TOOL">ping</field>
-            <next>
-              <block type="agent_use_tool">
-                <field name="TOOL">database</field>
+          <block type="agent_decide">
+            <value name="CONDITION">
+              <block type="agent_listen">
+                <field name="WHAT">alarm</field>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="agent_say">
+                <field name="TEXT">Server issue detected. Running diagnostics...</field>
                 <next>
-                  <block type="agent_remember">
-                    <field name="WHAT">diagnostic results</field>
+                  <block type="agent_use_tool">
+                    <field name="TOOL">ping</field>
                     <next>
-                      <block type="agent_check">
-                        <statement name="YES">
-                          <block type="agent_say">
-                            <field name="TEXT">Issue identified. Auto-remediating...</field>
+                      <block type="agent_use_tool">
+                        <field name="TOOL">database</field>
+                        <next>
+                          <block type="agent_remember">
+                            <field name="WHAT">diagnostic results</field>
                             <next>
-                              <block type="agent_do">
-                                <field name="ACTION">restart</field>
-                                <next>
-                                  <block type="agent_check">
-                                    <statement name="YES">
-                                      <block type="agent_say">
-                                        <field name="TEXT">Server recovered! Updating status page.</field>
-                                      </block>
-                                    </statement>
-                                    <statement name="NO">
-                                      <block type="agent_say">
-                                        <field name="TEXT">Auto-fix failed. Paging on-call engineer.</field>
+                              <block type="agent_check">
+                                <statement name="YES">
+                                  <block type="agent_say">
+                                    <field name="TEXT">Issue identified. Auto-remediating...</field>
+                                    <next>
+                                      <block type="agent_do">
+                                        <field name="ACTION">restart</field>
                                         <next>
-                                          <block type="agent_do">
-                                            <field name="ACTION">email</field>
+                                          <block type="agent_check">
+                                            <statement name="YES">
+                                              <block type="agent_say">
+                                                <field name="TEXT">Server recovered! Updating status page.</field>
+                                              </block>
+                                            </statement>
+                                            <statement name="NO">
+                                              <block type="agent_say">
+                                                <field name="TEXT">Auto-fix failed. Paging on-call engineer.</field>
+                                                <next>
+                                                  <block type="agent_do">
+                                                    <field name="ACTION">email</field>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </statement>
                                           </block>
                                         </next>
                                       </block>
-                                    </statement>
+                                    </next>
                                   </block>
-                                </next>
+                                </statement>
+                                <statement name="NO">
+                                  <block type="agent_say">
+                                    <field name="TEXT">Cannot determine root cause. Collecting logs.</field>
+                                    <next>
+                                      <block type="agent_do">
+                                        <field name="ACTION">save</field>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </statement>
                               </block>
                             </next>
                           </block>
-                        </statement>
-                        <statement name="NO">
-                          <block type="agent_say">
-                            <field name="TEXT">Cannot determine root cause. Collecting logs.</field>
-                            <next>
-                              <block type="agent_do">
-                                <field name="ACTION">save</field>
-                              </block>
-                            </next>
-                          </block>
-                        </statement>
+                        </next>
                       </block>
                     </next>
                   </block>
                 </next>
               </block>
-            </next>
+            </statement>
           </block>
         </next>
       </block>
@@ -806,6 +814,414 @@ const PREBUILT_AGENTS: PrebuiltAgent[] = [
 
 const DEFAULT_AGENT_ID = "starter";
 
+// --- Real Execution Engine ---
+
+interface LogEntry {
+  time: string;
+  text: string;
+  indent: boolean;
+}
+
+interface ExecutableBlock {
+  id: string;
+  type: string;
+  getFieldValue(name: string): string;
+  getInputTargetBlock(name: string): ExecutableBlock | null;
+  getNextBlock(): ExecutableBlock | null;
+}
+
+class AgentRuntime {
+  memory: string[] = [];
+  lastResult = "";
+  lastSuccess = true;
+  iteration = 0;
+  readonly startTime = Date.now();
+  private onLog: (entry: LogEntry) => void;
+  private signal: AbortSignal;
+
+  constructor(onLog: (entry: LogEntry) => void, signal: AbortSignal) {
+    this.onLog = onLog;
+    this.signal = signal;
+  }
+
+  private ts(): string {
+    return `${((Date.now() - this.startTime) / 1000).toFixed(1)}s`;
+  }
+
+  log(text: string, indent = false) {
+    if (!this.signal.aborted) {
+      this.onLog({ time: this.ts(), text, indent });
+    }
+  }
+
+  private async pause(ms = 350) {
+    if (this.signal.aborted) throw new DOMException("Aborted", "AbortError");
+    await new Promise<void>((resolve, reject) => {
+      const id = setTimeout(resolve, ms);
+      const onAbort = () => {
+        clearTimeout(id);
+        reject(new DOMException("Aborted", "AbortError"));
+      };
+      this.signal.addEventListener("abort", onAbort, { once: true });
+    });
+  }
+
+  async observe(what: string): Promise<string> {
+    this.log(`👀 Observing ${what}...`);
+    await this.pause();
+    let result: string;
+    switch (what) {
+      case "clock": {
+        const now = new Date();
+        result = `${now.toLocaleTimeString()} — ${now.toLocaleDateString()} (${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
+        break;
+      }
+      case "room": {
+        const cores = navigator.hardwareConcurrency || "unknown";
+        const mem = (navigator as unknown as Record<string, unknown>).deviceMemory;
+        result = `${cores} CPU cores${mem ? `, ${mem}GB RAM` : ""}, display ${screen.width}×${screen.height}, tab ${document.visibilityState}`;
+        break;
+      }
+      case "network": {
+        const conn = (navigator as unknown as Record<string, unknown>).connection as
+          | Record<string, unknown>
+          | undefined;
+        const entries = performance.getEntriesByType("resource");
+        const t0 = performance.now();
+        try {
+          await fetch(window.location.href, {
+            method: "HEAD",
+            cache: "no-store",
+            signal: this.signal,
+          });
+        } catch (e) {
+          if (e instanceof DOMException && e.name === "AbortError") throw e;
+        }
+        const latency = Math.round(performance.now() - t0);
+        result = conn
+          ? `${conn.effectiveType} (${conn.downlink}Mbps, RTT ${conn.rtt}ms), ${entries.length} resources, latency: ${latency}ms`
+          : `${entries.length} resources loaded, measured latency: ${latency}ms`;
+        break;
+      }
+      case "weather": {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const hour = new Date().getHours();
+        const period =
+          hour < 6 ? "night" : hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
+        result = `${tz}, local ${period} (${hour}:00), locale: ${navigator.language}`;
+        break;
+      }
+      case "inbox": {
+        let inbox: { from: string; subject: string; read: boolean }[];
+        try {
+          inbox = JSON.parse(localStorage.getItem("agent_inbox") || "[]");
+        } catch {
+          inbox = [];
+        }
+        if (inbox.length === 0) {
+          inbox = [
+            { from: "alice@example.com", subject: "Q1 Report Review", read: false },
+            { from: "bob@example.com", subject: "Meeting Tomorrow", read: false },
+            { from: "system@alerts.com", subject: "Server CPU Warning", read: false },
+          ];
+          localStorage.setItem("agent_inbox", JSON.stringify(inbox));
+        }
+        const unread = inbox.filter((m) => !m.read).length;
+        result = `${inbox.length} messages (${unread} unread)`;
+        break;
+      }
+      default:
+        result = `${what}: no data source`;
+    }
+    this.lastResult = result;
+    this.log(`→ ${result}`, true);
+    return result;
+  }
+
+  async listen(what: string): Promise<string> {
+    this.log(`👂 Listening for ${what}...`);
+    await this.pause();
+    let result: string;
+    switch (what) {
+      case "question":
+        result = "User query received: 'What is the current system status?'";
+        break;
+      case "alarm": {
+        const entries = performance.getEntriesByType("resource");
+        const slow = entries.filter((e) => (e as PerformanceResourceTiming).duration > 100);
+        if (slow.length > 0) {
+          const worst = Math.round(
+            Math.max(...slow.map((e) => (e as PerformanceResourceTiming).duration)),
+          );
+          result = `⚠ Alert: ${slow.length} slow resources detected (>100ms), worst: ${worst}ms`;
+        } else if (entries.length > 15) {
+          result = `⚠ Alert: High resource count (${entries.length} loaded)`;
+        } else {
+          result = "No alerts — all systems nominal";
+        }
+        break;
+      }
+      case "message": {
+        let inbox: { from: string; subject: string; read: boolean }[];
+        try {
+          inbox = JSON.parse(localStorage.getItem("agent_inbox") || "[]");
+        } catch {
+          inbox = [];
+        }
+        const unread = inbox.find((m) => !m.read);
+        if (unread) {
+          unread.read = true;
+          localStorage.setItem("agent_inbox", JSON.stringify(inbox));
+          result = `New message from ${unread.from}: "${unread.subject}"`;
+        } else {
+          result = "No new messages";
+        }
+        break;
+      }
+      default:
+        result = `${what}: nothing received`;
+    }
+    this.lastResult = result;
+    this.log(`→ ${result}`, true);
+    return result;
+  }
+
+  async say(text: string) {
+    this.log(`💬 "${text}"`);
+    await this.pause(250);
+  }
+
+  async doAction(action: string) {
+    this.log(`⚡ Executing: ${action}`);
+    await this.pause();
+    let result: string;
+    switch (action) {
+      case "email": {
+        const draft = {
+          to: "team@company.com",
+          subject: `Agent Report — ${new Date().toLocaleTimeString()}`,
+          body: this.memory.slice(-3).join("; "),
+          created: new Date().toISOString(),
+        };
+        const drafts: unknown[] = JSON.parse(localStorage.getItem("agent_drafts") || "[]");
+        drafts.push(draft);
+        localStorage.setItem("agent_drafts", JSON.stringify(drafts));
+        result = `Draft saved: "${draft.subject}" (${drafts.length} total in localStorage)`;
+        this.lastSuccess = true;
+        break;
+      }
+      case "lights":
+        document.documentElement.classList.toggle("agent-lights-dimmed");
+        result = `Lights ${document.documentElement.classList.contains("agent-lights-dimmed") ? "dimmed" : "restored"} — CSS filter applied`;
+        this.lastSuccess = true;
+        break;
+      case "search": {
+        const q = this.memory.at(-1) || "system status";
+        result = `Search: "${q}" → ${10 + performance.getEntriesByType("resource").length} results indexed`;
+        this.lastSuccess = true;
+        break;
+      }
+      case "save": {
+        const state = {
+          memory: this.memory,
+          iterations: this.iteration,
+          saved: new Date().toISOString(),
+        };
+        localStorage.setItem("agent_state", JSON.stringify(state));
+        result = `State persisted: ${this.memory.length} memories, ${this.iteration} iterations → localStorage["agent_state"]`;
+        this.lastSuccess = true;
+        break;
+      }
+      case "restart": {
+        const count = performance.getEntriesByType("resource").length;
+        performance.clearResourceTimings();
+        result = `Cleared ${count} performance entries, monitoring baseline reset`;
+        this.lastSuccess = true;
+        break;
+      }
+      default:
+        result = `"${action}" completed`;
+        this.lastSuccess = true;
+    }
+    this.lastResult = result;
+    this.log(`→ ${result}`, true);
+  }
+
+  async useTool(tool: string) {
+    this.log(`🔧 Using tool: ${tool}`);
+    await this.pause(500);
+    let result: string;
+    switch (tool) {
+      case "calculator": {
+        const a = Math.round(performance.now());
+        const b = navigator.hardwareConcurrency || 4;
+        result = `Computed: ${a} × ${b} = ${a * b} (perf.now × CPU cores)`;
+        this.lastSuccess = true;
+        break;
+      }
+      case "browser": {
+        const t0 = performance.now();
+        try {
+          const resp = await fetch(window.location.origin, {
+            method: "HEAD",
+            signal: this.signal,
+          });
+          result = `HEAD ${window.location.origin} → ${resp.status} ${resp.statusText} (${Math.round(performance.now() - t0)}ms)`;
+          this.lastSuccess = resp.ok;
+        } catch (e) {
+          if (e instanceof DOMException && e.name === "AbortError") throw e;
+          result = `Fetch failed: ${e instanceof Error ? e.message : "error"}`;
+          this.lastSuccess = false;
+        }
+        break;
+      }
+      case "database": {
+        const keys = Object.keys(localStorage).filter((k) => k.startsWith("agent_"));
+        const bytes = keys.reduce((s, k) => s + (localStorage.getItem(k)?.length || 0), 0);
+        result = `localStorage: ${keys.length} agent keys, ${bytes} bytes [${keys.join(", ")}]`;
+        this.lastSuccess = true;
+        break;
+      }
+      case "ping": {
+        const t0 = performance.now();
+        try {
+          await fetch(window.location.origin, {
+            method: "HEAD",
+            cache: "no-store",
+            signal: this.signal,
+          });
+          result = `Ping ${window.location.origin} → ${Math.round(performance.now() - t0)}ms`;
+          this.lastSuccess = true;
+        } catch (e) {
+          if (e instanceof DOMException && e.name === "AbortError") throw e;
+          result = "Ping failed: timeout";
+          this.lastSuccess = false;
+        }
+        break;
+      }
+      default:
+        result = `Tool "${tool}" executed`;
+        this.lastSuccess = true;
+    }
+    this.lastResult = result;
+    this.log(`→ ${result}`, true);
+  }
+
+  async remember(what: string) {
+    const ctx = this.lastResult ? ` | ctx: ${this.lastResult.slice(0, 80)}` : "";
+    const entry = `${what}${ctx}`;
+    this.memory.push(entry);
+    this.log(`💭 Memory[${this.memory.length - 1}]: "${entry}"`);
+    await this.pause(200);
+  }
+
+  checkResult(): boolean {
+    const ok = this.lastSuccess;
+    this.log(`✅ Check → ${ok ? "SUCCESS ✓" : "FAILED ✗"}`);
+    return ok;
+  }
+
+  isDone(condition: string): boolean {
+    switch (condition) {
+      case "tries":
+        return this.iteration >= 3;
+      case "done":
+        return this.iteration >= 2;
+      case "stop":
+        return this.iteration >= 2;
+      default:
+        return this.iteration >= 3;
+    }
+  }
+}
+
+async function executeValue(block: ExecutableBlock, rt: AgentRuntime): Promise<string> {
+  switch (block.type) {
+    case "agent_see":
+      return rt.observe(block.getFieldValue("WHAT"));
+    case "agent_listen":
+      return rt.listen(block.getFieldValue("WHAT"));
+    default:
+      return "";
+  }
+}
+
+async function executeStatement(
+  block: ExecutableBlock | null,
+  rt: AgentRuntime,
+  signal: AbortSignal,
+  highlight: (id: string) => void,
+): Promise<void> {
+  if (!block || signal.aborted) return;
+  highlight(block.id);
+
+  switch (block.type) {
+    case "agent_loop": {
+      const until = block.getFieldValue("UNTIL");
+      const labels: Record<string, string> = {
+        done: "task is done",
+        stop: "stopped",
+        tries: "3 tries",
+      };
+      rt.log(`🔄 Loop started (until: ${labels[until] || until})`);
+      const body = block.getInputTargetBlock("BODY");
+      rt.iteration = 0;
+      while (!rt.isDone(until) && !signal.aborted) {
+        rt.log(`── iteration ${rt.iteration + 1} ──`);
+        await executeStatement(body, rt, signal, highlight);
+        rt.iteration++;
+      }
+      rt.log(`🔄 Loop ended after ${rt.iteration} iterations`);
+      break;
+    }
+    case "agent_decide": {
+      const cond = block.getInputTargetBlock("CONDITION");
+      let val = "";
+      if (cond) val = await executeValue(cond, rt);
+      const negativePatterns = /^No (new |alerts)|nothing received|no data source|all systems nominal/i;
+      const triggered = val.length > 0 && !negativePatterns.test(val);
+      rt.log(`🧠 Decision: ${triggered ? "TRIGGERED ✓" : "NOT TRIGGERED ✗"}`);
+      if (triggered) {
+        await executeStatement(block.getInputTargetBlock("DO"), rt, signal, highlight);
+      }
+      break;
+    }
+    case "agent_check": {
+      const ok = rt.checkResult();
+      await executeStatement(
+        block.getInputTargetBlock(ok ? "YES" : "NO"),
+        rt,
+        signal,
+        highlight,
+      );
+      break;
+    }
+    case "agent_scan":
+      await rt.observe(block.getFieldValue("WHAT"));
+      break;
+    case "agent_wait_for":
+      await rt.listen(block.getFieldValue("WHAT"));
+      break;
+    case "agent_say":
+      await rt.say(block.getFieldValue("TEXT"));
+      break;
+    case "agent_do":
+      await rt.doAction(block.getFieldValue("ACTION"));
+      break;
+    case "agent_use_tool":
+      await rt.useTool(block.getFieldValue("TOOL"));
+      break;
+    case "agent_remember":
+      await rt.remember(block.getFieldValue("WHAT"));
+      break;
+    default:
+      break;
+  }
+
+  const next = block.getNextBlock();
+  if (next && !signal.aborted) await executeStatement(next, rt, signal, highlight);
+}
+
 export default function BlocklyAgentBuilder() {
   const blocklyDiv = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<unknown>(null);
@@ -813,8 +1229,10 @@ export default function BlocklyAgentBuilder() {
   const [showCode, setShowCode] = useState(false);
   const [ready, setReady] = useState(false);
   const [running, setRunning] = useState(false);
-  const [output, setOutput] = useState<string[]>([]);
+  const [output, setOutput] = useState<LogEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
   const [activeAgent, setActiveAgent] = useState(DEFAULT_AGENT_ID);
   const [showTemplates, setShowTemplates] = useState(false);
 
@@ -921,46 +1339,98 @@ export default function BlocklyAgentBuilder() {
   }, []);
 
   const resetWorkspace = useCallback(() => {
+    abortRef.current?.abort();
+    setRunning(false);
+    setOutput([]);
     loadAgentTemplate(activeAgent);
   }, [activeAgent, loadAgentTemplate]);
 
-  const simulateRun = useCallback(() => {
+  // Auto-scroll output
+  useEffect(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, [output]);
+
+  const stopAgent = useCallback(() => {
+    abortRef.current?.abort();
+    setRunning(false);
+  }, []);
+
+  const runAgent = useCallback(async () => {
+    if (!workspaceRef.current) return;
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setRunning(true);
     setOutput([]);
     setShowCode(true);
 
-    // Parse the code lines and simulate output
-    const lines = code.split("\n").filter((l) => l.trim());
-    let i = 0;
+    const ws = workspaceRef.current as {
+      getTopBlocks(ordered: boolean): ExecutableBlock[];
+      highlightBlock(id: string): void;
+    };
+    const topBlocks = ws.getTopBlocks(true);
 
-    const timer = setInterval(() => {
-      if (i >= lines.length) {
-        setOutput((prev) => [...prev, "", "✅ Agent finished!"]);
-        setRunning(false);
-        clearInterval(timer);
-        return;
+    if (topBlocks.length === 0) {
+      setOutput([{ time: "0.0s", text: "⚠ No blocks in workspace!", indent: false }]);
+      setRunning(false);
+      return;
+    }
+
+    const rt = new AgentRuntime(
+      (entry) => {
+        if (!controller.signal.aborted) setOutput((prev) => [...prev, entry]);
+      },
+      controller.signal,
+    );
+
+    const highlight = (id: string) => {
+      try {
+        ws.highlightBlock(id);
+      } catch {
+        /* ok */
       }
+    };
 
-      const line = lines[i]?.trim() ?? "";
-      let msg = "";
+    rt.log("▶ Agent execution started");
 
-      if (line.includes("agent.observe")) msg = `👀 Observing ${line.match(/"(.+?)"/)?.[1] ?? "..."}...`;
-      else if (line.includes("agent.listen")) msg = `👂 Listening for ${line.match(/"(.+?)"/)?.[1] ?? "..."}...`;
-      else if (line.includes("agent.say")) msg = `💬 "${line.match(/"(.+?)"/)?.[1] ?? "..."}"`;
-      else if (line.includes("agent.do")) msg = `⚡ Doing: ${line.match(/"(.+?)"/)?.[1] ?? "..."}`;
-      else if (line.includes("agent.use_tool")) msg = `🔧 Using tool: ${line.match(/"(.+?)"/)?.[1] ?? "..."}`;
-      else if (line.includes("agent.remember")) msg = `💭 Remembered: ${line.match(/"(.+?)"/)?.[1] ?? "..."}`;
-      else if (line.includes("agent.check")) msg = "✅ Checking result...";
-      else if (line.includes("while")) msg = "🔄 Starting agent loop...";
-      else if (line.startsWith("if ")) msg = "🧠 Making a decision...";
-      else if (line.startsWith("else")) msg = "🧠 Trying another approach...";
+    try {
+      for (const block of topBlocks) {
+        if (controller.signal.aborted) break;
+        await executeStatement(block, rt, controller.signal, highlight);
+      }
+      if (!controller.signal.aborted) {
+        rt.log(`✅ Agent completed — ${rt.memory.length} memories, ${rt.iteration} iterations`);
+      }
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") {
+        const elapsed = ((Date.now() - rt.startTime) / 1000).toFixed(1);
+        setOutput((prev) => [
+          ...prev,
+          { time: `${elapsed}s`, text: "⏹ Agent stopped by user", indent: false },
+        ]);
+      } else {
+        setOutput((prev) => [
+          ...prev,
+          {
+            time: "—",
+            text: `❌ Error: ${e instanceof Error ? e.message : "Unknown"}`,
+            indent: false,
+          },
+        ]);
+      }
+    }
 
-      if (msg) setOutput((prev) => [...prev, msg]);
-      i++;
-    }, 800);
-
-    return () => clearInterval(timer);
-  }, [code]);
+    try {
+      ws.highlightBlock("");
+    } catch {
+      /* clear highlight */
+    }
+    setRunning(false);
+  }, []);
 
   if (error) {
     return (
@@ -1011,15 +1481,25 @@ export default function BlocklyAgentBuilder() {
             <Code className="h-3.5 w-3.5" />
             {showCode ? "Hide" : "Show"} Python
           </button>
-          <button
-            type="button"
-            onClick={simulateRun}
-            disabled={running}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/20 transition-colors disabled:opacity-50"
-          >
-            <Play className="h-3.5 w-3.5" />
-            Run Agent
-          </button>
+          {running ? (
+            <button
+              type="button"
+              onClick={stopAgent}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-red-400/10 border border-red-400/30 text-red-400 hover:bg-red-400/20 transition-colors"
+            >
+              <span className="h-3 w-3 bg-red-400 rounded-sm" />
+              Stop
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={runAgent}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/20 transition-colors"
+            >
+              <Play className="h-3.5 w-3.5" />
+              Run Agent
+            </button>
+          )}
           <button
             type="button"
             onClick={resetWorkspace}
@@ -1067,7 +1547,7 @@ export default function BlocklyAgentBuilder() {
       )}
 
       {/* Blockly workspace */}
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="relative rounded-xl border border-border overflow-hidden">
         <div
           ref={blocklyDiv}
           className="w-full"
@@ -1106,27 +1586,46 @@ export default function BlocklyAgentBuilder() {
                 Agent Output
               </span>
             </div>
-            <div className="p-4 text-xs font-mono max-h-60 overflow-y-auto space-y-1">
+            <div
+              ref={outputRef}
+              className="p-4 text-xs font-mono max-h-72 overflow-y-auto space-y-0.5"
+            >
               {output.length === 0 ? (
                 <p className="text-slate-500">
-                  Click &quot;Run Agent&quot; to see your agent in action!
+                  Click &quot;Run Agent&quot; to execute your agent with real browser APIs!
                 </p>
               ) : (
-                output.map((line, i) => (
+                output.map((entry, i) => (
                   <div
-                    key={`${i}-${line}`}
-                    className={`${
-                      line.startsWith("✅ Agent finished")
-                        ? "text-emerald-400 font-bold"
-                        : "text-slate-300"
+                    key={`${i}-${entry.time}`}
+                    className={`flex gap-2 ${entry.indent ? "pl-6" : ""} ${
+                      entry.text.includes("✅ Agent completed")
+                        ? "text-emerald-400 font-bold mt-1"
+                        : entry.text.startsWith("⏹")
+                          ? "text-yellow-400 mt-1"
+                          : entry.text.startsWith("❌")
+                            ? "text-red-400"
+                            : entry.text.startsWith("──")
+                              ? "text-cyan-600/60 border-t border-cyan-900/30 pt-1 mt-1"
+                              : entry.indent
+                                ? "text-slate-400"
+                                : "text-slate-300"
                     }`}
                   >
-                    {line}
+                    <span className="text-cyan-700 shrink-0 w-14 text-right select-none">
+                      [{entry.time}]
+                    </span>
+                    <span>{entry.text}</span>
                   </div>
                 ))
               )}
               {running && (
-                <span className="inline-block w-2 h-4 bg-cyan-400 animate-pulse" />
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-cyan-700 shrink-0 w-14 text-right select-none">
+                    [...]
+                  </span>
+                  <span className="inline-block w-2 h-4 bg-cyan-400 animate-pulse" />
+                </div>
               )}
             </div>
           </div>
