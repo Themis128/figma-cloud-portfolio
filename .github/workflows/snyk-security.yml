@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   security-events: write
 
 jobs:
@@ -34,26 +35,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run Snyk dependency scan
-        uses: snyk/actions/node@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --org=${{ secrets.SNYK_ORG }} --severity-threshold=high --project-name=portfolio-nextjs
+      - name: Install Snyk CLI
+        run: npm install -g snyk
 
-      - name: Run Snyk to upload SARIF
-        uses: snyk/actions/node@master
+      - name: Run Snyk dependency scan
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-deps.sarif
-          command: test
+        run: snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=high --project-name=portfolio-nextjs --sarif-file-output=snyk-deps.sarif
 
       - name: Upload SARIF to GitHub
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('snyk-deps.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: snyk-deps.sarif
           category: snyk-dependencies
@@ -67,18 +60,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Run Snyk Code scan
-        uses: snyk/actions/node@master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-code.sarif
-          command: code test
+        run: snyk code test --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-code.sarif
 
       - name: Upload SARIF to GitHub
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('snyk-code.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: snyk-code.sarif
           category: snyk-code
@@ -92,17 +85,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Run Snyk IaC scan
-        uses: snyk/actions/iac@master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-iac.sarif
+        run: snyk iac test --org=${{ secrets.SNYK_ORG }} --sarif-file-output=snyk-iac.sarif
 
       - name: Upload SARIF to GitHub
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('snyk-iac.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: snyk-iac.sarif
           category: snyk-iac
