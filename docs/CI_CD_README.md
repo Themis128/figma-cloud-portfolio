@@ -51,6 +51,7 @@ The project uses [GitHub Agentic Workflows](https://github.github.com/gh-aw/) wi
 | Daily Malicious Code Scan | Scheduled / manual | Reviews recent code for suspicious patterns |
 | Link Checker | Scheduled / manual | Finds/fixes broken documentation links |
 | Playwright Test Runner | Scheduled / manual | Full E2E suite with regression detection |
+| Snyk Security Scan | Weekly / PR / push to production | Dependency, SAST, and IaC vulnerability scanning |
 
 **Required secret**: `COPILOT_GITHUB_TOKEN` — fine-grained PAT with "Copilot Requests" Account permission (Read).
 
@@ -152,6 +153,10 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 # Amplify Gen 2 Backend
 AMPLIFY_PRODUCTION_APP_ID=d1zjif7pi1h3om
+
+# Snyk Security Scanning
+SNYK_TOKEN=your_snyk_api_token       # From https://app.snyk.io/account
+SNYK_ORG=your_snyk_org_slug          # Snyk organization slug
 ```
 
 ### Environment Variables
@@ -247,9 +252,13 @@ Status files can be consumed by:
 
 ### Security Scanning
 
-- **Trivy**: Container and filesystem vulnerability scanning
+- **Snyk**: Dependency, SAST (code), and IaC vulnerability scanning (`.github/workflows/snyk-security.yml`)
+  - **Dependency Scan**: Checks `pnpm-lock.yaml` for known vulnerabilities (high/critical threshold)
+  - **Code Scan (SAST)**: Static analysis of source code (excludes test files via `--exclude` and `.snyk` policy)
+  - **IaC Scan**: Checks `amplify.yml` and other infrastructure files for misconfigurations
+  - **Pre-deploy gate**: `deploy.yml` runs `snyk test --severity-threshold=critical` before deployment
+  - **Dashboard monitoring**: `snyk monitor` uploads project state on pushes to `production`
 - **Dependabot**: Automated dependency updates
-- **CodeQL**: Static code analysis (can be added)
 
 ### Access Control
 
@@ -349,7 +358,7 @@ curl https://yourdomain.com/deployment-status-production.json
   - `aws-actions/amplify-cli-wrapper@1.2.0`
 
 - **External Tools**:
-  - Trivy (security scanning)
+  - Snyk CLI (security scanning — dependency, SAST, IaC)
   - pnpm (package management)
   - Node.js 22.x
 
@@ -365,4 +374,4 @@ When modifying CI/CD workflows:
 
 ---
 
-_Last Updated: March 9, 2026_
+_Last Updated: March 17, 2026_

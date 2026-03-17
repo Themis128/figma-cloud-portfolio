@@ -12,6 +12,9 @@ on:
 permissions:
   contents: read
 
+env:
+  SNYK_CLI_VERSION: v1.1296.1
+
 jobs:
   snyk-dependencies:
     name: Dependency Scan
@@ -34,7 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Snyk CLI
-        run: npm install -g snyk
+        run: npm install -g snyk@${{ env.SNYK_CLI_VERSION }}
 
       - name: Run Snyk dependency scan
         env:
@@ -51,13 +54,14 @@ jobs:
           fi
 
       - name: Monitor project on Snyk dashboard
+        if: github.ref == 'refs/heads/production'
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk monitor --org=${{ secrets.SNYK_ORG }} --all-projects --project-name=portfolio-nextjs
 
-  snyk-code:
-    name: Code Scan (SAST)
+  snyk-code-and-iac:
+    name: Code (SAST) + IaC Scan
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -66,14 +70,14 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install Snyk CLI
-        run: npm install -g snyk
+        run: npm install -g snyk@${{ env.SNYK_CLI_VERSION }}
 
-      - name: Run Snyk Code scan
+      - name: Run Snyk Code scan (SAST)
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           echo "## Snyk Code Scan (SAST)" >> "$GITHUB_STEP_SUMMARY"
-          if snyk code test --org=${{ secrets.SNYK_ORG }} 2>&1 | tee /tmp/snyk-code.txt; then
+          if snyk code test --org=${{ secrets.SNYK_ORG }} --exclude=playwright-tests,scripts/test-*,cline-hooks 2>&1 | tee /tmp/snyk-code.txt; then
             echo "✅ No code security issues found" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "⚠️ Code issues detected — review output above" >> "$GITHUB_STEP_SUMMARY"
@@ -81,18 +85,6 @@ jobs:
             tail -30 /tmp/snyk-code.txt >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
           fi
-
-  snyk-iac:
-    name: IaC Scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Install Snyk CLI
-        run: npm install -g snyk
 
       - name: Run Snyk IaC scan
         env:

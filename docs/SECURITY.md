@@ -316,49 +316,64 @@ Sentry.init({
 });
 ```
 
+## Automated Security Scanning (Snyk)
+
+The project uses [Snyk](https://snyk.io/) for continuous security scanning across three dimensions:
+
+### Scan Types
+
+| Scan | Command | What It Checks |
+|------|---------|----------------|
+| **Dependency Scan** | `snyk test --severity-threshold=high --all-projects` | Known CVEs in npm dependencies via `pnpm-lock.yaml` |
+| **Code Scan (SAST)** | `snyk code test --exclude=playwright-tests,scripts/test-*,cline-hooks` | Static analysis of source code for security anti-patterns |
+| **IaC Scan** | `snyk iac test` | Misconfigurations in `amplify.yml` and infrastructure files |
+
+### When Scans Run
+
+- **Weekly** (Monday 6am UTC) — scheduled full scan
+- **On PRs** to `production` or `main` — all 3 scan types
+- **On push** to `production` — all 3 scan types + `snyk monitor` (updates Snyk dashboard)
+- **Pre-deploy** — `deploy.yml` runs `snyk test --severity-threshold=critical` as a **blocking** deployment gate (critical vulnerabilities fail the deploy)
+
+### Configuration
+
+- **`.snyk`** — Policy file with exclude rules for non-production code (`playwright-tests/`, `scripts/test-*`, `cline-hooks/`)
+- **`.github/workflows/snyk-security.yml`** — Workflow with pinned CLI version
+- **GitHub Secrets**: `SNYK_TOKEN`, `SNYK_ORG`
+- **Snyk Dashboard**: Results are uploaded via `snyk monitor` on production pushes
+
+### Rate Limiting
+
+The chat endpoint (`server/routes/chat.ts`) implements in-memory rate limiting:
+- **Window**: 60 seconds per IP
+- **Limit**: 15 requests per window
+- **Cleanup**: Stale entries cleared every 5 minutes
+- **Response**: HTTP 429 when limit exceeded
+
 ## Security Testing
 
 ### E2E Security Tests
 
 ```typescript
-// playwright-tests/security-privacy.spec.ts
-test.describe('Security Tests', () => {
-  test('should block XSS in contact form', async ({ page }) => {
-    await page.goto('/contact');
-    
-    // Try XSS attack
-    await page.fill('[name="message"]', '<script>alert("XSS")</script>');
-    await page.click('button[type="submit"]');
-    
-    // Should not execute script
-    await expect(page.locator('body')).not.toContainText('XSS');
-  });
-  
-  test('should have security headers', async ({ page }) => {
-    const response = await page.goto('/');
-    const headers = response?.headers();
-    
-    expect(headers['x-content-type-options']).toBe('nosniff');
-    expect(headers['x-frame-options']).toBe('SAMEORIGIN');
-    expect(headers['x-xss-protection']).toBe('1; mode=block');
-  });
-});
+// playwright-tests/security-headers.spec.ts — API security header validation
+// playwright-tests/security.spec.ts — XSS prevention, input sanitization
+// playwright-tests/snyk-security-fixes.spec.ts — Snyk fix verification (rate limiting, X-Powered-By, type validation)
 ```
 
 ### OWASP Top 10 Coverage
 
 | OWASP Risk | Implementation | Status |
 |------------|----------------|--------|
-| **A01: Broken Access Control** | API rate limiting, CORS | ✅ Implemented |
-| **A02: Cryptographic Failures** | HTTPS, secure headers | ✅ Implemented |
-| **A03: Injection** | Input validation, sanitization | ✅ Implemented |
+| **A01: Broken Access Control** | API rate limiting (chat endpoint), CORS, Cognito auth | ✅ Implemented |
+| **A02: Cryptographic Failures** | HTTPS, secure headers, cookie Secure attribute | ✅ Implemented |
+| **A03: Injection** | Input type validation on all API endpoints, DOMPurify | ✅ Implemented |
 | **A04: Insecure Design** | Security by design principles | ✅ Implemented |
-| **A05: Security Misconfiguration** | Security headers, CSP | ✅ Implemented |
-| **A06: Vulnerable Components** | Regular dependency updates | ✅ Implemented |
-| **A07: Authentication Failures** | reCAPTCHA, rate limiting | ✅ Implemented |
-| **A08: Software Integrity** | Dependency scanning | ✅ Implemented |
+| **A05: Security Misconfiguration** | Security headers, X-Powered-By disabled, `.snyk` policy | ✅ Implemented |
+| **A06: Vulnerable Components** | Snyk dependency scanning (weekly + PR + pre-deploy) | ✅ Implemented |
+| **A07: Authentication Failures** | reCAPTCHA, rate limiting, Cognito auth | ✅ Implemented |
+| **A08: Software Integrity** | Snyk SAST + dependency scanning, pinned CI versions | ✅ Implemented |
 | **A09: Logging Failures** | Sentry integration | ✅ Implemented |
-| **A10: Server-Side Request Forgery** | URL validation | ✅ Implemented |
+| **A10: Server-Side Request Forgery** | Service worker same-origin validation (`public/sw.js`) | ✅ Implemented |
 
 ## Security Monitoring
 
@@ -381,37 +396,31 @@ export function trackSecurityEvent(event: string, details: any) {
 }
 ```
 
-### Rate Limiting Monitoring
+### Rate Limiting
+
+The chat API (`server/routes/chat.ts`) uses an in-memory rate limiter (no external dependencies):
 
 ```typescript
-// server/middleware/rateLimit.ts
-const rateLimit = require('express-rate-limit');
-
-const createRateLimit = (windowMs: number, max: number) => {
-  return rateLimit({
-    windowMs,
-    max,
-    handler: (req, res) => {
-      // Log rate limit violations
-      console.warn(`Rate limit exceeded: ${req.ip} - ${req.path}`);
-      res.status(429).json({ error: 'Too many requests' });
-    },
-  });
-};
+// 15 requests per minute per IP, with automatic cleanup every 5 minutes
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 15;
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 ```
+
+The rate limiter extracts client IP from `X-Forwarded-For` (for Lambda/CloudFront) or `req.socket.remoteAddress`.
 
 ## Security Best Practices
 
 ### 1. Dependency Management
 
 ```bash
-# Regular security audits
-pnpm audit
+# Snyk security scan (recommended)
+snyk test --severity-threshold=high --all-projects
 
-# Update dependencies
-pnpm update --latest
+# Upload to Snyk dashboard for continuous monitoring
+snyk monitor --all-projects --project-name=portfolio-nextjs
 
-# Check for known vulnerabilities
+# pnpm built-in audit (quick check)
 pnpm audit --audit-level=moderate
 ```
 

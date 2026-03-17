@@ -1,3 +1,10 @@
-# Snyk policy file
-# https://snyk.io/docs/snyk-policy-file
+# Snyk policy file — https://snyk.io/docs/snyk-policy-file
 version: v1.25.0
+
+exclude:
+  global:
+    # Test files — not production code
+    - playwright-tests/**
+    - scripts/test-*
+    # Local dev tooling hooks — not deployed
+    - cline-hooks/**
