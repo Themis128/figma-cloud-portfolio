@@ -61,7 +61,9 @@ test.describe("AI Agents Educational Page", () => {
     });
 
     test("should have Architecture Patterns section", async ({ page }) => {
-      await expect(page.getByText("Architecture Patterns")).toBeVisible();
+      const heading = page.getByText("Architecture Patterns");
+      await heading.scrollIntoViewIfNeeded();
+      await expect(heading).toBeVisible();
       await expect(page.getByText("Single Agent")).toBeVisible();
       await expect(page.getByText("Router Agent")).toBeVisible();
       await expect(
@@ -85,7 +87,9 @@ test.describe("AI Agents Educational Page", () => {
     });
 
     test("should have Key Terminology section", async ({ page }) => {
-      await expect(page.getByText("Key Terminology")).toBeVisible();
+      const heading = page.getByText("Key Terminology");
+      await heading.scrollIntoViewIfNeeded();
+      await expect(heading).toBeVisible();
       await expect(page.getByText("RAG").first()).toBeVisible();
       await expect(page.getByText("ReAct").first()).toBeVisible();
       await expect(page.getByText("Tool Use").first()).toBeVisible();
@@ -94,9 +98,9 @@ test.describe("AI Agents Educational Page", () => {
     });
 
     test("should show full term names", async ({ page }) => {
-      await expect(
-        page.getByText("Retrieval-Augmented Generation"),
-      ).toBeVisible();
+      const ragText = page.getByText("Retrieval-Augmented Generation");
+      await ragText.scrollIntoViewIfNeeded();
+      await expect(ragText).toBeVisible();
       await expect(page.getByText("Reasoning + Acting")).toBeVisible();
       await expect(
         page.getByText("Model Context Protocol"),
@@ -201,6 +205,10 @@ test.describe("AI Agents Educational Page", () => {
     test("should render Blockly workspace or loading state", async ({
       page,
     }) => {
+      // Scroll to the Build Your Own Agent section first
+      const heading = page.getByText("Build Your Own Agent");
+      await heading.scrollIntoViewIfNeeded();
+
       // Blockly loads dynamically — check for either the workspace or the loading indicator
       const workspace = page.locator(".blocklyWorkspace");
       const loading = page.getByText("Loading block editor", { exact: false });
