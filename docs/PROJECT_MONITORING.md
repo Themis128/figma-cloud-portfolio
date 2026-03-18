@@ -637,7 +637,7 @@ safe-outputs:
 
 ### Documentation
 - [GitHub Agentic Workflows Documentation](https://github.com/github/gh-aw)
-- [GitHub Projects v2 API](https://docs.github.com/en/issues/planning-and-tracking-with-projects/automating-your-project/about-automation)
+- [GitHub Projects v2 API](https://docs.github.com/en/issues/planning-and-tracking-with-projects/automating-your-project)
 - [Safe-Outputs Configuration Guide](https://github.com/github/gh-aw/blob/main/docs/safe-outputs.md)
 
 ### Troubleshooting

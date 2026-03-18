@@ -590,7 +590,7 @@ observer.observe({ entryTypes: ['navigation', 'paint', 'largest-contentful-paint
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [WebPageTest](https://www.webpagetest.org/)
 - [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools)
-- [Bundle Analyzer](https://webpack.js.org/analyse/)
+- [Bundle Analyzer](https://webpack.js.org/guides/code-splitting/#bundle-analysis)
 
 ### Documentation
 - [Web Vitals](https://web.dev/vitals/)
