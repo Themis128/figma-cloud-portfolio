@@ -1,6 +1,7 @@
 "use client";
 
-import { Bot, BookOpen, Code, Play, RotateCcw } from "lucide-react";
+import { Bot, BookOpen, Code, Copy, Download, Play, RotateCcw, SkipForward } from "lucide-react";
+import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // Blockly will be dynamically imported to avoid SSR issues
@@ -160,6 +161,8 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
         args0: [{ type: "input_value", name: "CONDITION", check: "String" }],
         message1: "do %1",
         args1: [{ type: "input_statement", name: "DO" }],
+        message2: "otherwise %1",
+        args2: [{ type: "input_statement", name: "ELSE" }],
         previousStatement: null,
         nextStatement: null,
         style: "think_blocks",
@@ -224,6 +227,8 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
               ["search the web", "search"],
               ["save a file", "save"],
               ["restart a server", "restart"],
+              ["adjust settings", "adjust"],
+              ["deploy code", "deploy"],
             ],
           },
         ],
@@ -283,15 +288,23 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
     init(this: { jsonInit: (json: Record<string, unknown>) => void }) {
       this.jsonInit({
         type: "agent_loop",
-        message0: "🔄 Keep going until %1",
+        message0: "🔄 Repeat up to %1 times until %2",
         args0: [
+          {
+            type: "field_number",
+            name: "MAX",
+            value: 3,
+            min: 1,
+            max: 20,
+            precision: 1,
+          },
           {
             type: "field_dropdown",
             name: "UNTIL",
             options: [
               ["the task is done", "done"],
               ["someone says stop", "stop"],
-              ["3 tries", "tries"],
+              ["max reached", "tries"],
             ],
           },
         ],
@@ -330,6 +343,10 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
     pythonGenerator.forBlock["agent_decide"] = (block: unknown) => {
       const condition = pythonGenerator.valueToCode(block, "CONDITION", pythonGenerator.ORDER_NONE) || '"something"';
       const body = pythonGenerator.statementToCode(block, "DO") || "  pass\n";
+      const elseBody = pythonGenerator.statementToCode(block, "ELSE");
+      if (elseBody) {
+        return `if ${condition}:\n${body}else:\n${elseBody}`;
+      }
       return `if ${condition}:\n${body}`;
     };
 
@@ -361,8 +378,9 @@ function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenera
 
     pythonGenerator.forBlock["agent_loop"] = (block: unknown) => {
       const until = (block as { getFieldValue: (n: string) => string }).getFieldValue("UNTIL");
+      const max = (block as { getFieldValue: (n: string) => string }).getFieldValue("MAX");
       const body = pythonGenerator.statementToCode(block, "BODY") || "  pass\n";
-      return `while not agent.is_done("${until}"):\n${body}`;
+      return `# max ${max} iterations\nwhile not agent.is_done("${until}"):\n${body}`;
     };
   }
 }
@@ -838,10 +856,12 @@ class AgentRuntime {
   readonly startTime = Date.now();
   private onLog: (entry: LogEntry) => void;
   private signal: AbortSignal;
+  private waitForStep: (() => Promise<void>) | undefined;
 
-  constructor(onLog: (entry: LogEntry) => void, signal: AbortSignal) {
+  constructor(onLog: (entry: LogEntry) => void, signal: AbortSignal, waitForStep?: () => Promise<void>) {
     this.onLog = onLog;
     this.signal = signal;
+    this.waitForStep = waitForStep ?? undefined;
   }
 
   private ts(): string {
@@ -856,14 +876,19 @@ class AgentRuntime {
 
   private async pause(ms = 350) {
     if (this.signal.aborted) throw new DOMException("Aborted", "AbortError");
-    await new Promise<void>((resolve, reject) => {
-      const id = setTimeout(resolve, ms);
-      const onAbort = () => {
-        clearTimeout(id);
-        reject(new DOMException("Aborted", "AbortError"));
-      };
-      this.signal.addEventListener("abort", onAbort, { once: true });
-    });
+    if (this.waitForStep) {
+      await this.waitForStep();
+      if (this.signal.aborted) throw new DOMException("Aborted", "AbortError");
+    } else {
+      await new Promise<void>((resolve, reject) => {
+        const id = setTimeout(resolve, ms);
+        const onAbort = () => {
+          clearTimeout(id);
+          reject(new DOMException("Aborted", "AbortError"));
+        };
+        this.signal.addEventListener("abort", onAbort, { once: true });
+      });
+    }
   }
 
   async observe(what: string): Promise<string> {
@@ -1039,6 +1064,20 @@ class AgentRuntime {
         this.lastSuccess = true;
         break;
       }
+      case "adjust": {
+        const hour = new Date().getHours();
+        const temp = hour < 6 ? 18 : hour < 12 ? 21 : hour < 18 ? 23 : 20;
+        result = `Settings adjusted: temperature → ${temp}°C, mode → auto (based on ${hour}:00 local time)`;
+        this.lastSuccess = true;
+        break;
+      }
+      case "deploy": {
+        const version = `v1.${Math.floor(performance.now() / 1000)}.0`;
+        const hash = Math.random().toString(36).slice(2, 10);
+        result = `Deployed ${version} (commit ${hash}) — build passed, 0 errors`;
+        this.lastSuccess = true;
+        break;
+      }
       default:
         result = `"${action}" completed`;
         this.lastSuccess = true;
@@ -1121,17 +1160,8 @@ class AgentRuntime {
     return ok;
   }
 
-  isDone(condition: string): boolean {
-    switch (condition) {
-      case "tries":
-        return this.iteration >= 3;
-      case "done":
-        return this.iteration >= 2;
-      case "stop":
-        return this.iteration >= 2;
-      default:
-        return this.iteration >= 3;
-    }
+  isDone(_condition: string, max = 3): boolean {
+    return this.iteration >= max;
   }
 }
 
@@ -1158,15 +1188,16 @@ async function executeStatement(
   switch (block.type) {
     case "agent_loop": {
       const until = block.getFieldValue("UNTIL");
+      const max = parseInt(block.getFieldValue("MAX")) || 3;
       const labels: Record<string, string> = {
         done: "task is done",
         stop: "stopped",
-        tries: "3 tries",
+        tries: `${max} tries`,
       };
-      rt.log(`🔄 Loop started (until: ${labels[until] || until})`);
+      rt.log(`🔄 Loop started (until: ${labels[until] || until}, max: ${max})`);
       const body = block.getInputTargetBlock("BODY");
       rt.iteration = 0;
-      while (!rt.isDone(until) && !signal.aborted) {
+      while (!rt.isDone(until, max) && !signal.aborted) {
         rt.log(`── iteration ${rt.iteration + 1} ──`);
         await executeStatement(body, rt, signal, highlight);
         rt.iteration++;
@@ -1183,6 +1214,12 @@ async function executeStatement(
       rt.log(`🧠 Decision: ${triggered ? "TRIGGERED ✓" : "NOT TRIGGERED ✗"}`);
       if (triggered) {
         await executeStatement(block.getInputTargetBlock("DO"), rt, signal, highlight);
+      } else {
+        const elseBranch = block.getInputTargetBlock("ELSE");
+        if (elseBranch) {
+          rt.log("↳ Running otherwise branch");
+          await executeStatement(elseBranch, rt, signal, highlight);
+        }
       }
       break;
     }
@@ -1222,6 +1259,38 @@ async function executeStatement(
   if (next && !signal.aborted) await executeStatement(next, rt, signal, highlight);
 }
 
+function highlightPython(code: string) {
+  return code.split("\n").map((line, lineIdx) => {
+    const parts: React.ReactNode[] = [];
+    const tokenRegex =
+      /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(while|if|else|elif|not|def|return|True|False|None|for|in|and|or|pass)\b|\b(agent)\b|\.(observe|listen|say|do|remember|is_done|check_result|use_tool)\b/g;
+    let lastIndex = 0;
+    let match;
+    let key = 0;
+    while ((match = tokenRegex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(<span key={key++}>{line.slice(lastIndex, match.index)}</span>);
+      }
+      if (match[1]) {
+        parts.push(<span key={key++} className="text-slate-500 italic">{match[0]}</span>);
+      } else if (match[2]) {
+        parts.push(<span key={key++} className="text-amber-400">{match[0]}</span>);
+      } else if (match[3]) {
+        parts.push(<span key={key++} className="text-purple-400 font-semibold">{match[0]}</span>);
+      } else if (match[4]) {
+        parts.push(<span key={key++} className="text-cyan-400">{match[0]}</span>);
+      } else if (match[5]) {
+        parts.push(<span key={key++} className="text-emerald-400">.{match[5]}</span>);
+      }
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < line.length) {
+      parts.push(<span key={key++}>{line.slice(lastIndex)}</span>);
+    }
+    return <div key={lineIdx}>{parts.length > 0 ? parts : "\u00A0"}</div>;
+  });
+}
+
 export default function BlocklyAgentBuilder() {
   const blocklyDiv = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<unknown>(null);
@@ -1235,6 +1304,12 @@ export default function BlocklyAgentBuilder() {
   const outputRef = useRef<HTMLDivElement>(null);
   const [activeAgent, setActiveAgent] = useState(DEFAULT_AGENT_ID);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [stepping, setStepping] = useState(false);
+  const [waitingForStep, setWaitingForStep] = useState(false);
+  const [blockCount, setBlockCount] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const steppingRef = useRef(false);
+  const stepResolveRef = useRef<(() => void) | null>(null);
 
   // Initialize Blockly
   useEffect(() => {
@@ -1297,7 +1372,7 @@ export default function BlocklyAgentBuilder() {
           BlocklyModule.Xml.domToWorkspace(xml, workspace);
         }
 
-        // Generate code on change
+        // Generate code on change + track block count
         workspace.addChangeListener(() => {
           try {
             const generated = pythonGenerator.workspaceToCode(workspace);
@@ -1305,6 +1380,10 @@ export default function BlocklyAgentBuilder() {
           } catch {
             setCode("# Drag blocks to build your agent!");
           }
+          try {
+            const blocks = (workspace as unknown as { getAllBlocks: (ordered: boolean) => unknown[] }).getAllBlocks(false);
+            setBlockCount(blocks.length);
+          } catch { /* ignore */ }
         });
 
         setReady(true);
@@ -1352,10 +1431,49 @@ export default function BlocklyAgentBuilder() {
     }
   }, [output]);
 
+  const toggleStepping = useCallback(() => {
+    setStepping((prev) => {
+      steppingRef.current = !prev;
+      return !prev;
+    });
+  }, []);
+
+  const advanceStep = useCallback(() => {
+    stepResolveRef.current?.();
+    stepResolveRef.current = null;
+  }, []);
+
   const stopAgent = useCallback(() => {
     abortRef.current?.abort();
+    stepResolveRef.current?.();
+    steppingRef.current = false;
+    setStepping(false);
     setRunning(false);
+    setWaitingForStep(false);
   }, []);
+
+  const copyCode = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* ignore */ }
+  }, [code]);
+
+  const exportWorkspace = useCallback(() => {
+    if (!workspaceRef.current || !Blockly) return;
+    const xml = Blockly.Xml.workspaceToDom(
+      workspaceRef.current as Parameters<typeof Blockly.Xml.workspaceToDom>[0],
+    );
+    const xmlText = Blockly.utils.xml.domToText(xml);
+    const blob = new Blob([xmlText], { type: "application/xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `agent-${activeAgent}-${Date.now()}.xml`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [activeAgent]);
 
   const runAgent = useCallback(async () => {
     if (!workspaceRef.current) return;
@@ -1380,11 +1498,24 @@ export default function BlocklyAgentBuilder() {
       return;
     }
 
+    const isStepMode = steppingRef.current;
+    const waitForStep = isStepMode
+      ? async () => {
+          setWaitingForStep(true);
+          await new Promise<void>((resolve) => {
+            stepResolveRef.current = resolve;
+          });
+          setWaitingForStep(false);
+          if (controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
+        }
+      : undefined;
+
     const rt = new AgentRuntime(
       (entry) => {
         if (!controller.signal.aborted) setOutput((prev) => [...prev, entry]);
       },
       controller.signal,
+      waitForStep,
     );
 
     const highlight = (id: string) => {
@@ -1459,11 +1590,18 @@ export default function BlocklyAgentBuilder() {
               Drag blocks to teach your robot agent what to do!
             </p>
           </div>
+          {blockCount > 0 && (
+            <span className="text-[10px] font-mono text-muted-foreground bg-foreground/5 px-2 py-0.5 rounded-full border border-border/30">
+              {blockCount} blocks
+            </span>
+          )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setShowTemplates(!showTemplates)}
+            aria-label="Toggle template browser"
+            aria-pressed={showTemplates}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors ${
               showTemplates
                 ? "border-cyan-400/40 text-cyan-400 bg-cyan-400/5"
@@ -1476,24 +1614,64 @@ export default function BlocklyAgentBuilder() {
           <button
             type="button"
             onClick={() => setShowCode(!showCode)}
+            aria-label={`${showCode ? "Hide" : "Show"} generated Python code`}
+            aria-pressed={showCode}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border border-border/40 text-foreground/70 hover:text-cyan-400 hover:border-cyan-400/40 transition-colors"
           >
             <Code className="h-3.5 w-3.5" />
             {showCode ? "Hide" : "Show"} Python
           </button>
-          {running ? (
+          <button
+            type="button"
+            onClick={toggleStepping}
+            aria-label="Toggle step-by-step execution mode"
+            aria-pressed={stepping}
+            disabled={running}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors ${
+              stepping
+                ? "border-amber-400/40 text-amber-400 bg-amber-400/5"
+                : "border-border/40 text-foreground/70 hover:text-amber-400 hover:border-amber-400/40"
+            } ${running ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            <SkipForward className="h-3.5 w-3.5" />
+            Step
+          </button>
+          {running && waitingForStep ? (
+            <>
+              <button
+                type="button"
+                onClick={advanceStep}
+                aria-label="Execute next step"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-amber-400/10 border border-amber-400/30 text-amber-400 hover:bg-amber-400/20 transition-colors animate-pulse"
+              >
+                <SkipForward className="h-3.5 w-3.5" />
+                Next Step
+              </button>
+              <button
+                type="button"
+                onClick={stopAgent}
+                aria-label="Stop agent execution"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-red-400/10 border border-red-400/30 text-red-400 hover:bg-red-400/20 transition-colors"
+              >
+                <span className="h-3 w-3 bg-red-400 rounded-sm" aria-hidden="true" />
+                Stop
+              </button>
+            </>
+          ) : running ? (
             <button
               type="button"
               onClick={stopAgent}
+              aria-label="Stop agent execution"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-red-400/10 border border-red-400/30 text-red-400 hover:bg-red-400/20 transition-colors"
             >
-              <span className="h-3 w-3 bg-red-400 rounded-sm" />
+              <span className="h-3 w-3 bg-red-400 rounded-sm" aria-hidden="true" />
               Stop
             </button>
           ) : (
             <button
               type="button"
               onClick={runAgent}
+              aria-label="Run agent"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/20 transition-colors"
             >
               <Play className="h-3.5 w-3.5" />
@@ -1503,6 +1681,7 @@ export default function BlocklyAgentBuilder() {
           <button
             type="button"
             onClick={resetWorkspace}
+            aria-label="Reset workspace to current template"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border border-border/40 text-foreground/70 hover:text-foreground transition-colors"
             title="Reset to starter example"
           >
@@ -1513,11 +1692,13 @@ export default function BlocklyAgentBuilder() {
 
       {/* Prebuilt Templates */}
       {showTemplates && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="listbox" aria-label="Agent templates">
           {PREBUILT_AGENTS.map((agent) => (
             <button
               key={agent.id}
               type="button"
+              role="option"
+              aria-selected={activeAgent === agent.id}
               onClick={() => loadAgentTemplate(agent.id)}
               className={`text-left p-3 rounded-lg border transition-all duration-200 ${
                 activeAgent === agent.id
@@ -1526,7 +1707,7 @@ export default function BlocklyAgentBuilder() {
               }`}
             >
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-lg">{agent.icon}</span>
+                <span className="text-lg" aria-hidden="true">{agent.icon}</span>
                 <span className="text-sm font-bold text-foreground">{agent.name}</span>
                 <span
                   className={`ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded-full border ${
@@ -1551,7 +1732,7 @@ export default function BlocklyAgentBuilder() {
         <div
           ref={blocklyDiv}
           className="w-full"
-          style={{ height: "420px" }}
+          style={{ height: "clamp(280px, 50vh, 420px)" }}
         />
         {!ready && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80">
@@ -1572,9 +1753,33 @@ export default function BlocklyAgentBuilder() {
               <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
                 Python Code
               </span>
+              <div className="ml-auto flex gap-1">
+                <button
+                  type="button"
+                  onClick={copyCode}
+                  aria-label="Copy Python code to clipboard"
+                  title={copied ? "Copied!" : "Copy code"}
+                  className={`p-1 rounded transition-colors ${
+                    copied
+                      ? "text-emerald-400"
+                      : "text-slate-500 hover:text-cyan-400"
+                  }`}
+                >
+                  <Copy className="h-3 w-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={exportWorkspace}
+                  aria-label="Download workspace as XML"
+                  title="Export XML"
+                  className="p-1 rounded text-slate-500 hover:text-cyan-400 transition-colors"
+                >
+                  <Download className="h-3 w-3" />
+                </button>
+              </div>
             </div>
             <pre className="p-4 text-xs font-mono text-slate-300 overflow-x-auto max-h-60 overflow-y-auto leading-relaxed">
-              <code>{code}</code>
+              <code>{highlightPython(code)}</code>
             </pre>
           </div>
 
@@ -1589,6 +1794,9 @@ export default function BlocklyAgentBuilder() {
             <div
               ref={outputRef}
               className="p-4 text-xs font-mono max-h-72 overflow-y-auto space-y-0.5"
+              role="log"
+              aria-label="Agent execution output"
+              aria-live="polite"
             >
               {output.length === 0 ? (
                 <p className="text-slate-500">
@@ -1619,12 +1827,20 @@ export default function BlocklyAgentBuilder() {
                   </div>
                 ))
               )}
-              {running && (
+              {running && !waitingForStep && (
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-cyan-700 shrink-0 w-14 text-right select-none">
                     [...]
                   </span>
                   <span className="inline-block w-2 h-4 bg-cyan-400 animate-pulse" />
+                </div>
+              )}
+              {waitingForStep && (
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-cyan-700 shrink-0 w-14 text-right select-none">
+                    [...]
+                  </span>
+                  <span className="text-amber-400 animate-pulse">⏸ Waiting for next step...</span>
                 </div>
               )}
             </div>

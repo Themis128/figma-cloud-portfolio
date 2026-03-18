@@ -122,11 +122,11 @@ The `BlocklyAgentBuilder` Client Component provides a visual drag-and-drop progr
 
 | Block | Type | Purpose |
 | --- | --- | --- |
-| `agent_loop` | Statement | Repeating observation loop (wraps body) |
+| `agent_loop` | Statement | Repeating observation loop with configurable max iterations (1–20) |
 | `agent_scan` | Statement | Scan a data source (inbox, network, room, logs) |
 | `agent_see` | Value | Observe environment — returns `[code, order]` tuple |
 | `agent_listen` | Value | Listen for input — returns `[code, order]` tuple |
-| `agent_decide` | Statement | If-then decision based on a condition value |
+| `agent_decide` | Statement | If-then-otherwise decision based on a condition value |
 | `agent_remember` | Statement | Store information in memory |
 | `agent_say` | Statement | Speak or output a message |
 | `agent_do` | Statement | Perform an action (email, restart, adjust, deploy) |
@@ -149,9 +149,10 @@ Each template is an XML workspace with blocks nested inside loops via `<next>` c
 A simulated execution engine that walks the Blockly block tree:
 
 - Processes blocks sequentially following `nextConnection` links
-- Handles nested statement blocks (loop body, decide branches, check yes/no)
+- Handles nested statement blocks (loop body, decide if/otherwise branches, check yes/no)
 - Decision triggers use regex pattern matching to detect meaningful observations vs. "no data" responses
 - Supports cancellation via `AbortController`
+- **Step-by-step mode** — pause after each action, advance with "Next Step" button
 - Produces timestamped execution logs displayed in a cyberpunk-styled console
 
 #### Code Generation
@@ -159,7 +160,15 @@ A simulated execution engine that walks the Blockly block tree:
 - Uses Blockly's Python generator to produce readable Python pseudocode
 - Value blocks (`agent_see`, `agent_listen`) return `[code, order]` tuples per Blockly convention
 - Statement blocks return code strings
-- Generated code is displayed in a syntax-highlighted panel
+- Generated code displayed with **syntax highlighting** (keywords, strings, agent methods, comments)
+- **Copy to clipboard** and **export workspace as XML** buttons in code panel
+
+#### UI Features
+
+- **Block counter** — live count of blocks in workspace
+- **Step-by-step execution** — toggle step mode, then advance one action at a time
+- **Responsive workspace** — height scales with viewport (`clamp(280px, 50vh, 420px)`)
+- **Accessibility** — ARIA labels, roles (`listbox`, `option`, `log`), `aria-live` for output, `aria-pressed` for toggles
 
 ## Testing
 
