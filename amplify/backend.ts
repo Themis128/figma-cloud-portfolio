@@ -1,12 +1,11 @@
 import { defineBackend } from '@aws-amplify/backend';
-import { data } from './data/resource';
 import { auth } from './auth/resource';
 
 /**
- * @description Define your backend with data, auth, and storage resources
+ * @description Auth-only backend — AppSync/DynamoDB removed (unused).
+ * Contact form uses SES+Slack, bookings use Cal.com API directly.
  */
 const backend = defineBackend({
-  data,
   auth,
 });
 
