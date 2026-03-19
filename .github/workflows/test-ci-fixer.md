@@ -239,7 +239,6 @@ Save results for comparison in future runs:
 ```json
 {
   "last_run": "<today ISO date>",
-  "trigger": "${{ github.event_name }}",
   "baseline_passed": "<N>",
   "baseline_failed": "<N>",
   "final_passed": "<N>",
