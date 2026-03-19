@@ -48,7 +48,15 @@ test.describe("Quick Contact Form — Live Backend", () => {
 
     const apiResponse = await apiPromise;
     const status = apiResponse.status();
-    const body = await apiResponse.json();
+
+    // Skip JSON parsing for redirect responses
+    let body: any;
+    if (status >= 300 && status < 400) {
+      console.log(`⚠️ Received redirect (${status}) - expected JSON response`);
+      body = { success: false, message: "Redirect response" };
+    } else {
+      body = await apiResponse.json();
+    }
 
     console.log("API Status:", status);
     console.log("API Body:", JSON.stringify(body));
@@ -111,7 +119,15 @@ test.describe("Quick Contact Form — Live Backend", () => {
 
     const apiResponse = await apiPromise;
     const status = apiResponse.status();
-    const body = await apiResponse.json();
+
+    // Skip JSON parsing for redirect responses
+    let body: any;
+    if (status >= 300 && status < 400) {
+      console.log(`⚠️ Received redirect (${status}) - expected JSON response`);
+      body = { success: false, message: "Redirect response" };
+    } else {
+      body = await apiResponse.json();
+    }
 
     console.log("API Status (no reCAPTCHA):", status);
     console.log("API Body:", JSON.stringify(body));
@@ -161,7 +177,15 @@ test.describe("Quick Contact Form — Live Backend", () => {
 
     const apiResponse = await apiPromise;
     const status = apiResponse.status();
-    const body = await apiResponse.json();
+
+    // Skip JSON parsing for redirect responses
+    let body: any;
+    if (status >= 300 && status < 400) {
+      console.log(`⚠️ Received redirect (${status}) - expected JSON response`);
+      body = { success: false, message: "Redirect response" };
+    } else {
+      body = await apiResponse.json();
+    }
 
     console.log("Delivery test — Status:", status);
     console.log("Delivery test — Body:", JSON.stringify(body));

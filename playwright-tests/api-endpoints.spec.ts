@@ -138,7 +138,10 @@ test.describe("API Endpoints", () => {
     const response = await page.request.get("/api/ping");
     const headers = response.headers();
 
+    // In development, CORS middleware returns the requesting origin
+    // In production, it returns one of the allowed origins
     expect(headers).toHaveProperty("access-control-allow-origin");
+    expect(headers["access-control-allow-origin"]).toBeTruthy();
   });
 
   test("should handle API timeouts", async ({ page }) => {

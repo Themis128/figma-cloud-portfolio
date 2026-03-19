@@ -135,7 +135,8 @@ test.describe("NotificationButton — Announcements", () => {
   });
 
   test("bell button has aria-expanded attribute", async ({ page }) => {
-    const bellBtn = page.getByRole("button", { name: "Announcements", exact: true });
+    // Match button by its aria-label which contains "announcement" (could be "Announcements" or "N new announcements")
+    const bellBtn = page.getByRole("button", { name: /announcement/i });
 
     // Wait for hydration (component returns null until mounted)
     await bellBtn.waitFor({ state: "visible", timeout: 10000 });

@@ -105,12 +105,13 @@ test.describe("Performance Dashboard", () => {
     // Wait for metrics to load
     await page.waitForTimeout(1000);
 
-    // The WebVitalsExplainer cards display metric values using font-mono class
-    const metricCards = page.locator('button[aria-label*="Click for details"]');
+    // The WebVitalsExplainer cards are buttons with aria-labels
+    // The aria-label contains the metric name and value
+    const metricCards = page.locator('button[aria-label*=": "]');
     const cardCount = await metricCards.count();
 
-    // Cards should be present (LCP, FCP, CLS, TTFB, INP)
-    expect(cardCount).toBeGreaterThan(0);
+    // Cards should be present (LCP, FCP, CLS, TTFB, INP) = 5 vitals
+    expect(cardCount).toBeGreaterThanOrEqual(4); // At least 4 core vitals
   });
 
   test("should handle performance score calculation", async ({ page }) => {

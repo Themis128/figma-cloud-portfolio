@@ -319,16 +319,10 @@ test.describe("AI Chatbot Widget", () => {
       const panel = chatPanel(page);
       await expect(panel.locator("text=Suggested questions:")).toBeVisible();
 
-      const suggestions = [
-        "What are your top skills?",
-        "Tell me about your networking experience.",
-        "What certifications do you hold?",
-        "Book a call with Themis.",
-      ];
-
-      for (const q of suggestions) {
-        await expect(panel.locator(`text=${q}`).first()).toBeVisible();
-      }
+      // The chatbot shows 3 random questions + 1 booking question
+      // Just verify there are 4 question buttons visible
+      const questionButtons = panel.locator("button").filter({ hasText: /\?|call/i });
+      await expect(questionButtons).toHaveCount(4, { timeout: 5000 });
     });
 
     test("suggested questions should be clickable buttons", async ({
@@ -337,14 +331,13 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
       const panel = chatPanel(page);
 
-      // Each suggestion is a <button> element
-      for (const q of [
-        "What are your top skills?",
-        "Tell me about your networking experience.",
-        "What certifications do you hold?",
-        "Book a call with Themis.",
-      ]) {
-        const btn = panel.locator(`button:has-text("${q}")`);
+      // The chatbot shows 4 question buttons - verify they're all clickable
+      const questionButtons = panel.locator("button").filter({ hasText: /\?|call/i });
+      const count = await questionButtons.count();
+      expect(count).toBe(4);
+
+      for (let i = 0; i < count; i++) {
+        const btn = questionButtons.nth(i);
         await expect(btn).toBeVisible();
         await expect(btn).toBeEnabled();
       }
@@ -439,12 +432,14 @@ test.describe("AI Chatbot Widget", () => {
 
       const panel = chatPanel(page);
 
-      // Click a suggested question
-      await panel.locator("text=What certifications do you hold?").click();
+      // Click the first suggested question button (any question will do)
+      const firstQuestion = panel.locator("button").filter({ hasText: /\?|call/i }).first();
+      const questionText = await firstQuestion.textContent();
+      await firstQuestion.click();
 
-      // The suggested question text should appear as a user message
+      // The question text should appear as a user message
       await expect(
-        panel.locator("div[class*='bg-cyan-500/20']").filter({ hasText: "What certifications do you hold?" }).first(),
+        panel.locator("div[class*='bg-cyan-500/20']").filter({ hasText: questionText || "" }).first(),
       ).toBeVisible();
 
       // Wait for the assistant to respond
