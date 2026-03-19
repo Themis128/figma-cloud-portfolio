@@ -26,7 +26,7 @@
 # assertions), re-runs the suite to verify, then opens a PR with all changes.
 # If failures remain after 3 fix iterations, opens an issue with a repair plan.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"de1ad44f138a9aae9d8d9210ee90ef200e4a8fd8b75e0ea2d9530ad374f42cd2","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"16e4319ded785ddff9c6214c256cdca72052ffe402a60c58795a51e2ee29fbae","compiler_version":"v0.59.0","strict":true}
 
 name: "E2E Test CI Fixer"
 "on":
@@ -310,17 +310,21 @@ jobs:
           CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
           CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
           NODE_ENV: test
+          PORT: "3002"
           RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         name: Start Express backend
         run: |
-          npx tsx server/index.ts &
-          echo "Waiting for backend..."
-          timeout 45 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done' || true
-          echo "Backend ready"
+          PORT=3002 npx tsx server/index.ts &
+          echo "Waiting for backend on port 3002..."
+          timeout 45 bash -c 'until curl -s http://localhost:3002 > /dev/null 2>&1; do sleep 2; done' || true
+          echo "Backend ready on port 3002 (port 3001 reserved by gh-aw Safe Outputs MCP)"
         shell: bash
-      - name: Run Playwright tests (baseline)
-        run: "echo \"=== BASELINE TEST RUN ===\" > /tmp/run1.txt\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list 2>&1 | tee -a /tmp/run1.txt || true\necho \"Baseline run complete.\"\n"
+      - env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+          PORT: "3002"
+        name: Run Playwright tests (baseline)
+        run: "echo \"=== BASELINE TEST RUN ===\" > /tmp/run1.txt\nPORT=3002 PLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list 2>&1 | tee -a /tmp/run1.txt || true\necho \"Baseline run complete.\"\n"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below
