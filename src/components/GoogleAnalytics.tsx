@@ -18,6 +18,39 @@ declare global {
   }
 }
 
+// ── Content group mapping ──────────────────────────────────────────────
+// Maps pathname prefixes to content groups visible in GA4 mobile app reports
+const CONTENT_GROUP_MAP: Record<string, string> = {
+  "/": "Home",
+  "/about": "About",
+  "/contact": "Contact",
+  "/resume": "Resume",
+  "/projects": "Projects",
+  "/performance": "Performance",
+  "/agents": "Agents",
+  "/privacy": "Legal",
+  "/terms": "Legal",
+  "/cookies": "Legal",
+  "/admin": "Admin",
+};
+
+function getContentGroup(pathname: string): string {
+  // Exact match first
+  const exact = CONTENT_GROUP_MAP[pathname] ?? CONTENT_GROUP_MAP[pathname.replace(/\/$/, "")];
+  if (exact) return exact;
+  // Prefix match (e.g., /admin/settings → Admin)
+  const prefix = Object.keys(CONTENT_GROUP_MAP).find(
+    (key) => key !== "/" && pathname.startsWith(key),
+  );
+  return prefix ? CONTENT_GROUP_MAP[prefix]! : "Other";
+}
+
+function getPageTitle(pathname: string): string {
+  const group = getContentGroup(pathname);
+  if (group === "Home") return "Themis Baltzakis — Portfolio";
+  return `${group} — Themis Baltzakis`;
+}
+
 /** Read analytics consent from localStorage */
 function hasAnalyticsConsent(): boolean {
   if (typeof window === "undefined") return false;
@@ -63,6 +96,21 @@ function denyAnalyticsConsent(): void {
   });
 }
 
+/** Set user properties for audience segmentation in GA4 mobile app */
+function setUserProperties(): void {
+  if (!GA_TRACKING_ID || typeof window === "undefined") return;
+
+  const isReturning = localStorage.getItem("ga_visited") === "true";
+  localStorage.setItem("ga_visited", "true");
+
+  window.gtag?.("set", "user_properties", {
+    visitor_type: isReturning ? "returning" : "new",
+    platform_type: "web",
+    viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+  });
+}
+
+/** Track SPA page view with content_group and page_title for GA4 mobile app */
 function GoogleAnalyticsInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -75,9 +123,15 @@ function GoogleAnalyticsInner() {
       pathname +
       (searchParams?.toString() ? `?${searchParams.toString()}` : "");
 
-    // Track page view
-    window.gtag?.("config", GA_TRACKING_ID, {
+    const contentGroup = getContentGroup(pathname);
+    const pageTitle = document.title || getPageTitle(pathname);
+
+    // Send page_view with content_group and page_title for GA4 mobile app
+    window.gtag?.("event", "page_view", {
       page_path: url,
+      page_location: window.location.href,
+      page_title: pageTitle,
+      content_group: contentGroup,
     });
   }, [pathname, searchParams]);
 
@@ -136,10 +190,25 @@ function ConsentAwareGA() {
     if (scriptLoadedRef.current) return;
     scriptLoadedRef.current = true;
     grantAnalyticsConsent();
+
+    // Configure with send_page_view: false to prevent duplicate page views
+    // (GoogleAnalyticsInner sends manual page_view events with content_group)
     window.gtag?.("config", GA_TRACKING_ID!, {
-      page_path: window.location.pathname,
+      send_page_view: false,
       anonymize_ip: true,
       cookie_flags: "SameSite=None;Secure",
+      content_group: getContentGroup(window.location.pathname),
+    });
+
+    // Set user properties for audience segmentation in GA4 mobile app
+    setUserProperties();
+
+    // Send initial page_view with full metadata
+    window.gtag?.("event", "page_view", {
+      page_path: window.location.pathname,
+      page_location: window.location.href,
+      page_title: document.title || getPageTitle(window.location.pathname),
+      content_group: getContentGroup(window.location.pathname),
     });
   }, []);
 
@@ -200,6 +269,27 @@ export function trackOutboundClick(linkUrl: string, linkText: string) {
     link_url: linkUrl,
     link_text: linkText,
     outbound: true,
+  });
+}
+
+// GA4 recommended event: file_download (resume PDF, JSON exports)
+export function trackFileDownload(
+  fileName: string,
+  fileExtension: string,
+  method: string,
+) {
+  trackGA4("file_download", {
+    file_name: fileName,
+    file_extension: fileExtension,
+    link_text: method,
+  });
+}
+
+// GA4 recommended event: view_search_results (project filtering/search)
+export function trackSearch(searchTerm: string, resultsCount: number) {
+  trackGA4("view_search_results", {
+    search_term: searchTerm,
+    results_count: resultsCount,
   });
 }
 

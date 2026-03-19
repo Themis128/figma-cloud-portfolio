@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { trackFileDownload } from "@/components/GoogleAnalytics";
 import type { ResumeFormData, TemplateName } from "@/types/resume-builder";
 import { renderResume } from "@/lib/resume-templates";
 import { Download, FileText, RotateCcw, Upload } from "lucide-react";
@@ -70,6 +71,7 @@ export function ExportControls({
         : "Resume.pdf";
 
       pdf.save(fileName);
+      trackFileDownload(fileName, ".pdf", "resume_builder");
     } catch (error) {
       console.error("PDF export failed:", error);
     } finally {
@@ -86,6 +88,7 @@ export function ExportControls({
     a.download = "resume-data.json";
     a.click();
     URL.revokeObjectURL(url);
+    trackFileDownload("resume-data.json", ".json", "resume_export");
   }, [data]);
 
   const handleImportJson = useCallback(() => {

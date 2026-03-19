@@ -1,0 +1,22 @@
+diff --git a/src/xmlparser/OptionsBuilder.js b/src/xmlparser/OptionsBuilder.js
+index b517f01f9d50b332b0d280ee828cba20c7ea1ca3..97a88eab9c3433bf53ddc80d6bf277ac2d53b06a 100644
+--- a/src/xmlparser/OptionsBuilder.js
++++ b/src/xmlparser/OptionsBuilder.js
+@@ -54,7 +54,7 @@ function normalizeProcessEntities(value) {
+       enabled: value, // true or false
+       maxEntitySize: 10000,
+       maxExpansionDepth: 10,
+-      maxTotalExpansions: 1000,
++      maxTotalExpansions: 10000,
+       maxExpandedLength: 100000,
+       allowedTags: null,
+       tagFilter: null
+@@ -67,7 +67,7 @@ function normalizeProcessEntities(value) {
+       enabled: value.enabled !== false, // default true if not specified
+       maxEntitySize: value.maxEntitySize ?? 10000,
+       maxExpansionDepth: value.maxExpansionDepth ?? 10,
+-      maxTotalExpansions: value.maxTotalExpansions ?? 1000,
++      maxTotalExpansions: value.maxTotalExpansions ?? 10000,
+       maxExpandedLength: value.maxExpandedLength ?? 100000,
+       allowedTags: value.allowedTags ?? null,
+       tagFilter: value.tagFilter ?? null

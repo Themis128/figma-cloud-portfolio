@@ -384,8 +384,8 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | Region       | `us-east-1`                                             |
 | Auth         | Cognito (email login, `admin` group, `USER_PASSWORD_AUTH`) |
 | API          | AppSync GraphQL                                         |
-| Database     | DynamoDB (ContactSubmission, Booking, ChatLog)          |
-| Deploy       | `ampx pipeline-deploy` (CI) / `ampx sandbox` (local)   |
+| Database     | DynamoDB (ContactSubmission, Booking)                   |
+| Deploy       | `ampx pipeline-deploy` (CI) / `ampx sandbox --identifier t` (local) |
 | Client config| `amplify_outputs.json` (gitignored, generated per env)  |
 
 ### Backend (Lambda)

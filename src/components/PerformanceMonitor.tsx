@@ -16,11 +16,12 @@ interface WebVitalsMetric {
 
 function sendToGA(metric: WebVitalsMetric) {
   if (typeof window !== "undefined" && window.gtag) {
-    window.gtag("event", "web_vitals", {
-      event_category: "Performance",
-      event_label: metric.name,
-      value: Math.round(metric.value),
-      custom_parameter_metric_id: metric.id,
+    // GA4-native format: individual metric names surface in GA4 mobile app Events detail
+    window.gtag("event", metric.name, {
+      value: Math.round(metric.name === "CLS" ? metric.delta * 1000 : metric.delta),
+      metric_id: metric.id,
+      metric_value: metric.value,
+      metric_delta: metric.delta,
     });
   } else if (process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line no-console

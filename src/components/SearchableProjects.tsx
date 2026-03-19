@@ -14,8 +14,8 @@ import {
   Shield,
 } from "lucide-react";
 import Image from "next/image";
-import React, { useDeferredValue, useMemo, useState } from "react";
-import { trackContentClick, trackGA4 } from "@/components/GoogleAnalytics";
+import React, { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { trackContentClick, trackGA4, trackSearch } from "@/components/GoogleAnalytics";
 import { Badge } from "@/components/ui/badge";
 
 interface Project {
@@ -269,6 +269,18 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
 
     return filtered;
   }, [deferredSearchQuery, selectedCategory, sortBy]);
+
+  // Track search queries in GA4 (view_search_results recommended event)
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (deferredSearchQuery.length >= 2) {
+      trackSearch(deferredSearchQuery, filteredProjects.length);
+    }
+  }, [deferredSearchQuery, filteredProjects.length]);
 
   const categories = [
     { key: "all", label: "All Projects", count: projects.length },

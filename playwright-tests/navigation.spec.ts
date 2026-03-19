@@ -7,6 +7,8 @@ import { expect, test } from "@playwright/test";
  */
 
 test.describe("Navigation — Desktop", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
   test("should display logo linking to home", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
@@ -47,7 +49,7 @@ test.describe("Navigation — Desktop", () => {
   });
 
   test("should highlight About link when on about page", async ({ page }) => {
-    await page.goto("/about");
+    await page.goto("/about/");
     await page.waitForLoadState("networkidle");
 
     const aboutLink = page.locator('nav a[href*="/about"]').first();
@@ -57,7 +59,7 @@ test.describe("Navigation — Desktop", () => {
   test("should highlight Contact link when on contact page", async ({
     page,
   }) => {
-    await page.goto("/contact");
+    await page.goto("/contact/");
     await page.waitForLoadState("networkidle");
 
     const contactLink = page.locator('nav a[href*="/contact"]').first();
@@ -65,7 +67,7 @@ test.describe("Navigation — Desktop", () => {
   });
 
   test("should not highlight inactive links", async ({ page }) => {
-    await page.goto("/about");
+    await page.goto("/about/");
     await page.waitForLoadState("networkidle");
 
     const homeLink = page.locator('nav a[href="/"]').filter({ hasText: "Home" }).first();
@@ -129,6 +131,8 @@ test.describe("Navigation — Mobile", () => {
 });
 
 test.describe("Navigation — Utilities", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
   test("should have theme toggle button", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");

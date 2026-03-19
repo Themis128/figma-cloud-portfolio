@@ -25,12 +25,54 @@ const WELCOME_MESSAGE: Message = {
     "Hi! I'm Themis's AI assistant. Ask me anything about his skills, experience, or background — or book a teleconference call.",
 };
 
-const SUGGESTED_QUESTIONS = [
-  "What are your top skills?",
-  "Tell me about your networking experience.",
+const BOOKING_QUESTION = "Book a call with Themis.";
+
+// Large pool — 3 are randomly selected per session; booking is always pinned
+const QUESTION_POOL = [
+  // Networking & infrastructure
+  "What Cisco technologies do you specialize in?",
+  "Tell me about your Fortinet firewall experience.",
+  "What enterprise network projects have you worked on?",
+  "How do you ensure high availability in network design?",
+  // Cybersecurity
+  "What is your approach to zero-trust security?",
+  "What cybersecurity tools and frameworks do you use?",
+  "Tell me about your CyberArk PAM experience.",
+  "How do you handle identity and access management?",
+  // Cloud
+  "What cloud platforms do you work with?",
+  "Tell me about your AWS experience.",
+  "How have you used Azure Active Directory in projects?",
+  "What is your approach to multi-cloud environments?",
+  // Work experience
+  "What are you currently working on at Skaramangas Shipyards?",
+  "Tell me about your work at Athens International Airport.",
+  "What was your role at Cosmos Business Systems?",
+  "How did you contribute during COVID-19?",
+  // Skills & certifications
   "What certifications do you hold?",
-  "Book a call with Themis.",
+  "Tell me about your Cisco DevNet Associate certification.",
+  "What are your top technical skills?",
+  "Do you have experience with Kubernetes?",
+  // Projects
+  "What are your most notable personal projects?",
+  "Tell me about your network monitoring stack.",
+  "What AI/ML projects have you built?",
+  "How does this portfolio website work technically?",
+  // Services & consulting
+  "Are you available for remote consulting?",
+  "What kind of projects are you open to?",
+  "Can you help with Microsoft 365 and Intune?",
+  "What industries have you worked in?",
+  // Education & background
+  "What is your educational background?",
+  "Tell me about your Master's in Data Analytics.",
 ];
+
+function pickRandomQuestions(pool: string[], count: number): string[] {
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
 
 function TypingCursor() {
   return (
@@ -43,6 +85,10 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [suggestedQuestions] = useState<string[]>(() => [
+    ...pickRandomQuestions(QUESTION_POOL, 3),
+    BOOKING_QUESTION,
+  ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -334,7 +380,7 @@ export default function ChatbotWidget() {
                 <p className="text-cyan-500/50 font-mono text-xs">
                   Suggested questions:
                 </p>
-                {SUGGESTED_QUESTIONS.map((q) => (
+                {suggestedQuestions.map((q) => (
                   <button
                     key={q}
                     onClick={() => void sendMessage(q)}

@@ -10,10 +10,11 @@
     "predev:all": "bash scripts/amplify-status.sh",
     "dev:all": "concurrently -n \"next,server\" -c \"cyan,yellow\" \"next dev\" \"tsx server/index.ts\"",
     "amplify:status": "bash scripts/amplify-status.sh",
-    "amplify:dev": "pnpm --package=@aws-amplify/backend-cli dlx ampx sandbox",
-    "amplify:deploy": "pnpm --package=@aws-amplify/backend-cli dlx ampx pipeline-deploy --branch production --app-id d1zjif7pi1h3om",
-    "amplify:outputs": "pnpm --package=@aws-amplify/backend-cli dlx ampx generate outputs --branch production --app-id d1zjif7pi1h3om",
-    "amplify:delete": "pnpm --package=@aws-amplify/backend-cli dlx ampx sandbox delete",
+    "amplify:dev": "pnpm exec ampx sandbox --identifier t",
+    "amplify:deploy": "pnpm exec ampx pipeline-deploy --branch production --app-id d1zjif7pi1h3om",
+    "amplify:outputs": "pnpm exec ampx generate outputs --branch production --app-id d1zjif7pi1h3om",
+    "amplify:outputs:sandbox": "bash scripts/amplify-outputs-sandbox.sh",
+    "amplify:delete": "bash scripts/amplify-delete.sh",
     "typecheck": "tsc --noEmit",
     "build": "next build",
     "build:server": "tsc --project server/tsconfig.server.json && mv dist/server/index.js dist/server/node-build.mjs",
@@ -147,5 +148,10 @@
     "vitest": "^4.0.18"
   },
   "packageManager": "pnpm@10.32.1",
-  "type": "module"
+  "type": "module",
+  "pnpm": {
+    "patchedDependencies": {
+      "fast-xml-parser@5.4.1": "patches/fast-xml-parser@5.4.1.patch"
+    }
+  }
 }
