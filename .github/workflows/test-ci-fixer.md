@@ -69,6 +69,15 @@ steps:
       PORT: "3002"
       PLAYWRIGHT_BASE_URL: http://localhost:3000
 
+  - name: Free port 3001 for gh-aw Safe Outputs MCP server
+    run: |
+      echo "Killing any processes on port 3001 (pnpm dev may have started Express there)..."
+      fuser -k 3001/tcp 2>/dev/null || true
+      pkill -f "server/index.ts" 2>/dev/null || true
+      sleep 2
+      echo "Port 3001 is now free for gh-aw MCP server"
+    shell: bash
+
 safe-outputs:
   mentions: false
   allowed-github-references: []
