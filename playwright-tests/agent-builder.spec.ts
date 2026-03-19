@@ -3,7 +3,7 @@ import { waitForAppReady } from "./test-utils";
 
 test.describe("Agent Builder (Interactive Section)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/agents");
+    await page.goto("/agents/");
     await waitForAppReady(page);
   });
 
@@ -196,7 +196,7 @@ test.describe("Agent Builder (Interactive Section)", () => {
   test("should handle responsive design", async ({ page }) => {
     // Mobile
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/agents");
+    await page.goto("/agents/");
     await waitForAppReady(page);
     await expect(
       page.getByRole("heading", { name: "Understanding AI Agents" }),
@@ -204,7 +204,7 @@ test.describe("Agent Builder (Interactive Section)", () => {
 
     // Desktop
     await page.setViewportSize({ width: 1920, height: 1080 });
-    await page.goto("/agents");
+    await page.goto("/agents/");
     await waitForAppReady(page);
     await expect(
       page.getByRole("heading", { name: "Understanding AI Agents" }),

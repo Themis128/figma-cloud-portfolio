@@ -407,8 +407,10 @@ COPILOT_GITHUB_TOKEN        # Fine-grained PAT for agentic workflows
 The Amplify Gen 2 backend (Cognito + AppSync + DynamoDB) is deployed separately:
 
 - **Production**: Deployed via `ampx pipeline-deploy` in `amplify.yml` backend phase (triggered by Amplify Hosting)
-- **Development**: `pnpm amplify:dev` runs a local sandbox
+- **Development**: `pnpm amplify:dev` runs a local sandbox (`--identifier t`)
 - **Client config**: `amplify_outputs.json` is generated per environment and gitignored
+- **Known issue**: The AWS SDK XML parser hits an entity expansion limit after deployment. The stack deploys successfully (`CREATE_COMPLETE`) despite the error. Run `pnpm amplify:outputs:sandbox` to regenerate `amplify_outputs.json` after the error appears.
+- **Delete sandbox**: Use `pnpm amplify:delete` (bypasses the broken `ampx sandbox delete` CLI via AWS CLI directly)
 
 > **Important**: Amplify Hosting auto-build should be disabled for the frontend (it OOMs). The backend phase still runs successfully.
 

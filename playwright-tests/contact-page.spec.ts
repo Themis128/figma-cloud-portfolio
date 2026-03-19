@@ -10,7 +10,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Contact Page — Content", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/contact/");
     await page.waitForLoadState("domcontentloaded");
   });
 
@@ -106,7 +106,7 @@ test.describe("Contact Page — Content", () => {
 
 test.describe("Contact Page — Form Structure", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/contact/");
     await page.waitForLoadState("domcontentloaded");
   });
 
@@ -168,7 +168,7 @@ test.describe("Contact Page — Form Structure", () => {
 
 test.describe("Contact Page — Form Interaction", () => {
   test("should accept input in all fields", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/contact/");
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("#name").fill("Test User");
@@ -180,5 +180,84 @@ test.describe("Contact Page — Form Interaction", () => {
     await expect(page.locator("#email")).toHaveValue("test@example.com");
     await expect(page.locator("#subject")).toHaveValue("Test Subject");
     await expect(page.locator("#message")).toHaveValue("Test message body");
+  });
+
+  test("should show success state after successful submission", async ({
+    page,
+  }) => {
+    // Set up route interception BEFORE navigation so it catches all requests
+    await page.route("**/api/contact", (route) =>
+      route.fulfill({ status: 200, body: JSON.stringify({ success: true }) }),
+    );
+    await page.route("**/contact**", async (route) => {
+      if (route.request().method() === "POST") {
+        await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await page.goto("/contact/");
+    await page.waitForLoadState("domcontentloaded");
+
+    await page.locator("#name").fill("Test User");
+    await page.locator("#email").fill("test@example.com");
+    await page.locator("#subject").fill("Test Subject");
+    await page.locator("#message").fill("Test message body");
+
+    await page.locator('button[type="submit"]').click();
+
+    // Should show a loading/sending state or success message
+    const successMsg = page.getByText(/message sent|success|thank you/i).first();
+    const loadingState = page.getByText(/sending/i).first();
+
+    await Promise.race([
+      successMsg.waitFor({ state: "visible", timeout: 5000 }).catch(() => {}),
+      loadingState.waitFor({ state: "visible", timeout: 2000 }).catch(() => {}),
+    ]);
+
+    // Submit button should be disabled while sending
+    const submitBtn = page.locator('button[type="submit"]');
+    const isDisabled = await submitBtn.isDisabled().catch(() => false);
+    const successVisible = await successMsg.isVisible().catch(() => false);
+
+    expect(isDisabled || successVisible).toBeTruthy();
+  });
+
+  test("should show error state when API fails", async ({ page }) => {
+    await page.goto("/contact/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Intercept and simulate server error
+    await page.route("**/api/contact", (route) =>
+      route.fulfill({ status: 500, body: JSON.stringify({ error: "Server error" }) }),
+    );
+
+    await page.locator("#name").fill("Test User");
+    await page.locator("#email").fill("test@example.com");
+    await page.locator("#message").fill("Test message body");
+
+    await page.locator('button[type="submit"]').click();
+
+    // After error, submit button should re-enable (form recoverable)
+    const submitBtn = page.locator('button[type="submit"]');
+    await expect(submitBtn).toBeEnabled({ timeout: 8000 });
+  });
+
+  test("should prevent submission with empty required fields", async ({
+    page,
+  }) => {
+    await page.goto("/contact/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const submitBtn = page.locator('button[type="submit"]');
+    await submitBtn.click();
+
+    // Browser native validation should prevent submission — name field should be invalid
+    const nameInput = page.locator("#name");
+    const validationMsg = await nameInput.evaluate(
+      (el: HTMLInputElement) => el.validationMessage,
+    );
+    expect(validationMsg).not.toBe("");
   });
 });

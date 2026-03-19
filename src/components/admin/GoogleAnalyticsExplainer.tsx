@@ -192,22 +192,25 @@ export default function GoogleAnalyticsExplainer() {
       <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 sm:p-6 space-y-4 sm:space-y-5">
         <SectionHeading>Configuration</SectionHeading>
 
-        <ConfigItem title="page_path" value="tracking">
-          Every client-side route change calls{" "}
-          <code className="font-mono text-foreground/60">
-            gtag(&apos;config&apos;, GA_ID, {"{"} page_path {"}"})
-          </code>{" "}
+        <ConfigItem title="page_view" value="manual tracking">
+          Every client-side route change sends a manual{" "}
+          <code className="font-mono text-foreground/60">page_view</code>{" "}
+          event with{" "}
+          <code className="font-mono text-foreground/60">page_title</code>,{" "}
+          <code className="font-mono text-foreground/60">content_group</code>,
+          and{" "}
+          <code className="font-mono text-foreground/60">page_location</code>{" "}
           via Next.js{" "}
           <code className="font-mono text-foreground/60">usePathname()</code>{" "}
           and{" "}
           <code className="font-mono text-foreground/60">
             useSearchParams()
           </code>{" "}
-          hooks inside a{" "}
-          <code className="font-mono text-foreground/60">&lt;Suspense&gt;</code>{" "}
-          boundary. This captures page view events on every navigation,
-          including client-side transitions that don&apos;t trigger full page
-          loads.
+          hooks. Automatic page views are disabled (
+          <code className="font-mono text-foreground/60">
+            send_page_view: false
+          </code>
+          ) to prevent duplicates in SPA navigation.
         </ConfigItem>
 
         <div className="border-t border-border/10" />
@@ -240,21 +243,58 @@ export default function GoogleAnalyticsExplainer() {
         <SectionHeading>Event Helpers</SectionHeading>
 
         <div className="space-y-3">
-          <ConfigItem title="trackEvent" value="(action, category, label?, value?)" >
-            Fires a custom GA4 event. Use this for tracking user interactions
-            like link clicks, form submissions, chatbot messages, and resume
-            downloads.
+          <ConfigItem title="trackGA4" value="(eventName, params?)" >
+            GA4-native event helper. Sends custom parameters that surface
+            directly in the GA4 mobile app&apos;s Events detail view.
           </ConfigItem>
           <CodeBlock
-            code={`trackEvent("click", "Navigation", "About Page");
-trackEvent("submit", "Contact Form", "Success", 1);
+            code={`trackGA4("chat_open", { method: "fab_button" });
+trackGA4("project_filter", { filter_category: "Cloud" });
 
 // Under the hood:
-gtag("event", action, {
-  event_category: category,
-  event_label: label,
-  value: value,
-});`}
+gtag("event", eventName, params);`}
+          />
+        </div>
+
+        <div className="border-t border-border/10" />
+
+        <div className="space-y-3">
+          <ConfigItem title="trackLead" value="(method, source)" >
+            GA4 recommended event: generate_lead. Tracks contact form
+            submissions and booking requests. Appears in GA4 mobile app
+            under Events → generate_lead.
+          </ConfigItem>
+          <CodeBlock
+            code={`trackLead("contact_form", "homepage");
+trackLead("booking", "chatbot");`}
+          />
+        </div>
+
+        <div className="border-t border-border/10" />
+
+        <div className="space-y-3">
+          <ConfigItem title="trackFileDownload" value="(fileName, ext, method)" >
+            GA4 recommended event: file_download. Tracks resume PDF exports
+            and JSON data exports. Visible in GA4 mobile app under
+            Events → file_download.
+          </ConfigItem>
+          <CodeBlock
+            code={`trackFileDownload("John_Doe_Resume.pdf", ".pdf", "resume_builder");
+trackFileDownload("resume-data.json", ".json", "resume_export");`}
+          />
+        </div>
+
+        <div className="border-t border-border/10" />
+
+        <div className="space-y-3">
+          <ConfigItem title="trackSearch" value="(searchTerm, resultsCount)" >
+            GA4 recommended event: view_search_results. Tracks project
+            filtering and search queries. Shows in GA4 mobile app under
+            Events → view_search_results.
+          </ConfigItem>
+          <CodeBlock
+            code={`trackSearch("kubernetes", 3);
+trackSearch("aws cloud", 5);`}
           />
         </div>
 
@@ -271,14 +311,59 @@ gtag("event", action, {
           </ConfigItem>
           <CodeBlock
             code={`trackConversion("contact_form_submit");
-trackConversion("booking_completed", "cal_booking");
-
-// Under the hood:
-gtag("event", "conversion", {
-  send_to: \`\${GA_ID}/\${label || conversionId}\`,
-});`}
+trackConversion("booking_completed", "cal_booking");`}
           />
         </div>
+      </Card>
+
+      {/* Card 3b: Mobile App Optimizations */}
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 sm:p-6 space-y-4 sm:space-y-5">
+        <SectionHeading>GA4 Mobile App Optimizations</SectionHeading>
+
+        <ConfigItem title="content_group" value="auto-mapped">
+          Every page view sends a{" "}
+          <code className="font-mono text-foreground/60">content_group</code>{" "}
+          parameter (Home, About, Contact, Projects, Resume, Performance,
+          Legal, Admin). This populates the Content reports in the GA4
+          mobile app.
+        </ConfigItem>
+
+        <div className="border-t border-border/10" />
+
+        <ConfigItem title="page_title" value="auto-set">
+          Page titles are sent with every SPA navigation, ensuring the GA4
+          mobile app shows meaningful page names instead of &quot;not set&quot;.
+        </ConfigItem>
+
+        <div className="border-t border-border/10" />
+
+        <ConfigItem title="user_properties" value="3 properties">
+          <code className="font-mono text-foreground/60">visitor_type</code>{" "}
+          (new/returning),{" "}
+          <code className="font-mono text-foreground/60">platform_type</code>{" "}
+          (web), and{" "}
+          <code className="font-mono text-foreground/60">viewport_size</code>{" "}
+          are set on load for audience segmentation in the mobile app.
+        </ConfigItem>
+
+        <div className="border-t border-border/10" />
+
+        <ConfigItem title="web_vitals" value="GA4-native format">
+          CLS, FCP, INP, LCP, and TTFB are sent as individual GA4 events
+          (not legacy event_category/event_label) so they appear in the
+          mobile app&apos;s Events detail view with proper parameters.
+        </ConfigItem>
+
+        <div className="border-t border-border/10" />
+
+        <ConfigItem title="send_page_view" value="false">
+          Automatic page views are disabled in{" "}
+          <code className="font-mono text-foreground/60">gtag config</code>.
+          Manual{" "}
+          <code className="font-mono text-foreground/60">page_view</code>{" "}
+          events are sent on each SPA navigation with full metadata,
+          preventing duplicate tracking.
+        </ConfigItem>
       </Card>
 
       {/* Card 4: Implementation Reference */}

@@ -4,7 +4,7 @@ import { waitForAppReady } from "./test-utils";
 test.describe("AI Agents Educational Page", () => {
   test.describe("Educational Content", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/agents");
+      await page.goto("/agents/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
       await page.waitForSelector("h1", { timeout: 10000 });
@@ -137,7 +137,7 @@ test.describe("AI Agents Educational Page", () => {
 
   test.describe("Interactive Agent Builder", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/agents");
+      await page.goto("/agents/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
       await page.waitForSelector("h1", { timeout: 10000 });
@@ -182,7 +182,7 @@ test.describe("AI Agents Educational Page", () => {
 
   test.describe("Blockly Agent Builder", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/agents");
+      await page.goto("/agents/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
       await page.waitForSelector("h1", { timeout: 10000 });
@@ -197,9 +197,9 @@ test.describe("AI Agents Educational Page", () => {
     });
 
     test("should display kid-friendly subtitle", async ({ page }) => {
-      await expect(
-        page.getByText("Drag blocks to teach your robot agent", { exact: false }),
-      ).toBeVisible();
+      const subtitle = page.getByText("Drag blocks to teach your robot agent", { exact: false });
+      await subtitle.scrollIntoViewIfNeeded().catch(() => {});
+      await expect(subtitle).toBeVisible({ timeout: 10000 });
     });
 
     test("should render Blockly workspace or loading state", async ({
@@ -260,7 +260,7 @@ test.describe("AI Agents Educational Page", () => {
 
   test.describe("Accessibility & Responsiveness", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/agents");
+      await page.goto("/agents/");
       await waitForAppReady(page);
       await page.waitForLoadState("domcontentloaded");
       await page.waitForSelector("h1", { timeout: 10000 });

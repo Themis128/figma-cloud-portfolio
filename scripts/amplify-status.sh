@@ -2,7 +2,7 @@
 # Dev environment startup dashboard.
 # Runs as predev:all hook to show system status before servers start.
 
-SANDBOX_API="7ogntqeeubek3hpclilgzlxhk4"
+SANDBOX_API="oeaimykf5vg3dj3d7wvumx5lhy"
 PRODUCTION_API="xwonpbkzc5ab5fqyfx53spkh7u"
 OUTPUTS="amplify_outputs.json"
 
