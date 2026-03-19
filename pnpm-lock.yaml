@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@smithy/xml-codec': latest
-
 patchedDependencies:
   fast-xml-parser@5.4.1:
     hash: 7671d8c62146696ea5b0994a1a073cde44be164c201a38bc1ab91795e918eef4
