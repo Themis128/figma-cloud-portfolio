@@ -39,7 +39,36 @@ steps:
     run: npx playwright install chromium --with-deps
     shell: bash
 
-  - name: Start Express backend
+  - name: Create mock amplify_outputs.json for CI
+    run: |
+      cat > amplify_outputs.json << 'EOF'
+      {
+        "version": "1.3",
+        "auth": {
+          "user_pool_id": "us-east-1_CImock",
+          "aws_region": "us-east-1",
+          "user_pool_client_id": "ci-mock-client-id",
+          "identity_pool_id": "us-east-1:00000000-0000-0000-0000-000000000000",
+          "mfa_methods": [],
+          "standard_required_attributes": ["email"],
+          "username_attributes": ["email"],
+          "user_verification_types": ["email"],
+          "mfa_configuration": "NONE",
+          "password_policy": {
+            "min_length": 8,
+            "require_numbers": true,
+            "require_lowercase": true,
+            "require_uppercase": true,
+            "require_symbols": true
+          },
+          "unauthenticated_identities_enabled": true
+        }
+      }
+      EOF
+      echo "Mock amplify_outputs.json created for CI (auth-only, placeholder values)"
+    shell: bash
+
+  - name: Start Express backend on port 3002
     run: |
       PORT=3002 npx tsx server/index.ts &
       echo "Waiting for backend on port 3002..."
@@ -57,25 +86,34 @@ steps:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       BEDROCK_REGION: us-east-1
 
+  - name: Start Next.js dev server
+    run: |
+      pnpm dev &
+      echo "Waiting up to 120s for Next.js on port 3000..."
+      timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
+      echo "Next.js dev server is ready"
+    shell: bash
+    env:
+      PORT: "3002"
+      NODE_ENV: development
+
   - name: Run Playwright tests (baseline)
     run: |
       echo "=== BASELINE TEST RUN ===" > /tmp/run1.txt
-      PORT=3002 PLAYWRIGHT_BASE_URL=http://localhost:3000 \
+      PLAYWRIGHT_BASE_URL=http://localhost:3000 \
       npx playwright test --config=playwright.config.fast.ts \
         --reporter=list 2>&1 | tee -a /tmp/run1.txt || true
       echo "Baseline run complete."
     shell: bash
     env:
-      PORT: "3002"
       PLAYWRIGHT_BASE_URL: http://localhost:3000
 
   - name: Free port 3001 for gh-aw Safe Outputs MCP server
     run: |
-      echo "Killing any processes on port 3001 (pnpm dev may have started Express there)..."
+      echo "Killing any processes on port 3001..."
       fuser -k 3001/tcp 2>/dev/null || true
-      pkill -f "server/index.ts" 2>/dev/null || true
       sleep 2
-      echo "Port 3001 is now free for gh-aw MCP server"
+      echo "Port 3001 is now free"
     shell: bash
 
 safe-outputs:
