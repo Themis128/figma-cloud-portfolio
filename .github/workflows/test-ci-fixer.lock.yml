@@ -26,7 +26,7 @@
 # assertions), re-runs the suite to verify, then opens a PR with all changes.
 # If failures remain after 3 fix iterations, opens an issue with a repair plan.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"0a8b01afa45e90029ac8af03029a0930371b378bdbd255579f867e80d2d11692","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"2d5271fe988f769b87ebabf40c7cc9bdc5b848c13da1c2e21ff99dbdf0751119","compiler_version":"v0.59.0","strict":true}
 
 name: "E2E Test CI Fixer"
 "on":
@@ -323,15 +323,8 @@ jobs:
           timeout 45 bash -c 'until curl -s http://localhost:3002 > /dev/null 2>&1; do sleep 2; done' || true
           echo "Backend ready on port 3002 (port 3001 reserved by gh-aw Safe Outputs MCP)"
         shell: bash
-      - env:
-          NODE_ENV: development
-          PORT: "3002"
-        name: Start Next.js dev server
-        run: |
-          pnpm dev &
-          echo "Waiting up to 120s for Next.js on port 3000..."
-          timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
-          echo "Next.js dev server is ready"
+      - name: Start Next.js dev server
+        run: "# Explicitly unset PORT so next dev binds to 3000 (not 3002 from Express step)\nunset PORT\npnpm dev &\necho \"Waiting up to 120s for Next.js on port 3000...\"\ntimeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'\necho \"Next.js dev server is ready\"\n"
         shell: bash
       - env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
