@@ -41,13 +41,14 @@ steps:
 
   - name: Start Express backend
     run: |
-      npx tsx server/index.ts &
-      echo "Waiting for backend..."
-      timeout 45 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done' || true
-      echo "Backend ready"
+      PORT=3002 npx tsx server/index.ts &
+      echo "Waiting for backend on port 3002..."
+      timeout 45 bash -c 'until curl -s http://localhost:3002 > /dev/null 2>&1; do sleep 2; done' || true
+      echo "Backend ready on port 3002 (port 3001 reserved by gh-aw Safe Outputs MCP)"
     shell: bash
     env:
       NODE_ENV: test
+      PORT: "3002"
       RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
@@ -59,11 +60,14 @@ steps:
   - name: Run Playwright tests (baseline)
     run: |
       echo "=== BASELINE TEST RUN ===" > /tmp/run1.txt
-      PLAYWRIGHT_BASE_URL=http://localhost:3000 \
+      PORT=3002 PLAYWRIGHT_BASE_URL=http://localhost:3000 \
       npx playwright test --config=playwright.config.fast.ts \
         --reporter=list 2>&1 | tee -a /tmp/run1.txt || true
       echo "Baseline run complete."
     shell: bash
+    env:
+      PORT: "3002"
+      PLAYWRIGHT_BASE_URL: http://localhost:3000
 
 safe-outputs:
   mentions: false
