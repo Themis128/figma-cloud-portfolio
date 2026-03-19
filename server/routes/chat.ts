@@ -1,4 +1,4 @@
-// Chat API endpoint — uses AWS Bedrock (Claude 3 Haiku) with full knowledge base
+// Chat API endpoint — uses AWS Bedrock (Claude 3.5 Haiku) with full knowledge base
 import { Router, Request, Response } from "express";
 import {
   BedrockRuntimeClient,
@@ -39,7 +39,7 @@ setInterval(() => {
 
 const BEDROCK_REGION = process.env.BEDROCK_REGION ?? "us-east-1";
 const BEDROCK_MODEL_ID =
-  process.env.BEDROCK_MODEL_ID ?? "anthropic.claude-3-haiku-20240307-v1:0";
+  process.env.BEDROCK_MODEL_ID ?? "us.anthropic.claude-3-5-haiku-20241022-v1:0";
 const MAX_HISTORY_TURNS = 6;
 
 interface HistoryMessage {
@@ -159,21 +159,26 @@ router.post("/", async (req: Request, res: Response) => {
     res.setHeader("X-Accel-Buffering", "no");
 
     let accumulated = "";
+    let sentBooking = false;
 
     if (response.stream) {
       for await (const event of response.stream) {
         if (event.contentBlockDelta?.delta?.text) {
-          accumulated += event.contentBlockDelta.delta.text;
+          const chunk = event.contentBlockDelta.delta.text;
+          accumulated += chunk;
+
+          // Check for booking action token mid-stream
+          if (!sentBooking && accumulated.includes("[BOOK_CALL]")) {
+            sentBooking = true;
+            res.write(`data: ${JSON.stringify({ action: "start_booking" })}\n\n`);
+          } else if (!sentBooking) {
+            res.write(`data: ${JSON.stringify({ token: chunk })}\n\n`);
+          }
         }
       }
     }
 
-    // Check for booking action
-    if (accumulated.includes("[BOOK_CALL]")) {
-      res.write(`data: ${JSON.stringify({ action: "start_booking" })}\n\n`);
-    } else if (accumulated) {
-      res.write(`data: ${JSON.stringify({ token: accumulated })}\n\n`);
-    } else {
+    if (!accumulated && !sentBooking) {
       res.write(
         `data: ${JSON.stringify({ error: "No response generated" })}\n\n`,
       );

@@ -88,7 +88,9 @@ if [ -f "$OUTPUTS" ]; then
   API_URL=$(grep '"url"' "$OUTPUTS" 2>/dev/null | head -1 | sed 's/.*"url": *"//;s/".*//')
   USER_POOL=$(grep '"user_pool_id"' "$OUTPUTS" 2>/dev/null | head -1 | sed 's/.*"user_pool_id": *"//;s/".*//')
 
-  if echo "$API_URL" | grep -q "$SANDBOX_API"; then
+  if [ -z "$API_URL" ]; then
+    echo -e "  Connected:  ${GREEN}● auth only${NC}  ${DIM}(no AppSync API)${NC}"
+  elif echo "$API_URL" | grep -q "$SANDBOX_API"; then
     echo -e "  Connected:  ${GREEN}● sandbox${NC}  ${DIM}(${SANDBOX_API})${NC}"
   elif echo "$API_URL" | grep -q "$PRODUCTION_API"; then
     echo -e "  Connected:  ${YELLOW}▲ PRODUCTION${NC}  ${DIM}(${PRODUCTION_API})${NC}"

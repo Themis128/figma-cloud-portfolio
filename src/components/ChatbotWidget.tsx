@@ -262,7 +262,7 @@ export default function ChatbotWidget() {
     }
   }
 
-  const showSuggestions = messages.length === 1 && !isStreaming;
+  const showSuggestions = messages.length === 1 && !isStreaming && suggestedQuestions.length > 0;
 
   return (
     <>
