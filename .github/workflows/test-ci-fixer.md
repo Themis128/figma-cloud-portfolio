@@ -88,14 +88,13 @@ steps:
 
   - name: Start Next.js dev server
     run: |
+      # Explicitly unset PORT so next dev binds to 3000 (not 3002 from Express step)
+      unset PORT
       pnpm dev &
       echo "Waiting up to 120s for Next.js on port 3000..."
       timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
       echo "Next.js dev server is ready"
     shell: bash
-    env:
-      PORT: "3002"
-      NODE_ENV: development
 
   - name: Run Playwright tests (baseline)
     run: |
