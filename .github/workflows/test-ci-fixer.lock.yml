@@ -26,7 +26,7 @@
 # assertions), re-runs the suite to verify, then opens a PR with all changes.
 # If failures remain after 3 fix iterations, opens an issue with a repair plan.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"16e4319ded785ddff9c6214c256cdca72052ffe402a60c58795a51e2ee29fbae","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"91fd10b09d323fe296fcbe60b9fe5fa58ed6a5433fe221ca3efe4bc314e5c536","compiler_version":"v0.59.0","strict":true}
 
 name: "E2E Test CI Fixer"
 "on":
@@ -325,6 +325,14 @@ jobs:
           PORT: "3002"
         name: Run Playwright tests (baseline)
         run: "echo \"=== BASELINE TEST RUN ===\" > /tmp/run1.txt\nPORT=3002 PLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list 2>&1 | tee -a /tmp/run1.txt || true\necho \"Baseline run complete.\"\n"
+        shell: bash
+      - name: Free port 3001 for gh-aw Safe Outputs MCP server
+        run: |
+          echo "Killing any processes on port 3001 (pnpm dev may have started Express there)..."
+          fuser -k 3001/tcp 2>/dev/null || true
+          pkill -f "server/index.ts" 2>/dev/null || true
+          sleep 2
+          echo "Port 3001 is now free for gh-aw MCP server"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below
