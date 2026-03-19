@@ -85,12 +85,13 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [suggestedQuestions] = useState<string[]>(() => [
-    ...pickRandomQuestions(QUESTION_POOL, 3),
-    BOOKING_QUESTION,
-  ]);
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setSuggestedQuestions([...pickRandomQuestions(QUESTION_POOL, 3), BOOKING_QUESTION]);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
