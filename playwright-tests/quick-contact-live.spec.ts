@@ -11,6 +11,13 @@ import { expect, test } from "@playwright/test";
  */
 
 test.describe("Quick Contact Form — Live Backend", () => {
+  // These tests submit through the real Express → SES + Slack pipeline.
+  // Skip in CI where backend secrets (SES, Slack, reCAPTCHA) are unavailable.
+  test.skip(
+    !!process.env.CI || !!process.env.GITHUB_ACTIONS,
+    "Live backend tests require SES/Slack credentials — skip in CI",
+  );
+
   /** Locate the error alert inside the quick-contact section */
   function errorAlert(page: import("@playwright/test").Page) {
     return page.locator('#quick-contact [role="alert"]');
