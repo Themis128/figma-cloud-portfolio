@@ -33,7 +33,7 @@ tools:
     toolsets: [all]
   cache-memory: true
 
-timeout-minutes: 15
+timeout-minutes: 30
 
 steps:
   - name: Checkout repository
