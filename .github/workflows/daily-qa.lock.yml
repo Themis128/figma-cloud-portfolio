@@ -28,13 +28,13 @@
 #
 # Source: githubnext/agentics/workflows/daily-qa.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"0a02455d36f61835eba86476be94bc059a3a7168b31ce032f614090a7497159f","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"4d24d0f188f5d66bbc66abcd32227d165d3956f1511e4450386d1a74ff2de07b","compiler_version":"v0.59.0","strict":true}
 
 name: "Daily QA"
 "on":
   schedule:
-  - cron: "15 9 * * *"
-    # Friendly format: daily (scattered)
+  - cron: "15 6 * * 4"
+    # Friendly format: weekly on Thursday around 6 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}

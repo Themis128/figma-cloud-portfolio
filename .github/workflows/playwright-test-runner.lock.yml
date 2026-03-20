@@ -25,13 +25,13 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"e4a7fd3cf7ae12f7dfeb3b28fafdd029ac4cca9d24004c24273fbfa4df795f92","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"b39eccc7959762f66e05300c9013be93269461427ed8da6ef935cbf5e55dc40b","compiler_version":"v0.59.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
   schedule:
-  - cron: "12 6 * * 1-5"
-    # Friendly format: daily on weekdays (scattered)
+  - cron: "12 7 * * 1"
+    # Friendly format: weekly on Monday around 8 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}
@@ -293,19 +293,31 @@ jobs:
           CAL_EVENT_TYPE_ID: ${{ secrets.CAL_EVENT_TYPE_ID }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           NODE_ENV: test
+          PORT: "3002"
           RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        name: Start Express backend
+        name: Start Express backend on port 3002
         run: |
-          npx tsx server/index.ts &
-          echo "Waiting for backend on port 3001..."
-          timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
-          echo "Backend is running on http://localhost:3001"
+          PORT=3002 npx tsx server/index.ts &
+          echo "Waiting for backend on port 3002..."
+          timeout 30 bash -c 'until curl -sf http://localhost:3002/api/ping > /dev/null 2>&1; do sleep 2; done'
+          echo "Backend is running on http://localhost:3002"
         shell: bash
-      - name: Start Next.js dev server
-        run: "# Next.js dev server proxies /api/* to backend via rewrite rules\npnpm dev &\necho \"Waiting for frontend on port 3000...\"\ntimeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'\necho \"Frontend is running on http://localhost:3000\"\n"
+      - env:
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
+        name: Start Next.js dev server
+        run: |
+          unset PORT
+          pnpm dev &
+          echo "Waiting for frontend on port 3000..."
+          timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
+          echo "Frontend is running on http://localhost:3000"
         shell: bash
-      - name: Run Playwright tests
+      - env:
+          BACKEND_API_URL: http://localhost:3002
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+        name: Run Playwright tests
         run: "echo \"Running Playwright E2E tests (chromium, fast config)...\"\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.ci.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
         shell: bash
 

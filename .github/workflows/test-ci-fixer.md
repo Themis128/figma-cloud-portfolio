@@ -6,8 +6,6 @@ description: |
   If failures remain after 3 fix iterations, opens an issue with a repair plan.
 
 on:
-  push:
-    branches: [production]
   workflow_dispatch:
 
 timeout-minutes: 90

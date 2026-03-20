@@ -24,13 +24,13 @@
 # Monitor and report on application performance metrics. This workflow runs
 # performance tests, analyzes bundle size, and tracks Web Vitals metrics.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"018bf1036118c0d023f4f17adeaf4c7b0573af0d40b4cf7bc681e45763a5a7c9","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"819172ffdcf79f3632b4b7b7e2edc60e02346abaf92b38a40f91efb958289df0","compiler_version":"v0.59.0","strict":true}
 
 name: "Performance Monitoring"
 "on":
   schedule:
-  - cron: "38 6 * * *"
-    # Friendly format: daily around 6 AM UTC (scattered)
+  - cron: "38 6 * * 6"
+    # Friendly format: weekly on Saturday around 6 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}

@@ -1,7 +1,8 @@
 ---
 description: Daily automated link checker that finds and fixes broken links in documentation files
 on:
-  schedule: daily on weekdays
+  schedule: weekly on Monday around 4 AM UTC
+  workflow_dispatch:
 permissions: read-all
 timeout-minutes: 60
 network:

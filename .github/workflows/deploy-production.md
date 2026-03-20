@@ -5,8 +5,6 @@ description: |
   syncs to S3, invalidates CloudFront, and validates with smoke tests.
 
 on:
-  push:
-    branches: [production]
   workflow_dispatch:
 
 timeout-minutes: 20

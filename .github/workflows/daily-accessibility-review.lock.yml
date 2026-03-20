@@ -29,13 +29,13 @@
 #
 # Source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"fb8113952f1fa7c2afe64c9a0fa945c5ed7b3521623ac39baa95a6606393588b","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"9c09d818e5962a0babc01a9d7efb186ea8a671c33c6d5a114e8c491f3f3294ce","compiler_version":"v0.59.0","strict":true}
 
 name: "Daily Accessibility Review"
 "on":
   schedule:
-  - cron: "36 18 * * *"
-    # Friendly format: daily (scattered)
+  - cron: "36 4 * * 2"
+    # Friendly format: weekly on Tuesday around 5 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}

@@ -25,13 +25,13 @@
 # This workflow backs up configuration files, environment variables, and
 # deployment artifacts to a secure location.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"17e053ed279c2fbfd54cf948c9f43f1e2e4a6cf30eb238ffe05d276b6a1b74ff","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"a50c37a408858d497797b57310029b15ed8b7df82f6920780792331df58ecb40","compiler_version":"v0.59.0","strict":true}
 
 name: "Backup and Restore Management"
 "on":
   schedule:
-  - cron: "34 1 * * *"
-    # Friendly format: daily around 2 AM UTC (scattered)
+  - cron: "34 1 * * 0"
+    # Friendly format: weekly on Sunday around 2 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}

@@ -1,7 +1,7 @@
 ---
 description: Daily security scan that reviews code changes from the last 3 days for suspicious patterns indicating malicious or agentic threats
 on:
-  schedule: daily
+  schedule: weekly on Wednesday around 3 AM UTC
   workflow_dispatch:
 permissions:
   contents: read

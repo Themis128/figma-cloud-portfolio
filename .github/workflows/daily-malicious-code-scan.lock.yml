@@ -25,13 +25,13 @@
 #
 # Source: githubnext/agentics/workflows/daily-malicious-code-scan.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"6fcee9f70bb87f3f844a19529b86d02652570fc95dbe841f5967342758665c77","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"e26c63336e2f3fa9254782158809bd6a4015c85373fb396f55439eed150ae1d5","compiler_version":"v0.59.0","strict":true}
 
 name: "Daily Malicious Code Scan Agent"
 "on":
   schedule:
-  - cron: "35 11 * * *"
-    # Friendly format: daily (scattered)
+  - cron: "35 3 * * 3"
+    # Friendly format: weekly on Wednesday around 3 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}
