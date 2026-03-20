@@ -27,13 +27,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: TypeScript check
-        run: pnpm typecheck
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Build
+      - name: Create mock amplify_outputs.json for CI
         run: |
           cat > amplify_outputs.json << 'MOCK'
           {
@@ -59,7 +53,15 @@ jobs:
             }
           }
           MOCK
-          pnpm build
+
+      - name: TypeScript check
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
         env:
           NEXT_PUBLIC_SITE_URL: https://www.baltzakisthemis.com
           NEXT_PUBLIC_API_BASE_URL: /api
