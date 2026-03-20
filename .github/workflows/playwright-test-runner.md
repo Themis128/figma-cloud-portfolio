@@ -65,7 +65,7 @@ steps:
     run: |
       echo "Running Playwright E2E tests (chromium, fast config)..."
       PLAYWRIGHT_BASE_URL=http://localhost:3000 \
-      npx playwright test --config=playwright.config.fast.ts \
+      npx playwright test --config=playwright.config.ci.ts \
         --reporter=list \
         2>&1 | tee /tmp/playwright-results.txt || true
       echo "Tests complete. Results saved to /tmp/playwright-results.txt"

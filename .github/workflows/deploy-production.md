@@ -93,7 +93,7 @@ steps:
     run: |
       echo "Running smoke tests against production..."
       PLAYWRIGHT_BASE_URL=https://www.baltzakisthemis.com \
-      npx playwright test --config=playwright.config.fast.ts \
+      npx playwright test --config=playwright.config.ci.ts \
         --reporter=list \
         --grep="smoke" \
         2>&1 | tee /tmp/smoke-test-results.txt || true

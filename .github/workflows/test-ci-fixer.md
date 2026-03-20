@@ -104,11 +104,11 @@ steps:
       curl -sf http://localhost:3000 > /dev/null && echo "Next.js OK on :3000" || echo "WARNING: Next.js not responding on :3000"
     shell: bash
 
-  - name: Run Playwright tests (baseline)
+  - name: Run Playwright tests (baseline — CI subset)
     run: |
       echo "=== BASELINE TEST RUN ===" > /tmp/run1.txt
       PLAYWRIGHT_BASE_URL=http://localhost:3000 \
-      npx playwright test --config=playwright.config.fast.ts \
+      npx playwright test --config=playwright.config.ci.ts \
         --reporter=list 2>&1 | tee -a /tmp/run1.txt || true
       echo "Baseline run complete."
     shell: bash
@@ -268,7 +268,7 @@ If there are new TS errors from your change, fix them before continuing.
 ```bash
 echo "=== POST-FIX TEST RUN ===" > /tmp/run2.txt
 PLAYWRIGHT_BASE_URL=http://localhost:3000 \
-npx playwright test --config=playwright.config.fast.ts \
+npx playwright test --config=playwright.config.ci.ts \
   --reporter=list 2>&1 | tee -a /tmp/run2.txt || true
 cat /tmp/run2.txt | tail -5
 ```
@@ -288,7 +288,7 @@ If failures remain after iteration 2, repeat Steps 3-5 for remaining failures on
 ```bash
 echo "=== FINAL TEST RUN ===" > /tmp/run3.txt
 PLAYWRIGHT_BASE_URL=http://localhost:3000 \
-npx playwright test --config=playwright.config.fast.ts \
+npx playwright test --config=playwright.config.ci.ts \
   --reporter=list 2>&1 | tee -a /tmp/run3.txt || true
 ```
 
@@ -353,7 +353,7 @@ Automated fix by `${{ github.workflow }}` — [Run #${{ github.run_number }}](${
 
 ## Verify locally
 ```bash
-npx playwright test --config=playwright.config.fast.ts
+npx playwright test --config=playwright.config.ci.ts
 ```
 ```
 
