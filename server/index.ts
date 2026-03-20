@@ -66,7 +66,8 @@ app.use(
   },
 );
 
-const server = app.listen(3001, () => console.log("Server running on port 3001"));
+const PORT = Number(process.env.PORT) || 3001;
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Keep the process alive
 server.on("close", () => process.exit(0));
