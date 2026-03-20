@@ -41,12 +41,54 @@ steps:
     with:
       fetch-depth: 0
       persist-credentials: false
+  - name: Setup Node.js
+    uses: actions/setup-node@v6
+    with:
+      node-version: 22
+
+  - name: Install pnpm
+    uses: pnpm/action-setup@v4
+
+  - name: Install dependencies
+    run: pnpm install --frozen-lockfile
+    shell: bash
+
+  - name: Create mock amplify_outputs.json for CI
+    run: |
+      cat > amplify_outputs.json << 'EOF'
+      {
+        "version": "1.3",
+        "auth": {
+          "user_pool_id": "us-east-1_CImock",
+          "aws_region": "us-east-1",
+          "user_pool_client_id": "ci-mock-client-id",
+          "identity_pool_id": "us-east-1:00000000-0000-0000-0000-000000000000",
+          "mfa_methods": [],
+          "standard_required_attributes": ["email"],
+          "username_attributes": ["email"],
+          "user_verification_types": ["email"],
+          "mfa_configuration": "NONE",
+          "password_policy": {
+            "min_length": 8,
+            "require_numbers": true,
+            "require_lowercase": true,
+            "require_uppercase": true,
+            "require_symbols": true
+          },
+          "unauthenticated_identities_enabled": true
+        }
+      }
+      EOF
+    shell: bash
+
   - name: Build and run app in background
     run: |
-      # This step should set up the runtime environment for your app, 
-      # including installing any necessary dependencies, and it should
-      # start your app in the background (e.g., using `&` at the end of the command).
-      echo "Building and running the app in background..."
+      pnpm build
+      pnpm start &
+      echo "Waiting for app on port 3000..."
+      timeout 30 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 2; done'
+      echo "App is running on http://localhost:3000"
+    shell: bash
 source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 engine: copilot
 ---

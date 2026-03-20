@@ -25,7 +25,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"b39eccc7959762f66e05300c9013be93269461427ed8da6ef935cbf5e55dc40b","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"f149c64d4f8908fbf3328385fde52bb21916ce911e0786b9c9ab54821fb95885","compiler_version":"v0.59.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
@@ -317,8 +317,9 @@ jobs:
           BACKEND_API_URL: http://localhost:3002
           NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+          PW_TEST_REUSE_CONTEXT: "1"
         name: Run Playwright tests
-        run: "echo \"Running Playwright E2E tests (chromium, fast config)...\"\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.ci.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
+        run: "echo \"Running Playwright E2E tests (chromium, CI config)...\"\nnpx playwright test --config=playwright.config.ci.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below

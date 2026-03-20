@@ -66,8 +66,7 @@ steps:
 
   - name: Run Playwright tests
     run: |
-      echo "Running Playwright E2E tests (chromium, fast config)..."
-      PLAYWRIGHT_BASE_URL=http://localhost:3000 \
+      echo "Running Playwright E2E tests (chromium, CI config)..."
       npx playwright test --config=playwright.config.ci.ts \
         --reporter=list \
         2>&1 | tee /tmp/playwright-results.txt || true
@@ -77,6 +76,7 @@ steps:
       PLAYWRIGHT_BASE_URL: http://localhost:3000
       BACKEND_API_URL: http://localhost:3002
       NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
+      PW_TEST_REUSE_CONTEXT: "1"
 
 tools:
   github:
