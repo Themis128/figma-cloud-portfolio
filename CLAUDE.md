@@ -14,7 +14,7 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 - **3D**: Three.js + @react-three/fiber
 - **State**: TanStack Query v5
 - **Backend**: AWS Lambda (production), Amplify Gen 2 (Cognito + AppSync + DynamoDB), Express dev server (local, port 3001)
-- **Chatbot**: AWS Bedrock (Claude 3 Haiku) via Express route — knowledge base in `server/bot/knowledge/`
+- **Chatbot**: AWS Bedrock (Claude 3.5 Haiku) via Express route — knowledge base in `server/bot/knowledge/`
 - **Testing**: Playwright 1.58+ E2E, Vitest unit tests
 - **Package Manager**: pnpm
 
@@ -77,14 +77,6 @@ docs/               # Documentation
 - Use feature branches for development
 - Write meaningful commit messages
 - Default branch: `production`
-
-## Security Scanning (Snyk)
-
-- Workflow: `.github/workflows/snyk-security.yml` — 2 parallel jobs (dependency scan + combined SAST/IaC scan)
-- Policy: `.snyk` — excludes test files and non-production code
-- Pre-deploy gate: `deploy.yml` runs `snyk test --severity-threshold=critical` (blocking — fails deploy on critical CVEs)
-- Secrets: `SNYK_TOKEN`, `SNYK_ORG`
-- Dashboard monitoring: `snyk monitor` on production pushes
 
 ## GitHub Agentic Workflows (gh-aw)
 
