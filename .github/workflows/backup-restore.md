@@ -5,7 +5,7 @@ description: |
   deployment artifacts to a secure location.
 
 on:
-  schedule: daily around 2 AM UTC
+  schedule: weekly on Sunday around 2 AM UTC
   workflow_dispatch:
 
 timeout-minutes: 15

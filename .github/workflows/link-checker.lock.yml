@@ -25,13 +25,13 @@
 #
 # Source: githubnext/agentics/workflows/link-checker.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"4b18647386dac36ff2a6c817646a89b0ae2a732ddc6ddc39ec1f946c3decd1b2","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"4856b3d4a646271c7a4705630ab0e7483863b64a9a0e21c5778ad0383ea2f0b6","compiler_version":"v0.59.0","strict":true}
 
 name: "Daily Link Checker & Fixer"
 "on":
   schedule:
-  - cron: "3 20 * * 1-5"
-    # Friendly format: daily on weekdays (scattered)
+  - cron: "3 3 * * 1"
+    # Friendly format: weekly on Monday around 4 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}

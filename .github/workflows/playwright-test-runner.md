@@ -5,7 +5,7 @@ description: |
   detection, and actionable recommendations. Files issues for new test failures.
 
 on:
-  schedule: daily on weekdays
+  schedule: weekly on Monday around 8 AM UTC
   workflow_dispatch:
 
 timeout-minutes: 30
@@ -37,15 +37,16 @@ steps:
     run: npx playwright install chromium --with-deps
     shell: bash
 
-  - name: Start Express backend
+  - name: Start Express backend on port 3002
     run: |
-      npx tsx server/index.ts &
-      echo "Waiting for backend on port 3001..."
-      timeout 30 bash -c 'until curl -s http://localhost:3001 > /dev/null 2>&1; do sleep 2; done'
-      echo "Backend is running on http://localhost:3001"
+      PORT=3002 npx tsx server/index.ts &
+      echo "Waiting for backend on port 3002..."
+      timeout 30 bash -c 'until curl -sf http://localhost:3002/api/ping > /dev/null 2>&1; do sleep 2; done'
+      echo "Backend is running on http://localhost:3002"
     shell: bash
     env:
       NODE_ENV: test
+      PORT: "3002"
       RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -54,12 +55,14 @@ steps:
 
   - name: Start Next.js dev server
     run: |
-      # Next.js dev server proxies /api/* to backend via rewrite rules
+      unset PORT
       pnpm dev &
       echo "Waiting for frontend on port 3000..."
       timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
       echo "Frontend is running on http://localhost:3000"
     shell: bash
+    env:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
 
   - name: Run Playwright tests
     run: |
@@ -70,6 +73,10 @@ steps:
         2>&1 | tee /tmp/playwright-results.txt || true
       echo "Tests complete. Results saved to /tmp/playwright-results.txt"
     shell: bash
+    env:
+      PLAYWRIGHT_BASE_URL: http://localhost:3000
+      BACKEND_API_URL: http://localhost:3002
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
 
 tools:
   github:

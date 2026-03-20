@@ -7,7 +7,7 @@ description: |
   continuously throughout the development cycle.
 
 on:
-  schedule: daily
+  schedule: weekly on Tuesday around 5 AM UTC
   workflow_dispatch:
 
 permissions: read-all

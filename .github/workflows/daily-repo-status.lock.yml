@@ -28,13 +28,13 @@
 #
 # Source: githubnext/agentics/workflows/daily-repo-status.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"d8433a4652bf5811d94a3ecf37dc6f682d8a33b9e51160f35f033f21da5d5ccc","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"38adfe7ec27ceb66ad3592067ece0197e6f005d8bd79af054d68ec07b2ed5dda","compiler_version":"v0.59.0","strict":true}
 
 name: "Daily Repo Status"
 "on":
   schedule:
-  - cron: "34 1 * * *"
-    # Friendly format: daily (scattered)
+  - cron: "34 7 * * 5"
+    # Friendly format: weekly on Friday around 7 AM UTC (scattered)
   workflow_dispatch:
 
 permissions: {}

@@ -6,7 +6,7 @@ description: |
   with improvements. Provides continuous quality monitoring throughout development.
 
 on:
-  schedule: daily
+  schedule: weekly on Thursday around 6 AM UTC
   workflow_dispatch:
 
 timeout-minutes: 15
