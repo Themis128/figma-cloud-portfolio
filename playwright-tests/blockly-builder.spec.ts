@@ -19,9 +19,9 @@ async function gotoBlocklyBuilder(page: Page) {
   const heading = page.getByText("Build Your Own Agent");
   await heading.scrollIntoViewIfNeeded();
 
-  // Wait for Blockly workspace + toolbox to fully load (dynamic import)
-  await page.waitForSelector(".blocklyWorkspace", { timeout: 20000 });
-  await page.waitForSelector(".blocklyToolboxDiv", { timeout: 10000 });
+  // Wait for Blockly workspace + toolbox to fully load (dynamic import — slow in CI)
+  await page.waitForSelector(".blocklyWorkspace", { timeout: 30000 });
+  await page.waitForSelector(".blocklyToolboxDiv", { timeout: 15000 });
 }
 
 /** Click the "Show Python" / "Hide Python" toggle */
