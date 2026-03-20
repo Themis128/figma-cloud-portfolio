@@ -13,14 +13,15 @@ import { waitForAppReady } from "./test-utils";
 async function gotoBlocklyBuilder(page: Page) {
   await page.goto("/agents/");
   await waitForAppReady(page);
-  await page.waitForLoadState("domcontentloaded");
+  await page.waitForLoadState("networkidle");
 
   // Scroll to the Build Your Own Agent section
   const heading = page.getByText("Build Your Own Agent");
   await heading.scrollIntoViewIfNeeded();
 
-  // Wait for Blockly workspace to load (dynamic import)
+  // Wait for Blockly workspace + toolbox to fully load (dynamic import)
   await page.waitForSelector(".blocklyWorkspace", { timeout: 20000 });
+  await page.waitForSelector(".blocklyToolboxDiv", { timeout: 10000 });
 }
 
 /** Click the "Show Python" / "Hide Python" toggle */

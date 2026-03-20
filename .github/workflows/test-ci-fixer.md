@@ -72,8 +72,8 @@ steps:
     run: |
       PORT=3002 npx tsx server/index.ts &
       echo "Waiting for backend on port 3002..."
-      timeout 45 bash -c 'until curl -s http://localhost:3002 > /dev/null 2>&1; do sleep 2; done' || true
-      echo "Backend ready on port 3002 (port 3001 reserved by gh-aw Safe Outputs MCP)"
+      timeout 60 bash -c 'until curl -sf http://localhost:3002/api/ping > /dev/null 2>&1; do sleep 2; done'
+      echo "Backend ready — verified via /api/ping on port 3002"
     shell: bash
     env:
       NODE_ENV: test
@@ -94,6 +94,14 @@ steps:
       echo "Waiting up to 120s for Next.js on port 3000..."
       timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'
       echo "Next.js dev server is ready"
+    shell: bash
+    env:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
+
+  - name: Verify backend is still running
+    run: |
+      curl -sf http://localhost:3002/api/ping && echo "Express backend OK on :3002" || echo "WARNING: Express backend not responding on :3002"
+      curl -sf http://localhost:3000 > /dev/null && echo "Next.js OK on :3000" || echo "WARNING: Next.js not responding on :3000"
     shell: bash
 
   - name: Run Playwright tests (baseline)
