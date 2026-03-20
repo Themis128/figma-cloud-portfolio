@@ -81,10 +81,10 @@ steps:
       EOF
     shell: bash
 
-  - name: Build and run app in background
+  - name: Build and serve static export
     run: |
       pnpm build
-      pnpm start &
+      npx serve out -l 3000 &
       echo "Waiting for app on port 3000..."
       timeout 30 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 2; done'
       echo "App is running on http://localhost:3000"
