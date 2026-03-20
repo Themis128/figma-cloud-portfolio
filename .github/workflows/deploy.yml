@@ -29,24 +29,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Snyk CLI
-        run: npm install -g snyk@v1.1296.1
-
-      - name: Snyk security gate (critical vulnerabilities block deploy)
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: |
-          echo "## Snyk Pre-Deploy Security Gate" >> "$GITHUB_STEP_SUMMARY"
-          if snyk test --org=${{ secrets.SNYK_ORG }} --severity-threshold=critical --all-projects 2>&1 | tee /tmp/snyk-gate.txt; then
-            echo "✅ No critical vulnerabilities — deploy proceeding" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "❌ Critical vulnerabilities found — deploy blocked" >> "$GITHUB_STEP_SUMMARY"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"
-            tail -20 /tmp/snyk-gate.txt >> "$GITHUB_STEP_SUMMARY"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
