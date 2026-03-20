@@ -25,7 +25,7 @@
 # Generates Amplify backend outputs, builds Next.js static export,
 # syncs to S3, invalidates CloudFront, and validates with smoke tests.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"3a97a2e2e86180061cc95a80bd6c9014d329ea1f59bbeafd149d345fa071bdf3","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"506c66f83319aba67bc907f767a320ac2d0fc8a789f1ede1c1da80080387d30c","compiler_version":"v0.59.0","strict":true}
 
 name: "Production Deployment Workflow (S3 + CloudFront)"
 "on":
@@ -326,7 +326,7 @@ jobs:
         run: npx playwright install chromium --with-deps
         shell: bash
       - name: Run smoke tests
-        run: "echo \"Running smoke tests against production...\"\nPLAYWRIGHT_BASE_URL=https://www.baltzakisthemis.com \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  --grep=\"smoke\" \\\n  2>&1 | tee /tmp/smoke-test-results.txt || true\necho \"Smoke tests completed\"\n"
+        run: "echo \"Running smoke tests against production...\"\nPLAYWRIGHT_BASE_URL=https://www.baltzakisthemis.com \\\nnpx playwright test --config=playwright.config.ci.ts \\\n  --reporter=list \\\n  --grep=\"smoke\" \\\n  2>&1 | tee /tmp/smoke-test-results.txt || true\necho \"Smoke tests completed\"\n"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below

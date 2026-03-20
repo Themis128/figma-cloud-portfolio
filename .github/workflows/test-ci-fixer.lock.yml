@@ -26,7 +26,7 @@
 # assertions), re-runs the suite to verify, then opens a PR with all changes.
 # If failures remain after 3 fix iterations, opens an issue with a repair plan.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"bae0957b7a43ddb4061593e278594c9cf9872d7d4c0e2b137fbad516178a5cc6","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"94c3b54c7c292c9be446ec26b4dd9ff07f880169b23fbb263faaf4856fb1105e","compiler_version":"v0.59.0","strict":true}
 
 name: "E2E Test CI Fixer"
 "on":
@@ -337,8 +337,8 @@ jobs:
           BACKEND_API_URL: http://localhost:3002
           NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
           PLAYWRIGHT_BASE_URL: http://localhost:3000
-        name: Run Playwright tests (baseline)
-        run: "echo \"=== BASELINE TEST RUN ===\" > /tmp/run1.txt\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list 2>&1 | tee -a /tmp/run1.txt || true\necho \"Baseline run complete.\"\n"
+        name: Run Playwright tests (baseline — CI subset)
+        run: "echo \"=== BASELINE TEST RUN ===\" > /tmp/run1.txt\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.ci.ts \\\n  --reporter=list 2>&1 | tee -a /tmp/run1.txt || true\necho \"Baseline run complete.\"\n"
         shell: bash
       - name: Free port 3001 for gh-aw Safe Outputs MCP server
         run: |

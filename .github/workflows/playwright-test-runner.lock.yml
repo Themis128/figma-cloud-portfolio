@@ -25,7 +25,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"b4a00dc94b65b9a245d2b49b9a452cb2b94850edd5a4a7e1d8ef97c4c1f84513","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"e4a7fd3cf7ae12f7dfeb3b28fafdd029ac4cca9d24004c24273fbfa4df795f92","compiler_version":"v0.59.0","strict":true}
 
 name: "Playwright E2E Test Runner"
 "on":
@@ -306,7 +306,7 @@ jobs:
         run: "# Next.js dev server proxies /api/* to backend via rewrite rules\npnpm dev &\necho \"Waiting for frontend on port 3000...\"\ntimeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'\necho \"Frontend is running on http://localhost:3000\"\n"
         shell: bash
       - name: Run Playwright tests
-        run: "echo \"Running Playwright E2E tests (chromium, fast config)...\"\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
+        run: "echo \"Running Playwright E2E tests (chromium, fast config)...\"\nPLAYWRIGHT_BASE_URL=http://localhost:3000 \\\nnpx playwright test --config=playwright.config.ci.ts \\\n  --reporter=list \\\n  2>&1 | tee /tmp/playwright-results.txt || true\necho \"Tests complete. Results saved to /tmp/playwright-results.txt\"\n"
         shell: bash
 
       # Cache memory file share configuration from frontmatter processed below
