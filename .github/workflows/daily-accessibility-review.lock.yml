@@ -29,7 +29,7 @@
 #
 # Source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"9c09d818e5962a0babc01a9d7efb186ea8a671c33c6d5a114e8c491f3f3294ce","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"52e1cd24772d60d2a998e7b82aefdefe366d0c2724d8622416c0f55eea17833c","compiler_version":"v0.59.0","strict":true}
 
 name: "Daily Accessibility Review"
 "on":
@@ -280,8 +280,26 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: 22
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        shell: bash
+      - name: Create mock amplify_outputs.json for CI
+        run: "cat > amplify_outputs.json << 'EOF'\n{\n  \"version\": \"1.3\",\n  \"auth\": {\n    \"user_pool_id\": \"us-east-1_CImock\",\n    \"aws_region\": \"us-east-1\",\n    \"user_pool_client_id\": \"ci-mock-client-id\",\n    \"identity_pool_id\": \"us-east-1:00000000-0000-0000-0000-000000000000\",\n    \"mfa_methods\": [],\n    \"standard_required_attributes\": [\"email\"],\n    \"username_attributes\": [\"email\"],\n    \"user_verification_types\": [\"email\"],\n    \"mfa_configuration\": \"NONE\",\n    \"password_policy\": {\n      \"min_length\": 8,\n      \"require_numbers\": true,\n      \"require_lowercase\": true,\n      \"require_uppercase\": true,\n      \"require_symbols\": true\n    },\n    \"unauthenticated_identities_enabled\": true\n  }\n}\nEOF\n"
+        shell: bash
       - name: Build and run app in background
-        run: "# This step should set up the runtime environment for your app, \n# including installing any necessary dependencies, and it should\n# start your app in the background (e.g., using `&` at the end of the command).\necho \"Building and running the app in background...\"\n"
+        run: |
+          pnpm build
+          pnpm start &
+          echo "Waiting for app on port 3000..."
+          timeout 30 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 2; done'
+          echo "App is running on http://localhost:3000"
+        shell: bash
 
       # Cache memory file share configuration from frontmatter processed below
       - name: Create cache-memory directory
