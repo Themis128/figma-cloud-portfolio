@@ -9,7 +9,7 @@ import { waitForAppReady } from "./test-utils";
  * keyboard interaction, panel structure, cyberpunk styling,
  * responsive behaviour, and accessibility.
  *
- * These tests hit the real /api/chat → Express server → AWS Bedrock (Claude 3 Haiku).
+ * These tests hit the real /api/chat → Express server → AWS Bedrock (Claude 3.5 Haiku).
  * The chatbot requires AWS credentials and Bedrock model access.
  */
 
@@ -17,7 +17,7 @@ import { waitForAppReady } from "./test-utils";
 const API_TIMEOUT = 30_000;
 
 // Express server URL — tests that require the Bedrock backend will skip when unavailable
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+const API_URL = process.env.API_URL ?? "http://localhost:3002";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -313,22 +313,18 @@ test.describe("AI Chatbot Widget", () => {
       await expect(welcomeBubble).toContainText("AI assistant");
     });
 
-    test("should display all 4 suggested questions", async ({ page }) => {
+    test("should display 4 suggested questions (3 random + booking)", async ({ page }) => {
       await openChat(page);
 
       const panel = chatPanel(page);
       await expect(panel.locator("text=Suggested questions:")).toBeVisible();
 
-      const suggestions = [
-        "What are your top skills?",
-        "Tell me about your networking experience.",
-        "What certifications do you hold?",
-        "Book a call with Themis.",
-      ];
+      // 3 randomly selected from pool + 1 pinned booking question = 4 suggestion buttons
+      const suggestionButtons = panel.locator("button").filter({ hasText: /\?|Themis\./ });
+      await expect(suggestionButtons).toHaveCount(4);
 
-      for (const q of suggestions) {
-        await expect(panel.locator(`text=${q}`).first()).toBeVisible();
-      }
+      // The booking question is always present
+      await expect(panel.locator("text=Book a call with Themis.").first()).toBeVisible();
     });
 
     test("suggested questions should be clickable buttons", async ({
@@ -337,16 +333,14 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
       const panel = chatPanel(page);
 
-      // Each suggestion is a <button> element
-      for (const q of [
-        "What are your top skills?",
-        "Tell me about your networking experience.",
-        "What certifications do you hold?",
-        "Book a call with Themis.",
-      ]) {
-        const btn = panel.locator(`button:has-text("${q}")`);
-        await expect(btn).toBeVisible();
-        await expect(btn).toBeEnabled();
+      // All 4 suggestion buttons (3 random + 1 booking) should be visible and enabled
+      const suggestionButtons = panel.locator("button").filter({ hasText: /\?|Themis\./ });
+      const count = await suggestionButtons.count();
+      expect(count).toBe(4);
+
+      for (let i = 0; i < count; i++) {
+        await expect(suggestionButtons.nth(i)).toBeVisible();
+        await expect(suggestionButtons.nth(i)).toBeEnabled();
       }
     });
 

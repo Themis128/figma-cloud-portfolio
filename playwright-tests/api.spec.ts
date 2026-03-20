@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3002";
 const hasApiServer = !!process.env.API_BASE_URL;
 
 // Lambda-only endpoints (contact, github) are not available on the local Express dev server.
@@ -55,7 +55,7 @@ test.describe("API Endpoints — Lambda Only", () => {
   // with API routes. Skip when testing against the local Express server.
   const isLocalExpress =
     !process.env.API_BASE_URL ||
-    process.env.API_BASE_URL.includes("localhost:3001");
+    process.env.API_BASE_URL.includes("localhost:300");
 
   test("should respond to /api/contact with 404/405 for GET", async ({
     request,

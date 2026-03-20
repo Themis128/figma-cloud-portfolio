@@ -82,7 +82,7 @@ test.describe("Quick Contact Form — Live Backend", () => {
     // Skip if backend API is not running
     try {
       const ping = await request.get(
-        (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001") + "/api/ping",
+        (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002") + "/api/ping",
         { timeout: 3000 },
       );
       if (!ping.ok()) {

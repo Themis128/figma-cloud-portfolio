@@ -12,7 +12,7 @@ import { expect, test } from "@playwright/test";
  *   pnpm dev:server & npx playwright test playwright-tests/api-endpoints-comprehensive.spec.ts --project=chromium
  */
 
-const API = process.env.BACKEND_API_URL || "http://localhost:3001";
+const API = process.env.BACKEND_API_URL || "http://localhost:3002";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // GENERAL ROUTES — /api/ping, /api/health, /api/search, /api/webhook,

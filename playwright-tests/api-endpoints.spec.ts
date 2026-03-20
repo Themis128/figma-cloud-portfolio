@@ -136,7 +136,7 @@ test.describe("API Endpoints", () => {
 
   test("should handle API CORS", async ({ page }) => {
     const apiBase =
-      process.env.BACKEND_API_URL || "http://localhost:3001";
+      process.env.BACKEND_API_URL || "http://localhost:3002";
     const response = await page.request.get(`${apiBase}/api/ping`);
     const headers = response.headers();
     const corsHeader = headers["access-control-allow-origin"];
