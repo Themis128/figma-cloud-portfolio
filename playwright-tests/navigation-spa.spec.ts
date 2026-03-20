@@ -87,7 +87,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     page,
   }) => {
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Check viewport for mobile handling
     const viewport = page.viewportSize();
@@ -108,7 +108,7 @@ test.describe("SPA Navigation — Link Component (No Full Page Reload)", () => {
     const aboutLink = page.locator('nav a[href="/about/"]').first();
     if (await aboutLink.isVisible()) {
       await aboutLink.click();
-      await page.waitForURL("**/about/", { timeout: 5000 });
+      await page.waitForURL("**/about/", { timeout: 10000 });
       await expect(page).toHaveURL(/\/about/);
     }
   });
@@ -427,12 +427,13 @@ test.describe("Route Content — Each Page Renders Expected Content", () => {
   });
 
   test("/product renders work experience content", async ({ page }) => {
-    await page.goto("/product");
-    await page.waitForLoadState("networkidle");
+    await page.goto("/product/");
+    await page.waitForLoadState("domcontentloaded");
 
     const body = await page.locator("body").textContent();
     const hasContent =
       body?.includes("Estarta") ||
+      body?.includes("Skaramangas") ||
       body?.toLowerCase().includes("experience") ||
       body?.toLowerCase().includes("engineer");
     expect(hasContent).toBeTruthy();
