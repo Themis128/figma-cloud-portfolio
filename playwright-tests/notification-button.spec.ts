@@ -10,14 +10,19 @@ test.describe("NotificationButton — Announcements", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
+    // Wait for hydration — NotificationButton returns null until mounted
+    await page
+      .locator('button[aria-label*="announcements"], button[aria-label="Announcements"]')
+      .waitFor({ state: "visible", timeout: 10_000 });
   });
 
   test("renders bell button in navigation", async ({ page }) => {
     // The bell button has aria-label containing "announcements"
+    // Wait for hydration — component returns null until mounted
     const bellBtn = page.locator(
       'button[aria-label*="announcements"], button[aria-label="Announcements"]',
     );
-    await expect(bellBtn).toBeVisible();
+    await expect(bellBtn).toBeVisible({ timeout: 10_000 });
   });
 
   test("shows unread badge with count on first visit", async ({ page }) => {
