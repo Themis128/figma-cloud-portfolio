@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { setupTestEnvironment, teardownTestEnvironment } from "./test-utils";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3002";
 
 // These tests target an external push notifications API server on port 3002.
 // The Next.js app (port 3000) does not include this API route, so these tests

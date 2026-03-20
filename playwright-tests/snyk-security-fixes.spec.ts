@@ -11,7 +11,9 @@ import { expect, test } from "@playwright/test";
  */
 
 const API_BASE =
-  process.env.BACKEND_API_URL || "http://localhost:3001";
+  process.env.BACKEND_API_URL ||
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:3002";
 
 test.describe("Snyk Security Fixes — API Hardening", () => {
   test("API should not expose X-Powered-By header on /api/health", async ({

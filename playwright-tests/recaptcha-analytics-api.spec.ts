@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3002";
 
 test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
   test.describe("Contact Form API with reCAPTCHA", () => {
@@ -10,7 +10,7 @@ test.describe("reCAPTCHA and Google Analytics API Integration Tests", () => {
       // Contact endpoint only exists on Lambda, not on the local Express dev server
       const isLocalExpress =
         !process.env.API_BASE_URL ||
-        API_BASE_URL.includes("localhost:3001");
+        API_BASE_URL.includes("localhost:300");
       test.skip(isLocalExpress, "Contact endpoint only available on Lambda");
 
       try {

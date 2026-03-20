@@ -15,7 +15,7 @@ import { test, expect } from "@playwright/test";
  * 8. Edge cases — unicode, concurrent submissions, boundary lengths
  */
 
-const API = process.env.BACKEND_API_URL || "http://localhost:3001";
+const API = process.env.BACKEND_API_URL || "http://localhost:3002";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 1. CONTACT FORM — UI (/contact/ page)

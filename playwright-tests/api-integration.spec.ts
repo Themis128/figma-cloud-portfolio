@@ -24,7 +24,7 @@ test.describe("API Integration Tests", () => {
   });
 
   test("should fetch resume download via API", async ({ request }) => {
-    const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+    const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3002";
     const response = await request.get(`${API_BASE_URL}/api/resume/download`);
     expect(response.status()).toBe(200);
   });

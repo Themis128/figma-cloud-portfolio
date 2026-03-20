@@ -106,6 +106,10 @@ steps:
     shell: bash
     env:
       PLAYWRIGHT_BASE_URL: http://localhost:3000
+      BACKEND_API_URL: http://localhost:3002
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
+      API_BASE_URL: http://localhost:3002
+      API_URL: http://localhost:3002
 
   - name: Free port 3001 for gh-aw Safe Outputs MCP server
     run: |

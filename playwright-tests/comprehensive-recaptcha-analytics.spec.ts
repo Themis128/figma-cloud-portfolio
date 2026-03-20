@@ -2,7 +2,7 @@
 /* biome-disable lint/suspicious/noExplicitAny */
 import { expect, test } from "@playwright/test";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3002";
 
 test.describe("Comprehensive reCAPTCHA and Google Analytics Integration Tests", () => {
   // Skip tests that require external API server (API_BASE_URL) — not available in CI/dev
