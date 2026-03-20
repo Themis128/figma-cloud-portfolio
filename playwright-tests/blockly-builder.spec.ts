@@ -25,7 +25,7 @@ async function gotoBlocklyBuilder(page: Page) {
 
 /** Click the "Show Python" / "Hide Python" toggle */
 async function togglePythonPanel(page: Page) {
-  const btn = page.getByRole("button", { name: /Python/i });
+  const btn = page.getByRole("button", { name: /^(Show|Hide) Python$/i });
   await btn.scrollIntoViewIfNeeded();
   await btn.click();
 }
@@ -841,7 +841,7 @@ test.describe("Blockly Builder — Accessibility", () => {
   test("should have aria-pressed on toggle buttons", async ({ page }) => {
     const toggles = [
       page.getByRole("button", { name: /Toggle template browser/i }),
-      page.getByRole("button", { name: /Python code/i }),
+      page.getByRole("button", { name: /generated Python code/i }),
       page.getByRole("button", { name: /Toggle step-by-step/i }),
     ];
 

@@ -135,10 +135,25 @@ test.describe("API Endpoints", () => {
   });
 
   test("should handle API CORS", async ({ page }) => {
-    const response = await page.request.get("/api/ping");
+    const apiBase =
+      process.env.BACKEND_API_URL || "http://localhost:3001";
+    const response = await page.request.get(`${apiBase}/api/ping`);
     const headers = response.headers();
+    const corsHeader = headers["access-control-allow-origin"];
 
-    expect(headers).toHaveProperty("access-control-allow-origin");
+    // CORS header may be absent when no Origin header is sent
+    if (corsHeader) {
+      expect(corsHeader).toBeTruthy();
+    } else {
+      // Verify via OPTIONS preflight
+      const preflight = await page.request.fetch(`${apiBase}/api/ping`, {
+        method: "OPTIONS",
+        headers: { Origin: "https://baltzakisthemis.com" },
+      });
+      expect(
+        preflight.headers()["access-control-allow-origin"],
+      ).toBeTruthy();
+    }
   });
 
   test("should handle API timeouts", async ({ page }) => {
