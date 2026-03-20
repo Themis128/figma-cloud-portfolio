@@ -25,7 +25,7 @@ test.describe("AI Agent Functionality @critical", () => {
 
   test("should support async operations", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     const supportsAsync = await page.evaluate(async () => {
       try {

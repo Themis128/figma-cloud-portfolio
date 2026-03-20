@@ -433,12 +433,14 @@ test.describe("AI Chatbot Widget", () => {
 
       const panel = chatPanel(page);
 
-      // Click a suggested question
-      await panel.locator("text=What certifications do you hold?").click();
+      // Click the first suggested question (questions are randomly selected)
+      const firstQuestion = panel.locator("button").filter({ hasText: /\?|Themis\./ }).first();
+      const questionText = await firstQuestion.textContent();
+      await firstQuestion.click();
 
       // The suggested question text should appear as a user message
       await expect(
-        panel.locator("div[class*='bg-cyan-500/20']").filter({ hasText: "What certifications do you hold?" }).first(),
+        panel.locator("div[class*='bg-cyan-500/20']").filter({ hasText: questionText ?? "" }).first(),
       ).toBeVisible();
 
       // Wait for the assistant to respond
