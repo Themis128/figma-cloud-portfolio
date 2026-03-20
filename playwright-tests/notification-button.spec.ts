@@ -9,11 +9,11 @@ import { expect, test } from "@playwright/test";
 test.describe("NotificationButton — Announcements", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
     // Wait for hydration — NotificationButton returns null until mounted
     await page
       .locator('button[aria-label*="announcements"], button[aria-label="Announcements"]')
-      .waitFor({ state: "visible", timeout: 10_000 });
+      .waitFor({ state: "visible", timeout: 15_000 });
   });
 
   test("renders bell button in navigation", async ({ page }) => {

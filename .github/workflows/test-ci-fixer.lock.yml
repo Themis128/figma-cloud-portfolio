@@ -26,7 +26,7 @@
 # assertions), re-runs the suite to verify, then opens a PR with all changes.
 # If failures remain after 3 fix iterations, opens an issue with a repair plan.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"77432dcee17414170466a9eba45397b8414b0f522313f5cc1df27b69d2ebcd73","compiler_version":"v0.59.0","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"bae0957b7a43ddb4061593e278594c9cf9872d7d4c0e2b137fbad516178a5cc6","compiler_version":"v0.59.0","strict":true}
 
 name: "E2E Test CI Fixer"
 "on":
@@ -320,11 +320,16 @@ jobs:
         run: |
           PORT=3002 npx tsx server/index.ts &
           echo "Waiting for backend on port 3002..."
-          timeout 45 bash -c 'until curl -s http://localhost:3002 > /dev/null 2>&1; do sleep 2; done' || true
-          echo "Backend ready on port 3002 (port 3001 reserved by gh-aw Safe Outputs MCP)"
+          timeout 60 bash -c 'until curl -sf http://localhost:3002/api/ping > /dev/null 2>&1; do sleep 2; done'
+          echo "Backend ready — verified via /api/ping on port 3002"
         shell: bash
-      - name: Start Next.js dev server
+      - env:
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:3002
+        name: Start Next.js dev server
         run: "# Explicitly unset PORT so next dev binds to 3000 (not 3002 from Express step)\nunset PORT\npnpm dev &\necho \"Waiting up to 120s for Next.js on port 3000...\"\ntimeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done'\necho \"Next.js dev server is ready\"\n"
+        shell: bash
+      - name: Verify backend is still running
+        run: "curl -sf http://localhost:3002/api/ping && echo \"Express backend OK on :3002\" || echo \"WARNING: Express backend not responding on :3002\"\ncurl -sf http://localhost:3000 > /dev/null && echo \"Next.js OK on :3000\" || echo \"WARNING: Next.js not responding on :3000\"\n"
         shell: bash
       - env:
           API_BASE_URL: http://localhost:3002
