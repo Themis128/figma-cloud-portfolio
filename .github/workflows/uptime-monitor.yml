@@ -1,0 +1,75 @@
+name: Uptime Monitor
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check site health
+        id: health
+        run: |
+          URLS=(
+            "https://www.baltzakisthemis.com/"
+            "https://www.baltzakisthemis.com/about/"
+            "https://www.baltzakisthemis.com/contact/"
+            "https://www.baltzakisthemis.com/performance/"
+          )
+
+          FAILED=0
+          REPORT=""
+
+          for url in "${URLS[@]}"; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$url" || echo "000")
+            TIME=$(curl -s -o /dev/null -w "%{time_total}" --max-time 10 "$url" 2>/dev/null || echo "timeout")
+
+            if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+              REPORT="$REPORT| $url | $STATUS | ${TIME}s |\n"
+            else
+              REPORT="$REPORT| $url | **$STATUS** | ${TIME}s |\n"
+              FAILED=$((FAILED + 1))
+            fi
+          done
+
+          echo "failed=$FAILED" >> "$GITHUB_OUTPUT"
+          echo "report<<EOF" >> "$GITHUB_OUTPUT"
+          echo -e "$REPORT" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create issue if down
+        if: steps.health.outputs.failed != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'uptime,automation',
+              state: 'open'
+            });
+
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body: `## Still down — ${new Date().toISOString()}\n\n| URL | Status | Response Time |\n|-----|--------|---------------|\n${{ steps.health.outputs.report }}`
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `Site Down Alert — ${new Date().toISOString().split('T')[0]}`,
+                body: `## Site Health Check Failed\n\n| URL | Status | Response Time |\n|-----|--------|---------------|\n${{ steps.health.outputs.report }}\n\nTriggered by [Uptime Monitor](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+                labels: ['uptime', 'automation']
+              });
+            }
