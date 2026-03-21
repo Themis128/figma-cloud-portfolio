@@ -46,7 +46,7 @@ run-name: "Daily QA"
 
 jobs:
   activation:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     outputs:
@@ -1132,7 +1132,7 @@ jobs:
       - safe_outputs
       - update_cache_memory
     if: (always()) && (needs.agent.result != 'skipped')
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       discussions: write
@@ -1261,7 +1261,7 @@ jobs:
       - activation
       - agent
     if: ((!cancelled()) && (needs.agent.result != 'skipped')) && (needs.agent.outputs.detection_success == 'true')
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       discussions: write
