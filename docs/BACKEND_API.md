@@ -457,22 +457,7 @@ Remove a push subscription.
 
 Download resume as PDF.
 
-**Response** `200 OK`: Plain text `"Resume PDF download"` (placeholder implementation).
-
----
-
-### Playwright Autofix API
-
-**Source**: [`server/routes/playwrightAutofix.ts`](../server/routes/playwrightAutofix.ts)
-**Note**: All endpoints return placeholder data.
-
-| Endpoint | Method | Response |
-|----------|--------|----------|
-| `/api/playwright-autofix/health` | GET | `{ "status": "ok" }` |
-| `/api/playwright-autofix/config` | GET | `{ "config": "Playwright Autofix config" }` |
-| `/api/playwright-autofix/config` | POST | `{ "status": "Config updated" }` |
-| `/api/playwright-autofix/analyze` | POST | `{ "suggestions": [] }` |
-| `/api/playwright-autofix/patterns` | GET | `{ "patterns": [] }` |
+**Response** `200 OK`: PDF file generated via jsPDF with full resume content (name, title, experience, skills, certifications).
 
 ---
 

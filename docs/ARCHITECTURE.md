@@ -63,7 +63,7 @@ portfolio-nextjs/
 │   ├── data/                 # Static data
 │   ├── types/                # Shared TypeScript types
 │   └── styles/               # Global styles
-├── server/                   # Express dev server (port 3001) — resume, API keys, playwright-autofix
+├── server/                   # Express dev server (port 3001) — all API routes
 ├── playwright-tests/         # E2E test suite
 ├── docs/                     # Project documentation
 ├── public/                   # Static assets
@@ -373,7 +373,7 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 | `/api/chat`                               | POST         | AI assistant — Claude 3.5 Haiku via Bedrock (SSE)     |
 | `/api/booking/slots`                      | GET          | Available booking slots (Cal.com)                     |
 | `/api/booking/create`                     | POST         | Create booking with Google Meet link (Cal.com)        |
-| `/api/resume/download`                    | GET          | Resume PDF download                                   |
+| `/api/resume/download`                    | GET          | Resume PDF download (jsPDF-generated with full content) |
 | `/api/resume/generate`                    | GET          | Resume data as JSON with PDF link                     |
 | `/api/github/stats`                       | GET          | GitHub profile statistics (repos, stars, followers)   |
 | `/api/github/repos`                       | GET          | Public repositories (paginated, with topics)          |
@@ -387,10 +387,14 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 
 | Route                             | Handler                        |
 | --------------------------------- | ------------------------------ |
-| `/api/resume`                     | `server/routes/resume.ts`      |
-| `/api/chat`                       | `server/routes/chat.ts` (AWS Bedrock — Claude 3 Haiku) |
-| `/api/organizations/api_keys`     | `server/routes/apiKeys.ts`     |
-| `/api/playwright-autofix`         | `server/routes/playwrightAutofix.ts` |
+| `/api/ping`, `/api/health`, `/api/search`, `/api/monitor`, `/api/webhook`, `/api/docs` | `server/routes/general.ts` |
+| `/api/resume`                     | `server/routes/resume.ts` (jsPDF-generated PDF) |
+| `/api/chat`                       | `server/routes/chat.ts` (AWS Bedrock — Claude 3.5 Haiku) |
+| `/api/github`                     | `server/routes/github.ts` (GitHub API — stats, repos) |
+| `/api/push-notifications`         | `server/routes/pushNotifications.ts` (VAPID, S3-persisted) |
+| `/api/organizations/api_keys`     | `server/routes/apiKeys.ts` (Slack notifications) |
+| `/api/booking`                    | `server/routes/booking.ts` (Cal.com integration) |
+| `/api/contact`                    | `server/routes/contact.ts` (reCAPTCHA, SES) |
 
 ---
 
@@ -401,7 +405,8 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - App manifest for installability
 - Background sync for contact form (when offline)
 - Push notification support via Web Push API (VAPID keys, S3-persisted subscriptions)
-- Service worker registration from admin Push tab or `usePushNotifications` hook
+- Subscribe/unsubscribe toggle in the Announcements bell dropdown (public site)
+- Service worker registration automatic on subscribe; manual from admin Push tab
 
 ---
 
