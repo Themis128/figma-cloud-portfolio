@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { LAMBDA_API_URL } from "@/lib/admin-constants";
 
 interface DeployInfo {
   frontend: {
@@ -42,7 +43,7 @@ interface DeployInfo {
 }
 
 const PRODUCTION_URL = "https://www.baltzakisthemis.com";
-const API_HEALTH_URL = `${PRODUCTION_URL}/api/health`;
+const API_HEALTH_URL = `${LAMBDA_API_URL}/api/health`;
 
 export default function DeploymentStatus() {
   const [deploy, setDeploy] = useState<DeployInfo | null>(null);
