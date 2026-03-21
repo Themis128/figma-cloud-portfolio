@@ -352,10 +352,12 @@ export async function generatePreviewCached(
   return preview;
 }
 
-export default {
+const linkPreviewService = {
   generatePreview,
   generatePreviewCached,
   validateUrl,
   getCachedPreview,
   setCachedPreview,
 };
+
+export default linkPreviewService;

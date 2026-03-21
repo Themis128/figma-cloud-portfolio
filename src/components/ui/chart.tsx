@@ -1,11 +1,10 @@
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
-import type { TooltipContentProps } from "recharts/types/component/Tooltip";
 import type {
   LegendPayload,
   Props as DefaultLegendContentProps,
 } from "recharts/types/component/DefaultLegendContent";
-
+import type { TooltipContentProps } from "recharts/types/component/Tooltip";
 import { cn } from "@/lib/utils";
 
 // Format: { THEME_NAME: CSS_SELECTOR }

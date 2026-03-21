@@ -3,7 +3,6 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-
 import type { ConsentState } from "@/hooks/useConsent";
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;

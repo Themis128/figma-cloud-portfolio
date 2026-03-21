@@ -2,10 +2,9 @@
 
 import { LogOut } from "lucide-react";
 import type { ReactNode } from "react";
-
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface AdminLayoutProps {
   children: ReactNode;

@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { useMemo } from "react";
-
 import { useLazyImage } from "@/hooks/useLazyImage";
 import { cn } from "@/lib/utils";
 
@@ -65,12 +65,12 @@ export function OptimizedImage({
           aria-hidden="true"
         >
           {placeholder && (
-            // biome-ignore lint/performance/noImgElement: Custom optimized image component with lazy loading and responsive formats
-            <img
+            <Image
               src={placeholder}
               alt=""
               className="w-full h-full object-cover"
               aria-hidden="true"
+              fill
             />
           )}
         </div>

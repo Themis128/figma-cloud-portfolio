@@ -1,11 +1,9 @@
 // @ts-nocheck
 
 import { Box, Float, Html, OrbitControls, Sphere } from "@react-three/drei";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { AmbientLight, DirectionalLight, PointLight, MeshStandardMaterial, PlaneGeometry, MeshBasicMaterial, Mesh, Group } from "@react-three/fiber";
+import { Canvas, useFrame, useThree , AmbientLight, DirectionalLight, PointLight, MeshStandardMaterial, PlaneGeometry, MeshBasicMaterial, Mesh, Group } from "@react-three/fiber";
 import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-
 import { cn } from "@/lib/utils";
 
 // Animation constants
@@ -114,6 +112,8 @@ function ProjectSphere({
   const meshRef = React.forwardRef<THREE.Mesh, React.ComponentProps<typeof Sphere>>((props, ref) => {
     return <Sphere {...props} ref={ref} />;
   });
+  // eslint-disable-next-line react-hooks/refs
+  meshRef.displayName = "MeshRef";
   const [hovered, setHovered] = useState(false);
 
   useFrame((_state) => {

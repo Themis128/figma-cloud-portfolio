@@ -1,8 +1,8 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Hammer } from "lucide-react";
 import { ResumeBuilderWrapper } from "@/components/resume-builder";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ATSGuideContent } from "./ATSGuideContent";
 
 export function ResumePageTabs() {

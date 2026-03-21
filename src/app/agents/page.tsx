@@ -15,14 +15,13 @@ import {
   Zap,
 } from "lucide-react";
 import type { Metadata } from "next";
-
+import AgentPlayground from "@/components/agents/AgentPlayground";
+import BlocklyAgentBuilderWrapper from "@/components/agents/BlocklyAgentBuilderWrapper";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
 import { SectionNav } from "@/components/SectionNav";
-import AgentPlayground from "@/components/agents/AgentPlayground";
-import BlocklyAgentBuilderWrapper from "@/components/agents/BlocklyAgentBuilderWrapper";
 
 const SECTIONS = [
   { id: "hero", label: "Overview" },

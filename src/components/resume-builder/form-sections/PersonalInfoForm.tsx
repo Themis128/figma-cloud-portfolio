@@ -1,9 +1,9 @@
 "use client";
 
+import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ResumeFormData } from "@/types/resume-builder";
-import { useFormContext } from "react-hook-form";
 
 export function PersonalInfoForm() {
   const {

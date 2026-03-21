@@ -2,7 +2,6 @@
 
 import { Lock } from "lucide-react";
 import { useState } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

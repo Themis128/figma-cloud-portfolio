@@ -3,7 +3,6 @@
 import { Bell, BellOff, ExternalLink, Megaphone, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { Button } from "@/components/ui/button";
 
 const LAST_SEEN_KEY = "site-announcements-last-seen";

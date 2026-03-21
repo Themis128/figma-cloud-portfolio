@@ -1,6 +1,5 @@
 import { Activity, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";

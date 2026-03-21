@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";

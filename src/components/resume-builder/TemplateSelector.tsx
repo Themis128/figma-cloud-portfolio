@@ -1,8 +1,8 @@
 "use client";
 
 import { templateList } from "@/lib/resume-templates";
-import type { TemplateName } from "@/types/resume-builder";
 import { cn } from "@/lib/utils";
+import type { TemplateName } from "@/types/resume-builder";
 
 const templateColors: Record<TemplateName, string> = {
   classic: "bg-gray-800",

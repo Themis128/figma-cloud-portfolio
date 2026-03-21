@@ -2,7 +2,6 @@
 
 import { Github, Linkedin, Mail } from "lucide-react";
 import Link from "next/link";
-
 import { ManageCookiesButton } from "@/components/CookieConsentBanner";
 
 export default function Footer() {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle,
@@ -10,7 +9,7 @@ import {
   Search,
   XCircle,
 } from "lucide-react";
-
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -236,6 +235,7 @@ export default function SeoAudit() {
                 variant="outline"
                 className={`text-[9px] font-mono ${page.ogImage ? "border-green-500/40 text-green-400" : "border-red-500/40 text-red-400"}`}
               >
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image className="w-2.5 h-2.5 mr-1" />
                 og:image
               </Badge>

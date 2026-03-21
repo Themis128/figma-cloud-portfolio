@@ -4,7 +4,6 @@ import { AlertCircle, CheckCircle, Loader2, Send } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
 import { useCallback, useState } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { trackLead } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";

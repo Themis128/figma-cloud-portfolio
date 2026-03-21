@@ -1,6 +1,5 @@
 import { Mic, MicOff, Volume2 } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -139,7 +138,7 @@ export default function VoiceCommandButton({
                 <div className="p-3 bg-muted rounded-lg">
                   <p className="text-sm font-medium">You said:</p>
                   <p className="text-sm text-muted-foreground">
-                    "{transcript}"
+                    &quot;{transcript}&quot;
                   </p>
                 </div>
               )}
@@ -164,7 +163,7 @@ export default function VoiceCommandButton({
                       >
                         <Volume2 className="w-3 h-3 text-muted-foreground" />
                         <span className="text-muted-foreground">
-                          "{command.keywords[0]}"
+                          &quot;{command.keywords[0]}&quot;
                         </span>
                         <span className="text-foreground">→</span>
                         <span className="text-foreground">
@@ -221,7 +220,7 @@ export default function VoiceCommandButton({
                 <div>
                   <p className="font-medium">Listening for voice commands...</p>
                   <p className="text-sm text-muted-foreground">
-                    Speak clearly and try commands like "go home" or "help"
+                    Speak clearly and try commands like &quot;go home&quot; or &quot;help&quot;
                   </p>
                 </div>
               </div>

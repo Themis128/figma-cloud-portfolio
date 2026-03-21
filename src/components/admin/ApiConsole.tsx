@@ -1,9 +1,8 @@
 "use client";
 
+import { fetchAuthSession } from "aws-amplify/auth";
 import { Keyboard, Play, RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-import { fetchAuthSession } from "aws-amplify/auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

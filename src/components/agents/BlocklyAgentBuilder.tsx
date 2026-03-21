@@ -1,9 +1,9 @@
 "use client";
 
+import type * as BlocklyNS from "blockly";
 import { Bot, BookOpen, Code, Copy, Download, Play, RotateCcw, SkipForward } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type * as BlocklyNS from "blockly";
 
 // Blockly will be dynamically imported to avoid SSR issues
 type BlocklyModule = typeof BlocklyNS;

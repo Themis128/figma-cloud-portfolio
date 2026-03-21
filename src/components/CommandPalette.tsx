@@ -260,6 +260,7 @@ export default function CommandPalette() {
     <div
       className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh]"
       onClick={close}
+      onKeyDown={(e) => { if (e.key === "Escape") close(); }}
       role="presentation"
     >
       {/* Backdrop */}
@@ -269,6 +270,7 @@ export default function CommandPalette() {
       <div
         className="relative w-full max-w-lg mx-4 rounded-xl border border-cyan-400/20 bg-slate-900/95 backdrop-blur-md shadow-[0_0_30px_rgba(6,182,212,0.1)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Command palette"
       >

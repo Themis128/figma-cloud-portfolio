@@ -16,7 +16,6 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { HoverCard } from "@/components/HoverAnimations";
 

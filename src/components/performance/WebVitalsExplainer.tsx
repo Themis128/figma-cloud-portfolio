@@ -2,7 +2,6 @@
 
 import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 

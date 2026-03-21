@@ -3,6 +3,7 @@
  * This replaces the direct /api/* routes with Lambda function URLs
  */
 
+import { fetchAuthSession } from "aws-amplify/auth";
 import type {
   ContactFormRequest,
   ResumeData,
@@ -11,7 +12,6 @@ import type {
   BookingCreateRequest,
   BookingCreateResponse,
 } from "@/types/api";
-import { fetchAuthSession } from "aws-amplify/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 

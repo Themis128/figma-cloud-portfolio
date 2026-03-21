@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-
 import type { AgentConnection, AgentNode } from "@/data/agentTemplates";
 
 const NODE_WIDTH = 240;

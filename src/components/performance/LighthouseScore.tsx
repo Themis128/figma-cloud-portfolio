@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 
 interface ScoreCategory {

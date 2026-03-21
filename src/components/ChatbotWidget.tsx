@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import BookingCard from "@/components/BookingCard";
 import { trackGA4, trackLead } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import BookingCard from "@/components/BookingCard";
 import { sendChatMessage } from "@/lib/api";
 
 type MessageAction = "start_booking";
