@@ -35,6 +35,31 @@ interface Props {
   responseHistory?: number[] | undefined;
 }
 
+type TrendDirection = "improving" | "stable" | "degrading";
+
+/**
+ * Compute a trend direction from the last 5 data points.
+ * Compares the average of the first 2 vs last 2 of the most recent 5 points.
+ * A >10 % change is considered improving (faster) or degrading (slower).
+ */
+function computeTrend(history: number[]): TrendDirection | null {
+  if (history.length < 5) return null;
+  const recent5 = history.slice(-5);
+  const first2 = ((recent5[0] ?? 0) + (recent5[1] ?? 0)) / 2;
+  const last2 = ((recent5[3] ?? 0) + (recent5[4] ?? 0)) / 2;
+  if (first2 === 0) return null;
+  const change = (last2 - first2) / first2;
+  if (change < -0.1) return "improving";
+  if (change > 0.1) return "degrading";
+  return "stable";
+}
+
+const TREND_DISPLAY: Record<TrendDirection, { symbol: string; color: string; label: string }> = {
+  improving: { symbol: "\u2193", color: "text-green-400", label: "Improving" },
+  stable:    { symbol: "\u2192", color: "text-foreground/40", label: "Stable" },
+  degrading: { symbol: "\u2191", color: "text-red-400", label: "Degrading" },
+};
+
 const METHOD_COLORS: Record<string, string> = {
   GET: "border-green-500/40 text-green-400",
   POST: "border-blue-500/40 text-blue-400",
@@ -157,6 +182,7 @@ export default function ApiEndpointCard({
           onClick={onRefresh}
           className="p-1.5 rounded hover:bg-foreground/5 text-foreground/40 hover:text-cyan-400 transition-colors"
           title="Refresh"
+          aria-label={`Refresh ${endpoint.name} endpoint`}
         >
           <RotateCcw
             className={`w-3.5 h-3.5 ${status.state === "checking" ? "animate-spin" : ""}`}
@@ -165,9 +191,14 @@ export default function ApiEndpointCard({
       </div>
 
       <div className="flex items-center gap-2 mb-2">
-        <span
-          className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[status.state] ?? ""}`}
-        />
+        <span className="flex items-center gap-1 shrink-0">
+          <span
+            className={`w-2 h-2 rounded-full ${STATUS_DOT[status.state] ?? ""}`}
+          />
+          <span className="text-[10px]" aria-hidden="true">
+            {status.state === "healthy" ? "\u2713" : status.state === "degraded" ? "\u26A0" : status.state === "down" ? "\u2715" : ""}
+          </span>
+        </span>
         <span
           className={`text-xs font-mono ${STATUS_TEXT_COLOR[status.state] ?? ""}`}
         >
@@ -179,8 +210,22 @@ export default function ApiEndpointCard({
           </span>
         )}
         {status.responseTime !== null && (
-          <span className="text-xs font-mono text-cyan-400 ml-auto">
+          <span className="text-xs font-mono text-cyan-400 ml-auto flex items-center gap-1">
             {status.responseTime}ms
+            {responseHistory && (() => {
+              const trend = computeTrend(responseHistory);
+              if (!trend) return null;
+              const display = TREND_DISPLAY[trend];
+              return (
+                <span
+                  className={`text-xs font-bold ${display.color}`}
+                  title={`Trend: ${display.label}`}
+                  aria-label={`Response time trend: ${display.label}`}
+                >
+                  {display.symbol}
+                </span>
+              );
+            })()}
           </span>
         )}
       </div>

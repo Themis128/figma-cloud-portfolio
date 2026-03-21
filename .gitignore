@@ -123,3 +123,4 @@ google-cloud-cli-*.tar.gz
 # Misc
 *.local
 .config/
+.claude/worktrees/
