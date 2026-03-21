@@ -7,9 +7,9 @@ permissions:
   contents: read
 
 jobs:
-  test-pinned:
+  test-no-pnpm-action:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v4.4.0
+      - run: npm install -g pnpm@latest
       - run: pnpm --version
