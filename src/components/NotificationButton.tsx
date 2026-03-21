@@ -1,9 +1,10 @@
 "use client";
 
-import { Bell, BellOff, ExternalLink, Megaphone, X } from "lucide-react";
+import { Bell, BellOff, BellRing, ExternalLink, Megaphone, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getApiOrigin } from "@/lib/admin-constants";
 
 const LAST_SEEN_KEY = "site-announcements-last-seen";
 const READ_IDS_KEY = "site-announcements-read";
@@ -77,21 +78,128 @@ function getActiveAnnouncements(): readonly Announcement[] {
   return ANNOUNCEMENTS.filter((a) => !a.expires || a.expires > now);
 }
 
+/** Convert a base64url string to ArrayBuffer (for VAPID applicationServerKey). */
+function urlBase64ToArrayBuffer(base64String: string): ArrayBuffer {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(base64);
+  const buf = new ArrayBuffer(raw.length);
+  const view = new Uint8Array(buf);
+  for (let i = 0; i < raw.length; ++i) view[i] = raw.charCodeAt(i);
+  return buf;
+}
+
 export function NotificationButton() {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const panelRef = useRef<HTMLDivElement>(null);
 
+  // Push subscription state
+  const [pushSupported, setPushSupported] = useState(false);
+  const [pushSubscribed, setPushSubscribed] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+
   const active = getActiveAnnouncements();
   const unreadCount = mounted
     ? active.filter((a) => !readIds.has(a.id)).length
     : 0;
 
+  // Check push support and existing subscription on mount
   useEffect(() => {
     setMounted(true);
     setReadIds(getReadIds());
+
+    // Check Web Push API support
+    if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
+      setPushSupported(true);
+      // Check if already subscribed
+      navigator.serviceWorker.getRegistration("/sw.js").then((reg) => {
+        if (reg) {
+          reg.pushManager.getSubscription().then((sub) => {
+            setPushSubscribed(sub !== null);
+          }).catch(() => { /* ignore */ });
+        }
+      }).catch(() => { /* ignore */ });
+    }
   }, []);
+
+  const subscribeToPush = useCallback(async () => {
+    if (!pushSupported || pushLoading) return;
+    setPushLoading(true);
+    try {
+      // 1. Request notification permission
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        setPushLoading(false);
+        return;
+      }
+
+      // 2. Register service worker if needed
+      let registration = await navigator.serviceWorker.getRegistration("/sw.js");
+      if (!registration) {
+        registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+        // Wait for it to activate
+        await navigator.serviceWorker.ready;
+      }
+
+      // 3. Get VAPID public key from server
+      const origin = getApiOrigin();
+      const vapidRes = await fetch(`${origin}/api/push-notifications?action=vapid-public-key`);
+      if (!vapidRes.ok) throw new Error("Failed to get VAPID key");
+      const { publicKey } = await vapidRes.json() as { publicKey: string };
+
+      // 4. Subscribe via Push API
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToArrayBuffer(publicKey),
+      });
+
+      // 5. Send subscription to server
+      const subJSON = subscription.toJSON();
+      const putRes = await fetch(`${origin}/api/push-notifications`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: subJSON.endpoint,
+          keys: subJSON.keys,
+        }),
+      });
+
+      if (!putRes.ok) throw new Error("Failed to store subscription");
+      setPushSubscribed(true);
+    } catch (err) {
+      console.error("Push subscription failed:", err);
+    } finally {
+      setPushLoading(false);
+    }
+  }, [pushSupported, pushLoading]);
+
+  const unsubscribeFromPush = useCallback(async () => {
+    if (pushLoading) return;
+    setPushLoading(true);
+    try {
+      const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+      if (registration) {
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          // Remove from server
+          const origin = getApiOrigin();
+          await fetch(
+            `${origin}/api/push-notifications?endpoint=${encodeURIComponent(subscription.endpoint)}`,
+            { method: "DELETE" },
+          );
+          // Unsubscribe locally
+          await subscription.unsubscribe();
+        }
+      }
+      setPushSubscribed(false);
+    } catch (err) {
+      console.error("Push unsubscribe failed:", err);
+    } finally {
+      setPushLoading(false);
+    }
+  }, [pushLoading]);
 
   // Close on outside click
   useEffect(() => {
@@ -246,6 +354,29 @@ export function NotificationButton() {
               </ul>
             )}
           </div>
+
+          {/* Push Subscription Toggle */}
+          {pushSupported && (
+            <div className="border-t border-cyan-400/10 px-4 py-3">
+              <button
+                onClick={() => void (pushSubscribed ? unsubscribeFromPush() : subscribeToPush())}
+                disabled={pushLoading}
+                className={`flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-mono transition-all ${
+                  pushSubscribed
+                    ? "bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20"
+                    : "bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20"
+                } ${pushLoading ? "opacity-50 cursor-wait" : ""}`}
+                aria-label={pushSubscribed ? "Unsubscribe from push notifications" : "Subscribe to push notifications"}
+              >
+                <BellRing className="w-3.5 h-3.5" />
+                {pushLoading
+                  ? "Processing..."
+                  : pushSubscribed
+                    ? "Subscribed — tap to unsubscribe"
+                    : "Get push notifications"}
+              </button>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="border-t border-cyan-400/10 px-4 py-2">

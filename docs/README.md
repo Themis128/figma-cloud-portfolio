@@ -95,10 +95,14 @@ pnpm test:e2e                   # Run Playwright E2E tests
 - `PUT /api/push-notifications` - Store push subscription
 - `POST /api/push-notifications` - Send push notification
 - `DELETE /api/push-notifications` - Remove subscription
-- `GET /api/playwright-autofix/config` - Get Playwright autofix configuration
-- `POST /api/playwright-autofix/config` - Update Playwright autofix configuration
-- `POST /api/playwright-autofix/analyze` - Analyze test failure and get AI suggestions
-- `GET /api/playwright-autofix/patterns` - Get common error patterns
+- `GET /api/github/stats` - GitHub profile statistics (repos, stars, followers)
+- `GET /api/github/repos` - Public repositories with languages and topics
+- `GET /api/search?q=` - Search portfolio content (skills, pages, experience)
+- `GET /api/monitor` - Server monitoring data (uptime, memory, request count)
+- `GET /api/resume/download` - Download resume as PDF (jsPDF-generated)
+- `GET /api/resume/generate` - Resume data as JSON
+- `POST /api/webhook` - Generic webhook receiver
+- `GET /api/docs` - API documentation (JSON)
 
 ## 🚀 Deployment
 

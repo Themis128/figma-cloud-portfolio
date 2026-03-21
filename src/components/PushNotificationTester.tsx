@@ -591,7 +591,7 @@ export function PushNotificationTester() {
             },
             {
               ok: (subscriptionCount ?? 0) > 0,
-              label: "Subscribed via Notification Button",
+              label: "Subscribed via Announcements bell (public site)",
             },
             { ok: true, label: "Web Push API configured with VAPID keys" },
           ].map((req) => (

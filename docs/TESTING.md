@@ -681,7 +681,9 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Cookie Consent             | `tests/cookie-consent.spec.ts`                                             | ✅ Covered |
 | Accessibility Button       | `tests/accessibility-button.spec.ts`                                       | ✅ Covered |
 | PWA Update Notification    | `tests/pwa-update-notification.spec.ts`                                    | ✅ Covered |
-| Playwright Autofix API     | `server/routes/playwright-autofix.ts`                                      | ✅ Covered |
+| Push Notifications API     | `push-notifications-api.spec.ts` (14 tests — CRUD, S3 persistence, VAPID) | ✅ Covered |
+| GitHub Repos Section       | `projects.spec.ts` (4 tests — heading, cards, stats, profile link)         | ✅ Covered |
+| CommandPalette Search      | `command-palette.spec.ts` (2 tests — server search, debounce)              | ✅ Covered |
 | API Keys CRUD              | `api-keys.spec.ts`                                                         | ✅ Covered |
 
 **Total coverage: 100% of pages and major features**
