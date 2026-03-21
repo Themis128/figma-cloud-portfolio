@@ -36,9 +36,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy Amplify backend (auth)
-        continue-on-error: true
-        run: npx ampx pipeline-deploy --branch production --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
+      # Backend (Cognito auth) is stable — deploy manually with `pnpm amplify:deploy`
+      # when amplify/ files change. Do NOT run ampx pipeline-deploy here — it creates
+      # duplicate stacks and overwrites amplify_outputs.json with wrong pool IDs.
 
       - name: Generate Amplify outputs
         run: npx ampx generate outputs --branch production --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
