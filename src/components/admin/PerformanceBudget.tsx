@@ -129,12 +129,12 @@ export default function PerformanceBudget() {
   ).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Overall Score */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-4 sm:gap-6">
           <div className="text-center">
-            <p className={`text-3xl font-mono font-bold ${gradeColor}`}>
+            <p className={`text-2xl sm:text-3xl font-mono font-bold ${gradeColor}`}>
               {validScores.length > 0 ? grade : "—"}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -142,7 +142,7 @@ export default function PerformanceBudget() {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-foreground">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">
               {validScores.length > 0 ? overallScore : "—"}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -150,9 +150,9 @@ export default function PerformanceBudget() {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-green-400">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-green-400">
               {withinBudget}
-              <span className="text-sm text-foreground/30">/{metrics.length}</span>
+              <span className="text-xs sm:text-sm text-foreground/30">/{metrics.length}</span>
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
               Within Budget
@@ -168,7 +168,7 @@ export default function PerformanceBudget() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {metrics.map((m) => {
           const Icon = m.icon;
           const score = metricScore(m.value, m.budget, m.name === "CLS");
@@ -179,7 +179,7 @@ export default function PerformanceBudget() {
           return (
             <Card
               key={m.name}
-              className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 hover:border-cyan-400/20 transition-all duration-300"
+              className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 sm:p-4 hover:border-cyan-400/20 transition-all duration-300"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export default function PerformanceBudget() {
       </div>
 
       {/* Budget Reference */}
-      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4">
+      <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 sm:p-4">
         <p className="text-[10px] uppercase tracking-wider text-foreground/40 font-mono mb-3">
           Budget Thresholds (Google CWV &quot;Good&quot;)
         </p>

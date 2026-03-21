@@ -1,18 +1,16 @@
 "use client";
 
 import { fetchAuthSession } from "aws-amplify/auth";
-import { Keyboard, Pause, Play, RefreshCcw } from "lucide-react";
+import { Download, Keyboard, Pause, Play, RefreshCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { API_TIMEOUT_MS, AUTO_REFRESH_INTERVAL_MS, MAX_HISTORY_POINTS } from "@/lib/admin-constants";
 import ApiEndpointCard, {
   type EndpointDef,
   type EndpointStatus,
 } from "./ApiEndpointCard";
-
-const AUTO_REFRESH_INTERVAL_MS = 30_000;
-const MAX_HISTORY_POINTS = 20;
 
 const ENDPOINTS: EndpointDef[] = [
   {
@@ -159,6 +157,31 @@ function Sparkline({ points, className }: { points: number[]; className?: string
   );
 }
 
+/** Shimmer skeleton matching the ApiEndpointCard layout, shown before first load. */
+function SkeletonEndpointCard() {
+  return (
+    <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4">
+      <div className="flex items-start justify-between mb-3">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-10 rounded bg-foreground/5 animate-pulse" />
+            <div className="h-3 w-28 rounded bg-foreground/5 animate-pulse" />
+          </div>
+          <div className="h-2.5 w-16 rounded bg-foreground/5 animate-pulse" />
+        </div>
+        <div className="h-6 w-6 rounded bg-foreground/5 animate-pulse" />
+      </div>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-2 h-2 rounded-full bg-foreground/5 animate-pulse" />
+        <div className="h-3 w-14 rounded bg-foreground/5 animate-pulse" />
+        <div className="h-3 w-10 rounded bg-foreground/5 animate-pulse ml-auto" />
+      </div>
+      <div className="h-4 w-full rounded bg-foreground/5 animate-pulse mb-2" />
+      <div className="h-2.5 w-3/4 rounded bg-foreground/5 animate-pulse" />
+    </Card>
+  );
+}
+
 export default function ApiHealthDashboard() {
   const [statuses, setStatuses] = useState<Record<string, EndpointStatus>>(
     () => {
@@ -180,6 +203,7 @@ export default function ApiHealthDashboard() {
 
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshCount, setRefreshCount] = useState(0);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const checkEndpoint = useCallback(async (ep: EndpointDef) => {
     setStatuses((prev) => {
@@ -213,24 +237,32 @@ export default function ApiHealthDashboard() {
       if (ep.healthCheck.body) {
         opts.body = ep.healthCheck.body;
       }
-      const res = await fetch(ep.healthCheck.path, opts);
-      const time = Math.round(performance.now() - start);
 
-      setStatuses((prev) => ({
-        ...prev,
-        [ep.id]: {
-          state: res.ok || res.status === 302 || res.status === 400 ? "healthy" : "degraded",
-          statusCode: res.status,
-          responseTime: time,
-          lastChecked: new Date(),
-        },
-      }));
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+      try {
+        const res = await fetch(ep.healthCheck.path, { ...opts, signal: controller.signal });
+        const time = Math.round(performance.now() - start);
 
-      // Record history
-      setHistory((prev) => ({
-        ...prev,
-        [ep.id]: [...(prev[ep.id] ?? []).slice(-(MAX_HISTORY_POINTS - 1)), time],
-      }));
+        setStatuses((prev) => ({
+          ...prev,
+          [ep.id]: {
+            state: res.ok || res.status === 302 || res.status === 400 || (ep.requiresAuth && res.status === 401) ? "healthy" : "degraded",
+            statusCode: res.status,
+            responseTime: time,
+            lastChecked: new Date(),
+          },
+        }));
+
+        // Record history
+        setHistory((prev) => ({
+          ...prev,
+          [ep.id]: [...(prev[ep.id] ?? []).slice(-(MAX_HISTORY_POINTS - 1)), time],
+        }));
+        setHasLoadedOnce(true);
+      } finally {
+        clearTimeout(timeoutId);
+      }
     } catch (err) {
       const time = Math.round(performance.now() - start);
       setStatuses((prev) => ({
@@ -240,7 +272,9 @@ export default function ApiHealthDashboard() {
           statusCode: null,
           responseTime: time,
           lastChecked: new Date(),
-          error: err instanceof Error ? err.message : "Network error",
+          error: err instanceof Error
+            ? (err.name === "AbortError" ? "Request timed out (10s)" : err.message)
+            : "Network error",
         },
       }));
 
@@ -248,6 +282,7 @@ export default function ApiHealthDashboard() {
         ...prev,
         [ep.id]: [...(prev[ep.id] ?? []).slice(-(MAX_HISTORY_POINTS - 1)), time],
       }));
+      setHasLoadedOnce(true);
     }
   }, []);
 
@@ -312,20 +347,20 @@ export default function ApiHealthDashboard() {
     times.length > 0 ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Stats Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-foreground">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto pb-1 sm:pb-0" role="status" aria-live="polite" aria-label="Endpoint health summary">
+          <div className="text-center shrink-0">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">
               {ENDPOINTS.length}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
               Total
             </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-green-400">
+          <div className="text-center shrink-0">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-green-400">
               {healthy}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -333,8 +368,8 @@ export default function ApiHealthDashboard() {
             </p>
           </div>
           {degraded > 0 && (
-            <div className="text-center">
-              <p className="text-2xl font-mono font-bold text-yellow-400">
+            <div className="text-center shrink-0">
+              <p className="text-xl sm:text-2xl font-mono font-bold text-yellow-400">
                 {degraded}
               </p>
               <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -343,8 +378,8 @@ export default function ApiHealthDashboard() {
             </div>
           )}
           {down > 0 && (
-            <div className="text-center">
-              <p className="text-2xl font-mono font-bold text-red-400">
+            <div className="text-center shrink-0">
+              <p className="text-xl sm:text-2xl font-mono font-bold text-red-400">
                 {down}
               </p>
               <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -353,13 +388,13 @@ export default function ApiHealthDashboard() {
             </div>
           )}
           {avgTime > 0 && (
-            <div className="text-center">
+            <div className="text-center shrink-0">
               <div className="flex items-center gap-2">
-                <p className="text-2xl font-mono font-bold text-cyan-400">
+                <p className="text-xl sm:text-2xl font-mono font-bold text-cyan-400">
                   {avgTime}
-                  <span className="text-sm text-foreground/40">ms</span>
+                  <span className="text-xs sm:text-sm text-foreground/40">ms</span>
                 </p>
-                <Sparkline points={avgHistory} className="text-cyan-400/60" />
+                <Sparkline points={avgHistory} className="text-cyan-400/60 hidden sm:block" />
               </div>
               <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
                 Avg
@@ -373,6 +408,7 @@ export default function ApiHealthDashboard() {
             variant="outline"
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
+            aria-label={autoRefresh ? "Pause auto-refresh" : "Resume auto-refresh"}
             className={`border-border/30 font-mono text-xs ${
               autoRefresh
                 ? "text-green-400 border-green-500/30"
@@ -384,16 +420,50 @@ export default function ApiHealthDashboard() {
             ) : (
               <Play className="w-3 h-3 mr-1.5" />
             )}
-            {autoRefresh ? "Auto" : "Paused"}
+            <span className="hidden sm:inline">{autoRefresh ? "Auto" : "Paused"}</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={refreshAll}
+            aria-label="Refresh all endpoints"
             className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
           >
-            <RefreshCcw className="w-3.5 h-3.5 mr-1.5" />
-            Refresh All
+            <RefreshCcw className="w-3.5 h-3.5 sm:mr-1.5" />
+            <span className="hidden sm:inline">Refresh All</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const exportData = ENDPOINTS.map((ep) => {
+                const s = statuses[ep.id] ?? defaultStatus();
+                return {
+                  id: ep.id,
+                  name: ep.name,
+                  path: ep.path,
+                  service: ep.service,
+                  state: s.state,
+                  statusCode: s.statusCode,
+                  responseTime: s.responseTime,
+                  lastChecked: s.lastChecked?.toISOString() ?? null,
+                  ...(s.error !== undefined && { error: s.error }),
+                  responseHistory: history[ep.id] ?? [],
+                };
+              });
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `health-check-${new Date().toISOString().split("T")[0]}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            aria-label="Export health check data as JSON"
+            className="border-border/30 text-foreground/40 hover:text-foreground font-mono text-xs"
+          >
+            <Download className="w-3 h-3 mr-1.5" />
+            Export
           </Button>
           <span className="hidden sm:flex items-center gap-1 text-[9px] text-foreground/20 font-mono">
             <Keyboard className="w-3 h-3" />
@@ -404,7 +474,7 @@ export default function ApiHealthDashboard() {
 
       {/* Auto-refresh status line */}
       {autoRefresh && (
-        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 px-4 py-2 flex items-center justify-between">
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 px-3 sm:px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             <span className="text-[10px] font-mono text-foreground/30">
@@ -427,15 +497,17 @@ export default function ApiHealthDashboard() {
 
       {/* Endpoint Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {ENDPOINTS.map((ep) => (
-          <ApiEndpointCard
-            key={ep.id}
-            endpoint={ep}
-            status={statuses[ep.id] ?? defaultStatus()}
-            onRefresh={() => void checkEndpoint(ep)}
-            {...(history[ep.id] !== undefined && { responseHistory: history[ep.id] })}
-          />
-        ))}
+        {!hasLoadedOnce
+          ? ENDPOINTS.map((ep) => <SkeletonEndpointCard key={ep.id} />)
+          : ENDPOINTS.map((ep) => (
+              <ApiEndpointCard
+                key={ep.id}
+                endpoint={ep}
+                status={statuses[ep.id] ?? defaultStatus()}
+                onRefresh={() => void checkEndpoint(ep)}
+                {...(history[ep.id] !== undefined && { responseHistory: history[ep.id] })}
+              />
+            ))}
       </div>
     </div>
   );

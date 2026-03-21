@@ -3,6 +3,7 @@
 import {
   AlertTriangle,
   Ban,
+  Download,
   Trash2,
   Wifi,
   WifiOff,
@@ -60,6 +61,23 @@ function formatTime(date: Date): string {
   });
 }
 
+/** Strip sensitive data patterns from error messages before storing */
+function sanitizeSensitiveData(text: string): string {
+  return text
+    // JWT tokens (eyJ... base64 segments)
+    .replace(/eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g, "[REDACTED]")
+    // Authorization headers in logged text
+    .replace(/(?:Authorization|Bearer)\s*[:=]\s*\S+/gi, "Authorization: [REDACTED]")
+    // API keys: sk-*, key_*, tok_* patterns
+    .replace(/\b(?:sk-|key_|tok_)[A-Za-z0-9_-]{8,}/g, "[REDACTED]")
+    // token=<value> in URLs or text
+    .replace(/token=[A-Za-z0-9_.-]{8,}/gi, "token=[REDACTED]")
+    // Generic api_key / apikey query params
+    .replace(/(?:api_?key|apikey|secret)=[A-Za-z0-9_.-]{8,}/gi, "$<key>=[REDACTED]")
+    // Fallback: any long base64-ish string after common secret labels
+    .replace(/(?:password|secret|credential|token)\s*[:=]\s*["']?[A-Za-z0-9_/+=.-]{12,}["']?/gi, "[REDACTED]");
+}
+
 export default function ErrorLogViewer() {
   const [errors, setErrors] = useState<ErrorEntry[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -78,6 +96,9 @@ export default function ErrorLogViewer() {
     function addError(entry: Omit<ErrorEntry, "id" | "timestamp">) {
       const newEntry: ErrorEntry = {
         ...entry,
+        message: sanitizeSensitiveData(entry.message),
+        ...(entry.source !== undefined && { source: sanitizeSensitiveData(entry.source) }),
+        ...(entry.stack !== undefined && { stack: sanitizeSensitiveData(entry.stack) }),
         id: crypto.randomUUID(),
         timestamp: new Date(),
       };
@@ -185,12 +206,12 @@ export default function ErrorLogViewer() {
   }, {});
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-foreground">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto">
+          <div className="text-center shrink-0">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">
               {errors.length}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -201,8 +222,8 @@ export default function ErrorLogViewer() {
             const config = TYPE_CONFIG[type as ErrorEntry["type"]];
             if (!config) return null;
             return (
-              <div key={type} className="text-center">
-                <p className={`text-2xl font-mono font-bold ${config.color}`}>
+              <div key={type} className="text-center shrink-0">
+                <p className={`text-xl sm:text-2xl font-mono font-bold ${config.color}`}>
                   {count}
                 </p>
                 <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -217,6 +238,7 @@ export default function ErrorLogViewer() {
             variant="outline"
             size="sm"
             onClick={() => setIsCapturing(!isCapturing)}
+            aria-label={isCapturing ? "Pause error capturing" : "Resume error capturing"}
             className={`font-mono text-xs ${
               isCapturing
                 ? "border-green-500/30 text-green-400"
@@ -233,8 +255,32 @@ export default function ErrorLogViewer() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => {
+              const exportData = errors.map((e) => ({
+                ...e,
+                timestamp: e.timestamp.toISOString(),
+              }));
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `error-log-${new Date().toISOString().split("T")[0]}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            disabled={errors.length === 0}
+            aria-label="Export error logs as JSON"
+            className="border-border/30 text-foreground/40 hover:text-foreground font-mono text-xs"
+          >
+            <Download className="w-3 h-3 mr-1.5" />
+            Export JSON
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setErrors([])}
             disabled={errors.length === 0}
+            aria-label="Clear all captured errors"
             className="border-border/30 text-foreground/40 hover:text-foreground font-mono text-xs"
           >
             <Trash2 className="w-3 h-3 mr-1.5" />
@@ -245,17 +291,18 @@ export default function ErrorLogViewer() {
 
       {/* Capture status */}
       {isCapturing && (
-        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 px-4 py-2 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 px-3 sm:px-4 py-2 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
           <span className="text-[10px] font-mono text-foreground/30">
-            Capturing browser errors, unhandled rejections, console.error, and failed network requests (5xx)
+            <span className="hidden sm:inline">Capturing browser errors, unhandled rejections, console.error, and failed network requests (5xx)</span>
+            <span className="sm:hidden">Capturing errors in real time</span>
           </span>
         </Card>
       )}
 
       {/* Error List */}
       {errors.length === 0 ? (
-        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-8 text-center">
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-6 sm:p-8 text-center">
           <p className="text-foreground/20 font-mono text-sm">
             No errors captured yet
           </p>
@@ -264,7 +311,7 @@ export default function ErrorLogViewer() {
           </p>
         </Card>
       ) : (
-        <div className="space-y-2 max-h-[600px] overflow-y-auto">
+        <div className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto" role="log" aria-live="polite" aria-label="Captured error log">
           {errors.map((entry) => {
             const config = TYPE_CONFIG[entry.type];
             if (!config) return null;
@@ -274,7 +321,7 @@ export default function ErrorLogViewer() {
             return (
               <Card
                 key={entry.id}
-                className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 hover:border-border/30 transition-colors cursor-pointer"
+                className="bg-card/40 backdrop-blur-sm border border-border/20 p-2.5 sm:p-3 hover:border-border/30 transition-colors cursor-pointer"
                 onClick={() =>
                   setExpandedId(isExpanded ? null : entry.id)
                 }

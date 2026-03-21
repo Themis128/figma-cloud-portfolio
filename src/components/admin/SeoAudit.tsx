@@ -85,28 +85,42 @@ export default function SeoAudit() {
     setPages([]);
     setScannedCount(0);
 
-    const results: PageSeoData[] = [];
-    for (const path of PAGES) {
-      try {
-        const res = await fetch(path, { cache: "no-store" });
-        const html = await res.text();
-        results.push(extractSeoFromHtml(html, path));
-      } catch {
-        results.push({
-          path,
-          title: null,
-          description: null,
-          ogImage: null,
-          ogTitle: null,
-          canonical: null,
-          robots: null,
-          structuredData: false,
-          status: "error",
-          issues: ["Failed to fetch page"],
-        });
-      }
-      setScannedCount((c) => c + 1);
-      setPages([...results]);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15_000 * PAGES.length);
+
+    try {
+      const results = await Promise.all(
+        PAGES.map(async (path) => {
+          try {
+            const res = await fetch(path, { cache: "no-store", signal: controller.signal });
+            const html = await res.text();
+            const result = extractSeoFromHtml(html, path);
+            setScannedCount((c) => c + 1);
+            return result;
+          } catch (err) {
+            setScannedCount((c) => c + 1);
+            const issue = err instanceof Error && err.name === "AbortError"
+              ? "Request timed out"
+              : "Failed to fetch page";
+            return {
+              path,
+              title: null,
+              description: null,
+              ogImage: null,
+              ogTitle: null,
+              canonical: null,
+              robots: null,
+              structuredData: false,
+              status: "error" as const,
+              issues: [issue],
+            };
+          }
+        })
+      );
+
+      setPages(results);
+    } finally {
+      clearTimeout(timeoutId);
     }
 
     setScanning(false);
@@ -121,20 +135,20 @@ export default function SeoAudit() {
   const errorCount = pages.filter((p) => p.status === "error").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Summary Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-foreground">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto">
+          <div className="text-center shrink-0">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">
               {PAGES.length}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
               Pages
             </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-mono font-bold text-green-400">
+          <div className="text-center shrink-0">
+            <p className="text-xl sm:text-2xl font-mono font-bold text-green-400">
               {okCount}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -142,8 +156,8 @@ export default function SeoAudit() {
             </p>
           </div>
           {warnCount > 0 && (
-            <div className="text-center">
-              <p className="text-2xl font-mono font-bold text-yellow-400">
+            <div className="text-center shrink-0">
+              <p className="text-xl sm:text-2xl font-mono font-bold text-yellow-400">
                 {warnCount}
               </p>
               <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -152,8 +166,8 @@ export default function SeoAudit() {
             </div>
           )}
           {errorCount > 0 && (
-            <div className="text-center">
-              <p className="text-2xl font-mono font-bold text-red-400">
+            <div className="text-center shrink-0">
+              <p className="text-xl sm:text-2xl font-mono font-bold text-red-400">
                 {errorCount}
               </p>
               <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
@@ -164,8 +178,8 @@ export default function SeoAudit() {
         </div>
         <div className="flex items-center gap-2">
           {scanning && (
-            <span className="text-[10px] font-mono text-foreground/30">
-              {scannedCount}/{PAGES.length}
+            <span className="text-[10px] font-mono text-foreground/30" role="status" aria-live="polite">
+              Auditing {scannedCount}/{PAGES.length} pages...
             </span>
           )}
           <Button
@@ -182,11 +196,11 @@ export default function SeoAudit() {
       </div>
 
       {/* Page Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         {pages.map((page) => (
           <Card
             key={page.path}
-            className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 hover:border-cyan-400/20 transition-all duration-300"
+            className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 sm:p-4 hover:border-cyan-400/20 transition-all duration-300"
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 min-w-0">
@@ -217,7 +231,7 @@ export default function SeoAudit() {
             <div className="flex items-center gap-2 mb-1">
               <FileText className="w-3 h-3 text-foreground/20 shrink-0" />
               <span className="text-[10px] font-mono text-foreground/40 truncate">
-                {page.title ?? "—"}
+                {page.title ?? "\u2014"}
               </span>
             </div>
 
@@ -225,7 +239,7 @@ export default function SeoAudit() {
             <div className="flex items-start gap-2 mb-1">
               <Search className="w-3 h-3 text-foreground/20 shrink-0 mt-0.5" />
               <span className="text-[10px] font-mono text-foreground/40 line-clamp-2">
-                {page.description ?? "—"}
+                {page.description ?? "\u2014"}
               </span>
             </div>
 
