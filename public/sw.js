@@ -276,6 +276,17 @@ self.addEventListener("push", (event) => {
       self.registration
         .showNotification(data.title || "Portfolio Notification", options)
         .then(() => {
+          // Forward push data to all open tabs for in-app display
+          self.clients.matchAll({ type: "window" }).then((clientList) => {
+            for (const client of clientList) {
+              client.postMessage({
+                type: "PUSH_RECEIVED",
+                title: data.title || "Portfolio Notification",
+                body: data.body || "",
+                url: data.url || "/",
+              });
+            }
+          });
           // Track notification metrics if analytics enabled
           if (options.data.analytics) {
             trackNotificationReceived(data);
