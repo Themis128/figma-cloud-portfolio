@@ -27,7 +27,7 @@ steps:
       node-version: 22
 
   - name: Install pnpm
-    uses: pnpm/action-setup@v4
+    run: corepack enable
 
   - name: Install dependencies
     run: pnpm install --frozen-lockfile
