@@ -9,7 +9,13 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: production
     steps:
       - uses: actions/checkout@v6
-      - run: echo "Hello from test workflow with environment"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+      - run: echo "AWS_KEY=${{ secrets.AWS_ACCESS_KEY_ID != '' && 'set' || 'unset' }}"
+      - run: echo "Test complete"
