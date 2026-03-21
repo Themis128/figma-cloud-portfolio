@@ -83,6 +83,10 @@ export default function ApiConsole() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   const execute = useCallback(async () => {
+    if (!url.startsWith("/")) {
+      setResponse({ status: 0, statusText: "Invalid URL", body: "URL must start with / to prevent external requests", timing: 0 });
+      return;
+    }
     setIsLoading(true);
     setResponse(null);
     const start = performance.now();
