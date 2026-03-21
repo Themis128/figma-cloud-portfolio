@@ -182,34 +182,36 @@ export function NotificationButton() {
     if (!pushSupported || pushLoading) return;
     setPushLoading(true);
     try {
-      // 1. Request notification permission
-      const permission = await Notification.requestPermission();
+      // 1. Request notification permission (skip if already granted)
+      let permission = Notification.permission;
+      if (permission === "default") {
+        permission = await Notification.requestPermission();
+      }
       if (permission !== "granted") {
         setPushLoading(false);
         return;
       }
 
-      // 2. Get an active SW registration (register if needed, with timeout)
-      const readyWithTimeout = async (): Promise<ServiceWorkerRegistration> => {
-        // Try existing registration first
-        const existing = await navigator.serviceWorker.getRegistration("/");
-        if (existing?.active) return existing;
-
-        // Register and wait for active state with timeout
+      // 2. Get an active SW registration — use navigator.serviceWorker.ready
+      //    which resolves when any SW controlling this page is active
+      const registration = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("SW ready timeout")), 5000),
+        ),
+      ]).catch(async () => {
+        // Fallback: register fresh and wait
         const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
         if (reg.active) return reg;
-
         return new Promise<ServiceWorkerRegistration>((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error("SW activation timeout")), 10000);
+          const timeout = setTimeout(() => reject(new Error("SW activation timeout")), 8000);
           const sw = reg.installing ?? reg.waiting;
-          if (!sw) { clearTimeout(timeout); reject(new Error("No SW found")); return; }
+          if (!sw) { clearTimeout(timeout); reject(new Error("No SW")); return; }
           sw.addEventListener("statechange", () => {
             if (sw.state === "activated") { clearTimeout(timeout); resolve(reg); }
           });
         });
-      };
-
-      const registration = await readyWithTimeout();
+      });
 
       // 3. Get VAPID public key from server
       const origin = getApiOrigin();
