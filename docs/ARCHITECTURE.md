@@ -353,6 +353,8 @@ Eight interactive components enhance user engagement across the site. Seven are 
 
 The frontend is a **static export** (`output: "export"`) — no server-side rendering or API routes in Next.js. All backend logic runs on a **single AWS Lambda function** (`figma-portfolio-api`) fronted by CloudFront at `/api/*`.
 
+> **Same-origin API routing**: The frontend calls `/api/*` using relative paths (empty origin string from `getApiOrigin()`). CloudFront routes these requests to the Lambda Function URL origin. This eliminates CORS preflight requests, avoids Edge Tracking Prevention in Safari/Brave, and simplifies the security model. The direct Lambda Function URL is no longer used at runtime — it is retained in `LAMBDA_API_URL` as a fallback reference only.
+
 ### Production (Lambda)
 
 - **Function URL**: `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
@@ -407,6 +409,10 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - Push notification support via Web Push API (VAPID keys, S3-persisted subscriptions)
 - Subscribe/unsubscribe toggle in the Announcements bell dropdown (public site)
 - Service worker registration automatic on subscribe; manual from admin Push tab
+- **Same-origin API routing**: All `/api/*` requests route through CloudFront to the Lambda origin. The frontend uses relative paths (empty origin), eliminating third-party domain issues (CORS, Edge Tracking Prevention). The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only.
+- **In-app push toasts** (`src/components/PushToast.tsx`): Cyberpunk-themed toast notifications that slide in from the top-right when the service worker receives a push message. Listens for `PUSH_RECEIVED` postMessage from `sw.js`, glass morphism styling with cyan accents, auto-dismiss after 8s with animated progress bar, stacks up to 5 toasts, dismiss button, and optional "View" link. Added to the root layout.
+- **Push notifications in Announcements dropdown**: `NotificationButton` listens for `PUSH_RECEIVED` messages from the service worker. Received push notifications are saved to `localStorage` (key: `site-push-notifications`, max 20 items) and displayed with a purple "Push" badge and timestamp. The dropdown merges push notifications (newest first) with static announcements.
+- **Service worker push forwarding**: `public/sw.js` sends `postMessage({ type: "PUSH_RECEIVED", title, body, url })` to all open client tabs after displaying the OS notification.
 
 ---
 
