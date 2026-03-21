@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { API_ORIGIN, API_TIMEOUT_MS, AUTO_REFRESH_INTERVAL_MS, MAX_HISTORY_POINTS } from "@/lib/admin-constants";
+import { API_TIMEOUT_MS, AUTO_REFRESH_INTERVAL_MS, MAX_HISTORY_POINTS, getApiOrigin } from "@/lib/admin-constants";
 import ApiEndpointCard, {
   type EndpointDef,
   type EndpointStatus,
@@ -241,7 +241,7 @@ export default function ApiHealthDashboard() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
       try {
-        const res = await fetch(`${API_ORIGIN}${ep.healthCheck.path}`, { ...opts, signal: controller.signal });
+        const res = await fetch(`${getApiOrigin()}${ep.healthCheck.path}`, { ...opts, signal: controller.signal });
         const time = Math.round(performance.now() - start);
 
         setStatuses((prev) => ({

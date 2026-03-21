@@ -24,10 +24,15 @@ export const API_TIMEOUT_MS = 10_000;
  * We need the Lambda function URL. In dev, relative paths work via Express proxy.
  */
 export const LAMBDA_API_URL = "https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws";
-export const API_ORIGIN =
-  typeof globalThis.window !== "undefined" && globalThis.window.location.hostname !== "localhost"
-    ? LAMBDA_API_URL
-    : "";
+
+/** Returns the API origin — must be a function (not a const) because static export
+ *  evaluates module-level code at build time when `window` is undefined. */
+export function getApiOrigin(): string {
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    return LAMBDA_API_URL;
+  }
+  return "";
+}
 
 /* ------------------------------------------------------------------ */
 /*  HTTP status colour mapping                                        */
