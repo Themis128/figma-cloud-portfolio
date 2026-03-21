@@ -841,7 +841,7 @@ Execute a Claude API call via Anthropic SDK.
 
 ```json
 {
-  "model": "claude-3-haiku-20240307",
+  "model": "claude-3-5-haiku-20241022",
   "max_tokens": 1000,
   "messages": [{ "role": "user", "content": "Hello, Claude!" }],
   "system": "You are a helpful assistant.",
@@ -862,7 +862,7 @@ Execute a Claude API call via Anthropic SDK.
   "type": "message",
   "role": "assistant",
   "content": [{ "type": "text", "text": "Hello! How can I help you today?" }],
-  "model": "claude-3-haiku-20240307",
+  "model": "claude-3-5-haiku-20241022",
   "stop_reason": "end_turn",
   "stop_sequence": null,
   "usage": {
@@ -878,7 +878,7 @@ Execute a Claude API call via Anthropic SDK.
 
 - `claude-3-opus-20240229`
 - `claude-3-sonnet-20240229`
-- `claude-3-haiku-20240307`
+- `claude-3-5-haiku-20241022`
 - `claude-3-5-sonnet-20240620`
 
 **Configuration:**
@@ -897,7 +897,7 @@ Execute an AI agent workflow.
 {
   "templateId": "basic-chatbot",
   "inputs": { "userInput": "Hello" },
-  "model": "claude-3-haiku-20240307",
+  "model": "claude-3-5-haiku-20241022",
   "provider": "anthropic"
 }
 ```
@@ -1600,7 +1600,7 @@ interface ClaudeRequest {
   model:
     | "claude-3-opus-20240229"
     | "claude-3-sonnet-20240229"
-    | "claude-3-haiku-20240307"
+    | "claude-3-5-haiku-20241022"
     | "claude-3-5-sonnet-20240620";
   max_tokens: number;
   messages: ClaudeMessage[];
@@ -1628,7 +1628,7 @@ interface AgentExecutionRequest {
   model?:
     | "claude-3-opus-20240229"
     | "claude-3-sonnet-20240229"
-    | "claude-3-haiku-20240307"
+    | "claude-3-5-haiku-20241022"
     | "claude-3-5-sonnet-20240620"
     | "gpt-4"
     | "gpt-3.5-turbo";
@@ -1733,7 +1733,7 @@ curl -X POST http://localhost:3001/api/ai/agent \
   -d '{
     "templateId": "basic-chatbot",
     "inputs": { "userInput": "Hello" },
-    "model": "claude-3-haiku-20240307",
+    "model": "claude-3-5-haiku-20241022",
     "provider": "anthropic"
   }'
 ```

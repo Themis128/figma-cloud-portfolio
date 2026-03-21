@@ -8,24 +8,13 @@ backend:
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
   phases:
-    preBuild:
-      commands:
-        - npm install -g pnpm
-        - pnpm install --frozen-lockfile
     build:
       commands:
-        - npx ampx generate outputs --branch $AWS_BRANCH --app-id $AWS_APP_ID
-        - NEXT_PRIVATE_STANDALONE=false npx next build --webpack
+        - echo "Frontend deployed via GitHub Actions to S3 + CloudFront. Skipping."
   artifacts:
-    baseDirectory: out
+    baseDirectory: /
     files:
-      - "**/*"
-  cache:
-    paths:
-      - node_modules/**/*
-      - .next/cache/**/*
-  environment:
-    NODE_OPTIONS: "--max-old-space-size=2048"
+      - /dev/null
 
 # Custom headers for security and caching (CloudFront level)
 customHeaders:

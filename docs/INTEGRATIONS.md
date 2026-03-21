@@ -195,7 +195,7 @@ GITHUB_TOKEN=ghp_your_personal_access_token
 **Features**:
 
 - Direct Claude API integration
-- Agent workflow execution (claude-3-haiku-20240307)
+- Agent workflow execution (claude-3-5-haiku-20241022)
 - Token usage tracking
 - System prompts for context-aware responses
 - Streaming responses
@@ -210,7 +210,7 @@ ANTHROPIC_API_KEY=sk-ant-api03-your_key_here
 
 - `claude-3-opus-20240229` (Most capable)
 - `claude-3-sonnet-20240229` (Balanced)
-- `claude-3-haiku-20240307` (Fast and cost-effective)
+- `claude-3-5-haiku-20241022` (Fast and cost-effective)
 
 **Setup**:
 
@@ -222,7 +222,7 @@ ANTHROPIC_API_KEY=sk-ant-api03-your_key_here
 
 ```typescript
 const response = await anthropic.messages.create({
-  model: "claude-3-haiku-20240307",
+  model: "claude-3-5-haiku-20241022",
   max_tokens: 1024,
   messages: [{ role: "user", content: "Hello" }],
 });
