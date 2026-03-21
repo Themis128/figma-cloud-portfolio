@@ -2,8 +2,8 @@
 # Dev environment startup dashboard.
 # Runs as predev:all hook to show system status before servers start.
 
-SANDBOX_API="oeaimykf5vg3dj3d7wvumx5lhy"
 PRODUCTION_API="xwonpbkzc5ab5fqyfx53spkh7u"
+PRODUCTION_COGNITO="us-east-1_EM9ipdfSA"
 OUTPUTS="amplify_outputs.json"
 
 # Colors
@@ -89,17 +89,15 @@ if [ -f "$OUTPUTS" ]; then
   USER_POOL=$(grep '"user_pool_id"' "$OUTPUTS" 2>/dev/null | head -1 | sed 's/.*"user_pool_id": *"//;s/".*//')
 
   if [ -z "$API_URL" ]; then
-    echo -e "  Connected:  ${GREEN}● auth only${NC}  ${DIM}(no AppSync API)${NC}"
-  elif echo "$API_URL" | grep -q "$SANDBOX_API"; then
-    echo -e "  Connected:  ${GREEN}● sandbox${NC}  ${DIM}(${SANDBOX_API})${NC}"
+    if [ "$USER_POOL" = "$PRODUCTION_COGNITO" ]; then
+      echo -e "  Connected:  ${GREEN}● production (auth only)${NC}"
+    else
+      echo -e "  Connected:  ${GREEN}● auth only${NC}  ${DIM}(no AppSync API)${NC}"
+    fi
   elif echo "$API_URL" | grep -q "$PRODUCTION_API"; then
     echo -e "  Connected:  ${YELLOW}▲ PRODUCTION${NC}  ${DIM}(${PRODUCTION_API})${NC}"
-    if [ "$SANDBOX_RUNNING" = true ]; then
-      echo -e "  ${YELLOW}  ⚠ Sandbox running but config points to production!${NC}"
-      echo -e "  ${DIM}    Fix: touch amplify/backend.ts${NC}"
-    fi
   else
-    echo -e "  Connected:  ${RED}? unknown${NC}  ${DIM}(${API_URL})${NC}"
+    echo -e "  Connected:  ${GREEN}● sandbox${NC}  ${DIM}(${API_URL})${NC}"
   fi
 
   if [ -n "$USER_POOL" ]; then
