@@ -189,13 +189,27 @@ export function NotificationButton() {
         return;
       }
 
-      // 2. Register service worker if needed
-      let registration = await navigator.serviceWorker.getRegistration("/sw.js");
-      if (!registration) {
-        registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        // Wait for it to activate
-        await navigator.serviceWorker.ready;
-      }
+      // 2. Get an active SW registration (register if needed, with timeout)
+      const readyWithTimeout = async (): Promise<ServiceWorkerRegistration> => {
+        // Try existing registration first
+        const existing = await navigator.serviceWorker.getRegistration("/");
+        if (existing?.active) return existing;
+
+        // Register and wait for active state with timeout
+        const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+        if (reg.active) return reg;
+
+        return new Promise<ServiceWorkerRegistration>((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error("SW activation timeout")), 10000);
+          const sw = reg.installing ?? reg.waiting;
+          if (!sw) { clearTimeout(timeout); reject(new Error("No SW found")); return; }
+          sw.addEventListener("statechange", () => {
+            if (sw.state === "activated") { clearTimeout(timeout); resolve(reg); }
+          });
+        });
+      };
+
+      const registration = await readyWithTimeout();
 
       // 3. Get VAPID public key from server
       const origin = getApiOrigin();
