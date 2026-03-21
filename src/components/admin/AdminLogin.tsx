@@ -37,7 +37,7 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
             shake ? "animate-pulse" : ""
           }`}
         >
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" aria-describedby={errorMessage ? "login-error" : undefined}>
             <div className="text-center space-y-3">
               <div className="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mx-auto">
                 <Lock className="w-5 h-5 text-cyan-400" />
@@ -58,6 +58,8 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
                 autoComplete="email"
                 required
                 disabled={submitting}
+                aria-invalid={errorMessage ? true : undefined}
+                aria-label="Email address"
               />
               <Input
                 type="password"
@@ -68,11 +70,13 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
                 autoComplete="current-password"
                 required
                 disabled={submitting}
+                aria-invalid={errorMessage ? true : undefined}
+                aria-label="Password"
               />
             </div>
 
             {errorMessage && (
-              <p className="text-destructive text-xs text-center font-mono">
+              <p id="login-error" className="text-destructive text-xs text-center font-mono" role="alert">
                 {errorMessage}
               </p>
             )}

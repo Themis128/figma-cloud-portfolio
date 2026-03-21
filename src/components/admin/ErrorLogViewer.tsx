@@ -3,6 +3,7 @@
 import {
   AlertTriangle,
   Ban,
+  Download,
   Trash2,
   Wifi,
   WifiOff,
@@ -217,6 +218,7 @@ export default function ErrorLogViewer() {
             variant="outline"
             size="sm"
             onClick={() => setIsCapturing(!isCapturing)}
+            aria-label={isCapturing ? "Pause error capturing" : "Resume error capturing"}
             className={`font-mono text-xs ${
               isCapturing
                 ? "border-green-500/30 text-green-400"
@@ -233,8 +235,32 @@ export default function ErrorLogViewer() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => {
+              const exportData = errors.map((e) => ({
+                ...e,
+                timestamp: e.timestamp.toISOString(),
+              }));
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `error-log-${new Date().toISOString().split("T")[0]}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            disabled={errors.length === 0}
+            aria-label="Export error logs as JSON"
+            className="border-border/30 text-foreground/40 hover:text-foreground font-mono text-xs"
+          >
+            <Download className="w-3 h-3 mr-1.5" />
+            Export JSON
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setErrors([])}
             disabled={errors.length === 0}
+            aria-label="Clear all captured errors"
             className="border-border/30 text-foreground/40 hover:text-foreground font-mono text-xs"
           >
             <Trash2 className="w-3 h-3 mr-1.5" />
@@ -264,7 +290,7 @@ export default function ErrorLogViewer() {
           </p>
         </Card>
       ) : (
-        <div className="space-y-2 max-h-[600px] overflow-y-auto">
+        <div className="space-y-2 max-h-[600px] overflow-y-auto" role="log" aria-live="polite" aria-label="Captured error log">
           {errors.map((entry) => {
             const config = TYPE_CONFIG[entry.type];
             if (!config) return null;
