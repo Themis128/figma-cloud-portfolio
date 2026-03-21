@@ -1567,3 +1567,87 @@ test.describe("Admin Page — SEO", () => {
     await expect(page.locator("text=Admin Dashboard")).not.toBeVisible();
   });
 });
+
+// ─── Accessibility ──────────────────────────────────────────────────────────
+
+test.describe("Admin Page — Accessibility", () => {
+  test("should have ARIA labels on login form inputs", async ({ page }) => {
+    await page.goto("/admin");
+    await page.waitForLoadState("domcontentloaded");
+
+    const emailInput = page.locator('input[type="email"]');
+    await expect(emailInput).toHaveAttribute("aria-label", "Email address");
+
+    const passInput = page.locator('input[type="password"]');
+    await expect(passInput).toHaveAttribute("aria-label", "Password");
+  });
+
+  test("should show error with role=alert on invalid login", async ({ page }) => {
+    await page.goto("/admin");
+    await page.waitForLoadState("domcontentloaded");
+
+    await page.locator('input[type="email"]').fill("wrong@test.com");
+    await page.locator('input[type="password"]').fill("wrong");
+    await page.locator('button[type="submit"]').click();
+
+    const authError = page.locator('[role="alert"]');
+    await expect(authError).toBeVisible({ timeout: 20000 });
+  });
+
+  test("should have aria-describedby linking form to error", async ({ page }) => {
+    await page.goto("/admin");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Before error, no aria-describedby
+    const form = page.locator("form");
+    await expect(form).not.toHaveAttribute("aria-describedby");
+
+    // Trigger error
+    await page.locator('input[type="email"]').fill("wrong@test.com");
+    await page.locator('input[type="password"]').fill("wrong");
+    await page.locator('button[type="submit"]').click();
+
+    // After error, form links to error message
+    const errorEl = page.locator('[role="alert"]');
+    await expect(errorEl).toBeVisible({ timeout: 20000 });
+    await expect(form).toHaveAttribute("aria-describedby", "login-error");
+  });
+});
+
+// ─── Mobile Responsive ──────────────────────────────────────────────────────
+
+test.describe("Admin Page — Mobile Responsive", () => {
+  test("should show dropdown tab selector on mobile viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    const success = await adminLogin(page);
+    if (!success) {
+      test.skip(true, "Cognito auth is not available");
+      return;
+    }
+
+    // Mobile dropdown should be visible
+    const mobileSelect = page.locator('select[aria-label="Select admin tab"]');
+    await expect(mobileSelect).toBeVisible();
+
+    // Desktop tabs should be hidden
+    const desktopTabs = page.locator('[role="tablist"]');
+    await expect(desktopTabs).not.toBeVisible();
+  });
+
+  test("should show tab bar on desktop viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const success = await adminLogin(page);
+    if (!success) {
+      test.skip(true, "Cognito auth is not available");
+      return;
+    }
+
+    // Desktop tabs should be visible
+    const desktopTabs = page.locator('[role="tablist"]');
+    await expect(desktopTabs).toBeVisible();
+
+    // Mobile dropdown should be hidden
+    const mobileSelect = page.locator('select[aria-label="Select admin tab"]');
+    await expect(mobileSelect).not.toBeVisible();
+  });
+});
