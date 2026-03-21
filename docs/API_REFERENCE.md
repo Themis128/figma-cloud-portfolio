@@ -1480,7 +1480,7 @@ Get common error patterns and their categories.
 
 ## TypeScript Types
 
-All types are defined in `shared/api.ts`. Below is the complete reference.
+All types are defined in `src/types/api.ts`. Below is the complete reference.
 
 ### Base Types
 

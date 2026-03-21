@@ -34,10 +34,9 @@ src/
   hooks/            → Custom React hooks
   lib/              → Utilities, helpers, constants
   styles/           → Global CSS
+  types/            → TypeScript type definitions
 server/             → Express backend (tsx)
-shared/             → Shared types between client and server
 public/             → Static assets
-prisma/             → Database schema
 playwright-tests/   → E2E tests
 ```
 

@@ -52,17 +52,16 @@ The AI Agent Templates System enables users to browse, select, clone, and create
 ### Component Structure
 
 ```text
-client/
+src/
+├── app/
+│   └── agents/page.tsx             # Agents page (App Router)
 ├── components/
-│   ├── agents/
-│   │   ├── TemplateSelector.tsx    # Main template browsing component
-│   │   ├── TemplateCreator.tsx     # Custom template creation form
-│   │   └── README.md              # Component documentation
-│   └── pages/
-│       └── Agents.tsx             # Main agents page with routing
-├── data/
-│   └── agentTemplates.ts          # Template data and utility functions
-└── App.tsx                        # Route configuration (/agents)
+│   └── agents/
+│       ├── AgentBuilder.tsx         # Agent builder component
+│       ├── AgentPlayground.tsx      # Interactive playground
+│       └── BlocklyAgentBuilder.tsx  # Blockly visual builder
+└── lib/
+    └── agentTemplates.ts            # Template data and utility functions
 ```
 
 ### Data Structure
