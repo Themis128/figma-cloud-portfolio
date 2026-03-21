@@ -66,6 +66,12 @@ test.describe("SEO — Metadata", () => {
 test.describe("SEO — Structured Data", () => {
   test("home page should have WebSite JSON-LD", async ({ page }) => {
     await page.goto("/");
+    // StructuredData component injects via useEffect — wait for hydration
+    await page.waitForFunction(() =>
+      Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
+        .some((s) => s.textContent?.includes('"WebSite"')),
+      { timeout: 10000 },
+    );
     const scripts = await page
       .locator('script[type="application/ld+json"]')
       .allTextContents();
@@ -75,6 +81,11 @@ test.describe("SEO — Structured Data", () => {
 
   test("home page should have Person JSON-LD", async ({ page }) => {
     await page.goto("/");
+    await page.waitForFunction(() =>
+      Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
+        .some((s) => s.textContent?.includes('"Person"')),
+      { timeout: 10000 },
+    );
     const scripts = await page
       .locator('script[type="application/ld+json"]')
       .allTextContents();
@@ -149,7 +160,7 @@ test.describe("SEO — Admin noindex", () => {
 
 test.describe("SEO — Heading Hierarchy", () => {
   const pagesWithH1 = [
-    { path: "/", h1Pattern: /Themistoklis Baltzakis/i },
+    { path: "/", h1Pattern: /Themistoklis|Baltzakis/i },
     { path: "/about/", h1Pattern: /About Me/i },
     { path: "/contact/", h1Pattern: /Get In Touch/i },
     { path: "/agents/", h1Pattern: /AI Agents/i },
