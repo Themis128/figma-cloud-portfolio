@@ -353,7 +353,7 @@ curl https://yourdomain.com/deployment-status-production.json
 - **GitHub Actions**:
   - `actions/checkout@v6`
   - `actions/setup-node@v6`
-  - `pnpm/action-setup@v4`
+  - `corepack enable` (pnpm via `packageManager` field)
   - `aws-actions/configure-aws-credentials@v6`
   - `aws-actions/amplify-cli-wrapper@1.2.0`
 

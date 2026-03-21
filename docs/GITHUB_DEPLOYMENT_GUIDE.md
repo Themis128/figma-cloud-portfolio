@@ -135,9 +135,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 10
+      - name: Enable corepack
+        run: corepack enable
 
       - uses: actions/setup-node@v6
         with:
@@ -161,9 +160,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 10
+      - name: Enable corepack
+        run: corepack enable
 
       - uses: actions/setup-node@v6
         with:
@@ -182,9 +180,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 10
+      - name: Enable corepack
+        run: corepack enable
 
       - uses: actions/setup-node@v6
         with:
