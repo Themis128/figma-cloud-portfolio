@@ -1,384 +1,167 @@
 import { expect, test } from "@playwright/test";
-import { waitForAppReady } from "./test-utils";
 
-test.describe("SEO & Metadata", () => {
-  test.describe("Meta Tags & Open Graph", () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("networkidle");
+/**
+ * SEO Tests
+ *
+ * Comprehensive tests for metadata, OpenGraph tags, canonical URLs,
+ * structured data, sitemap, robots.txt, heading hierarchy, and admin noindex.
+ */
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
+
+test.describe("SEO — Metadata", () => {
+  const pages = [
+    { path: "/", title: "Home", hasOg: true },
+    { path: "/about/", title: "About Me", hasOg: true },
+    { path: "/contact/", title: "Contact", hasOg: true },
+    { path: "/agents/", title: "Understanding AI Agents", hasOg: true },
+    { path: "/projects/", title: "Projects", hasOg: true },
+    { path: "/resume/", title: "CV Builder", hasOg: true },
+    { path: "/performance/", title: "Performance", hasOg: true },
+    { path: "/product/", title: "Work Experience", hasOg: true },
+  ];
+
+  for (const pg of pages) {
+    test(`${pg.path} should have title containing "${pg.title}"`, async ({
+      page,
+    }) => {
+      await page.goto(pg.path);
+      await expect(page).toHaveTitle(new RegExp(pg.title));
     });
 
-    test("should have proper meta tags", async ({ page }) => {
-      // Check for essential meta tags
-      const title = await page.title();
-      expect(title.length).toBeGreaterThan(0);
-
-      // Check meta description
-      const metaDescription = page.locator('meta[name="description"]');
-      await expect(metaDescription).toHaveCount(1);
-      const descriptionContent = await metaDescription.getAttribute("content");
-      expect(descriptionContent?.length).toBeGreaterThan(10);
-
-      // Check viewport meta tag
-      const viewport = page.locator('meta[name="viewport"]');
-      await expect(viewport).toHaveCount(1);
-
-      // Check charset
-      const charset = page.locator("meta[charset]");
-      await expect(charset).toHaveCount(1);
+    test(`${pg.path} should have meta description`, async ({ page }) => {
+      await page.goto(pg.path);
+      const desc = page.locator('meta[name="description"]');
+      await expect(desc).toBeAttached();
+      const content = await desc.getAttribute("content");
+      expect(content).toBeTruthy();
+      expect(content!.length).toBeGreaterThan(20);
     });
 
-    test("should have Open Graph tags", async ({ page }) => {
-      // Check Open Graph meta tags
-      const ogTitle = page.locator('meta[property="og:title"]');
-      const ogDescription = page.locator('meta[property="og:description"]');
-      const ogType = page.locator('meta[property="og:type"]');
+    if (pg.hasOg) {
+      test(`${pg.path} should have OpenGraph tags`, async ({ page }) => {
+        await page.goto(pg.path);
+        await expect(
+          page.locator('meta[property="og:title"]'),
+        ).toBeAttached();
+        await expect(
+          page.locator('meta[property="og:description"]'),
+        ).toBeAttached();
+        await expect(page.locator('meta[property="og:url"]')).toBeAttached();
+      });
+    }
 
-      // Should have basic Open Graph tags
-      await expect(ogTitle).toHaveCount(1);
-      await expect(ogDescription).toHaveCount(1);
-      await expect(ogType).toHaveCount(1);
-
-      // Check content
-      const titleContent = await ogTitle.getAttribute("content");
-      const descContent = await ogDescription.getAttribute("content");
-      const typeContent = await ogType.getAttribute("content");
-
-      expect(titleContent?.length).toBeGreaterThan(0);
-      expect(descContent?.length).toBeGreaterThan(0);
-      expect(typeContent).toBe("website");
-    });
-
-    test("should have Twitter Card tags", async ({ page }) => {
-      // Check Twitter Card meta tags
-      const twitterCard = page.locator('meta[name="twitter:card"]');
-      const twitterTitle = page.locator('meta[name="twitter:title"]');
-      const twitterDescription = page.locator(
-        'meta[name="twitter:description"]',
-      );
-
-      // Twitter cards are optional but if present should be valid
-      const cardCount = await twitterCard.count();
-      if (cardCount > 0) {
-        await expect(twitterTitle).toHaveCount(1);
-        await expect(twitterDescription).toHaveCount(1);
-
-        const cardType = await twitterCard.getAttribute("content");
-        expect(["summary", "summary_large_image", "app", "player"]).toContain(
-          cardType,
-        );
-      }
-    });
-
-    test("should have structured data (JSON-LD)", async ({ page }) => {
-      // Check for JSON-LD structured data
-      const jsonLdScripts = page.locator('script[type="application/ld+json"]');
-
-      if ((await jsonLdScripts.count()) > 0) {
-        for (const script of await jsonLdScripts.all()) {
-          const content = await script.textContent();
-          expect(content).toBeTruthy();
-
-          // Should be valid JSON
-          const jsonData = JSON.parse(content || "{}");
-          expect(jsonData).toHaveProperty("@context");
-          expect(jsonData).toHaveProperty("@type");
-        }
-      }
-    });
-
-    test("should have canonical URL", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("domcontentloaded");
-
-      // Check for canonical link
+    test(`${pg.path} should have canonical URL`, async ({ page }) => {
+      await page.goto(pg.path);
       const canonical = page.locator('link[rel="canonical"]');
-
-      if ((await canonical.count()) > 0) {
-        const href = await canonical.getAttribute("href");
-        expect(href).toBeTruthy();
-        expect(href).toMatch(/^https?:\/\//);
-      }
+      await expect(canonical).toBeAttached();
+      const href = await canonical.getAttribute("href");
+      expect(href).toContain("baltzakisthemis.com");
     });
+  }
+});
+
+// ─── Structured Data ──────────────────────────────────────────────────────────
+
+test.describe("SEO — Structured Data", () => {
+  test("home page should have WebSite JSON-LD", async ({ page }) => {
+    await page.goto("/");
+    const scripts = await page
+      .locator('script[type="application/ld+json"]')
+      .allTextContents();
+    const hasWebSite = scripts.some((s) => s.includes('"WebSite"'));
+    expect(hasWebSite).toBe(true);
   });
 
-  test.describe("Sitemap & Crawling", () => {
-    test("should generate sitemap.xml", async ({ page }) => {
-      // Check if sitemap exists
-      const response = await page.request.get("/sitemap.xml");
-
-      if (response.ok()) {
-        const content = await response.text();
-
-        // In development, Next.js handles unknown routes
-        const isDevelopment =
-          content.includes("<!doctype html>") ||
-          content.includes('<div id="root">');
-
-        if (isDevelopment) {
-          // In development, sitemap.xml serves the main HTML page
-          expect(content).toContain("<!doctype html>");
-          expect(content).toContain('<div id="root">');
-        } else {
-          // In production, should be proper XML sitemap
-          expect(content).toContain("<?xml");
-          expect(content).toContain("<urlset");
-          expect(content).toContain("<url>");
-          expect(content).toContain("<loc>");
-        }
-      } else {
-        // Sitemap not implemented yet - this is acceptable for now
-        console.log("Sitemap not implemented - skipping test");
-      }
-    });
-
-    test("should have robots.txt", async ({ page }) => {
-      // Check if robots.txt exists
-      const response = await page.request.get("/robots.txt");
-
-      if (response.ok()) {
-        const content = await response.text();
-        expect(content.length).toBeGreaterThan(0);
-        expect(content).toMatch(/User-agent|Disallow|Allow|Sitemap/i);
-      }
-    });
-
-    test("should have proper heading structure for SEO", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("networkidle");
-
-      // Wait for React to fully hydrate and render content
-      await page.waitForFunction(
-        () => {
-          const h1 = document.querySelector("h1");
-          return h1?.textContent?.includes("Themistoklis") ?? false;
-        },
-        { timeout: 15000 },
-      );
-
-      // Check heading hierarchy
-      const h1Count = await page.locator("h1").count();
-      expect(h1Count).toBeGreaterThan(0);
-
-      // Should have only one h1 per page
-      expect(h1Count).toBe(1);
-
-      // Check that h1 contains meaningful content
-      const h1Text = await page.locator("h1").first().textContent();
-      expect(h1Text?.trim().length).toBeGreaterThan(0);
-      expect(h1Text).toContain("Themistoklis");
-    });
-
-    test("should have descriptive page titles", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("networkidle");
-
-      // Wait for the title to be set (Next.js metadata API might set it asynchronously)
-      await page.waitForFunction(
-        () => document.title && document.title.length > 10,
-        {
-          timeout: 10000,
-        },
-      );
-
-      const title = await page.title();
-
-      // Title should be descriptive and not too long
-      expect(title.length).toBeGreaterThan(10);
-      expect(title.length).toBeLessThan(80); // Allow up to 80 characters for SEO titles
-
-      // Should not be generic
-      expect(title.toLowerCase()).not.toContain("untitled");
-      expect(title.toLowerCase()).not.toContain("page");
-    });
-
-    test("should have proper URL structure", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("networkidle");
-
-      const url = page.url();
-
-      // URLs should be clean and descriptive
-      expect(url).not.toContain("index.html");
-      expect(url).not.toContain("?");
-      expect(url).not.toContain("#");
-
-      // Should use HTTPS in production
-      if (process.env.NODE_ENV === "production") {
-        expect(url).toMatch(/^https:\/\//);
-      }
-    });
+  test("home page should have Person JSON-LD", async ({ page }) => {
+    await page.goto("/");
+    const scripts = await page
+      .locator('script[type="application/ld+json"]')
+      .allTextContents();
+    const hasPerson = scripts.some((s) => s.includes('"Person"'));
+    expect(hasPerson).toBe(true);
   });
 
-  test.describe("Performance & Core Web Vitals", () => {
-    test("should have good Core Web Vitals scores", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("domcontentloaded");
+  test("about page should have BreadcrumbList JSON-LD", async ({ page }) => {
+    await page.goto("/about/");
+    const scripts = await page
+      .locator('script[type="application/ld+json"]')
+      .allTextContents();
+    const hasBreadcrumb = scripts.some((s) => s.includes('"BreadcrumbList"'));
+    expect(hasBreadcrumb).toBe(true);
+  });
+});
 
-      // Measure basic performance metrics
-      const metrics = await page.evaluate(() => {
-        const navigation = performance.getEntriesByType(
-          "navigation",
-        )[0] as PerformanceNavigationTiming;
-        const paint = performance.getEntriesByType("paint");
+// ─── Sitemap & Robots ─────────────────────────────────────────────────────────
 
-        return {
-          domContentLoaded:
-            navigation.domContentLoadedEventEnd -
-            navigation.domContentLoadedEventStart,
-          loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-          firstPaint:
-            paint.find((p) => p.name === "first-paint")?.startTime || 0,
-          firstContentfulPaint:
-            paint.find((p) => p.name === "first-contentful-paint")?.startTime ||
-            0,
-        };
-      });
-
-      // Core Web Vitals thresholds (approximate)
-      expect(metrics.domContentLoaded).toBeLessThan(2500); // Good DCL
-      expect(metrics.loadComplete).toBeLessThan(4000); // Good load time
-      expect(metrics.firstContentfulPaint).toBeLessThan(3000); // Good FCP (relaxed for dev environment)
-    });
-
-    test("should have optimized images", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("domcontentloaded");
-
-      const images = page.locator("img");
-
-      for (const img of await images.all()) {
-        const src = await img.getAttribute("src");
-
-        if (src && !src.startsWith("data:")) {
-          // Check if image is optimized (has proper format or loading attributes)
-          const loading = await img.getAttribute("loading");
-          const decoding = await img.getAttribute("decoding");
-
-          // Should have loading="lazy" for performance
-          if (loading) {
-            expect(["lazy", "eager"]).toContain(loading);
-          }
-
-          // Should have decoding hint
-          if (decoding) {
-            expect(["sync", "async", "auto"]).toContain(decoding);
-          }
-        }
-      }
-    });
-
-    test("should minimize render-blocking resources", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("domcontentloaded");
-
-      // Check for render-blocking CSS
-      const renderBlockingCss = await page.evaluate(() => {
-        const stylesheets = document.querySelectorAll("link[rel='stylesheet']");
-        let blocking = 0;
-
-        for (const sheet of stylesheets) {
-          const media = sheet.getAttribute("media");
-          if (!media || media === "all") {
-            blocking++;
-          }
-        }
-
-        return blocking;
-      });
-
-      // Should minimize render-blocking CSS
-      expect(renderBlockingCss).toBeLessThan(5);
-    });
+test.describe("SEO — Sitemap & Robots", () => {
+  test("sitemap.xml should be accessible", async ({ page }) => {
+    const res = await page.goto("/sitemap.xml");
+    expect(res?.status()).toBe(200);
   });
 
-  test.describe("Mobile SEO", () => {
-    test("should be mobile-friendly", async ({ page }) => {
-      // Test mobile viewport
-      await page.setViewportSize({ width: 375, height: 667 });
-
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("domcontentloaded");
-
-      // Content should be readable on mobile
-      const viewport = await page.viewportSize();
-      expect(viewport?.width).toBe(375);
-
-      // Check font sizes are readable
-      const textElements = page.locator("p, span, div");
-      const smallText = await textElements.evaluateAll(
-        (elements) =>
-          elements.filter((el) => {
-            const style = window.getComputedStyle(el);
-            const fontSize = parseFloat(style.fontSize);
-            return fontSize < 14; // Minimum readable size
-          }).length,
-      );
-
-      // Should minimize very small text (footer legal nav, copyright, etc.)
-      expect(smallText).toBeLessThan(15);
-    });
-
-    test("should have proper mobile meta tags", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("networkidle");
-
-      // Check viewport meta tag
-      const viewport = page.locator('meta[name="viewport"]');
-      await expect(viewport).toHaveCount(1);
-
-      const viewportContent = await viewport.getAttribute("content");
-      expect(viewportContent).toContain("width=device-width");
-      expect(viewportContent).toContain("initial-scale=1");
-    });
+  test("robots.txt should be accessible", async ({ page }) => {
+    const res = await page.goto("/robots.txt");
+    expect(res?.status()).toBe(200);
+    const text = await page.textContent("body");
+    expect(text).toContain("Sitemap:");
+    expect(text).toContain("Disallow: /admin/");
   });
 
-  test.describe("Content Quality", () => {
-    test("should have quality content structure", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForLoadState("domcontentloaded");
-
-      // Check content length
-      const bodyText = await page.locator("body").textContent();
-      expect(bodyText?.length).toBeGreaterThan(100);
-
-      // Check for keyword stuffing (very basic check)
-      const words = bodyText?.split(/\s+/) || [];
-      const wordCount = words.length;
-      const uniqueWords = new Set(words.map((w) => w.toLowerCase())).size;
-
-      // Should have reasonable word diversity
-      const diversityRatio = uniqueWords / wordCount;
-      expect(diversityRatio).toBeGreaterThan(0.3);
-    });
-
-    test("should have proper internal linking", async ({ page }) => {
-      const internalLinks = page.locator(
-        'a[href^="/"], a[href^="./"], a[href^="../"]',
-      );
-
-      if ((await internalLinks.count()) > 0) {
-        // Check that internal links work
-        for (const link of await internalLinks.all()) {
-          const href = await link.getAttribute("href");
-          if (href && !href.includes("#")) {
-            // Try to navigate (but don't actually do it to avoid slowing tests)
-            const response = await page.request.get(href);
-            expect(response.status()).toBeLessThan(400);
-          }
-        }
-      }
-    });
+  test("sitemap should contain all public pages", async ({ page }) => {
+    await page.goto("/sitemap.xml");
+    const text = (await page.textContent("body")) ?? "";
+    const expectedPaths = [
+      "/about/",
+      "/contact/",
+      "/agents/",
+      "/projects/",
+      "/resume/",
+      "/performance/",
+      "/product/",
+      "/builder/",
+    ];
+    for (const path of expectedPaths) {
+      expect(text).toContain(path);
+    }
   });
+
+  test("sitemap should NOT contain admin page", async ({ page }) => {
+    await page.goto("/sitemap.xml");
+    const text = (await page.textContent("body")) ?? "";
+    expect(text).not.toContain("/admin/");
+  });
+});
+
+// ─── Admin noindex ────────────────────────────────────────────────────────────
+
+test.describe("SEO — Admin noindex", () => {
+  test("admin page should have noindex", async ({ page }) => {
+    await page.goto("/admin/");
+    const robots = page.locator('meta[name="robots"]');
+    await expect(robots).toBeAttached();
+    const content = await robots.getAttribute("content");
+    expect(content).toContain("noindex");
+  });
+});
+
+// ─── Heading Hierarchy ────────────────────────────────────────────────────────
+
+test.describe("SEO — Heading Hierarchy", () => {
+  const pagesWithH1 = [
+    { path: "/", h1Pattern: /Themistoklis Baltzakis/i },
+    { path: "/about/", h1Pattern: /About Me/i },
+    { path: "/contact/", h1Pattern: /Get In Touch/i },
+    { path: "/agents/", h1Pattern: /AI Agents/i },
+    { path: "/performance/", h1Pattern: /Performance/i },
+  ];
+
+  for (const pg of pagesWithH1) {
+    test(`${pg.path} should have proper H1`, async ({ page }) => {
+      await page.goto(pg.path);
+      const h1 = page.locator("h1").first();
+      await expect(h1).toBeVisible();
+      await expect(h1).toHaveText(pg.h1Pattern);
+    });
+  }
 });

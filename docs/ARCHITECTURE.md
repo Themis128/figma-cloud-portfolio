@@ -91,14 +91,35 @@ The app uses the Next.js App Router Server/Client component model:
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery                      |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
 | `/agents`      | `agents/page.tsx`      | Educational AI agents guide with Blockly drag-and-drop builder + interactive builder |
-| `/contact`     | `contact/page.tsx`     | Contact form with reCAPTCHA v3                  |
-| `/settings`    | `settings/page.tsx`    | App preferences (theme, notifications, privacy) |
+| `/contact`     | `contact/page.tsx`     | Server component wrapper with metadata; renders `ContactPage` client component |
+| `/settings`    | `settings/page.tsx`    | Server component wrapper with metadata; renders `SettingsPage` client component |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |
+| `/builder`     | `builder/page.tsx`     | Server component wrapper with metadata; renders `BuilderPage` client component |
 | `/admin`       | `admin/page.tsx`       | Admin dashboard (10 tabs — see below)           |
 | `/cookies`     | `cookies/page.tsx`     | Cookie policy                                   |
 | `/privacy`     | `privacy/page.tsx`     | Privacy policy                                   |
 | `/terms`       | `terms/page.tsx`       | Terms of service                                 |
-| `*`            | `not-found.tsx`        | 404 fallback                                    |
+| `*`            | `not-found.tsx`        | 404 fallback with `noindex` metadata and semantic H1 |
+
+### SEO
+
+All public pages include:
+- **OpenGraph tags**: `og:title`, `og:description`, `og:url` for social sharing
+- **Canonical URLs**: `<link rel="canonical">` pointing to `https://www.baltzakisthemis.com/...`
+- **BreadcrumbList JSON-LD**: Structured data for search engine breadcrumb display (via `BreadcrumbSchema` component)
+
+The sitemap (`public/sitemap.xml`) includes all public pages: `/`, `/about/`, `/contact/`, `/agents/`, `/projects/`, `/resume/`, `/performance/`, `/product/`, `/builder/`. The `/admin/` page is excluded and marked `noindex, nofollow`.
+
+#### Extracted Client Components
+
+Pages that needed server component wrappers for Next.js metadata export have their interactive UI extracted into dedicated client components:
+
+| Client Component                    | Used By               | Purpose                                       |
+| ----------------------------------- | --------------------- | --------------------------------------------- |
+| `src/components/ContactPage.tsx`    | `/contact/page.tsx`   | Contact form UI with reCAPTCHA v3             |
+| `src/components/SettingsPage.tsx`   | `/settings/page.tsx`  | App preferences (theme, notifications, privacy)|
+| `src/components/BuilderPage.tsx`    | `/builder/page.tsx`   | Builder.io page UI                            |
+| `src/components/BreadcrumbSchema.tsx` | Multiple pages      | Reusable breadcrumb JSON-LD structured data   |
 
 ---
 
