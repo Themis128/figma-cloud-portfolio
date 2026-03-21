@@ -60,8 +60,8 @@ const ENDPOINTS: EndpointDef[] = [
     name: "AI Chat",
     method: "POST",
     path: "/api/chat",
-    service: "HuggingFace",
-    description: "AI assistant powered by Llama 3.1",
+    service: "AWS Bedrock",
+    description: "AI assistant powered by Claude 3.5 Haiku",
     healthCheck: {
       method: "POST",
       path: "/api/chat",
