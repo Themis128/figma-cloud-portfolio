@@ -51,10 +51,28 @@ export function PushNotificationTester() {
     state?: string;
   }>({ registered: false, active: false });
 
-  // Check service worker status on mount
+  // Initialize permission and service worker status on mount
   useEffect(() => {
+    // Read the current browser notification permission
+    if ("Notification" in window) {
+      setNotificationPermission(Notification.permission);
+    }
+
     const checkServiceWorker = async () => {
-      if ("serviceWorker" in navigator) {
+      if (!("serviceWorker" in navigator)) return;
+
+      try {
+        // Wait for the SW to be ready (handles concurrent registration)
+        const registration = await navigator.serviceWorker.ready;
+        setServiceWorkerStatus({
+          registered: true,
+          active: registration.active !== null,
+          ...(registration.active?.state !== undefined && {
+            state: registration.active.state,
+          }),
+        });
+      } catch {
+        // Fallback: check if any registration exists
         try {
           const registration = await navigator.serviceWorker.getRegistration();
           if (registration) {
@@ -70,7 +88,7 @@ export function PushNotificationTester() {
       }
     };
 
-    checkServiceWorker();
+    void checkServiceWorker();
   }, []);
 
   const checkSubscriptions = async () => {
@@ -168,6 +186,10 @@ export function PushNotificationTester() {
       try {
         const permission = await Notification.requestPermission();
         setNotificationPermission(permission);
+        // Auto-check subscriptions after granting permission
+        if (permission === "granted") {
+          void checkSubscriptions();
+        }
       } catch (_error) {}
     }
   };

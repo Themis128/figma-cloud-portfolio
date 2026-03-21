@@ -11,13 +11,14 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "Work Experience",
   description:
-    "Professional work experience of Themistoklis Baltzakis - IT Network Engineer with expertise in Cisco systems, Fortinet security, Azure AD, and enterprise IT infrastructure.",
+    "Work experience of Themistoklis Baltzakis — Cisco, Fortinet, Azure AD, and enterprise IT infrastructure expertise.",
   openGraph: {
     title: "Work Experience | Themistoklis Baltzakis",
     description:
-      "Professional work experience of Themistoklis Baltzakis - IT Network Engineer with expertise in Cisco systems, Fortinet security, Azure AD, and enterprise IT infrastructure.",
+      "Work experience of Themistoklis Baltzakis — Cisco, Fortinet, Azure AD, and enterprise IT infrastructure expertise.",
     url: `${SITE_URL}/product/`,
     type: "website",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/product/` },
 };

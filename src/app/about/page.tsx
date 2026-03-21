@@ -39,6 +39,7 @@ export const metadata: Metadata = {
       "Learn about Themistoklis Baltzakis - IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
     url: `${SITE_URL}/about/`,
     type: "profile",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/about/` },
 };
