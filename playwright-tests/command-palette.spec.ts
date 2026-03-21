@@ -53,7 +53,7 @@ test.describe("CommandPalette", () => {
     await expect(input).toBeVisible();
     await expect(input).toHaveAttribute(
       "placeholder",
-      "Search pages, actions...",
+      "Search pages, skills, actions...",
     );
   });
 
@@ -134,5 +134,44 @@ test.describe("CommandPalette", () => {
 
     await expect(page.getByText("navigate", { exact: false })).toBeVisible();
     await expect(page.getByText("select", { exact: false })).toBeVisible();
+  });
+
+  test("shows Search Results section when typing 2+ chars", async ({
+    page,
+  }) => {
+    await page.keyboard.press("Control+k");
+    await page.waitForTimeout(300);
+
+    const input = page.locator('input[aria-label="Search commands"]');
+    await input.fill("cloud");
+
+    // Wait for the 300ms debounce + network fetch
+    await page.waitForTimeout(1000);
+
+    const dialog = page.locator(
+      'div[role="dialog"][aria-label="Command palette"]',
+    );
+    await expect(
+      dialog.getByText("Search Results", { exact: true }),
+    ).toBeVisible();
+  });
+
+  test("does NOT show Search Results section when typing fewer than 2 chars", async ({
+    page,
+  }) => {
+    await page.keyboard.press("Control+k");
+    await page.waitForTimeout(300);
+
+    const input = page.locator('input[aria-label="Search commands"]');
+    await input.fill("c");
+    await page.waitForTimeout(500);
+
+    const dialog = page.locator(
+      'div[role="dialog"][aria-label="Command palette"]',
+    );
+    const searchResultsHeading = dialog.getByText("Search Results", {
+      exact: true,
+    });
+    await expect(searchResultsHeading).toHaveCount(0);
   });
 });

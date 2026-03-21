@@ -17,7 +17,7 @@ interface StoredSubscription {
 // S3 persistence — uses the existing static site bucket with a _data/ prefix
 const S3_BUCKET = process.env.PUSH_SUBS_BUCKET ?? "figma-portfolio-static";
 const S3_KEY = "_data/push-subscriptions.json";
-const s3 = new S3Client({ region: process.env.AWS_REGION ?? "us-east-1" });
+const s3 = new S3Client({ region: process.env.S3_REGION ?? "eu-central-1" });
 
 // In-memory cache — loaded from S3 on first access, written back on mutation
 let subscriptions: StoredSubscription[] = [];

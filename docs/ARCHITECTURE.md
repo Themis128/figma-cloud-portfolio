@@ -88,7 +88,7 @@ The app uses the Next.js App Router Server/Client component model:
 | `/`            | `page.tsx`             | Home / landing with AIBrain visualisation, TypeWriter hero, AvailabilityBadge |
 | `/about`       | `about/page.tsx`       | Professional bio, skills, SkillsRadar chart, career timeline |
 | `/product`     | `product/page.tsx`     | Work experience InteractiveTimeline              |
-| `/projects`    | `projects/page.tsx`    | Portfolio projects gallery                      |
+| `/projects`    | `projects/page.tsx`    | Portfolio projects gallery + live GitHub repos (via `GitHubRepos` component) |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
 | `/agents`      | `agents/page.tsx`      | Educational AI agents guide with Blockly drag-and-drop builder + interactive builder |
 | `/contact`     | `contact/page.tsx`     | Server component wrapper with metadata; renders `ContactPage` client component |
@@ -120,6 +120,7 @@ Pages that needed server component wrappers for Next.js metadata export have the
 | `src/components/SettingsPage.tsx`   | `/settings/page.tsx`  | App preferences (theme, notifications, privacy)|
 | `src/components/BuilderPage.tsx`    | `/builder/page.tsx`   | Builder.io page UI                            |
 | `src/components/BreadcrumbSchema.tsx` | Multiple pages      | Reusable breadcrumb JSON-LD structured data   |
+| `src/components/GitHubRepos.tsx`     | `/projects/page.tsx` | Live GitHub repository cards — fetches from `/api/github/repos` and `/api/github/stats`, shows repo name, description, topics, language, stars, forks, updated date, plus stats header (repos count, stars, followers, profile link) |
 
 ---
 
@@ -300,7 +301,7 @@ Eight interactive components enhance user engagement across the site. Seven are 
 | `MatrixRain`     | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s with 1s fade-out, SVG countdown ring on button, respects `prefers-reduced-motion` (hidden entirely), cyan glow on active state, Katakana + Latin + digit characters |
 | `CyberTerminal`  | Client | Full-screen terminal easter egg — opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
 | `CursorTrail`    | Client | 10-particle trailing cursor effect — desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
-| `CommandPalette` | Client | Ctrl+K / Cmd+K command palette — search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility), cyberpunk glass panel |
+| `CommandPalette` | Client | Ctrl+K / Cmd+K command palette — search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility), cyberpunk glass panel. **Server-powered search**: queries `/api/search?q=` with 300ms debounce when 2+ chars typed; results shown in a "Search Results" section between Pages and Actions |
 
 ### Page-Specific Components
 
