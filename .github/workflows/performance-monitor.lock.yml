@@ -23,7 +23,7 @@
 # Monitor and report on application performance metrics. This workflow runs
 # performance tests, analyzes bundle size, and tracks Web Vitals metrics.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"819172ffdcf79f3632b4b7b7e2edc60e02346abaf92b38a40f91efb958289df0","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"1b0ce3dc003ab7ba428dc861e4b7a14bd40e3f4fd981f74ccfd0cdd6870bed15","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Performance Monitoring"
 "on":

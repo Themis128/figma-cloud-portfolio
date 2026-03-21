@@ -24,7 +24,7 @@
 # Generates Amplify backend outputs, builds Next.js static export,
 # syncs to S3, invalidates CloudFront, and validates with smoke tests.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"73391374bcb26fdd7a5c7119958c8e6cb19f75ac3e76ec417bc97b8a208f0bfc","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"4fd5d5690ac573c45850fee1046674a518dca08b7e16d1b1aedc971359e6c779","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Production Deployment Workflow (S3 + CloudFront)"
 "on":

@@ -23,7 +23,7 @@
 # Monitor and update project dependencies. This workflow checks for outdated
 # packages, runs tests with updates, and creates pull requests for safe updates.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"be2f70bb613645b21aaf8320b9b392903d2020e48d2751046aa3822d7d7d1a17","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"831507a9e01ddf3f6b127baa3ea3b0c4eab491ab22d6c43cab2f3066ac94e506","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Dependency Update Management"
 "on":

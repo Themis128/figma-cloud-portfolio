@@ -23,7 +23,7 @@
 # Perform automated code review for pull requests. This workflow runs linting,
 # type checking, and basic security scans on PR changes.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"a44135e25dcf012ef0b8f7fbbc0766b0e347b7fb436c75abd856960d84e72a55","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"141e94f067a0fa705311abb81fbb3b67a6fb07674a7bf34563f0a6bf9f25fbbd","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Automated Code Review"
 "on":

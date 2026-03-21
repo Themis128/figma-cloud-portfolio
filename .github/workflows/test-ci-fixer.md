@@ -26,7 +26,7 @@ steps:
     with:
       node-version: 22
 
-  - name: Install pnpm
+  - name: Enable corepack
     run: corepack enable
 
   - name: Install dependencies

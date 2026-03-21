@@ -24,7 +24,7 @@
 # a detailed report discussion with pass/fail summary, failure analysis, regression
 # detection, and actionable recommendations. Files issues for new test failures.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"f149c64d4f8908fbf3328385fde52bb21916ce911e0786b9c9ab54821fb95885","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"f4c708601b389abf032923c04b179972dbd89bd0732d3f19610c05aa3affcf16","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Playwright E2E Test Runner"
 "on":

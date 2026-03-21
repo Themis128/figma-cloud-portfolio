@@ -24,7 +24,7 @@
 # This workflow backs up configuration files, environment variables, and
 # deployment artifacts to a secure location.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"a50c37a408858d497797b57310029b15ed8b7df82f6920780792331df58ecb40","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"12115423f7cc38b6b9aa28771f0f504ede26f9b7d62ee0f89196519b11deac09","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Backup and Restore Management"
 "on":

@@ -28,7 +28,7 @@
 #
 # Source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"253f057a5b91fa0675a25c6658cba5540d4ba108fd9a1dd3fd8a95690430fd86","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"0c350d918ca7924768278a6eef072c53af0032402556862a3a283b25c76bb10d","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Daily Accessibility Review"
 "on":
