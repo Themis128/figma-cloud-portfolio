@@ -8,6 +8,8 @@ import { getApiOrigin } from "@/lib/admin-constants";
 
 const LAST_SEEN_KEY = "site-announcements-last-seen";
 const READ_IDS_KEY = "site-announcements-read";
+const PUSH_NOTIFICATIONS_KEY = "site-push-notifications";
+const MAX_PUSH_NOTIFICATIONS = 20;
 
 // Site announcements — update this array to show new items to visitors.
 // IDs must be chronologically sortable strings (e.g. "YYYY-MM-DD-slug").
@@ -37,6 +39,30 @@ interface Announcement {
   href?: string;
   /** ISO date string — announcement hidden after this date */
   expires?: string;
+  /** Whether this came from a push notification */
+  isPush?: boolean;
+  /** Timestamp for push notifications */
+  receivedAt?: string;
+}
+
+/** Load push notifications from localStorage */
+function getPushNotifications(): Announcement[] {
+  const raw = storageGet(PUSH_NOTIFICATIONS_KEY);
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed as Announcement[];
+  } catch { /* ignore */ }
+  return [];
+}
+
+/** Save a new push notification to localStorage */
+function savePushNotification(notification: Announcement): void {
+  const existing = getPushNotifications();
+  // Avoid duplicates by ID
+  if (existing.some((n) => n.id === notification.id)) return;
+  const updated = [notification, ...existing].slice(0, MAX_PUSH_NOTIFICATIONS);
+  storageSet(PUSH_NOTIFICATIONS_KEY, JSON.stringify(updated));
 }
 
 /** Safe localStorage wrapper */
@@ -99,16 +125,22 @@ export function NotificationButton() {
   const [pushSupported, setPushSupported] = useState(false);
   const [pushSubscribed, setPushSubscribed] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
+  const [pushNotifications, setPushNotifications] = useState<Announcement[]>([]);
 
-  const active = getActiveAnnouncements();
+  // Merge static announcements + push notifications
+  const staticActive = getActiveAnnouncements();
+  const allItems = mounted
+    ? [...pushNotifications, ...staticActive]
+    : [...staticActive];
   const unreadCount = mounted
-    ? active.filter((a) => !readIds.has(a.id)).length
+    ? allItems.filter((a) => !readIds.has(a.id)).length
     : 0;
 
-  // Check push support and existing subscription on mount
+  // Check push support, load saved push notifications, and listen for SW messages
   useEffect(() => {
     setMounted(true);
     setReadIds(getReadIds());
+    setPushNotifications(getPushNotifications());
 
     // Check Web Push API support
     if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
@@ -122,6 +154,28 @@ export function NotificationButton() {
         }
       }).catch(() => { /* ignore */ });
     }
+
+    // Listen for push notifications forwarded from the service worker
+    const handleSwMessage = (event: MessageEvent) => {
+      if (event.data?.type === "PUSH_RECEIVED") {
+        const { title, body, url } = event.data;
+        const notification: Announcement = {
+          id: `push-${Date.now()}`,
+          title: title ?? "New Notification",
+          description: body ?? "",
+          ...(url ? { href: url } : {}),
+          isPush: true,
+          receivedAt: new Date().toISOString(),
+        };
+        savePushNotification(notification);
+        setPushNotifications(getPushNotifications());
+      }
+    };
+
+    navigator.serviceWorker?.addEventListener("message", handleSwMessage);
+    return () => {
+      navigator.serviceWorker?.removeEventListener("message", handleSwMessage);
+    };
   }, []);
 
   const subscribeToPush = useCallback(async () => {
@@ -224,12 +278,12 @@ export function NotificationButton() {
   }, [open]);
 
   const markAllRead = useCallback(() => {
-    const ids = new Set(active.map((a) => a.id));
+    const ids = new Set(allItems.map((a) => a.id));
     setReadIds(ids);
     saveReadIds(ids);
-    const latestId = active[active.length - 1]?.id;
+    const latestId = allItems[allItems.length - 1]?.id;
     if (latestId) storageSet(LAST_SEEN_KEY, latestId);
-  }, [active]);
+  }, [allItems]);
 
   const togglePanel = () => {
     const next = !open;
@@ -302,14 +356,14 @@ export function NotificationButton() {
 
           {/* Announcement list */}
           <div className="max-h-72 overflow-y-auto">
-            {active.length === 0 ? (
+            {allItems.length === 0 ? (
               <div className="flex flex-col items-center gap-2 py-8 text-slate-500">
                 <BellOff className="h-6 w-6" />
                 <p className="text-xs">No announcements right now</p>
               </div>
             ) : (
               <ul className="divide-y divide-cyan-400/10">
-                {[...active].reverse().map((announcement) => {
+                {[...allItems].reverse().map((announcement) => {
                   const isRead = readIds.has(announcement.id);
                   return (
                     <li
@@ -317,35 +371,51 @@ export function NotificationButton() {
                       className={`px-4 py-3 transition-colors ${
                         isRead
                           ? "opacity-60"
-                          : "bg-cyan-400/5"
+                          : announcement.isPush
+                            ? "bg-purple-400/5"
+                            : "bg-cyan-400/5"
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         {/* Unread dot */}
                         <div className="mt-1.5 shrink-0">
                           {!isRead ? (
-                            <span className="block h-2 w-2 rounded-full bg-cyan-400" />
+                            <span className={`block h-2 w-2 rounded-full ${announcement.isPush ? "bg-purple-400" : "bg-cyan-400"}`} />
                           ) : (
                             <span className="block h-2 w-2 rounded-full bg-slate-600" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-200">
-                            {announcement.title}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-slate-200">
+                              {announcement.title}
+                            </p>
+                            {announcement.isPush && (
+                              <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/20">
+                                Push
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
                             {announcement.description}
                           </p>
-                          {announcement.href && (
-                            <Link
-                              href={announcement.href}
-                              onClick={() => setOpen(false)}
-                              className="inline-flex items-center gap-1 mt-2 text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
-                            >
-                              Check it out
-                              <ExternalLink className="h-3 w-3" />
-                            </Link>
-                          )}
+                          <div className="flex items-center gap-3 mt-2">
+                            {announcement.href && (
+                              <Link
+                                href={announcement.href}
+                                onClick={() => setOpen(false)}
+                                className="inline-flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+                              >
+                                Check it out
+                                <ExternalLink className="h-3 w-3" />
+                              </Link>
+                            )}
+                            {announcement.receivedAt && (
+                              <span className="text-[10px] text-slate-600 font-mono">
+                                {new Date(announcement.receivedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </li>
@@ -381,7 +451,10 @@ export function NotificationButton() {
           {/* Footer */}
           <div className="border-t border-cyan-400/10 px-4 py-2">
             <p className="text-[10px] text-slate-500 text-center font-mono">
-              {active.length} announcement{active.length !== 1 ? "s" : ""}
+              {allItems.length} item{allItems.length !== 1 ? "s" : ""}
+              {pushNotifications.length > 0 && (
+                <span className="text-purple-400/60"> · {pushNotifications.length} push</span>
+              )}
             </p>
           </div>
         </div>
