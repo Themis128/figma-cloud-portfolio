@@ -145,34 +145,33 @@ RECAPTCHA_SECRET_KEY=your_secret_key
 
 ### GitHub API Integration
 
-**Purpose**: Workflow monitoring and deployment status
-**Files**: Lambda-based backend
+**Purpose**: Public profile stats and repository data for portfolio display and admin monitoring
+**Files**: `server/routes/github.ts` (Lambda)
+
+**Endpoints**:
+
+- `GET /api/github/stats` — Profile statistics (repos, stars, followers, bio)
+- `GET /api/github/repos` — Public repositories (paginated, with topics/languages)
 
 **Features**:
 
-- GitHub workflow retrieval
-- Deployment run status tracking
-- Job details fetching
-- Token validation
-- LRU caching with TTL (15 seconds)
-- Rate limiting (120 requests/60 minutes per IP)
-- Metrics tracking (cache hits/misses)
+- Live GitHub profile data (auto-updates without redeploy)
+- Repository listing with stars, forks, languages, and topics
+- Authenticated requests (5,000 req/hr vs 60 unauthenticated)
+- Used by admin Deploy tab (GitHub Activity card) and Health tab monitoring
 
 **Configuration**:
 
 ```env
-GITHUB_TOKEN=ghp_your_personal_access_token
+GITHUB_TOKEN=ghp_your_fine_grained_pat    # No repo access needed (public read only)
+GITHUB_USERNAME=Themis128                  # GitHub username
 ```
 
-**Required Scopes**:
-
-- `repo` (full control of private repositories)
-- `workflow` (update GitHub Actions workflows)
-- `read:user` (read user profile data)
+**Required Scopes**: None — fine-grained PAT with default permissions (public read only)
 
 **Setup**:
 
-1. Generate token: https://github.com/settings/tokens
+1. Generate fine-grained token: https://github.com/settings/tokens?type=beta
 2. Select required scopes
 3. Add to `.env` file
 4. **Never commit token to git**

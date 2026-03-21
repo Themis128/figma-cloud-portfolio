@@ -500,13 +500,15 @@ test.describe("Admin Page — Console Tab", () => {
     // Use more specific selectors scoped to the console panel
     const panel = page.locator('[role="tabpanel"]');
     await expect(panel.getByText("Ping", { exact: true })).toBeVisible();
+    await expect(panel.getByText("Monitor", { exact: true })).toBeVisible();
+    await expect(panel.getByText("GitHub", { exact: true })).toBeVisible();
+    await expect(panel.getByText("Repos", { exact: true })).toBeVisible();
+    await expect(panel.getByText("Search", { exact: true })).toBeVisible();
+    await expect(panel.getByText("Resume", { exact: true })).toBeVisible();
     await expect(panel.getByText("Slots", { exact: true })).toBeVisible();
-    await expect(
-      panel.getByText("API Keys", { exact: true }),
-    ).toBeVisible();
-    await expect(
-      panel.getByText("Subscriptions", { exact: true }),
-    ).toBeVisible();
+    await expect(panel.getByText("API Keys", { exact: true })).toBeVisible();
+    await expect(panel.getByText("Push Subs", { exact: true })).toBeVisible();
+    await expect(panel.getByText("Docs", { exact: true })).toBeVisible();
     // "Health" preset button — distinguish from tab by scoping to preset row
     const presetButtons = panel
       .locator("button")
@@ -544,16 +546,40 @@ test.describe("Admin Page — Console Tab", () => {
     await expect(urlInput).toHaveValue("/api/organizations/api_keys");
   });
 
-  test("should populate URL when clicking Subscriptions preset", async ({
+  test("should populate URL when clicking Push Subs preset", async ({
     page,
   }) => {
     const panel = page.locator('[role="tabpanel"]');
-    await panel.getByText("Subscriptions", { exact: true }).click();
+    await panel.getByText("Push Subs", { exact: true }).click();
 
     const urlInput = page.locator('input[placeholder="/api/..."]');
     await expect(urlInput).toHaveValue(
       "/api/push-notifications?action=subscriptions",
     );
+  });
+
+  test("should populate URL when clicking GitHub preset", async ({ page }) => {
+    const panel = page.locator('[role="tabpanel"]');
+    await panel.getByText("GitHub", { exact: true }).click();
+
+    const urlInput = page.locator('input[placeholder="/api/..."]');
+    await expect(urlInput).toHaveValue("/api/github/stats");
+  });
+
+  test("should populate URL when clicking Search preset", async ({ page }) => {
+    const panel = page.locator('[role="tabpanel"]');
+    await panel.getByText("Search", { exact: true }).click();
+
+    const urlInput = page.locator('input[placeholder="/api/..."]');
+    await expect(urlInput).toHaveValue("/api/search?q=cloud");
+  });
+
+  test("should populate URL when clicking Monitor preset", async ({ page }) => {
+    const panel = page.locator('[role="tabpanel"]');
+    await panel.getByText("Monitor", { exact: true }).click();
+
+    const urlInput = page.locator('input[placeholder="/api/..."]');
+    await expect(urlInput).toHaveValue("/api/monitor");
   });
 
   test("should allow editing URL input manually", async ({ page }) => {
@@ -1222,6 +1248,24 @@ test.describe("Admin Page — Deploy Tab", () => {
     const panel = page.locator('[role="tabpanel"]');
     const statusLabels = panel.getByText(/healthy|degraded|down|unknown/i);
     expect(await statusLabels.count()).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should display GitHub Activity card after check", async ({ page }) => {
+    await page.getByRole("button", { name: "Check" }).click();
+    await expect(page.getByText("GitHub Activity")).toBeVisible({ timeout: 10_000 });
+    // Should show stats labels
+    await expect(page.getByText("Repos", { exact: true })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Stars", { exact: true })).toBeVisible();
+    await expect(page.getByText("Followers", { exact: true })).toBeVisible();
+  });
+
+  test("should display Service Endpoints card after check", async ({ page }) => {
+    await page.getByRole("button", { name: "Check" }).click();
+    await expect(page.getByText("Service Endpoints")).toBeVisible({ timeout: 10_000 });
+    // Should show service names with check marks or x marks
+    await expect(page.getByText("Search", { exact: true })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("GitHub API", { exact: true })).toBeVisible();
+    await expect(page.getByText("Monitor", { exact: true })).toBeVisible();
   });
 });
 
