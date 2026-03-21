@@ -13,9 +13,4 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-      - uses: pnpm/action-setup@v4
-      - run: echo "AWS_KEY=${{ secrets.AWS_ACCESS_KEY_ID != '' && 'set' || 'unset' }}"
-      - run: echo "Test complete"
+      - run: echo "Test with timeout"
