@@ -219,7 +219,13 @@ export function NotificationButton() {
       if (!vapidRes.ok) throw new Error("Failed to get VAPID key");
       const { publicKey } = await vapidRes.json() as { publicKey: string };
 
-      // 4. Subscribe via Push API
+      // 4. Clear any stale subscription (different VAPID key causes hang)
+      const existingSub = await registration.pushManager.getSubscription();
+      if (existingSub) {
+        await existingSub.unsubscribe();
+      }
+
+      // 5. Subscribe via Push API
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToArrayBuffer(publicKey),
@@ -239,11 +245,21 @@ export function NotificationButton() {
       if (!putRes.ok) throw new Error("Failed to store subscription");
       setPushSubscribed(true);
     } catch (err) {
-      console.error("Push subscription failed:", err);
+      console.error("Push subscription failed:", err instanceof Error ? err.message : err);
     } finally {
       setPushLoading(false);
     }
   }, [pushSupported, pushLoading]);
+
+  // Global timeout wrapper — ensures subscribe never hangs forever
+  const handleSubscribe = useCallback(async () => {
+    const timeout = setTimeout(() => {
+      console.error("Push subscribe global timeout (15s)");
+      setPushLoading(false);
+    }, 15000);
+    await subscribeToPush();
+    clearTimeout(timeout);
+  }, [subscribeToPush]);
 
   const unsubscribeFromPush = useCallback(async () => {
     if (pushLoading) return;
@@ -445,7 +461,7 @@ export function NotificationButton() {
           {pushSupported && (
             <div className="border-t border-cyan-400/10 px-4 py-3">
               <button
-                onClick={() => void (pushSubscribed ? unsubscribeFromPush() : subscribeToPush())}
+                onClick={() => void (pushSubscribed ? unsubscribeFromPush() : handleSubscribe())}
                 disabled={pushLoading}
                 className={`flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-mono transition-all ${
                   pushSubscribed
