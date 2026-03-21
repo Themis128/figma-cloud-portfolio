@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { API_ORIGIN, API_TIMEOUT_MS, getHttpStatusColor } from "@/lib/admin-constants";
+import { API_TIMEOUT_MS, getApiOrigin, getHttpStatusColor } from "@/lib/admin-constants";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "HEAD";
 
@@ -130,7 +130,7 @@ export default function ApiConsole() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
       try {
-        const res = await fetch(`${API_ORIGIN}${url}`, { ...opts, signal: controller.signal });
+        const res = await fetch(`${getApiOrigin()}${url}`, { ...opts, signal: controller.signal });
         const timing = Math.round(performance.now() - start);
         let resBody: string;
         const ct = res.headers.get("content-type") ?? "";
