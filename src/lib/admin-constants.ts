@@ -20,17 +20,16 @@ export const API_TIMEOUT_MS = 10_000;
 
 /**
  * API origin for admin dashboard requests.
- * In production (static export on S3), relative /api/ paths hit CloudFront (404).
- * We need the Lambda function URL. In dev, relative paths work via Express proxy.
+ * Production: relative /api/ paths route through CloudFront → Lambda origin.
+ * Dev: relative paths proxy via Express on port 3001 (next.config rewrites).
+ * Direct Lambda URL kept as fallback constant.
  */
 export const LAMBDA_API_URL = "https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws";
 
-/** Returns the API origin — must be a function (not a const) because static export
- *  evaluates module-level code at build time when `window` is undefined. */
+/** Returns the API origin — empty string uses same-origin (CloudFront in prod,
+ *  Express proxy in dev). This avoids third-party domain issues like Edge
+ *  Tracking Prevention blocking storage access. */
 export function getApiOrigin(): string {
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-    return LAMBDA_API_URL;
-  }
   return "";
 }
 
