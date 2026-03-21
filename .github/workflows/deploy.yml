@@ -71,5 +71,5 @@ jobs:
             --distribution-id E134SCTR0QGQKJ \
             --id "${INVALIDATION_ID}" \
             --max-attempts 120 \
-            --delay 10
+            --delay-seconds 10
           echo "Invalidation completed"
