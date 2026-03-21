@@ -1,10 +1,16 @@
 "use client";
 
 import { CheckCircle2, Circle, Play, RotateCcw, Share2 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+
+const CyberConfetti = dynamic(
+  () => import("@/components/interactive/CyberConfetti"),
+  { ssr: false },
+);
 
 type Phase = "idle" | "running" | "done";
 type MetricStatus = "good" | "warn" | "poor";
@@ -146,6 +152,7 @@ export function SpeedTestRunner() {
   const [capturedMetrics, setCapturedMetrics] = useState<
     Record<string, number>
   >({});
+  const [showConfetti, setShowConfetti] = useState(false);
   const metricsRef = useRef<Record<string, number>>({});
 
   // Passively collect metrics as the page loads
@@ -226,8 +233,20 @@ export function SpeedTestRunner() {
   const grade =
     phase === "done" ? getOverallGrade(TEST_SEQUENCE, capturedMetrics) : null;
 
+  // Trigger confetti for top grades once all results are revealed
+  useEffect(() => {
+    if (
+      revealedCount >= TEST_SEQUENCE.length &&
+      grade &&
+      (grade.label === "A+" || grade.label === "A")
+    ) {
+      setShowConfetti(true);
+    }
+  }, [revealedCount, grade]);
+
   return (
     <div className="space-y-8">
+      {showConfetti && <CyberConfetti trigger={showConfetti} />}
       {/* Section header */}
       <div className="text-center space-y-3">
         <h2 className="text-2xl font-bold uppercase tracking-[0.15em] text-foreground">

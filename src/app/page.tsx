@@ -6,6 +6,7 @@ import AvailabilityBadge from "@/components/AvailabilityBadge";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
+import TerminalHint from "@/components/interactive/TerminalHint";
 import TypeWriter from "@/components/interactive/TypeWriter";
 import Navigation from "@/components/Navigation";
 import QuickContactForm from "@/components/QuickContactForm";
@@ -80,6 +81,7 @@ export default function HomePage() {
                     />
                   </p>
                   <div className="w-12 sm:w-16 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mb-3 md:mb-4" />
+                  <TerminalHint />
                 </AnimatedSection>
                 <AnimatedSection delay={0.3}>
                   <p className="text-foreground/80 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl">
