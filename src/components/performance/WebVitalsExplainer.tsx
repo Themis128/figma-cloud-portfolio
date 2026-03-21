@@ -3,7 +3,18 @@
 import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { VitalGaugeRing } from "@/components/performance/VitalGaugeRing";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
+
+const GAUGE_CONFIG: Record<
+  string,
+  { good: number; poor: number; max: number; unit: string }
+> = {
+  lcp: { good: 2500, poor: 4000, max: 6000, unit: "ms" },
+  fcp: { good: 1800, poor: 3000, max: 5000, unit: "ms" },
+  cls: { good: 0.1, poor: 0.25, max: 0.5, unit: "" },
+  inp: { good: 200, poor: 500, max: 800, unit: "ms" },
+};
 
 interface VitalInfo {
   key: "lcp" | "fcp" | "cls" | "ttfb" | "inp";
@@ -203,6 +214,25 @@ export function WebVitalsExplainer() {
                     {statusStyle.label}
                   </span>
                 </div>
+
+                {/* Gauge ring for core vitals */}
+                {rawValue !== undefined &&
+                  (() => {
+                    const gauge = GAUGE_CONFIG[vital.key];
+                    if (!gauge) return null;
+                    return (
+                      <div className="flex justify-center my-3">
+                        <VitalGaugeRing
+                          value={rawValue}
+                          max={gauge.max}
+                          label={vital.label}
+                          unit={gauge.unit}
+                          good={gauge.good}
+                          poor={gauge.poor}
+                        />
+                      </div>
+                    );
+                  })()}
 
                 {/* Value */}
                 <div
