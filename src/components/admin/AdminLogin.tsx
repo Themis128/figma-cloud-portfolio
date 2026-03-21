@@ -21,7 +21,7 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const ok = await onLogin(email, password);
+    const ok = await onLogin(email.trim(), password);
     setSubmitting(false);
     if (!ok) {
       setShake(true);
