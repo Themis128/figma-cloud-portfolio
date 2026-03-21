@@ -285,7 +285,9 @@ aws lambda update-function-configuration \
     \"VAPID_PRIVATE_KEY\":\"your-vapid-private-key\",
     \"VAPID_EMAIL\":\"mailto:your-email@domain.com\",
     \"GOOGLE_ANALYTICS_MEASUREMENT_ID\":\"GA_MEASUREMENT_ID\",
-    \"GOOGLE_ANALYTICS_API_SECRET\":\"GA_API_SECRET\"
+    \"GOOGLE_ANALYTICS_API_SECRET\":\"GA_API_SECRET\",
+    \"GITHUB_TOKEN\":\"ghp_your_fine_grained_pat\",
+    \"GITHUB_USERNAME\":\"Themis128\"
   }"
 ```
 
