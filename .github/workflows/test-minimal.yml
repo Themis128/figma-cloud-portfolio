@@ -3,9 +3,13 @@ name: Test Minimal
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v6
-      - run: echo "Hello from test workflow"
+      - run: echo "Hello from test workflow with environment"
