@@ -2,14 +2,18 @@ import { ArrowUp, Cookie } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import Navigation from "@/components/Navigation";
+
+const SITE_URL = "https://www.baltzakisthemis.com";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description:
     "Cookie Policy for baltzakisthemis.com — what cookies we use, why, and how to manage your preferences.",
+  alternates: { canonical: `${SITE_URL}/cookies/` },
 };
 
 function CookieTable({
@@ -77,6 +81,12 @@ function CookieTable({
 export default function CookiePolicyPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Cookie Policy", url: `${SITE_URL}/cookies/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

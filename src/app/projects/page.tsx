@@ -1,18 +1,35 @@
 import type { Metadata } from "next";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import SearchableProjects from "@/components/SearchableProjects";
+
+const SITE_URL = "https://www.baltzakisthemis.com";
 
 export const metadata: Metadata = {
   title: "Projects",
   description:
     "Portfolio of projects by Themistoklis Baltzakis - Network infrastructure, DevOps, web applications, and AI/data tools.",
+  openGraph: {
+    title: "Projects | Themistoklis Baltzakis",
+    description:
+      "Portfolio of projects by Themistoklis Baltzakis - Network infrastructure, DevOps, web applications, and AI/data tools.",
+    url: `${SITE_URL}/projects/`,
+    type: "website",
+  },
+  alternates: { canonical: `${SITE_URL}/projects/` },
 };
 
 export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Projects", url: `${SITE_URL}/projects/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

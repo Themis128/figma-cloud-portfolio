@@ -18,6 +18,7 @@ import type { Metadata } from "next";
 import AgentPlayground from "@/components/agents/AgentPlayground";
 import BlocklyAgentBuilderWrapper from "@/components/agents/BlocklyAgentBuilderWrapper";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
@@ -35,10 +36,20 @@ const SECTIONS = [
   { id: "playground", label: "Playground" },
 ] as const;
 
+const SITE_URL = "https://www.baltzakisthemis.com";
+
 export const metadata: Metadata = {
   title: "Understanding AI Agents",
   description:
     "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
+  openGraph: {
+    title: "Understanding AI Agents | Themistoklis Baltzakis",
+    description:
+      "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
+    url: `${SITE_URL}/agents/`,
+    type: "article",
+  },
+  alternates: { canonical: `${SITE_URL}/agents/` },
 };
 
 const coreComponents = [
@@ -175,6 +186,12 @@ const keyTerms = [
 export default function AgentsPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "AI Agents", url: `${SITE_URL}/agents/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
       <SectionNav sections={SECTIONS} ariaLabel="AI Agents page sections" />

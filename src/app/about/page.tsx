@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import SkillsRadar from "@/components/interactive/SkillsRadar";
@@ -25,15 +26,31 @@ const SECTIONS = [
   { id: "awards", label: "Awards" },
 ] as const;
 
+const SITE_URL = "https://www.baltzakisthemis.com";
+
 export const metadata: Metadata = {
   title: "About Me",
   description:
     "Learn about Themistoklis Baltzakis - IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
+  openGraph: {
+    title: "About Me | Themistoklis Baltzakis",
+    description:
+      "Learn about Themistoklis Baltzakis - IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
+    url: `${SITE_URL}/about/`,
+    type: "profile",
+  },
+  alternates: { canonical: `${SITE_URL}/about/` },
 };
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "About", url: `${SITE_URL}/about/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

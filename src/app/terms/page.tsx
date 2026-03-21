@@ -2,13 +2,17 @@ import { ArrowUp, FileText, Mail } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
+
+const SITE_URL = "https://www.baltzakisthemis.com";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
     "Terms of Service for baltzakisthemis.com — the rules governing your use of this website and its services.",
+  alternates: { canonical: `${SITE_URL}/terms/` },
 };
 
 function SectionCard({
@@ -42,6 +46,12 @@ function SectionCard({
 export default function TermsOfServicePage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Terms of Service", url: `${SITE_URL}/terms/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

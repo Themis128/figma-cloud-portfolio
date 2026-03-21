@@ -2,13 +2,17 @@ import { ArrowUp, Mail, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
+
+const SITE_URL = "https://www.baltzakisthemis.com";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
     "Privacy Policy for baltzakisthemis.com — how we collect, use, and protect your personal data under GDPR and CCPA.",
+  alternates: { canonical: `${SITE_URL}/privacy/` },
 };
 
 function SectionCard({
@@ -42,6 +46,12 @@ function SectionCard({
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Privacy Policy", url: `${SITE_URL}/privacy/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 
