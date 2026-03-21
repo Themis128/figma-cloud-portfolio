@@ -13,4 +13,8 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v6
-      - run: echo "Test with timeout"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+      - run: echo "Test with node and pnpm"
