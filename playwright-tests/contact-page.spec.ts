@@ -261,3 +261,32 @@ test.describe("Contact Page — Form Interaction", () => {
     expect(validationMsg).not.toBe("");
   });
 });
+
+// ─── Section Navigation ──────────────────────────────────────────────────────
+
+test.describe("Contact Page — Section Navigation", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/contact/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should have all section IDs for navigation", async ({ page }) => {
+    const sectionIds = ["hero", "contact-info", "contact-form", "more-info"];
+    for (const id of sectionIds) {
+      await expect(page.locator(`#${id}`)).toBeAttached();
+    }
+  });
+
+  test("should display sticky section nav on desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/contact/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Scroll past the hero to trigger visibility
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await page.waitForTimeout(500);
+
+    const sectionNav = page.locator('nav[aria-label="Contact page sections"]');
+    await expect(sectionNav).toBeAttached();
+  });
+});

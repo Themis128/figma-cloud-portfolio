@@ -1,6 +1,6 @@
 # Portfolio Chatbot
 
-An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using **AWS Bedrock** (Claude 3 Haiku) with the full knowledge base loaded into the system prompt — fast, accurate, and cost-effective.
+An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using **AWS Bedrock** (Claude 3.5 Haiku) with the full knowledge base loaded into the system prompt — fast, accurate, and cost-effective.
 
 ## Architecture
 
@@ -8,7 +8,7 @@ An AI-powered chat assistant embedded in the portfolio site. It answers visitor 
 Browser (ChatbotWidget.tsx)
   └─ POST /api/chat  ←── Express server (server/routes/chat.ts, port 3001)
        └─ ConverseStream API
-            └─ AWS Bedrock (Claude 3 Haiku)
+            └─ AWS Bedrock (Claude 3.5 Haiku)
                  └─ System prompt includes full knowledge base (~25 KB, 10 markdown files)
 ```
 
@@ -18,11 +18,11 @@ The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock
 
 - **Fast responses** — ~1-3 seconds per query via AWS Bedrock
 - **Grounded answers** — full knowledge base in the system prompt prevents hallucination
-- **Low cost** — Claude 3 Haiku: ~$0.002 per query (~$1.60/month for 1,000 queries)
+- **Low cost** — Claude 3.5 Haiku: ~$0.005 per query (~$5/month for 1,000 queries)
 - **Conversation history** — multi-turn context preserved per session (last 6 messages)
-- **SSE streaming** — Server-Sent Events delivery to the browser
+- **SSE streaming** — incremental token-by-token Server-Sent Events delivery to the browser
 - **Cyberpunk UI** — dark glass-morphism panel, cyan accent, `font-mono`
-- **Suggested questions** — clickable prompts shown on first open
+- **Suggested questions** — 3 randomly selected prompts from a pool of ~40, plus a pinned booking prompt, shown on first open
 - **Booking flow** — `[BOOK_CALL]` token triggers the BookingCard component (Cal.com integration)
 - **Graceful errors** — failures displayed inline without crashing
 
@@ -71,14 +71,14 @@ Open the portfolio in your browser and click **Chat with AI** in the bottom-left
 ### Prerequisites
 
 - AWS credentials configured (`~/.aws/credentials` or environment variables)
-- Bedrock model access enabled for Claude 3 Haiku in `us-east-1`
+- Bedrock model access enabled for Claude 3.5 Haiku in `us-east-1`
 
 ## Environment Variables
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
 | `BEDROCK_REGION` | No | `us-east-1` | AWS region for Bedrock API calls |
-| `BEDROCK_MODEL_ID` | No | `anthropic.claude-3-haiku-20240307-v1:0` | Bedrock model identifier |
+| `BEDROCK_MODEL_ID` | No | `us.anthropic.claude-3-5-haiku-20241022-v1:0` | Bedrock inference profile ID |
 | `AWS_ACCESS_KEY_ID` | Yes | (from AWS config) | AWS credentials |
 | `AWS_SECRET_ACCESS_KEY` | Yes | (from AWS config) | AWS credentials |
 
@@ -86,24 +86,28 @@ Open the portfolio in your browser and click **Chat with AI** in the bottom-left
 
 | Property | Value |
 | --- | --- |
-| Model | Claude 3 Haiku |
-| Provider | AWS Bedrock |
-| Model ID | `anthropic.claude-3-haiku-20240307-v1:0` |
+| Model | Claude 3.5 Haiku |
+| Provider | AWS Bedrock (inference profile) |
+| Model ID | `us.anthropic.claude-3-5-haiku-20241022-v1:0` |
 | Max output tokens | 512 |
 | Temperature | 0.3 |
 | Top-p | 0.9 |
-| Cost (input) | $0.25 / 1M tokens |
-| Cost (output) | $1.25 / 1M tokens |
+| Cost (input) | $0.80 / 1M tokens |
+| Cost (output) | $4.00 / 1M tokens |
 | Typical response time | 1-3 seconds |
 
 ## SSE Protocol
 
-The Express route yields events in this format:
+The Express route streams incremental tokens as they arrive from Bedrock:
 
 ```
-data: {"token": "Full assistant reply here"}\n\n
+data: {"token": "Hello"}\n\n
+data: {"token": " there"}\n\n
+data: {"token": "!"}\n\n
 data: [DONE]\n\n
 ```
+
+Each `token` event contains a small chunk of text (typically a word or partial word). The frontend appends each chunk to the assistant message in real time, producing a typewriter effect.
 
 On booking intent:
 
@@ -136,7 +140,7 @@ The chatbot widget follows WCAG 2.2 guidelines:
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
 | "Chat request failed" | Express server not running | Start with `pnpm dev:all` |
-| "Access denied" from Bedrock | Missing model access | Enable Claude 3 Haiku in AWS Bedrock console |
+| "Access denied" from Bedrock | Missing model access | Enable Claude 3.5 Haiku in AWS Bedrock console |
 | "Invalid payment instrument" | AWS billing not set up | Add payment method in AWS Billing console |
 | "Credentials not found" | AWS not configured | Run `aws configure` or set `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` |
 | Empty responses | Knowledge base not found | Verify `server/bot/knowledge/*.md` files exist |

@@ -20,8 +20,16 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard, HoverButton } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
+import { SectionNav } from "@/components/SectionNav";
 import { trackLead, trackOutboundClick } from "@/components/GoogleAnalytics";
 import { submitContactForm } from "@/lib/api";
+
+const SECTIONS = [
+  { id: "hero", label: "Overview" },
+  { id: "contact-info", label: "Contact Info" },
+  { id: "contact-form", label: "Send Message" },
+  { id: "more-info", label: "More Info" },
+] as const;
 import {
   Card,
   CardContent,
@@ -202,10 +210,12 @@ export default function ContactPage() {
       )}
       <CircuitBackground />
       <Navigation />
+      <SectionNav sections={SECTIONS} ariaLabel="Contact page sections" />
 
       <main id="main-content" className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
           {/* Hero Section */}
+          <div id="hero">
           <AnimatedSection className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-16">
             <div className="space-y-3 md:space-y-4">
               <AnimatedSection delay={0.1}>
@@ -222,10 +232,11 @@ export default function ContactPage() {
               </p>
             </AnimatedSection>
           </AnimatedSection>
+          </div>
 
           {/* Main Content */}
           <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+            <div id="contact-info" className="grid lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Contact Information */}
               <AnimatedSection delay={0.2} direction="left">
                 <div className="space-y-6">
@@ -319,6 +330,7 @@ export default function ContactPage() {
               </AnimatedSection>
 
               {/* Contact Form */}
+              <div id="contact-form">
               <AnimatedSection delay={0.3} direction="right">
                 <Card className="bg-foreground/5 backdrop-blur-sm border-border">
                   <CardHeader>
@@ -448,9 +460,11 @@ export default function ContactPage() {
                   </CardContent>
                 </Card>
               </AnimatedSection>
+              </div>
             </div>
 
             {/* Call to Action */}
+            <div id="more-info">
             <AnimatedSection delay={0.5} className="text-center mt-16">
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border max-w-2xl mx-auto">
                 <h3 className="text-xl font-bold text-foreground mb-4">
@@ -480,6 +494,7 @@ export default function ContactPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
           </div>
         </div>
       </main>
