@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import {
@@ -13,6 +14,8 @@ import { LiveLoadHero } from "@/components/performance/LiveLoadHero";
 import { PerformanceMethodology } from "@/components/performance/PerformanceMethodology";
 import { SectionNav } from "@/components/SectionNav";
 
+const SITE_URL = "https://www.baltzakisthemis.com";
+
 export const metadata: Metadata = {
   title: "Performance",
   description:
@@ -21,7 +24,10 @@ export const metadata: Metadata = {
     title: "Performance | Themistoklis Baltzakis",
     description:
       "See how fast this portfolio loads on your device — live Core Web Vitals and interactive speed test.",
+    url: `${SITE_URL}/performance/`,
+    type: "website",
   },
+  alternates: { canonical: `${SITE_URL}/performance/` },
 };
 
 function MetricSkeleton() {
@@ -50,6 +56,12 @@ const SECTIONS = [
 export default function PerformancePage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Performance", url: `${SITE_URL}/performance/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

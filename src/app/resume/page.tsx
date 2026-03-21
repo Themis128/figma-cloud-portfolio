@@ -1,18 +1,35 @@
 import type { Metadata } from "next";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import { ResumePageTabs } from "@/components/resume/ResumePageTabs";
+
+const SITE_URL = "https://www.baltzakisthemis.com";
 
 export const metadata: Metadata = {
   title: "CV Builder & Career Guide",
   description:
     "Build a professional CV with our interactive builder, or learn how to write a resume that beats ATS systems. Practical tips for IT professionals.",
+  openGraph: {
+    title: "CV Builder & Career Guide | Themistoklis Baltzakis",
+    description:
+      "Build a professional CV with our interactive builder, or learn how to write a resume that beats ATS systems. Practical tips for IT professionals.",
+    url: `${SITE_URL}/resume/`,
+    type: "website",
+  },
+  alternates: { canonical: `${SITE_URL}/resume/` },
 };
 
 export default function ResumePage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "CV Builder & Career Guide", url: `${SITE_URL}/resume/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

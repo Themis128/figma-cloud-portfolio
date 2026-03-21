@@ -1,17 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import BuilderPage from "@/components/BuilderPage";
 
-import dynamic from "next/dynamic";
+export const metadata: Metadata = {
+  title: "Builder",
+  description:
+    "Visual page builder powered by Builder.io — create and customize content with a drag-and-drop interface.",
+};
 
-// Dynamically import BuilderClient with SSR disabled to avoid createContext issues
-const BuilderClient = dynamic(
-  () => import("@/components/BuilderClient").then((mod) => mod.BuilderClient),
-  { ssr: false },
-);
-
-export default function BuilderPage() {
-  return (
-    <main id="main-content">
-      <BuilderClient model="page" url="/builder" />
-    </main>
-  );
+export default function Builder() {
+  return <BuilderPage />;
 }

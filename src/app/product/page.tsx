@@ -1,14 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import InteractiveTimeline from "@/components/interactive/InteractiveTimeline";
 import Navigation from "@/components/Navigation";
+
+const SITE_URL = "https://www.baltzakisthemis.com";
 
 export const metadata: Metadata = {
   title: "Work Experience",
   description:
     "Professional work experience of Themistoklis Baltzakis - IT Network Engineer with expertise in Cisco systems, Fortinet security, Azure AD, and enterprise IT infrastructure.",
+  openGraph: {
+    title: "Work Experience | Themistoklis Baltzakis",
+    description:
+      "Professional work experience of Themistoklis Baltzakis - IT Network Engineer with expertise in Cisco systems, Fortinet security, Azure AD, and enterprise IT infrastructure.",
+    url: `${SITE_URL}/product/`,
+    type: "website",
+  },
+  alternates: { canonical: `${SITE_URL}/product/` },
 };
 
 const experiences = [
@@ -78,6 +89,12 @@ const experiences = [
 export default function ProductPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Work Experience", url: `${SITE_URL}/product/` },
+        ]}
+      />
       <CircuitBackground />
       <Navigation />
 

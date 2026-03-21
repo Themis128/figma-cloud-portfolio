@@ -3,21 +3,35 @@ import type { Metadata } from "next";
 import AIBrain from "@/components/AIBrain";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import AvailabilityBadge from "@/components/AvailabilityBadge";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
 import TypeWriter from "@/components/interactive/TypeWriter";
 import Navigation from "@/components/Navigation";
 import QuickContactForm from "@/components/QuickContactForm";
 
+const SITE_URL = "https://www.baltzakisthemis.com";
+
 export const metadata: Metadata = {
   title: "Home | Themistoklis Baltzakis",
   description:
     "Full-stack developer specializing in React, Next.js, AWS, and cloud solutions. Building modern, scalable web applications with cutting-edge technologies.",
+  openGraph: {
+    title: "Home | Themistoklis Baltzakis",
+    description:
+      "Full-stack developer specializing in React, Next.js, AWS, and cloud solutions. Building modern, scalable web applications with cutting-edge technologies.",
+    url: `${SITE_URL}/`,
+    type: "website",
+  },
+  alternates: { canonical: `${SITE_URL}/` },
 };
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
+      <BreadcrumbSchema
+        items={[{ name: "Home", url: `${SITE_URL}/` }]}
+      />
       {/* Circuit background */}
       <CircuitBackground />
 
