@@ -34,6 +34,7 @@ build/
 .vscode/*
 !.vscode/extensions.json
 .idea/
+*.code-workspace
 *.swp
 *.swo
 *.suo
@@ -73,6 +74,11 @@ coverage/
 amplify_outputs.json
 amplify_outputs.dart
 amplify_outputs.mjs
+
+# Cline AI assistant (no longer used)
+.cline/
+.clineignore
+.clinerules
 
 # MCP configuration files (may contain sensitive tokens)
 mcp.json
