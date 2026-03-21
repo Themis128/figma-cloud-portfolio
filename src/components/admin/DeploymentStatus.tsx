@@ -198,7 +198,9 @@ export default function DeploymentStatus() {
                 Frontend
               </p>
             </div>
-            {deploy && statusBadge(deploy.frontend.status)}
+            <div role="status" aria-label={`Frontend status: ${deploy?.frontend.status ?? "unknown"}`}>
+              {deploy && statusBadge(deploy.frontend.status)}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -244,7 +246,9 @@ export default function DeploymentStatus() {
                 API (Lambda)
               </p>
             </div>
-            {deploy && statusBadge(deploy.api.status)}
+            <div role="status" aria-label={`API status: ${deploy?.api.status ?? "unknown"}`}>
+              {deploy && statusBadge(deploy.api.status)}
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchAuthSession } from "aws-amplify/auth";
-import { Keyboard, Pause, Play, RefreshCcw } from "lucide-react";
+import { Download, Keyboard, Pause, Play, RefreshCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -315,7 +315,7 @@ export default function ApiHealthDashboard() {
     <div className="space-y-6">
       {/* Stats Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6" role="status" aria-live="polite" aria-label="Endpoint health summary">
           <div className="text-center">
             <p className="text-2xl font-mono font-bold text-foreground">
               {ENDPOINTS.length}
@@ -373,6 +373,7 @@ export default function ApiHealthDashboard() {
             variant="outline"
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
+            aria-label={autoRefresh ? "Pause auto-refresh" : "Resume auto-refresh"}
             className={`border-border/30 font-mono text-xs ${
               autoRefresh
                 ? "text-green-400 border-green-500/30"
@@ -390,10 +391,44 @@ export default function ApiHealthDashboard() {
             variant="outline"
             size="sm"
             onClick={refreshAll}
+            aria-label="Refresh all endpoints"
             className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
           >
             <RefreshCcw className="w-3.5 h-3.5 mr-1.5" />
             Refresh All
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const exportData = ENDPOINTS.map((ep) => {
+                const s = statuses[ep.id] ?? defaultStatus();
+                return {
+                  id: ep.id,
+                  name: ep.name,
+                  path: ep.path,
+                  service: ep.service,
+                  state: s.state,
+                  statusCode: s.statusCode,
+                  responseTime: s.responseTime,
+                  lastChecked: s.lastChecked?.toISOString() ?? null,
+                  ...(s.error !== undefined && { error: s.error }),
+                  responseHistory: history[ep.id] ?? [],
+                };
+              });
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `health-check-${new Date().toISOString().split("T")[0]}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            aria-label="Export health check data as JSON"
+            className="border-border/30 text-foreground/40 hover:text-foreground font-mono text-xs"
+          >
+            <Download className="w-3 h-3 mr-1.5" />
+            Export
           </Button>
           <span className="hidden sm:flex items-center gap-1 text-[9px] text-foreground/20 font-mono">
             <Keyboard className="w-3 h-3" />

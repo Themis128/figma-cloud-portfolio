@@ -187,7 +187,7 @@ export default function ApiConsole() {
               if (!["POST", "PUT", "DELETE"].includes(v)) setShowBody(false);
             }}
           >
-            <SelectTrigger className="w-30 font-mono text-sm bg-background/50 border-border/30">
+            <SelectTrigger className="w-30 font-mono text-sm bg-background/50 border-border/30" aria-label="HTTP method">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -204,11 +204,13 @@ export default function ApiConsole() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="/api/..."
+            aria-label="Request URL"
             className="flex-1 font-mono text-sm bg-background/50 border-border/30 focus:border-cyan-500/50"
           />
           <Button
             onClick={() => void execute()}
             disabled={isLoading || !url.trim()}
+            aria-label="Send request"
             className="bg-cyan-500/10 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-40"
           >
             {isLoading ? (
@@ -302,7 +304,7 @@ export default function ApiConsole() {
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="space-y-1 max-h-50 overflow-auto">
+          <div className="space-y-1 max-h-50 overflow-auto" role="log" aria-label="Request history">
             {history.map((entry) => (
               <button
                 key={entry.id}

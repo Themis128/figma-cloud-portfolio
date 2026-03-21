@@ -85,30 +85,35 @@ export default function SeoAudit() {
     setPages([]);
     setScannedCount(0);
 
-    const results: PageSeoData[] = [];
-    for (const path of PAGES) {
-      try {
-        const res = await fetch(path, { cache: "no-store" });
-        const html = await res.text();
-        results.push(extractSeoFromHtml(html, path));
-      } catch {
-        results.push({
-          path,
-          title: null,
-          description: null,
-          ogImage: null,
-          ogTitle: null,
-          canonical: null,
-          robots: null,
-          structuredData: false,
-          status: "error",
-          issues: ["Failed to fetch page"],
-        });
-      }
-      setScannedCount((c) => c + 1);
-      setPages([...results]);
-    }
+    const controller = new AbortController();
 
+    const results = await Promise.all(
+      PAGES.map(async (path) => {
+        try {
+          const res = await fetch(path, { cache: "no-store", signal: controller.signal });
+          const html = await res.text();
+          const result = extractSeoFromHtml(html, path);
+          setScannedCount((c) => c + 1);
+          return result;
+        } catch {
+          setScannedCount((c) => c + 1);
+          return {
+            path,
+            title: null,
+            description: null,
+            ogImage: null,
+            ogTitle: null,
+            canonical: null,
+            robots: null,
+            structuredData: false,
+            status: "error" as const,
+            issues: ["Failed to fetch page"],
+          };
+        }
+      })
+    );
+
+    setPages(results);
     setScanning(false);
   }
 
@@ -164,8 +169,8 @@ export default function SeoAudit() {
         </div>
         <div className="flex items-center gap-2">
           {scanning && (
-            <span className="text-[10px] font-mono text-foreground/30">
-              {scannedCount}/{PAGES.length}
+            <span className="text-[10px] font-mono text-foreground/30" role="status" aria-live="polite">
+              Auditing {scannedCount}/{PAGES.length} pages...
             </span>
           )}
           <Button

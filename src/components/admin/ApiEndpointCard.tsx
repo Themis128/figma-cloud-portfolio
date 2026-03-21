@@ -157,6 +157,7 @@ export default function ApiEndpointCard({
           onClick={onRefresh}
           className="p-1.5 rounded hover:bg-foreground/5 text-foreground/40 hover:text-cyan-400 transition-colors"
           title="Refresh"
+          aria-label={`Refresh ${endpoint.name} endpoint`}
         >
           <RotateCcw
             className={`w-3.5 h-3.5 ${status.state === "checking" ? "animate-spin" : ""}`}
@@ -165,9 +166,14 @@ export default function ApiEndpointCard({
       </div>
 
       <div className="flex items-center gap-2 mb-2">
-        <span
-          className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[status.state] ?? ""}`}
-        />
+        <span className="flex items-center gap-1 shrink-0">
+          <span
+            className={`w-2 h-2 rounded-full ${STATUS_DOT[status.state] ?? ""}`}
+          />
+          <span className="text-[10px]" aria-hidden="true">
+            {status.state === "healthy" ? "\u2713" : status.state === "degraded" ? "\u26A0" : status.state === "down" ? "\u2715" : ""}
+          </span>
+        </span>
         <span
           className={`text-xs font-mono ${STATUS_TEXT_COLOR[status.state] ?? ""}`}
         >
