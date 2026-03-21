@@ -15,6 +15,7 @@ import ScrollProgress from "@/components/interactive/ScrollProgress";
 import { MotionProvider } from "@/components/MotionProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { Providers } from "@/components/providers";
+import PushToast from "@/components/PushToast";
 import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
 import SentryInit from "@/components/SentryInit";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
@@ -168,6 +169,7 @@ export default function RootLayout({
               <MatrixRain />
               <CursorTrail />
               <CommandPalette />
+              <PushToast />
             </MotionProvider>
           </AuthProvider>
           </AmplifyProvider>
