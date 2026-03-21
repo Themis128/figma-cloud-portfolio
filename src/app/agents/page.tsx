@@ -48,6 +48,7 @@ export const metadata: Metadata = {
       "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
     url: `${SITE_URL}/agents/`,
     type: "article",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/agents/` },
 };

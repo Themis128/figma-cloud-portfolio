@@ -26,6 +26,7 @@ export const metadata: Metadata = {
       "See how fast this portfolio loads on your device — live Core Web Vitals and interactive speed test.",
     url: `${SITE_URL}/performance/`,
     type: "website",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/performance/` },
 };

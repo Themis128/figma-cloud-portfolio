@@ -18,10 +18,15 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
   const [shake, setShake] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    const ok = await onLogin(email.trim(), password);
+    // Read directly from the form to handle password-manager autofill,
+    // which can populate the DOM without firing React's onChange.
+    const formData = new FormData(e.currentTarget);
+    const submittedEmail = ((formData.get("email") as string) ?? email).trim();
+    const submittedPassword = (formData.get("password") as string) ?? password;
+    const ok = await onLogin(submittedEmail, submittedPassword);
     setSubmitting(false);
     if (!ok) {
       setShake(true);
@@ -51,6 +56,7 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
             <div className="space-y-4">
               <Input
                 type="email"
+                name="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -63,6 +69,7 @@ export default function AdminLogin({ onLogin, errorMessage }: AdminLoginProps) {
               />
               <Input
                 type="password"
+                name="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

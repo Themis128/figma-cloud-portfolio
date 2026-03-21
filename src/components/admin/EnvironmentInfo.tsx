@@ -72,7 +72,9 @@ export default function EnvironmentInfo() {
   const appVersion =
     process.env.NEXT_PUBLIC_APP_VERSION ?? "1.0.0";
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "not set";
+    typeof window !== "undefined"
+      ? window.location.origin
+      : (process.env.NEXT_PUBLIC_SITE_URL ?? "not set");
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
   const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
   const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;

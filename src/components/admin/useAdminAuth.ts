@@ -52,13 +52,46 @@ export function useAdminAuth() {
         const name =
           err instanceof Error && "name" in err ? err.name : "";
         const errMsg = err instanceof Error ? err.message : "";
+
+        // If a previous sign-in flow is still in progress, Amplify v6
+        // may throw. Retry once after clearing the session.
+        if (
+          name === "InvalidParameterException" ||
+          errMsg.includes("sign-in") ||
+          errMsg.includes("signIn")
+        ) {
+          try {
+            await signOut();
+            const retryResult = await signIn({
+              username: email,
+              password,
+              options: { authFlowType: "USER_PASSWORD_AUTH" },
+            });
+            if (retryResult.isSignedIn) return true;
+          } catch (retryErr: unknown) {
+            const retryName =
+              retryErr instanceof Error && "name" in retryErr ? retryErr.name : "";
+            const retryMsg = retryErr instanceof Error ? retryErr.message : "";
+            const retryMessages: Record<string, string> = {
+              NotAuthorizedException: "Invalid email or password",
+              UserNotFoundException: "No account found with this email",
+              UserNotConfirmedException: "Account not confirmed. Please check your email.",
+              LimitExceededException:
+                "Too many failed attempts. Please try again later.",
+            };
+            setLoginError(
+              retryMessages[retryName] ?? (retryMsg || "Login failed. Please try again."),
+            );
+            return false;
+          }
+        }
+
         const messages: Record<string, string> = {
           NotAuthorizedException: "Invalid email or password",
           UserNotFoundException: "No account found with this email",
           UserNotConfirmedException: "Account not confirmed. Please check your email.",
           LimitExceededException:
             "Too many failed attempts. Please try again later.",
-          InvalidParameterException: "Invalid email format",
         };
 
         setLoginError(

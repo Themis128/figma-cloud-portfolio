@@ -14,6 +14,7 @@ export const metadata: Metadata = {
       "Reach out for cloud architecture consulting, cybersecurity services, or collaboration opportunities.",
     url: `${SITE_URL}/contact/`,
     type: "website",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/contact/` },
 };

@@ -16,13 +16,14 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "Home | Themistoklis Baltzakis",
   description:
-    "Full-stack developer specializing in React, Next.js, AWS, and cloud solutions. Building modern, scalable web applications with cutting-edge technologies.",
+    "Cloud Architect & Network Engineer with 15+ years in Cisco, Fortinet, AWS, and enterprise security. Scalable infrastructure & modern web apps.",
   openGraph: {
     title: "Home | Themistoklis Baltzakis",
     description:
-      "Full-stack developer specializing in React, Next.js, AWS, and cloud solutions. Building modern, scalable web applications with cutting-edge technologies.",
+      "Cloud Architect & Network Engineer with 15+ years in Cisco, Fortinet, AWS, and enterprise security. Scalable infrastructure & modern web apps.",
     url: `${SITE_URL}/`,
     type: "website",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/` },
 };
@@ -60,9 +61,12 @@ export default function HomePage() {
                   >
                     <span className="block text-foreground/60 uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-1 md:mb-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
                       Themistoklis
-                    </span>
+                    </span>{" "}
                     <span className="block text-foreground uppercase tracking-wider leading-tight">
                       Baltzakis
+                    </span>{" "}
+                    <span className="block text-cyan-400/90 text-lg sm:text-xl md:text-2xl font-semibold tracking-wide mt-2 normal-case">
+                      IT Network Engineer &amp; Cloud Architect
                     </span>
                   </h1>
                 </AnimatedSection>
@@ -70,10 +74,10 @@ export default function HomePage() {
                   <p className="text-cyan-400 text-base sm:text-lg md:text-xl font-semibold tracking-wide">
                     <TypeWriter
                       words={[
-                        'IT Network Engineer',
-                        'Cloud Architect',
                         'Cybersecurity Specialist',
                         'DevOps Engineer',
+                        'Azure AD & M365 Administrator',
+                        'Data Center Expert',
                       ]}
                       typingSpeed={80}
                       deletingSpeed={40}
@@ -87,7 +91,15 @@ export default function HomePage() {
                   <p className="text-foreground/80 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl">
                     IT Network Engineer with over 15 years of extensive
                     experience in network infrastructure, Cisco systems, and
-                    Fortinet security solutions.
+                    Fortinet security solutions. Specializing in data center
+                    management, Azure AD, Microsoft 365 administration, and
+                    AWS cloud environments.
+                  </p>
+                  <p className="text-foreground/60 text-sm sm:text-base leading-relaxed max-w-2xl mt-3">
+                    From designing secure enterprise networks to building
+                    modern web applications with React, Next.js, and
+                    serverless architectures — I bridge the gap between
+                    infrastructure engineering and full-stack development.
                   </p>
                 </AnimatedSection>
               </div>
@@ -155,9 +167,10 @@ export default function HomePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-foreground/70 hover:text-cyan-400 transition-colors duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
-                    aria-label="Portfolio"
+                    aria-label="Portfolio website"
                   >
                     <GlobeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="sr-only">Portfolio website</span>
                   </a>
                 </HoverIcon>
               </AnimatedSection>
@@ -175,6 +188,36 @@ export default function HomePage() {
           </div>
         </div>
       </main>
+
+      {/* Core expertise section */}
+      <section
+        className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
+        aria-label="Core expertise"
+      >
+        <div className="max-w-3xl mx-auto">
+          <AnimatedSection delay={0.55} className="text-center space-y-4">
+            <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
+              Core Expertise
+            </h2>
+            <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
+            <p className="text-foreground/70 text-sm sm:text-base leading-relaxed">
+              With deep expertise in Cisco routing and switching, Fortinet
+              firewall management, and enterprise network security, I deliver
+              reliable, high-performance infrastructure for organizations of all
+              sizes. My background spans data center operations, VPN
+              configuration, network monitoring, and disaster recovery planning.
+            </p>
+            <p className="text-foreground/70 text-sm sm:text-base leading-relaxed">
+              Beyond traditional networking, I bring hands-on experience with
+              cloud platforms including AWS and Azure, containerization with
+              Docker and Kubernetes, and modern DevOps practices. I hold
+              certifications in Cisco, Fortinet, and AWS, and I am passionate
+              about continuous learning and adopting emerging technologies to
+              solve real-world problems.
+            </p>
+          </AnimatedSection>
+        </div>
+      </section>
 
       {/* Quick contact section */}
       <section
