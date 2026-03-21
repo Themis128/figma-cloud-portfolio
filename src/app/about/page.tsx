@@ -14,7 +14,17 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
+import { SectionNav } from "@/components/SectionNav";
 import SkillsRadar from "@/components/interactive/SkillsRadar";
+
+const SECTIONS = [
+  { id: "hero", label: "Overview" },
+  { id: "summary", label: "Summary" },
+  { id: "focus-areas", label: "Focus Areas" },
+  { id: "skills", label: "Skills" },
+  { id: "badges", label: "Badges" },
+  { id: "awards", label: "Awards" },
+] as const;
 
 export const metadata: Metadata = {
   title: "About Me",
@@ -28,9 +38,12 @@ export default function AboutPage() {
       <CircuitBackground />
       <Navigation />
 
+      <SectionNav sections={SECTIONS} ariaLabel="About page sections" />
+
       <main id="main-content" className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
           {/* Hero Section */}
+          <div id="hero">
           <AnimatedSection className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-20">
             <div className="space-y-3 md:space-y-4">
               <AnimatedSection delay={0.1}>
@@ -51,10 +64,12 @@ export default function AboutPage() {
               </p>
             </AnimatedSection>
           </AnimatedSection>
+          </div>
 
           {/* Main Content */}
           <div className="max-w-6xl mx-auto space-y-16">
             {/* Summary */}
+            <div id="summary">
             <AnimatedSection delay={0.1}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
@@ -93,8 +108,10 @@ export default function AboutPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Key Focus Areas */}
+            <div id="focus-areas">
             <AnimatedSection delay={0.2}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 <HoverCard>
@@ -140,6 +157,7 @@ export default function AboutPage() {
                 </HoverCard>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Skills Radar */}
             <AnimatedSection delay={0.25}>
@@ -147,6 +165,7 @@ export default function AboutPage() {
             </AnimatedSection>
 
             {/* Skills & Certifications */}
+            <div id="skills">
             <AnimatedSection delay={0.3}>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border hover:border-cyan-400/30 transition-all duration-300">
@@ -214,8 +233,10 @@ export default function AboutPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Credly Badges */}
+            <div id="badges">
             <AnimatedSection delay={0.35}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <div className="flex items-center justify-between mb-6">
@@ -381,6 +402,7 @@ export default function AboutPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Languages */}
             <AnimatedSection delay={0.3}>
@@ -406,6 +428,7 @@ export default function AboutPage() {
             </AnimatedSection>
 
             {/* Honors & Awards */}
+            <div id="awards">
             <AnimatedSection delay={0.4}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
@@ -436,6 +459,7 @@ export default function AboutPage() {
                 </ul>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Call to Action */}
             <AnimatedSection delay={0.5}>

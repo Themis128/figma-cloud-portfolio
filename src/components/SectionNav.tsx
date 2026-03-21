@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 
 interface SectionNavProps {
   sections: ReadonlyArray<{ readonly id: string; readonly label: string }>;
+  ariaLabel?: string;
 }
 
-export function SectionNav({ sections }: SectionNavProps) {
+export function SectionNav({ sections, ariaLabel = "Page sections" }: SectionNavProps) {
   const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
   const [visible, setVisible] = useState(false);
 
@@ -55,7 +56,7 @@ export function SectionNav({ sections }: SectionNavProps) {
 
   return (
     <nav
-      aria-label="Performance page sections"
+      aria-label={ariaLabel}
       className={`fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-end gap-3 transition-all duration-300 ${
         visible
           ? "opacity-100 translate-x-0"

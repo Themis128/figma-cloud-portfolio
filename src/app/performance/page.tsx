@@ -12,7 +12,7 @@ import {
 } from "@/components/performance/BelowFoldSections";
 import { LiveLoadHero } from "@/components/performance/LiveLoadHero";
 import { PerformanceMethodology } from "@/components/performance/PerformanceMethodology";
-import { SectionNav } from "@/components/performance/SectionNav";
+import { SectionNav } from "@/components/SectionNav";
 
 export const metadata: Metadata = {
   title: "Performance",

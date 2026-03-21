@@ -20,8 +20,21 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
+import { SectionNav } from "@/components/SectionNav";
 import AgentPlayground from "@/components/agents/AgentPlayground";
 import BlocklyAgentBuilderWrapper from "@/components/agents/BlocklyAgentBuilderWrapper";
+
+const SECTIONS = [
+  { id: "hero", label: "Overview" },
+  { id: "what-is-agent", label: "What Is an Agent" },
+  { id: "agentic-loop", label: "Agentic Loop" },
+  { id: "components", label: "Components" },
+  { id: "architecture", label: "Architecture" },
+  { id: "terminology", label: "Terminology" },
+  { id: "use-cases", label: "Use Cases" },
+  { id: "block-builder", label: "Block Builder" },
+  { id: "playground", label: "Playground" },
+] as const;
 
 export const metadata: Metadata = {
   title: "Understanding AI Agents",
@@ -165,10 +178,12 @@ export default function AgentsPage() {
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
       <CircuitBackground />
       <Navigation />
+      <SectionNav sections={SECTIONS} ariaLabel="AI Agents page sections" />
 
       <main id="main-content" className="relative z-10">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
           {/* Hero Section */}
+          <div id="hero">
           <AnimatedSection className="max-w-4xl mx-auto text-center space-y-6 mb-16 md:mb-24">
             <AnimatedSection delay={0.1}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground uppercase tracking-wider">
@@ -188,9 +203,11 @@ export default function AgentsPage() {
               </p>
             </AnimatedSection>
           </AnimatedSection>
+          </div>
 
           <div className="max-w-6xl mx-auto space-y-20">
             {/* What is an AI Agent? */}
+            <div id="what-is-agent">
             <AnimatedSection delay={0.1}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
@@ -232,8 +249,10 @@ export default function AgentsPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* The Agentic Loop */}
+            <div id="agentic-loop">
             <AnimatedSection delay={0.15}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
@@ -301,8 +320,10 @@ export default function AgentsPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Core Components */}
+            <div id="components">
             <AnimatedSection delay={0.2}>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
                 <Cpu className="w-8 h-8 text-cyan-400" />
@@ -333,8 +354,10 @@ export default function AgentsPage() {
                 ))}
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Architecture Patterns */}
+            <div id="architecture">
             <AnimatedSection delay={0.25}>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
                 <GitBranch className="w-8 h-8 text-cyan-400" />
@@ -427,8 +450,10 @@ export default function AgentsPage() {
                 ))}
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Key Terminology */}
+            <div id="terminology">
             <AnimatedSection delay={0.3}>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
                 <MessageSquare className="w-8 h-8 text-cyan-400" />
@@ -455,8 +480,10 @@ export default function AgentsPage() {
                 ))}
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Use Cases in Network Engineering */}
+            <div id="use-cases">
             <AnimatedSection delay={0.35}>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
                 <Network className="w-8 h-8 text-cyan-400" />
@@ -497,8 +524,10 @@ export default function AgentsPage() {
                 ))}
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Kids Block Builder (Blockly) */}
+            <div id="block-builder">
             <AnimatedSection delay={0.38}>
               <div className="space-y-6">
                 <div className="text-center space-y-3">
@@ -517,8 +546,10 @@ export default function AgentsPage() {
                 </div>
               </div>
             </AnimatedSection>
+            </div>
 
             {/* Interactive Builder */}
+            <div id="playground">
             <AnimatedSection delay={0.4}>
               <div className="space-y-6">
                 <div className="text-center space-y-3">
@@ -536,6 +567,7 @@ export default function AgentsPage() {
                 <AgentPlayground />
               </div>
             </AnimatedSection>
+            </div>
           </div>
         </div>
       </main>

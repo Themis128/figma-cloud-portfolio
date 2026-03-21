@@ -18,7 +18,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | PWA                    | Workbox (service worker)                          |
 | Backend (production)   | AWS Lambda (`figma-portfolio-api`)                |
 | Backend (local dev)    | Express.js on port 3001                           |
-| Chatbot backend        | AWS Bedrock (Claude 3 Haiku) via Express route |
+| Chatbot backend        | AWS Bedrock (Claude 3.5 Haiku) via Express route |
 | Auth + Data backend    | AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)  |
 | Frontend hosting       | S3 (`figma-portfolio-static`) + CloudFront        |
 | Analytics              | Google Analytics GA4 + Sentry                     |
@@ -102,18 +102,42 @@ The app uses the Next.js App Router Server/Client component model:
 
 ---
 
+## Shared Components
+
+### `SectionNav` (`src/components/SectionNav.tsx`)
+
+A sticky dot navigation component (desktop-only, `lg:flex`) that floats on the right edge of the viewport. It highlights the currently visible section and provides smooth-scroll navigation.
+
+- **Visibility**: Hidden until user scrolls past 300px (hero area)
+- **Active tracking**: Uses `IntersectionObserver` with thresholds `[0.1, 0.3, 0.5]` and `rootMargin: "-80px 0px -40% 0px"`
+- **UI**: Dot indicators with label text on hover; active dot is cyan with glow
+- **Props**: `sections` (array of `{ id, label }`), `ariaLabel` (default: "Page sections")
+
+Used on:
+
+| Page | Sections | `ariaLabel` |
+| --- | --- | --- |
+| `/performance` | hero, speed-test, vitals, lighthouse, comparison, methodology | Performance page sections |
+| `/about` | hero, summary, focus-areas, skills, badges, awards | About page sections |
+| `/contact` | hero, contact-info, contact-form, more-info | Contact page sections |
+| `/agents` | hero, what-is-agent, agentic-loop, components, architecture, terminology, use-cases, block-builder, playground | Agents page sections |
+
+> **Note**: `AnimatedSection` does not pass the `id` prop through to its rendered `<m.div>`, so each section target is wrapped in a `<div id="...">` element.
+
+---
+
 ## Performance Page (`/performance`)
 
 A public-facing showcase demonstrating real performance metrics and technical optimisation choices. Designed to engage **recruiters, clients, and fellow developers** — not an internal monitoring dashboard.
 
 ### Architecture
 
-The page is a **Server Component shell** with **Client Component islands** for live data. A sticky dot-nav (`SectionNav`) on the right edge (desktop only) tracks the active section via IntersectionObserver.
+The page is a **Server Component shell** with **Client Component islands** for live data. A sticky dot-nav (`SectionNav` — shared component, see below) on the right edge (desktop only) tracks the active section via IntersectionObserver.
 
 | Component                 | Type       | Purpose                                                                                                  |
 | ------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
 | `performance/page.tsx`    | Server     | Layout shell, metadata, `Suspense` wrappers, section IDs for nav                                        |
-| `SectionNav`              | Client     | Sticky right-side dot navigation with smooth-scroll and active-section tracking                          |
+| `SectionNav` (shared)     | Client     | Sticky right-side dot navigation with smooth-scroll and active-section tracking (see Shared Components)  |
 | `LiveLoadHero`            | Client     | Animated LCP counter + spring-animated grade badge + 4 stat chips (LCP, FCP, CLS, INP)                  |
 | `SpeedTestRunner`         | Client     | Interactive test — reveals 5 live Web Vitals sequentially with share (toast feedback) / re-measure       |
 | `WebVitalsExplainer`      | Client     | 5 interactive cards (LCP, FCP, CLS, TTFB, INP) with AnimatePresence expand/collapse + live values       |
