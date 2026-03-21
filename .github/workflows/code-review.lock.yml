@@ -314,8 +314,8 @@ jobs:
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 20
-      - name: Install pnpm
-        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - name: Enable corepack
+        run: corepack enable
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         shell: bash
