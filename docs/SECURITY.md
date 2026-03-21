@@ -325,7 +325,7 @@ The project uses [Snyk](https://snyk.io/) for continuous security scanning acros
 | Scan | Command | What It Checks |
 |------|---------|----------------|
 | **Dependency Scan** | `snyk test --severity-threshold=high --all-projects` | Known CVEs in npm dependencies via `pnpm-lock.yaml` |
-| **Code Scan (SAST)** | `snyk code test --exclude=playwright-tests,scripts/test-*,cline-hooks` | Static analysis of source code for security anti-patterns |
+| **Code Scan (SAST)** | `snyk code test --exclude=playwright-tests,scripts/test-*` | Static analysis of source code for security anti-patterns |
 | **IaC Scan** | `snyk iac test` | Misconfigurations in `amplify.yml` and infrastructure files |
 
 ### When Scans Run
@@ -337,7 +337,7 @@ The project uses [Snyk](https://snyk.io/) for continuous security scanning acros
 
 ### Configuration
 
-- **`.snyk`** — Policy file with exclude rules for non-production code (`playwright-tests/`, `scripts/test-*`, `cline-hooks/`)
+- **`.snyk`** — Policy file with exclude rules for non-production code (`playwright-tests/`, `scripts/test-*`)
 - **`.github/workflows/snyk-security.yml`** — Workflow with pinned CLI version
 - **GitHub Secrets**: `SNYK_TOKEN`, `SNYK_ORG`
 - **Snyk Dashboard**: Results are uploaded via `snyk monitor` on production pushes
