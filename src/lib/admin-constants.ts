@@ -18,6 +18,17 @@ export const MAX_HISTORY_POINTS = 20;
 /** Default request timeout (ms) used for API calls in the admin panel. */
 export const API_TIMEOUT_MS = 10_000;
 
+/**
+ * API origin for admin dashboard requests.
+ * In production (static export on S3), relative /api/ paths hit CloudFront (404).
+ * We need the Lambda function URL. In dev, relative paths work via Express proxy.
+ */
+export const LAMBDA_API_URL = "https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws";
+export const API_ORIGIN =
+  typeof globalThis.window !== "undefined" && globalThis.window.location.hostname !== "localhost"
+    ? LAMBDA_API_URL
+    : "";
+
 /* ------------------------------------------------------------------ */
 /*  HTTP status colour mapping                                        */
 /* ------------------------------------------------------------------ */
