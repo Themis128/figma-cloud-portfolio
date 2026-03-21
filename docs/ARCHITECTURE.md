@@ -221,18 +221,29 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 
 ### Features
 
-- **Keyboard shortcuts**: `R` refreshes Health tab, `Ctrl+Enter` sends Console request
+- **Mobile responsive**: Dropdown tab selector on mobile, tabs on desktop
+- **Keyboard shortcuts**: `R` refreshes Health tab, `Ctrl+Enter` sends Console request, `?` shows help
 - **Auto-refresh**: Health tab polls every 30s with pause/resume toggle and poll counter
 - **Response time sparklines**: Inline SVG charts on endpoint cards and summary bar
+- **Health trend indicators**: ↑↓→ arrows showing improving/stable/degrading response times
+- **Session timeout warning**: Token expiry badge with yellow/red warning and refresh button
+- **Data export**: JSON export for health check history and error logs
+- **Sensitive data sanitization**: JWT tokens and API keys redacted in error logs
+- **Request timeouts**: All API calls use AbortController (10s API, 15s SEO audit)
+- **Offline detection**: Red banner when network is unavailable
+- **Loading skeletons**: Shimmer cards before first health check completes
+- **Accessibility**: ARIA labels, roles, aria-live regions, keyboard navigation
+- **Security**: Safe JSON rendering (no dangerouslySetInnerHTML), URL validation in API console
 - **Theme toggle**: Dark/light mode switch in admin header
 - **Cyberpunk styling**: All tabs use consistent glass morphism cards, cyan accents, mono fonts
 
 ### Components (all in `src/components/admin/`)
 
-- `AdminLayout` — Header bar with logout, theme toggle, online badge
-- `AdminLogin` — Cognito email/password login gate with error handling
+- `AdminDashboard` — Main client component with tab management (mobile dropdown + desktop tabs)
+- `AdminLayout` — Header bar with logout, session timeout, theme toggle, offline indicator
+- `AdminLogin` — Cognito email/password login gate with ARIA accessibility
 - `useAdminAuth` — Auth hook wrapping Cognito sign-in with timeout and error mapping
-- `ApiEndpointCard` — Individual endpoint status card with sparkline and auto-refresh timestamps
+- `ApiEndpointCard` — Individual endpoint status card with sparkline, trend indicator, and status icons
 
 ### Testing (`playwright-tests/admin.spec.ts` — 138 tests)
 
