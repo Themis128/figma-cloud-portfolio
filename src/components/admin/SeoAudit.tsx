@@ -121,9 +121,8 @@ export default function SeoAudit() {
       setPages(results);
     } finally {
       clearTimeout(timeoutId);
+      setScanning(false);
     }
-
-    setScanning(false);
   }
 
   useEffect(() => {

@@ -246,7 +246,7 @@ export default function ApiConsole() {
               ) : (
                 <Play className="w-4 h-4" />
               )}
-              <span className="ml-1.5">Send</span>
+              <span className="ml-1.5 hidden sm:inline">Send</span>
             </Button>
             <span className="hidden sm:flex items-center gap-1 text-[9px] text-foreground/20 font-mono shrink-0">
               <Keyboard className="w-3 h-3" />
