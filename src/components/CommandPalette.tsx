@@ -7,6 +7,7 @@ import {
   Command,
   FileText,
   Gauge,
+  Globe,
   Home,
   Laptop,
   Mail,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getApiOrigin } from "@/lib/admin-constants";
 
 interface PaletteItem {
   id: string;
@@ -28,15 +30,23 @@ interface PaletteItem {
   icon: React.ReactNode;
   action: () => void;
   keywords: string[];
-  category: "navigation" | "action";
+  category: "navigation" | "action" | "search";
+}
+
+interface SearchResult {
+  title: string;
+  type: string;
+  description: string;
 }
 
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const router = useRouter();
 
   const close = useCallback(() => {
@@ -52,6 +62,24 @@ export default function CommandPalette() {
     },
     [close, router],
   );
+
+  // Debounced server-side search
+  useEffect(() => {
+    if (!open) return;
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      const origin = getApiOrigin();
+      fetch(`${origin}/api/search?q=${encodeURIComponent(query)}`)
+        .then((r) => (r.ok ? r.json() : { results: [] }))
+        .then((data: { results: SearchResult[] }) => setSearchResults(data.results))
+        .catch(() => setSearchResults([]));
+    }, 300);
+    return () => clearTimeout(searchTimerRef.current);
+  }, [query, open]);
 
   const items = useMemo<PaletteItem[]>(
     () => [
@@ -194,15 +222,38 @@ export default function CommandPalette() {
   );
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return items;
-    const q = query.toLowerCase();
-    return items.filter(
-      (item) =>
-        item.label.toLowerCase().includes(q) ||
-        item.description?.toLowerCase().includes(q) ||
-        item.keywords.some((k) => k.includes(q)),
-    );
-  }, [items, query]);
+    const localItems = !query.trim()
+      ? items
+      : items.filter(
+          (item) =>
+            item.label.toLowerCase().includes(query.toLowerCase()) ||
+            item.description?.toLowerCase().includes(query.toLowerCase()) ||
+            item.keywords.some((k) => k.includes(query.toLowerCase())),
+        );
+
+    // Merge server search results as "search" category items
+    const serverItems: PaletteItem[] = searchResults
+      .filter((r) => !localItems.some((l) => l.label.toLowerCase() === r.title.toLowerCase()))
+      .map((r) => ({
+        id: `search-${r.title}`,
+        label: r.title,
+        description: r.description,
+        icon: <Globe className="h-4 w-4" />,
+        action: () => {
+          close();
+          // Navigate to relevant page based on type
+          if (r.type === "page") {
+            const slug = r.title.toLowerCase().replace(/\s+/g, "-");
+            if (slug === "about-themistoklis") router.push("/about/");
+            else router.push(`/${slug}/`);
+          }
+        },
+        keywords: [],
+        category: "search" as const,
+      }));
+
+    return [...localItems, ...serverItems];
+  }, [items, query, searchResults, close, router]);
 
   // Keyboard shortcut to open
   useEffect(() => {
@@ -255,6 +306,7 @@ export default function CommandPalette() {
 
   const navItems = filtered.filter((i) => i.category === "navigation");
   const actionItems = filtered.filter((i) => i.category === "action");
+  const searchItems = filtered.filter((i) => i.category === "search");
 
   return (
     <div
@@ -283,7 +335,7 @@ export default function CommandPalette() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search pages, actions..."
+            placeholder="Search pages, skills, actions..."
             className="flex-1 bg-transparent text-sm text-slate-200 placeholder:text-slate-500 outline-none font-mono"
             aria-label="Search commands"
           />
@@ -306,6 +358,42 @@ export default function CommandPalette() {
                 Pages
               </p>
               {navItems.map((item) => {
+                const idx = filtered.indexOf(item);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={item.action}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                    data-selected={idx === selectedIndex}
+                    className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                      idx === selectedIndex
+                        ? "bg-cyan-400/10 text-cyan-300"
+                        : "text-slate-300 hover:bg-slate-800/50"
+                    }`}
+                  >
+                    <span className="shrink-0 text-cyan-400">{item.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium">{item.label}</span>
+                      {item.description && (
+                        <span className="ml-2 text-xs text-slate-500">
+                          {item.description}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronRight className="h-3 w-3 shrink-0 text-slate-600" />
+                  </button>
+                );
+              })}
+            </>
+          )}
+
+          {searchItems.length > 0 && (
+            <>
+              <p className="px-4 py-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-500/60 mt-1">
+                Search Results
+              </p>
+              {searchItems.map((item) => {
                 const idx = filtered.indexOf(item);
                 return (
                   <button

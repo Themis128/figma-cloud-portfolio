@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
+import GitHubRepos from "@/components/GitHubRepos";
 import Navigation from "@/components/Navigation";
 import SearchableProjects from "@/components/SearchableProjects";
 
@@ -55,8 +56,13 @@ export default function ProjectsPage() {
             </AnimatedSection>
           </AnimatedSection>
 
-          {/* Projects Gallery */}
+          {/* Live GitHub Repos */}
           <AnimatedSection delay={0.3}>
+            <GitHubRepos />
+          </AnimatedSection>
+
+          {/* Projects Gallery */}
+          <AnimatedSection delay={0.4}>
             <SearchableProjects />
           </AnimatedSection>
         </div>
