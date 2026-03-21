@@ -40,8 +40,13 @@ export default function PushToast() {
       }
     };
 
+    // Listen on SW container (production) and window (fallback for tests/SSE)
     navigator.serviceWorker.addEventListener("message", handler);
-    return () => navigator.serviceWorker.removeEventListener("message", handler);
+    window.addEventListener("message", handler);
+    return () => {
+      navigator.serviceWorker.removeEventListener("message", handler);
+      window.removeEventListener("message", handler);
+    };
   }, []);
 
   if (toasts.length === 0) return null;

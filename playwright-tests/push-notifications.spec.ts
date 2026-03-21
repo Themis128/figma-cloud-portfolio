@@ -52,6 +52,29 @@ test.describe("Push Notifications @smoke", () => {
   });
 });
 
+test.describe("PushToast In-App Notifications", () => {
+  test("should show toast when PUSH_RECEIVED message is dispatched", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(1000);
+
+    // Simulate a PUSH_RECEIVED message via window.postMessage (PushToast listens on window)
+    await page.evaluate(() => {
+      window.postMessage({
+        type: "PUSH_RECEIVED",
+        title: "Test Notification",
+        body: "This is a test push notification body.",
+        url: "/about/",
+      }, "*");
+    });
+
+    // Verify a toast element with role="alert" appears
+    const toast = page.locator('div[role="alert"]');
+    await expect(toast.first()).toBeVisible({ timeout: 5000 });
+    await expect(toast.first()).toContainText("Test Notification");
+  });
+});
+
 test.describe("Push Subscribe Button in Announcements", () => {
   test("should show subscribe button in announcements panel", async ({ page }) => {
     await page.goto("/");

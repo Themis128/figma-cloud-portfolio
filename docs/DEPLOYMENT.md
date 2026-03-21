@@ -295,9 +295,6 @@ aws lambda update-function-configuration \
 
 ```bash
 # Create function URL for direct HTTP access
-# IMPORTANT: Do NOT configure CORS here — Express handles CORS in lambda.ts.
-# Setting CORS on both Lambda Function URL and Express causes duplicate
-# Access-Control-Allow-Origin headers, which browsers reject as invalid.
 aws lambda create-function-url-config \
   --function-name figma-portfolio-api \
   --auth-type NONE \
@@ -307,9 +304,7 @@ aws lambda create-function-url-config \
 aws lambda get-function-url-config --function-name figma-portfolio-api
 ```
 
-> **CORS Note**: CORS is managed exclusively by Express (`server/lambda.ts`) with
-> specific allowed origins (`https://www.baltzakisthemis.com`, `https://baltzakisthemis.com`).
-> Do not add CORS to the Lambda Function URL config — it creates duplicate headers.
+> **Same-origin API routing**: The frontend no longer calls the Lambda Function URL directly. All `/api/*` requests use relative paths (same-origin) and are routed through CloudFront to the Lambda origin. This eliminates CORS entirely — no preflight requests, no `Access-Control-Allow-Origin` headers needed, and no Edge Tracking Prevention issues in Safari/Brave. The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only but is not used at runtime. The Lambda Function URL still exists for CloudFront to use as an origin, but clients never call it directly.
 
 ### 4. Configure CloudFront to Route API Requests
 
@@ -541,8 +536,9 @@ aws logs filter-log-events \
 ### Common Issues
 
 1. **CORS Errors**
-   - Check CloudFront CORS configuration
-   - Verify Lambda function URL CORS settings
+   - All API calls use same-origin routing via CloudFront (`/api/*` → Lambda origin), so CORS should not apply
+   - If CORS errors appear, verify that `getApiOrigin()` returns `""` (empty string) and API calls use relative paths
+   - The Lambda Function URL is only used as a CloudFront origin — clients should never call it directly
 
 2. **SSL/TLS Issues**
    - Ensure SSL certificate is valid
