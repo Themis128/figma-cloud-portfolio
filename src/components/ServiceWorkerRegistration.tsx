@@ -9,8 +9,6 @@ export function ServiceWorkerRegistration() {
         navigator.serviceWorker
           .register("/sw.js")
           .then((registration) => {
-            console.log("SW registered:", registration.scope);
-
             // Check for updates every 60 minutes
             setInterval(
               () => {
@@ -20,7 +18,7 @@ export function ServiceWorkerRegistration() {
             );
           })
           .catch((error) => {
-            console.error("SW registration failed:", error);
+            console.error("SW registration failed:", error); // eslint-disable-line no-console
           });
       });
     }
