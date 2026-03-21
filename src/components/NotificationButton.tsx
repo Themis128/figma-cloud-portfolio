@@ -182,58 +182,70 @@ export function NotificationButton() {
     if (!pushSupported || pushLoading) return;
     setPushLoading(true);
     try {
-      // 1. Request notification permission (skip if already granted)
+      // 1. Check permission
+      console.log("[Push] Step 1: checking permission...", Notification.permission);
       let permission = Notification.permission;
       if (permission === "default") {
         permission = await Notification.requestPermission();
       }
       if (permission !== "granted") {
+        console.log("[Push] Permission denied:", permission);
         setPushLoading(false);
         return;
       }
+      console.log("[Push] Step 1 done: permission granted");
 
-      // 2. Get an active SW registration — use navigator.serviceWorker.ready
-      //    which resolves when any SW controlling this page is active
-      const registration = await Promise.race([
-        navigator.serviceWorker.ready,
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("SW ready timeout")), 5000),
-        ),
-      ]).catch(async () => {
-        // Fallback: register fresh and wait
-        const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        if (reg.active) return reg;
-        return new Promise<ServiceWorkerRegistration>((resolve, reject) => {
+      // 2. Get SW registration
+      console.log("[Push] Step 2: getting SW registration...");
+      let registration = await navigator.serviceWorker.getRegistration("/");
+      if (!registration) {
+        console.log("[Push] No registration found, registering /sw.js...");
+        registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      }
+      console.log("[Push] Registration:", registration.active?.state ?? "no active SW");
+
+      // Wait for active SW if needed
+      if (!registration.active) {
+        console.log("[Push] Waiting for SW to activate...");
+        await new Promise<void>((resolve, reject) => {
           const timeout = setTimeout(() => reject(new Error("SW activation timeout")), 8000);
-          const sw = reg.installing ?? reg.waiting;
-          if (!sw) { clearTimeout(timeout); reject(new Error("No SW")); return; }
+          const sw = registration.installing ?? registration.waiting;
+          if (!sw) { clearTimeout(timeout); reject(new Error("No SW worker")); return; }
           sw.addEventListener("statechange", () => {
-            if (sw.state === "activated") { clearTimeout(timeout); resolve(reg); }
+            if (sw.state === "activated") { clearTimeout(timeout); resolve(); }
           });
         });
-      });
+      }
+      console.log("[Push] Step 2 done: SW active");
 
-      // 3. Get VAPID public key from server
-      const origin = getApiOrigin();
-      const vapidRes = await fetch(`${origin}/api/push-notifications?action=vapid-public-key`);
-      if (!vapidRes.ok) throw new Error("Failed to get VAPID key");
+      // 3. Get VAPID key
+      console.log("[Push] Step 3: fetching VAPID key...");
+      const vapidRes = await fetch("/api/push-notifications?action=vapid-public-key");
+      if (!vapidRes.ok) throw new Error(`VAPID fetch failed: ${vapidRes.status}`);
       const { publicKey } = await vapidRes.json() as { publicKey: string };
+      console.log("[Push] Step 3 done: VAPID key received");
 
-      // 4. Clear any stale subscription (different VAPID key causes hang)
+      // 4. Clear stale subscription
+      console.log("[Push] Step 4: clearing stale subscription...");
       const existingSub = await registration.pushManager.getSubscription();
       if (existingSub) {
+        console.log("[Push] Unsubscribing stale subscription");
         await existingSub.unsubscribe();
       }
+      console.log("[Push] Step 4 done");
 
-      // 5. Subscribe via Push API
+      // 5. Subscribe
+      console.log("[Push] Step 5: subscribing via PushManager...");
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToArrayBuffer(publicKey),
       });
+      console.log("[Push] Step 5 done: subscribed");
 
-      // 5. Send subscription to server
+      // 6. Send to server
+      console.log("[Push] Step 6: sending to server...");
       const subJSON = subscription.toJSON();
-      const putRes = await fetch(`${origin}/api/push-notifications`, {
+      const putRes = await fetch("/api/push-notifications", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -241,11 +253,13 @@ export function NotificationButton() {
           keys: subJSON.keys,
         }),
       });
+      if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
+      console.log("[Push] Step 6 done: saved to server");
 
-      if (!putRes.ok) throw new Error("Failed to store subscription");
       setPushSubscribed(true);
+      console.log("[Push] Subscribe complete!");
     } catch (err) {
-      console.error("Push subscription failed:", err instanceof Error ? err.message : err);
+      console.error("[Push] Failed:", err instanceof Error ? err.message : err);
     } finally {
       setPushLoading(false);
     }
