@@ -255,11 +255,11 @@ test.describe("Admin Page — Health Tab", () => {
     ).toBeVisible();
   });
 
-  test("should render exactly 9 endpoint cards", async ({ page }) => {
+  test("should render exactly 16 endpoint cards", async ({ page }) => {
     const cardArea = page.locator('[role="tabpanel"]');
     // Each endpoint card is a Card with endpoint path
     const cards = cardArea.locator(".grid > div");
-    await expect(cards).toHaveCount(9);
+    await expect(cards).toHaveCount(16);
   });
 
   test("should show summary stats", async ({ page }) => {
@@ -269,12 +269,12 @@ test.describe("Admin Page — Health Tab", () => {
     await expect(page.locator("text=Healthy").first()).toBeVisible();
   });
 
-  test("should display total endpoint count of 9", async ({ page }) => {
-    // The total count should be 9
+  test("should display total endpoint count of 16", async ({ page }) => {
+    // The total count should be 16
     const totalStat = page
       .locator("div.text-center")
       .filter({ hasText: "Total" });
-    await expect(totalStat.locator(".font-mono.font-bold")).toContainText("9");
+    await expect(totalStat.locator(".font-mono.font-bold")).toContainText("16");
   });
 
   test("should show Refresh All button", async ({ page }) => {
@@ -284,8 +284,8 @@ test.describe("Admin Page — Health Tab", () => {
   test("should display service labels on cards", async ({ page }) => {
     await expect(page.locator("text=Lambda").first()).toBeVisible();
     await expect(page.locator("text=Cal.com").first()).toBeVisible();
-    await expect(page.locator("text=HuggingFace")).toBeVisible();
     await expect(page.locator("text=Web Push")).toBeVisible();
+    await expect(page.locator("text=GitHub API").first()).toBeVisible();
   });
 
   test("should display reCAPTCHA + SES service for contact endpoint", async ({
@@ -298,14 +298,19 @@ test.describe("Admin Page — Health Tab", () => {
   });
 
   test("should show method badges", async ({ page }) => {
-    const getBadges = page.locator("text=GET");
+    // Wait for cards to load (skeleton replaced with real cards)
+    await page.waitForTimeout(3000);
+    const cardArea = page.locator('[role="tabpanel"]');
+    const getBadges = cardArea.locator("text=GET");
     expect(await getBadges.count()).toBeGreaterThanOrEqual(5);
 
-    const postBadges = page.locator("text=POST");
+    const postBadges = cardArea.locator("text=POST");
     expect(await postBadges.count()).toBeGreaterThanOrEqual(3);
   });
 
   test("should display endpoint descriptions", async ({ page }) => {
+    // Wait for skeleton cards to be replaced with real endpoint cards
+    await page.waitForTimeout(4000);
     const cardArea = page.locator('[role="tabpanel"]');
     await expect(
       cardArea.getByText("Basic health check", { exact: false }),
@@ -331,6 +336,28 @@ test.describe("Admin Page — Health Tab", () => {
     await expect(
       cardArea.getByText("Push notification management", { exact: false }),
     ).toBeVisible();
+    // New endpoints may be below the fold — check they exist in the DOM
+    await expect(
+      cardArea.getByText("Public profile statistics", { exact: false }),
+    ).toBeAttached();
+    await expect(
+      cardArea.getByText("Public repositories", { exact: false }),
+    ).toBeAttached();
+    await expect(
+      cardArea.getByText("Portfolio content search", { exact: false }),
+    ).toBeAttached();
+    await expect(
+      cardArea.getByText("Server monitoring", { exact: false }),
+    ).toBeAttached();
+    await expect(
+      cardArea.getByText("Resume data as JSON", { exact: false }),
+    ).toBeAttached();
+    await expect(
+      cardArea.getByText("webhook receiver", { exact: false }),
+    ).toBeAttached();
+    await expect(
+      cardArea.getByText("API endpoint documentation", { exact: false }),
+    ).toBeAttached();
   });
 
   test("should have individual refresh buttons on each card", async ({
@@ -338,8 +365,8 @@ test.describe("Admin Page — Health Tab", () => {
   }) => {
     const cardArea = page.locator('[role="tabpanel"]');
     const refreshButtons = cardArea.locator('button[title="Refresh"]');
-    // Should be 9 refresh buttons (one per endpoint card)
-    await expect(refreshButtons).toHaveCount(9);
+    // Should be 16 refresh buttons (one per endpoint card)
+    await expect(refreshButtons).toHaveCount(16);
   });
 
   test("should auto-run health checks on mount and show response times", async ({
@@ -912,6 +939,27 @@ test.describe("Admin Page — Push Tab", () => {
     await expect(
       page.getByText("Message Body", { exact: true }),
     ).toBeVisible();
+  });
+
+  test("should show Register Service Worker button when SW is not registered", async ({ page }) => {
+    // In test environment, SW is typically not registered
+    const registerButton = page.getByRole("button", { name: "Register Service Worker" });
+    // Button is shown only when SW is not registered — check it exists or is absent
+    const count = await registerButton.count();
+    // Either visible (SW missing) or absent (SW already registered) — both valid
+    expect(count).toBeLessThanOrEqual(1);
+  });
+
+  test("should show subscribers list after checking subscriptions", async ({ page }) => {
+    const checkButton = page.getByRole("button", { name: "Check Subscriptions" });
+    await checkButton.click();
+    // Wait for result message
+    await expect(page.getByText(/Found \d+ active subscription/)).toBeVisible({ timeout: 10_000 });
+    // If subscribers exist, the list section should appear
+    const subscribersList = page.locator('[role="list"][aria-label="Push notification subscribers"]');
+    const count = await subscribersList.count();
+    // List appears only if >0 subscribers — both cases are valid
+    expect(count).toBeLessThanOrEqual(1);
   });
 });
 

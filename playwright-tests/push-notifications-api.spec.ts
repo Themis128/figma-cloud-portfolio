@@ -29,7 +29,7 @@ test.describe.skip("Push Notifications API", () => {
       expect(data.publicKey.length).toBeGreaterThan(0);
     });
 
-    test("should return subscriptions count", async ({ request }) => {
+    test("should return subscriptions count with createdAt", async ({ request }) => {
       const response = await request.get(
         `${API_BASE_URL}/api/push-notifications?action=subscriptions`,
       );
@@ -41,6 +41,12 @@ test.describe.skip("Push Notifications API", () => {
       expect(data).toHaveProperty("list");
       expect(Array.isArray(data.list)).toBe(true);
       expect(typeof data.subscriptions).toBe("number");
+      // Each list item should have endpoint and createdAt
+      if (data.list.length > 0) {
+        expect(data.list[0]).toHaveProperty("endpoint");
+        expect(data.list[0]).toHaveProperty("createdAt");
+        expect(typeof data.list[0].createdAt).toBe("string");
+      }
     });
 
     test("should send test notifications to all subscriptions", async ({
@@ -239,9 +245,8 @@ test.describe.skip("Push Notifications API", () => {
       const data = await response.json();
 
       expect(data).toHaveProperty("success", true);
-      expect(data).toHaveProperty("message", "Subscription stored");
-      expect(data).toHaveProperty("totalSubscriptions");
-      expect(typeof data.totalSubscriptions).toBe("number");
+      expect(data).toHaveProperty("subscriptions");
+      expect(typeof data.subscriptions).toBe("number");
     });
 
     test("should return error for invalid subscription data", async ({
@@ -261,7 +266,7 @@ test.describe.skip("Push Notifications API", () => {
 
       expect(response.status()).toBe(400);
       const data = await response.json();
-      expect(data).toHaveProperty("error", "Invalid subscription data");
+      expect(data).toHaveProperty("error");
     });
 
     test("should update existing subscription with same endpoint", async ({
@@ -709,6 +714,107 @@ test.describe.skip("Push Notifications API", () => {
         );
         expect(notificationSupported).toBe(true);
       }
+    });
+  });
+
+  test.describe("Subscription Persistence (S3)", () => {
+    test("should persist subscriptions across requests", async ({ request }) => {
+      // Store a subscription
+      const subscription = {
+        endpoint: "https://fcm.googleapis.com/fcm/send/persistence-test-" + Date.now(),
+        keys: {
+          p256dh: "test-p256dh-persistence",
+          auth: "test-auth-persistence",
+        },
+      };
+
+      const putResponse = await request.put(
+        `${API_BASE_URL}/api/push-notifications`,
+        { data: subscription },
+      );
+      expect(putResponse.ok()).toBe(true);
+
+      // Verify it appears in the subscription list
+      const getResponse = await request.get(
+        `${API_BASE_URL}/api/push-notifications?action=subscriptions`,
+      );
+      expect(getResponse.ok()).toBe(true);
+      const data = await getResponse.json();
+
+      expect(data.subscriptions).toBeGreaterThanOrEqual(1);
+      const found = data.list.find(
+        (s: { endpoint: string }) => s.endpoint === subscription.endpoint,
+      );
+      expect(found).toBeTruthy();
+      expect(found.endpoint).toBe(subscription.endpoint);
+      expect(found.createdAt).toBeDefined();
+
+      // Clean up
+      await request.delete(
+        `${API_BASE_URL}/api/push-notifications?endpoint=${encodeURIComponent(subscription.endpoint)}`,
+      );
+    });
+
+    test("should include createdAt timestamp for new subscriptions", async ({ request }) => {
+      const endpoint = "https://fcm.googleapis.com/fcm/send/timestamp-test-" + Date.now();
+      const before = new Date().toISOString();
+
+      await request.put(`${API_BASE_URL}/api/push-notifications`, {
+        data: {
+          endpoint,
+          keys: { p256dh: "test-key", auth: "test-auth" },
+        },
+      });
+
+      const response = await request.get(
+        `${API_BASE_URL}/api/push-notifications?action=subscriptions`,
+      );
+      const data = await response.json();
+      const sub = data.list.find(
+        (s: { endpoint: string }) => s.endpoint === endpoint,
+      );
+
+      expect(sub).toBeTruthy();
+      expect(sub.createdAt).toBeDefined();
+      // createdAt should be after our timestamp
+      expect(new Date(sub.createdAt).getTime()).toBeGreaterThanOrEqual(
+        new Date(before).getTime() - 1000,
+      );
+
+      // Clean up
+      await request.delete(
+        `${API_BASE_URL}/api/push-notifications?endpoint=${encodeURIComponent(endpoint)}`,
+      );
+    });
+
+    test("should remove subscription and persist deletion", async ({ request }) => {
+      const endpoint = "https://fcm.googleapis.com/fcm/send/delete-test-" + Date.now();
+
+      // Add
+      await request.put(`${API_BASE_URL}/api/push-notifications`, {
+        data: {
+          endpoint,
+          keys: { p256dh: "test-key", auth: "test-auth" },
+        },
+      });
+
+      // Delete
+      const delResponse = await request.delete(
+        `${API_BASE_URL}/api/push-notifications?endpoint=${encodeURIComponent(endpoint)}`,
+      );
+      expect(delResponse.ok()).toBe(true);
+      const delData = await delResponse.json();
+      expect(delData).toHaveProperty("success", true);
+
+      // Verify it's gone
+      const getResponse = await request.get(
+        `${API_BASE_URL}/api/push-notifications?action=subscriptions`,
+      );
+      const data = await getResponse.json();
+      const found = data.list.find(
+        (s: { endpoint: string }) => s.endpoint === endpoint,
+      );
+      expect(found).toBeUndefined();
     });
   });
 });

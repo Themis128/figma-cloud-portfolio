@@ -97,8 +97,8 @@ SENTRY_ENVIRONMENT=production
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
 SLACK_CHANNEL=#personal-website
 ANTHROPIC_API_KEY=your-anthropic-api-key
-VAPID_PUBLIC_KEY=your-vapid-public-key
-VAPID_PRIVATE_KEY=your-vapid-private-key
+VAPID_PUBLIC_KEY=your-vapid-public-key          # Generate with: npx web-push generate-vapid-keys
+VAPID_PRIVATE_KEY=your-vapid-private-key        # Must persist across deploys
 VAPID_EMAIL=mailto:your-email@domain.com
 GOOGLE_ANALYTICS_MEASUREMENT_ID=GA_MEASUREMENT_ID
 GOOGLE_ANALYTICS_API_SECRET=GA_API_SECRET
@@ -239,25 +239,34 @@ aws cloudfront update-distribution \
 ### 1. Create Lambda Function
 
 ```bash
-# Create deployment package
-pnpm build:server
+# Build and deploy Lambda
+npx esbuild server/lambda.ts \
+  --bundle --platform=node --target=node20 --format=esm \
+  --outfile=/tmp/lambda-build/index.mjs \
+  --external:@aws-sdk/* \
+  --banner:js="import { createRequire } from 'module'; const require = createRequire(import.meta.url);"
 
-# Create Lambda function
-aws lambda create-function \
-  --function-name figma-portfolio-api \
-  --runtime nodejs22.x \
-  --role arn:aws:iam::account:role/lambda-execution-role \
-  --handler index.handler \
-  --zip-file fileb://dist/server.zip \
-  --environment Variables="{NODE_ENV=production,RECAPTCHA_SECRET_KEY=your-secret-key}"
+cd /tmp/lambda-build && zip -j lambda.zip index.mjs
 
-# Create API Gateway trigger
-aws lambda add-permission \
+aws lambda update-function-code \
   --function-name figma-portfolio-api \
-  --action lambda:InvokeFunction \
-  --principal apigateway.amazonaws.com \
-  --statement-id apigateway-invoke
+  --zip-file fileb:///tmp/lambda-build/lambda.zip \
+  --region us-east-1
 ```
+
+#### IAM Policy Requirements
+
+The Lambda execution role (`newsletter-lambda-role`) needs:
+
+| Permission | Resource | Purpose |
+|---|---|---|
+| `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream` | `arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-haiku-*`, `arn:aws:bedrock:us-east-1:<account>:inference-profile/us.anthropic.claude-3-5-haiku-*` | AI chat (cross-region inference profile) |
+| `ses:SendEmail`, `ses:SendRawEmail` | `*` | Contact form emails |
+| `s3:GetObject`, `s3:PutObject` | `arn:aws:s3:::figma-portfolio-static/_data/*` | Push notification subscription storage |
+
+#### Push Notification Subscription Storage
+
+Subscriptions are persisted as a JSON file on S3 at `s3://figma-portfolio-static/_data/push-subscriptions.json`. The Lambda loads from S3 on first request and caches in memory, writing back on mutations. This survives cold starts and redeploys.
 
 ### 2. Configure Environment Variables
 
@@ -284,14 +293,21 @@ aws lambda update-function-configuration \
 
 ```bash
 # Create function URL for direct HTTP access
+# IMPORTANT: Do NOT configure CORS here — Express handles CORS in lambda.ts.
+# Setting CORS on both Lambda Function URL and Express causes duplicate
+# Access-Control-Allow-Origin headers, which browsers reject as invalid.
 aws lambda create-function-url-config \
   --function-name figma-portfolio-api \
   --auth-type NONE \
-  --cors '{"AllowOrigins":["https://baltzakisthemis.com"],"AllowMethods":["GET","POST","PUT","DELETE"],"AllowHeaders":["*"]}'
+  --cors '{}'
 
 # Get function URL
 aws lambda get-function-url-config --function-name figma-portfolio-api
 ```
+
+> **CORS Note**: CORS is managed exclusively by Express (`server/lambda.ts`) with
+> specific allowed origins (`https://www.baltzakisthemis.com`, `https://baltzakisthemis.com`).
+> Do not add CORS to the Lambda Function URL config — it creates duplicate headers.
 
 ### 4. Configure CloudFront to Route API Requests
 

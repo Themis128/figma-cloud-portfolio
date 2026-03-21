@@ -235,7 +235,7 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 | **Errors**     | `ErrorLogViewer`           | Client     | Real-time capture of browser errors, unhandled rejections, console.error, 5xx network fails|
 | **Perf**       | `PerformanceBudget`        | Client     | Live Core Web Vitals (LCP/FCP/CLS/TTFB) from `web-vitals` with budget bars and grades     |
 | **SEO**        | `SeoAudit`                 | Client     | Scans all pages for title, description, og:image, canonical, JSON-LD; shows pass/warn/error|
-| **Push**       | `PushNotificationTester`   | Client     | Web Push API tester — permission, service worker, subscriptions, send test/custom messages |
+| **Push**       | `PushNotificationTester`   | Client     | Web Push API tester — permission, SW registration, subscriber list (S3-persisted), send test/custom messages |
 | **Analytics**  | `GoogleAnalyticsExplainer` | Client     | Live session info (time on page, referrer), GA4 config reference, event helper docs        |
 | **Auth**       | `AuthManagement`           | Client     | Current session details (user ID, token expiry), Cognito config status                     |
 | **Env**        | `EnvironmentInfo`          | Client     | Build version, Node env, site URL, integrations (GA/Sentry/reCAPTCHA), client device info  |
@@ -358,15 +358,25 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 - **Runtime**: Node.js, Express 5 + serverless-http
 - **Memory**: 256 MB
 - **Timeout**: 15 seconds
-- **Environment Variables**: 14 (see Deployment section below)
+- **Environment Variables**: 16 (see Deployment section below)
 
 | Route                                     | Method       | Description                                           |
 | ----------------------------------------- | ------------ | ----------------------------------------------------- |
-| `/api/ping`                               | GET          | Health check                                          |
-| `/api/demo`                               | GET          | Demo endpoint                                         |
+| `/api/ping`                               | GET          | Health check ping                                     |
+| `/api/health`                             | GET          | Detailed health status (uptime, memory, env)          |
+| `/api/search?q=`                          | GET          | Portfolio content search                              |
+| `/api/monitor`                            | GET          | Server monitoring (requests, errors, memory)          |
+| `/api/webhook`                            | POST         | Generic webhook receiver                              |
+| `/api/docs`                               | GET          | API endpoint documentation (JSON)                     |
 | `/api/contact`                            | POST         | Contact form — reCAPTCHA v3, SES email, Sentry        |
-| `/api/resume`                             | GET          | 302 redirect to `/resume.pdf`                         |
-| `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID)       |
+| `/api/chat`                               | POST         | AI assistant — Claude 3.5 Haiku via Bedrock (SSE)     |
+| `/api/booking/slots`                      | GET          | Available booking slots (Cal.com)                     |
+| `/api/booking/create`                     | POST         | Create booking with Google Meet link (Cal.com)        |
+| `/api/resume/download`                    | GET          | Resume PDF download                                   |
+| `/api/resume/generate`                    | GET          | Resume data as JSON with PDF link                     |
+| `/api/github/stats`                       | GET          | GitHub profile statistics (repos, stars, followers)   |
+| `/api/github/repos`                       | GET          | Public repositories (paginated, with topics)          |
+| `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID, S3-persisted) |
 | `/api/organizations/api_keys`             | GET/POST     | List / create API keys (Slack notifications)          |
 | `/api/organizations/api_keys/:id`         | GET/POST/DELETE | Get / update / delete API key (Slack notifications)|
 
@@ -389,7 +399,8 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - Offline-first caching for static assets
 - App manifest for installability
 - Background sync for contact form (when offline)
-- Push notification support via Web Push API
+- Push notification support via Web Push API (VAPID keys, S3-persisted subscriptions)
+- Service worker registration from admin Push tab or `usePushNotifications` hook
 
 ---
 

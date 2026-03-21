@@ -11,13 +11,14 @@ import compression from "compression";
 import cors from "cors";
 
 // Routes
-import playwrightAutofix from "./routes/playwrightAutofix";
+import general from "./routes/general";
 import resume from "./routes/resume";
 import apiKeys from "./routes/apiKeys";
 import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
 import pushNotifications from "./routes/pushNotifications";
+import github from "./routes/github";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
@@ -46,30 +47,16 @@ app.use((_req, res, next) => {
 });
 
 // Public routes
-app.use("/api/playwright-autofix", playwrightAutofix);
+app.use("/api", general);
 app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
 app.use("/api/push-notifications", pushNotifications);
+app.use("/api/github", github);
 
-// Protected routes (require Firebase Auth)
+// Protected routes (require Cognito Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);
-
-// Simple endpoints
-app.get("/api/ping", (_req, res) => {
-  res.json({ message: process.env.PING_MESSAGE ?? "ping_pong" });
-});
-
-app.get("/api/health", (_req, res) => {
-  res.json({
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV ?? "production",
-    memory: `${Math.round(process.memoryUsage().heapUsed / (1024 * 1024))}MB`,
-  });
-});
 
 // 404 for unknown API routes
 app.use((req, res, next) => {

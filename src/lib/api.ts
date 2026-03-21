@@ -175,7 +175,7 @@ export const pushNotificationsApi = {
    */
   async getSubscriptionCount(): Promise<{
     subscriptions: number;
-    list: Array<{ endpoint: string }>;
+    list: Array<{ endpoint: string; createdAt?: string }>;
   }> {
     const url = `${LAMBDA_URLS["push-notifications"]}?action=subscriptions`;
     const response = await fetch(url, {

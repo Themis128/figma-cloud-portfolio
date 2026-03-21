@@ -96,53 +96,29 @@ router.get("/monitor", (_req: Request, res: Response) => {
   });
 });
 
-// GET /api/docs — API documentation
+// GET /api/docs — API documentation (JSON)
 router.get("/docs", (_req: Request, res: Response) => {
-  res.setHeader("Content-Type", "text/html");
-  res.send(`<!DOCTYPE html>
-<html>
-<head><title>API Documentation</title></head>
-<body>
-<h1>API Documentation</h1>
-<h2>Endpoints</h2>
-<ul>
-  <li><strong>GET /api/ping</strong> — Health check ping</li>
-  <li><strong>GET /api/health</strong> — Detailed health status</li>
-  <li><strong>GET /api/github/stats</strong> — GitHub profile statistics</li>
-  <li><strong>GET /api/github/repos</strong> — Public repositories (supports ?page=&limit=)</li>
-  <li><strong>POST /api/contact</strong> — Submit contact form</li>
-  <li><strong>POST /api/chat</strong> — AI chat (SSE streaming)</li>
-  <li><strong>GET /api/booking/slots</strong> — Available booking slots</li>
-  <li><strong>POST /api/booking/create</strong> — Create a booking</li>
-  <li><strong>GET /api/resume/download</strong> — Download resume PDF</li>
-  <li><strong>GET /api/resume/generate</strong> — Generate resume data</li>
-  <li><strong>GET /api/search?q=</strong> — Search portfolio content</li>
-  <li><strong>POST /api/webhook</strong> — Webhook receiver</li>
-  <li><strong>GET /api/monitor</strong> — Server monitoring</li>
-  <li><strong>GET /api/docs</strong> — This documentation</li>
-  <li><strong>POST /api/upload</strong> — File upload</li>
-  <li><strong>GET /api/push-notifications?action=subscriptions</strong> — Push notification subscriptions</li>
-  <li><strong>GET /api/admin/stats</strong> — Admin statistics (requires auth)</li>
-</ul>
-</body>
-</html>`);
-});
-
-// POST /api/upload — file upload handler
-router.post("/upload", (req: Request, res: Response) => {
-  const contentLength = parseInt(req.headers["content-length"] ?? "0", 10);
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-
-  if (contentLength > MAX_SIZE) {
-    return res.status(413).json({ error: "File too large. Maximum size is 10MB." });
-  }
-
-  // Accept the upload
-  return res.json({
-    success: true,
-    message: "File uploaded successfully",
-    size: contentLength,
-    timestamp: new Date().toISOString(),
+  res.json({
+    name: "Portfolio API",
+    version: "1.0.0",
+    endpoints: [
+      { method: "GET", path: "/api/ping", description: "Health check ping" },
+      { method: "GET", path: "/api/health", description: "Detailed health status" },
+      { method: "GET", path: "/api/search?q=", description: "Search portfolio content" },
+      { method: "GET", path: "/api/monitor", description: "Server monitoring data" },
+      { method: "POST", path: "/api/webhook", description: "Webhook receiver" },
+      { method: "GET", path: "/api/docs", description: "This documentation" },
+      { method: "GET", path: "/api/github/stats", description: "GitHub profile statistics" },
+      { method: "GET", path: "/api/github/repos", description: "Public repositories" },
+      { method: "POST", path: "/api/contact", description: "Submit contact form" },
+      { method: "POST", path: "/api/chat", description: "AI chat (SSE streaming)" },
+      { method: "GET", path: "/api/booking/slots", description: "Available booking slots" },
+      { method: "POST", path: "/api/booking/create", description: "Create a booking" },
+      { method: "GET", path: "/api/resume/download", description: "Download resume PDF" },
+      { method: "GET", path: "/api/resume/generate", description: "Generate resume data" },
+      { method: "GET/PUT/POST/DELETE", path: "/api/push-notifications", description: "Push notification management" },
+      { method: "GET/POST/DELETE", path: "/api/organizations/api_keys", description: "API key management (auth required)" },
+    ],
   });
 });
 
