@@ -49,7 +49,7 @@ VAPID_EMAIL=mailto:your-email@example.com
 
 # AWS Bedrock chatbot (uses AWS credentials from ~/.aws/credentials or env vars)
 BEDROCK_REGION=us-east-1
-BEDROCK_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
+BEDROCK_MODEL_ID=us.anthropic.claude-3-5-haiku-20241022-v1:0
 ```
 
 ## Development Servers

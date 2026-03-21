@@ -70,7 +70,7 @@ test.describe("AI Integrations", () => {
                 text: `Response to: ${message}`,
               },
             ],
-            model: "claude-3-haiku-20240307",
+            model: "claude-3-5-haiku-20241022",
             role: "assistant",
             usage: {
               input_tokens: 10,
@@ -218,7 +218,7 @@ test.describe("AI Integrations", () => {
         const validModels = [
           "claude-3-opus-20240229",
           "claude-3-sonnet-20240229",
-          "claude-3-haiku-20240307",
+          "claude-3-5-haiku-20241022",
         ];
 
         const validateModel = (model: string) => validModels.includes(model);
@@ -226,7 +226,7 @@ test.describe("AI Integrations", () => {
         return {
           validOpus: validateModel("claude-3-opus-20240229"),
           validSonnet: validateModel("claude-3-sonnet-20240229"),
-          validHaiku: validateModel("claude-3-haiku-20240307"),
+          validHaiku: validateModel("claude-3-5-haiku-20241022"),
           invalidModel: validateModel("invalid-model"),
         };
       });
