@@ -25,7 +25,7 @@
 # assertions), re-runs the suite to verify, then opens a PR with all changes.
 # If failures remain after 3 fix iterations, opens an issue with a repair plan.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"3aba0e2b96b27cd0e642d3f13057d50beac951d86999ce8aadf9825d0d7b73bb","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"3cb6d94a38aca4ab67fe923a1a14c88008b528ed7b2342d456af7e2489aa86e8","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "E2E Test CI Fixer"
 "on":
