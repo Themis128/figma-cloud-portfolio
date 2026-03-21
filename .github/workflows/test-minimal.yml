@@ -7,11 +7,9 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  test-v5:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    environment: production
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v4
-      - run: echo "Test with pnpm only"
+      - uses: pnpm/action-setup@v5
+      - run: pnpm --version
