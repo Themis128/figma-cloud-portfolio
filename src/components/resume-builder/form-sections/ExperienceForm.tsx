@@ -1,13 +1,13 @@
 "use client";
 
+import { Plus, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ResumeFormData } from "@/types/resume-builder";
-import { Plus, Trash2, X } from "lucide-react";
-import { useState } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
 
 export function ExperienceForm() {
   const {

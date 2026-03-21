@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { AgentBuilder } from "@/components/agents/AgentBuilder";
-import TemplateSelector from "@/components/agents/TemplateSelector";
 import TemplateCreator from "@/components/agents/TemplateCreator";
+import TemplateSelector from "@/components/agents/TemplateSelector";
 import type { AgentTemplate } from "@/data/agentTemplates";
 
 type View = "select" | "create" | "build";

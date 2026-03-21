@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 
 interface ComparisonItem {

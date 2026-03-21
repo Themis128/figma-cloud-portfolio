@@ -12,9 +12,6 @@ import {
   Shield,
   Terminal,
 } from "lucide-react";
-
-import CircuitBackground from "@/components/CircuitBackground";
-import Navigation from "@/components/Navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminLogin from "@/components/admin/AdminLogin";
 import ApiConsole from "@/components/admin/ApiConsole";
@@ -26,8 +23,10 @@ import ErrorLogViewer from "@/components/admin/ErrorLogViewer";
 import GoogleAnalyticsExplainer from "@/components/admin/GoogleAnalyticsExplainer";
 import PerformanceBudget from "@/components/admin/PerformanceBudget";
 import SeoAudit from "@/components/admin/SeoAudit";
-import { PushNotificationTester } from "@/components/PushNotificationTester";
 import { useAdminAuth } from "@/components/admin/useAdminAuth";
+import CircuitBackground from "@/components/CircuitBackground";
+import Navigation from "@/components/Navigation";
+import { PushNotificationTester } from "@/components/PushNotificationTester";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AdminPage() {

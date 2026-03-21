@@ -1,6 +1,5 @@
 "use client";
 
-import type { LinkPreviewData } from "@/types/api";
 import { AlertCircle, ExternalLink, Image as ImageIcon } from "lucide-react";
 import NextImage from "next/image";
 import type { SyntheticEvent } from "react";
@@ -10,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generatePreviewCached } from "@/lib/linkPreviewService";
 import { cn } from "@/lib/utils";
+import type { LinkPreviewData } from "@/types/api";
 
 interface LinkPreviewProps {
   url: string;

@@ -15,13 +15,23 @@ import {
 import Link from "next/link";
 import Script from "next/script";
 import { useCallback, useState } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
+import { trackLead, trackOutboundClick } from "@/components/GoogleAnalytics";
 import { HoverCard, HoverButton } from "@/components/HoverAnimations";
 import Navigation from "@/components/Navigation";
 import { SectionNav } from "@/components/SectionNav";
-import { trackLead, trackOutboundClick } from "@/components/GoogleAnalytics";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { submitContactForm } from "@/lib/api";
 
 const SECTIONS = [
@@ -30,17 +40,6 @@ const SECTIONS = [
   { id: "contact-form", label: "Send Message" },
   { id: "more-info", label: "More Info" },
 ] as const;
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 
 // Contact information data
 const contactInfo = [
@@ -227,7 +226,7 @@ export default function ContactPage() {
             </div>
             <AnimatedSection delay={0.2}>
               <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-                I'm always open to discussing new projects, creative ideas, or
+                I&apos;m always open to discussing new projects, creative ideas, or
                 opportunities to be part of your vision.
               </p>
             </AnimatedSection>
@@ -338,7 +337,7 @@ export default function ContactPage() {
                       Send a Message
                     </CardTitle>
                     <CardDescription className="text-muted-foreground">
-                      Fill out the form below and I'll get back to you as soon
+                      Fill out the form below and I&apos;ll get back to you as soon
                       as possible.
                     </CardDescription>
                   </CardHeader>
@@ -408,7 +407,7 @@ export default function ContactPage() {
                       {/* Status Messages */}
                       {submitStatus === "success" && (
                         <div role="alert" className="p-3 rounded-lg bg-green-400/10 border border-green-400/30 text-green-400 text-sm">
-                          Message sent successfully! I'll get back to you soon.
+                          Message sent successfully! I&apos;ll get back to you soon.
                         </div>
                       )}
                       {submitStatus === "error" && (

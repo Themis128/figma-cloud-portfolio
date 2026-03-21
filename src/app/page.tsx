@@ -1,14 +1,13 @@
 import { Globe as GlobeIcon, Linkedin, Mail } from "lucide-react";
 import type { Metadata } from "next";
-
 import AIBrain from "@/components/AIBrain";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import AvailabilityBadge from "@/components/AvailabilityBadge";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
+import TypeWriter from "@/components/interactive/TypeWriter";
 import Navigation from "@/components/Navigation";
 import QuickContactForm from "@/components/QuickContactForm";
-import TypeWriter from "@/components/interactive/TypeWriter";
 
 export const metadata: Metadata = {
   title: "Home | Themistoklis Baltzakis",

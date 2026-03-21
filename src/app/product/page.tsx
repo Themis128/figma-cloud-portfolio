@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
-import Navigation from "@/components/Navigation";
 import InteractiveTimeline from "@/components/interactive/InteractiveTimeline";
+import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "Work Experience",

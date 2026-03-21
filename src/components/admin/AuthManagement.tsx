@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import {
   Key,
   Shield,
   User,
 } from "lucide-react";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
-
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 

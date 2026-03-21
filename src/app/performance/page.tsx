@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";

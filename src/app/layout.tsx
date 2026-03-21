@@ -2,24 +2,24 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-import { MotionProvider } from "@/components/MotionProvider";
-import { Providers } from "@/components/providers";
-import { DefaultStructuredData } from "@/components/StructuredData";
+import AmplifyProvider from "@/components/AmplifyProvider";
 import ChatbotWidget from "@/components/ChatbotWidget";
-import CyberTerminal from "@/components/interactive/CyberTerminal";
-import ScrollProgress from "@/components/interactive/ScrollProgress";
-import MatrixRain from "@/components/interactive/MatrixRain";
-import CursorTrail from "@/components/interactive/CursorTrail";
 import CommandPalette from "@/components/CommandPalette";
-import SentryInit from "@/components/SentryInit";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
-import AmplifyProvider from "@/components/AmplifyProvider";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
-import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import CursorTrail from "@/components/interactive/CursorTrail";
+import CyberTerminal from "@/components/interactive/CyberTerminal";
+import MatrixRain from "@/components/interactive/MatrixRain";
+import ScrollProgress from "@/components/interactive/ScrollProgress";
+import { MotionProvider } from "@/components/MotionProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
+import { Providers } from "@/components/providers";
+import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
+import SentryInit from "@/components/SentryInit";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { DefaultStructuredData } from "@/components/StructuredData";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],

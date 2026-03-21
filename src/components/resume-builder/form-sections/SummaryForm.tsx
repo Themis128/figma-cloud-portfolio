@@ -1,9 +1,9 @@
 "use client";
 
+import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { ResumeFormData } from "@/types/resume-builder";
-import { useFormContext } from "react-hook-form";
 
 export function SummaryForm() {
   const {

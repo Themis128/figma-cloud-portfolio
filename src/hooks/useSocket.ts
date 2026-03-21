@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { socketManager } from "@/lib/socket";
 
 interface User {

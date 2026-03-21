@@ -1,6 +1,8 @@
 "use client";
 
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { useCallback, useEffect, useState } from "react";
+import { FormProvider, type Resolver, useForm } from "react-hook-form";
 import {
   type ResumeFormData,
   type TemplateName,
@@ -8,8 +10,6 @@ import {
   resumeFormSchema,
   sampleResumeData,
 } from "@/types/resume-builder";
-import { useCallback, useEffect, useState } from "react";
-import { FormProvider, type Resolver, useForm } from "react-hook-form";
 import { ExportControls } from "./ExportControls";
 import { ResumeForm } from "./ResumeForm";
 import { ResumePreview } from "./ResumePreview";
@@ -48,6 +48,7 @@ export function ResumeBuilder() {
     mode: "onChange",
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const formData = form.watch();
 
   // Auto-save to localStorage (debounced via effect)

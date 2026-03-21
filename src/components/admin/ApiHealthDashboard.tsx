@@ -1,12 +1,11 @@
 "use client";
 
+import { fetchAuthSession } from "aws-amplify/auth";
 import { Keyboard, Pause, Play, RefreshCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { fetchAuthSession } from "aws-amplify/auth";
 import ApiEndpointCard, {
   type EndpointDef,
   type EndpointStatus,

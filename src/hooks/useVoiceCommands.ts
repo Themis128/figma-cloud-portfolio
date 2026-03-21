@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { reportError, trackInteraction } from "@/lib/sentry";
 
 // Web Speech API type declarations

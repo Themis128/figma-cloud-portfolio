@@ -1,8 +1,8 @@
 "use client";
 
-import type { ResumeFormData, TemplateName } from "@/types/resume-builder";
-import { renderResume } from "@/lib/resume-templates";
 import { useMemo } from "react";
+import { renderResume } from "@/lib/resume-templates";
+import type { ResumeFormData, TemplateName } from "@/types/resume-builder";
 
 interface ResumePreviewProps {
   data: ResumeFormData;

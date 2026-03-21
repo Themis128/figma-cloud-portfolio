@@ -4,7 +4,6 @@ import { Accessibility, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-
 import { HoverButton } from "@/components/HoverAnimations";
 import { NotificationButton } from "@/components/NotificationButton";
 import { ThemeToggle } from "@/components/ThemeToggle";

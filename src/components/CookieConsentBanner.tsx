@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { useConsent } from "@/hooks/useConsent";
 

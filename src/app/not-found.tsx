@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 

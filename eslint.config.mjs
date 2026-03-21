@@ -1,7 +1,4 @@
-import tsParser from "@typescript-eslint/parser";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import reactPlugin from "eslint-plugin-react";
-import reactHooksPlugin from "eslint-plugin-react-hooks";
+import nextConfig from "eslint-config-next";
 
 export default [
   // ── Ignored paths ───────────────────────────────────────────────────────────
@@ -14,52 +11,32 @@ export default [
       "amplify/**",
       "docs/**",
       "playwright-tests/**",
-      // Legacy Vite SPA (pre-migration artefacts, not part of Next.js build)
-      "client/**",
-      // Server-side and tooling files with pre-existing issues
       "server/**",
-      "cline-hooks/**",
-      "shared/**",
       "scripts/**",
-      // Next.js internal/generated routes outside the main tsconfig project
       "src/app/.well-known/**",
-      // Config files handled by their own parsers
       "*.config.mjs",
       "*.config.ts",
       "*.config.js",
       "*.config.shared.ts",
-      "vite.config.ts",
       "vitest.config.ts",
-      "tailwind.config.ts",
       "postcss.config.mjs",
     ],
   },
 
-  // ── Next.js src — TypeScript + React ────────────────────────────────────────
+  // ── Next.js recommended (includes React, React Hooks, Import, JSX-A11y, TS)
+  ...nextConfig,
+
+  // ── Custom rules for src/ ─────────────────────────────────────────────────
   {
     files: ["src/**/*.{ts,tsx}"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-        // Point at the root tsconfig so the parser resolves paths correctly
-        project: "./tsconfig.json",
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-    plugins: {
-      "@typescript-eslint": tsPlugin,
-      react: reactPlugin,
-      "react-hooks": reactHooksPlugin,
-    },
     settings: {
       react: { version: "detect" },
+      "import/resolver": {
+        typescript: { alwaysTryTypes: true },
+      },
     },
     rules: {
       // ── TypeScript ───────────────────────────────────────────────────────
-      // Disable the base rule — @typescript-eslint/no-unused-vars handles TS
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -76,10 +53,37 @@ export default [
       ],
 
       // ── React ────────────────────────────────────────────────────────────
-      "react/react-in-jsx-scope": "off", // Not needed with React 17+ JSX transform
-      "react/prop-types": "off", // TypeScript handles this
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/set-state-in-effect": "off", // Too many valid patterns (browser API detection in effects)
+      "react-hooks/purity": "off", // React 19 compiler hints, not actionable yet
+
+      // ── Accessibility ──────────────────────────────────────────────────
+      "jsx-a11y/alt-text": "error",
+      "jsx-a11y/anchor-is-valid": "error",
+      "jsx-a11y/aria-props": "error",
+      "jsx-a11y/aria-role": "error",
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/heading-has-content": "error",
+      "jsx-a11y/label-has-associated-control": "warn",
+      "jsx-a11y/no-autofocus": "warn",
+      "jsx-a11y/no-redundant-roles": "error",
+
+      // ── Imports ──────────────────────────────────────────────────────────
+      "import/no-duplicates": "error",
+      "import/no-cycle": ["error", { maxDepth: 3 }],
+      "import/no-self-import": "error",
+      "import/no-useless-path-segments": "error",
+      "import/order": [
+        "warn",
+        {
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
+          "newlines-between": "never",
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
 
       // ── General ──────────────────────────────────────────────────────────
       "no-console": "warn",

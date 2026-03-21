@@ -9,13 +9,12 @@ import {
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverCard } from "@/components/HoverAnimations";
+import SkillsRadar from "@/components/interactive/SkillsRadar";
 import Navigation from "@/components/Navigation";
 import { SectionNav } from "@/components/SectionNav";
-import SkillsRadar from "@/components/interactive/SkillsRadar";
 
 const SECTIONS = [
   { id: "hero", label: "Overview" },

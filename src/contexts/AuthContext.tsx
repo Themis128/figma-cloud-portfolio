@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { Hub } from "aws-amplify/utils";
 import { getCurrentUser, type AuthUser } from "aws-amplify/auth";
+import { Hub } from "aws-amplify/utils";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   user: AuthUser | null;

@@ -3,7 +3,6 @@
 import { CheckCircle2, Circle, Play, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
-
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 

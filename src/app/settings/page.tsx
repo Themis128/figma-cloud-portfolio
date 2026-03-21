@@ -2,7 +2,6 @@
 
 import { Moon, Monitor, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";

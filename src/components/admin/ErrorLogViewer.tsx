@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
   Ban,
@@ -9,7 +8,7 @@ import {
   WifiOff,
   XCircle,
 } from "lucide-react";
-
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -66,7 +65,10 @@ export default function ErrorLogViewer() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(true);
   const errorsRef = useRef(errors);
-  errorsRef.current = errors;
+
+  useEffect(() => {
+    errorsRef.current = errors;
+  }, [errors]);
 
   useEffect(() => {
     if (!isCapturing) return;

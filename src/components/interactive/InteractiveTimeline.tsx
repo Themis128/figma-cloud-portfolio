@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { Calendar, MapPin } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface TimelineEntry {
   company: string;

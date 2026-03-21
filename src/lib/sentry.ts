@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/nextjs";
-
 import type { ConsentState } from "@/hooks/useConsent";
 
 const STORAGE_KEY = "cookie-consent";

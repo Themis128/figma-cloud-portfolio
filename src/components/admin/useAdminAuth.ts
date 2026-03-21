@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { signIn, signOut } from "aws-amplify/auth";
+import { useCallback, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function useAdminAuth() {
