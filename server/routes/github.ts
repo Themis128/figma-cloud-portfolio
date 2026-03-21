@@ -3,7 +3,7 @@ import { Router, Request, Response } from "express";
 
 const router = Router();
 
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME ?? "tbaltzakis";
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME ?? "Themis128";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN ?? "";
 
 function githubHeaders(): Record<string, string> {

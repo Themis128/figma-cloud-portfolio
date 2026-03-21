@@ -38,9 +38,15 @@ interface HistoryEntry {
 const PRESETS = [
   { label: "Ping", method: "GET" as HttpMethod, url: "/api/ping" },
   { label: "Health", method: "GET" as HttpMethod, url: "/api/health" },
+  { label: "Monitor", method: "GET" as HttpMethod, url: "/api/monitor" },
+  { label: "GitHub", method: "GET" as HttpMethod, url: "/api/github/stats" },
+  { label: "Repos", method: "GET" as HttpMethod, url: "/api/github/repos?limit=5" },
+  { label: "Search", method: "GET" as HttpMethod, url: "/api/search?q=cloud" },
+  { label: "Resume", method: "GET" as HttpMethod, url: "/api/resume/generate" },
   { label: "Slots", method: "GET" as HttpMethod, url: "/api/booking/slots" },
   { label: "API Keys", method: "GET" as HttpMethod, url: "/api/organizations/api_keys" },
-  { label: "Subscriptions", method: "GET" as HttpMethod, url: "/api/push-notifications?action=subscriptions" },
+  { label: "Push Subs", method: "GET" as HttpMethod, url: "/api/push-notifications?action=subscriptions" },
+  { label: "Docs", method: "GET" as HttpMethod, url: "/api/docs" },
 ];
 
 const getStatusColor = getHttpStatusColor;

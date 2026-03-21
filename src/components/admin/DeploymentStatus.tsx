@@ -6,8 +6,10 @@ import {
   Cloud,
   ExternalLink,
   GitBranch,
+  Github,
   Loader2,
   RefreshCcw,
+  Search,
   Server,
   XCircle,
 } from "lucide-react";
@@ -42,12 +44,37 @@ interface DeployInfo {
   };
 }
 
+interface GitHubStats {
+  repos: number;
+  stars: number;
+  followers: number;
+  name: string | null;
+}
+
+interface ServiceCheck {
+  name: string;
+  path: string;
+  ok: boolean | null;
+  ms: number | null;
+}
+
 const PRODUCTION_URL = "https://www.baltzakisthemis.com";
 const API_HEALTH_URL = `${LAMBDA_API_URL}/api/health`;
+
+const SERVICE_CHECKS: { name: string; path: string }[] = [
+  { name: "Search", path: "/api/search?q=test" },
+  { name: "GitHub API", path: "/api/github/stats" },
+  { name: "Monitor", path: "/api/monitor" },
+  { name: "Resume", path: "/api/resume/generate" },
+  { name: "API Docs", path: "/api/docs" },
+  { name: "Push Subs", path: "/api/push-notifications?action=subscriptions" },
+];
 
 export default function DeploymentStatus() {
   const [deploy, setDeploy] = useState<DeployInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [githubStats, setGithubStats] = useState<GitHubStats | null>(null);
+  const [serviceChecks, setServiceChecks] = useState<ServiceCheck[]>([]);
 
   const checkDeployment = async () => {
     setLoading(true);
@@ -145,6 +172,27 @@ export default function DeploymentStatus() {
 
     setDeploy(info);
     setLoading(false);
+
+    // Fetch GitHub stats (non-blocking)
+    fetch(`${LAMBDA_API_URL}/api/github/stats`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setGithubStats(data as GitHubStats);
+      })
+      .catch(() => {});
+
+    // Run service checks (non-blocking)
+    void Promise.all(
+      SERVICE_CHECKS.map(async (svc) => {
+        const start = performance.now();
+        try {
+          const r = await fetch(`${LAMBDA_API_URL}${svc.path}`, { cache: "no-store" });
+          return { name: svc.name, path: svc.path, ok: r.ok, ms: Math.round(performance.now() - start) };
+        } catch {
+          return { name: svc.name, path: svc.path, ok: false, ms: Math.round(performance.now() - start) };
+        }
+      }),
+    ).then(setServiceChecks);
   };
 
   useEffect(() => {
@@ -391,6 +439,80 @@ export default function DeploymentStatus() {
           ))}
         </div>
       </Card>
+
+      {/* GitHub Activity + Service Health (side by side on desktop) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* GitHub Activity */}
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 sm:p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Github className="w-4 h-4 text-cyan-400" />
+            <p className="text-[10px] uppercase tracking-wider text-cyan-400 font-mono">
+              GitHub Activity
+            </p>
+          </div>
+          {githubStats ? (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: "Repos", value: githubStats.repos, color: "text-foreground" },
+                { label: "Stars", value: githubStats.stars, color: "text-yellow-400" },
+                { label: "Followers", value: githubStats.followers, color: "text-cyan-400" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <p className={`text-xl font-mono font-bold ${stat.color}`}>
+                    {stat.value}
+                  </p>
+                  <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-foreground/20">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              <span className="text-[10px] font-mono">Loading...</span>
+            </div>
+          )}
+        </Card>
+
+        {/* Service Health */}
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-3 sm:p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Search className="w-4 h-4 text-cyan-400" />
+            <p className="text-[10px] uppercase tracking-wider text-cyan-400 font-mono">
+              Service Endpoints
+            </p>
+          </div>
+          {serviceChecks.length > 0 ? (
+            <div className="space-y-1.5">
+              {serviceChecks.map((svc) => (
+                <div key={svc.name} className="flex items-center gap-2">
+                  {svc.ok === null ? (
+                    <Clock className="w-3 h-3 text-foreground/20" />
+                  ) : svc.ok ? (
+                    <CheckCircle className="w-3 h-3 text-green-400" />
+                  ) : (
+                    <XCircle className="w-3 h-3 text-red-400" />
+                  )}
+                  <span className={`text-[10px] font-mono flex-1 ${svc.ok ? "text-foreground/50" : "text-red-400"}`}>
+                    {svc.name}
+                  </span>
+                  {svc.ms !== null && (
+                    <span className="text-[9px] font-mono text-foreground/20">
+                      {svc.ms}ms
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-foreground/20">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              <span className="text-[10px] font-mono">Checking...</span>
+            </div>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

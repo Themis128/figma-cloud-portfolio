@@ -5,7 +5,6 @@ import "./env";
 // Main server setup (express config + routes)
 import express from "express";
 import cors from "cors";
-import playwrightAutofix from "./routes/playwrightAutofix";
 import resume from "./routes/resume";
 import apiKeys from "./routes/apiKeys";
 import chat from "./routes/chat";
@@ -37,7 +36,6 @@ app.use(
 
 // Public routes
 app.use("/api", general);
-app.use("/api/playwright-autofix", playwrightAutofix);
 app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);

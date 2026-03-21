@@ -29,12 +29,18 @@ interface NotificationResult {
   }>;
 }
 
+interface SubscriberInfo {
+  endpoint: string;
+  createdAt?: string;
+}
+
 export function PushNotificationTester() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<NotificationResult | null>(null);
   const [subscriptionCount, setSubscriptionCount] = useState<number | null>(
     null,
   );
+  const [subscribers, setSubscribers] = useState<SubscriberInfo[]>([]);
   const [notificationPermission, setNotificationPermission] =
     useState<NotificationPermission>("default");
 
@@ -51,19 +57,11 @@ export function PushNotificationTester() {
     state?: string;
   }>({ registered: false, active: false });
 
-  // Initialize permission and service worker status on mount
-  useEffect(() => {
-    // Read the current browser notification permission
-    if ("Notification" in window) {
-      setNotificationPermission(Notification.permission);
-    }
-
-    const checkServiceWorker = async () => {
-      if (!("serviceWorker" in navigator)) return;
-
-      try {
-        // Wait for the SW to be ready (handles concurrent registration)
-        const registration = await navigator.serviceWorker.ready;
+  const updateSwStatus = async () => {
+    if (!("serviceWorker" in navigator)) return;
+    try {
+      const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+      if (registration) {
         setServiceWorkerStatus({
           registered: true,
           active: registration.active !== null,
@@ -71,24 +69,34 @@ export function PushNotificationTester() {
             state: registration.active.state,
           }),
         });
-      } catch {
-        // Fallback: check if any registration exists
-        try {
-          const registration = await navigator.serviceWorker.getRegistration();
-          if (registration) {
-            setServiceWorkerStatus({
-              registered: true,
-              active: registration.active !== null,
-              ...(registration.active?.state !== undefined && {
-                state: registration.active.state,
-              }),
-            });
-          }
-        } catch (_error) {}
       }
-    };
+    } catch { /* no SW support */ }
+  };
 
-    void checkServiceWorker();
+  const registerServiceWorker = async () => {
+    if (!("serviceWorker" in navigator)) return;
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      // Wait for the SW to become active
+      if (registration.installing || registration.waiting) {
+        const sw = registration.installing ?? registration.waiting;
+        await new Promise<void>((resolve) => {
+          sw?.addEventListener("statechange", () => {
+            if (sw.state === "activated") resolve();
+          });
+          if (registration.active) resolve();
+        });
+      }
+      await updateSwStatus();
+    } catch { /* registration failed */ }
+  };
+
+  // Initialize permission and service worker status on mount
+  useEffect(() => {
+    if ("Notification" in window) {
+      setNotificationPermission(Notification.permission);
+    }
+    void updateSwStatus();
   }, []);
 
   const checkSubscriptions = async () => {
@@ -96,6 +104,7 @@ export function PushNotificationTester() {
       setIsLoading(true);
       const data = await pushNotificationsApi.getSubscriptionCount();
       setSubscriptionCount(data.subscriptions);
+      setSubscribers(data.list);
       setResult({
         success: true,
         message: `Found ${data.subscriptions} active subscription${data.subscriptions !== 1 ? "s" : ""}`,
@@ -186,11 +195,14 @@ export function PushNotificationTester() {
       try {
         const permission = await Notification.requestPermission();
         setNotificationPermission(permission);
-        // Auto-check subscriptions after granting permission
         if (permission === "granted") {
+          // Register SW if not already registered, then check subscriptions
+          if (!serviceWorkerStatus.registered) {
+            await registerServiceWorker();
+          }
           void checkSubscriptions();
         }
-      } catch (_error) {}
+      } catch { /* permission request failed */ }
     }
   };
 
@@ -308,7 +320,7 @@ export function PushNotificationTester() {
                 : "Missing"}
             </Badge>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-3">
             <span
               className={`w-2 h-2 rounded-full shrink-0 ${statusDot(
                 serviceWorkerStatus.registered && serviceWorkerStatus.active,
@@ -323,6 +335,17 @@ export function PushNotificationTester() {
                 : "Not Registered",
             )}
           </div>
+          {!serviceWorkerStatus.registered && (
+            <Button
+              onClick={() => void registerServiceWorker()}
+              disabled={isLoading}
+              size="sm"
+              variant="outline"
+              className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 font-mono text-xs"
+            >
+              Register Service Worker
+            </Button>
+          )}
         </Card>
 
         {/* Subscriptions */}
@@ -371,6 +394,57 @@ export function PushNotificationTester() {
           {isLoading ? "Sending..." : "Send Custom Notification"}
         </Button>
       </div>
+
+      {/* Subscribers List */}
+      {subscribers.length > 0 && (
+        <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-cyan-400 font-mono mb-3">
+            Active Subscribers ({subscribers.length})
+          </p>
+          <div className="space-y-1.5 max-h-60 overflow-y-auto" role="list" aria-label="Push notification subscribers">
+            {subscribers.map((sub, i) => {
+              // Extract browser/service info from endpoint URL
+              const url = new URL(sub.endpoint);
+              const service = url.hostname.includes("google")
+                ? "Chrome/FCM"
+                : url.hostname.includes("mozilla") || url.hostname.includes("push.services")
+                  ? "Firefox"
+                  : url.hostname.includes("windows") || url.hostname.includes("wns")
+                    ? "Edge/WNS"
+                    : url.hostname.includes("apple") || url.hostname.includes("push.apple")
+                      ? "Safari/APNs"
+                      : url.hostname;
+
+              return (
+                <div
+                  key={sub.endpoint}
+                  role="listitem"
+                  className="flex items-center gap-3 p-2 rounded bg-background/30 border border-border/10 hover:border-border/20 transition-colors"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+                  <span className="font-mono text-[10px] text-foreground/30 w-5 shrink-0">
+                    {i + 1}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-[9px] font-mono border-cyan-500/30 text-cyan-400 shrink-0"
+                  >
+                    {service}
+                  </Badge>
+                  <span className="font-mono text-[10px] text-foreground/40 truncate flex-1" title={sub.endpoint}>
+                    ...{sub.endpoint.slice(-40)}
+                  </span>
+                  {sub.createdAt && (
+                    <span className="font-mono text-[9px] text-foreground/20 shrink-0">
+                      {new Date(sub.createdAt).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       {/* Custom Notification Form */}
       <Card className="bg-card/40 backdrop-blur-sm border border-border/20 p-4 space-y-4">
