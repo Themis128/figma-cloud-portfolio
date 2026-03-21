@@ -69,5 +69,7 @@ jobs:
           echo "CloudFront invalidation: ${INVALIDATION_ID}"
           aws cloudfront wait invalidation-completed \
             --distribution-id E134SCTR0QGQKJ \
-            --id "${INVALIDATION_ID}"
+            --id "${INVALIDATION_ID}" \
+            --max-attempts 120 \
+            --delay 10
           echo "Invalidation completed"
