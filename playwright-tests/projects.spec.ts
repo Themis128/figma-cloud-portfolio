@@ -184,3 +184,64 @@ test.describe("Projects Page", () => {
     expect(tagCount).toBeGreaterThanOrEqual(0);
   });
 });
+
+/**
+ * GitHub Repos Section Tests — /projects
+ *
+ * The GitHubRepos component fetches live data from /api/github/repos
+ * and /api/github/stats, displaying repo cards and profile statistics.
+ */
+test.describe("GitHub Repos Section", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/projects");
+    await waitForAppReady(page);
+    await page.waitForLoadState("domcontentloaded");
+    // Wait for React hydration and GitHub API fetch to complete
+    await page.waitForTimeout(3000);
+  });
+
+  test('should show "Live from GitHub" heading', async ({ page }) => {
+    // The GitHubRepos component renders a heading with the GitHub icon
+    const heading = page.getByText("Live from GitHub");
+    await expect(heading).toBeVisible();
+  });
+
+  test("should display repo cards with names", async ({ page }) => {
+    // Repo cards are links with h3 titles inside the GitHub section
+    const githubSection = page.locator("div", { hasText: "Live from GitHub" }).first();
+    const repoCards = githubSection.locator("a h3");
+    const count = await repoCards.count();
+    expect(count).toBeGreaterThan(0);
+
+    // First repo card should have a visible name
+    await expect(repoCards.first()).toBeVisible();
+    const name = await repoCards.first().textContent();
+    expect(name?.trim().length).toBeGreaterThan(0);
+  });
+
+  test("should show GitHub stats (Repos, Stars, Followers)", async ({
+    page,
+  }) => {
+    // Stats header displays Repos count, Stars count, and Followers count
+    await expect(page.getByText("Repos:")).toBeVisible();
+    await expect(page.getByText("Followers:")).toBeVisible();
+
+    // Stars indicator (Star icon is next to the count)
+    const starIcon = page.locator('svg.lucide-star').first();
+    await expect(starIcon).toBeVisible();
+  });
+
+  test("should have profile link", async ({ page }) => {
+    // Profile link opens GitHub in a new tab
+    const profileLink = page.locator("a", { hasText: "Profile" }).filter({
+      has: page.locator("svg"),
+    });
+    await expect(profileLink).toBeVisible();
+    await expect(profileLink).toHaveAttribute("target", "_blank");
+    await expect(profileLink).toHaveAttribute("rel", /noopener/);
+
+    // Link should point to a GitHub URL
+    const href = await profileLink.getAttribute("href");
+    expect(href).toContain("github.com");
+  });
+});
