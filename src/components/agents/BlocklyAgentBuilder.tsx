@@ -3,9 +3,11 @@
 import { Bot, BookOpen, Code, Copy, Download, Play, RotateCcw, SkipForward } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type * as BlocklyNS from "blockly";
 
 // Blockly will be dynamically imported to avoid SSR issues
-let Blockly: typeof import("blockly") | null = null;
+type BlocklyModule = typeof BlocklyNS;
+let Blockly: BlocklyModule | null = null;
 
 // Custom dark cyberpunk theme for Blockly
 const CYBERPUNK_THEME_DEF = {
@@ -49,7 +51,7 @@ type PythonGen = {
 };
 
 // Custom block definitions for agent concepts
-function defineAgentBlocks(BlocklyModule: typeof import("blockly"), pythonGenerator?: PythonGen) {
+function defineAgentBlocks(BlocklyModule: BlocklyModule, pythonGenerator?: PythonGen) {
   const { Blocks } = BlocklyModule;
 
   // --- OBSERVE blocks ---

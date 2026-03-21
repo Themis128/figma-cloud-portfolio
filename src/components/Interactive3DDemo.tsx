@@ -111,7 +111,7 @@ function ProjectSphere({
   onHover: (id: string | null) => void;
 }) {
   // Use forwardRef to properly handle refs in function components
-  const meshRef = React.forwardRef<THREE.Mesh, any>((props, ref) => {
+  const meshRef = React.forwardRef<THREE.Mesh, React.ComponentProps<typeof Sphere>>((props, ref) => {
     return <Sphere {...props} ref={ref} />;
   });
   const [hovered, setHovered] = useState(false);

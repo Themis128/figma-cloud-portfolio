@@ -73,7 +73,7 @@ export function ExportControls({
       pdf.save(fileName);
       trackFileDownload(fileName, ".pdf", "resume_builder");
     } catch (error) {
-      console.error("PDF export failed:", error);
+      console.error("PDF export failed:", error); // eslint-disable-line no-console
     } finally {
       setIsExporting(false);
     }
@@ -105,7 +105,7 @@ export function ExportControls({
         localStorage.setItem("resume-builder-data", JSON.stringify(parsed));
         window.location.reload();
       } catch {
-        console.error("Invalid JSON file");
+        console.error("Invalid JSON file"); // eslint-disable-line no-console
       }
     };
     input.click();

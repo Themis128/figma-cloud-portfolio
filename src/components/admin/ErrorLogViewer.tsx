@@ -110,8 +110,8 @@ export default function ErrorLogViewer() {
     }
 
     // Intercept console.error
-    const originalConsoleError = console.error;
-    console.error = (...args: unknown[]) => {
+    const originalConsoleError = console.error; // eslint-disable-line no-console
+    console.error = (...args: unknown[]) => { // eslint-disable-line no-console
       originalConsoleError.apply(console, args);
       const message = args
         .map((a) =>
@@ -172,7 +172,7 @@ export default function ErrorLogViewer() {
     return () => {
       window.removeEventListener("error", handleError);
       window.removeEventListener("unhandledrejection", handleRejection);
-      console.error = originalConsoleError;
+      console.error = originalConsoleError; // eslint-disable-line no-console
       window.fetch = originalFetch;
     };
   }, [isCapturing]);
