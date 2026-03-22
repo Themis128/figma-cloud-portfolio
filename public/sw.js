@@ -399,6 +399,9 @@ self.addEventListener("message", (event) => {
       case "SKIP_WAITING":
         self.skipWaiting();
         break;
+      case "CLAIM_CLIENTS":
+        event.waitUntil(self.clients.claim());
+        break;
       case "GET_VERSION":
         // Safely send response only if port exists
         if (event.ports && event.ports[0]) {
