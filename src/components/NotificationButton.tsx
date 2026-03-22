@@ -438,7 +438,7 @@ export function NotificationButton() {
       {/* Dropdown panel */}
       {open && (
         <div
-          className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-cyan-400/20 bg-slate-900/95 backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.1)] z-50"
+          className="fixed left-4 right-4 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 rounded-lg border border-cyan-400/20 bg-slate-900/95 backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.1)] z-50"
           role="dialog"
           aria-label="Announcements"
         >
