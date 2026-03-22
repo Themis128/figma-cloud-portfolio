@@ -76,6 +76,12 @@ test.describe("PushToast In-App Notifications", () => {
 });
 
 test.describe("Push Subscribe Button in Announcements", () => {
+  // Bell button is hidden on mobile viewports
+  test.beforeEach(async ({ page }) => {
+    const viewport = page.viewportSize();
+    test.skip(!!viewport && viewport.width < 640, "Bell button hidden on mobile viewports");
+  });
+
   test("should show subscribe button in announcements panel", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
