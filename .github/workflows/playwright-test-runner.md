@@ -121,22 +121,44 @@ From the test output, extract:
 - **Total duration**
 - For each **failure**: test name, spec file, error message
 
+Also categorize tests by spec file into these groups:
+- **smoke**: tests tagged `@smoke`
+- **push-notifications**: `push-notifications*.spec.ts`
+- **navigation**: `navigation.spec.ts`, `mobile.spec.ts`
+- **chatbot**: `chatbot-widget.spec.ts`
+- **global-components**: `global-components.spec.ts`
+- **interactive-components**: `interactive-components*.spec.ts`
+- **performance-components**: `performance-components.spec.ts`, `performance-*.spec.ts`
+- **admin**: `admin.spec.ts`
+- **other**: everything else
+
 ## Step 3: Check for Regressions
 
 Load cache memory to compare with previous run results. The cache should have this structure:
 
 ```json
 {
-  "last_run": "2026-03-07",
-  "total": 92,
-  "passed": 85,
-  "failed": 7,
-  "skipped": 0,
+  "last_run": "2026-03-22",
+  "total": 400,
+  "passed": 396,
+  "failed": 0,
+  "skipped": 4,
+  "categories": {
+    "smoke": { "total": 30, "passed": 30 },
+    "push-notifications": { "total": 67, "passed": 67 },
+    "navigation": { "total": 20, "passed": 20 },
+    "chatbot": { "total": 11, "passed": 11 },
+    "global-components": { "total": 14, "passed": 14 },
+    "interactive-components": { "total": 8, "passed": 8 },
+    "performance-components": { "total": 14, "passed": 14 },
+    "admin": { "total": 135, "passed": 135 },
+    "other": { "total": 101, "passed": 97 }
+  },
   "known_failures": [
     {
       "test": "test name",
       "file": "spec-file.spec.ts",
-      "since": "2026-03-07"
+      "since": "2026-03-22"
     }
   ]
 }
