@@ -173,8 +173,42 @@ export function NotificationButton() {
     };
 
     navigator.serviceWorker?.addEventListener("message", handleSwMessage);
+
+    // Dev fallback: poll for notifications when WNS/FCM rejects push from localhost.
+    // Only active in development. Checks every 3s for new notifications.
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
+    let lastPollTs = Date.now();
+    if (process.env.NODE_ENV !== "production") {
+      pollTimer = setInterval(async () => {
+        try {
+          const res = await fetch("/api/push-notifications/poll?since=" + lastPollTs);
+          if (!res.ok) return;
+          const items = await res.json() as Array<{ title?: string; body?: string; url?: string; ts?: number }>;
+          for (const data of items) {
+            const notification: Announcement = {
+              id: `push-poll-${data.ts ?? Date.now()}`,
+              title: data.title ?? "New Notification",
+              description: data.body ?? "",
+              ...(data.url ? { href: data.url } : {}),
+              isPush: true,
+              receivedAt: new Date().toISOString(),
+            };
+            savePushNotification(notification);
+            if (Notification.permission === "granted") {
+              new Notification(notification.title, { body: notification.description, icon: "/logo.jpg" });
+            }
+          }
+          if (items.length > 0) {
+            setPushNotifications(getPushNotifications());
+            lastPollTs = Date.now();
+          }
+        } catch { /* ignore poll errors */ }
+      }, 3000);
+    }
+
     return () => {
       navigator.serviceWorker?.removeEventListener("message", handleSwMessage);
+      if (pollTimer) clearInterval(pollTimer);
     };
   }, []);
 
