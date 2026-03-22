@@ -212,15 +212,30 @@ test("navigation adapts to viewport", async ({ page }) => {
 
   for (const { width, height, isMobile } of viewports) {
     await page.setViewportSize({ width, height });
-    
+
     if (isMobile) {
-      await expect(page.locator('button[aria-label="Open menu"]')).toBeVisible();
+      // Mobile: hamburger + bell + theme toggle visible in top bar
+      await expect(page.locator('button[aria-label="Toggle menu"]')).toBeVisible();
+      await expect(page.locator('button[aria-label*="announcements"]').first()).toBeVisible();
     } else {
+      // Desktop: horizontal nav links + bell + theme + accessibility
       await expect(page.locator('nav a')).toBeVisible();
     }
   }
 });
 ```
+
+**Mobile nav layout** (below `md` / 768px):
+```
+[Logo]                    [Bell] [Theme] [☰ Hamburger]
+```
+
+**Desktop nav layout** (768px+):
+```
+[Logo]    [Home] [About] [Resume] [Contact] ...    [Bell] [Theme] [A11y]
+```
+
+The bell icon's notification dropdown uses `fixed left-4 right-4 top-16` on mobile (near-full-width below nav) and `absolute right-0 w-80` on `sm`+ (standard dropdown).
 
 ### Form Testing
 
