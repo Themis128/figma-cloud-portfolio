@@ -146,7 +146,7 @@ export function NotificationButton() {
     if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
       setPushSupported(true);
       // Check if already subscribed
-      navigator.serviceWorker.getRegistration("/sw.js").then((reg) => {
+      navigator.serviceWorker.getRegistration("/").then((reg) => {
         if (reg) {
           reg.pushManager.getSubscription().then((sub) => {
             setPushSubscribed(sub !== null);
@@ -181,12 +181,39 @@ export function NotificationButton() {
   const subscribeToPush = useCallback(async () => {
     if (!pushSupported || pushLoading) return;
     setPushLoading(true);
+
+    /** Race a promise against a timeout — prevents any single step from hanging. */
+    function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+      return Promise.race([
+        promise,
+        new Promise<never>((_resolve, reject) =>
+          setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms),
+        ),
+      ]);
+    }
+
     try {
-      // 1. Check permission
-      console.log("[Push] Step 1: checking permission...", Notification.permission);
+      // 1. Check / request notification permission
+      console.log("[Push] Step 1: checking permission…", Notification.permission);
       let permission = Notification.permission;
+      if (permission === "denied") {
+        console.warn("[Push] Notifications are blocked — check browser settings");
+        setPushLoading(false);
+        return;
+      }
       if (permission === "default") {
-        permission = await Notification.requestPermission();
+        try {
+          // 5s timeout — Edge with "Quiet notification requests" silently suppresses
+          // the prompt, causing requestPermission() to hang indefinitely.
+          permission = await withTimeout(Notification.requestPermission(), 5000, "Permission prompt");
+        } catch {
+          console.warn(
+            "[Push] Permission prompt timed out — your browser may be silently blocking it.\n" +
+            "Fix: open browser notification settings and allow this site, or disable 'Quiet notification requests'.",
+          );
+          setPushLoading(false);
+          return;
+        }
       }
       if (permission !== "granted") {
         console.log("[Push] Permission denied:", permission);
@@ -195,38 +222,41 @@ export function NotificationButton() {
       }
       console.log("[Push] Step 1 done: permission granted");
 
-      // 2. Get SW registration
-      console.log("[Push] Step 2: getting SW registration...");
-      let registration = await navigator.serviceWorker.getRegistration("/");
-      if (!registration) {
-        console.log("[Push] No registration found, registering /sw.js...");
-        registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      // 2. Get a ready SW registration via navigator.serviceWorker.ready
+      //    This is the spec-recommended way to wait for an active SW.
+      //    Falls back to manual register + activation wait.
+      console.log("[Push] Step 2: getting ready SW registration…");
+      let registration: ServiceWorkerRegistration;
+      try {
+        // Ensure the SW is registered so .ready can resolve
+        const existing = await navigator.serviceWorker.getRegistration("/");
+        if (!existing) {
+          console.log("[Push] No existing registration — registering /sw.js…");
+          await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+        }
+        // .ready resolves when a SW is active for the page's scope
+        registration = await withTimeout(navigator.serviceWorker.ready, 8000, "SW ready");
+      } catch {
+        // Last resort: get whatever registration exists
+        const fallback = await navigator.serviceWorker.getRegistration("/");
+        if (!fallback?.active) throw new Error("No active service worker available");
+        registration = fallback;
       }
-      console.log("[Push] Registration:", registration.active?.state ?? "no active SW");
+      console.log("[Push] Step 2 done: SW active (" + (registration.active?.state ?? "unknown") + ")");
 
-      // Wait for active SW if needed
-      if (!registration.active) {
-        console.log("[Push] Waiting for SW to activate...");
-        await new Promise<void>((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error("SW activation timeout")), 8000);
-          const sw = registration.installing ?? registration.waiting;
-          if (!sw) { clearTimeout(timeout); reject(new Error("No SW worker")); return; }
-          sw.addEventListener("statechange", () => {
-            if (sw.state === "activated") { clearTimeout(timeout); resolve(); }
-          });
-        });
-      }
-      console.log("[Push] Step 2 done: SW active");
-
-      // 3. Get VAPID key
-      console.log("[Push] Step 3: fetching VAPID key...");
-      const vapidRes = await fetch("/api/push-notifications?action=vapid-public-key");
+      // 3. Get VAPID key from the Express backend
+      console.log("[Push] Step 3: fetching VAPID key…");
+      const vapidRes = await withTimeout(
+        fetch("/api/push-notifications?action=vapid-public-key"),
+        8000,
+        "VAPID fetch",
+      );
       if (!vapidRes.ok) throw new Error(`VAPID fetch failed: ${vapidRes.status}`);
       const { publicKey } = await vapidRes.json() as { publicKey: string };
       console.log("[Push] Step 3 done: VAPID key received");
 
-      // 4. Clear stale subscription
-      console.log("[Push] Step 4: clearing stale subscription...");
+      // 4. Clear stale subscription (avoids key-mismatch errors)
+      console.log("[Push] Step 4: clearing stale subscription…");
       const existingSub = await registration.pushManager.getSubscription();
       if (existingSub) {
         console.log("[Push] Unsubscribing stale subscription");
@@ -234,25 +264,30 @@ export function NotificationButton() {
       }
       console.log("[Push] Step 4 done");
 
-      // 5. Subscribe
-      console.log("[Push] Step 5: subscribing via PushManager...");
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToArrayBuffer(publicKey),
-      });
+      // 5. Subscribe via PushManager — timeout protects against Chrome hanging
+      console.log("[Push] Step 5: subscribing via PushManager…");
+      const subscription = await withTimeout(
+        registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToArrayBuffer(publicKey),
+        }),
+        10000,
+        "pushManager.subscribe()",
+      );
       console.log("[Push] Step 5 done: subscribed");
 
-      // 6. Send to server
-      console.log("[Push] Step 6: sending to server...");
+      // 6. Store subscription on the server
+      console.log("[Push] Step 6: sending to server…");
       const subJSON = subscription.toJSON();
-      const putRes = await fetch("/api/push-notifications", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          endpoint: subJSON.endpoint,
-          keys: subJSON.keys,
+      const putRes = await withTimeout(
+        fetch("/api/push-notifications", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: subJSON.endpoint, keys: subJSON.keys }),
         }),
-      });
+        8000,
+        "PUT subscription",
+      );
       if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
       console.log("[Push] Step 6 done: saved to server");
 
@@ -265,21 +300,11 @@ export function NotificationButton() {
     }
   }, [pushSupported, pushLoading]);
 
-  // Global timeout wrapper — ensures subscribe never hangs forever
-  const handleSubscribe = useCallback(async () => {
-    const timeout = setTimeout(() => {
-      console.error("Push subscribe global timeout (15s)");
-      setPushLoading(false);
-    }, 15000);
-    await subscribeToPush();
-    clearTimeout(timeout);
-  }, [subscribeToPush]);
-
   const unsubscribeFromPush = useCallback(async () => {
     if (pushLoading) return;
     setPushLoading(true);
     try {
-      const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+      const registration = await navigator.serviceWorker.getRegistration("/");
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
         if (subscription) {
@@ -475,7 +500,7 @@ export function NotificationButton() {
           {pushSupported && (
             <div className="border-t border-cyan-400/10 px-4 py-3">
               <button
-                onClick={() => void (pushSubscribed ? unsubscribeFromPush() : handleSubscribe())}
+                onClick={() => void (pushSubscribed ? unsubscribeFromPush() : subscribeToPush())}
                 disabled={pushLoading}
                 className={`flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-mono transition-all ${
                   pushSubscribed
