@@ -54,11 +54,12 @@ async function saveSubscriptions(): Promise<void> {
   }
 }
 
-// VAPID keys
-const vapidPublicKey =
-  process.env.VAPID_PUBLIC_KEY ?? webpush.generateVAPIDKeys().publicKey;
-const vapidPrivateKey =
-  process.env.VAPID_PRIVATE_KEY ?? webpush.generateVAPIDKeys().privateKey;
+// VAPID keys — generate a matched pair if env vars are missing
+const generatedKeys = (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY)
+  ? webpush.generateVAPIDKeys()
+  : null;
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY ?? generatedKeys!.publicKey;
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY ?? generatedKeys!.privateKey;
 
 webpush.setVapidDetails(
   process.env.VAPID_EMAIL ?? "mailto:tbaltzakis@cloudless.gr",
@@ -171,6 +172,19 @@ router.delete("/", (req: Request, res: Response) => {
   });
 });
 
+// Dev fallback: in-memory queue of recent notifications for polling
+const recentNotifications: Array<{ payload: Record<string, unknown>; ts: number }> = [];
+const MAX_RECENT = 20;
+
+// GET /api/push-notifications/poll?since=<timestamp> — dev polling fallback
+router.get("/poll", (req: Request, res: Response) => {
+  const since = Number(req.query.since) || 0;
+  const items = recentNotifications
+    .filter((n) => n.ts > since)
+    .map((n) => ({ ...n.payload, ts: n.ts }));
+  res.json(items);
+});
+
 // Helper: send notification to all subscribers
 async function sendToAll(
   payload: Record<string, unknown>,
@@ -226,10 +240,19 @@ async function sendToAll(
     await saveSubscriptions();
   }
 
+  // Dev fallback: if WNS/FCM rejected all pushes, queue for polling
+  const pushSuccessCount = settled.filter((r) => r.success).length;
+  if (pushSuccessCount === 0 && settled.length > 0) {
+    recentNotifications.push({ payload, ts: Date.now() });
+    if (recentNotifications.length > MAX_RECENT) recentNotifications.shift();
+  }
+
   res.json({
     success: true,
-    message: `Sent to ${settled.filter((r) => r.success).length}/${settled.length} subscribers`,
+    message: `Sent to ${pushSuccessCount}/${settled.length} subscribers` +
+      (pushSuccessCount === 0 && settled.length > 0 ? " (queued for dev poll fallback)" : ""),
     results: settled,
+    devPollFallback: pushSuccessCount === 0 && settled.length > 0,
     totalSubscriptions: subscriptions.length,
   });
 }
