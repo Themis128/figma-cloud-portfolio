@@ -111,6 +111,44 @@ test.describe("Navigation — Mobile", () => {
     await expect(page.locator('a.block', { hasText: "Contact" })).toBeVisible();
   });
 
+  test("should show bell and theme toggle in mobile top bar", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Bell button should be visible on mobile (in the top bar, not behind hamburger)
+    const bellBtn = page.locator(
+      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
+    );
+    await expect(bellBtn.first()).toBeVisible({ timeout: 15000 });
+
+    // Theme toggle should be visible on mobile
+    const themeToggle = page.locator('[data-testid="theme-toggle"]');
+    await expect(themeToggle.first()).toBeVisible();
+  });
+
+  test("should open notification panel on mobile", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const bellBtn = page.locator(
+      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
+    );
+    await bellBtn.first().click();
+    await page.waitForTimeout(300);
+
+    // Panel should be visible as a near-full-width fixed panel
+    const panel = page.locator('div[role="dialog"][aria-label="Announcements"]');
+    await expect(panel).toBeVisible();
+
+    // Panel should have reasonable width on mobile (not overflowing)
+    const box = await panel.boundingBox();
+    expect(box).not.toBeNull();
+    if (box) {
+      expect(box.width).toBeLessThanOrEqual(375);
+      expect(box.width).toBeGreaterThan(200);
+    }
+  });
+
   test("should show accessibility settings button in mobile menu", async ({
     page,
   }) => {

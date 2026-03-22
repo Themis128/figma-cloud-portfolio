@@ -53,6 +53,33 @@ test.describe("Mobile Responsiveness Tests", () => {
     await expect(page.locator("h1")).toBeVisible();
   });
 
+  test("should show bell and theme toggle on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Bell button visible in mobile top bar
+    const bellBtn = page.locator(
+      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
+    );
+    await expect(bellBtn.first()).toBeVisible({ timeout: 15000 });
+
+    // Theme toggle visible in mobile top bar
+    const themeToggle = page.locator('[data-testid="theme-toggle"]');
+    await expect(themeToggle.first()).toBeVisible();
+  });
+
+  test("should show bell and theme on Galaxy S9 (360px)", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const bellBtn = page.locator(
+      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
+    );
+    await expect(bellBtn.first()).toBeVisible({ timeout: 15000 });
+  });
+
   test("should handle mobile navigation", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");

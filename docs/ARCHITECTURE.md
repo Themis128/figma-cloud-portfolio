@@ -319,13 +319,13 @@ Eight interactive components enhance user engagement across the site. Seven are 
 | ----------------------------------------- | ---------------------------------------------------------- |
 | `CircuitBackground`                       | Animated SVG circuit board background (used on most pages) |
 | `AnimatedSection`                         | Framer Motion scroll-triggered reveal wrapper              |
-| `Navigation`                              | Top navbar with active link highlighting + mobile accessibility button |
+| `Navigation`                              | Top navbar with active link highlighting. Mobile: bell + theme toggle + hamburger in top bar; hamburger opens nav links + accessibility + CTA. Desktop: horizontal nav links + bell + theme + accessibility buttons |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
 | `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded, `inert` when collapsed) |
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
-| `NotificationButton`                      | Bell icon with dropdown announcement panel, read/unread tracking via localStorage, auto-expire support |
+| `NotificationButton`                      | Bell icon with dropdown announcement panel, read/unread tracking via localStorage, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |
 | `AvailabilityBadge`                       | Hero section badge with pulsing green dot — "Available for Consulting" |
 | `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
