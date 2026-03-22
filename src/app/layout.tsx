@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
@@ -174,6 +175,11 @@ export default function RootLayout({
           </AuthProvider>
           </AmplifyProvider>
         </Providers>
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="VJt2VZnhN2fh5o9Gcp2+Mw"
+          strategy="afterInteractive"
+        />
         <GoogleAnalytics />
         <SentryInit />
         <CookieConsentBanner />
