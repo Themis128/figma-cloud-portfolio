@@ -81,16 +81,20 @@ export default function Navigation() {
             </Button>
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 min-w-11 min-h-11 flex items-center justify-center rounded-md text-foreground hover:text-cyan-400 hover:bg-foreground/10 transition-colors"
-            aria-label="Toggle menu"
-            aria-expanded={isOpen}
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Mobile: bell + theme + hamburger */}
+          <div className="flex md:hidden items-center gap-1">
+            <NotificationButton />
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center rounded-md text-foreground hover:text-cyan-400 hover:bg-foreground/10 transition-colors"
+              aria-label="Toggle menu"
+              aria-expanded={isOpen}
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
