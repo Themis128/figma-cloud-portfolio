@@ -112,6 +112,28 @@ Expired entries (older than 7 days) are cleaned up during periodic sync.
 | `/api/push-notifications` | PUT | Store a new subscription |
 | `/api/push-notifications` | POST | Send custom notification |
 | `/api/push-notifications?endpoint=...` | DELETE | Remove a subscription |
+| `/api/push-notifications/poll?since=<ts>` | GET | Dev-only: poll for queued notifications since timestamp |
+
+### Dev Poll Fallback
+
+Edge/WNS returns **401 Unauthorized** for VAPID-authenticated push from `localhost` — a known Microsoft platform limitation. In development:
+
+1. When all Web Push sends fail (e.g. WNS 401), the server queues the notification in memory
+2. The client (`NotificationButton`) polls `/api/push-notifications/poll` every 3s
+3. New notifications trigger a native `Notification` and appear in the bell dropdown
+4. This fallback is **dev-only** (`NODE_ENV !== "production"`) — production uses real Web Push
+
+### Subscribe Flow
+
+The subscribe flow in `NotificationButton.tsx` uses per-step timeouts via `withTimeout()`:
+
+| Step | Timeout | Notes |
+| --- | --- | --- |
+| Permission prompt | 5s | Detects Edge "Quiet notification requests" |
+| SW ready | 8s | Uses `navigator.serviceWorker.ready` |
+| VAPID key fetch | 8s | Fetches from Express backend |
+| `pushManager.subscribe()` | 10s | Protects against Chrome/Edge hanging |
+| PUT subscription | 8s | Stores on server |
 
 ### VAPID Keys
 
@@ -121,7 +143,7 @@ Generate new keys for production:
 npx web-push generate-vapid-keys
 ```
 
-Update the keys in `server/routes/push-notifications.ts`.
+Update the keys in `server/routes/pushNotifications.ts` or set `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` environment variables. If env vars are missing, the server generates a matched pair at startup (dev only).
 
 ## Local Development
 
@@ -170,4 +192,7 @@ Run in Chrome DevTools → Lighthouse → Progressive Web App category.
 | No offline indicator | Component not rendered | Verify `OfflineIndicator` in layout.tsx |
 | SW not registering | Dev mode | SW only registers when `NODE_ENV === "production"` |
 | Push notifications not working | Express server not running | Start with `pnpm dev:server` |
+| Push subscribe hangs in Edge | "Quiet notification requests" enabled | Allow notifications in `edge://settings/content/notifications` |
+| WNS 401 on localhost | Known Edge/WNS VAPID limitation | Dev poll fallback delivers notifications automatically |
+| Subscribe timeout at Step 5 | `pushManager.subscribe()` hangs | Clear site data in DevTools → Application, then retry |
 | Stale content after deploy | Old SW cached | Click "Update Now" in update notification |

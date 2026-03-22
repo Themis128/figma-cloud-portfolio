@@ -251,6 +251,70 @@ test.describe("Push Notifications API", () => {
     });
   });
 
+  test.describe("Dev Poll Fallback", () => {
+    test("should return empty array when no notifications queued", async ({ request }) => {
+      const response = await request.get(
+        `${API_BASE_URL}/api/push-notifications/poll?since=${Date.now()}`,
+      );
+
+      expect(response.ok()).toBe(true);
+      const data = await response.json();
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBe(0);
+    });
+
+    test("should return queued notifications after failed push send", async ({ request }) => {
+      // First add a fake subscription that will fail delivery
+      const endpoint = `https://wns-fake.notify.windows.com/test-${Date.now()}`;
+      await request.put(`${API_BASE_URL}/api/push-notifications`, {
+        data: { endpoint, keys: { p256dh: "fake-key", auth: "fake-auth" } },
+      });
+
+      // Record timestamp AFTER setup to avoid picking up stale notifications
+      const before = Date.now();
+
+      // Send notification (will fail push, should queue for poll)
+      const sendRes = await request.post(`${API_BASE_URL}/api/push-notifications`, {
+        data: { message: { title: "Poll Test", body: "Testing poll fallback" } },
+      });
+      expect(sendRes.ok()).toBe(true);
+      const sendData = await sendRes.json();
+      expect(sendData).toHaveProperty("devPollFallback");
+
+      // Poll for notifications since before the send
+      const pollRes = await request.get(
+        `${API_BASE_URL}/api/push-notifications/poll?since=${before - 1}`,
+      );
+      expect(pollRes.ok()).toBe(true);
+      const pollData = await pollRes.json();
+
+      if (sendData.devPollFallback) {
+        expect(pollData.length).toBeGreaterThan(0);
+        // Find our specific notification (queue may contain others from parallel tests)
+        const ours = pollData.find((n: { title?: string }) => n.title === "Poll Test");
+        expect(ours).toBeTruthy();
+        expect(ours.body).toBe("Testing poll fallback");
+        expect(ours.ts).toBeGreaterThanOrEqual(before - 1);
+      }
+
+      // Clean up
+      await request.delete(
+        `${API_BASE_URL}/api/push-notifications?endpoint=${encodeURIComponent(endpoint)}`,
+      );
+    });
+
+    test("should filter notifications by since parameter", async ({ request }) => {
+      const futureTs = Date.now() + 60000;
+      const response = await request.get(
+        `${API_BASE_URL}/api/push-notifications/poll?since=${futureTs}`,
+      );
+
+      expect(response.ok()).toBe(true);
+      const data = await response.json();
+      expect(data.length).toBe(0);
+    });
+  });
+
   test.describe("S3 Persistence", () => {
     test("should persist subscription and retrieve it", async ({ request }) => {
       const endpoint = `https://fcm.googleapis.com/fcm/send/persist-test-${Date.now()}`;

@@ -379,7 +379,7 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 | `/api/resume/generate`                    | GET          | Resume data as JSON with PDF link                     |
 | `/api/github/stats`                       | GET          | GitHub profile statistics (repos, stars, followers)   |
 | `/api/github/repos`                       | GET          | Public repositories (paginated, with topics)          |
-| `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID, S3-persisted) |
+| `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID, S3-persisted, dev poll fallback) |
 | `/api/organizations/api_keys`             | GET/POST     | List / create API keys (Slack notifications)          |
 | `/api/organizations/api_keys/:id`         | GET/POST/DELETE | Get / update / delete API key (Slack notifications)|
 
@@ -412,7 +412,9 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - **Same-origin API routing**: All `/api/*` requests route through CloudFront to the Lambda origin. The frontend uses relative paths (empty origin), eliminating third-party domain issues (CORS, Edge Tracking Prevention). The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only.
 - **In-app push toasts** (`src/components/PushToast.tsx`): Cyberpunk-themed toast notifications that slide in from the top-right when the service worker receives a push message. Listens for `PUSH_RECEIVED` postMessage from `sw.js`, glass morphism styling with cyan accents, auto-dismiss after 8s with animated progress bar, stacks up to 5 toasts, dismiss button, and optional "View" link. Added to the root layout.
 - **Push notifications in Announcements dropdown**: `NotificationButton` listens for `PUSH_RECEIVED` messages from the service worker. Received push notifications are saved to `localStorage` (key: `site-push-notifications`, max 20 items) and displayed with a purple "Push" badge and timestamp. The dropdown merges push notifications (newest first) with static announcements.
-- **Service worker push forwarding**: `public/sw.js` sends `postMessage({ type: "PUSH_RECEIVED", title, body, url })` to all open client tabs after displaying the OS notification.
+- **Service worker push forwarding**: `public/sw.js` sends `postMessage({ type: "PUSH_RECEIVED", title, body, url })` to all open client tabs after displaying the OS notification. SW also supports `CLAIM_CLIENTS` message for on-demand `clients.claim()`.
+- **Dev poll fallback**: Edge/WNS returns 401 for VAPID push from localhost — a known platform limitation. In development (`NODE_ENV !== "production"`), when all push sends fail, notifications are queued in-memory on the server. The client polls `GET /api/push-notifications/poll?since=<timestamp>` every 3s and shows native notifications + adds them to the bell dropdown. This is dev-only; production uses real Web Push via WNS/FCM.
+- **Per-step subscribe timeouts**: Each async step in the subscribe flow (permission, SW ready, VAPID fetch, PushManager.subscribe, server PUT) has its own timeout via `withTimeout()` helper, preventing any single step from hanging the UI. Edge's "Quiet notification requests" is detected with a 5s timeout and actionable console warning.
 
 ---
 
