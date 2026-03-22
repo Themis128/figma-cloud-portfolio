@@ -44,18 +44,27 @@ test.describe("BadgeModal", () => {
     await page.goto("/about/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Find a clickable badge card (role="button" on AchievementBadge)
-    const clickableBadge = page.locator('[role="button"]').first();
-    if (await clickableBadge.count() > 0 && await clickableBadge.isVisible().catch(() => false)) {
+    // Dismiss cookie consent banner first so it doesn't interfere
+    const acceptBtn = page.getByRole("button", { name: /accept all/i });
+    if (await acceptBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await acceptBtn.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Find a badge card with cursor-pointer (AchievementBadge with onClick)
+    const clickableBadge = page.locator('[role="button"].cursor-pointer').first();
+    if (await clickableBadge.count() > 0) {
+      await clickableBadge.scrollIntoViewIfNeeded();
       await clickableBadge.click();
       await page.waitForTimeout(500);
 
-      const modal = page.locator('div[role="dialog"][aria-modal="true"]');
+      // Badge modal has aria-label set to badge name — exclude cookie consent
+      const modal = page.locator('div[role="dialog"][aria-modal="true"]:not([aria-label="Cookie consent"])');
       if (await modal.count() > 0) {
         await expect(modal).toBeVisible();
 
         // Should have a Close button
-        const closeBtn = page.getByRole("button", { name: /close/i });
+        const closeBtn = modal.getByRole("button", { name: /close/i });
         await expect(closeBtn).toBeVisible();
 
         // Close the modal
@@ -70,12 +79,20 @@ test.describe("BadgeModal", () => {
     await page.goto("/about/");
     await page.waitForLoadState("domcontentloaded");
 
-    const clickableBadge = page.locator('[role="button"]').first();
-    if (await clickableBadge.count() > 0 && await clickableBadge.isVisible().catch(() => false)) {
+    // Dismiss cookie consent banner first
+    const acceptBtn = page.getByRole("button", { name: /accept all/i });
+    if (await acceptBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await acceptBtn.click();
+      await page.waitForTimeout(500);
+    }
+
+    const clickableBadge = page.locator('[role="button"].cursor-pointer').first();
+    if (await clickableBadge.count() > 0) {
+      await clickableBadge.scrollIntoViewIfNeeded();
       await clickableBadge.click();
       await page.waitForTimeout(500);
 
-      const modal = page.locator('div[role="dialog"][aria-modal="true"]');
+      const modal = page.locator('div[role="dialog"][aria-modal="true"]:not([aria-label="Cookie consent"])');
       if (await modal.count() > 0) {
         await page.keyboard.press("Escape");
         await page.waitForTimeout(300);
