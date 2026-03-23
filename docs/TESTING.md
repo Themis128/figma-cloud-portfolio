@@ -625,7 +625,7 @@ The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests 
 
 Tests both `https://www.baltzakisthemis.com` and `https://baltzakisthemis.com` across 9 browser configs (Chromium, Firefox, WebKit × desktop + mobile viewports).
 
-- ✅ All 9 frontend pages return 200 (`/`, `/about/`, `/contact/`, `/resume/`, `/projects/`, `/performance/`, `/agents/`, `/settings/`, `/product/`)
+- ✅ All 10 frontend pages return 200 (`/`, `/about/`, `/blog/`, `/contact/`, `/resume/`, `/projects/`, `/performance/`, `/agents/`, `/settings/`, `/product/`)
 - ✅ API health endpoints (`/api/ping`, `/api/health`)
 - ✅ Contact form POST (accepts 200, 400, or 403 for reCAPTCHA rejection)
 - ✅ Chat API responds (SSE stream)
@@ -653,6 +653,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Product (/product)         | `product.spec.ts`                                                          | ✅ Covered |
 | Projects (/projects)       | `projects.spec.ts`, `routing-test.spec.ts`                                 | ✅ Covered |
 | Resume (/resume)           | `resume.spec.ts`, `app.spec.ts`                                            | ✅ Covered |
+| Blog (/blog, /blog/[slug]) | `blog.spec.ts`                                                             | ✅ Covered |
 | Agents (/agents)           | `agents.spec.ts`, `agent-builder.spec.ts`, `ai-agents.spec.ts`             | ✅ Covered |
 | Settings (/settings)       | `settings-page.spec.ts`, `app.spec.ts`                                     | ✅ Covered |
 | Performance (/performance) | `performance-page.spec.ts`, `performance-dashboard.spec.ts`, `performance-monitoring.spec.ts`, `app.spec.ts` | ✅ Covered |

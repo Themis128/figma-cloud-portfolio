@@ -393,7 +393,7 @@ The project uses two deployment mechanisms that trigger on push to `production` 
 
 Both workflows:
 1. Generate `amplify_outputs.json` from the Amplify Gen 2 backend (`ampx generate outputs`)
-2. Build the Next.js static export (`pnpm build`)
+2. Build the Next.js static export (`pnpm build` — runs `velite build` for MDX content, then `next build`)
 3. Sync `out/` to S3 (`aws s3 sync`)
 4. Invalidate CloudFront cache
 

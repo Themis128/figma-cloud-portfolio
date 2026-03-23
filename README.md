@@ -11,7 +11,8 @@ A production-ready portfolio built with **Next.js 16**, **React 19**, **TypeScri
 - **Backend**: AWS Lambda (production), Express dev server (local)
 - **Hosting**: S3 + CloudFront (frontend), Lambda Function URL (backend)
 - **PWA**: Service worker with offline caching and push notifications
-- **Testing**: Playwright 1.57+ E2E (69+ test files)
+- **Blog**: Velite (MDX → typed JSON at build time) with rehype-pretty-code syntax highlighting
+- **Testing**: Playwright 1.58+ E2E (89+ test files)
 - **Analytics**: Google Analytics 4 + Sentry error tracking
 - **Package Manager**: PNPM
 
@@ -22,6 +23,7 @@ src/
   app/                  # Next.js App Router pages
     about/              # About page
     agents/             # AI agents showcase
+    blog/               # Blog listing + [slug] post pages
     contact/            # Contact form (reCAPTCHA v3)
     performance/        # Performance monitoring showcase
     product/            # Work experience
@@ -36,9 +38,11 @@ src/
   types/                # TypeScript interfaces (api.ts)
   data/                 # Static data files
   styles/               # Global styles
+content/
+  blog/                 # MDX blog posts (processed by Velite at build time)
 server/                 # Express dev server (port 3001)
   routes/               # API handlers (resume, apiKeys, playwrightAutofix)
-playwright-tests/       # E2E test suite (69+ specs)
+playwright-tests/       # E2E test suite (89+ specs)
 docs/                   # Documentation (~55 reference files)
 public/                 # Static assets and PWA files
 ```
@@ -54,6 +58,7 @@ public/                 # Static assets and PWA files
 - **Analytics**: GA4 + Sentry + custom performance monitoring
 - **API Keys Management**: Full CRUD with Slack notifications
 - **Real-time Features**: Socket.IO integration for live updates
+- **Blog**: MDX-powered blog with syntax highlighting, tags, reading time, and SEO
 - **3D Visualizations**: Three.js for interactive 3D components
 - **Accessibility**: WCAG 2.1 AA compliant with comprehensive testing
 

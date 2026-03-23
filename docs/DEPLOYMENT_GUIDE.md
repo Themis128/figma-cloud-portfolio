@@ -2,7 +2,7 @@
 
 ## Architecture
 
-- **Frontend**: Static export (`next build` with `output: "export"`) → S3 bucket → CloudFront CDN
+- **Frontend**: Static export (`velite build && next build` with `output: "export"`) → S3 bucket → CloudFront CDN
 - **Lambda Backend**: Single AWS Lambda function (`figma-portfolio-api`) → CloudFront `/api/*` routing
 - **Amplify Gen 2 Backend**: Cognito auth + AppSync GraphQL + DynamoDB (App ID: `d1zjif7pi1h3om`)
 - **Domain**: `www.baltzakisthemis.com` / `baltzakisthemis.com` via CloudFront

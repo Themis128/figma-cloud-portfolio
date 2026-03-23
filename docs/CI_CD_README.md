@@ -86,7 +86,7 @@ gh aw health
 **Jobs**:
 
 - **Test**: Linting, type checking, unit tests, E2E tests
-- **Build**: Application build verification
+- **Build**: Velite content compilation (`velite build`) + Next.js application build
 - **Security**: Vulnerability scanning with Trivy
 
 **Features**:
