@@ -15,6 +15,7 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 - **State**: TanStack Query v5
 - **Backend**: AWS Lambda (production), Amplify Gen 2 (Cognito + AppSync + DynamoDB), Express dev server (local, port 3001)
 - **Chatbot**: AWS Bedrock (Claude 3.5 Haiku) via Express route — knowledge base in `server/bot/knowledge/`
+- **Blog**: Velite (MDX → typed JSON at build time), rehype-pretty-code for syntax highlighting
 - **Testing**: Playwright 1.58+ E2E, Vitest unit tests
 - **Package Manager**: pnpm
 
@@ -27,6 +28,8 @@ src/
     admin/          # Admin dashboard components (10 tabs)
     interactive/    # Interactive engagement components (7 in folder + CommandPalette in layout)
     ui/             # shadcn/ui primitives (Radix-based)
+content/
+  blog/             # MDX blog posts (frontmatter + content, processed by Velite)
     sections/       # Page section components
     performance/    # Performance page components
   hooks/            # Custom React hooks

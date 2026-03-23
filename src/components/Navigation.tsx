@@ -22,6 +22,7 @@ export default function Navigation() {
     { name: "About", href: "/about/" },
     { name: "Resume", href: "/resume/" },
     { name: "Contact", href: "/contact/" },
+    { name: "Blog", href: "/blog/" },
     { name: "Performance", href: "/performance/" },
     { name: "Agents", href: "/agents/" },
     { name: "Admin", href: "/admin/" },

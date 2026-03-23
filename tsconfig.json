@@ -40,7 +40,8 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/data/*": ["./src/data/*"],
       "@/styles/*": ["./src/styles/*"],
-      "@/types/*": ["./src/types/*"]
+      "@/types/*": ["./src/types/*"],
+      "#site/content": ["./.velite"]
     },
 
     // Advanced options

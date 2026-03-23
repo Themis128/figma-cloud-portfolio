@@ -1,0 +1,69 @@
+---
+title: "Building Resilient Cloud Architectures on AWS"
+slug: blog/building-resilient-cloud-architectures
+description: "A practical guide to designing fault-tolerant, highly available cloud systems using AWS services like Route 53, CloudFront, S3, and Lambda."
+date: "2026-03-20"
+published: true
+tags: ["AWS", "Cloud Architecture", "Resilience", "Infrastructure"]
+author: "Themistoklis Baltzakis"
+---
+
+Cloud architecture is more than just spinning up EC2 instances. Building truly resilient systems requires intentional design decisions at every layer of the stack.
+
+## The Pillars of Resilience
+
+When I design cloud architectures, I focus on three core pillars:
+
+1. **Redundancy** — No single point of failure
+2. **Observability** — You can't fix what you can't see
+3. **Automation** — Manual recovery doesn't scale
+
+## Multi-AZ by Default
+
+Every production workload should span at least two Availability Zones. This is non-negotiable. AWS services like ALB, RDS Multi-AZ, and ECS make this straightforward:
+
+```typescript
+const vpc = new ec2.Vpc(this, "ProductionVpc", {
+  maxAzs: 3,
+  natGateways: 2,
+  subnetConfiguration: [
+    {
+      name: "Public",
+      subnetType: ec2.SubnetType.PUBLIC,
+      cidrMask: 24,
+    },
+    {
+      name: "Private",
+      subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+      cidrMask: 24,
+    },
+  ],
+});
+```
+
+## Static Assets: S3 + CloudFront
+
+For static content, the combination of S3 and CloudFront provides global edge caching with automatic failover. This very portfolio site uses this pattern — the Next.js static export is synced to S3, then served through CloudFront with:
+
+- **Origin Access Control** for secure S3 access
+- **Custom error pages** for SPA-style routing
+- **Cache policies** tuned per content type
+
+## Monitoring That Matters
+
+CloudWatch dashboards are a start, but real observability comes from:
+
+- **Structured logging** with correlation IDs
+- **Custom metrics** for business-critical paths
+- **Alerting** based on error budgets, not just thresholds
+
+> The best architecture is one that fails gracefully and recovers automatically.
+
+## Key Takeaways
+
+- Design for failure from day one
+- Automate your disaster recovery — test it regularly
+- Use managed services where possible to reduce operational burden
+- Monitor business metrics, not just infrastructure metrics
+
+Cloud resilience isn't a destination — it's a continuous practice of improvement and testing.

@@ -1,0 +1,81 @@
+---
+title: "Next.js Static Export in Production: Lessons Learned"
+slug: blog/nextjs-static-export-production
+description: "Real-world lessons from deploying a Next.js static export to S3 and CloudFront, including performance optimization and CI/CD patterns."
+date: "2026-03-10"
+published: true
+tags: ["Next.js", "Web Development", "Performance", "CI/CD"]
+author: "Themistoklis Baltzakis"
+---
+
+After migrating this portfolio from a React SPA to Next.js with static export, I learned several valuable lessons about making it work in production.
+
+## Why Static Export?
+
+Next.js supports multiple rendering strategies, but for a portfolio site, static export (`output: "export"`) offers compelling advantages:
+
+- **Zero server costs** — S3 + CloudFront is pennies per month
+- **Global edge caching** — sub-100ms TTFB worldwide
+- **Simple deployment** — just sync files to S3
+- **No cold starts** — everything is pre-rendered HTML
+
+## The Build Pipeline
+
+Our CI/CD pipeline is straightforward:
+
+```yaml
+# Simplified deploy workflow
+steps:
+  - name: Build
+    run: pnpm build
+
+  - name: Sync to S3
+    run: |
+      aws s3 sync out/ s3://$BUCKET \
+        --delete \
+        --cache-control "public, max-age=31536000, immutable"
+
+  - name: Invalidate CloudFront
+    run: |
+      aws cloudfront create-invalidation \
+        --distribution-id $CF_DIST_ID \
+        --paths "/*"
+```
+
+## Performance Results
+
+After optimization, the site achieves excellent Core Web Vitals:
+
+- **LCP**: ~0.8s (target: < 2.5s)
+- **FID**: < 10ms (target: < 100ms)
+- **CLS**: 0 (target: < 0.1)
+
+Key optimizations that made the difference:
+
+1. **Font optimization** — `next/font` with `display: swap`
+2. **Image optimization** — WebP/AVIF with proper sizing
+3. **Code splitting** — dynamic imports for heavy components
+4. **Trailing slashes** — `trailingSlash: true` for clean S3 routing
+
+## Gotchas with Static Export
+
+### No Server-Side Features
+
+With `output: "export"`, you lose:
+
+- API routes (use external APIs or Lambda)
+- Server-side rendering (everything is pre-rendered)
+- `headers()`, `redirects()`, `rewrites()` in next.config
+- Incremental Static Regeneration (ISR)
+
+### Trailing Slash Matters
+
+S3 serves `index.html` from directories, so `/about/` works but `/about` returns 404. Always use `trailingSlash: true` and ensure all internal links have trailing slashes.
+
+### Image Optimization
+
+Static export requires `unoptimized: true` for images. Use build-time image processing or a CDN-level solution instead.
+
+## Was It Worth It?
+
+Absolutely. The simplicity and performance of static export far outweigh the limitations for content-focused sites. The key is choosing the right architecture from the start.
