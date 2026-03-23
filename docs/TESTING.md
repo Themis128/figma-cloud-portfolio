@@ -665,7 +665,7 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Contact API                | `api-integration.spec.ts`, `contact-form-analytics.spec.ts`                | ✅ Covered |
 | GitHub API                 | `github-api-integration.spec.ts`, `api-integration.spec.ts`                | ✅ Covered |
 | Analytics GA4              | `analytics-integration.spec.ts`, `recaptcha-analytics.spec.ts`             | ✅ Covered |
-| reCAPTCHA v3               | `recaptcha-analytics.spec.ts`, `comprehensive-recaptcha-analytics.spec.ts` | ✅ Covered |
+| reCAPTCHA v3               | `recaptcha-v3.spec.ts`, `recaptcha-analytics.spec.ts`, `comprehensive-recaptcha-analytics.spec.ts` | ✅ Covered |
 | Push Notifications         | `push-notifications.spec.ts`, `app.spec.ts`                                | ✅ Covered |
 | AI Chatbot                 | `chatbot.spec.ts`                                                          | ✅ Covered |
 | PWA / Service Worker       | `pwa-advanced.spec.ts`                                                     | ✅ Covered |

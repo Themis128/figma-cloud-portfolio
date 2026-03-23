@@ -129,24 +129,31 @@ if (isValidPath(path)) {
 
 ### reCAPTCHA v3 Integration
 
-Server-side verification (`server/routes/contact.ts`) validates three fields from Google's `/siteverify` response:
+**Server-side** (`server/routes/contact.ts`) validates four fields from Google's `/siteverify` response:
 
 1. **Score** — must be ≥ 0.7 (configurable via `RECAPTCHA_THRESHOLD` env var)
 2. **Action** — must match an allowed action (`contact`, `quick_contact`)
 3. **Hostname** — must match an allowed domain (`www.baltzakisthemis.com`, `baltzakisthemis.com`, `localhost`)
+4. **Token age** — `challenge_ts` must be < 2 minutes old (tokens expire after 2 min per Google docs)
 
-Client-side: reCAPTCHA badge is hidden via CSS (`visibility: hidden`); inline attribution text with links to Google's Privacy Policy and Terms of Service is shown on both contact forms, per [Google's FAQ](https://developers.google.com/recaptcha/docs/faq).
+**Client-side** (`src/hooks/useRecaptcha.ts`):
+- Shared `useRecaptcha` hook used by both `ContactPage` and `QuickContactForm`
+- Script loaded with `afterInteractive` strategy (gives reCAPTCHA time to observe user behavior)
+- 3-second timeout on token generation (form never hangs if reCAPTCHA is slow)
+- Badge hidden via CSS (`visibility: hidden` in `globals.css`); inline attribution text with links to Google's Privacy Policy and Terms of Service shown on both forms, per [Google's FAQ](https://developers.google.com/recaptcha/docs/faq)
 
 ```typescript
 // server/routes/contact.ts — verification checks
 const ALLOWED_ACTIONS = new Set(["contact", "quick_contact"]);
 const ALLOWED_HOSTNAMES = new Set(["www.baltzakisthemis.com", "baltzakisthemis.com", "localhost"]);
+const MAX_TOKEN_AGE_MS = 120_000; // 2 minutes
 
 // After siteverify response:
 // 1. data.success must be true
 // 2. data.action must be in ALLOWED_ACTIONS
 // 3. data.hostname must be in ALLOWED_HOSTNAMES
-// 4. data.score must be >= RECAPTCHA_THRESHOLD (default 0.7)
+// 4. data.challenge_ts must be < 2 minutes old
+// 5. data.score must be >= RECAPTCHA_THRESHOLD (default 0.7)
 ```
 
 ### API Key Management
