@@ -129,8 +129,8 @@ Create a new agent.
 ### Chat API
 
 **Source**: [`server/routes/chat.ts`](../server/routes/chat.ts)
-**External Service**: HuggingFace Inference API (Llama 3.1-8B-Instruct)
-**Env Vars Required**: `HF_TOKEN`
+**External Service**: AWS Bedrock (Claude 3.5 Haiku, model ID: `us.anthropic.claude-3-5-haiku-20241022-v1:0`)
+**Env Vars Required**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (or AWS config), optional `BEDROCK_REGION`, `BEDROCK_MODEL_ID`
 
 #### `POST /api/chat`
 
@@ -172,15 +172,17 @@ data: [DONE]
 | Status | Condition |
 |--------|-----------|
 | `400` | Missing or empty `message` |
-| `500` | Chat request failed (HF API error) |
-| `503` | `HF_TOKEN` not configured |
+| `429` | Rate limited (15 req/min per IP) |
+| `500` | Chat request failed (Bedrock API error) |
 
 **Configuration**:
-- Model: `meta-llama/Llama-3.1-8B-Instruct`
+- Model: Claude 3.5 Haiku (`us.anthropic.claude-3-5-haiku-20241022-v1:0`)
 - Max tokens: 512
-- Temperature: 0.7
+- Temperature: 0.3
 - Top-p: 0.9
-- System prompt includes portfolio context (bio, experience, certifications)
+- Knowledge base: 10 markdown files (~33 KB) loaded into system prompt with `<knowledge_base>` XML tags
+- Rate limit: 15 requests per 60 seconds per IP (in-memory)
+- Conversation history: last 6 turns included in messages array
 
 ---
 

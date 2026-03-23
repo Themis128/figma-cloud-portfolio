@@ -9,7 +9,7 @@ Browser (ChatbotWidget.tsx)
   └─ POST /api/chat  ←── Express server (server/routes/chat.ts, port 3001)
        └─ ConverseStream API
             └─ AWS Bedrock (Claude 3.5 Haiku)
-                 └─ System prompt includes full knowledge base (~25 KB, 10 markdown files)
+                 └─ System prompt includes full knowledge base (~33 KB, 10 markdown files)
 ```
 
 The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock-runtime` SDK. All 10 knowledge files are loaded into the system prompt at startup — no separate vector database or RAG pipeline needed.
@@ -43,16 +43,16 @@ The knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
 | --- | --- |
 | `01_identity.md` | Name, title, location, contact info |
 | `02_professional_summary.md` | Career overview, key strengths |
-| `03_work_experience.md` | 8 roles across 15+ years |
+| `03_work_experience.md` | 7 roles across 15+ years |
 | `04_education.md` | Degrees, certifications, academy programs |
-| `05_certifications_skills.md` | 11 certifications + technical skill categories |
-| `06_projects.md` | 6 portfolio projects |
-| `07_portfolio_website.md` | Portfolio tech stack details |
-| `08_ai_agents.md` | AI agent templates |
-| `09_services_offerings.md` | Professional services and offerings |
+| `05_certifications_skills.md` | 4 professional certs + 16 Credly badges + 6 skill categories |
+| `06_projects.md` | 12 portfolio projects |
+| `07_portfolio_website.md` | Portfolio tech stack, 14 pages, features, deployment |
+| `08_ai_agents.md` | AI agent concepts, patterns, templates, Blockly builder |
+| `09_services_offerings.md` | Services, project types, contact methods |
 | `10_booking_faq.md` | Booking instructions, FAQ |
 
-All files are loaded into the system prompt at startup (~25 KB, ~6,300 tokens). To update the chatbot's knowledge, edit the markdown files and restart the Express server.
+All files are loaded into the system prompt at startup (~33 KB, ~8,000 tokens). Knowledge is wrapped in `<knowledge_base>` XML tags and instructions in `<instructions>` tags per Bedrock best practices. To update the chatbot's knowledge, edit the markdown files and restart the Express server.
 
 ## Local Development
 
