@@ -13,8 +13,9 @@
 - **State Management**: TanStack Query v5
 - **Backend**: AWS Lambda (production), Express dev server (local, port 3001)
 - **Auth**: AWS Amplify Gen 2 (Cognito + AppSync + DynamoDB)
-- **Chatbot**: AWS Bedrock (Claude 3 Haiku) with structured knowledge base
-- **Testing**: Playwright E2E (88+ spec files), Vitest unit tests
+- **Blog**: Velite (MDX → typed JSON at build time) with rehype-pretty-code syntax highlighting
+- **Chatbot**: AWS Bedrock (Claude 3.5 Haiku) with structured knowledge base and SSE streaming
+- **Testing**: Playwright E2E (103 spec files across 9 browser/viewport configs), Vitest unit tests
 - **Package Manager**: pnpm
 
 ## Design Language
@@ -36,17 +37,19 @@
 2. **About** (`/about/`): Professional summary, key focus areas, top skills with radar chart, 16 Credly certification badges, languages (English, Greek), honors & awards
 3. **Work Experience** (`/product/`): Interactive timeline of 7 professional positions with detailed responsibilities
 4. **Projects** (`/projects/`): Searchable gallery of 12 projects with category filters (Web, Infrastructure, AI/Data, DevOps, Tools), sort options, featured markers, and GitHub/live links
-5. **Contact** (`/contact/`): 6 contact cards (email, LinkedIn, GitHub, location, phone, portfolio), contact form with reCAPTCHA v3, quick actions, stats (15+ years, 100+ projects, 5+ certs)
-6. **Resume Builder** (`/resume/`): Interactive CV builder with 7 HTML/CSS templates (Classic, Modern, Minimal, Executive, Creative, Bold, Emerald), live preview, PDF download, JSON export/import, localStorage auto-save, plus an ATS optimization guide
-7. **Performance** (`/performance/`): Live Core Web Vitals, interactive speed test runner, web vitals explainer cards, industry comparison chart, 8-item optimization checklist, tech stack rationale
-8. **AI Agents** (`/agents/`): Educational guide on AI agents with core concepts (Observe → Think → Act → Evaluate), architecture patterns, key terminology (RAG, ReAct, MCP, Guardrails), network engineering use cases, 5 agent templates, and a Blockly drag-and-drop agent builder for kids
-9. **Admin Dashboard** (`/admin/`): Internal dashboard with 10 tabs — Health (API monitoring), Console (HTTP request builder), Deploy (production status), Errors (real-time capture), Performance (CWV budgets), SEO (page audit), Push (notification tester), Analytics (GA4), Auth (session details), Environment (build info)
-10. **Settings** (`/settings/`): Theme, animations, notifications, analytics consent
-11. **Privacy Policy** (`/privacy/`): GDPR/CCPA compliant privacy policy
-12. **Terms of Service** (`/terms/`): Website usage terms
-13. **Cookie Policy** (`/cookies/`): Cookie categories and management
+5. **Blog** (`/blog/`): Articles on cloud architecture, cybersecurity, and web development. Featured latest post with hero card, 2-column grid for older posts, tag cloud with counts, reading time estimates. Individual post pages (`/blog/[slug]/`) with syntax-highlighted code blocks, older/newer navigation, breadcrumbs, and BlogPosting structured data.
+6. **Contact** (`/contact/`): 6 contact cards (email, LinkedIn, GitHub, location, phone, portfolio), contact form with reCAPTCHA v3, quick actions, stats (15+ years, 100+ projects, 5+ certs)
+7. **Resume Builder** (`/resume/`): Interactive CV builder with 7 HTML/CSS templates (Classic, Modern, Minimal, Executive, Creative, Bold, Emerald), live preview, PDF download, JSON export/import, localStorage auto-save, plus an ATS optimization guide
+8. **Performance** (`/performance/`): Live Core Web Vitals, interactive speed test runner, web vitals explainer cards, industry comparison chart, 8-item optimization checklist, tech stack rationale
+9. **AI Agents** (`/agents/`): Educational guide on AI agents with core concepts (Observe → Think → Act → Evaluate), architecture patterns, key terminology (RAG, ReAct, MCP, Guardrails), network engineering use cases, 5 agent templates, and a Blockly drag-and-drop agent builder for kids
+10. **Admin Dashboard** (`/admin/`): Internal dashboard with 10 tabs — Health (API monitoring), Console (HTTP request builder), Deploy (production status), Errors (real-time capture), Performance (CWV budgets), SEO (page audit), Push (notification tester), Analytics (GA4), Auth (session details), Environment (build info)
+11. **Settings** (`/settings/`): Theme, animations, notifications, analytics consent
+12. **Privacy Policy** (`/privacy/`): GDPR/CCPA compliant privacy policy
+13. **Terms of Service** (`/terms/`): Website usage terms
+14. **Cookie Policy** (`/cookies/`): Cookie categories and management
 
 ## Key Features
+- MDX-powered blog with syntax-highlighted code blocks, tags, reading time, and SEO (BlogPosting structured data)
 - AI Chatbot assistant (this chatbot) powered by AWS Bedrock for answering visitor questions
 - Booking system for scheduling teleconference calls with Themis
 - Progressive Web App (PWA) with offline support and push notifications
