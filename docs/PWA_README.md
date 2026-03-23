@@ -94,6 +94,22 @@ Expired entries (older than 7 days) are cleaned up during periodic sync.
 }
 ```
 
+## Automated Announcements
+
+Announcements are **auto-generated from git commits at build time**:
+
+1. `scripts/generate-announcements.sh` runs as part of `pnpm build`
+2. Extracts `feat`/`fix`/`refactor`/`perf` commits from the last 30 days
+3. Outputs `public/announcements.json` (max 10 items)
+4. `NotificationButton` fetches this JSON on mount
+
+**Per-item dismiss**: Users can dismiss individual announcements via an X button. Dismissed IDs are persisted in `localStorage` (`site-announcements-dismissed`).
+
+**localStorage keys**:
+- `site-announcements-read` — JSON array of read announcement IDs
+- `site-announcements-dismissed` — JSON array of dismissed announcement IDs
+- `site-announcements-last-seen` — timestamp of last seen announcement
+
 ## Push Notifications
 
 ### Architecture

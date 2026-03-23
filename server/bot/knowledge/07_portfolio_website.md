@@ -55,7 +55,7 @@
 - Progressive Web App (PWA) with offline support and push notifications
 - Interactive CV builder with 7 templates and client-side PDF generation
 - Command palette (Ctrl+K) for quick navigation
-- Announcement/notification system with unseen badges
+- Automated announcement system — announcements auto-generated from git commits at build time, with per-item dismiss and push notification integration
 - Real-time performance monitoring with web-vitals
 - Google Analytics 4 integration
 - Contact form with reCAPTCHA v3 spam protection
