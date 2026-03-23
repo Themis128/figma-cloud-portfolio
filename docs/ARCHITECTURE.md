@@ -27,6 +27,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Performance monitoring | web-vitals library                                |
 | Real-time features     | Socket.IO                                         |
 | 3D visualizations      | Three.js + @react-three/fiber v9 + @react-three/drei v10 |
+| Blog / Content         | Velite (MDX → typed JSON), rehype-pretty-code      |
 | Testing                | Playwright 1.58+ E2E, Vitest 4 unit tests         |
 
 ---
@@ -41,6 +42,7 @@ portfolio-nextjs/
 │   │   ├── page.tsx          # Home page
 │   │   ├── about/            # About page
 │   │   ├── agents/           # AI Agents educational guide
+│   │   ├── blog/             # Blog listing + [slug] post pages (MDX via Velite)
 │   │   ├── contact/          # Contact form
 │   │   ├── performance/      # Performance page (public-facing)
 │   │   ├── product/          # Work experience timeline
@@ -63,6 +65,10 @@ portfolio-nextjs/
 │   ├── data/                 # Static data
 │   ├── types/                # Shared TypeScript types
 │   └── styles/               # Global styles
+├── content/
+│   └── blog/                # MDX blog posts (processed by Velite at build time)
+├── velite.config.ts           # Velite content schema (Zod) + MDX pipeline config
+├── .velite/                   # Generated typed content (gitignored)
 ├── server/                   # Express dev server (port 3001) — all API routes
 ├── playwright-tests/         # E2E test suite
 ├── docs/                     # Project documentation
@@ -91,6 +97,8 @@ The app uses the Next.js App Router Server/Client component model:
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery + live GitHub repos (via `GitHubRepos` component) |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
 | `/agents`      | `agents/page.tsx`      | Educational AI agents guide with Blockly drag-and-drop builder + interactive builder |
+| `/blog`        | `blog/page.tsx`        | Blog listing — MDX posts via Velite, tags, reading time  |
+| `/blog/[slug]` | `blog/[slug]/page.tsx` | Individual blog post with syntax highlighting    |
 | `/contact`     | `contact/page.tsx`     | Server component wrapper with metadata; renders `ContactPage` client component |
 | `/settings`    | `settings/page.tsx`    | Server component wrapper with metadata; renders `SettingsPage` client component |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |
