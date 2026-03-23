@@ -10,7 +10,7 @@ const SES_VERIFIED_EMAIL = process.env.SES_VERIFIED_EMAIL ?? "";
 const AWS_REGION = process.env.AWS_REGION ?? "us-east-1";
 
 // Minimum reCAPTCHA score to accept (0.0–1.0, higher = more likely human)
-const RECAPTCHA_THRESHOLD = parseFloat(process.env.RECAPTCHA_THRESHOLD ?? "0.5");
+const RECAPTCHA_THRESHOLD = parseFloat(process.env.RECAPTCHA_THRESHOLD ?? "0.7");
 
 interface ContactBody {
   name?: string;
@@ -52,14 +52,12 @@ async function verifyRecaptcha(token: string): Promise<{ success: boolean; score
       "error-codes"?: string[];
     };
 
-    console.log("reCAPTCHA verify response:", JSON.stringify(data));
-
     if (!data.success) {
-      return { success: false, score: 0, error: `reCAPTCHA failed: ${(data["error-codes"] ?? []).join(", ")}` };
+      console.warn("reCAPTCHA verification failed:", data["error-codes"]);
+      return { success: false, score: 0, error: "reCAPTCHA verification failed" };
     }
 
     const score = data.score ?? 0;
-    console.log(`reCAPTCHA score: ${score}, threshold: ${RECAPTCHA_THRESHOLD}`);
     if (score < RECAPTCHA_THRESHOLD) {
       return { success: false, score, error: `reCAPTCHA score too low (${score})` };
     }

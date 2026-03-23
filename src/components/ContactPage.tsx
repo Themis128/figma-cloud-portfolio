@@ -158,7 +158,7 @@ export default function ContactPage() {
     if (!RECAPTCHA_SITE_KEY || !window.grecaptcha) return undefined;
 
     // Race the reCAPTCHA call against a timeout so the form never hangs
-    const RECAPTCHA_TIMEOUT_MS = 5000;
+    const RECAPTCHA_TIMEOUT_MS = 3000;
 
     const tokenPromise = new Promise<string | undefined>((resolve) => {
       window.grecaptcha!.ready(async () => {

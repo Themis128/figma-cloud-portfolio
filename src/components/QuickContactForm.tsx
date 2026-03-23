@@ -29,7 +29,7 @@ export default function QuickContactForm() {
     const grecaptcha = (window as unknown as { grecaptcha?: Grecaptcha }).grecaptcha;
     if (!RECAPTCHA_SITE_KEY || !grecaptcha) return undefined;
 
-    const RECAPTCHA_TIMEOUT_MS = 5000;
+    const RECAPTCHA_TIMEOUT_MS = 3000;
 
     const tokenPromise = new Promise<string | undefined>((resolve) => {
       grecaptcha.ready(async () => {
