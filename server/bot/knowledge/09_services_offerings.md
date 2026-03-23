@@ -44,9 +44,21 @@ Based on Themis's expertise and experience, he can help organizations with:
 - Custom dashboard development
 - API development and integration
 
-## Availability
-Themis is open to discussing new projects, creative ideas, or opportunities. Visitors can:
-- Send a project inquiry via email
+## Types of Projects Themis Is Open To
+Themis is open to a wide range of projects, including:
+- **Enterprise networking** — designing and managing Cisco/Fortinet infrastructure
+- **Cloud migration** — moving workloads to AWS, Azure, or multi-cloud environments
+- **Cybersecurity consulting** — zero-trust architecture, penetration testing reviews, security assessments
+- **Identity & access management** — Azure AD, Okta, CyberArk deployments
+- **Full-stack web development** — React/Next.js applications, dashboards, API development
+- **AI integration** — embedding AI/ML into business workflows
+- **IT strategy consulting** — technology roadmaps, infrastructure modernization
+
+He is particularly interested in projects that combine networking, security, and cloud architecture.
+
+## How to Reach Themis
+Visitors can:
+- Send a project inquiry via email at baltzakis.themis@gmail.com
 - Connect on LinkedIn
 - Schedule a teleconference call through the chatbot
 - Fill out the contact form on the website

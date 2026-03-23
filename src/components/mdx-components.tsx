@@ -1,29 +1,35 @@
 import type { ComponentPropsWithoutRef } from "react";
 
-function MdxH1(props: ComponentPropsWithoutRef<"h1">) {
+function MdxH1({ children, ...props }: ComponentPropsWithoutRef<"h1">) {
   return (
     <h1
       className="mt-10 mb-4 text-3xl font-bold tracking-tight text-foreground"
       {...props}
-    />
+    >
+      {children}
+    </h1>
   );
 }
 
-function MdxH2(props: ComponentPropsWithoutRef<"h2">) {
+function MdxH2({ children, ...props }: ComponentPropsWithoutRef<"h2">) {
   return (
     <h2
       className="mt-8 mb-3 text-2xl font-semibold tracking-tight text-foreground border-b border-cyan-400/20 pb-2"
       {...props}
-    />
+    >
+      {children}
+    </h2>
   );
 }
 
-function MdxH3(props: ComponentPropsWithoutRef<"h3">) {
+function MdxH3({ children, ...props }: ComponentPropsWithoutRef<"h3">) {
   return (
     <h3
       className="mt-6 mb-2 text-xl font-semibold text-foreground"
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 
@@ -116,9 +122,13 @@ function MdxTd(props: ComponentPropsWithoutRef<"td">) {
   );
 }
 
-function MdxImg(props: ComponentPropsWithoutRef<"img">) {
+// MDX images use <img> since next/image requires static dimensions
+// which aren't available from MDX content at build time
+function MdxImg({ alt, ...props }: ComponentPropsWithoutRef<"img">) {
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
+      alt={alt ?? ""}
       className="mb-4 rounded-lg border border-border/20"
       loading="lazy"
       {...props}
