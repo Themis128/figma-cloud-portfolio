@@ -13,7 +13,6 @@ import {
   FolderGit2,
 } from "lucide-react";
 import Link from "next/link";
-import Script from "next/script";
 import { useState } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
@@ -125,7 +124,7 @@ const stats = [
 ];
 
 export default function ContactPage() {
-  const { getToken, siteKey } = useRecaptcha();
+  const { getToken } = useRecaptcha();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -167,12 +166,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
-      {siteKey && (
-        <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
-          strategy="afterInteractive"
-        />
-      )}
       <CircuitBackground />
       <Navigation />
       <SectionNav sections={SECTIONS} ariaLabel="Contact page sections" />

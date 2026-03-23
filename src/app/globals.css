@@ -356,10 +356,9 @@ html.transitioning *::after {
 }
 
 /* ─── reCAPTCHA v3 badge ───────────────────────────────────────────────────── */
-/* Hidden per Google's FAQ — inline attribution text is shown near forms instead.
-   See: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge-what-is-allowed */
+/* Badge is visible on all pages. Shifted up to avoid overlapping the chatbot FAB button. */
 .grecaptcha-badge {
-  visibility: hidden !important;
+  margin-bottom: 60px !important;
 }
 
 /* ─── Mobile-specific optimizations ────────────────────────────────────────── */

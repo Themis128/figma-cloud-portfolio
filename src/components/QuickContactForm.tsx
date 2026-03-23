@@ -2,7 +2,6 @@
 
 import { AlertCircle, CheckCircle, Loader2, Send } from "lucide-react";
 import Link from "next/link";
-import Script from "next/script";
 import { useState } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { trackLead } from "@/components/GoogleAnalytics";
@@ -16,7 +15,7 @@ const CONTACT_URL =
   process.env.NEXT_PUBLIC_LAMBDA_CONTACT_URL || `${API_BASE_URL}/contact`;
 
 export default function QuickContactForm() {
-  const { getToken, siteKey } = useRecaptcha();
+  const { getToken } = useRecaptcha();
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -85,12 +84,6 @@ export default function QuickContactForm() {
 
   return (
     <AnimatedSection>
-      {siteKey && (
-        <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
-          strategy="afterInteractive"
-        />
-      )}
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
