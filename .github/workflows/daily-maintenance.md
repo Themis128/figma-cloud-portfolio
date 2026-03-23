@@ -1,15 +1,16 @@
 ---
 description: |
-  Daily maintenance workflow that runs after midnight UTC. Performs code quality
-  checks (ESLint, TypeScript, Tailwind v4 syntax), dependency audits (outdated
-  packages, security vulnerabilities), and build verification. Creates a GitHub
-  issue report with findings and can submit draft PRs for auto-fixable issues.
+  Daily maintenance workflow that runs after midnight UTC. Performs static code
+  quality checks (Tailwind v4 syntax, trailing slashes, forbidden patterns,
+  security anti-patterns), dependency health review (package.json analysis),
+  and recent commit quality review. Creates a GitHub issue report with findings.
+  All checks use grep/file analysis — no npm install or build required.
 
 on:
   schedule: daily around 1 AM UTC
   workflow_dispatch:
 
-timeout-minutes: 20
+timeout-minutes: 15
 
 permissions: read-all
 
@@ -35,7 +36,6 @@ safe-outputs:
 tools:
   github:
     toolsets: [all]
-  web-fetch:
   bash: true
   cache-memory: true
 
@@ -46,96 +46,127 @@ engine: copilot
 
 ## Job Description
 
-Your name is ${{ github.workflow }}. Your job is to act as an automated maintenance engineer for the repository `${{ github.repository }}`. You run daily after midnight to catch code quality regressions, dependency issues, and security vulnerabilities before they accumulate.
+Your name is ${{ github.workflow }}. Your job is to act as an automated maintenance engineer for the repository `${{ github.repository }}`. You run daily after midnight to catch code quality regressions, security anti-patterns, and convention violations using **static file analysis only** — no package installation or build steps are needed.
 
-## Step 1: Setup
+## Important: Environment Constraints
 
-Install dependencies and prepare the environment:
+The runner does NOT have access to npm/pnpm registries or Node.js package installation. All checks must use **bash commands** (grep, find, cat, wc, jq, etc.) against the checked-out repository files. Do NOT attempt to run `pnpm install`, `npm install`, `pnpm build`, `pnpm lint`, or `pnpm typecheck`.
 
-```bash
-npm install -g pnpm@latest
-pnpm install --frozen-lockfile
-```
+## Step 1: Code Quality Checks
 
-## Step 2: Code Quality Checks
+Run ALL of the following checks using grep/bash and record findings:
 
-Run these checks and record all findings:
+### 1a. Tailwind v4 Deprecated Syntax
 
-### 2a. TypeScript
+This project uses Tailwind CSS v4. Search for deprecated v3 patterns:
 
 ```bash
-pnpm typecheck 2>&1
-```
-
-Record the number of errors. Zero errors is the expected baseline.
-
-### 2b. ESLint
-
-```bash
-pnpm lint 2>&1
-```
-
-Record errors and warnings separately. Zero errors is the expected baseline. Warnings for `no-console` in push notification code are acceptable.
-
-### 2c. Tailwind v4 Deprecated Syntax
-
-Search for deprecated Tailwind v3 patterns that should use v4 syntax:
-
-```bash
-# Deprecated gradient syntax
+# Deprecated gradient syntax (should be bg-linear-to-*)
 grep -rn "bg-gradient-to-" src/ --include="*.tsx" --include="*.ts" || echo "PASS: No deprecated gradient classes"
 
-# Deprecated arbitrary value syntax
+# Deprecated arbitrary value syntax (should be bg-size-[])
 grep -rn 'bg-\[length:' src/ --include="*.tsx" --include="*.ts" || echo "PASS: No deprecated bg-[length:] classes"
+
+# Deprecated ring/shadow syntax
+grep -rn "ring-offset-" src/ --include="*.tsx" --include="*.ts" | head -5 || echo "PASS: No deprecated ring-offset classes"
 ```
 
-### 2d. Trailing Slash Compliance
+### 1b. Trailing Slash Compliance
 
-Check that internal navigation URLs use trailing slashes (required by `trailingSlash: true` config):
+All internal navigation URLs must use trailing slashes (`trailingSlash: true` in next.config):
 
 ```bash
-# Look for href="/path" without trailing slash (exclude external URLs, anchors, and root "/")
-grep -rn 'href="\/[a-z][^"]*[^/"]"' src/ --include="*.tsx" --include="*.ts" | grep -v "http" | grep -v "#" || echo "PASS: All internal URLs have trailing slashes"
+# href="/path" without trailing slash (exclude external URLs, anchors, root "/", and API paths)
+grep -rn 'href="\/[a-z][^"]*[^/"]"' src/ --include="*.tsx" --include="*.ts" | grep -v "http" | grep -v "#" | grep -v "/api/" || echo "PASS: All internal URLs have trailing slashes"
+
+# window.location.href without trailing slash
+grep -rn 'location\.href\s*=\s*"\/[a-z][^"]*[^/"]"' src/ --include="*.tsx" --include="*.ts" || echo "PASS: All location.href URLs have trailing slashes"
 ```
 
-### 2e. Forbidden Patterns
+### 1c. Forbidden TypeScript Patterns
 
 ```bash
-# Check for `any` type usage without eslint-disable
-grep -rn ': any' src/ --include="*.tsx" --include="*.ts" | grep -v "eslint-disable" | grep -v "node_modules" || echo "PASS: No unexcused any types"
+# `any` type without eslint-disable comment
+grep -rn ': any' src/ --include="*.tsx" --include="*.ts" | grep -v "eslint-disable" | grep -v "node_modules" | grep -v ".d.ts" || echo "PASS: No unexcused any types"
+
+# `@ts-ignore` usage (should use @ts-expect-error instead)
+grep -rn "@ts-ignore" src/ --include="*.tsx" --include="*.ts" || echo "PASS: No @ts-ignore usage"
+
+# Console.log left in production code (exclude test files and push notification code which intentionally logs)
+grep -rn "console\.log" src/ --include="*.tsx" --include="*.ts" | grep -v "spec\." | grep -v "test\." | grep -v "pushNotification" | grep -v "NotificationButton" | grep -v "usePushNotifications" | head -10 || echo "PASS: No console.log in production code"
 ```
 
-## Step 3: Dependency Audit
-
-### 3a. Outdated Packages
+### 1d. Security Anti-Patterns
 
 ```bash
-pnpm outdated 2>&1 || true
+# Hardcoded API keys or tokens (look for common patterns)
+grep -rn "sk-ant-\|ghp_\|figd_\|xoxb-\|hooks\.slack\.com/services/T" src/ --include="*.tsx" --include="*.ts" --include="*.md" | grep -v "node_modules" || echo "PASS: No hardcoded secrets in src/"
+
+# Same check in docs (exclude placeholder patterns)
+grep -rn "sk-ant-\|ghp_\|figd_\|xoxb-" docs/ --include="*.md" | grep -v "your_" | grep -v "placeholder" | grep -v "YOUR" || echo "PASS: No real secrets in docs/"
+
+# innerHTML usage (XSS risk)
+grep -rn "dangerouslySetInnerHTML\|innerHTML" src/ --include="*.tsx" --include="*.ts" | head -5 || echo "PASS: No innerHTML usage"
 ```
 
-Flag any packages that are more than 2 major versions behind.
-
-### 3b. Security Vulnerabilities
+### 1e. Import Convention Compliance
 
 ```bash
-pnpm audit 2>&1 || true
+# Using <img> instead of next/image (exclude mdx-components which has a documented exception)
+grep -rn "<img " src/ --include="*.tsx" | grep -v "mdx-components" | grep -v "eslint-disable" || echo "PASS: All images use next/image"
+
+# Using <a> instead of next/link for internal links
+grep -rn '<a href="/' src/ --include="*.tsx" | grep -v "node_modules" || echo "PASS: All internal links use next/link"
 ```
 
-Record any high or critical vulnerabilities.
+## Step 2: Dependency Health
 
-## Step 4: Build Verification
+Analyze package.json without installing packages:
 
 ```bash
-pnpm build 2>&1
+# Check for known deprecated or problematic packages
+cat package.json | grep -E '"(request|moment|lodash)"' || echo "PASS: No known deprecated packages"
+
+# Count total dependencies
+echo "Dependencies: $(cat package.json | grep -c '":'  || true)"
+
+# Check for mismatched engines
+cat package.json | grep -A2 '"engines"' || echo "No engines field specified"
 ```
 
-Verify the build succeeds and record the number of static pages generated.
+## Step 3: Recent Commit Quality
+
+Review commits from the last 24 hours for quality:
+
+```bash
+# List recent commits
+git log --since="24 hours ago" --oneline --no-merges
+
+# Check for commits without conventional commit format
+git log --since="24 hours ago" --format="%s" --no-merges | grep -v -E "^(feat|fix|refactor|perf|style|docs|test|chore|ci|build)\(?.*\)?:" || echo "PASS: All recent commits follow conventional format"
+
+# Check for large commits (>500 lines changed)
+git log --since="24 hours ago" --no-merges --format="%h %s" --shortstat | head -20
+```
+
+## Step 4: File Hygiene
+
+```bash
+# Check for files that should be gitignored but are tracked
+git ls-files | grep -E "\.env$|\.env\.local|\.env\.production" || echo "PASS: No .env files tracked"
+
+# Check for large files (>1MB) in tracked files
+find . -path ./.git -prune -o -path ./node_modules -prune -o -type f -size +1M -print || echo "PASS: No large files"
+
+# Check for TODO/FIXME/HACK comments added recently
+git diff HEAD~5 --unified=0 -- '*.ts' '*.tsx' 2>/dev/null | grep "^+" | grep -iE "TODO|FIXME|HACK|XXX" || echo "PASS: No new TODO/FIXME comments"
+```
 
 ## Step 5: Generate Report
 
 Search for any previous "[maintenance]" open issues in the repository. Read the latest one.
 
-If the findings are essentially identical to the previous report (same error counts, same warnings, no new vulnerabilities), add a brief comment to that issue saying "No changes detected" and exit. Close all previous open maintenance issues.
+If the findings are essentially identical to the previous report (same issues, no new violations), add a brief comment to that issue saying "No changes detected — all checks pass" and exit using noop. Close all previous open maintenance issues.
 
 Otherwise, create a new issue with the following format:
 
@@ -153,24 +184,30 @@ Otherwise, create a new issue with the following format:
 
 | Check | Result | Details |
 |-------|--------|---------|
-| TypeScript | PASS/FAIL | N errors |
-| ESLint | PASS/FAIL | N errors, N warnings |
-| Tailwind v4 syntax | PASS/FAIL | N deprecated classes |
-| Trailing slashes | PASS/FAIL | N missing |
-| Forbidden patterns | PASS/FAIL | N violations |
+| Tailwind v4 syntax | PASS/FAIL | N deprecated classes found |
+| Trailing slashes | PASS/FAIL | N missing trailing slashes |
+| Forbidden TS patterns | PASS/FAIL | N violations |
+| Security anti-patterns | PASS/FAIL | N issues |
+| Import conventions | PASS/FAIL | N violations |
 
-### Dependencies
-
-| Check | Result | Details |
-|-------|--------|---------|
-| Outdated packages | N outdated | [list major-version-behind packages] |
-| Security audit | N vulnerabilities | [list high/critical] |
-
-### Build
+### Dependency Health
 
 | Check | Result | Details |
 |-------|--------|---------|
-| Production build | PASS/FAIL | N pages generated |
+| Deprecated packages | PASS/FAIL | [details] |
+
+### Recent Commits
+
+- N commits in last 24 hours
+- Convention compliance: PASS/FAIL
+
+### File Hygiene
+
+| Check | Result | Details |
+|-------|--------|---------|
+| Tracked secrets | PASS/FAIL | [details] |
+| Large files | PASS/FAIL | [details] |
+| New TODOs | INFO | N new TODO/FIXME comments |
 
 ### Recommendations
 
@@ -186,25 +223,25 @@ Otherwise, create a new issue with the following format:
 
 ## Step 6: Auto-fix (Optional)
 
-If you find simple, high-confidence fixes (e.g., a single deprecated Tailwind class), you may create a draft PR with the fix. Only do this for changes that:
+If you find simple, high-confidence fixes (e.g., a single deprecated Tailwind class, a missing trailing slash), you may create a draft PR with the fix. Only do this for changes that:
 - Are purely mechanical (find-and-replace)
 - Have zero risk of breaking functionality
-- Would pass all checks in Step 2-4
+- Affect fewer than 5 lines total
 
-Do NOT create PRs for dependency updates or complex refactors.
+Do NOT create PRs for dependency updates, complex refactors, or security issues.
 
-## Important Guidelines
+## Important Project Conventions
 
-- This is a Next.js 16 project with static export (`output: "export"`)
-- Tailwind CSS v4 uses `bg-linear-to-*` not `bg-gradient-to-*`
-- All internal URLs must have trailing slashes
-- TypeScript `any` is forbidden unless explicitly disabled with eslint comment
-- The build command is `pnpm build` which runs: `bash scripts/generate-announcements.sh && velite build && next build`
-- Package manager is pnpm, NOT npm or yarn
+- **Framework**: Next.js 16 with static export (`output: "export"`)
+- **Tailwind CSS v4**: Use `bg-linear-to-*` not `bg-gradient-to-*`, `bg-size-[]` not `bg-[length:]`
+- **URLs**: All internal URLs must have trailing slashes
+- **TypeScript**: `any` type forbidden unless explicitly disabled with eslint-disable comment
+- **Images**: Must use `next/image`, not `<img>` (except in mdx-components.tsx)
+- **Links**: Must use `next/link`, not `<a>` for internal navigation
+- **Secrets**: Never in source code — use environment variables
 
 ## Success Criteria
 
-- All code quality checks pass
-- No high/critical security vulnerabilities
-- Build succeeds
-- Report issue created with accurate findings
+- All static checks executed
+- Report issue created with accurate, actionable findings
+- Previous maintenance issues closed if superseded

@@ -20,17 +20,18 @@
 #
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
-# Daily maintenance workflow that runs after midnight UTC. Performs code quality
-# checks (ESLint, TypeScript, Tailwind v4 syntax), dependency audits (outdated
-# packages, security vulnerabilities), and build verification. Creates a GitHub
-# issue report with findings and can submit draft PRs for auto-fixable issues.
+# Daily maintenance workflow that runs after midnight UTC. Performs static code
+# quality checks (Tailwind v4 syntax, trailing slashes, forbidden patterns,
+# security anti-patterns), dependency health review (package.json analysis),
+# and recent commit quality review. Creates a GitHub issue report with findings.
+# All checks use grep/file analysis — no npm install or build required.
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"f51f8ebf10b2958730df0bfd8534555b50ff2c60dfef8243ba4a9e82ddabdd3b","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"ab5e53671afe69aca56a5c063edd4b979e58743dd0ea24428c6b176cabc57c9a","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot"}
 
 name: "Daily Maintenance"
 "on":
   schedule:
-  - cron: "32 0 * * *"
+  - cron: "56 0 * * *"
     # Friendly format: daily around 1 AM UTC (scattered)
   workflow_dispatch:
 
@@ -631,7 +632,7 @@ jobs:
       - name: Execute GitHub Copilot CLI
         id: agentic_execution
         # Copilot CLI tool arguments (sorted):
-        timeout-minutes: 20
+        timeout-minutes: 15
         run: |
           set -o pipefail
           touch /tmp/gh-aw/agent-step-summary.md
@@ -838,7 +839,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           WORKFLOW_NAME: "Daily Maintenance"
-          WORKFLOW_DESCRIPTION: "Daily maintenance workflow that runs after midnight UTC. Performs code quality\nchecks (ESLint, TypeScript, Tailwind v4 syntax), dependency audits (outdated\npackages, security vulnerabilities), and build verification. Creates a GitHub\nissue report with findings and can submit draft PRs for auto-fixable issues."
+          WORKFLOW_DESCRIPTION: "Daily maintenance workflow that runs after midnight UTC. Performs static code\nquality checks (Tailwind v4 syntax, trailing slashes, forbidden patterns,\nsecurity anti-patterns), dependency health review (package.json analysis),\nand recent commit quality review. Creates a GitHub issue report with findings.\nAll checks use grep/file analysis — no npm install or build required."
           HAS_PATCH: ${{ steps.collect_output.outputs.has_patch }}
         with:
           script: |
@@ -1009,7 +1010,7 @@ jobs:
           GH_AW_LOCKDOWN_CHECK_FAILED: ${{ needs.activation.outputs.lockdown_check_failed }}
           GH_AW_GROUP_REPORTS: "false"
           GH_AW_FAILURE_REPORT_AS_ISSUE: "true"
-          GH_AW_TIMEOUT_MINUTES: "20"
+          GH_AW_TIMEOUT_MINUTES: "15"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
