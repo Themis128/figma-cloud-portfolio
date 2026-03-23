@@ -356,10 +356,7 @@ html.transitioning *::after {
 }
 
 /* ─── reCAPTCHA v3 badge ───────────────────────────────────────────────────── */
-/* Badge is visible on all pages. Shifted up to avoid overlapping the chatbot FAB button. */
-.grecaptcha-badge {
-  margin-bottom: 60px !important;
-}
+/* Badge is visible on all pages (bottom-right, default position). */
 
 /* ─── Mobile-specific optimizations ────────────────────────────────────────── */
 @media (max-width: 767px) {

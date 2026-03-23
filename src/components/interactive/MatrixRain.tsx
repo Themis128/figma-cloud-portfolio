@@ -159,7 +159,7 @@ export default function MatrixRain() {
             ? 'bg-cyan-400/20 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.4)]'
             : 'bg-card/60 border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50'
         }`}
-        style={{ bottom: 'max(5rem, calc(1rem + var(--safe-area-bottom)))', right: 'max(1rem, var(--safe-area-right))' }}
+        style={{ bottom: 'max(8rem, calc(4rem + var(--safe-area-bottom)))', right: 'max(1rem, var(--safe-area-right))' }}
         aria-label={active ? 'Disable matrix rain effect' : 'Enable matrix rain effect'}
         title={active ? 'Disable matrix rain' : 'Enable matrix rain'}
       >
