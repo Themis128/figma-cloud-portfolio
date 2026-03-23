@@ -8,28 +8,9 @@ import { getApiOrigin } from "@/lib/admin-constants";
 
 const LAST_SEEN_KEY = "site-announcements-last-seen";
 const READ_IDS_KEY = "site-announcements-read";
+const DISMISSED_IDS_KEY = "site-announcements-dismissed";
 const PUSH_NOTIFICATIONS_KEY = "site-push-notifications";
 const MAX_PUSH_NOTIFICATIONS = 20;
-
-// Site announcements — update this array to show new items to visitors.
-// IDs must be chronologically sortable strings (e.g. "YYYY-MM-DD-slug").
-// Optional `href` adds a "View" link. Optional `expires` auto-hides after that date.
-const ANNOUNCEMENTS: readonly Announcement[] = [
-  {
-    id: "2026-03-10-performance",
-    title: "Performance Dashboard Live",
-    description:
-      "Check out the new /performance page — real-time Web Vitals and industry benchmarks.",
-    href: "/performance/",
-  },
-  {
-    id: "2026-03-10-agents",
-    title: "AI Agents Showcase",
-    description:
-      "Explore the /agents page to see AI-powered automation workflows.",
-    href: "/agents/",
-  },
-];
 
 interface Announcement {
   id: string;
@@ -98,10 +79,18 @@ function saveReadIds(ids: Set<string>): void {
   storageSet(READ_IDS_KEY, JSON.stringify([...ids]));
 }
 
-/** Filter out expired announcements */
-function getActiveAnnouncements(): readonly Announcement[] {
-  const now = new Date().toISOString();
-  return ANNOUNCEMENTS.filter((a) => !a.expires || a.expires > now);
+function getDismissedIds(): Set<string> {
+  const raw = storageGet(DISMISSED_IDS_KEY);
+  if (!raw) return new Set();
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) return new Set(parsed as string[]);
+  } catch { /* ignore */ }
+  return new Set();
+}
+
+function saveDismissedIds(ids: Set<string>): void {
+  storageSet(DISMISSED_IDS_KEY, JSON.stringify([...ids]));
 }
 
 /** Convert a base64url string to ArrayBuffer (for VAPID applicationServerKey). */
@@ -119,6 +108,8 @@ export function NotificationButton() {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+  const [autoAnnouncements, setAutoAnnouncements] = useState<Announcement[]>([]);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Push subscription state
@@ -127,20 +118,33 @@ export function NotificationButton() {
   const [pushLoading, setPushLoading] = useState(false);
   const [pushNotifications, setPushNotifications] = useState<Announcement[]>([]);
 
-  // Merge static announcements + push notifications
-  const staticActive = getActiveAnnouncements();
+  // Merge auto-generated announcements + push notifications, filter dismissed
   const allItems = mounted
-    ? [...pushNotifications, ...staticActive]
-    : [...staticActive];
+    ? [...pushNotifications, ...autoAnnouncements].filter((a) => !dismissedIds.has(a.id))
+    : [];
   const unreadCount = mounted
     ? allItems.filter((a) => !readIds.has(a.id)).length
     : 0;
 
-  // Check push support, load saved push notifications, and listen for SW messages
+  // Check push support, load saved push notifications, fetch auto announcements
   useEffect(() => {
     setMounted(true);
     setReadIds(getReadIds());
+    setDismissedIds(getDismissedIds());
     setPushNotifications(getPushNotifications());
+
+    // Fetch build-time generated announcements
+    fetch("/announcements.json")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: unknown) => {
+        if (Array.isArray(data)) {
+          const now = new Date().toISOString();
+          setAutoAnnouncements(
+            (data as Announcement[]).filter((a) => !a.expires || a.expires > now),
+          );
+        }
+      })
+      .catch(() => { /* announcements.json may not exist yet */ });
 
     // Check Web Push API support
     if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
@@ -390,6 +394,15 @@ export function NotificationButton() {
     if (latestId) storageSet(LAST_SEEN_KEY, latestId);
   }, [allItems]);
 
+  const dismissAnnouncement = useCallback((id: string) => {
+    setDismissedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      saveDismissedIds(next);
+      return next;
+    });
+  }, []);
+
   const togglePanel = () => {
     const next = !open;
     setOpen(next);
@@ -492,9 +505,20 @@ export function NotificationButton() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-slate-200">
+                            <p className="text-sm font-semibold text-slate-200 flex-1">
                               {announcement.title}
                             </p>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                dismissAnnouncement(announcement.id);
+                              }}
+                              className="shrink-0 p-0.5 rounded text-slate-500 hover:text-slate-300 hover:bg-slate-700/50 transition-colors"
+                              aria-label={`Dismiss ${announcement.title}`}
+                              title="Dismiss"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
                             {announcement.isPush && (
                               <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/20">
                                 Push

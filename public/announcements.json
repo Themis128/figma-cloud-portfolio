@@ -1,0 +1,72 @@
+[
+  {
+    "id": "2026-03-23-8f9ecb9d",
+    "title": "Bug Fix",
+    "description": "Move Matrix Rain button above reCAPTCHA badge",
+    "date": "2026-03-23T22:26:19+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-23-ca09ace8",
+    "title": "New Feature",
+    "description": "Show reCAPTCHA badge on all pages",
+    "date": "2026-03-23T22:20:18+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-23-87921f0d",
+    "title": "Bug Fix",
+    "description": "Update chatbot knowledge base and system prompt",
+    "date": "2026-03-23T22:01:14+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-23-e63f0e3a",
+    "title": "Bug Fix",
+    "description": "Resolve ESLint errors and improve chatbot knowledge",
+    "date": "2026-03-23T21:41:21+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-23-cb459896",
+    "title": "Improvement",
+    "description": "Fine-tune reCAPTCHA v3 implementation",
+    "date": "2026-03-23T19:28:05+02:00",
+    "type": "refactor"
+  },
+  {
+    "id": "2026-03-23-bdbf9f03",
+    "title": "Bug Fix: security",
+    "description": "Complete reCAPTCHA v3 hardening per Google docs",
+    "date": "2026-03-23T19:23:44+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-23-b4da13b3",
+    "title": "Bug Fix: security",
+    "description": "Harden reCAPTCHA v3 implementation",
+    "date": "2026-03-23T18:44:08+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-23-d2de18f3",
+    "title": "Bug Fix: ci",
+    "description": "Run velite build before next build for Turbopack compatibility",
+    "date": "2026-03-23T08:11:20+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-23-6c963e9e",
+    "title": "New Feature",
+    "description": "Add MDX blog with Velite, cyberpunk-styled listing and post pages",
+    "date": "2026-03-23T02:16:02+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-22-4a707a6c",
+    "title": "New Feature",
+    "description": "Add Ahrefs analytics script to root layout",
+    "date": "2026-03-22T19:55:37+02:00",
+    "type": "feat"
+  }
+]
