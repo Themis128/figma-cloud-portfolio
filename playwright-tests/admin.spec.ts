@@ -1317,6 +1317,57 @@ test.describe("Admin Page — Errors Tab", () => {
     await toggleButton.click();
     await expect(toggleButton).toContainText("Live");
   });
+
+  test("should have search input for filtering errors", async ({ page }) => {
+    const searchInput = page.locator('input[aria-label="Search error messages"]');
+    await expect(searchInput).toBeVisible();
+    await expect(searchInput).toHaveAttribute("placeholder", "Search errors...");
+  });
+
+  test("should have Group/Flat toggle button", async ({ page }) => {
+    const groupButton = page.locator("button", { hasText: /Grouped|Flat/ });
+    await expect(groupButton).toBeVisible();
+  });
+
+  test("should toggle group mode", async ({ page }) => {
+    const groupButton = page.locator("button", { hasText: /Grouped|Flat/ });
+    await expect(groupButton).toContainText("Grouped");
+    await groupButton.click();
+    await expect(groupButton).toContainText("Flat");
+    await groupButton.click();
+    await expect(groupButton).toContainText("Grouped");
+  });
+
+  test("should have Sound toggle button", async ({ page }) => {
+    const soundButton = page.locator("button", { hasText: "Sound" });
+    await expect(soundButton).toBeVisible();
+  });
+
+  test("should have Export button", async ({ page }) => {
+    const exportButton = page.locator("button", { hasText: "Export" });
+    await expect(exportButton).toBeVisible();
+  });
+
+  test("should show error rate sparkline", async ({ page }) => {
+    const sparkline = page.locator('svg[aria-label*="Error rate"]');
+    await expect(sparkline).toBeVisible();
+  });
+
+  test("should have clickable type filter counters", async ({ page }) => {
+    // All 4 type counters should be clickable buttons
+    for (const label of ["Error", "Promise", "Network", "Console"]) {
+      const filterButton = page.locator("button", { hasText: label }).first();
+      await expect(filterButton).toBeVisible();
+      await expect(filterButton).toHaveAttribute("aria-pressed", "true");
+    }
+  });
+
+  test("should toggle type filter on click", async ({ page }) => {
+    const errorFilter = page.locator('button[aria-label*="Error errors"]').first();
+    await expect(errorFilter).toHaveAttribute("aria-pressed", "true");
+    await errorFilter.click();
+    await expect(errorFilter).toHaveAttribute("aria-pressed", "false");
+  });
 });
 
 // ─── Perf Tab ───────────────────────────────────────────────────────────────

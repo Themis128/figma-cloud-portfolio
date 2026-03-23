@@ -42,7 +42,7 @@
 7. **Resume Builder** (`/resume/`): Interactive CV builder with 7 HTML/CSS templates (Classic, Modern, Minimal, Executive, Creative, Bold, Emerald), live preview, PDF download, JSON export/import, localStorage auto-save, plus an ATS optimization guide
 8. **Performance** (`/performance/`): Live Core Web Vitals, interactive speed test runner, web vitals explainer cards, industry comparison chart, 8-item optimization checklist, tech stack rationale
 9. **AI Agents** (`/agents/`): Educational guide on AI agents with core concepts (Observe → Think → Act → Evaluate), architecture patterns, key terminology (RAG, ReAct, MCP, Guardrails), network engineering use cases, 5 agent templates, and a Blockly drag-and-drop agent builder for kids
-10. **Admin Dashboard** (`/admin/`): Internal dashboard with 10 tabs — Health (API monitoring), Console (HTTP request builder), Deploy (production status), Errors (real-time capture), Performance (CWV budgets), SEO (page audit), Push (notification tester), Analytics (GA4), Auth (session details), Environment (build info)
+10. **Admin Dashboard** (`/admin/`): Internal dashboard with 10 tabs — Health (API monitoring), Console (HTTP request builder), Deploy (production status), Errors (real-time capture with type filters, search, grouping, severity levels, sparkline, sound alerts, session persistence, copy-to-clipboard), Performance (CWV budgets), SEO (page audit), Push (notification tester), Analytics (GA4), Auth (session details), Environment (build info)
 11. **Settings** (`/settings/`): Theme, animations, notifications, analytics consent
 12. **Privacy Policy** (`/privacy/`): GDPR/CCPA compliant privacy policy
 13. **Terms of Service** (`/terms/`): Website usage terms

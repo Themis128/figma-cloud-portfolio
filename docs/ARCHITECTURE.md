@@ -241,7 +241,7 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 | **Health**     | `ApiHealthDashboard`       | Client     | 9 API endpoint health checks with 30s auto-refresh polling, SVG sparkline response history |
 | **Console**    | `ApiConsole`               | Client     | Interactive HTTP request builder with presets, syntax-highlighted JSON, request history     |
 | **Deploy**     | `DeploymentStatus`         | Client     | Production health checks (frontend + API), Lambda uptime/memory, infrastructure details    |
-| **Errors**     | `ErrorLogViewer`           | Client     | Real-time capture of browser errors, unhandled rejections, console.error, 5xx network fails|
+| **Errors**     | `ErrorLogViewer`           | Client     | Real-time error capture with type filters, text search, error grouping, severity levels, error rate sparkline, session persistence, sound alerts, copy-to-clipboard, and JSON export |
 | **Perf**       | `PerformanceBudget`        | Client     | Live Core Web Vitals (LCP/FCP/CLS/TTFB) from `web-vitals` with budget bars and grades     |
 | **SEO**        | `SeoAudit`                 | Client     | Scans all pages for title, description, og:image, canonical, JSON-LD; shows pass/warn/error|
 | **Push**       | `PushNotificationTester`   | Client     | Web Push API tester — permission, SW registration, subscriber list (S3-persisted), send test/custom messages |
@@ -283,7 +283,7 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 | Health Tab        | 16    | Yes        | Endpoints, stats, refresh, service labels, method badges, sparklines       |
 | Console Tab       | 18    | Yes        | Request builder, presets, HTTP methods, body toggle, history, Send/replay  |
 | Deploy Tab        | 7     | Yes        | Production status, infrastructure, health checks, Check button             |
-| Errors Tab        | 6     | Yes        | Error count, Live/Paused toggle, Clear, capture status, empty state        |
+| Errors Tab        | 14    | Yes        | Error count, type filters, search, group/flat, sound toggle, sparkline, Live/Paused, Export, Clear, capture status, empty state, copy-to-clipboard |
 | Perf Tab          | 8     | Yes        | Grade, score, Within Budget, CWV metrics, descriptions, budget thresholds  |
 | SEO Audit Tab     | 5     | Yes        | Pages count, Re-scan, page paths, status labels, metadata badges           |
 | Push Tab          | 15    | Yes        | Permission status, service worker, subscriptions, custom notification form |
