@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import CircuitBackground from "@/components/CircuitBackground";
 import { trackLead, trackOutboundClick } from "@/components/GoogleAnalytics";
@@ -32,6 +32,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 import { submitContactForm } from "@/lib/api";
 
 const SECTIONS = [
@@ -123,19 +124,8 @@ const stats = [
   { value: "5+", label: "Certifications", icon: Award },
 ];
 
-const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
-
-// Extend window for reCAPTCHA v3
-declare global {
-  interface Window {
-    grecaptcha?: {
-      ready: (cb: () => void) => void;
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
-    };
-  }
-}
-
 export default function ContactPage() {
+  const { getToken, siteKey } = useRecaptcha();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -154,37 +144,13 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const getRecaptchaToken = useCallback(async (): Promise<string | undefined> => {
-    if (!RECAPTCHA_SITE_KEY || !window.grecaptcha) return undefined;
-
-    // Race the reCAPTCHA call against a timeout so the form never hangs
-    const RECAPTCHA_TIMEOUT_MS = 3000;
-
-    const tokenPromise = new Promise<string | undefined>((resolve) => {
-      window.grecaptcha!.ready(async () => {
-        try {
-          const token = await window.grecaptcha!.execute(RECAPTCHA_SITE_KEY, { action: "contact" });
-          resolve(token);
-        } catch {
-          resolve(undefined);
-        }
-      });
-    });
-
-    const timeoutPromise = new Promise<undefined>((resolve) => {
-      setTimeout(() => resolve(undefined), RECAPTCHA_TIMEOUT_MS);
-    });
-
-    return Promise.race([tokenPromise, timeoutPromise]);
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
     try {
-      const recaptchaToken = await getRecaptchaToken();
+      const recaptchaToken = await getToken("contact");
       await submitContactForm({
         ...formData,
         ...(recaptchaToken !== undefined && { recaptchaToken }),
@@ -201,10 +167,10 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-background relative overflow-hidden">
-      {RECAPTCHA_SITE_KEY && (
+      {siteKey && (
         <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`}
-          strategy="lazyOnload"
+          src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
+          strategy="afterInteractive"
         />
       )}
       <CircuitBackground />

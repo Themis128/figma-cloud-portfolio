@@ -3,51 +3,23 @@
 import { AlertCircle, CheckCircle, Loader2, Send } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { trackLead } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
-const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const CONTACT_URL =
   process.env.NEXT_PUBLIC_LAMBDA_CONTACT_URL || `${API_BASE_URL}/contact`;
 
-interface Grecaptcha {
-  ready: (cb: () => void) => void;
-  execute: (siteKey: string, options: { action: string }) => Promise<string>;
-}
-
 export default function QuickContactForm() {
+  const { getToken, siteKey } = useRecaptcha();
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-
-  const getRecaptchaToken = useCallback(async (): Promise<string | undefined> => {
-    const grecaptcha = (window as unknown as { grecaptcha?: Grecaptcha }).grecaptcha;
-    if (!RECAPTCHA_SITE_KEY || !grecaptcha) return undefined;
-
-    const RECAPTCHA_TIMEOUT_MS = 3000;
-
-    const tokenPromise = new Promise<string | undefined>((resolve) => {
-      grecaptcha.ready(async () => {
-        try {
-          const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "quick_contact" });
-          resolve(token);
-        } catch {
-          resolve(undefined);
-        }
-      });
-    });
-
-    const timeoutPromise = new Promise<undefined>((resolve) => {
-      setTimeout(() => resolve(undefined), RECAPTCHA_TIMEOUT_MS);
-    });
-
-    return Promise.race([tokenPromise, timeoutPromise]);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +27,7 @@ export default function QuickContactForm() {
     setErrorMsg("");
 
     try {
-      const recaptchaToken = await getRecaptchaToken();
+      const recaptchaToken = await getToken("quick_contact");
 
       const res = await fetch(CONTACT_URL, {
         method: "POST",
@@ -113,10 +85,10 @@ export default function QuickContactForm() {
 
   return (
     <AnimatedSection>
-      {RECAPTCHA_SITE_KEY && (
+      {siteKey && (
         <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`}
-          strategy="lazyOnload"
+          src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
+          strategy="afterInteractive"
         />
       )}
       <form onSubmit={handleSubmit} className="space-y-3">

@@ -58,6 +58,7 @@ async function verifyRecaptcha(token: string): Promise<{ success: boolean; score
       score?: number;
       action?: string;
       hostname?: string;
+      challenge_ts?: string;
       "error-codes"?: string[];
     };
 
@@ -76,6 +77,16 @@ async function verifyRecaptcha(token: string): Promise<{ success: boolean; score
     if (data.hostname && !ALLOWED_HOSTNAMES.has(data.hostname)) {
       console.warn("reCAPTCHA hostname mismatch:", data.hostname);
       return { success: false, score: 0, error: "reCAPTCHA hostname mismatch" };
+    }
+
+    // Reject stale tokens (older than 2 minutes — tokens expire after 2 min per Google docs)
+    const MAX_TOKEN_AGE_MS = 120_000;
+    if (data.challenge_ts) {
+      const tokenAge = Date.now() - new Date(data.challenge_ts).getTime();
+      if (tokenAge > MAX_TOKEN_AGE_MS) {
+        console.warn("reCAPTCHA token expired:", Math.round(tokenAge / 1000), "seconds old");
+        return { success: false, score: 0, error: "reCAPTCHA token expired" };
+      }
     }
 
     const score = data.score ?? 0;
