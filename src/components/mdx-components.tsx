@@ -59,7 +59,7 @@ function MdxOl(props: ComponentPropsWithoutRef<"ol">) {
 function MdxBlockquote(props: ComponentPropsWithoutRef<"blockquote">) {
   return (
     <blockquote
-      className="mb-4 border-l-4 border-cyan-400/50 pl-4 italic text-muted-foreground bg-cyan-400/5 py-2 rounded-r"
+      className="mb-4 border-l-4 border-cyan-400/50 pl-4 italic text-muted-foreground bg-cyan-400/5 py-2 rounded-r-lg"
       {...props}
     />
   );
