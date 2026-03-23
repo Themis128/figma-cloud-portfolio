@@ -129,23 +129,24 @@ if (isValidPath(path)) {
 
 ### reCAPTCHA v3 Integration
 
+Server-side verification (`server/routes/contact.ts`) validates three fields from Google's `/siteverify` response:
+
+1. **Score** — must be ≥ 0.7 (configurable via `RECAPTCHA_THRESHOLD` env var)
+2. **Action** — must match an allowed action (`contact`, `quick_contact`)
+3. **Hostname** — must match an allowed domain (`www.baltzakisthemis.com`, `baltzakisthemis.com`, `localhost`)
+
+Client-side: reCAPTCHA badge is hidden via CSS (`visibility: hidden`); inline attribution text with links to Google's Privacy Policy and Terms of Service is shown on both contact forms, per [Google's FAQ](https://developers.google.com/recaptcha/docs/faq).
+
 ```typescript
-// server/routes/contact.ts
-async function verifyRecaptcha(token: string): Promise<boolean> {
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-    method: 'POST',
-    body: new URLSearchParams({
-      secret: secretKey,
-      response: token,
-    }),
-  });
-  
-  const result = await response.json();
-  
-  // Require score > 0.5
-  return result.success && result.score > 0.5;
-}
+// server/routes/contact.ts — verification checks
+const ALLOWED_ACTIONS = new Set(["contact", "quick_contact"]);
+const ALLOWED_HOSTNAMES = new Set(["www.baltzakisthemis.com", "baltzakisthemis.com", "localhost"]);
+
+// After siteverify response:
+// 1. data.success must be true
+// 2. data.action must be in ALLOWED_ACTIONS
+// 3. data.hostname must be in ALLOWED_HOSTNAMES
+// 4. data.score must be >= RECAPTCHA_THRESHOLD (default 0.7)
 ```
 
 ### API Key Management

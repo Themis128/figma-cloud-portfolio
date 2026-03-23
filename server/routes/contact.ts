@@ -33,6 +33,13 @@ interface RequestMeta {
 
 // ── reCAPTCHA v3 verification ────────────────────────────────────────────────
 
+const ALLOWED_ACTIONS = new Set(["contact", "quick_contact"]);
+const ALLOWED_HOSTNAMES = new Set([
+  "www.baltzakisthemis.com",
+  "baltzakisthemis.com",
+  "localhost",
+]);
+
 async function verifyRecaptcha(token: string): Promise<{ success: boolean; score: number; error?: string }> {
   try {
     const params = new URLSearchParams({
@@ -49,12 +56,26 @@ async function verifyRecaptcha(token: string): Promise<{ success: boolean; score
     const data = (await res.json()) as {
       success: boolean;
       score?: number;
+      action?: string;
+      hostname?: string;
       "error-codes"?: string[];
     };
 
     if (!data.success) {
       console.warn("reCAPTCHA verification failed:", data["error-codes"]);
       return { success: false, score: 0, error: "reCAPTCHA verification failed" };
+    }
+
+    // Verify the action matches an expected value (prevents token reuse from other pages)
+    if (data.action && !ALLOWED_ACTIONS.has(data.action)) {
+      console.warn("reCAPTCHA action mismatch:", data.action);
+      return { success: false, score: 0, error: "reCAPTCHA action mismatch" };
+    }
+
+    // Verify the hostname matches the expected domain (prevents token theft)
+    if (data.hostname && !ALLOWED_HOSTNAMES.has(data.hostname)) {
+      console.warn("reCAPTCHA hostname mismatch:", data.hostname);
+      return { success: false, score: 0, error: "reCAPTCHA hostname mismatch" };
     }
 
     const score = data.score ?? 0;
