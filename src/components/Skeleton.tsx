@@ -9,7 +9,7 @@ export function Skeleton({ className }: SkeletonProps) {
     <div
       data-testid="skeleton"
       className={cn(
-        "animate-pulse rounded-md bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 bg-[length:200%_100%]",
+        "animate-pulse rounded-md bg-linear-to-r from-slate-700 via-slate-600 to-slate-700 bg-size-[200%_100%]",
         className,
       )}
       style={{
@@ -100,7 +100,7 @@ export function PageSkeleton() {
   return (
     <div
       data-testid="page-skeleton"
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+      className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900"
     >
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">

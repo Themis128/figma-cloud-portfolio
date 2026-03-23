@@ -341,11 +341,11 @@ export default function CircuitBackground() {
 
       {/* Animated gradient overlays */}
       <div
-        className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-br from-cyan-500/10 to-transparent blur-3xl animate-pulse"
+        className="absolute top-0 right-0 w-1/2 h-1/2 bg-linear-to-br from-cyan-500/10 to-transparent blur-3xl animate-pulse"
         style={{ animationDuration: "4s" }}
       />
       <div
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-blue-500/10 to-transparent blur-3xl animate-pulse"
+        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-linear-to-tr from-blue-500/10 to-transparent blur-3xl animate-pulse"
         style={{ animationDuration: "5s", animationDelay: "1s" }}
       />
     </div>

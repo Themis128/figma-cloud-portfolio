@@ -61,7 +61,7 @@ export default function PushToast() {
           role="alert"
         >
           {/* Cyan top accent line */}
-          <div className="h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500" />
+          <div className="h-[2px] bg-linear-to-r from-cyan-400 to-blue-500" />
 
           <div className="p-4">
             <div className="flex items-start gap-3">

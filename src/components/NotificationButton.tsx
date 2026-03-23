@@ -2,7 +2,7 @@
 
 import { Bell, BellOff, BellRing, ExternalLink, Megaphone, X } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getApiOrigin } from "@/lib/admin-constants";
 
@@ -119,9 +119,13 @@ export function NotificationButton() {
   const [pushNotifications, setPushNotifications] = useState<Announcement[]>([]);
 
   // Merge auto-generated announcements + push notifications, filter dismissed
-  const allItems = mounted
-    ? [...pushNotifications, ...autoAnnouncements].filter((a) => !dismissedIds.has(a.id))
-    : [];
+  const allItems = useMemo(
+    () =>
+      mounted
+        ? [...pushNotifications, ...autoAnnouncements].filter((a) => !dismissedIds.has(a.id))
+        : [],
+    [mounted, pushNotifications, autoAnnouncements, dismissedIds],
+  );
   const unreadCount = mounted
     ? allItems.filter((a) => !readIds.has(a.id)).length
     : 0;

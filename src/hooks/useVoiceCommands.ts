@@ -339,21 +339,21 @@ export const commonVoiceCommands: VoiceCommand[] = [
   {
     keywords: ["go to about", "about page", "tell me about"],
     action: () => {
-      window.location.href = "/about";
+      window.location.href = "/about/";
     },
     description: "Navigate to about page",
   },
   {
     keywords: ["contact", "get in touch", "contact page"],
     action: () => {
-      window.location.href = "/contact";
+      window.location.href = "/contact/";
     },
     description: "Navigate to contact page",
   },
   {
     keywords: ["agents", "ai agents", "agent builder"],
     action: () => {
-      window.location.href = "/agents";
+      window.location.href = "/agents/";
     },
     description: "Navigate to AI agents page",
   },
