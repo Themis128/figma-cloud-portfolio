@@ -491,11 +491,11 @@ if (process.env.NODE_ENV === 'production') {
 - [OWASP ZAP](https://www.zaproxy.org/) - Web application security scanner
 - [Snyk](https://snyk.io/) - Dependency vulnerability scanning
 - [npm audit](https://docs.npmjs.com/cli/v10/commands/npm-audit) - Built-in vulnerability scanner
-- [Retire.js](https://retire.dev/) - JavaScript vulnerability scanner
+- [Retire.js](https://retirejs.github.io/retire.js/) - JavaScript vulnerability scanner
 
 ### Documentation
 - [OWASP Top 10](https://owasp.org/Top10/)
-- [Next.js Security](https://nextjs.org/docs/app/building-your-application/configuring/security)
+- [Next.js Security](https://nextjs.org/docs/app/building-your-application/deploying)
 - [Express Security Best Practices](https://expressjs.com/en/advanced/best-practice-security.html)
 - [CSP Reference](https://content-security-policy.com/)
 

@@ -474,7 +474,7 @@ End Time: [WRITE YOUR END TIME]
 - **GitHub Actions Help**: https://docs.github.com/en/actions
 - **AWS Amplify Docs**: https://docs.aws.amazon.com/amplify/
 - **AWS Secrets Manager**: https://docs.aws.amazon.com/secretsmanager/
-- **Codacy API**: https://docs.codacy.com/api/
+- **Codacy API**: https://docs.codacy.com/
 
 ---
 

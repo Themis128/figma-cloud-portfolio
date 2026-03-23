@@ -590,15 +590,15 @@ observer.observe({ entryTypes: ['navigation', 'paint', 'largest-contentful-paint
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [WebPageTest](https://www.webpagetest.org/)
 - [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools)
-- [Bundle Analyzer](https://webpack.js.org/analyse/)
+- [Bundle Analyzer](https://webpack.js.org/guides/code-splitting/)
 
 ### Documentation
 - [Web Vitals](https://web.dev/vitals/)
 - [Next.js Performance](https://nextjs.org/docs/app/building-your-application/optimizing)
 - [React Performance](https://react.dev/learn/render-and-commit)
-- [CSS Performance](https://web.dev/learn/css/performance)
+- [CSS Performance](https://web.dev/articles/critical-rendering-path)
 
 ### Best Practices
-- [Performance Checklist](https://web.dev/performance-checklist/)
+- [Performance Checklist](https://web.dev/learn/performance)
 - [Image Optimization Guide](https://web.dev/fast/#optimize-your-images)
 - [JavaScript Performance](https://web.dev/fast/#optimize-your-javascript)
