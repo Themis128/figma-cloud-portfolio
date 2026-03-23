@@ -12,7 +12,7 @@ A production-ready portfolio built with **Next.js 16**, **React 19**, **TypeScri
 - **Hosting**: S3 + CloudFront (frontend), Lambda Function URL (backend)
 - **PWA**: Service worker with offline caching and push notifications
 - **Blog**: Velite (MDX → typed JSON at build time) with rehype-pretty-code syntax highlighting
-- **Testing**: Playwright 1.58+ E2E (89+ test files)
+- **Testing**: Playwright 1.58+ E2E (103 test files)
 - **Analytics**: Google Analytics 4 + Sentry error tracking
 - **Package Manager**: PNPM
 
@@ -28,8 +28,9 @@ src/
     performance/        # Performance monitoring showcase
     product/            # Work experience
     projects/           # Projects gallery
-    resume/             # Resume builder
-    settings/           # App settings
+    builder/            # Visual page builder (Builder.io)
+    resume/             # Resume & career guide
+    settings/           # App preferences
   components/           # Reusable UI components
     ui/                 # shadcn/ui components
     performance/        # Performance page components
@@ -42,7 +43,7 @@ content/
   blog/                 # MDX blog posts (processed by Velite at build time)
 server/                 # Express dev server (port 3001)
   routes/               # API handlers (resume, apiKeys, playwrightAutofix)
-playwright-tests/       # E2E test suite (89+ specs)
+playwright-tests/       # E2E test suite (103 specs)
 docs/                   # Documentation (~55 reference files)
 public/                 # Static assets and PWA files
 ```

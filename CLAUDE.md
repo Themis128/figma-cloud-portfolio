@@ -26,18 +26,17 @@ src/
   app/              # App Router pages and layouts
   components/
     admin/          # Admin dashboard components (10 tabs)
-    interactive/    # Interactive engagement components (7 in folder + CommandPalette in layout)
-    ui/             # shadcn/ui primitives (Radix-based)
-content/
-  blog/             # MDX blog posts (frontmatter + content, processed by Velite)
-    sections/       # Page section components
+    interactive/    # Interactive engagement components (13 in folder + CommandPalette in layout)
     performance/    # Performance page components
-  hooks/            # Custom React hooks
+    ui/             # shadcn/ui primitives (Radix-based)
+  hooks/            # Custom React hooks (useRecaptcha, useScrollAnimation, etc.)
   lib/              # Utilities, helpers, constants
   types/            # TypeScript type definitions
   styles/           # Global CSS
+content/
+  blog/             # MDX blog posts (frontmatter + content, processed by Velite)
 server/             # Express backend (tsx)
-playwright-tests/   # E2E tests (88 spec files)
+playwright-tests/   # E2E tests (103 spec files)
 public/             # Static assets and PWA files
 docs/               # Documentation
 ```
