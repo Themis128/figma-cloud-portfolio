@@ -1,0 +1,57 @@
+# Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist
+
+> IT Network Engineer with 15+ years of extensive experience in network infrastructure, Cisco systems, and Fortinet security solutions. Specializing in data center management, Azure AD, Microsoft 365 administration, and AWS cloud environments. Based in Athens, Greece. Available for consulting and collaboration.
+
+## Professional Summary
+
+Themistoklis (Themis) Baltzakis is an IT Network Engineer and Cloud Architect with over 15 years of experience spanning enterprise network infrastructure, cybersecurity, and modern cloud environments. He bridges the gap between infrastructure engineering and full-stack web development.
+
+### Core Competencies
+
+- **Network Infrastructure**: Cisco routing/switching, enterprise network design, data center management, SD-WAN
+- **Cybersecurity**: Fortinet firewalls (FortiGate, FortiManager, FortiAnalyzer), zero-trust architecture, SIEM, threat detection
+- **Cloud Platforms**: AWS (EC2, S3, CloudFront, Lambda, Bedrock, Amplify), Azure AD, Microsoft 365
+- **Identity & Access**: Azure AD, Conditional Access, MFA, SSO, Cognito
+- **Web Development**: React, Next.js, TypeScript, Node.js, Tailwind CSS, serverless architectures
+- **DevOps**: CI/CD (GitHub Actions), Docker, infrastructure as code, monitoring
+- **Programming**: TypeScript, Python, Bash scripting
+
+### Location & Contact
+
+- Location: Athens, Greece
+- Email: baltzakis.themis@gmail.com
+- LinkedIn: linkedin.com/in/baltzakis-themis
+- GitHub: github.com/Themis128
+- Website: baltzakisthemis.com
+
+## Services
+
+Themis offers consulting in the following areas:
+
+1. **Cloud Architecture Design** — Multi-region AWS deployments, cost optimization, migration planning
+2. **Network Security Audits** — Fortinet/Cisco infrastructure review, zero-trust implementation
+3. **Azure AD & M365 Administration** — Identity governance, Conditional Access policies, hybrid environments
+4. **Full-Stack Web Development** — Next.js applications, serverless backends, PWA development
+5. **DevOps & CI/CD** — Pipeline design, automated testing, deployment automation
+
+## Blog Articles
+
+### Building Resilient Cloud Architectures
+Multi-region AWS design patterns for high availability and disaster recovery. Covers active-active deployments, Route 53 failover, and cross-region replication strategies.
+
+### Next.js Static Export in Production
+Complete guide to deploying Next.js static exports on S3 + CloudFront with Amplify Gen 2 backend. Includes CI/CD pipeline setup, cache invalidation, and performance optimization.
+
+### Zero Trust Network Security
+Modern network security framework moving beyond perimeter-based defenses. Covers microsegmentation, identity-centric access, continuous verification, and implementation roadmap.
+
+## Technical Portfolio
+
+This website (baltzakisthemis.com) is itself a technical showcase:
+
+- **Frontend**: Next.js 16, TypeScript, Tailwind CSS v4, Framer Motion
+- **Backend**: AWS Lambda, Amplify Gen 2 (Cognito + AppSync + DynamoDB)
+- **AI Chatbot**: AWS Bedrock (Claude 3.5 Haiku) with knowledge base
+- **Deployment**: S3 + CloudFront static hosting, GitHub Actions CI/CD
+- **Performance**: Lighthouse-optimized, lazy-loaded components, WebP/AVIF images
+- **PWA**: Installable with offline support, push notifications, service worker caching

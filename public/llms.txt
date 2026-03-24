@@ -1,0 +1,35 @@
+# Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist
+
+> IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, Fortinet security, Azure AD, Microsoft 365, and AWS cloud environments. Based in Athens, Greece. Available for consulting.
+
+## About
+
+- [About Me](https://www.baltzakisthemis.com/about/): Professional background, skills, certifications, and career timeline
+- [Resume](https://www.baltzakisthemis.com/resume/): Downloadable CV with work history and qualifications
+- [Contact](https://www.baltzakisthemis.com/contact/): Get in touch for consulting or collaboration
+
+## Expertise
+
+- Cloud Architecture: AWS, Azure AD, Microsoft 365, multi-cloud environments
+- Cybersecurity: Fortinet firewalls, network security, zero-trust architecture
+- Network Infrastructure: Cisco systems, data center management, enterprise networking
+- Web Development: React, Next.js, TypeScript, Node.js, serverless architectures
+- DevOps: CI/CD pipelines, Docker, infrastructure as code
+
+## Projects
+
+- [Projects](https://www.baltzakisthemis.com/projects/): Portfolio of infrastructure, web, and DevOps projects
+
+## Blog
+
+- [Blog](https://www.baltzakisthemis.com/blog/): Articles on cloud architecture, cybersecurity, and web development
+- [Building Resilient Cloud Architectures](https://www.baltzakisthemis.com/blog/building-resilient-cloud-architectures/): Multi-region AWS design patterns
+- [Next.js Static Export in Production](https://www.baltzakisthemis.com/blog/nextjs-static-export-production/): S3 + CloudFront deployment guide
+- [Zero Trust Network Security](https://www.baltzakisthemis.com/blog/zero-trust-network-security/): Modern network security framework
+
+## Optional
+
+- [Performance](https://www.baltzakisthemis.com/performance/): Live Core Web Vitals and performance metrics
+- [Privacy Policy](https://www.baltzakisthemis.com/privacy/): Data collection and processing practices
+- [Terms of Service](https://www.baltzakisthemis.com/terms/): Website usage terms
+- [Cookie Policy](https://www.baltzakisthemis.com/cookies/): Cookie and localStorage usage details

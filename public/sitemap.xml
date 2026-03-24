@@ -46,6 +46,26 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://www.baltzakisthemis.com/blog/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.baltzakisthemis.com/blog/building-resilient-cloud-architectures/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.baltzakisthemis.com/blog/nextjs-static-export-production/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.baltzakisthemis.com/blog/zero-trust-network-security/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.baltzakisthemis.com/privacy/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
