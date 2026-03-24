@@ -19,7 +19,7 @@ import { requireAuth } from "./middleware/requireAuth";
 const app = express();
 app.disable("x-powered-by");
 
-app.use(express.json());
+app.use(express.json({ limit: "50kb" }));
 app.use(
   cors({
     origin:

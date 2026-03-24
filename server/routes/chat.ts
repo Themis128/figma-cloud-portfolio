@@ -16,12 +16,20 @@ const router = Router();
 // ── Simple in-memory rate limiter ────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const RATE_LIMIT_MAX = 15; // max requests per window per IP
+const RATE_LIMIT_MAP_MAX_SIZE = 10_000; // prevent memory exhaustion
+const MAX_MESSAGE_LENGTH = 2_000; // max characters per message
+const MAX_HISTORY_CONTENT_LENGTH = 1_000; // max characters per history entry
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
   if (!entry || now > entry.resetAt) {
+    // Evict oldest entries if map grows too large (prevents memory exhaustion)
+    if (rateLimitMap.size >= RATE_LIMIT_MAP_MAX_SIZE) {
+      const oldest = rateLimitMap.keys().next().value;
+      if (oldest !== undefined) rateLimitMap.delete(oldest);
+    }
     rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return false;
   }
@@ -120,7 +128,7 @@ router.post("/", async (req: Request, res: Response) => {
     const message = typeof body.message === "string" ? body.message : "";
     const history = Array.isArray(body.history) ? (body.history as HistoryMessage[]) : [];
 
-    const trimmedMessage = message.trim();
+    const trimmedMessage = message.trim().slice(0, MAX_MESSAGE_LENGTH);
     if (!trimmedMessage) {
       return res.status(400).json({ error: "Message is required" });
     }
@@ -133,10 +141,14 @@ router.post("/", async (req: Request, res: Response) => {
 
     const recentHistory = history.slice(-MAX_HISTORY_TURNS);
     for (const entry of recentHistory) {
-      if (entry.role === "user" || entry.role === "assistant") {
+      if (
+        (entry.role === "user" || entry.role === "assistant") &&
+        typeof entry.content === "string" &&
+        entry.content.length > 0
+      ) {
         messages.push({
           role: entry.role,
-          content: [{ text: entry.content }],
+          content: [{ text: entry.content.slice(0, MAX_HISTORY_CONTENT_LENGTH) }],
         });
       }
     }

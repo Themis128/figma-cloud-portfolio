@@ -18,13 +18,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      - name: Enable corepack and pnpm
-        run: corepack enable
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,23 +51,27 @@ jobs:
           NEXT_PUBLIC_API_BASE_URL: /api
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
           NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
-          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
-          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
-          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
-          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
       - name: Deploy to S3 and capture changed files
         id: s3sync
         run: |
           # Sync and capture changed paths for targeted invalidation
-          CHANGED=$(aws s3 sync out/ s3://figma-portfolio-static --delete --region us-east-1 2>&1 | grep -oP '(?<=upload: out/).*|(?<=delete: s3://figma-portfolio-static/).*' | sed 's|^|/|' | head -50)
-          if [ -z "$CHANGED" ]; then
+          SYNC_OUTPUT=$(aws s3 sync out/ s3://figma-portfolio-static --delete --region us-east-1 2>&1) || true
+          echo "$SYNC_OUTPUT"
+          # Extract uploaded/deleted paths — handle filenames with spaces safely
+          CHANGED=$(echo "$SYNC_OUTPUT" | awk '
+            /^upload:/ { sub(/^upload: out\//, "/"); sub(/ to s3:.*/, ""); print }
+            /^delete:/ { sub(/^delete: s3:\/\/figma-portfolio-static\//, "/"); print }
+          ' | head -50)
+          CHANGED_COUNT=$(echo "$CHANGED" | grep -c . || true)
+          if [ "$CHANGED_COUNT" -eq 0 ]; then
+            echo "No files changed — skipping invalidation"
             echo "paths=none" >> "$GITHUB_OUTPUT"
-          elif [ "$(echo "$CHANGED" | wc -l)" -gt 49 ]; then
+          elif [ "$CHANGED_COUNT" -gt 49 ]; then
+            echo "$CHANGED_COUNT files changed — using wildcard invalidation"
             echo "paths=/*" >> "$GITHUB_OUTPUT"
           else
+            echo "$CHANGED_COUNT files changed — targeted invalidation"
             echo "paths<<EOF" >> "$GITHUB_OUTPUT"
             echo "$CHANGED" >> "$GITHUB_OUTPUT"
             echo "EOF" >> "$GITHUB_OUTPUT"
@@ -91,6 +96,7 @@ jobs:
           echo "Invalidation completed"
 
       - name: Lighthouse CI smoke test
+        timeout-minutes: 5
         run: |
           npx -y @lhci/cli@0.14.x autorun \
             --collect.url=https://www.baltzakisthemis.com/ \

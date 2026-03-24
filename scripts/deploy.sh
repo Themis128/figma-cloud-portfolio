@@ -26,15 +26,37 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY="${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}" \
 NEXT_PUBLIC_GA_ID="${NEXT_PUBLIC_GA_ID:-}" \
 pnpm run build
 
-# Sync to S3
+# Sync to S3 and capture changed paths
 echo "☁  Syncing to s3://${S3_BUCKET}..."
-aws s3 sync out/ "s3://${S3_BUCKET}" --delete --region "${AWS_REGION}"
+SYNC_OUTPUT=$(aws s3 sync out/ "s3://${S3_BUCKET}" --delete --region "${AWS_REGION}" 2>&1) || true
+echo "$SYNC_OUTPUT"
 
-# Invalidate CloudFront
-echo "🔄 Invalidating CloudFront ${CF_DISTRIBUTION}..."
+# Extract changed paths for targeted invalidation
+CHANGED=$(echo "$SYNC_OUTPUT" | awk '
+  /^upload:/ { sub(/^upload: out\//, "/"); sub(/ to s3:.*/, ""); print }
+  /^delete:/ { sub(/^delete: s3:\/\/'"${S3_BUCKET}"'\//, "/"); print }
+' | head -50)
+CHANGED_COUNT=$(echo "$CHANGED" | grep -c . || true)
+
+if [ "$CHANGED_COUNT" -eq 0 ]; then
+  echo "✅ No files changed — skipping CloudFront invalidation"
+  echo "   Deployed to ${SITE_URL} (no changes)"
+  exit 0
+fi
+
+# Use wildcard if too many files changed, otherwise targeted
+if [ "$CHANGED_COUNT" -gt 49 ]; then
+  echo "🔄 Invalidating CloudFront ${CF_DISTRIBUTION} (${CHANGED_COUNT} files → wildcard)..."
+  PATHS="/*"
+else
+  echo "🔄 Invalidating CloudFront ${CF_DISTRIBUTION} (${CHANGED_COUNT} paths)..."
+  PATHS="$CHANGED"
+fi
+
+# shellcheck disable=SC2086
 INVALIDATION_ID=$(aws cloudfront create-invalidation \
   --distribution-id "${CF_DISTRIBUTION}" \
-  --paths "/*" \
+  --paths $PATHS \
   --query 'Invalidation.Id' --output text)
 
 echo "⏳ Waiting for invalidation ${INVALIDATION_ID}..."
@@ -44,4 +66,4 @@ aws cloudfront wait invalidation-completed \
 
 echo ""
 echo "✅ Deployed to ${SITE_URL}"
-echo "   CloudFront invalidation: ${INVALIDATION_ID} (completed)"
+echo "   CloudFront invalidation: ${INVALIDATION_ID} (${CHANGED_COUNT} paths, completed)"

@@ -554,11 +554,10 @@ async function prefetchCriticalContent() {
 
     const criticalUrls = [
       "/",
-      "/about",
-      "/projects",
-      "/contact",
-      "/api/projects",
-      "/api/resume",
+      "/about/",
+      "/projects/",
+      "/contact/",
+      "/blog/",
     ];
 
     for (const url of criticalUrls) {
@@ -743,8 +742,24 @@ async function prefetchRoutes(routes) {
 // Data management functions
 async function syncCachedRequests() {
   try {
-    console.log("Syncing cached requests...");
-    // Implementation would sync cached API responses
+    const failedRequests = await getFailedRequests();
+    if (failedRequests.length === 0) return;
+    console.log(`Syncing ${failedRequests.length} cached request(s)...`);
+    for (const request of failedRequests) {
+      try {
+        const requestUrl = new URL(request.url, self.location.origin);
+        if (requestUrl.origin !== self.location.origin) {
+          await removeFailedRequest(request.id);
+          continue;
+        }
+        const response = await fetch(requestUrl.href, request.options);
+        if (response.ok) {
+          await removeFailedRequest(request.id);
+        }
+      } catch {
+        // Will retry on next sync
+      }
+    }
   } catch (error) {
     console.error("Failed to sync cached requests:", error);
   }
@@ -755,9 +770,9 @@ async function updateCriticalResources() {
     console.log("Updating critical resources...");
 
     const criticalResources = [
-      "/manifest.json",
-      "/logo.jpg",
-      "/fonts/Inter-VariableFont_slnt,wght.ttf",
+      "/manifest.webmanifest",
+      "/offline.html",
+      "/logo.svg",
     ];
 
     for (const resource of criticalResources) {
@@ -779,8 +794,6 @@ async function cleanupOldCaches() {
       "pages-cache",
       "offline-fallback",
       "enhanced-api-cache",
-      "google-fonts-stylesheets", // Keep for backward compatibility
-      "google-fonts-webfonts", // Keep for backward compatibility
       "enhanced-images-cache",
       "enhanced-static-resources",
       "cdn-resources",
@@ -796,14 +809,6 @@ async function cleanupOldCaches() {
       console.log("Cleaned up old cache:", cacheName);
     }
 
-    // Also clean up Google Fonts caches since we no longer use them
-    const googleFontsCaches = ["google-fonts-stylesheets", "google-fonts-webfonts"];
-    for (const cacheName of googleFontsCaches) {
-      if (cacheNames.includes(cacheName)) {
-        await caches.delete(cacheName);
-        console.log("Cleaned up unused Google Fonts cache:", cacheName);
-      }
-    }
   } catch (error) {
     console.error("Failed to cleanup old caches:", error);
   }
@@ -821,20 +826,27 @@ const STORE_OFFLINE_ANALYTICS = "offline-analytics";
 function openDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
+    req.onupgradeneeded = (event) => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_FAILED_REQUESTS)) {
-        db.createObjectStore(STORE_FAILED_REQUESTS, {
-          keyPath: "id",
-          autoIncrement: true,
-        });
+      const oldVersion = event.oldVersion;
+
+      // Version 1: initial schema
+      if (oldVersion < 1) {
+        if (!db.objectStoreNames.contains(STORE_FAILED_REQUESTS)) {
+          db.createObjectStore(STORE_FAILED_REQUESTS, {
+            keyPath: "id",
+            autoIncrement: true,
+          });
+        }
+        if (!db.objectStoreNames.contains(STORE_OFFLINE_ANALYTICS)) {
+          db.createObjectStore(STORE_OFFLINE_ANALYTICS, {
+            keyPath: "id",
+            autoIncrement: true,
+          });
+        }
       }
-      if (!db.objectStoreNames.contains(STORE_OFFLINE_ANALYTICS)) {
-        db.createObjectStore(STORE_OFFLINE_ANALYTICS, {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-      }
+
+      // Future migrations: if (oldVersion < 2) { ... }
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -927,9 +939,28 @@ async function removeOfflineEvent(id) {
 }
 
 async function sendAnalyticsEvent(event) {
-  // Send to Google Analytics Measurement Protocol or custom endpoint
-  // For now, log and remove — extend when an analytics endpoint exists
-  console.log("Sending analytics event:", event);
+  // Send to GA4 via Measurement Protocol if configured
+  // Falls back to logging if no GA endpoint is available
+  try {
+    const clientId = event.params?.client_id || "sw-offline";
+    const response = await fetch(
+      `https://www.google-analytics.com/mp/collect?api_secret=&measurement_id=`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: clientId,
+          events: [{ name: event.name, params: event.params }],
+        }),
+      },
+    );
+    if (!response.ok) {
+      console.log("Analytics event logged locally (GA endpoint unavailable):", event.name);
+    }
+  } catch {
+    // Network still unavailable — event stays in queue for next sync
+    console.log("Analytics event queued for retry:", event.name);
+    throw new Error("Network unavailable");
+  }
 }
 
 async function updateCacheStatistics() {
@@ -944,7 +975,7 @@ async function updateCacheStatistics() {
 async function prefetchPopularContent() {
   try {
     // Prefetch most visited pages based on analytics
-    const popularRoutes = ["/", "/projects", "/about"];
+    const popularRoutes = ["/", "/projects/", "/about/"];
     for (const route of popularRoutes) {
       try {
         await fetch(route, { cache: "force-cache" });

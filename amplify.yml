@@ -46,11 +46,11 @@ customHeaders:
       - key: "X-Content-Type-Options"
         value: "nosniff"
 
-  # Images (180-day cache)
+  # Images (90-day cache)
   - pattern: "**/*.{png,jpg,jpeg,gif,webp,avif,svg,ico}"
     headers:
       - key: "Cache-Control"
-        value: "public, max-age=15552000, immutable"
+        value: "public, max-age=7776000, immutable"
       - key: "X-Content-Type-Options"
         value: "nosniff"
 
@@ -63,6 +63,14 @@ customHeaders:
         value: "*"
       - key: "X-Content-Type-Options"
         value: "nosniff"
+
+  # Admin pages — no caching (auth-gated content)
+  - pattern: "admin/**/*.html"
+    headers:
+      - key: "Cache-Control"
+        value: "no-store"
+      - key: "X-Robots-Tag"
+        value: "noindex, nofollow"
 
   # HTML files — security + caching headers
   - pattern: "**/*.html"
@@ -86,7 +94,7 @@ customHeaders:
       - key: "Cross-Origin-Resource-Policy"
         value: "same-origin"
       - key: "Content-Security-Policy"
-        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com https://analytics.ahrefs.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https: wss:; frame-src https://www.google.com https://calendly.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'"
+        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com https://analytics.ahrefs.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https: wss:; frame-src https://www.google.com https://cal.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests"
 
   # JSON and manifest files
   - pattern: "**/*.{json,webmanifest}"
