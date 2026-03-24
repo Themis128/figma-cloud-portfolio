@@ -27,6 +27,10 @@ const CONTENT_GROUP_MAP: Record<string, string> = {
   "/projects": "Projects",
   "/performance": "Performance",
   "/agents": "Agents",
+  "/blog": "Blog",
+  "/builder": "Builder",
+  "/product": "Product",
+  "/settings": "Settings",
   "/privacy": "Legal",
   "/terms": "Legal",
   "/cookies": "Legal",
@@ -99,36 +103,52 @@ function setUserProperties(): void {
   const isReturning = localStorage.getItem("ga_visited") === "true";
   localStorage.setItem("ga_visited", "true");
 
+  const isPWA = window.matchMedia("(display-mode: standalone)").matches;
+
   window.gtag?.("set", "user_properties", {
     visitor_type: isReturning ? "returning" : "new",
-    platform_type: "web",
+    platform_type: isPWA ? "pwa" : "web",
     viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+    screen_resolution: `${window.screen.width}x${window.screen.height}`,
+    color_scheme: document.documentElement.classList.contains("dark") ? "dark" : "light",
   });
 }
 
-/** Track SPA page view with content_group and page_title for GA4 mobile app */
+/** Track SPA page view with content_group and page_title for GA4 mobile app.
+ *  Defers firing until document.title is stable to avoid "(not set)" in reports. */
 function GoogleAnalyticsInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     if (!GA_TRACKING_ID) return;
     if (!hasAnalyticsConsent()) return;
 
-    const url =
-      pathname +
-      (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+    // Skip first render — initial page_view is sent by handleScriptLoad
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
 
-    const contentGroup = getContentGroup(pathname);
-    const pageTitle = document.title || getPageTitle(pathname);
+    // Defer to allow Next.js to update document.title after navigation
+    const timeoutId = setTimeout(() => {
+      const url =
+        pathname +
+        (searchParams?.toString() ? `?${searchParams.toString()}` : "");
 
-    // Send page_view with content_group and page_title for GA4 mobile app
-    window.gtag?.("event", "page_view", {
-      page_path: url,
-      page_location: window.location.href,
-      page_title: pageTitle,
-      content_group: contentGroup,
-    });
+      const pageTitle = document.title || getPageTitle(pathname);
+      const contentGroup = getContentGroup(pathname);
+
+      window.gtag?.("event", "page_view", {
+        page_path: url,
+        page_location: window.location.href,
+        page_title: pageTitle,
+        content_group: contentGroup,
+      });
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [pathname, searchParams]);
 
   return null;
@@ -187,25 +207,30 @@ function ConsentAwareGA() {
     scriptLoadedRef.current = true;
     grantAnalyticsConsent();
 
-    // Configure with send_page_view: false to prevent duplicate page views
-    // (GoogleAnalyticsInner sends manual page_view events with content_group)
+    const currentPath = window.location.pathname;
+    const contentGroup = getContentGroup(currentPath);
+
+    // Configure with send_page_view: false — we send manual page_view events
+    // with content_group and page_title to avoid "(not set)" in GA4 reports
     window.gtag?.("config", GA_TRACKING_ID!, {
       send_page_view: false,
       anonymize_ip: true,
       cookie_flags: "SameSite=None;Secure",
-      content_group: getContentGroup(window.location.pathname),
+      content_group: contentGroup,
     });
 
     // Set user properties for audience segmentation in GA4 mobile app
     setUserProperties();
 
-    // Send initial page_view with full metadata
-    window.gtag?.("event", "page_view", {
-      page_path: window.location.pathname,
-      page_location: window.location.href,
-      page_title: document.title || getPageTitle(window.location.pathname),
-      content_group: getContentGroup(window.location.pathname),
-    });
+    // Defer initial page_view to ensure document.title is set by Next.js
+    setTimeout(() => {
+      window.gtag?.("event", "page_view", {
+        page_path: currentPath,
+        page_location: window.location.href,
+        page_title: document.title || getPageTitle(currentPath),
+        content_group: contentGroup,
+      });
+    }, 50);
   }, []);
 
   if (!consentGranted) {

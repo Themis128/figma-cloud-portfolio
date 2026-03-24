@@ -323,26 +323,32 @@ trackConversion("booking_completed", "cal_booking");`}
           Every page view sends a{" "}
           <code className="font-mono text-foreground/60">content_group</code>{" "}
           parameter (Home, About, Contact, Projects, Resume, Performance,
-          Legal, Admin). This populates the Content reports in the GA4
-          mobile app.
+          Blog, Agents, Legal, Admin). This populates the Content reports
+          in the GA4 mobile app.
         </ConfigItem>
 
         <div className="border-t border-border/10" />
 
         <ConfigItem title="page_title" value="auto-set">
-          Page titles are sent with every SPA navigation, ensuring the GA4
-          mobile app shows meaningful page names instead of &quot;not set&quot;.
+          Page titles are deferred (50-100ms) after navigation to ensure
+          Next.js has updated document.title, preventing &quot;not set&quot;
+          in reports. Initial page_view is deduplicated to avoid double
+          tracking.
         </ConfigItem>
 
         <div className="border-t border-border/10" />
 
-        <ConfigItem title="user_properties" value="3 properties">
+        <ConfigItem title="user_properties" value="5 properties">
           <code className="font-mono text-foreground/60">visitor_type</code>{" "}
           (new/returning),{" "}
           <code className="font-mono text-foreground/60">platform_type</code>{" "}
-          (web), and{" "}
-          <code className="font-mono text-foreground/60">viewport_size</code>{" "}
-          are set on load for audience segmentation in the mobile app.
+          (pwa/web),{" "}
+          <code className="font-mono text-foreground/60">viewport_size</code>,{" "}
+          <code className="font-mono text-foreground/60">screen_resolution</code>,
+          and{" "}
+          <code className="font-mono text-foreground/60">color_scheme</code>{" "}
+          (dark/light) are set on load for audience segmentation in the
+          mobile app.
         </ConfigItem>
 
         <div className="border-t border-border/10" />
