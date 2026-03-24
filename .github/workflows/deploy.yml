@@ -18,13 +18,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      - name: Enable corepack
-        run: corepack enable
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -57,17 +58,46 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
-      - name: Deploy to S3
-        run: aws s3 sync out/ s3://figma-portfolio-static --delete --region us-east-1
+      - name: Deploy to S3 and capture changed files
+        id: s3sync
+        run: |
+          # Sync and capture changed paths for targeted invalidation
+          CHANGED=$(aws s3 sync out/ s3://figma-portfolio-static --delete --region us-east-1 2>&1 | grep -oP '(?<=upload: out/).*|(?<=delete: s3://figma-portfolio-static/).*' | sed 's|^|/|' | head -50)
+          if [ -z "$CHANGED" ]; then
+            echo "paths=none" >> "$GITHUB_OUTPUT"
+          elif [ "$(echo "$CHANGED" | wc -l)" -gt 49 ]; then
+            echo "paths=/*" >> "$GITHUB_OUTPUT"
+          else
+            echo "paths<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$CHANGED" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Invalidate CloudFront
+        if: steps.s3sync.outputs.paths != 'none'
         run: |
+          if [ "${{ steps.s3sync.outputs.paths }}" = "/*" ]; then
+            PATHS="/*"
+          else
+            PATHS=$(echo "${{ steps.s3sync.outputs.paths }}" | tr '\n' ' ')
+          fi
           INVALIDATION_ID=$(aws cloudfront create-invalidation \
             --distribution-id E134SCTR0QGQKJ \
-            --paths "/*" \
+            --paths $PATHS \
             --query 'Invalidation.Id' --output text)
-          echo "CloudFront invalidation: ${INVALIDATION_ID}"
+          echo "CloudFront invalidation: ${INVALIDATION_ID} ($(echo $PATHS | wc -w) paths)"
           aws cloudfront wait invalidation-completed \
             --distribution-id E134SCTR0QGQKJ \
             --id "${INVALIDATION_ID}"
           echo "Invalidation completed"
+
+      - name: Lighthouse CI audit
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://www.baltzakisthemis.com/
+            https://www.baltzakisthemis.com/about/
+            https://www.baltzakisthemis.com/blog/
+          budgetPath: .github/lighthouse-budget.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true

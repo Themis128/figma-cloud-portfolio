@@ -1,6 +1,11 @@
 import { build } from "velite";
+import bundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 // Velite webpack plugin — triggers content build before Next.js compilation
 class VeliteWebpackPlugin {
@@ -225,7 +230,7 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-export default withSentryConfig(nextConfig, {
+export default withBundleAnalyzer(withSentryConfig(nextConfig, {
   // Suppress Sentry CLI source map upload warnings (no auth token in static export)
   silent: true,
 
@@ -240,4 +245,4 @@ export default withSentryConfig(nextConfig, {
     autoInstrumentMiddleware: false,
     autoInstrumentAppDirectory: false,
   },
-});
+}));
