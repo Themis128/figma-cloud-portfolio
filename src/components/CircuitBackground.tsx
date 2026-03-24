@@ -1,6 +1,10 @@
 export default function CircuitBackground() {
+  // Dark mode: bright cyan glow. Light mode: deeper teal for contrast on light bg.
+  const stroke = "currentColor";
+  const fill = "currentColor";
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none text-cyan-400 dark:text-[#00d4ff]">
       <svg
         className="absolute w-full h-full"
         viewBox="0 0 1000 700"
@@ -27,7 +31,7 @@ export default function CircuitBackground() {
             y1="-50"
             x2="600"
             y2="350"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
             filter="url(#circuitGlow)"
           />
@@ -36,7 +40,7 @@ export default function CircuitBackground() {
             y1="-50"
             x2="550"
             y2="350"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
             filter="url(#circuitGlow)"
           />
@@ -45,7 +49,7 @@ export default function CircuitBackground() {
             y1="50"
             x2="650"
             y2="450"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
             filter="url(#circuitGlow)"
           />
@@ -57,28 +61,28 @@ export default function CircuitBackground() {
             cx="750"
             cy="150"
             r="4"
-            fill="#00d4ff"
+            fill={fill}
             filter="url(#circuitGlow)"
           />
           <circle
             cx="800"
             cy="200"
             r="3"
-            fill="#00d4ff"
+            fill={fill}
             filter="url(#circuitGlow)"
           />
           <circle
             cx="850"
             cy="250"
             r="4"
-            fill="#00d4ff"
+            fill={fill}
             filter="url(#circuitGlow)"
           />
           <circle
             cx="780"
             cy="300"
             r="3"
-            fill="#00d4ff"
+            fill={fill}
             filter="url(#circuitGlow)"
           />
 
@@ -87,7 +91,7 @@ export default function CircuitBackground() {
             y1="150"
             x2="800"
             y2="200"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <line
@@ -95,7 +99,7 @@ export default function CircuitBackground() {
             y1="200"
             x2="850"
             y2="250"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <line
@@ -103,7 +107,7 @@ export default function CircuitBackground() {
             y1="250"
             x2="780"
             y2="300"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
         </g>
@@ -115,7 +119,7 @@ export default function CircuitBackground() {
             y1="700"
             x2="250"
             y2="450"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
             filter="url(#circuitGlow)"
           />
@@ -124,7 +128,7 @@ export default function CircuitBackground() {
             y1="750"
             x2="300"
             y2="450"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
             filter="url(#circuitGlow)"
           />
@@ -137,7 +141,7 @@ export default function CircuitBackground() {
             y1="100"
             x2="150"
             y2="50"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
             filter="url(#circuitGlow)"
           />
@@ -146,7 +150,7 @@ export default function CircuitBackground() {
             y1="50"
             x2="200"
             y2="30"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
             filter="url(#circuitGlow)"
           />
@@ -154,7 +158,7 @@ export default function CircuitBackground() {
             cx="150"
             cy="50"
             r="3"
-            fill="#00d4ff"
+            fill={fill}
             filter="url(#circuitGlow)"
           />
         </g>
@@ -168,7 +172,7 @@ export default function CircuitBackground() {
             width="30"
             height="30"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
           <rect
@@ -177,7 +181,7 @@ export default function CircuitBackground() {
             width="40"
             height="40"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
           <rect
@@ -186,7 +190,7 @@ export default function CircuitBackground() {
             width="25"
             height="25"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
           <rect
@@ -195,7 +199,7 @@ export default function CircuitBackground() {
             width="35"
             height="35"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
           <rect
@@ -204,7 +208,7 @@ export default function CircuitBackground() {
             width="30"
             height="30"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
         </g>
@@ -216,7 +220,7 @@ export default function CircuitBackground() {
             cy="180"
             r="6"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
             opacity="0.6"
             filter="url(#circuitGlow)"
@@ -228,7 +232,7 @@ export default function CircuitBackground() {
             cy="320"
             r="6"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
             opacity="0.6"
             filter="url(#circuitGlow)"
@@ -244,7 +248,7 @@ export default function CircuitBackground() {
             cy="200"
             r="15"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <circle
@@ -252,7 +256,7 @@ export default function CircuitBackground() {
             cy="200"
             r="10"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
           <line
@@ -260,7 +264,7 @@ export default function CircuitBackground() {
             y1="185"
             x2="350"
             y2="175"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
           />
           <line
@@ -268,7 +272,7 @@ export default function CircuitBackground() {
             y1="215"
             x2="350"
             y2="225"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
           />
           <line
@@ -276,7 +280,7 @@ export default function CircuitBackground() {
             y1="200"
             x2="375"
             y2="200"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
           />
           <line
@@ -284,7 +288,7 @@ export default function CircuitBackground() {
             y1="200"
             x2="325"
             y2="200"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="2"
           />
 
@@ -293,7 +297,7 @@ export default function CircuitBackground() {
             cy="450"
             r="12"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <circle
@@ -301,7 +305,7 @@ export default function CircuitBackground() {
             cy="450"
             r="8"
             fill="none"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1"
           />
           <line
@@ -309,7 +313,7 @@ export default function CircuitBackground() {
             y1="438"
             x2="850"
             y2="430"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <line
@@ -317,7 +321,7 @@ export default function CircuitBackground() {
             y1="462"
             x2="850"
             y2="470"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <line
@@ -325,7 +329,7 @@ export default function CircuitBackground() {
             y1="450"
             x2="870"
             y2="450"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
           <line
@@ -333,7 +337,7 @@ export default function CircuitBackground() {
             y1="450"
             x2="830"
             y2="450"
-            stroke="#00d4ff"
+            stroke={stroke}
             strokeWidth="1.5"
           />
         </g>
@@ -341,11 +345,11 @@ export default function CircuitBackground() {
 
       {/* Animated gradient overlays */}
       <div
-        className="absolute top-0 right-0 w-1/2 h-1/2 bg-linear-to-br from-cyan-500/10 to-transparent blur-3xl animate-pulse"
+        className="absolute top-0 right-0 w-1/2 h-1/2 bg-linear-to-br from-cyan-600/5 dark:from-cyan-500/10 to-transparent blur-3xl animate-pulse"
         style={{ animationDuration: "4s" }}
       />
       <div
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-linear-to-tr from-blue-500/10 to-transparent blur-3xl animate-pulse"
+        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-linear-to-tr from-blue-600/5 dark:from-blue-500/10 to-transparent blur-3xl animate-pulse"
         style={{ animationDuration: "5s", animationDelay: "1s" }}
       />
     </div>
