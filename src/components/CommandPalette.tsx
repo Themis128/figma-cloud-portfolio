@@ -310,7 +310,7 @@ export default function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh]"
+      className="fixed inset-0 z-100 flex items-start justify-center pt-[20vh]"
       onClick={close}
       onKeyDown={(e) => { if (e.key === "Escape") close(); }}
       role="presentation"
@@ -354,7 +354,7 @@ export default function CommandPalette() {
 
           {navItems.length > 0 && (
             <>
-              <p className="px-4 py-1.5 text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <p className="px-4 py-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-500">
                 Pages
               </p>
               {navItems.map((item) => {
@@ -390,7 +390,7 @@ export default function CommandPalette() {
 
           {searchItems.length > 0 && (
             <>
-              <p className="px-4 py-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-500/60 mt-1">
+              <p className="px-4 py-1.5 text-[11px] font-mono uppercase tracking-wider text-cyan-500/60 mt-1">
                 Search Results
               </p>
               {searchItems.map((item) => {
@@ -426,7 +426,7 @@ export default function CommandPalette() {
 
           {actionItems.length > 0 && (
             <>
-              <p className="px-4 py-1.5 text-[10px] font-mono uppercase tracking-wider text-slate-500 mt-1">
+              <p className="px-4 py-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-500 mt-1">
                 Actions
               </p>
               {actionItems.map((item) => {

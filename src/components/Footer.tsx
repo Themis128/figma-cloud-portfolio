@@ -70,7 +70,7 @@ export default function Footer() {
                   href={link.href}
                   target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                   rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/20 text-foreground/40 hover:text-cyan-400 hover:border-cyan-400/30 hover:bg-cyan-400/5 transition-all duration-200"
+                  className="flex h-11 w-11 items-center justify-center rounded-lg border border-border/20 text-foreground/40 hover:text-cyan-400 hover:border-cyan-400/30 hover:bg-cyan-400/5 transition-all duration-200"
                   aria-label={link.label}
                 >
                   <link.icon className="h-3.5 w-3.5" />

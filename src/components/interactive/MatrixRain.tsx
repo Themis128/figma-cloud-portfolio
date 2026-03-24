@@ -154,12 +154,12 @@ export default function MatrixRain() {
             setActive(true);
           }
         }}
-        className={`fixed z-30 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-sm border transition-all duration-300 ${
+        className={`fixed z-30 flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-sm border transition-all duration-300 ${
           active && !fadingOut
             ? 'bg-cyan-400/20 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.4)]'
             : 'bg-card/60 border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50'
         }`}
-        style={{ bottom: 'max(8rem, calc(4rem + var(--safe-area-bottom)))', right: 'max(1rem, var(--safe-area-right))' }}
+        style={{ bottom: 'max(9rem, calc(6.5rem + var(--safe-area-bottom)))', right: 'max(1.25rem, var(--safe-area-right))' }}
         aria-label={active ? 'Disable matrix rain effect' : 'Enable matrix rain effect'}
         title={active ? 'Disable matrix rain' : 'Enable matrix rain'}
       >
