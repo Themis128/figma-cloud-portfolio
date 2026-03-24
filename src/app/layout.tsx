@@ -4,14 +4,10 @@ import Script from "next/script";
 import "./globals.css";
 import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
 import AmplifyProvider from "@/components/AmplifyProvider";
-import ChatbotWidget from "@/components/ChatbotWidget";
-import CommandPalette from "@/components/CommandPalette";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-import CursorTrail from "@/components/interactive/CursorTrail";
-import CyberTerminal from "@/components/interactive/CyberTerminal";
-import MatrixRain from "@/components/interactive/MatrixRain";
+import { LazyInteractive } from "@/components/LazyInteractive";
 import ScrollProgress from "@/components/interactive/ScrollProgress";
 import { MotionProvider } from "@/components/MotionProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
@@ -172,11 +168,7 @@ export default function RootLayout({
               {children}
               <ScrollToTop />
               <Footer />
-              <ChatbotWidget />
-              <CyberTerminal />
-              <MatrixRain />
-              <CursorTrail />
-              <CommandPalette />
+              <LazyInteractive />
               <PushToast />
               <PWAInstallButton />
             </MotionProvider>

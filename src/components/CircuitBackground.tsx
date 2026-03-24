@@ -6,7 +6,7 @@ export default function CircuitBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none text-cyan-400 dark:text-[#00d4ff]">
       <svg
-        className="absolute w-full h-full"
+        className="absolute w-full h-full drop-shadow-[0_0_4px_currentColor]"
         viewBox="0 0 1000 700"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -14,15 +14,6 @@ export default function CircuitBackground() {
         role="img"
       >
         <title>Circuit board background pattern</title>
-        <defs>
-          <filter id="circuitGlow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
 
         {/* Diagonal circuit lines from top right */}
         <g opacity="0.4">
@@ -33,7 +24,6 @@ export default function CircuitBackground() {
             y2="350"
             stroke={stroke}
             strokeWidth="2"
-            filter="url(#circuitGlow)"
           />
           <line
             x1="950"
@@ -42,7 +32,6 @@ export default function CircuitBackground() {
             y2="350"
             stroke={stroke}
             strokeWidth="1.5"
-            filter="url(#circuitGlow)"
           />
           <line
             x1="1050"
@@ -51,40 +40,15 @@ export default function CircuitBackground() {
             y2="450"
             stroke={stroke}
             strokeWidth="1.5"
-            filter="url(#circuitGlow)"
           />
         </g>
 
         {/* Circuit nodes and connectors on the right */}
         <g opacity="0.5">
-          <circle
-            cx="750"
-            cy="150"
-            r="4"
-            fill={fill}
-            filter="url(#circuitGlow)"
-          />
-          <circle
-            cx="800"
-            cy="200"
-            r="3"
-            fill={fill}
-            filter="url(#circuitGlow)"
-          />
-          <circle
-            cx="850"
-            cy="250"
-            r="4"
-            fill={fill}
-            filter="url(#circuitGlow)"
-          />
-          <circle
-            cx="780"
-            cy="300"
-            r="3"
-            fill={fill}
-            filter="url(#circuitGlow)"
-          />
+          <circle cx="750" cy="150" r="4" fill={fill} />
+          <circle cx="800" cy="200" r="3" fill={fill} />
+          <circle cx="850" cy="250" r="4" fill={fill} />
+          <circle cx="780" cy="300" r="3" fill={fill} />
 
           <line
             x1="750"
@@ -121,7 +85,6 @@ export default function CircuitBackground() {
             y2="450"
             stroke={stroke}
             strokeWidth="2"
-            filter="url(#circuitGlow)"
           />
           <line
             x1="0"
@@ -130,7 +93,6 @@ export default function CircuitBackground() {
             y2="450"
             stroke={stroke}
             strokeWidth="1.5"
-            filter="url(#circuitGlow)"
           />
         </g>
 
@@ -143,7 +105,6 @@ export default function CircuitBackground() {
             y2="50"
             stroke={stroke}
             strokeWidth="2"
-            filter="url(#circuitGlow)"
           />
           <line
             x1="150"
@@ -152,20 +113,12 @@ export default function CircuitBackground() {
             y2="30"
             stroke={stroke}
             strokeWidth="2"
-            filter="url(#circuitGlow)"
           />
-          <circle
-            cx="150"
-            cy="50"
-            r="3"
-            fill={fill}
-            filter="url(#circuitGlow)"
-          />
+          <circle cx="150" cy="50" r="3" fill={fill} />
         </g>
 
         {/* Geometric accent shapes */}
         <g opacity="0.2">
-          {/* Small squares scattered */}
           <rect
             x="100"
             y="150"
@@ -204,7 +157,7 @@ export default function CircuitBackground() {
           />
           <rect
             x="900"
-            cy="400"
+            y="400"
             width="30"
             height="30"
             fill="none"
@@ -213,8 +166,8 @@ export default function CircuitBackground() {
           />
         </g>
 
-        {/* Animated pulse circles */}
-        <g>
+        {/* Pulse indicator circles (static — animation moved to CSS) */}
+        <g opacity="0.6">
           <circle
             cx="700"
             cy="180"
@@ -222,10 +175,6 @@ export default function CircuitBackground() {
             fill="none"
             stroke={stroke}
             strokeWidth="2"
-            opacity="0.6"
-            filter="url(#circuitGlow)"
-            className="animate-ping"
-            style={{ animationDuration: "3s" }}
           />
           <circle
             cx="850"
@@ -234,10 +183,6 @@ export default function CircuitBackground() {
             fill="none"
             stroke={stroke}
             strokeWidth="2"
-            opacity="0.6"
-            filter="url(#circuitGlow)"
-            className="animate-ping"
-            style={{ animationDuration: "4s", animationDelay: "1s" }}
           />
         </g>
 
@@ -259,38 +204,10 @@ export default function CircuitBackground() {
             stroke={stroke}
             strokeWidth="1"
           />
-          <line
-            x1="350"
-            y1="185"
-            x2="350"
-            y2="175"
-            stroke={stroke}
-            strokeWidth="2"
-          />
-          <line
-            x1="350"
-            y1="215"
-            x2="350"
-            y2="225"
-            stroke={stroke}
-            strokeWidth="2"
-          />
-          <line
-            x1="365"
-            y1="200"
-            x2="375"
-            y2="200"
-            stroke={stroke}
-            strokeWidth="2"
-          />
-          <line
-            x1="335"
-            y1="200"
-            x2="325"
-            y2="200"
-            stroke={stroke}
-            strokeWidth="2"
-          />
+          <line x1="350" y1="185" x2="350" y2="175" stroke={stroke} strokeWidth="2" />
+          <line x1="350" y1="215" x2="350" y2="225" stroke={stroke} strokeWidth="2" />
+          <line x1="365" y1="200" x2="375" y2="200" stroke={stroke} strokeWidth="2" />
+          <line x1="335" y1="200" x2="325" y2="200" stroke={stroke} strokeWidth="2" />
 
           <circle
             cx="850"
@@ -308,50 +225,16 @@ export default function CircuitBackground() {
             stroke={stroke}
             strokeWidth="1"
           />
-          <line
-            x1="850"
-            y1="438"
-            x2="850"
-            y2="430"
-            stroke={stroke}
-            strokeWidth="1.5"
-          />
-          <line
-            x1="850"
-            y1="462"
-            x2="850"
-            y2="470"
-            stroke={stroke}
-            strokeWidth="1.5"
-          />
-          <line
-            x1="862"
-            y1="450"
-            x2="870"
-            y2="450"
-            stroke={stroke}
-            strokeWidth="1.5"
-          />
-          <line
-            x1="838"
-            y1="450"
-            x2="830"
-            y2="450"
-            stroke={stroke}
-            strokeWidth="1.5"
-          />
+          <line x1="850" y1="438" x2="850" y2="430" stroke={stroke} strokeWidth="1.5" />
+          <line x1="850" y1="462" x2="850" y2="470" stroke={stroke} strokeWidth="1.5" />
+          <line x1="862" y1="450" x2="870" y2="450" stroke={stroke} strokeWidth="1.5" />
+          <line x1="838" y1="450" x2="830" y2="450" stroke={stroke} strokeWidth="1.5" />
         </g>
       </svg>
 
-      {/* Animated gradient overlays */}
-      <div
-        className="absolute top-0 right-0 w-1/2 h-1/2 bg-linear-to-br from-cyan-600/5 dark:from-cyan-500/10 to-transparent blur-3xl animate-pulse"
-        style={{ animationDuration: "4s" }}
-      />
-      <div
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-linear-to-tr from-blue-600/5 dark:from-blue-500/10 to-transparent blur-3xl animate-pulse"
-        style={{ animationDuration: "5s", animationDelay: "1s" }}
-      />
+      {/* Gradient overlays (static — no animate-pulse to reduce GPU load) */}
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-linear-to-br from-cyan-600/5 dark:from-cyan-500/10 to-transparent blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-linear-to-tr from-blue-600/5 dark:from-blue-500/10 to-transparent blur-3xl" />
     </div>
   );
 }
