@@ -42,7 +42,7 @@ The project uses [GitHub Agentic Workflows](https://github.github.com/gh-aw/) wi
 
 | Workflow | Trigger | Description |
 |---|---|---|
-| Deploy to Production | Push to `production` / manual | S3 sync + CloudFront invalidation (standard Actions) |
+| Deploy to Production | Push to `production` / manual | S3 sync + targeted CloudFront invalidation + Lighthouse CI audit (standard Actions) |
 | Production Deployment (Agentic) | Push to `production` / manual | S3 deploy + Playwright smoke tests (`production-smoke.spec.ts`) + deployment report (Copilot) |
 | Daily Repo Status | Scheduled / manual | Creates daily activity reports as GitHub issues |
 | CI Doctor | On monitored workflow failure | Analyzes CI failures, identifies root causes, suggests fixes |
@@ -71,9 +71,9 @@ gh aw health
 
 ### Deployment
 
-- **Frontend**: S3 sync + CloudFront invalidation (via GitHub Actions or `scripts/deploy.sh`)
-- **Amplify Gen 2 Backend**: Cognito + AppSync + DynamoDB (deployed via `ampx pipeline-deploy` in Amplify backend phase)
-- **Lambda Backend**: AWS Lambda `figma-portfolio-api` (manual deployment)
+- **Frontend**: S3 sync + targeted CloudFront invalidation + Lighthouse CI audit (via GitHub Actions or `scripts/deploy.sh`)
+- **Amplify Gen 2 Backend**: Cognito (TOTP MFA enabled) + AppSync + DynamoDB (deployed via `ampx pipeline-deploy` in Amplify backend phase)
+- **Lambda Backend**: AWS Lambda `figma-portfolio-api` (1024MB, 30s timeout, CloudWatch alarms for errors/throttles/duration)
 
 > **Note**: Amplify Hosting auto-build is bypassed for the frontend (Next.js 16 OOMs on the build instance). The deploy workflows sync directly to S3.
 

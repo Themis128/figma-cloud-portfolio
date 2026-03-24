@@ -44,12 +44,19 @@ Security and caching headers are configured in `amplify.yml` under `customHeader
 
 | Header | Purpose | Value |
 |--------|---------|-------|
+| **Strict-Transport-Security** | Enforces HTTPS for 1 year | `max-age=31536000; includeSubDomains; preload` |
+| **Permissions-Policy** | Restricts browser APIs | `camera=(), microphone=(), geolocation=(), interest-cohort=()` |
+| **Cross-Origin-Resource-Policy** | Restricts cross-origin resource access | `same-origin` |
 | **X-DNS-Prefetch-Control** | Controls DNS prefetching | `on` |
 | **X-Content-Type-Options** | Prevents MIME type sniffing | `nosniff` |
 | **Referrer-Policy** | Controls referrer information | `origin-when-cross-origin` |
-| **X-Frame-Options** | Prevents clickjacking | `SAMEORIGIN` |
+| **X-Frame-Options** | Prevents clickjacking | `SAMEORIGIN` (CloudFront) / `DENY` (Lambda) |
 | **X-XSS-Protection** | Enables XSS filtering | `1; mode=block` |
 | **Cache-Control** | Controls caching behavior | Varies by content type |
+
+### Cognito MFA
+
+TOTP-based MFA is enabled as **OPTIONAL** on the production Cognito user pool (`us-east-1_EM9ipdfSA`). Admin users can enroll via any authenticator app (Google Authenticator, Authy, etc.). MFA is not required for login but is recommended for admin accounts.
 
 ## Authentication
 

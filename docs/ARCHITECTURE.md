@@ -487,9 +487,10 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | ------------- | --------------------------------- |
 | Function name | `figma-portfolio-api`             |
 | Region        | `us-east-1`                       |
-| Memory        | 256 MB                            |
-| Timeout       | 15 seconds                        |
+| Memory        | 1024 MB                           |
+| Timeout       | 30 seconds                        |
 | Routing       | CloudFront `/api/*` → Lambda      |
+| Monitoring    | CloudWatch alarms (errors >5/5min, throttles >0, avg duration >10s) |
 
 ### Lambda Environment Variables (14)
 

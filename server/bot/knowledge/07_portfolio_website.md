@@ -32,10 +32,13 @@
 - Scroll-to-top button with safe-area support on all pages
 - 44px minimum touch targets on all interactive elements for mobile accessibility
 
-## Deployment
-- **Frontend**: S3 bucket + CloudFront CDN
-- **Backend**: AWS Amplify Gen 2 (Cognito auth + AppSync GraphQL + DynamoDB)
-- **CI/CD**: GitHub Actions + 11 GitHub Agentic Workflows (deploy, CI doctor, QA, accessibility review, maintenance, malicious code scan, link checker, performance monitor, backup, code review, test coverage)
+## Deployment & Infrastructure
+- **Frontend**: S3 bucket + CloudFront CDN with targeted invalidation (only changed files)
+- **Backend**: AWS Amplify Gen 2 (Cognito auth with TOTP MFA + AppSync GraphQL + DynamoDB)
+- **Lambda**: `figma-portfolio-api` — 1024MB memory, 30s timeout, CloudWatch alarms (errors, throttles, duration)
+- **CI/CD**: GitHub Actions (pnpm caching, Lighthouse CI post-deploy) + 11 GitHub Agentic Workflows
+- **Security headers**: HSTS (1 year + preload), Permissions-Policy, CORP, CSP, X-Frame-Options, X-Content-Type-Options
+- **Monitoring**: Sentry (error tracking + session replay), CloudWatch (Lambda alarms), Uptime Monitor (6-hourly)
 - **Region**: us-east-1
 
 ## Website Pages
