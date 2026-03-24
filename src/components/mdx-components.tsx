@@ -81,7 +81,7 @@ function MdxCode(props: ComponentPropsWithoutRef<"code">) {
 function MdxPre(props: ComponentPropsWithoutRef<"pre">) {
   return (
     <pre
-      className="mb-4 overflow-x-auto rounded-lg border border-border/30 bg-[#0d1117] p-4 font-mono text-sm [&>code]:bg-transparent [&>code]:p-0"
+      className="mb-4 overflow-x-auto rounded-lg border border-border/30 bg-slate-950 p-4 font-mono text-sm [&>code]:bg-transparent [&>code]:p-0"
       {...props}
     />
   );
@@ -128,7 +128,7 @@ function MdxImg({ alt, ...props }: ComponentPropsWithoutRef<"img">) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      alt={alt ?? ""}
+      alt={alt ?? "Blog content image"}
       className="mb-4 rounded-lg border border-border/20"
       loading="lazy"
       {...props}
