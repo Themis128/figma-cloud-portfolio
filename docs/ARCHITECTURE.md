@@ -109,14 +109,24 @@ The app uses the Next.js App Router Server/Client component model:
 | `/terms`       | `terms/page.tsx`       | Terms of service                                 |
 | `*`            | `not-found.tsx`        | 404 fallback with `noindex` metadata and semantic H1 |
 
-### SEO
+### SEO & AI Visibility
 
 All public pages include:
-- **OpenGraph tags**: `og:title`, `og:description`, `og:url` for social sharing
+- **OpenGraph tags**: `og:title`, `og:description`, `og:url`, `og:image` for social sharing (including legal pages)
 - **Canonical URLs**: `<link rel="canonical">` pointing to `https://www.baltzakisthemis.com/...`
-- **BreadcrumbList JSON-LD**: Structured data for search engine breadcrumb display (via `BreadcrumbSchema` component)
+- **Server-rendered JSON-LD**: Structured data output in static HTML at build time (not client-side injected) via `<script type="application/ld+json">`
+  - `WebSite` schema with `SearchAction` and `@id` entity linking
+  - `Person` schema with `knowsAbout`, `sameAs`, `worksFor`, `image`
+  - `ProfilePage` schema linking to Person via `mainEntity`
+  - `BreadcrumbList` on all pages (via `BreadcrumbSchema` component)
+  - `BlogPosting` on blog post pages with author, dates, keywords
 
-The sitemap (`public/sitemap.xml`) includes all public pages: `/`, `/about/`, `/contact/`, `/agents/`, `/projects/`, `/resume/`, `/performance/`, `/product/`, `/builder/`. The `/admin/` page is excluded and marked `noindex, nofollow`.
+**AI Agent Discovery**:
+- `/llms.txt` — Curated Markdown site map for AI agents (follows llmstxt.org spec)
+- `/llms-full.txt` — Extended context with professional summary, services, and technical details
+- `robots.txt` explicitly allows AI search bots (GPTBot, ClaudeBot, PerplexityBot, etc.) while blocking training-only scrapers (CCBot, Bytespider)
+
+The sitemap (`public/sitemap.xml`) includes all public pages and blog posts. The `/admin/` page is excluded and marked `noindex, nofollow`.
 
 #### Extracted Client Components
 
