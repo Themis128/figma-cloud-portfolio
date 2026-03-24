@@ -33,42 +33,49 @@ export function AnimatedSection({
 
   const finalDuration = duration ?? optimizedDuration;
 
-  const getInitialPosition = () => {
-    switch (direction) {
-      case "up":
-        return { y: 40, opacity: 0 };
-      case "down":
-        return { y: -40, opacity: 0 };
-      case "left":
-        return { x: 40, opacity: 0 };
-      case "right":
-        return { x: -40, opacity: 0 };
-      default:
-        return { y: 40, opacity: 0 };
-    }
-  };
+  // Skip Framer Motion entirely when animations are disabled (low-end devices,
+  // reduced-motion preference). Removes IntersectionObserver + spring overhead.
+  if (disabled) {
+    return <div className={className}>{children}</div>;
+  }
 
-  const getAnimatePosition = () => {
+  const offset = 20; // px — smaller offset for faster visual reveal
+
+  const initial = (() => {
+    switch (direction) {
+      case "up":
+        return { y: offset, opacity: 0 };
+      case "down":
+        return { y: -offset, opacity: 0 };
+      case "left":
+        return { x: offset, opacity: 0 };
+      case "right":
+        return { x: -offset, opacity: 0 };
+      default:
+        return { y: offset, opacity: 0 };
+    }
+  })();
+
+  const animate = (() => {
+    const visible = { opacity: 1 };
     switch (direction) {
       case "up":
       case "down":
-        return { y: 0, opacity: 1 };
+        return isVisible ? { y: 0, ...visible } : initial;
       case "left":
       case "right":
-        return { x: 0, opacity: 1 };
+        return isVisible ? { x: 0, ...visible } : initial;
       default:
-        return { y: 0, opacity: 1 };
+        return isVisible ? { y: 0, ...visible } : initial;
     }
-  };
+  })();
 
   return (
     <m.div
       ref={ref}
       className={className}
-      initial={getInitialPosition()}
-      animate={
-        isVisible && !disabled ? getAnimatePosition() : getInitialPosition()
-      }
+      initial={initial}
+      animate={animate}
       transition={{
         duration: finalDuration,
         delay,
