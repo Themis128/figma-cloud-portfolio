@@ -17,6 +17,7 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { Providers } from "@/components/providers";
 import PushToast from "@/components/PushToast";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
 import SentryInit from "@/components/SentryInit";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
@@ -164,6 +165,7 @@ export default function RootLayout({
               <AccessibilityEnhancer />
               <ScrollProgress />
               {children}
+              <ScrollToTop />
               <Footer />
               <ChatbotWidget />
               <CyberTerminal />
