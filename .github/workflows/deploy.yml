@@ -89,3 +89,16 @@ jobs:
             --distribution-id E134SCTR0QGQKJ \
             --id "${INVALIDATION_ID}"
           echo "Invalidation completed"
+
+      - name: Lighthouse CI smoke test
+        run: |
+          npx -y @lhci/cli@0.14.x autorun \
+            --collect.url=https://www.baltzakisthemis.com/ \
+            --collect.url=https://www.baltzakisthemis.com/about/ \
+            --collect.url=https://www.baltzakisthemis.com/blog/ \
+            --collect.numberOfRuns=1 \
+            --assert.assertions.categories:performance=warn \
+            --assert.assertions.categories:accessibility=warn \
+            --assert.assertions.categories:best-practices=warn \
+            --assert.assertions.categories:seo=warn \
+            || echo "Lighthouse completed with warnings (non-blocking)"
