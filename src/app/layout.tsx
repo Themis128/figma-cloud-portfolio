@@ -16,6 +16,7 @@ import ScrollProgress from "@/components/interactive/ScrollProgress";
 import { MotionProvider } from "@/components/MotionProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { Providers } from "@/components/providers";
+import { PWAInstallButton } from "@/components/PWAInstallButton";
 import PushToast from "@/components/PushToast";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
@@ -138,8 +139,12 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "T. Baltzakis",
   },
+  applicationName: "T. Baltzakis",
   other: {
     "mobile-web-app-capable": "yes",
+    "color-scheme": "light dark",
+    "msapplication-TileColor": "#0f172a",
+    "msapplication-TileImage": "/logo-192.png",
   },
 };
 
@@ -173,6 +178,7 @@ export default function RootLayout({
               <CursorTrail />
               <CommandPalette />
               <PushToast />
+              <PWAInstallButton />
             </MotionProvider>
           </AuthProvider>
           </AmplifyProvider>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Download, Smartphone, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";

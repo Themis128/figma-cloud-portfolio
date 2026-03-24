@@ -10,12 +10,17 @@ export function ServiceWorkerRegistration() {
           .register("/sw.js")
           .then((registration) => {
             // Check for updates every 60 minutes
-            setInterval(
-              () => {
+            const HOUR = 60 * 60 * 1000;
+            setInterval(() => {
+              registration.update();
+            }, HOUR);
+
+            // Also check for updates when user returns to the tab
+            document.addEventListener("visibilitychange", () => {
+              if (document.visibilityState === "visible") {
                 registration.update();
-              },
-              60 * 60 * 1000,
-            );
+              }
+            });
           })
           .catch((error) => {
             console.error("SW registration failed:", error); // eslint-disable-line no-console
