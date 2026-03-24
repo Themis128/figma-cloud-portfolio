@@ -206,6 +206,18 @@ export default function CookiePolicyPage() {
                 description="Enhance your experience by remembering your preferences. Stored locally on your device."
                 cookies={[
                   {
+                    name: "cookie-consent",
+                    purpose: "Stores your cookie consent preferences and timestamp",
+                    duration: "Persistent",
+                    type: "localStorage",
+                  },
+                  {
+                    name: "theme",
+                    purpose: "Stores your preferred colour theme",
+                    duration: "Persistent",
+                    type: "localStorage",
+                  },
+                  {
                     name: "notification-prompt-dismissed",
                     purpose: "Remembers if you dismissed the notification prompt",
                     duration: "7 days",
@@ -218,10 +230,28 @@ export default function CookiePolicyPage() {
                     type: "localStorage",
                   },
                   {
-                    name: "theme",
-                    purpose: "Stores your preferred colour theme",
+                    name: "site-announcements-read",
+                    purpose: "Tracks which announcements you have seen",
                     duration: "Persistent",
                     type: "localStorage",
+                  },
+                  {
+                    name: "site-announcements-dismissed",
+                    purpose: "Stores IDs of announcements you have dismissed",
+                    duration: "Persistent",
+                    type: "localStorage",
+                  },
+                  {
+                    name: "site-announcements-last-seen",
+                    purpose: "Timestamp of last announcement check",
+                    duration: "Persistent",
+                    type: "localStorage",
+                  },
+                  {
+                    name: "pwa-update-dismissed",
+                    purpose: "Remembers if you dismissed a PWA update prompt",
+                    duration: "Session",
+                    type: "sessionStorage",
                   },
                 ]}
               />

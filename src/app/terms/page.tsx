@@ -125,8 +125,18 @@ export default function TermsOfServicePage() {
                 </li>
                 <li>
                   <span className="text-foreground">AI Chat</span> &mdash; an
-                  experimental conversational assistant powered by HuggingFace
-                  AI models.
+                  experimental conversational assistant powered by AWS Bedrock
+                  (Anthropic Claude).
+                </li>
+                <li>
+                  <span className="text-foreground">Blog</span> &mdash;
+                  articles on cloud architecture, cybersecurity, and web
+                  development.
+                </li>
+                <li>
+                  <span className="text-foreground">Progressive Web App</span>{" "}
+                  &mdash; installable app with offline support and push
+                  notifications.
                 </li>
               </ul>
             </SectionCard>
@@ -239,8 +249,8 @@ export default function TermsOfServicePage() {
                   verify information independently.
                 </li>
                 <li>
-                  Messages are sent to the HuggingFace API for processing and
-                  are not permanently stored on our servers.
+                  Messages are sent to AWS Bedrock (Anthropic Claude) for
+                  processing and are not permanently stored on our servers.
                 </li>
                 <li>
                   Do not share sensitive personal information, passwords, or
@@ -351,7 +361,7 @@ export default function TermsOfServicePage() {
               </p>
               <div className="bg-background/50 rounded-lg p-4 border border-border/10 font-mono text-sm mt-2">
                 <p className="text-foreground">Themistoklis Baltzakis</p>
-                <p>IT Network Engineer</p>
+                <p>Cloud Architect &amp; Cybersecurity Specialist</p>
                 <p>Athens, Greece</p>
                 <p className="mt-2">
                   <Mail className="w-4 h-4 inline-block mr-2 text-cyan-400" />

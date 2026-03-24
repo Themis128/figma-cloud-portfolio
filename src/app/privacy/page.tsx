@@ -80,7 +80,8 @@ export default function PrivacyPolicyPage() {
                 .
               </p>
               <p className="text-sm text-muted-foreground/70 font-mono mt-2">
-                Effective date: March 2026 &middot; Last updated: March 2026
+                Effective date: March 2026 &middot; Last updated: March
+                2026
               </p>
             </AnimatedSection>
           </AnimatedSection>
@@ -92,7 +93,7 @@ export default function PrivacyPolicyPage() {
               <p>The data controller for this website is:</p>
               <div className="bg-background/50 rounded-lg p-4 border border-border/10 font-mono text-sm">
                 <p className="text-foreground">Themistoklis Baltzakis</p>
-                <p>IT Network Engineer</p>
+                <p>Cloud Architect &amp; Cybersecurity Specialist</p>
                 <p>Athens, Greece</p>
                 <p className="mt-2">
                   <Mail className="w-4 h-4 inline-block mr-2 text-cyan-400" />
@@ -195,9 +196,11 @@ export default function PrivacyPolicyPage() {
                 3.6 AI Chat
               </h3>
               <p>
-                Messages you send in the AI chat are forwarded to the HuggingFace
-                API for processing. Messages are not permanently stored on our
-                servers and are cleared when the session ends.
+                Messages you send in the AI chat are forwarded to{" "}
+                <span className="text-foreground">AWS Bedrock</span> (Anthropic
+                Claude) for processing. Messages are rate-limited to 15 requests
+                per minute per IP address. Messages are not permanently stored on
+                our servers and are cleared when the session ends.
               </p>
 
               <h3 className="text-foreground font-semibold text-lg mt-4">
@@ -218,11 +221,36 @@ export default function PrivacyPolicyPage() {
               </p>
 
               <h3 className="text-foreground font-semibold text-lg mt-4">
-                3.9 Functional Data
+                3.9 Blog
               </h3>
               <p>
-                We store a sidebar state cookie (7 days) and theme preferences
-                in localStorage for a better browsing experience. These are
+                We publish blog posts on cloud architecture, cybersecurity, and
+                web development. The blog does not collect any personal data
+                beyond standard analytics (if consented). Blog content is
+                statically generated at build time.
+              </p>
+
+              <h3 className="text-foreground font-semibold text-lg mt-4">
+                3.10 Progressive Web App (PWA)
+              </h3>
+              <p>
+                This website can be installed as a Progressive Web App. The
+                service worker caches static assets and pages for offline
+                access. An{" "}
+                <span className="text-foreground">IndexedDB</span> queue stores
+                analytics events and failed requests temporarily when you are
+                offline, sending them when connectivity is restored. PWA
+                install and update prompts store dismiss state in
+                localStorage/sessionStorage.
+              </p>
+
+              <h3 className="text-foreground font-semibold text-lg mt-4">
+                3.11 Functional Data
+              </h3>
+              <p>
+                We store a sidebar state cookie (7 days), theme preferences,
+                announcement read/dismiss state, and cookie consent choices in
+                localStorage for a better browsing experience. These are
                 strictly functional and do not track you.
               </p>
             </SectionCard>
@@ -306,16 +334,16 @@ export default function PrivacyPolicyPage() {
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-3 pr-4 text-foreground">HuggingFace</td>
-                      <td className="py-3 pr-4">AI chat processing</td>
+                      <td className="py-3 pr-4 text-foreground">Anthropic (via AWS Bedrock)</td>
+                      <td className="py-3 pr-4">AI chat processing (Claude model)</td>
                       <td className="py-3">
                         <a
-                          href="https://huggingface.co/privacy"
+                          href="https://www.anthropic.com/privacy"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-cyan-400 hover:underline"
                         >
-                          huggingface.co/privacy
+                          anthropic.com/privacy
                         </a>
                       </td>
                     </tr>
@@ -486,7 +514,7 @@ export default function PrivacyPolicyPage() {
               <p>
                 Some of our third-party service providers are based in the
                 United States, including Amazon Web Services, Google, Sentry, and
-                HuggingFace. When your data is transferred outside the EEA, we
+                Anthropic. When your data is transferred outside the EEA, we
                 rely on:
               </p>
               <ul className="list-disc list-inside space-y-2 pl-2 mt-2">
