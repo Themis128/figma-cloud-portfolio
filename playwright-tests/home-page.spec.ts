@@ -17,10 +17,10 @@ test.describe("Home Page — Hero Section", () => {
     await expect(page.getByText("Baltzakis", { exact: true })).toBeVisible();
   });
 
-  test("should display role title via TypeWriter", async ({ page }) => {
-    // TypeWriter cycles through roles — at least one should appear within timeout
+  test("should display role title in hero heading", async ({ page }) => {
+    // The h1 contains the static role title "IT Network Engineer & Cloud Architect"
     await expect(
-      page.getByText("IT Network Engineer", { exact: false }),
+      page.locator("h1").getByText("IT Network Engineer & Cloud Architect"),
     ).toBeVisible({ timeout: 10000 });
   });
 

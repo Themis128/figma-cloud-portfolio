@@ -325,12 +325,13 @@ Eight interactive components enhance user engagement across the site. Seven are 
 
 | Component                                 | Purpose                                                    |
 | ----------------------------------------- | ---------------------------------------------------------- |
-| `CircuitBackground`                       | Animated SVG circuit board background (used on most pages) |
-| `AnimatedSection`                         | Framer Motion scroll-triggered reveal wrapper              |
+| `CircuitBackground`                       | SVG circuit board background with CSS `drop-shadow` glow (used on most pages, no SVG filters) |
+| `AnimatedSection`                         | Framer Motion scroll-triggered reveal wrapper (20px offset, skips animation on low-end devices) |
 | `Navigation`                              | Top navbar with active link highlighting. Mobile: bell + theme toggle + hamburger in top bar; hamburger opens nav links + accessibility + CTA. Desktop: horizontal nav links + bell + theme + accessibility buttons |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded, `inert` when collapsed) |
+| `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded via `LazyInteractive`, `inert` when collapsed) |
+| `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette via `next/dynamic` (ssr: false) |
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
 | `NotificationButton`                      | Bell icon with dropdown announcement panel. Announcements auto-generated from git commits at build time (`scripts/generate-announcements.sh` → `public/announcements.json`). Per-item dismiss (persisted in localStorage), read/unread tracking, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |

@@ -61,15 +61,16 @@ import Image from 'next/image';
 ```
 
 **Optimization Features**:
-- Automatic WebP format serving
-- Lazy loading for non-critical images
+- `OptimizedImage` component with `<picture>` element (AVIF → WebP → original fallback)
+- Lazy loading via IntersectionObserver (`useLazyImage` hook)
 - Responsive image sizes
-- Built-in blur placeholders
+- `decoding="async"` for non-blocking image decode
 
 **Image Processing**:
-- Sharp.js for image optimization
-- Multiple format support (WebP, AVIF)
-- Automatic compression
+- Sharp.js for build-time image optimization (`scripts/optimize-images.mjs`)
+- Pre-compresses all PNG/JPG to WebP (quality 80) and AVIF (quality 65)
+- Run `node scripts/optimize-images.mjs` to generate optimized variants
+- Static export uses `unoptimized: true` — Next.js image optimization is disabled in production
 
 ### 3. Code Splitting
 
@@ -197,12 +198,24 @@ export default {
 
 **Lazy Loading**:
 ```tsx
-// Lazy load heavy components
-const Chart = dynamic(() => import('./Chart'), {
+// Heavy interactive components are lazy-loaded via LazyInteractive
+// (MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette)
+const MatrixRain = dynamic(() => import("@/components/interactive/MatrixRain"), {
   ssr: false,
-  loading: () => <div>Loading chart...</div>
 });
 ```
+
+**Third-Party Script Deferral**:
+- Ahrefs analytics: `strategy="lazyOnload"` (loads after page is fully idle)
+- reCAPTCHA v3: `strategy="lazyOnload"` (only needed when user interacts with contact form)
+- Google Analytics: `strategy="afterInteractive"` (consent-gated)
+
+**Animation Optimization**:
+- `AnimatedSection` skips Framer Motion entirely on low-end devices (renders plain `<div>`)
+- Animation offset reduced from 40px to 20px for faster visual reveal
+- Hero headings (Home, About, Blog) render without animation wrappers for instant LCP
+- `CircuitBackground` uses CSS `drop-shadow` instead of SVG `feGaussianBlur` filter
+- `AIBrain` SVG removed `feGaussianBlur` and `animate-pulse` — uses CSS `drop-shadow` instead
 
 **Event Delegation**:
 ```tsx

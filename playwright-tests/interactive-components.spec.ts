@@ -4,13 +4,18 @@ import { expect, test } from "@playwright/test";
  * Interactive Components Tests
  *
  * Tests the 7 interactive engagement components added to the portfolio:
- * - ScrollProgress (global, in layout)
- * - MatrixRain (global, in layout)
- * - CursorTrail (global, in layout — desktop only)
- * - CyberTerminal (global, in layout — backtick key)
+ * - ScrollProgress (global, in layout — direct import)
+ * - MatrixRain (global, lazy-loaded via LazyInteractive)
+ * - CursorTrail (global, lazy-loaded via LazyInteractive — desktop only)
+ * - CyberTerminal (global, lazy-loaded via LazyInteractive — backtick key)
  * - TypeWriter (home page hero)
  * - SkillsRadar (about page)
  * - InteractiveTimeline (product page)
+ *
+ * Note: MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, and
+ * CommandPalette are lazy-loaded with next/dynamic (ssr: false) for
+ * performance. Tests use waitForLoadState("domcontentloaded") which is
+ * sufficient since Playwright waits for assertions with auto-retry.
  */
 
 // ─── ScrollProgress ──────────────────────────────────────────────────────────
@@ -170,35 +175,46 @@ test.describe("MatrixRain — Toggle Button", () => {
 // ─── CyberTerminal ───────────────────────────────────────────────────────────
 
 test.describe("CyberTerminal — Terminal Easter Egg", () => {
+  // CyberTerminal is lazy-loaded via LazyInteractive (next/dynamic, ssr: false).
+  // The keydown listener only registers after the dynamic chunk loads and mounts.
+  // openTerminal() retries the backtick keypress until the terminal appears.
+  async function openTerminal(page: import("@playwright/test").Page) {
+    const terminal = page.locator('div[role="dialog"][aria-label="Cyber Terminal"]');
+    // Retry keypress — the lazy chunk may not have loaded yet
+    for (let i = 0; i < 10; i++) {
+      await page.keyboard.press("`");
+      try {
+        await expect(terminal).toBeVisible({ timeout: 2000 });
+        return terminal;
+      } catch {
+        // Component not yet hydrated — wait and retry
+      }
+    }
+    // Final attempt with full timeout
+    await page.keyboard.press("`");
+    await expect(terminal).toBeVisible({ timeout: 5000 });
+    return terminal;
+  }
+
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
   });
 
   test("opens with backtick key", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
-
-    const terminal = page.locator('div[role="dialog"][aria-label="Cyber Terminal"]');
+    const terminal = await openTerminal(page);
     await expect(terminal).toBeVisible();
   });
 
   test("displays CYBER_TERMINAL header", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(500);
-
-    const terminal = page.locator('div[role="dialog"][aria-label="Cyber Terminal"]');
-    await expect(terminal).toBeVisible();
-    // Header bar contains the title in a span — use exact match to avoid boot message
+    const terminal = await openTerminal(page);
     await expect(
       terminal.getByText("CYBER_TERMINAL v1.0", { exact: true }),
     ).toBeVisible();
   });
 
   test("shows boot messages", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
-
+    await openTerminal(page);
     await expect(
       page.getByText("Initializing CYBER_TERMINAL", { exact: false }),
     ).toBeVisible();
@@ -208,67 +224,51 @@ test.describe("CyberTerminal — Terminal Easter Egg", () => {
   });
 
   test("has input field with placeholder", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
-
+    await openTerminal(page);
     const input = page.locator('input[placeholder="Enter command..."]');
     await expect(input).toBeVisible();
   });
 
   test("has close button with aria-label", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
-
+    await openTerminal(page);
     const closeBtn = page.locator('button[aria-label="Close terminal"]');
     await expect(closeBtn).toBeVisible();
   });
 
   test("closes with Escape key", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
-
-    const terminal = page.locator('div[role="dialog"][aria-label="Cyber Terminal"]');
-    await expect(terminal).toBeVisible();
-
+    const terminal = await openTerminal(page);
     await page.keyboard.press("Escape");
     await page.waitForTimeout(300);
-
     await expect(terminal).not.toBeVisible();
   });
 
   test("closes with close button", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
-
+    await openTerminal(page);
     const closeBtn = page.locator('button[aria-label="Close terminal"]');
     await closeBtn.click();
     await page.waitForTimeout(300);
-
     const terminal = page.locator('div[role="dialog"][aria-label="Cyber Terminal"]');
     await expect(terminal).not.toBeVisible();
   });
 
   test("'help' command shows available commands", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
+    const terminal = await openTerminal(page);
 
-    const input = page.locator('input[placeholder="Enter command..."]');
+    const input = terminal.locator('input[placeholder="Enter command..."]');
     await input.fill("help");
     await page.keyboard.press("Enter");
     await page.waitForTimeout(500);
 
     await expect(
-      page.getByText("Available commands:", { exact: false }),
+      terminal.getByText("Available commands:", { exact: false }),
     ).toBeVisible();
-    await expect(page.getByText("whoami", { exact: false }).first()).toBeVisible();
-    await expect(page.getByText("skills", { exact: false }).first()).toBeVisible();
+    await expect(terminal.getByText("whoami", { exact: false }).first()).toBeVisible();
+    await expect(terminal.getByText("skills", { exact: false }).first()).toBeVisible();
   });
 
   test("'whoami' command shows identity", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(500);
+    const terminal = await openTerminal(page);
 
-    const terminal = page.locator('div[role="dialog"][aria-label="Cyber Terminal"]');
     const input = terminal.locator('input[placeholder="Enter command..."]');
     await input.fill("whoami");
     await page.keyboard.press("Enter");
@@ -280,24 +280,22 @@ test.describe("CyberTerminal — Terminal Easter Egg", () => {
   });
 
   test("unknown command shows error message", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
+    const terminal = await openTerminal(page);
 
-    const input = page.locator('input[placeholder="Enter command..."]');
+    const input = terminal.locator('input[placeholder="Enter command..."]');
     await input.fill("foobar");
     await page.keyboard.press("Enter");
     await page.waitForTimeout(500);
 
     await expect(
-      page.getByText('Command not found: "foobar"', { exact: false }),
+      terminal.getByText('Command not found: "foobar"', { exact: false }),
     ).toBeVisible();
   });
 
   test("input disabled during typing animation", async ({ page }) => {
-    await page.keyboard.press("`");
-    await page.waitForTimeout(300);
+    const terminal = await openTerminal(page);
 
-    const input = page.locator('input[placeholder="Enter command..."]');
+    const input = terminal.locator('input[placeholder="Enter command..."]');
     await input.fill("skills");
     await page.keyboard.press("Enter");
 
@@ -318,13 +316,13 @@ test.describe("TypeWriter — Home Page Hero", () => {
     await expect(cursor.first()).toBeAttached();
   });
 
-  test("types out first word within timeout", async ({ page }) => {
+  test("hero heading contains role title", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Should eventually display "IT Network Engineer"
+    // The h1 contains the static role title
     await expect(
-      page.getByText("IT Network Engineer", { exact: false }),
+      page.locator("h1").getByText("IT Network Engineer & Cloud Architect"),
     ).toBeVisible({ timeout: 10000 });
   });
 });
