@@ -13,6 +13,14 @@ export const metadata: Metadata = {
   description:
     "Privacy Policy for baltzakisthemis.com — how we collect, use, and protect your personal data under GDPR and CCPA.",
   alternates: { canonical: `${SITE_URL}/privacy/` },
+  openGraph: {
+    title: "Privacy Policy | Themistoklis Baltzakis",
+    description:
+      "Privacy Policy for baltzakisthemis.com — how we collect, use, and protect your personal data under GDPR and CCPA.",
+    url: `${SITE_URL}/privacy/`,
+    type: "website",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — Privacy Policy" }],
+  },
 };
 
 function SectionCard({

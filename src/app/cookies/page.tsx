@@ -14,6 +14,14 @@ export const metadata: Metadata = {
   description:
     "Cookie Policy for baltzakisthemis.com — what cookies we use, why, and how to manage your preferences.",
   alternates: { canonical: `${SITE_URL}/cookies/` },
+  openGraph: {
+    title: "Cookie Policy | Themistoklis Baltzakis",
+    description:
+      "Cookie Policy for baltzakisthemis.com — what cookies we use, why, and how to manage your preferences.",
+    url: `${SITE_URL}/cookies/`,
+    type: "website",
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — Cookie Policy" }],
+  },
 };
 
 function CookieTable({

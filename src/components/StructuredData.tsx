@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect, useMemo } from "react";
-
 interface StructuredDataProps {
   type:
     | "WebSite"
@@ -9,131 +5,134 @@ interface StructuredDataProps {
     | "Project"
     | "Article"
     | "WebPage"
-    | "Organization";
+    | "Organization"
+    | "ProfilePage";
   data: Record<string, unknown>;
 }
 
 /**
- * Component for adding Schema.org structured data to pages
- * Improves SEO by providing search engines with structured information
+ * Server-rendered JSON-LD structured data component.
+ * Outputs <script type="application/ld+json"> in the HTML at build time,
+ * ensuring crawlers and AI agents can read it without executing JavaScript.
  */
 export function StructuredData({ type, data }: StructuredDataProps) {
-  const structuredData = useMemo(
-    () => ({
-      "@context": "https://schema.org",
-      "@type": type,
-      ...data,
-    }),
-    [type, data],
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": type,
+    ...data,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
   );
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.type = "application/ld+json";
-    script.textContent = JSON.stringify(structuredData, null, 2);
-    document.head.appendChild(script);
-
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
-  }, [structuredData]);
-
-  return null;
 }
 
+const SITE_URL = "https://www.baltzakisthemis.com";
+
+const PERSON = {
+  "@type": "Person" as const,
+  "@id": `${SITE_URL}/#person`,
+  name: "Themistoklis Baltzakis",
+  alternateName: "Themis Baltzakis",
+  jobTitle: "IT Network Engineer & Cloud Architect",
+  description:
+    "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, Fortinet security, Azure AD, Microsoft 365, and AWS cloud environments.",
+  url: SITE_URL,
+  email: "baltzakis.themis@gmail.com",
+  image: `${SITE_URL}/og-image.jpg`,
+  sameAs: [
+    "https://github.com/Themis128",
+    "https://www.linkedin.com/in/baltzakis-themis",
+  ],
+  knowsAbout: [
+    "Cloud Architecture",
+    "Cisco Systems",
+    "Fortinet Security",
+    "Azure AD",
+    "Microsoft 365",
+    "AWS",
+    "Cybersecurity",
+    "Network Infrastructure",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Node.js",
+    "Python",
+    "DevOps",
+  ],
+  worksFor: {
+    "@type": "Organization" as const,
+    name: "Cloudless.gr",
+    url: "https://cloudless.gr",
+  },
+  address: {
+    "@type": "PostalAddress" as const,
+    addressLocality: "Athens",
+    addressCountry: "GR",
+  },
+};
+
 /**
- * Default structured data for the portfolio site
- * Used in root layout for consistent site-wide SEO
+ * Default structured data for the portfolio site.
+ * Server-rendered — included in static HTML at build time.
+ * Includes WebSite, Person, and ProfilePage schemas for maximum
+ * visibility in Google Search, AI Overviews, and generative engines.
  */
 export function DefaultStructuredData() {
-  useEffect(() => {
-    const websiteData = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: "Themistoklis Baltzakis - Portfolio",
-      description:
-        "Cloud Architect & Full-Stack Developer portfolio showcasing modern web applications, cloud solutions, and technical expertise",
-      url: "https://www.baltzakisthemis.com",
-      author: {
-        "@type": "Person",
-        name: "Themistoklis Baltzakis",
-        jobTitle: "Cloud Architect & Full-Stack Developer",
-        url: "https://www.baltzakisthemis.com",
-        sameAs: [
-          "https://github.com/Themis128",
-          "https://linkedin.com/in/baltzakis-themis",
-        ],
-      },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: "https://www.baltzakisthemis.com/projects?search={search_term_string}",
-        "query-input": "required name=search_term_string",
-      },
-    };
+  const websiteData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: "Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist",
+    description:
+      "Portfolio of IT Network Engineer & Cloud Architect with 15+ years of experience in Cisco, Fortinet, AWS, and enterprise security.",
+    url: SITE_URL,
+    inLanguage: "en-US",
+    author: { "@id": `${SITE_URL}/#person` },
+    publisher: { "@id": `${SITE_URL}/#person` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${SITE_URL}/projects/?search={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
 
-    const personData = {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: "Themistoklis Baltzakis",
-      alternateName: "Themis Baltzakis",
-      jobTitle: "Cloud Architect & Full-Stack Developer",
-      description:
-        "Technical Leadership and Cloud Innovation with 15+ years of IT expertise, specializing in Azure AD, Microsoft 365, and multi-cloud environments",
-      url: "https://www.baltzakisthemis.com",
-      email: "baltzakis.themis@gmail.com",
-      sameAs: [
-        "https://github.com/Themis128",
-        "https://linkedin.com/in/baltzakis-themis",
-      ],
-      knowsAbout: [
-        "Cloud Architecture",
-        "Azure AD",
-        "Microsoft 365",
-        "AWS",
-        "Cybersecurity",
-        "React",
-        "Next.js",
-        "TypeScript",
-        "Node.js",
-        "Python",
-      ],
-      worksFor: {
-        "@type": "Organization",
-        name: "Cloudless.gr",
-        url: "https://cloudless.gr",
-      },
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Athens",
-        addressCountry: "GR",
-      },
-    };
+  const personData = {
+    "@context": "https://schema.org",
+    ...PERSON,
+  };
 
-    // Website structured data
-    const websiteScript = document.createElement("script");
-    websiteScript.type = "application/ld+json";
-    websiteScript.textContent = JSON.stringify(websiteData);
-    document.head.appendChild(websiteScript);
+  const profilePageData = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": `${SITE_URL}/#profilepage`,
+    name: "Themistoklis Baltzakis — Portfolio",
+    url: SITE_URL,
+    mainEntity: { "@id": `${SITE_URL}/#person` },
+    dateCreated: "2024-01-01",
+    dateModified: "2026-03-24",
+    inLanguage: "en-US",
+  };
 
-    // Person structured data
-    const personScript = document.createElement("script");
-    personScript.type = "application/ld+json";
-    personScript.textContent = JSON.stringify(personData);
-    document.head.appendChild(personScript);
-
-    return () => {
-      if (document.head.contains(websiteScript)) {
-        document.head.removeChild(websiteScript);
-      }
-      if (document.head.contains(personScript)) {
-        document.head.removeChild(personScript);
-      }
-    };
-  }, []);
-
-  return null;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageData) }}
+      />
+    </>
+  );
 }
 
 export default StructuredData;
