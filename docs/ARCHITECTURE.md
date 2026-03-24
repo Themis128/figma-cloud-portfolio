@@ -410,9 +410,13 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 
 ## PWA
 
-- Service worker via **Workbox** (auto-generated during Next.js build)
-- Offline-first caching for static assets
-- App manifest for installability
+- Service worker via **Workbox v7** (CDN-loaded in `public/sw.js`)
+- Offline-first caching: CacheFirst for images (30d), StaleWhileRevalidate for static assets (7d), NetworkFirst for pages (7d) and API (5min)
+- App manifest with 192x192 + 512x512 icons, maskable icon, screenshots, 4 shortcuts (About, Projects, Blog, Contact)
+- PWA install button (`PWAInstallButton`) rendered in root layout with 30s delay prompt
+- SW update detection: 60-minute interval + visibilitychange (tab focus) check
+- Meta tags: `application-name`, `color-scheme`, `msapplication-TileColor`, `msapplication-TileImage`
+- IndexedDB-backed offline analytics queue and failed request retry
 - Background sync for contact form (when offline)
 - Push notification support via Web Push API (VAPID keys, S3-persisted subscriptions)
 - Subscribe/unsubscribe toggle in the Announcements bell dropdown (public site)

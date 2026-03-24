@@ -21,12 +21,16 @@
 - **Package Manager**: pnpm
 
 ## Design Language
-- Dark cyberpunk aesthetic with animated circuit board background
+- Dark cyberpunk aesthetic with animated circuit board background (theme-aware — adjusts for light mode)
+- Cyberpunk-light theme: cool slate background with cyan primary, muted glass effects
 - Primary accent color: Cyan
 - Glass morphism cards with backdrop blur
 - Uppercase tracking headings
 - Mono font (JetBrains Mono) for numbers and code labels
 - Framer Motion scroll-reveal animations
+- Redesigned 3-column footer with brand/navigation/legal sections and circuit-node divider
+- Scroll-to-top button with safe-area support on all pages
+- 44px minimum touch targets on all interactive elements for mobile accessibility
 
 ## Deployment
 - **Frontend**: S3 bucket + CloudFront CDN
@@ -55,7 +59,7 @@
 - MDX-powered blog with syntax-highlighted code blocks, tags, reading time, and SEO (BlogPosting structured data)
 - AI Chatbot assistant (this chatbot) powered by AWS Bedrock for answering visitor questions
 - Booking system for scheduling teleconference calls with Themis
-- Progressive Web App (PWA) with offline support, push notifications, and update prompts
+- Progressive Web App (PWA) with offline support, push notifications, install prompt, update detection on tab focus, proper maskable icons, screenshots in manifest, and Windows tile support
 - Interactive CV builder with 7 templates and client-side PDF generation
 - Command palette (Ctrl+K) for quick navigation across all pages
 - Automated announcement system — announcements auto-generated from git commits at build time, with per-item dismiss and push notification integration
@@ -67,7 +71,7 @@
 - Contact form with reCAPTCHA v3 spam protection (score threshold 0.7, action/hostname/challenge_ts validation)
 - Interactive 3D AI Brain visualization on homepage
 - Matrix Rain animation toggle with glow effects
-- Dark/Light theme toggle with system preference detection
+- Dark/Light theme toggle with system preference detection — cyberpunk-light theme with cool slate bg and cyan primary
 - Blockly visual agent builder for educational purposes
 - Cookie consent banner with granular category controls
 - Availability status badge on homepage
