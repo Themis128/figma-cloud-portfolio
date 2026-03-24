@@ -62,14 +62,12 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
           {/* Hero Section */}
           <div id="hero">
-          <AnimatedSection className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-20">
+          <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-20">
             <div className="space-y-3 md:space-y-4">
-              <AnimatedSection delay={0.1}>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground uppercase tracking-wider">
                   About Me
                 </h1>
                 <div className="w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
-              </AnimatedSection>
             </div>
             <AnimatedSection delay={0.2}>
               <p className="text-cyan-400 text-lg sm:text-xl md:text-2xl font-semibold tracking-wide">
@@ -81,7 +79,7 @@ export default function AboutPage() {
                 solutions.
               </p>
             </AnimatedSection>
-          </AnimatedSection>
+          </div>
           </div>
 
           {/* Count-Up Stats */}

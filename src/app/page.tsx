@@ -54,7 +54,6 @@ export default function HomePage() {
             >
               <div className="space-y-3 md:space-y-4">
                 <AvailabilityBadge delay={0.05} />
-                <AnimatedSection delay={0.1}>
                   <h1
                     id="hero-heading"
                     className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight"
@@ -69,7 +68,6 @@ export default function HomePage() {
                       IT Network Engineer &amp; Cloud Architect
                     </span>
                   </h1>
-                </AnimatedSection>
                 <AnimatedSection delay={0.2}>
                   <p className="text-cyan-400 text-base sm:text-lg md:text-xl font-semibold tracking-wide">
                     <TypeWriter

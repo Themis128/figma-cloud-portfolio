@@ -178,12 +178,12 @@ export default function RootLayout({
         <Script
           src="https://analytics.ahrefs.com/analytics.js"
           data-key="VJt2VZnhN2fh5o9Gcp2+Mw"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
           <Script
             src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-            strategy="afterInteractive"
+            strategy="lazyOnload"
           />
         )}
         <GoogleAnalytics />

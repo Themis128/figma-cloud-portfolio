@@ -87,9 +87,8 @@ export default function BlogPage() {
       <main id="main-content" className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
           {/* Hero Section */}
-          <AnimatedSection className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-20">
+          <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-20">
             <div className="space-y-3 md:space-y-4">
-              <AnimatedSection delay={0.1}>
                 <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/5 px-4 py-1.5 text-sm font-mono text-cyan-400 mb-4">
                   <Rss className="h-3.5 w-3.5" />
                   {publishedPosts.length} Articles Published
@@ -98,7 +97,6 @@ export default function BlogPage() {
                   Blog
                 </h1>
                 <div className="w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
-              </AnimatedSection>
             </div>
             <AnimatedSection delay={0.2}>
               <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
@@ -106,7 +104,7 @@ export default function BlogPage() {
                 development — from the trenches of enterprise infrastructure.
               </p>
             </AnimatedSection>
-          </AnimatedSection>
+          </div>
 
           <div className="max-w-6xl mx-auto space-y-16">
             {/* Featured / Latest Post */}
