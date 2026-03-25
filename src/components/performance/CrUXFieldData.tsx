@@ -23,7 +23,7 @@ interface CrUXData {
   message?: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const METRIC_CONFIG = [
   { key: "lcp", label: "LCP", fullName: "Largest Contentful Paint", unit: "ms", icon: LayoutDashboard, goodThreshold: 2500, poorThreshold: 4000, isDecimal: false },
@@ -47,7 +47,7 @@ export default function CrUXFieldData() {
   useEffect(() => {
     async function fetchCrUX() {
       try {
-        const res = await fetch(`${API_BASE}/api/crux`);
+        const res = await fetch(`${API_BASE}/crux`);
         if (res.ok) {
           setData(await res.json() as CrUXData);
         }
