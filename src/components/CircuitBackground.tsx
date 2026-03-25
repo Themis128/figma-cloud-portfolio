@@ -4,7 +4,7 @@ export default function CircuitBackground() {
   const fill = "currentColor";
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none text-cyan-400 dark:text-[#00d4ff]">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none text-cyan-400 dark:text-[#00d4ff]" style={{ contentVisibility: "auto" }}>
       <svg
         className="absolute w-full h-full drop-shadow-[0_0_4px_currentColor]"
         viewBox="0 0 1000 700"

@@ -72,7 +72,7 @@ export default function HomePage() {
                       IT Network Engineer &amp; Cloud Architect
                     </span>
                   </h1>
-                <AnimatedSection delay={0.2}>
+                <div>
                   <p className="text-cyan-400 text-base sm:text-lg md:text-xl font-semibold tracking-wide">
                     <TypeWriter
                       words={[
@@ -88,8 +88,8 @@ export default function HomePage() {
                   </p>
                   <div className="w-12 sm:w-16 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mb-3 md:mb-4" />
                   <TerminalHint />
-                </AnimatedSection>
-                <AnimatedSection delay={0.3}>
+                </div>
+                <div>
                   <p className="text-foreground/80 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl">
                     IT Network Engineer with over 15 years of extensive
                     experience in network infrastructure, Cisco systems, and
@@ -103,7 +103,7 @@ export default function HomePage() {
                     serverless architectures. I bridge the gap between
                     infrastructure engineering and full-stack development.
                   </p>
-                </AnimatedSection>
+                </div>
               </div>
 
               <AnimatedSection
@@ -178,10 +178,11 @@ export default function HomePage() {
               </AnimatedSection>
             </section>
 
-            {/* Right side - AI Brain visualization */}
+            {/* Right side - AI Brain visualization (deferred for LCP) */}
             <section
               className="relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0"
               aria-label="Interactive AI visualization"
+              style={{ contentVisibility: "auto", containIntrinsicSize: "0 500px" }}
             >
               <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
                 <AIBrain />
