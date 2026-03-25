@@ -340,7 +340,7 @@ Eight interactive components enhance user engagement across the site. Seven are 
 | `Navigation`                              | Top navbar with active link highlighting. Mobile: bell + theme toggle + hamburger in top bar; hamburger opens nav links + accessibility + CTA. Desktop: horizontal nav links + bell + theme + accessibility buttons |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock (lazy-loaded via `LazyInteractive`, `inert` when collapsed) |
+| `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock with tool use + blog RAG (lazy-loaded via `LazyInteractive`, `inert` when collapsed). Action tokens: `[BOOK_CALL]` (booking), `[CONTACT]` (contact form), `[GOTO:/path/]` (navigation links). Tools: search_portfolio, search_blog, get_github_stats, check_booking_availability |
 | `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette via `next/dynamic` (ssr: false) |
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
@@ -391,7 +391,7 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 | `/api/webhook`                            | POST         | Generic webhook receiver                              |
 | `/api/docs`                               | GET          | API endpoint documentation (JSON)                     |
 | `/api/contact`                            | POST         | Contact form — reCAPTCHA v3, SES email, Sentry        |
-| `/api/chat`                               | POST         | AI assistant — Claude 3.5 Haiku via Bedrock (SSE)     |
+| `/api/chat`                               | POST         | AI assistant — Claude 3.5 Haiku via Bedrock (SSE, tool use, blog RAG) |
 | `/api/booking/slots`                      | GET          | Available booking slots (Cal.com)                     |
 | `/api/booking/create`                     | POST         | Create booking with Google Meet link (Cal.com)        |
 | `/api/resume/download`                    | GET          | Resume PDF download (jsPDF-generated with full content) |
