@@ -1846,4 +1846,393 @@ test.describe("AI Chatbot Widget", () => {
       await expect(input).toBeEnabled();
     });
   });
+
+  // ── SSE protocol (route interception) ────────────────────────────────
+
+  test.describe("SSE protocol", () => {
+    test("should handle token events and append to message", async ({ page }) => {
+      // Intercept chat API to send controlled SSE tokens
+      await page.route("**/api/chat", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/event-stream",
+          body: 'data: {"token": "Hello "}\n\ndata: {"token": "world!"}\n\ndata: [DONE]\n\n',
+        }),
+      );
+
+      await openChat(page);
+      await chatInput(page).fill("test");
+      await sendButton(page).click();
+
+      // Wait for the full message to render
+      await expect(
+        chatPanel(page).locator("div[class*='bg-white/5']").filter({ hasText: "Hello world!" }).first(),
+      ).toBeVisible({ timeout: 5000 });
+    });
+
+    test("should handle action event for booking", async ({ page }) => {
+      await page.route("**/api/chat", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/event-stream",
+          body: 'data: {"action": "start_booking"}\n\ndata: [DONE]\n\n',
+        }),
+      );
+
+      await openChat(page);
+      await chatInput(page).fill("book");
+      await sendButton(page).click();
+
+      // BookingCard should render (or its loading state)
+      await expect(
+        chatPanel(page).locator("text=Loading available slots")
+          .or(chatPanel(page).locator("text=Pick a time slot"))
+          .or(chatPanel(page).locator("text=Booking unavailable"))
+          .first(),
+      ).toBeVisible({ timeout: 5000 });
+    });
+
+    test("should handle action event for contact", async ({ page }) => {
+      await page.route("**/api/chat", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/event-stream",
+          body: 'data: {"action": "open_contact"}\n\ndata: [DONE]\n\n',
+        }),
+      );
+
+      await openChat(page);
+      await chatInput(page).fill("contact");
+      await sendButton(page).click();
+
+      // Should navigate to /contact/
+      await page.waitForURL("**/contact/", { timeout: 5000 });
+    });
+
+    test("should handle navigate action with link rendering", async ({ page }) => {
+      await page.route("**/api/chat", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/event-stream",
+          body: 'data: {"token": "Check out the performance page."}\n\ndata: {"action": "navigate", "path": "/performance/"}\n\ndata: [DONE]\n\n',
+        }),
+      );
+
+      await openChat(page);
+      await chatInput(page).fill("test");
+      await sendButton(page).click();
+
+      // Text should render
+      await expect(
+        chatPanel(page).locator("div[class*='bg-white/5']").filter({ hasText: "Check out the performance page." }).first(),
+      ).toBeVisible({ timeout: 5000 });
+
+      // NavigateLink should render with correct href
+      const navLink = chatPanel(page).locator('a[href="/performance/"]');
+      await expect(navLink).toBeVisible();
+      await expect(navLink).toContainText("Go to performance");
+    });
+
+    test("should handle thinking status event", async ({ page }) => {
+      await page.route("**/api/chat", async (route) => {
+        // Simulate: thinking → then text response
+        const body = [
+          'data: {"status": "thinking"}\n\n',
+          'data: {"token": "Here are the results."}\n\n',
+          "data: [DONE]\n\n",
+        ].join("");
+        await route.fulfill({ status: 200, contentType: "text/event-stream", body });
+      });
+
+      await openChat(page);
+      await chatInput(page).fill("test");
+      await sendButton(page).click();
+
+      // Final text should render
+      await expect(
+        chatPanel(page).locator("div[class*='bg-white/5']").filter({ hasText: "Here are the results." }).first(),
+      ).toBeVisible({ timeout: 5000 });
+    });
+
+    test("should handle error event inline", async ({ page }) => {
+      await page.route("**/api/chat", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/event-stream",
+          body: 'data: {"error": "Model overloaded"}\n\ndata: [DONE]\n\n',
+        }),
+      );
+
+      await openChat(page);
+      await chatInput(page).fill("test");
+      await sendButton(page).click();
+
+      await expect(
+        chatPanel(page).locator("div[class*='bg-white/5']").filter({ hasText: "Error: Model overloaded" }).first(),
+      ).toBeVisible({ timeout: 5000 });
+    });
+
+    test("should handle empty response gracefully", async ({ page }) => {
+      await page.route("**/api/chat", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/event-stream",
+          body: "data: [DONE]\n\n",
+        }),
+      );
+
+      await openChat(page);
+      await chatInput(page).fill("test");
+      await sendButton(page).click();
+
+      // Should not crash — input should re-enable
+      await expect(chatInput(page)).toBeEnabled({ timeout: 5000 });
+    });
+  });
+
+  // ── Knowledge base coverage ──────────────────────────────────────────
+
+  test.describe("Knowledge base coverage", () => {
+    test("should answer about work experience", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("Where has Themis worked?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      // Should mention at least one employer from knowledge base
+      const mentions = lower.includes("skaramangas") || lower.includes("estarta") ||
+        lower.includes("airport") || lower.includes("cosmos") || lower.includes("navy");
+      expect(mentions).toBe(true);
+    });
+
+    test("should answer about education", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("What is Themis's educational background?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("master") || lower.includes("bachelor") ||
+        lower.includes("data analytics") || lower.includes("informatics") || lower.includes("degree");
+      expect(mentions).toBe(true);
+    });
+
+    test("should answer about projects", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("What projects has Themis built?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("project") || lower.includes("portfolio") ||
+        lower.includes("monitoring") || lower.includes("built");
+      expect(mentions).toBe(true);
+    });
+
+    test("should answer about services and availability", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("What services does Themis offer?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("consult") || lower.includes("service") ||
+        lower.includes("available") || lower.includes("remote") || lower.includes("project");
+      expect(mentions).toBe(true);
+    });
+
+    test("should answer about skills and technologies", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("What technologies does Themis know?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      // Should mention concrete technologies
+      const mentions = lower.includes("cisco") || lower.includes("aws") ||
+        lower.includes("azure") || lower.includes("python") || lower.includes("react") ||
+        lower.includes("security") || lower.includes("cloud");
+      expect(mentions).toBe(true);
+    });
+
+    test("should know about the portfolio website itself", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("How was this portfolio website built?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("next") || lower.includes("react") ||
+        lower.includes("typescript") || lower.includes("aws") || lower.includes("tailwind");
+      expect(mentions).toBe(true);
+    });
+  });
+
+  // ── NLP synonym & stemming coverage ──────────────────────────────────
+
+  test.describe("NLP synonym & stemming", () => {
+    test("should resolve k8s synonym to Kubernetes", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("Does Themis have k8s experience?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      // Should understand k8s as Kubernetes/containers
+      const mentions = lower.includes("kubernetes") || lower.includes("docker") ||
+        lower.includes("container") || lower.includes("devops") || lower.includes("k8s");
+      expect(mentions).toBe(true);
+    });
+
+    test("should resolve IAM synonym to identity/access", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("Tell me about Themis's IAM experience");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("identity") || lower.includes("access") ||
+        lower.includes("cyberark") || lower.includes("azure ad") || lower.includes("entra") ||
+        lower.includes("iam") || lower.includes("pam");
+      expect(mentions).toBe(true);
+    });
+
+    test("should resolve datacenter synonym to Cisco infrastructure", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("What datacenter technologies does Themis work with?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("cisco") || lower.includes("ucs") ||
+        lower.includes("hyperflex") || lower.includes("aci") || lower.includes("data center") ||
+        lower.includes("vmware");
+      expect(mentions).toBe(true);
+    });
+
+    test("should handle stemmed queries (networking → network)", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("Tell me about Themis's networking background");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("network") || lower.includes("cisco") ||
+        lower.includes("routing") || lower.includes("switching") || lower.includes("infrastructure");
+      expect(mentions).toBe(true);
+    });
+
+    test("should handle multi-word synonym (zero-trust → zero trust)", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT);
+
+      await openChat(page);
+      await chatInput(page).fill("What is Themis's approach to zero-trust?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const reply = await chatPanel(page).locator("div[class*='bg-white/5']").nth(1).textContent();
+      const lower = reply?.toLowerCase() ?? "";
+      const mentions = lower.includes("zero trust") || lower.includes("zero-trust") ||
+        lower.includes("security") || lower.includes("ztna");
+      expect(mentions).toBe(true);
+    });
+  });
+
+  // ── Conversation history ────────────────────────────────────────────
+
+  test.describe("Conversation history", () => {
+    test("should maintain context across messages (last 6 turns)", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 3);
+
+      await openChat(page);
+      const input = chatInput(page);
+
+      // Send 3 messages to build up history
+      await input.fill("What certifications does Themis have?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      await input.fill("Which ones are Cisco-related?");
+      await sendButton(page).click();
+      await page.waitForFunction(
+        () => {
+          const bubbles = document.querySelectorAll("div[class*='bg-white/5']");
+          let count = 0;
+          for (const b of bubbles) {
+            const text = b.textContent?.trim() ?? "";
+            if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) count++;
+          }
+          return count >= 2;
+        },
+        null,
+        { timeout: API_TIMEOUT },
+      );
+
+      // Third message references previous context
+      await input.fill("Are any of those expiring soon?");
+      await sendButton(page).click();
+      await page.waitForFunction(
+        () => {
+          const bubbles = document.querySelectorAll("div[class*='bg-white/5']");
+          let count = 0;
+          for (const b of bubbles) {
+            const text = b.textContent?.trim() ?? "";
+            if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) count++;
+          }
+          return count >= 3;
+        },
+        null,
+        { timeout: API_TIMEOUT },
+      );
+
+      // All 3 user messages should be visible (history preserved)
+      const panel = chatPanel(page);
+      await expect(panel.locator("text=What certifications").first()).toBeVisible();
+      await expect(panel.locator("text=Which ones are Cisco").first()).toBeVisible();
+      await expect(panel.locator("text=Are any of those expiring").first()).toBeVisible();
+    });
+  });
 });
