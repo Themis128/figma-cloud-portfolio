@@ -356,6 +356,31 @@ html.transitioning *::after {
   }
 }
 
+/* ─── Retro Terminal Easter Egg Theme ──────────────────────────────────────── */
+.retro-terminal {
+  --background: 0 0% 3%;
+  --foreground: 120 100% 65%;
+  --card: 0 0% 5%;
+  --border: 120 50% 20%;
+  filter: contrast(1.1);
+}
+.retro-terminal * {
+  font-family: "JetBrains Mono", "Courier New", monospace !important;
+  text-shadow: 0 0 4px hsl(120 100% 65% / 0.3);
+}
+.retro-terminal .text-cyan-400,
+.retro-terminal .text-cyan-300 {
+  color: hsl(120 100% 65%) !important;
+}
+.retro-terminal .border-cyan-500\/30,
+.retro-terminal .border-cyan-500\/60 {
+  border-color: hsl(120 50% 30%) !important;
+}
+.retro-terminal .bg-cyan-500\/20,
+.retro-terminal .bg-cyan-400 {
+  background-color: hsl(120 100% 25% / 0.3) !important;
+}
+
 /* ─── reCAPTCHA v3 badge ───────────────────────────────────────────────────── */
 /* Badge is visible on all pages (bottom-right, default position). */
 

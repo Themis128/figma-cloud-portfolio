@@ -6,7 +6,11 @@ import AvailabilityBadge from "@/components/AvailabilityBadge";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
+import CyberQuiz from "@/components/interactive/CyberQuiz";
+import GitHubHeatmap from "@/components/interactive/GitHubHeatmap";
+import SiteStats from "@/components/interactive/SiteStats";
 import TerminalHint from "@/components/interactive/TerminalHint";
+import Testimonials from "@/components/interactive/Testimonials";
 import TypeWriter from "@/components/interactive/TypeWriter";
 import Navigation from "@/components/Navigation";
 import QuickContactForm from "@/components/QuickContactForm";
@@ -217,6 +221,75 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Site stats */}
+      <section
+        className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
+        aria-label="Site statistics"
+      >
+        <div className="max-w-3xl mx-auto">
+          <AnimatedSection delay={0.6}>
+            <SiteStats />
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* GitHub activity */}
+      <section
+        className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
+        aria-label="GitHub activity"
+      >
+        <div className="max-w-3xl mx-auto">
+          <AnimatedSection delay={0.65} className="text-center mb-4">
+            <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
+              Open Source
+            </h2>
+            <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
+          </AnimatedSection>
+          <AnimatedSection delay={0.7}>
+            <GitHubHeatmap />
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section
+        className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
+        aria-label="Testimonials"
+      >
+        <div className="max-w-2xl mx-auto">
+          <AnimatedSection delay={0.7} className="text-center mb-4">
+            <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
+              What Colleagues Say
+            </h2>
+            <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
+          </AnimatedSection>
+          <AnimatedSection delay={0.75}>
+            <Testimonials />
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Challenge quiz */}
+      <section
+        className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
+        aria-label="Challenge quiz"
+      >
+        <div className="max-w-xl mx-auto">
+          <AnimatedSection delay={0.75} className="text-center mb-4">
+            <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
+              Test Your Knowledge
+            </h2>
+            <p className="text-foreground/50 text-sm">
+              A quick cybersecurity &amp; cloud quiz — how do you score?
+            </p>
+            <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto mt-2" />
+          </AnimatedSection>
+          <AnimatedSection delay={0.8}>
+            <CyberQuiz />
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* Quick contact section */}
       <section
         id="quick-contact"
@@ -224,7 +297,7 @@ export default function HomePage() {
         aria-label="Quick contact form"
       >
         <div className="max-w-lg mx-auto">
-          <AnimatedSection delay={0.6} className="text-center mb-6">
+          <AnimatedSection delay={0.85} className="text-center mb-6">
             <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
               Quick Contact
             </h2>

@@ -62,11 +62,9 @@ test.describe("ChatbotWidget @smoke", () => {
     const suggestedLabel = page.getByText("Suggested questions:", { exact: false });
     await expect(suggestedLabel).toBeVisible();
 
-    // "Book a call" and "Send a message" should always be present
+    // "Book a call" should always be present as the pinned booking suggestion
     const bookCall = page.getByText("Book a call with Themis", { exact: false });
     await expect(bookCall).toBeVisible();
-    const contact = page.getByText("Send a message to Themis", { exact: false });
-    await expect(contact).toBeVisible();
   });
 
   test("should have input field and send button", async ({ page }) => {

@@ -77,6 +77,8 @@ const QUESTION_POOL = [
   "Tell me about the cloud architecture blog post.",
   // GitHub
   "What's on Themis's GitHub?",
+  // Cover letter
+  "Write a cover letter for a Cloud Engineer role.",
 ];
 
 function pickRandomQuestions(pool: string[], count: number): string[] {

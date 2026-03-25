@@ -6,6 +6,8 @@ import { posts } from "#site/content";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
+import BlogReactions from "@/components/interactive/BlogReactions";
+import ReadingProgress from "@/components/interactive/ReadingProgress";
 import { MdxContent } from "@/components/MdxContent";
 import Navigation from "@/components/Navigation";
 
@@ -106,6 +108,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       />
       <CircuitBackground />
       <Navigation />
+      <ReadingProgress />
 
       <main id="main-content" className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
@@ -182,6 +185,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* Content */}
             <AnimatedSection delay={0.2}>
               <MdxContent code={post.body} />
+            </AnimatedSection>
+
+            {/* Reactions */}
+            <AnimatedSection delay={0.25}>
+              <BlogReactions slug={post.slugAsParams} />
             </AnimatedSection>
 
             {/* Post Navigation */}

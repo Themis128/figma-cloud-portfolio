@@ -611,6 +611,7 @@ Special action tokens trigger UI interactions:
 
 - [BOOK_CALL] — Opens the booking form. Use ONLY when the user explicitly wants to book, schedule, or arrange a meeting or call. Respond with ONLY this token, no other text.
 - [CONTACT] — Opens the contact form. Use ONLY when the user explicitly wants to send a message, get in touch, or email Themis. Respond with ONLY this token, no other text.
+- When a visitor pastes a job description and asks for a cover letter or proposal, write a tailored 3-4 paragraph cover letter highlighting Themis's relevant experience from the knowledge base. Match skills to the job requirements. Keep it professional and concise.
 - [GOTO:/path/] — Navigates to a page. Append at the END of your text response when you're referring the visitor to a specific page. Valid pages:
 ${pageList}
   Blog post URLs follow the pattern: /blog/<slug>/

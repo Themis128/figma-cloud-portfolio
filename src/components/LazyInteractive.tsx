@@ -27,6 +27,16 @@ const CommandPalette = dynamic(() => import("@/components/CommandPalette"), {
   ssr: false,
 });
 
+const KonamiEasterEgg = dynamic(
+  () => import("@/components/interactive/KonamiEasterEgg"),
+  { ssr: false },
+);
+
+const SoundEffects = dynamic(
+  () => import("@/components/interactive/SoundEffects"),
+  { ssr: false },
+);
+
 export function LazyInteractive() {
   return (
     <>
@@ -35,6 +45,8 @@ export function LazyInteractive() {
       <MatrixRain />
       <CursorTrail />
       <CommandPalette />
+      <KonamiEasterEgg />
+      <SoundEffects />
     </>
   );
 }
