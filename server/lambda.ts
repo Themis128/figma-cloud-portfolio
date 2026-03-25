@@ -17,6 +17,7 @@ import apiKeys from "./routes/apiKeys";
 import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
+import crux from "./routes/crux";
 import pushNotifications from "./routes/pushNotifications";
 import github from "./routes/github";
 import admin from "./routes/admin";
@@ -57,6 +58,7 @@ app.use("/api/booking", booking);
 app.use("/api/contact", contact);
 app.use("/api/push-notifications", pushNotifications);
 app.use("/api/github", github);
+app.use("/api/crux", crux);
 
 // Protected routes (require Cognito Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);

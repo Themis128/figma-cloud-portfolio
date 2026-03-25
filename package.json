@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:server": "tsx server/index.ts",
+    "mcp:start": "tsx server/mcp/index.ts",
     "dev:bot": "cd server/bot && ./venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8001",
     "predev": "pnpm amplify:outputs:sandbox >/dev/null 2>&1 || true",
     "predev:all": "pnpm amplify:outputs:sandbox >/dev/null 2>&1 || true && bash scripts/amplify-status.sh",
@@ -121,6 +122,7 @@
     "@aws-amplify/backend": "^1.21.1",
     "@aws-amplify/backend-cli": "^1.8.2",
     "@eslint/eslintrc": "^3.3.5",
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "@next/bundle-analyzer": "^16.2.1",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.2.1",

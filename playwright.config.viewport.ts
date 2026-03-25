@@ -195,7 +195,11 @@ export function createViewportConfig(
     ],
   };
 
-  return { ...viewportConfig, ...overrides };
+  // Deep-merge `use` to preserve trace/video/screenshot settings from base config
+  const mergedUse = overrides.use
+    ? { ...viewportConfig.use, ...overrides.use }
+    : viewportConfig.use;
+  return { ...viewportConfig, ...overrides, use: mergedUse };
 }
 
 // Convenience functions for common viewport configurations

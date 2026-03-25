@@ -345,8 +345,11 @@ export function createPlaywrightConfig(
     globalTeardown: join(__dirname, "playwright-tests/global-teardown.ts"),
   };
 
-  // Apply overrides
-  return { ...baseConfig, ...overrides };
+  // Apply overrides (deep-merge `use` to preserve trace/video/screenshot settings)
+  const mergedUse = overrides.use
+    ? { ...baseConfig.use, ...overrides.use }
+    : baseConfig.use;
+  return { ...baseConfig, ...overrides, use: mergedUse };
 }
 
 // Configuration validation

@@ -13,6 +13,7 @@ import contact from "./routes/contact";
 import github from "./routes/github";
 import general from "./routes/general";
 import admin from "./routes/admin";
+import crux from "./routes/crux";
 import pushNotifications from "./routes/pushNotifications";
 import { requireAuth } from "./middleware/requireAuth";
 
@@ -42,6 +43,7 @@ app.use("/api/booking", booking);
 app.use("/api/contact", contact);
 app.use("/api/push-notifications", pushNotifications);
 app.use("/api/github", github);
+app.use("/api/crux", crux);
 
 // Protected routes (require Cognito Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);

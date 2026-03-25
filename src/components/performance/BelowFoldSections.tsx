@@ -48,9 +48,15 @@ const LighthouseScore = dynamic(
   { ssr: false, loading: () => <SectionSkeleton rows={2} /> },
 );
 
+const CrUXFieldData = dynamic(
+  () => import("@/components/performance/CrUXFieldData"),
+  { ssr: false, loading: () => <SectionSkeleton rows={3} /> },
+);
+
 export {
   SpeedTestRunner,
   WebVitalsExplainer,
   IndustryComparison,
   LighthouseScore,
+  CrUXFieldData,
 };

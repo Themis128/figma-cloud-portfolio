@@ -5,6 +5,7 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import {
+  CrUXFieldData,
   IndustryComparison,
   LighthouseScore,
   SpeedTestRunner,
@@ -49,6 +50,7 @@ const SECTIONS = [
   { id: "hero", label: "Live Metrics" },
   { id: "speed-test", label: "Speed Test" },
   { id: "vitals", label: "Web Vitals" },
+  { id: "field-data", label: "Field Data" },
   { id: "lighthouse", label: "Lighthouse" },
   { id: "comparison", label: "Comparison" },
   { id: "methodology", label: "How It's Built" },
@@ -124,7 +126,32 @@ export default function PerformancePage() {
 
         <div className="border-t border-border/10" />
 
-        {/* ── SECTION 4: Lighthouse Audit ── */}
+        {/* ── SECTION 4: CrUX Field Data ── */}
+        <section
+          id="field-data"
+          aria-labelledby="field-data-heading"
+          className="container mx-auto px-4 sm:px-6 lg:px-8 py-20"
+        >
+          <AnimatedSection>
+            <h2
+              id="field-data-heading"
+              className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono text-center mb-2"
+            >
+              Real-User Field Data
+            </h2>
+            <p className="text-center text-foreground/40 text-sm mb-8 max-w-2xl mx-auto">
+              Chrome UX Report (CrUX) data from real visitors over the last 28 days — the ground truth for Core Web Vitals.
+            </p>
+            <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto mb-8" />
+          </AnimatedSection>
+          <Suspense>
+            <CrUXFieldData />
+          </Suspense>
+        </section>
+
+        <div className="border-t border-border/10" />
+
+        {/* ── SECTION 5: Lighthouse Audit ── */}
         <section
           id="lighthouse"
           aria-labelledby="lighthouse-heading"
