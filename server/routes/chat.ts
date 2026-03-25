@@ -91,6 +91,153 @@ function getKnowledgeBase(): string {
   return _knowledgeBase;
 }
 
+// ── NLP utilities ───────────────────────────────────────────────────────────
+
+// Stop words to filter from search queries
+const STOP_WORDS = new Set([
+  "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
+  "have", "has", "had", "do", "does", "did", "will", "would", "could",
+  "should", "may", "might", "shall", "can", "need", "dare", "ought",
+  "used", "to", "of", "in", "for", "on", "with", "at", "by", "from",
+  "as", "into", "through", "during", "before", "after", "above", "below",
+  "between", "out", "off", "over", "under", "again", "further", "then",
+  "once", "here", "there", "when", "where", "why", "how", "all", "each",
+  "every", "both", "few", "more", "most", "other", "some", "such", "no",
+  "nor", "not", "only", "own", "same", "so", "than", "too", "very",
+  "just", "because", "but", "and", "or", "if", "while", "about",
+  "what", "which", "who", "whom", "this", "that", "these", "those",
+  "i", "me", "my", "we", "our", "you", "your", "he", "him", "his",
+  "she", "her", "it", "its", "they", "them", "their", "tell", "know",
+  "think", "want", "like", "get", "make", "go", "see", "look",
+  "also", "back", "use", "much", "many", "up", "down",
+]);
+
+// Synonym map — expands user terms to match knowledge base vocabulary
+const SYNONYMS: Record<string, string[]> = {
+  // Cybersecurity
+  infosec: ["cybersecurity", "security"],
+  "cyber security": ["cybersecurity"],
+  hacking: ["cybersecurity", "penetration", "security"],
+  pentest: ["penetration", "security"],
+  soc: ["security", "sentinel", "monitoring"],
+  siem: ["sentinel", "security", "monitoring"],
+  iam: ["identity", "access", "management", "cyberark"],
+  pam: ["cyberark", "privileged", "access"],
+  "zero-trust": ["zero trust", "ztna"],
+  ztna: ["zero trust", "zero-trust"],
+  firewall: ["fortinet", "fortigate", "security"],
+  // Cloud
+  cloud: ["aws", "azure", "cloud architecture"],
+  serverless: ["lambda", "aws"],
+  containers: ["kubernetes", "docker", "k8s"],
+  k8s: ["kubernetes"],
+  devops: ["ci/cd", "pipeline", "infrastructure"],
+  iaas: ["cloud", "infrastructure"],
+  paas: ["cloud", "platform"],
+  // Networking
+  networking: ["cisco", "network", "infrastructure"],
+  switching: ["cisco", "network"],
+  routing: ["cisco", "network"],
+  datacenter: ["cisco", "ucs", "hyperflex", "aci"],
+  "data center": ["cisco", "ucs", "hyperflex", "aci"],
+  hyperconverged: ["hyperflex", "hci"],
+  hci: ["hyperflex", "hyperconverged"],
+  // Certifications
+  certs: ["certifications", "certified"],
+  cert: ["certification", "certified"],
+  ccna: ["cisco", "certification", "network"],
+  cissp: ["cybersecurity", "certification", "security"],
+  // General
+  resume: ["cv", "experience", "background"],
+  cv: ["resume", "experience", "background"],
+  portfolio: ["projects", "website", "work"],
+  skills: ["expertise", "technologies", "tech stack"],
+  experience: ["work", "career", "employment", "job"],
+  job: ["work", "career", "employment", "experience"],
+  education: ["degree", "university", "masters", "bachelor"],
+  degree: ["education", "university", "masters", "bachelor"],
+  hire: ["consulting", "available", "services"],
+  consult: ["consulting", "available", "services"],
+  blog: ["article", "post", "writing"],
+  article: ["blog", "post", "writing"],
+};
+
+/** Simple English stemmer — reduces words to approximate roots */
+function stem(word: string): string {
+  let w = word.toLowerCase();
+  // Common suffixes
+  if (w.endsWith("ation")) return w.slice(0, -5);
+  if (w.endsWith("ment")) return w.slice(0, -4);
+  if (w.endsWith("ness")) return w.slice(0, -4);
+  if (w.endsWith("ence")) return w.slice(0, -4);
+  if (w.endsWith("ance")) return w.slice(0, -4);
+  if (w.endsWith("ible")) return w.slice(0, -4);
+  if (w.endsWith("able")) return w.slice(0, -4);
+  if (w.endsWith("tion")) return w.slice(0, -4);
+  if (w.endsWith("sion")) return w.slice(0, -4);
+  if (w.endsWith("ment")) return w.slice(0, -4);
+  if (w.endsWith("ful")) return w.slice(0, -3);
+  if (w.endsWith("ous")) return w.slice(0, -3);
+  if (w.endsWith("ive")) return w.slice(0, -3);
+  if (w.endsWith("ing") && w.length > 5) return w.slice(0, -3);
+  if (w.endsWith("ied")) return w.slice(0, -3) + "y";
+  if (w.endsWith("ies")) return w.slice(0, -3) + "y";
+  if (w.endsWith("ed") && w.length > 4) return w.slice(0, -2);
+  if (w.endsWith("er") && w.length > 4) return w.slice(0, -2);
+  if (w.endsWith("ly") && w.length > 4) return w.slice(0, -2);
+  if (w.endsWith("s") && !w.endsWith("ss") && w.length > 3) return w.slice(0, -1);
+  return w;
+}
+
+/** Tokenize, filter stop words, expand synonyms, and stem */
+function normalizeQuery(query: string): string[] {
+  const raw = query.toLowerCase().replace(/[^\w\s-]/g, " ").split(/\s+/).filter(Boolean);
+  const expanded = new Set<string>();
+
+  for (const word of raw) {
+    if (STOP_WORDS.has(word)) continue;
+    expanded.add(word);
+    expanded.add(stem(word));
+
+    // Check synonym map (both exact and stemmed)
+    const syns = SYNONYMS[word] ?? SYNONYMS[stem(word)];
+    if (syns) {
+      for (const s of syns) expanded.add(s.toLowerCase());
+    }
+  }
+
+  return [...expanded];
+}
+
+/** Score how well a text matches a set of normalized terms (TF-IDF-lite) */
+function scoreMatch(text: string, terms: string[], boost: number = 1): number {
+  const lower = text.toLowerCase();
+  const words = lower.split(/\s+/);
+  const wordCount = words.length || 1;
+  let score = 0;
+
+  for (const term of terms) {
+    // Exact substring match
+    if (lower.includes(term)) {
+      // Count occurrences (term frequency)
+      const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+      const matches = lower.match(regex);
+      const tf = matches ? matches.length / wordCount : 0;
+      // Inverse document frequency approximation (shorter terms = more common = less weight)
+      const idf = Math.log(1 + 10 / (term.length || 1));
+      score += (tf * idf + 1) * boost;
+    }
+
+    // Stemmed match (slightly lower weight)
+    const stemmed = stem(term);
+    if (stemmed !== term && lower.includes(stemmed)) {
+      score += 0.5 * boost;
+    }
+  }
+
+  return score;
+}
+
 // ── Blog index for RAG (loaded once at startup) ────────────────────────────
 
 interface BlogPost {
@@ -107,7 +254,6 @@ let _blogIndex: BlogPost[] | null = null;
 function getBlogIndex(): BlogPost[] {
   if (_blogIndex !== null) return _blogIndex;
 
-  // Blog MDX files live at project root /content/blog/
   const blogDir = join(__dirname, "..", "..", "content", "blog");
   _blogIndex = [];
 
@@ -122,7 +268,6 @@ function getBlogIndex(): BlogPost[] {
     for (const file of files) {
       const raw = readFileSync(join(blogDir, file), "utf-8");
 
-      // Parse frontmatter
       const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
       if (!fmMatch) continue;
 
@@ -136,15 +281,14 @@ function getBlogIndex(): BlogPost[] {
         ? tagsMatch[1].split(",").map((t) => t.trim().replace(/"/g, ""))
         : [];
 
-      // Strip MDX/JSX to plain text for search
       const body = raw.slice(fmMatch[0].length);
       const plainText = body
-        .replace(/```[\s\S]*?```/g, "") // code blocks
-        .replace(/<[^>]+>/g, "") // JSX/HTML tags
-        .replace(/!\[.*?]\(.*?\)/g, "") // images
-        .replace(/\[(.+?)]\(.*?\)/g, "$1") // links → text
-        .replace(/#{1,6}\s+/g, "") // headings
-        .replace(/[*_~`]/g, "") // emphasis
+        .replace(/```[\s\S]*?```/g, "")
+        .replace(/<[^>]+>/g, "")
+        .replace(/!\[.*?]\(.*?\)/g, "")
+        .replace(/\[(.+?)]\(.*?\)/g, "$1")
+        .replace(/#{1,6}\s+/g, "")
+        .replace(/[*_~`]/g, "")
         .replace(/\n{2,}/g, "\n")
         .trim();
 
@@ -161,19 +305,15 @@ function getBlogIndex(): BlogPost[] {
 
 function searchBlog(query: string): Array<{ title: string; description: string; url: string; excerpt: string }> {
   const posts = getBlogIndex();
-  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const terms = normalizeQuery(query);
   if (terms.length === 0) return [];
 
   const scored = posts.map((post) => {
-    const haystack = `${post.title} ${post.description} ${post.tags.join(" ")} ${post.plainText}`.toLowerCase();
-    let score = 0;
-    for (const term of terms) {
-      if (post.title.toLowerCase().includes(term)) score += 10;
-      if (post.tags.some((t) => t.toLowerCase().includes(term))) score += 5;
-      if (post.description.toLowerCase().includes(term)) score += 3;
-      if (haystack.includes(term)) score += 1;
-    }
-    return { post, score };
+    const titleScore = scoreMatch(post.title, terms, 10);
+    const tagScore = scoreMatch(post.tags.join(" "), terms, 5);
+    const descScore = scoreMatch(post.description, terms, 3);
+    const bodyScore = scoreMatch(post.plainText, terms, 1);
+    return { post, score: titleScore + tagScore + descScore + bodyScore };
   });
 
   return scored
@@ -181,15 +321,28 @@ function searchBlog(query: string): Array<{ title: string; description: string; 
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
     .map(({ post }) => {
-      // Extract a relevant excerpt around the first matching term
+      // Extract best excerpt — find the densest passage with matching terms
       const lower = post.plainText.toLowerCase();
-      const firstTerm = terms.find((t) => lower.includes(t));
-      let excerpt = post.plainText.slice(0, 300);
-      if (firstTerm) {
-        const idx = lower.indexOf(firstTerm);
-        const start = Math.max(0, idx - 100);
-        excerpt = (start > 0 ? "…" : "") + post.plainText.slice(start, start + 300) + "…";
+      let bestStart = 0;
+      let bestDensity = 0;
+
+      // Slide a 300-char window across the text, score each window
+      for (let i = 0; i < lower.length - 100; i += 50) {
+        const window = lower.slice(i, i + 300);
+        let density = 0;
+        for (const term of terms) {
+          if (window.includes(term)) density++;
+        }
+        if (density > bestDensity) {
+          bestDensity = density;
+          bestStart = i;
+        }
       }
+
+      const excerpt = (bestStart > 0 ? "…" : "") +
+        post.plainText.slice(bestStart, bestStart + 300).trim() +
+        (bestStart + 300 < post.plainText.length ? "…" : "");
+
       return {
         title: post.title,
         description: post.description,
@@ -199,27 +352,78 @@ function searchBlog(query: string): Array<{ title: string; description: string; 
     });
 }
 
-// ── Portfolio search (mirrors server/routes/general.ts) ─────────────────────
+// ── Portfolio search (built from knowledge base sections) ───────────────────
 
-function searchPortfolio(query: string): Array<{ title: string; type: string; description: string }> {
-  const q = query.toLowerCase();
-  const content = [
-    { title: "Cloud Architecture", type: "skill", description: "AWS, Azure, multi-cloud environments and migration strategies" },
-    { title: "Cybersecurity", type: "skill", description: "Zero-trust security, CyberArk PAM, Microsoft Sentinel, CISSP" },
-    { title: "Full-Stack Development", type: "skill", description: "React, Next.js, TypeScript, Node.js, Python" },
-    { title: "DevOps & Infrastructure", type: "skill", description: "Cisco ACI/UCS, VMware vSphere, CI/CD pipelines" },
-    { title: "About Themistoklis", type: "page", description: "Cloud Architect & Cybersecurity Specialist with 15+ years IT expertise" },
-    { title: "Contact", type: "page", description: "Get in touch for consulting, collaboration, or career opportunities" },
-    { title: "Performance", type: "page", description: "Live web performance metrics and optimization showcase" },
-    { title: "AI Agents", type: "page", description: "AI agent templates and workflow builder" },
-    { title: "Estarta Solutions", type: "experience", description: "Systems and Network Engineer — Cisco UCS, HyperFlex, ACI" },
-    { title: "Cosmos Business Systems", type: "experience", description: "IT Support Engineer — Azure AD, Microsoft 365, Intune" },
+interface PortfolioEntry {
+  title: string;
+  type: string;
+  description: string;
+  keywords: string[];
+}
+
+let _portfolioIndex: PortfolioEntry[] | null = null;
+
+function getPortfolioIndex(): PortfolioEntry[] {
+  if (_portfolioIndex !== null) return _portfolioIndex;
+
+  _portfolioIndex = [
+    // Skills
+    { title: "Cloud Architecture", type: "skill", description: "AWS, Azure, multi-cloud environments, migration strategies, S3, CloudFront, Lambda, Route 53", keywords: ["cloud", "aws", "azure", "serverless", "lambda", "s3", "cloudfront", "multi-cloud"] },
+    { title: "Cybersecurity", type: "skill", description: "Zero-trust security, CyberArk PAM, Microsoft Sentinel, SIEM/SOC, penetration testing, CISSP", keywords: ["cybersecurity", "security", "zero trust", "cyberark", "pam", "sentinel", "siem", "soc", "cissp", "infosec"] },
+    { title: "Network Engineering", type: "skill", description: "Cisco ACI, UCS, HyperFlex, Nexus switching, Fortinet FortiGate, VPN, VLAN, BGP, OSPF", keywords: ["cisco", "networking", "aci", "ucs", "hyperflex", "fortinet", "fortigate", "switching", "routing", "firewall", "vpn"] },
+    { title: "Full-Stack Development", type: "skill", description: "React, Next.js, TypeScript, Node.js, Python, Three.js, Tailwind CSS, REST APIs", keywords: ["react", "nextjs", "typescript", "nodejs", "python", "fullstack", "frontend", "backend", "web development"] },
+    { title: "DevOps & Infrastructure", type: "skill", description: "Docker, Kubernetes, CI/CD pipelines, VMware vSphere, Ansible, Terraform, GitHub Actions", keywords: ["devops", "docker", "kubernetes", "k8s", "ci/cd", "vmware", "ansible", "terraform", "infrastructure"] },
+    { title: "Identity & Access Management", type: "skill", description: "Azure AD, Microsoft Entra, Intune MDM, Conditional Access, MFA, RBAC, SSO", keywords: ["iam", "azure ad", "entra", "intune", "mdm", "mfa", "rbac", "sso", "identity", "access"] },
+    // Experience
+    { title: "Hellenic Navy — Skaramangas Shipyards", type: "experience", description: "IT Network & Security Specialist — enterprise network management, cybersecurity operations, VMware virtualization", keywords: ["navy", "skaramangas", "military", "current", "network", "security"] },
+    { title: "Estarta Solutions", type: "experience", description: "Systems and Network Engineer — Cisco UCS, HyperFlex, ACI data center deployment", keywords: ["estarta", "cisco", "ucs", "hyperflex", "aci", "data center"] },
+    { title: "Athens International Airport", type: "experience", description: "Network Operations Center Engineer — NOC monitoring, incident response, network troubleshooting", keywords: ["airport", "athens", "noc", "monitoring", "operations"] },
+    { title: "Cosmos Business Systems", type: "experience", description: "IT Support Engineer — Azure AD, Microsoft 365, Intune MDM, endpoint management", keywords: ["cosmos", "microsoft", "365", "intune", "azure", "support"] },
+    { title: "COVID-19 Response", type: "experience", description: "Led rapid deployment of remote access infrastructure for hospital network continuity", keywords: ["covid", "pandemic", "remote", "hospital", "vpn"] },
+    // Pages
+    { title: "About Themistoklis", type: "page", description: "Cloud Architect & Cybersecurity Specialist — skills, certifications, background", keywords: ["about", "background", "bio", "profile"] },
+    { title: "Work Experience", type: "page", description: "Career timeline with 7 roles across 15+ years", keywords: ["experience", "career", "timeline", "jobs", "work history"] },
+    { title: "Projects Portfolio", type: "page", description: "12 personal and professional projects", keywords: ["projects", "portfolio", "work", "built"] },
+    { title: "Blog", type: "page", description: "Articles on cloud architecture, cybersecurity, and web development", keywords: ["blog", "articles", "writing", "posts"] },
+    { title: "Performance", type: "page", description: "Live web performance metrics and Core Web Vitals", keywords: ["performance", "speed", "metrics", "web vitals", "lighthouse"] },
+    { title: "AI Agents", type: "page", description: "AI agent templates, patterns, and Blockly workflow builder", keywords: ["agents", "ai", "automation", "blockly", "workflow"] },
+    { title: "Contact", type: "page", description: "Get in touch for consulting, collaboration, or career opportunities", keywords: ["contact", "email", "hire", "reach", "message"] },
+    { title: "Resume Builder", type: "page", description: "Interactive resume builder and PDF export", keywords: ["resume", "cv", "builder", "pdf"] },
+    // Certifications
+    { title: "Cisco DevNet Associate", type: "certification", description: "Cisco Certified DevNet Associate — network automation, APIs, Python for networking", keywords: ["devnet", "cisco", "automation", "api", "python"] },
+    { title: "Fortinet NSE", type: "certification", description: "Fortinet Network Security Expert certifications", keywords: ["fortinet", "nse", "firewall", "security"] },
+    { title: "CISSP (In Progress)", type: "certification", description: "Certified Information Systems Security Professional", keywords: ["cissp", "security", "certification"] },
+    // Education
+    { title: "M.Sc. Data Analytics", type: "education", description: "Master's degree in Data Analytics — machine learning, data science, statistical analysis", keywords: ["masters", "data analytics", "machine learning", "data science", "education", "degree"] },
+    { title: "B.Sc. Informatics", type: "education", description: "Bachelor's degree in Informatics and Telecommunications", keywords: ["bachelors", "informatics", "telecommunications", "education", "degree", "university"] },
   ];
-  return content.filter(
-    (item) =>
-      item.title.toLowerCase().includes(q) ||
-      item.description.toLowerCase().includes(q),
-  );
+
+  return _portfolioIndex;
+}
+
+function searchPortfolio(query: string): Array<{ title: string; type: string; description: string; relevance: number }> {
+  const terms = normalizeQuery(query);
+  if (terms.length === 0) return [];
+
+  const index = getPortfolioIndex();
+
+  const scored = index.map((entry) => {
+    const titleScore = scoreMatch(entry.title, terms, 10);
+    const descScore = scoreMatch(entry.description, terms, 3);
+    const keywordScore = scoreMatch(entry.keywords.join(" "), terms, 5);
+    return { entry, score: titleScore + descScore + keywordScore };
+  });
+
+  return scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ entry, score }) => ({
+      title: entry.title,
+      type: entry.type,
+      description: entry.description,
+      relevance: Math.round(score * 10) / 10,
+    }));
 }
 
 // ── Tool definitions for Bedrock ────────────────────────────────────────────
@@ -370,36 +574,61 @@ function buildSystemPrompt(): string {
   const pageList = VALID_PAGES.map((p) => `  ${p.path} — ${p.label}`).join("\n");
 
   return `You are an AI assistant on Themistoklis Baltzakis's portfolio website (baltzakisthemis.com).
-Your job is to answer visitor questions about Themis using the knowledge base and tools provided.
+Your job is to help visitors learn about Themis — his skills, experience, certifications, and services.
+Visitors are typically recruiters, potential clients, or fellow engineers.
 
 <knowledge_base>
 ${knowledge}${blogSummary}
 </knowledge_base>
 
 <tools_guidance>
-You have access to tools that let you search the portfolio, search blog articles, check GitHub stats, and check booking availability.
-Use tools when the visitor's question would benefit from live or detailed data. For basic questions already covered in the knowledge base, answer directly.
+You have access to tools for live data and deeper search. Use this decision framework:
+
+1. **Answer directly from the knowledge base** when the question is about:
+   - Themis's skills, certifications, education, or work history
+   - General "who is Themis" / "what does he do" questions
+   - Services, availability, or contact methods
+
+2. **Use search_portfolio** when:
+   - The visitor asks about a specific technology and you want to find related skills/experience
+   - You need to cross-reference which experience entries relate to a topic
+
+3. **Use search_blog** when:
+   - The visitor asks about articles, blog posts, or written content
+   - The visitor asks about a technical topic that might be covered in a blog post
+
+4. **Use get_github_stats** when:
+   - The visitor asks about open source work, GitHub activity, or repos
+
+5. **Use check_booking_availability** when:
+   - The visitor asks if Themis is free, what times are available, or how soon they can meet
+
+Do NOT use tools for questions you can answer directly from the knowledge base — it adds latency.
 </tools_guidance>
 
 <action_tokens>
-Special action tokens trigger UI interactions. Include them in your response when appropriate:
+Special action tokens trigger UI interactions:
 
-- [BOOK_CALL] — Opens the booking form. Use when the user wants to book, schedule, or arrange a meeting or call. Respond with ONLY this token, no other text.
-- [CONTACT] — Opens the contact form. Use when the user wants to send a message, get in touch, or contact Themis directly. Respond with ONLY this token, no other text.
-- [GOTO:/path/] — Navigates to a page. Include at the END of your text response (after your answer) when you're referencing a specific page. Valid pages:
+- [BOOK_CALL] — Opens the booking form. Use ONLY when the user explicitly wants to book, schedule, or arrange a meeting or call. Respond with ONLY this token, no other text.
+- [CONTACT] — Opens the contact form. Use ONLY when the user explicitly wants to send a message, get in touch, or email Themis. Respond with ONLY this token, no other text.
+- [GOTO:/path/] — Navigates to a page. Append at the END of your text response when you're referring the visitor to a specific page. Valid pages:
 ${pageList}
   Blog post URLs follow the pattern: /blog/<slug>/
-  Only include ONE [GOTO:] token per response. Only use it when navigation would genuinely help the visitor.
+  Only include ONE [GOTO:] token per response. Use it when the visitor would benefit from seeing the actual page.
 </action_tokens>
 
-<instructions>
-- Answer from the knowledge base and tool results. Never invent facts, certifications, job titles, dates, or skills.
+<response_guidelines>
+- Answer from the knowledge base and tool results. Never invent facts, certifications, job titles, dates, or skills not in the knowledge base.
 - If you don't have enough information, say: "I don't have that information, but you can ask Themis directly through the contact form."
 - Keep answers concise: 2-4 sentences for simple questions, up to a short paragraph for detailed ones.
-- Use a professional, friendly tone. Refer to him as "Themis".
+- Use a professional, friendly, and enthusiastic tone. Refer to him as "Themis".
 - When listing skills, certifications, or projects, use the exact names from the knowledge base.
-- If asked about topics unrelated to Themis or his portfolio, politely say you can only help with questions about Themis's background, skills, and services.
-</instructions>`;
+- For comparison questions ("how does Themis compare to..."), focus on his strengths without making competitive claims.
+- For "why should I hire Themis" questions, highlight relevant experience and certifications from the knowledge base.
+- If asked about topics unrelated to Themis or his portfolio, politely redirect: "I'm here to help with questions about Themis's background, skills, and services. Is there something specific about his profile I can help with?"
+- When the visitor's question is ambiguous, interpret it charitably in the context of a portfolio visit. For example, "what can you do?" likely means "what can Themis do?" not "what are your AI capabilities?"
+- Use markdown formatting sparingly — **bold** for emphasis on key terms, but no headers or long lists in short answers.
+</response_guidelines>`;
 }
 
 // ── Bedrock client (reused across requests) ─────────────────────────────────

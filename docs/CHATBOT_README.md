@@ -67,16 +67,36 @@ The knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
 
 All files are loaded into the system prompt at startup (~33 KB, ~8,000 tokens). Knowledge is wrapped in `<knowledge_base>` XML tags and instructions in `<instructions>` tags per Bedrock best practices. To update the chatbot's knowledge, edit the markdown files and restart the Express server.
 
+## NLP Pipeline
+
+All search tools share a common NLP pipeline that processes queries before matching:
+
+1. **Tokenization** — split query into words, strip punctuation
+2. **Stop-word removal** — filters 100+ common English words ("what", "the", "is", "does", etc.)
+3. **Synonym expansion** — maps domain-specific terms to knowledge base vocabulary:
+   - `infosec` → cybersecurity, security
+   - `k8s` → kubernetes
+   - `certs` → certifications, certified
+   - `IAM` → identity, access, management, cyberark
+   - `datacenter` → cisco, ucs, hyperflex, aci
+   - 30+ mappings covering cybersecurity, cloud, networking, and general terms
+4. **Stemming** — reduces words to approximate roots (e.g., "certifications" → "certif", "networking" → "network")
+5. **TF-IDF scoring** — term frequency weighted by inverse document frequency; rarer terms score higher
+
+This means a query like "What infosec certs does he have?" becomes search terms `["infosec", "cybersecurity", "security", "cert", "certif", "certified"]` — matching across word forms and domain synonyms.
+
 ## Tool Use (Bedrock Native)
 
 The chatbot uses Bedrock's native `toolConfig` parameter in `ConverseStreamCommand`. When the model determines it needs live data, it requests a tool call. The server executes the tool and re-invokes Bedrock with the result (up to 2 rounds).
 
 | Tool | Trigger | Data Source |
 | --- | --- | --- |
-| `search_portfolio` | Questions about specific skills, pages, or experience | In-memory content index |
-| `search_blog` | Questions about blog articles or written content | MDX files indexed at startup |
+| `search_portfolio` | Questions about specific skills, pages, or experience | 24-entry index with keyword tags, TF-IDF scoring |
+| `search_blog` | Questions about blog articles or written content | MDX files indexed at startup, dense excerpt extraction |
 | `get_github_stats` | Questions about GitHub activity or open source work | GitHub REST API |
 | `check_booking_availability` | Questions about scheduling or availability | Cal.com API |
+
+The system prompt includes an **intent classification framework** that guides the model on when to use tools vs answer directly from the knowledge base, reducing unnecessary tool calls and latency.
 
 The tool-use loop sends a `{ status: "thinking" }` SSE event to the client while executing, which renders an animated "Looking up…" indicator.
 
@@ -86,10 +106,24 @@ Blog posts in `content/blog/*.mdx` are indexed at startup:
 
 1. MDX files are read and frontmatter (title, slug, description, tags, date) is extracted
 2. Body content is stripped of code blocks, JSX, HTML, and markdown syntax to produce plain text
-3. The `search_blog` tool performs keyword matching across title, tags, description, and body
-4. Top 3 results are returned with title, description, URL, and a ~300-char excerpt
+3. The `search_blog` tool performs NLP-enhanced matching (stemming, synonyms, TF-IDF) across title, tags, description, and body
+4. Top 3 results are returned with title, description, URL, and a dense excerpt (sliding window finds the passage with highest term density)
 
 Blog post summaries are also injected into the system prompt so the model knows articles exist without needing a tool call for basic questions like "do you have a blog?".
+
+## Portfolio Search
+
+The portfolio search index contains 24 richly-tagged entries across 6 categories:
+
+| Category | Entries | Examples |
+| --- | --- | --- |
+| Skills | 6 | Cloud Architecture, Cybersecurity, Network Engineering, Full-Stack Dev, DevOps, IAM |
+| Experience | 5 | Skaramangas Shipyards, Estarta Solutions, Athens Airport, Cosmos, COVID-19 Response |
+| Pages | 8 | About, Work Experience, Projects, Blog, Performance, AI Agents, Contact, Resume |
+| Certifications | 3 | Cisco DevNet, Fortinet NSE, CISSP |
+| Education | 2 | M.Sc. Data Analytics, B.Sc. Informatics |
+
+Each entry has a `keywords[]` array for synonym-aware matching. Results include relevance scores so the model can judge result quality.
 
 ## Action Tokens
 
