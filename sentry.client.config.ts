@@ -28,10 +28,7 @@ if (SENTRY_DSN) {
         // Instrument page load and navigation spans automatically
         enableInp: true,
       }),
-      Sentry.replayIntegration({
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
+      // Replay deferred: loaded lazily after page is interactive (~94KB saved from initial bundle)
     ],
 
     // Filter noisy errors that aren't actionable
@@ -57,4 +54,19 @@ if (SENTRY_DSN) {
     // Only send errors from our domain
     allowUrls: [/baltzakisthemis\.com/, /localhost/],
   });
+
+  // Lazy-load replay integration after page is interactive
+  if (typeof window !== "undefined") {
+    const loadReplay = () => {
+      void Sentry.lazyLoadIntegration("replayIntegration").then((replay) => {
+        Sentry.addIntegration(replay({ maskAllText: true, blockAllMedia: true }));
+      });
+    };
+
+    if (document.readyState === "complete") {
+      setTimeout(loadReplay, 2000);
+    } else {
+      window.addEventListener("load", () => setTimeout(loadReplay, 2000));
+    }
+  }
 }

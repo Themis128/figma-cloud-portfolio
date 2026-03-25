@@ -180,12 +180,7 @@ export default function RootLayout({
           data-key="VJt2VZnhN2fh5o9Gcp2+Mw"
           strategy="lazyOnload"
         />
-        {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
-          <Script
-            src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-            strategy="lazyOnload"
-          />
-        )}
+        {/* reCAPTCHA loaded on-demand by useRecaptcha hook when forms are focused */}
         <GoogleAnalytics />
         <SentryInit />
         <CookieConsentBanner />

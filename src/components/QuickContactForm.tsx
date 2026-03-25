@@ -15,7 +15,7 @@ const CONTACT_URL =
   process.env.NEXT_PUBLIC_LAMBDA_CONTACT_URL || `${API_BASE_URL}/contact`;
 
 export default function QuickContactForm() {
-  const { getToken } = useRecaptcha();
+  const { getToken, preload } = useRecaptcha();
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -93,6 +93,7 @@ export default function QuickContactForm() {
             placeholder="Your name"
             required
             value={formData.name}
+            onFocus={preload}
             onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             className={inputClass}
             disabled={status === "submitting"}

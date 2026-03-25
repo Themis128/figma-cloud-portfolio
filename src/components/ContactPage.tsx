@@ -124,7 +124,7 @@ const stats = [
 ];
 
 export default function ContactPage() {
-  const { getToken } = useRecaptcha();
+  const { getToken, preload } = useRecaptcha();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -311,6 +311,7 @@ export default function ContactPage() {
                             id="name"
                             name="name"
                             value={formData.name}
+                            onFocus={preload}
                             onChange={handleInputChange}
                             placeholder="Your name"
                             required
