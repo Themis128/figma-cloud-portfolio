@@ -309,17 +309,37 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 
 ## Interactive Engagement Components
 
-Eight interactive components enhance user engagement across the site. Seven are Client Components (`'use client'`) in `src/components/interactive/`, plus `CommandPalette` in `src/components/`.
+Interactive components enhance user engagement across the site. Most are Client Components (`'use client'`) in `src/components/interactive/`, plus `CommandPalette` and several homepage/blog components in `src/components/`.
 
 ### Global Components (in Root Layout)
 
-| Component        | Type   | Purpose                                                                                  |
-| ---------------- | ------ | ---------------------------------------------------------------------------------------- |
-| `ScrollProgress` | Client | Fixed top-of-page progress bar — tracks scroll position via `requestAnimationFrame`, cyan gradient, `role="progressbar"` with ARIA attributes |
-| `MatrixRain`     | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s with 1s fade-out, SVG countdown ring on button, respects `prefers-reduced-motion` (hidden entirely), cyan glow on active state, Katakana + Latin + digit characters |
-| `CyberTerminal`  | Client | Full-screen terminal easter egg — opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
-| `CursorTrail`    | Client | 10-particle trailing cursor effect — desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
-| `CommandPalette` | Client | Ctrl+K / Cmd+K command palette — search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility), cyberpunk glass panel. **Server-powered search**: queries `/api/search?q=` with 300ms debounce when 2+ chars typed; results shown in a "Search Results" section between Pages and Actions |
+| Component           | Type   | Purpose                                                                                  |
+| ------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| `ScrollProgress`    | Client | Fixed top-of-page progress bar — tracks scroll position via `requestAnimationFrame`, cyan gradient, `role="progressbar"` with ARIA attributes |
+| `MatrixRain`        | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s with 1s fade-out, SVG countdown ring on button, respects `prefers-reduced-motion` (hidden entirely), cyan glow on active state, Katakana + Latin + digit characters |
+| `CyberTerminal`     | Client | Full-screen terminal easter egg — opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
+| `CursorTrail`       | Client | 10-particle trailing cursor effect — desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
+| `CommandPalette`    | Client | Ctrl+K / Cmd+K command palette — search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility, retro terminal toggle), cyberpunk glass panel. **Server-powered search**: queries `/api/search?q=` with 300ms debounce when 2+ chars typed; results shown in a "Search Results" section between Pages and Actions |
+| `KonamiEasterEgg`   | Client | Global easter egg — ↑↑↓↓←→←→BA triggers Matrix rain with Greek characters (lazy-loaded via `LazyInteractive`) |
+| `SoundEffects`      | Client | Subtle Web Audio hover/click blips with toggle button — provides ambient audio feedback on interactive elements (lazy-loaded via `LazyInteractive`) |
+
+### Homepage Components
+
+| Component            | Page       | Purpose                                                                                  |
+| -------------------- | ---------- | ---------------------------------------------------------------------------------------- |
+| `SiteStats`          | Home (`/`) | Lighthouse score, tech stack count, pages, and uptime badges — social-proof stats section |
+| `GitHubHeatmap`      | Home (`/`) | Live GitHub contribution heatmap fetched from the GitHub Events API                      |
+| `Testimonials`       | Home (`/`) | Carousel with colleague quotes (3 entries), prev/next navigation                         |
+| `CyberQuiz`          | Home (`/`) | 5-question cybersecurity & cloud quiz with scoring and grades                            |
+
+> **Homepage section order**: Hero → Core Expertise → SiteStats → GitHubHeatmap → Testimonials → CyberQuiz → Quick Contact
+
+### Blog Components
+
+| Component            | Page               | Purpose                                                                                  |
+| -------------------- | ------------------ | ---------------------------------------------------------------------------------------- |
+| `ReadingProgress`    | Blog posts (`/blog/[slug]`) | Sticky progress bar with estimated reading time for blog posts                  |
+| `BlogReactions`      | Blog posts (`/blog/[slug]`) | Per-post helpful/interesting/bookmark reactions persisted in `localStorage`      |
 
 ### Page-Specific Components
 
@@ -341,7 +361,7 @@ Eight interactive components enhance user engagement across the site. Seven are 
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
 | `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock with tool use + blog RAG (lazy-loaded via `LazyInteractive`, `inert` when collapsed). Action tokens: `[BOOK_CALL]` (booking), `[CONTACT]` (contact form), `[GOTO:/path/]` (navigation links). Tools: search_portfolio, search_blog, get_github_stats, check_booking_availability |
-| `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette via `next/dynamic` (ssr: false) |
+| `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette, KonamiEasterEgg, SoundEffects via `next/dynamic` (ssr: false) |
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
 | `NotificationButton`                      | Bell icon with dropdown announcement panel. Announcements auto-generated from git commits at build time (`scripts/generate-announcements.sh` → `public/announcements.json`). Per-item dismiss (persisted in localStorage), read/unread tracking, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |
