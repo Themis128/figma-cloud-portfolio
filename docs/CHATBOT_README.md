@@ -36,6 +36,7 @@ The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock
 - **Thinking indicator** — animated dots shown while tools execute server-side
 - **Cyberpunk UI** — dark glass-morphism panel, cyan accent, `font-mono`
 - **Suggested questions** — 3 randomly selected prompts from a pool of ~40, plus pinned contact and booking prompts
+- **AI cover letter generator** — visitors can paste a job description and the chatbot generates a tailored 3-4 paragraph cover letter highlighting Themis's relevant experience
 - **Graceful errors** — failures displayed inline without crashing
 
 ## Files

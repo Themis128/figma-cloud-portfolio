@@ -593,8 +593,10 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 88 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/` — 88+ spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
+- **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (114 tests) — toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history
+- **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (77 tests) — SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects, KonamiEasterEgg, Retro Terminal theme, section ordering
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts` — API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
 
