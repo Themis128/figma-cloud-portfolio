@@ -136,7 +136,7 @@ export function LiveLoadHero() {
           ? lcp >= 1000
             ? `${(lcp / 1000).toFixed(2)}s`
             : `${Math.round(lcp)}ms`
-          : "—",
+          : "N/A",
       sublabel: "Largest Paint",
       status:
         lcp !== undefined
@@ -154,7 +154,7 @@ export function LiveLoadHero() {
           ? fcp >= 1000
             ? `${(fcp / 1000).toFixed(2)}s`
             : `${Math.round(fcp)}ms`
-          : "—",
+          : "N/A",
       sublabel: "First Paint",
       status:
         fcp !== undefined
@@ -167,7 +167,7 @@ export function LiveLoadHero() {
     },
     {
       label: "CLS",
-      value: cls !== undefined ? cls.toFixed(3) : "—",
+      value: cls !== undefined ? cls.toFixed(3) : "N/A",
       sublabel: "Layout Shift",
       status:
         cls !== undefined
@@ -185,7 +185,7 @@ export function LiveLoadHero() {
           ? inp >= 1000
             ? `${(inp / 1000).toFixed(2)}s`
             : `${Math.round(inp)}ms`
-          : "—",
+          : "N/A",
       sublabel: "Responsiveness",
       status:
         inp !== undefined
@@ -198,7 +198,7 @@ export function LiveLoadHero() {
     },
   ];
 
-  const lcpSeconds = lcp !== undefined ? (lcpCountUp / 1000).toFixed(2) : "—";
+  const lcpSeconds = lcp !== undefined ? (lcpCountUp / 1000).toFixed(2) : "N/A";
 
   return (
     <div className="space-y-10">
@@ -210,7 +210,7 @@ export function LiveLoadHero() {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
           </span>
           <span className="text-xs text-foreground/50 uppercase tracking-[0.25em] font-mono">
-            Live — Measured for your device
+            Live: Measured for your device
           </span>
         </div>
       </AnimatedSection>

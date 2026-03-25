@@ -1,4 +1,4 @@
-# Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist
+# Themistoklis Baltzakis | Cloud Architect & Cybersecurity Specialist
 
 > IT Network Engineer with 15+ years of extensive experience in network infrastructure, Cisco systems, and Fortinet security solutions. Specializing in data center management, Azure AD, Microsoft 365 administration, and AWS cloud environments. Based in Athens, Greece. Available for consulting and collaboration.
 
@@ -28,11 +28,11 @@ Themistoklis (Themis) Baltzakis is an IT Network Engineer and Cloud Architect wi
 
 Themis offers consulting in the following areas:
 
-1. **Cloud Architecture Design** — Multi-region AWS deployments, cost optimization, migration planning
-2. **Network Security Audits** — Fortinet/Cisco infrastructure review, zero-trust implementation
-3. **Azure AD & M365 Administration** — Identity governance, Conditional Access policies, hybrid environments
-4. **Full-Stack Web Development** — Next.js applications, serverless backends, PWA development
-5. **DevOps & CI/CD** — Pipeline design, automated testing, deployment automation
+1. **Cloud Architecture Design**: Multi-region AWS deployments, cost optimization, migration planning
+2. **Network Security Audits**: Fortinet/Cisco infrastructure review, zero-trust implementation
+3. **Azure AD & M365 Administration**: Identity governance, Conditional Access policies, hybrid environments
+4. **Full-Stack Web Development**: Next.js applications, serverless backends, PWA development
+5. **DevOps & CI/CD**: Pipeline design, automated testing, deployment automation
 
 ## Blog Articles
 

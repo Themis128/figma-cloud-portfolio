@@ -184,9 +184,9 @@ cat amplify.yml | grep load-secrets
    - Find workflow: **Build & Deploy** (most recent)
    - Click: View workflow run
    - Watch stages:
-     - ✅ **Quality Checks** (lint, types, format) — should pass
-     - ✅ **Security Audit** (npm audit, secrets scan) — should pass
-     - ✅ **Build** (vite, server, resume) — should pass
+     - ✅ **Quality Checks** (lint, types, format): should pass
+     - ✅ **Security Audit** (npm audit, secrets scan): should pass
+     - ✅ **Build** (vite, server, resume): should pass
      - ⏳ **Unit Tests** (may have pre-existing failures, OK)
      - ⏳ **E2E Tests** (may be skipped for non-production, OK)
      - ⏳ **Deploy** (only runs on `production` branch)

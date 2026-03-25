@@ -32,14 +32,14 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "About Me",
   description:
-    "Learn about Themistoklis Baltzakis - IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
+    "Learn about Themistoklis Baltzakis, IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
   openGraph: {
     title: "About Me | Themistoklis Baltzakis",
     description:
-      "Learn about Themistoklis Baltzakis - IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
+      "Learn about Themistoklis Baltzakis, IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
     url: `${SITE_URL}/about/`,
     type: "profile",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/about/` },
 };
@@ -122,7 +122,7 @@ export default function AboutPage() {
                     COVID-19, I supported vulnerable communities through
                     telecommunications services, then contributed to Athens
                     International Airport&apos;s critical infrastructure
-                    rebuild—enabling safe travel and economic recovery. My work
+                    rebuild, enabling safe travel and economic recovery. My work
                     bridges technical mastery with social impact, creating
                     solutions that are both efficient and meaningful.
                   </p>
@@ -319,7 +319,7 @@ export default function AboutPage() {
                     <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2" />
                     <div>
                       <div className="font-medium">
-                        3rd Place – Cisco Incubator 12.0
+                        3rd Place, Cisco Incubator 12.0
                       </div>
                       <div className="text-muted-foreground text-sm">
                         Customer Experience Track

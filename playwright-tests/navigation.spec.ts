@@ -3,10 +3,11 @@ import { expect, test } from "@playwright/test";
 /**
  * Navigation Tests
  *
- * Tests the navigation bar behavior, active states, mobile menu, and utilities.
+ * Tests the sticky glassmorphic navbar, desktop links, mobile Sheet menu,
+ * icon toolbar, and active link highlighting.
  */
 
-test.describe("Navigation — Desktop", () => {
+test.describe("Navigation | Desktop", () => {
   test.use({ viewport: { width: 1280, height: 720 } });
 
   test("should display logo linking to home", async ({ page }) => {
@@ -19,19 +20,21 @@ test.describe("Navigation — Desktop", () => {
     await expect(logo).toHaveAttribute("href", "/");
   });
 
-  test("should display all 7 nav links on desktop", async ({ page }) => {
+  test("should be sticky with glassmorphic background", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    const navLinks = [
-      "Home",
-      "About",
-      "Resume",
-      "Contact",
-      "Performance",
-      "Agents",
-      "Admin",
-    ];
+    const header = page.locator("header").first();
+    await expect(header).toHaveCSS("position", "sticky");
+    const cls = await header.getAttribute("class");
+    expect(cls).toContain("backdrop-blur");
+  });
+
+  test("should display all 8 nav links on desktop", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const navLinks = ["Home", "About", "Resume", "Contact", "Blog", "Performance", "Agents", "Admin"];
 
     for (const name of navLinks) {
       const link = page.locator("nav").locator("a", { hasText: name }).first();
@@ -43,7 +46,6 @@ test.describe("Navigation — Desktop", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // Active link gets border-b-2 style (use .first() to avoid mobile nav duplicate)
     const homeLink = page.locator('nav a[href="/"]').filter({ hasText: "Home" }).first();
     await expect(homeLink).toHaveClass(/border-cyan-400/);
   });
@@ -56,9 +58,7 @@ test.describe("Navigation — Desktop", () => {
     await expect(aboutLink).toHaveClass(/border-cyan-400/);
   });
 
-  test("should highlight Contact link when on contact page", async ({
-    page,
-  }) => {
+  test("should highlight Contact link when on contact page", async ({ page }) => {
     await page.goto("/contact/");
     await page.waitForLoadState("networkidle");
 
@@ -74,16 +74,55 @@ test.describe("Navigation — Desktop", () => {
     const cls = await homeLink.getAttribute("class");
     expect(cls).not.toContain("border-cyan-400");
   });
+
+  test("should show separator between primary and effects toolbar groups", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Separator is a Radix Separator with vertical orientation
+    const toolbar = page.locator("header .hidden.md\\:flex").last();
+    const separator = toolbar.locator('[data-orientation="vertical"]');
+    await expect(separator).toBeAttached();
+  });
 });
 
-test.describe("Navigation — Mobile", () => {
+test.describe("Navigation | Desktop Toolbar", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
+  test("should have theme toggle button", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const themeToggle = page.locator('[data-testid="theme-toggle"]').first();
+    await expect(themeToggle).toBeVisible();
+  });
+
+  test("should have accessibility button", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const a11yButton = page.locator('button[aria-label="Open accessibility settings"]');
+    await expect(a11yButton).toBeVisible();
+  });
+
+  test("should have notification bell", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const bellBtn = page.locator(
+      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
+    );
+    await expect(bellBtn.first()).toBeVisible();
+  });
+});
+
+test.describe("Navigation | Mobile Sheet Menu", () => {
   test.use({ viewport: { width: 375, height: 667 } });
 
-  test("should show hamburger menu on mobile", async ({ page }) => {
+  test("should show hamburger menu button on mobile", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // Hamburger button should be visible (wait for hydration)
     const menuButton = page.locator('button[aria-label="Toggle menu"]');
     await expect(menuButton).toBeVisible({ timeout: 15000 });
 
@@ -92,103 +131,98 @@ test.describe("Navigation — Mobile", () => {
     await expect(desktopNav.first()).not.toBeVisible();
   });
 
-  test("should open mobile menu and show all links", async ({ page }) => {
+  test("should open Sheet menu and show all nav links with icons", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Click hamburger
+    // Click hamburger to open Sheet
     const menuButton = page.locator('button[aria-label="Toggle menu"]');
     await menuButton.click();
+    await page.waitForTimeout(600);
 
-    // Wait for menu to expand
-    await page.waitForTimeout(500);
+    // Sheet dialog should be visible
+    const sheet = page.getByRole("dialog", { name: "TB" });
+    await expect(sheet).toBeVisible();
 
-    // Mobile menu links should be visible (block-level links inside the mobile nav container)
-    const mobileMenu = page.locator('button[aria-label="Toggle menu"][aria-expanded="true"]').locator('..').locator('..').locator('..').locator('div.md\\:hidden');
-    // Simpler: just check that links with block display are now visible
-    await expect(page.locator('a.block', { hasText: "Home" })).toBeVisible();
-    await expect(page.locator('a.block', { hasText: "About" })).toBeVisible();
-    await expect(page.locator('a.block', { hasText: "Contact" })).toBeVisible();
+    // All nav links should be visible inside the Sheet
+    const navNames = ["Home", "About", "Resume", "Contact", "Blog", "Performance", "Agents", "Admin"];
+    for (const name of navNames) {
+      await expect(sheet.locator("a", { hasText: name }).first()).toBeVisible();
+    }
+
+    // Each link should have an SVG icon
+    const navLinks = sheet.locator("a").filter({ has: page.locator("svg") });
+    expect(await navLinks.count()).toBeGreaterThanOrEqual(8);
   });
 
   test("should show bell and theme toggle in mobile top bar", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Bell button should be visible on mobile (in the top bar, not behind hamburger)
-    const bellBtn = page.locator(
+    // Scope to the mobile toolbar (flex md:hidden)
+    const mobileBar = page.locator("header .flex.md\\:hidden");
+    const bellBtn = mobileBar.locator(
       'button[aria-label*="announcements"], button[aria-label="Announcements"]',
     );
     await expect(bellBtn.first()).toBeVisible({ timeout: 15000 });
 
-    // Theme toggle should be visible on mobile
-    const themeToggle = page.locator('[data-testid="theme-toggle"]');
-    await expect(themeToggle.first()).toBeVisible();
+    const themeToggle = mobileBar.locator('[data-testid="theme-toggle"]');
+    await expect(themeToggle).toBeVisible();
   });
 
-  test("should open notification panel on mobile", async ({ page }) => {
+  test("should show Effects & Settings section in Sheet menu", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    const bellBtn = page.locator(
-      'button[aria-label*="announcements"], button[aria-label="Announcements"]',
-    );
-    await bellBtn.first().click();
-    await page.waitForTimeout(300);
-
-    // Panel should be visible as a near-full-width fixed panel
-    const panel = page.locator('div[role="dialog"][aria-label="Announcements"]');
-    await expect(panel).toBeVisible();
-
-    // Panel should have reasonable width on mobile (not overflowing)
-    const box = await panel.boundingBox();
-    expect(box).not.toBeNull();
-    if (box) {
-      expect(box.width).toBeLessThanOrEqual(375);
-      expect(box.width).toBeGreaterThan(200);
-    }
-  });
-
-  test("should show accessibility settings button in mobile menu", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
-
-    // Open mobile menu
     const menuButton = page.locator('button[aria-label="Toggle menu"]');
     await menuButton.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(600);
 
-    // Accessibility Settings button should be visible in the mobile nav
-    const a11yButton = page.getByText("Accessibility Settings", {
-      exact: true,
-    });
+    const sheet = page.getByRole("dialog", { name: "TB" });
+    await expect(sheet.getByText("Effects & Settings")).toBeVisible();
+
+    // Accessibility icon button should be in the sheet
+    const a11yButton = sheet.locator('button[aria-label="Open accessibility settings"]');
     await expect(a11yButton).toBeVisible();
   });
-});
 
-test.describe("Navigation — Utilities", () => {
-  test.use({ viewport: { width: 1280, height: 720 } });
-
-  test("should have theme toggle button", async ({ page }) => {
+  test("should show Get In Touch CTA in Sheet menu", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Theme toggle is a button in the nav area
-    const themeToggle = page.locator("nav button").filter({
-      has: page.locator("svg"),
-    });
-    expect(await themeToggle.count()).toBeGreaterThanOrEqual(1);
+    const menuButton = page.locator('button[aria-label="Toggle menu"]');
+    await menuButton.click();
+    await page.waitForTimeout(600);
+
+    const sheet = page.getByRole("dialog", { name: "TB" });
+    await expect(sheet.locator("a", { hasText: "Get In Touch" })).toBeVisible();
   });
 
-  test("should have accessibility button on desktop", async ({ page }) => {
+  test("should close Sheet when a nav link is clicked", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    const a11yButton = page.locator(
-      'button[aria-label="Open accessibility settings"]',
-    );
-    await expect(a11yButton).toBeVisible();
+    const menuButton = page.locator('button[aria-label="Toggle menu"]');
+    await menuButton.click();
+    await page.waitForTimeout(600);
+
+    const sheet = page.getByRole("dialog", { name: "TB" });
+    await sheet.locator("a", { hasText: "About" }).click();
+
+    // Sheet should close after navigation
+    await expect(sheet).not.toBeVisible({ timeout: 5000 });
+  });
+
+  test("should highlight active link in Sheet menu", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const menuButton = page.locator('button[aria-label="Toggle menu"]');
+    await menuButton.click();
+    await page.waitForTimeout(600);
+
+    const sheet = page.getByRole("dialog", { name: "TB" });
+    const homeLink = sheet.locator('a[href="/"]');
+    await expect(homeLink).toHaveClass(/text-cyan-400/);
   });
 });

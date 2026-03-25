@@ -27,7 +27,7 @@ export const metadata: Metadata = {
       "Cloud Architect & Network Engineer with 15+ years in Cisco, Fortinet, AWS, and enterprise security. Scalable infrastructure & modern web apps.",
     url: `${SITE_URL}/`,
     type: "website",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/` },
 };
@@ -100,7 +100,7 @@ export default function HomePage() {
                   <p className="text-foreground/60 text-sm sm:text-base leading-relaxed max-w-2xl mt-3">
                     From designing secure enterprise networks to building
                     modern web applications with React, Next.js, and
-                    serverless architectures — I bridge the gap between
+                    serverless architectures. I bridge the gap between
                     infrastructure engineering and full-stack development.
                   </p>
                 </AnimatedSection>
@@ -280,7 +280,7 @@ export default function HomePage() {
               Test Your Knowledge
             </h2>
             <p className="text-foreground/50 text-sm">
-              A quick cybersecurity &amp; cloud quiz — how do you score?
+              A quick cybersecurity &amp; cloud quiz. How do you score?
             </p>
             <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto mt-2" />
           </AnimatedSection>

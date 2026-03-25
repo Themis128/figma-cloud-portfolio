@@ -150,8 +150,8 @@ RECAPTCHA_SECRET_KEY=your_secret_key
 
 **Endpoints**:
 
-- `GET /api/github/stats` — Profile statistics (repos, stars, followers, bio)
-- `GET /api/github/repos` — Public repositories (paginated, with topics/languages)
+- `GET /api/github/stats`: Profile statistics (repos, stars, followers, bio)
+- `GET /api/github/repos`: Public repositories (paginated, with topics/languages)
 
 **Features**:
 
@@ -167,7 +167,7 @@ GITHUB_TOKEN=ghp_your_fine_grained_pat    # No repo access needed (public read o
 GITHUB_USERNAME=Themis128                  # GitHub username
 ```
 
-**Required Scopes**: None — fine-grained PAT with default permissions (public read only)
+**Required Scopes**: None. Fine-grained PAT with default permissions (public read only)
 
 **Setup**:
 
@@ -476,11 +476,11 @@ test('renders component', () => {
 
 **Files**:
 
-- `sentry.client.config.ts` — Client-side Sentry initialization (auto-loaded by `@sentry/nextjs`)
-- `instrumentation.ts` — Next.js instrumentation hook for server-side Sentry (dev only)
-- `src/lib/sentry.ts` — Consent-aware enable/disable + helper functions
-- `src/components/SentryInit.tsx` — Client component that sets up consent listener
-- `next.config.ts` — Wrapped with `withSentryConfig` (webpack plugins disabled for static export)
+- `sentry.client.config.ts`: Client-side Sentry initialization (auto-loaded by `@sentry/nextjs`)
+- `instrumentation.ts`: Next.js instrumentation hook for server-side Sentry (dev only)
+- `src/lib/sentry.ts`: Consent-aware enable/disable + helper functions
+- `src/components/SentryInit.tsx`: Client component that sets up consent listener
+- `next.config.ts`: Wrapped with `withSentryConfig` (webpack plugins disabled for static export)
 
 **Package**: `@sentry/nextjs` (v10.43.0)
 
@@ -505,8 +505,8 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 
 **Architecture**:
 
-1. `sentry.client.config.ts` runs at page load — initializes Sentry with full config
-2. `SentryInit` component (in layout) calls `setupSentryConsentListener()` — checks localStorage for analytics consent and enables/disables accordingly
+1. `sentry.client.config.ts` runs at page load. Initializes Sentry with full config
+2. `SentryInit` component (in layout) calls `setupSentryConsentListener()`. Checks localStorage for analytics consent and enables/disables accordingly
 3. When consent changes, a `consent-updated` CustomEvent toggles `client.getOptions().enabled`
 4. Static export: `withSentryConfig` wraps `next.config.ts` with all webpack/server plugins disabled
 

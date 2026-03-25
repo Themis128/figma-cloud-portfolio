@@ -38,6 +38,7 @@ test.describe("Performance Page — Structure", () => {
       "hero",
       "speed-test",
       "vitals",
+      "field-data",
       "lighthouse",
       "comparison",
       "methodology",

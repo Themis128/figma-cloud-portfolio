@@ -12,7 +12,7 @@ const OPTIMIZATIONS: OptimizationItem[] = [
     icon: "▲",
     title: "Next.js Server Components",
     detail:
-      "Static and data-driven content renders entirely on the server — zero client-side JavaScript shipped for those sections.",
+      "Static and data-driven content renders entirely on the server. Zero client-side JavaScript shipped for those sections.",
     tag: "Framework",
   },
   {
@@ -33,7 +33,7 @@ const OPTIMIZATIONS: OptimizationItem[] = [
     icon: "☁️",
     title: "S3 + CloudFront Edge CDN",
     detail:
-      "Static export deployed to S3 and distributed via CloudFront edge nodes worldwide. Your browser fetches from the nearest server — not a distant origin.",
+      "Static export deployed to S3 and distributed via CloudFront edge nodes worldwide. Your browser fetches from the nearest server, not a distant origin.",
     tag: "Infrastructure",
   },
   {
@@ -61,7 +61,7 @@ const OPTIMIZATIONS: OptimizationItem[] = [
     icon: "🔒",
     title: "Security Headers via CloudFront",
     detail:
-      "CSP, HSTS, and X-Frame-Options headers are configured in the deployment pipeline — security hardening with no client performance cost.",
+      "CSP, HSTS, and X-Frame-Options headers are configured in the deployment pipeline. Security hardening with no client performance cost.",
     tag: "Security",
   },
 ];

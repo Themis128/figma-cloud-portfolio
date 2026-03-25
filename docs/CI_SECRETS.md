@@ -4,16 +4,16 @@ This document lists the repository secrets used by the CI/CD workflows and how t
 
 ## Required secrets
 
-- `AWS_ACCESS_KEY_ID` — IAM user access key with permissions to start Amplify jobs or deploy resources.
-- `AWS_SECRET_ACCESS_KEY` — IAM secret key paired with the access key.
-- `AMPLIFY_APP_ID` — Amplify Console app ID (found in Amplify app settings).
-- `AMPLIFY_BRANCH` — Branch name in Amplify to trigger releases (e.g., `production`).
+- `AWS_ACCESS_KEY_ID`: IAM user access key with permissions to start Amplify jobs or deploy resources.
+- `AWS_SECRET_ACCESS_KEY`: IAM secret key paired with the access key.
+- `AMPLIFY_APP_ID`: Amplify Console app ID (found in Amplify app settings).
+- `AMPLIFY_BRANCH`: Branch name in Amplify to trigger releases (e.g., `production`).
 
 ## Optional secrets
 
-- `AWS_REGION` — AWS region, defaults to `us-east-1`.
-- `DEPLOY_TO_GHPAGES` — Set to `true` to enable GitHub Pages deployment in the release workflow.
-- `DOCKER_USERNAME` / `DOCKER_PASSWORD` — For pushing Docker images from CI.
+- `AWS_REGION`: AWS region, defaults to `us-east-1`.
+- `DEPLOY_TO_GHPAGES`: Set to `true` to enable GitHub Pages deployment in the release workflow.
+- `DOCKER_USERNAME` / `DOCKER_PASSWORD`: For pushing Docker images from CI.
 
 ## How to set secrets
 

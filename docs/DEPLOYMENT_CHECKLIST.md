@@ -16,7 +16,7 @@
   # See "Lambda Configuration Verification" section for full list
   ```
 
-- [x] **Optional** — error tracking:
+- [x] **Optional**, error tracking:
 
   ```bash
   NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
@@ -94,7 +94,7 @@
 - [x] Static assets load from S3 via CloudFront (images, CSS, JS)
 - [x] PWA features work (service worker, manifest) - FIXED: Service worker registration conflict resolved
 - [x] No InvalidStateError for service worker registration
-- [x] Production build successful — `pnpm build` produces `out/` directory
+- [x] Production build successful. `pnpm build` produces `out/` directory
 
 ### 2. Lambda Backend Testing
 
@@ -422,7 +422,7 @@ See `POST_DEPLOYMENT_VERIFICATION.md` for comprehensive manual testing checklist
 **Current State**: All systems operational
 **Infrastructure**: S3 + CloudFront (static frontend) + Lambda (backend API)
 **Build Output**: `out/` directory (static export)
-**Lambda**: `figma-portfolio-api` — 14 env vars, 256 MB, 15s timeout
+**Lambda**: `figma-portfolio-api`, 14 env vars, 256 MB, 15s timeout
 **Security**: All security measures implemented
 **Performance**: Lighthouse scores >90
 **Monitoring**: CloudWatch + Sentry + Google Analytics
@@ -459,4 +459,4 @@ See `POST_DEPLOYMENT_VERIFICATION.md` for comprehensive manual testing checklist
 | 13 | `GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 measurement ID (server-side events) |
 | 14 | `GOOGLE_ANALYTICS_API_SECRET` | GA4 Measurement Protocol API secret |
 
-> **Note:** SES uses the Lambda execution role — no explicit AWS credentials (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`) are needed.
+> **Note:** SES uses the Lambda execution role. No explicit AWS credentials (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`) are needed.

@@ -41,14 +41,14 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "Understanding AI Agents",
   description:
-    "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
+    "Learn how AI agents work: from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
   openGraph: {
     title: "Understanding AI Agents | Themistoklis Baltzakis",
     description:
-      "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
+      "Learn how AI agents work: from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
     url: `${SITE_URL}/agents/`,
     type: "article",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/agents/` },
 };
@@ -65,7 +65,7 @@ const coreComponents = [
     icon: Wrench,
     title: "Tools & APIs",
     description:
-      "Agents extend their capabilities by calling external tools — web search, code execution, database queries, or any API. This bridges the gap between language understanding and real-world action.",
+      "Agents extend their capabilities by calling external tools: web search, code execution, database queries, or any API. This bridges the gap between language understanding and real-world action.",
     detail: "Web search, code execution, API calls, file I/O",
   },
   {
@@ -107,7 +107,7 @@ const architecturePatterns = [
     title: "Multi-Agent Collaboration",
     difficulty: "Advanced",
     description:
-      "Multiple agents with distinct roles collaborate on complex tasks — debating, reviewing, and refining each other's work. Used in research, code review, and content pipelines.",
+      "Multiple agents with distinct roles collaborate on complex tasks: debating, reviewing, and refining each other's work. Used in research, code review, and content pipelines.",
     flow: ["Input", "Planner", "Executor + Reviewer", "Consensus", "Output"],
     pros: ["Higher quality output", "Self-correction", "Handles complexity"],
     cons: ["Token-expensive", "Harder to orchestrate"],
@@ -133,7 +133,7 @@ const networkUseCases = [
     icon: Cpu,
     title: "Infrastructure Automation Agent",
     description:
-      "Automates routine tasks — VLAN provisioning, ACL updates, firmware upgrades, and configuration backups. Validates changes against policies before applying.",
+      "Automates routine tasks: VLAN provisioning, ACL updates, firmware upgrades, and configuration backups. Validates changes against policies before applying.",
     tags: ["Ansible", "Python", "DevNet"],
   },
   {
@@ -213,7 +213,7 @@ export default function AgentsPage() {
                 From Language Models to Autonomous Systems
               </p>
               <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
-                AI agents go beyond simple chatbots — they observe, reason, act,
+                AI agents go beyond simple chatbots. They observe, reason, act,
                 and learn. This guide explains how they work, the architectures
                 behind them, and how they apply to network engineering and IT
                 operations.
@@ -297,7 +297,7 @@ export default function AgentsPage() {
                     {
                       step: "3",
                       title: "Act",
-                      desc: "Execute the chosen action — call a tool, generate a response, update memory, or delegate to another agent.",
+                      desc: "Execute the chosen action: call a tool, generate a response, update memory, or delegate to another agent.",
                       color: "from-purple-500 to-violet-600",
                     },
                     {
@@ -331,7 +331,7 @@ export default function AgentsPage() {
                     <strong className="text-cyan-400">Key insight:</strong> The
                     power of agents comes from this loop being{" "}
                     <em>autonomous</em>. The agent decides when to stop, what
-                    tools to use, and how to handle errors — without human
+                    tools to use, and how to handle errors, without human
                     intervention at each step.
                   </p>
                 </div>
@@ -553,7 +553,7 @@ export default function AgentsPage() {
                     Build Your Own Agent
                   </h2>
                   <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-                    Drag and drop colorful blocks to build an AI agent — no
+                    Drag and drop colorful blocks to build an AI agent. No
                     typing needed! See how agents observe, think, act, and
                     learn. Perfect for beginners of all ages.
                   </p>

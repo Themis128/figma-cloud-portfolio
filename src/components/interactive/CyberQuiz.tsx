@@ -20,7 +20,7 @@ const QUESTIONS: Question[] = [
       "Firewalls are sufficient protection",
     ],
     correct: 1,
-    explanation: "Zero Trust assumes no implicit trust — every request must be verified regardless of origin.",
+    explanation: "Zero Trust assumes no implicit trust. Every request must be verified regardless of origin.",
   },
   {
     question: "Which Cisco technology provides data center network automation?",
@@ -53,7 +53,7 @@ const QUESTIONS: Question[] = [
       "RDS",
     ],
     correct: 2,
-    explanation: "AWS Lambda runs code without provisioning servers — you pay only for compute time consumed.",
+    explanation: "AWS Lambda runs code without provisioning servers. You pay only for compute time consumed.",
   },
   {
     question: "What protocol does HTTPS use for encryption?",
@@ -111,12 +111,12 @@ export default function CyberQuiz() {
       <div className="bg-card/40 backdrop-blur-sm border border-border/20 rounded-lg p-6 text-center">
         <Trophy className="w-10 h-10 text-cyan-400 mx-auto mb-3" />
         <p className="text-foreground font-mono text-lg font-bold">
-          {score}/{QUESTIONS.length} Correct — Grade {grade}
+          {score}/{QUESTIONS.length} Correct, Grade {grade}
         </p>
         <p className="text-foreground/60 font-mono text-sm mt-1">
           {pct >= 80 ? "Impressive! You know your stuff." :
            pct >= 60 ? "Good knowledge! Room to grow." :
-           "Keep learning — cybersecurity is a journey!"}
+           "Keep learning, cybersecurity is a journey!"}
         </p>
         <button
           onClick={handleRestart}

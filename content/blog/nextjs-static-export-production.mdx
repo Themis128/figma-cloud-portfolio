@@ -14,10 +14,10 @@ After migrating this portfolio from a React SPA to Next.js with static export, I
 
 Next.js supports multiple rendering strategies, but for a portfolio site, static export (`output: "export"`) offers compelling advantages:
 
-- **Zero server costs** — S3 + CloudFront is pennies per month
-- **Global edge caching** — sub-100ms TTFB worldwide
-- **Simple deployment** — just sync files to S3
-- **No cold starts** — everything is pre-rendered HTML
+- **Zero server costs**: S3 + CloudFront is pennies per month
+- **Global edge caching**: sub-100ms TTFB worldwide
+- **Simple deployment**: just sync files to S3
+- **No cold starts**: everything is pre-rendered HTML
 
 ## The Build Pipeline
 
@@ -52,10 +52,10 @@ After optimization, the site achieves excellent Core Web Vitals:
 
 Key optimizations that made the difference:
 
-1. **Font optimization** — `next/font` with `display: swap`
-2. **Image optimization** — WebP/AVIF with proper sizing
-3. **Code splitting** — dynamic imports for heavy components
-4. **Trailing slashes** — `trailingSlash: true` for clean S3 routing
+1. **Font optimization**: `next/font` with `display: swap`
+2. **Image optimization**: WebP/AVIF with proper sizing
+3. **Code splitting**: dynamic imports for heavy components
+4. **Trailing slashes**: `trailingSlash: true` for clean S3 routing
 
 ## Gotchas with Static Export
 

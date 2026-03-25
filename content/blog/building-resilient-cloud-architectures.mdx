@@ -14,9 +14,9 @@ Cloud architecture is more than just spinning up EC2 instances. Building truly r
 
 When I design cloud architectures, I focus on three core pillars:
 
-1. **Redundancy** — No single point of failure
-2. **Observability** — You can't fix what you can't see
-3. **Automation** — Manual recovery doesn't scale
+1. **Redundancy**: No single point of failure
+2. **Observability**: You can't fix what you can't see
+3. **Automation**: Manual recovery doesn't scale
 
 ## Multi-AZ by Default
 
@@ -43,7 +43,7 @@ const vpc = new ec2.Vpc(this, "ProductionVpc", {
 
 ## Static Assets: S3 + CloudFront
 
-For static content, the combination of S3 and CloudFront provides global edge caching with automatic failover. This very portfolio site uses this pattern — the Next.js static export is synced to S3, then served through CloudFront with:
+For static content, the combination of S3 and CloudFront provides global edge caching with automatic failover. This very portfolio site uses this pattern. The Next.js static export is synced to S3, then served through CloudFront with:
 
 - **Origin Access Control** for secure S3 access
 - **Custom error pages** for SPA-style routing
@@ -62,8 +62,8 @@ CloudWatch dashboards are a start, but real observability comes from:
 ## Key Takeaways
 
 - Design for failure from day one
-- Automate your disaster recovery — test it regularly
+- Automate your disaster recovery and test it regularly
 - Use managed services where possible to reduce operational burden
 - Monitor business metrics, not just infrastructure metrics
 
-Cloud resilience isn't a destination — it's a continuous practice of improvement and testing.
+Cloud resilience isn't a destination. It's a continuous practice of improvement and testing.

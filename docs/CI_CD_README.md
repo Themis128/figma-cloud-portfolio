@@ -53,7 +53,7 @@ The project uses [GitHub Agentic Workflows](https://github.github.com/gh-aw/) wi
 | Playwright Test Runner | Scheduled / manual | Full E2E suite with regression detection |
 | Snyk Security Scan | Weekly / PR / push to production | Dependency, SAST, and IaC vulnerability scanning |
 
-**Required secret**: `COPILOT_GITHUB_TOKEN` — fine-grained PAT with "Copilot Requests" Account permission (Read).
+**Required secret**: `COPILOT_GITHUB_TOKEN`, fine-grained PAT with "Copilot Requests" Account permission (Read).
 
 ```bash
 # Compile workflows after editing markdown
@@ -193,7 +193,7 @@ NODE_ENV=staging|production
 # Trigger production deployment (standard)
 gh workflow run "Deploy to Production"
 
-# Trigger production deployment (agentic — with smoke tests + report)
+# Trigger production deployment (agentic, with smoke tests + report)
 gh workflow run "Production Deployment Workflow (S3 + CloudFront)"
 
 # Local deploy (requires AWS CLI configured)
@@ -358,7 +358,7 @@ curl https://yourdomain.com/deployment-status-production.json
   - `aws-actions/amplify-cli-wrapper@1.2.0`
 
 - **External Tools**:
-  - Snyk CLI (security scanning — dependency, SAST, IaC)
+  - Snyk CLI (security scanning: dependency, SAST, IaC)
   - pnpm (package management)
   - Node.js 22.x
 

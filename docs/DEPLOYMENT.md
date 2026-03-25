@@ -33,7 +33,7 @@ The portfolio uses a **static export** architecture with **S3 + CloudFront** for
     └──────────────────┘  └────────────┘  └────────────────┘
 ```
 
-> **Note**: Amplify Hosting's build system cannot handle the Next.js 16 build within its memory limits (OOM at "Collecting build traces"). Frontend deployment bypasses Amplify Hosting entirely — using direct S3 sync + CloudFront invalidation instead.
+> **Note**: Amplify Hosting's build system cannot handle the Next.js 16 build within its memory limits (OOM at "Collecting build traces"). Frontend deployment bypasses Amplify Hosting entirely, using direct S3 sync + CloudFront invalidation instead.
 
 ## Prerequisites
 
@@ -304,7 +304,7 @@ aws lambda create-function-url-config \
 aws lambda get-function-url-config --function-name figma-portfolio-api
 ```
 
-> **Same-origin API routing**: The frontend no longer calls the Lambda Function URL directly. All `/api/*` requests use relative paths (same-origin) and are routed through CloudFront to the Lambda origin. This eliminates CORS entirely — no preflight requests, no `Access-Control-Allow-Origin` headers needed, and no Edge Tracking Prevention issues in Safari/Brave. The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only but is not used at runtime. The Lambda Function URL still exists for CloudFront to use as an origin, but clients never call it directly.
+> **Same-origin API routing**: The frontend no longer calls the Lambda Function URL directly. All `/api/*` requests use relative paths (same-origin) and are routed through CloudFront to the Lambda origin. This eliminates CORS entirely: no preflight requests, no `Access-Control-Allow-Origin` headers needed, and no Edge Tracking Prevention issues in Safari/Brave. The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only but is not used at runtime. The Lambda Function URL still exists for CloudFront to use as an origin, but clients never call it directly.
 
 ### 4. Configure CloudFront to Route API Requests
 
@@ -388,12 +388,12 @@ The project uses two deployment mechanisms that trigger on push to `production` 
 
 | Workflow | File | Description |
 |---|---|---|
-| Deploy to Production | `.github/workflows/deploy.yml` | Standard GitHub Actions — builds, syncs to S3, invalidates CloudFront |
-| Production Deployment (Agentic) | `.github/workflows/deploy-production.md` | Copilot-powered agentic workflow — same deployment + smoke tests + deployment report |
+| Deploy to Production | `.github/workflows/deploy.yml` | Standard GitHub Actions: builds, syncs to S3, invalidates CloudFront |
+| Production Deployment (Agentic) | `.github/workflows/deploy-production.md` | Copilot-powered agentic workflow: same deployment + smoke tests + deployment report |
 
 Both workflows:
 1. Generate `amplify_outputs.json` from the Amplify Gen 2 backend (`ampx generate outputs`)
-2. Build the Next.js static export (`pnpm build` — runs `velite build` for MDX content, then `next build`)
+2. Build the Next.js static export (`pnpm build`, runs `velite build` for MDX content, then `next build`)
 3. Sync `out/` to S3 (`aws s3 sync`)
 4. Invalidate CloudFront cache
 
@@ -538,7 +538,7 @@ aws logs filter-log-events \
 1. **CORS Errors**
    - All API calls use same-origin routing via CloudFront (`/api/*` → Lambda origin), so CORS should not apply
    - If CORS errors appear, verify that `getApiOrigin()` returns `""` (empty string) and API calls use relative paths
-   - The Lambda Function URL is only used as a CloudFront origin — clients should never call it directly
+   - The Lambda Function URL is only used as a CloudFront origin. Clients should never call it directly
 
 2. **SSL/TLS Issues**
    - Ensure SSL certificate is valid

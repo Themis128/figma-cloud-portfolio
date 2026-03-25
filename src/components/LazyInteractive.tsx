@@ -32,11 +32,6 @@ const KonamiEasterEgg = dynamic(
   { ssr: false },
 );
 
-const SoundEffects = dynamic(
-  () => import("@/components/interactive/SoundEffects"),
-  { ssr: false },
-);
-
 export function LazyInteractive() {
   return (
     <>
@@ -46,7 +41,6 @@ export function LazyInteractive() {
       <CursorTrail />
       <CommandPalette />
       <KonamiEasterEgg />
-      <SoundEffects />
     </>
   );
 }

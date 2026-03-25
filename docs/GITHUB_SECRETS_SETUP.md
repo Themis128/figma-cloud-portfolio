@@ -34,7 +34,7 @@ AWS_ACCESS_KEY_ID          → Your AWS Access Key ID
 AWS_SECRET_ACCESS_KEY      → Your AWS Secret Access Key
 AWS_REGION                 → eu-central-1
 AMPLIFY_PRODUCTION_APP_ID  → d25rpobpd22vvg   ✅ confirmed (baltzakis-portfolio)
-AMPLIFY_STAGING_APP_ID     → d25rpobpd22vvg   ✅ same app — staging = a branch on this app
+AMPLIFY_STAGING_APP_ID     → d25rpobpd22vvg   ✅ same app, staging = a branch on this app
                              (create a "staging" branch in Amplify Console if not yet done)
 ```
 

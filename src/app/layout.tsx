@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.baltzakisthemis.com",
   ),
   title: {
-    default: "Themistoklis Baltzakis - IT Network Engineer",
+    default: "Themistoklis Baltzakis | IT Network Engineer",
     template: "%s | Themistoklis Baltzakis",
   },
   description:
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://www.baltzakisthemis.com",
-    title: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
+    title: "Themistoklis Baltzakis | Cloud Architect & Full-Stack Developer",
     description:
       "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
     siteName: "Themistoklis Baltzakis Portfolio",
@@ -88,13 +88,13 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
+        alt: "Themistoklis Baltzakis | Cloud Architect & Full-Stack Developer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Themistoklis Baltzakis - Cloud Architect & Full-Stack Developer",
+    title: "Themistoklis Baltzakis | Cloud Architect & Full-Stack Developer",
     description:
       "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
     creator: "@baltzakis_themis",

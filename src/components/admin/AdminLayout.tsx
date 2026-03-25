@@ -177,7 +177,7 @@ export default function AdminLayout({
           className="flex items-center gap-2 px-4 py-2 mb-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono"
         >
           <WifiOff className="w-4 h-4 shrink-0" />
-          You are offline — data may be stale
+          You are offline, data may be stale
         </div>
       )}
 

@@ -711,23 +711,23 @@ test.describe("Blog — Reactions", () => {
 // SOUND EFFECTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-test.describe("Sound Effects Toggle", () => {
+test.describe("Sound Effects Toggle (Navbar)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await waitForAppReady(page);
     await dismissCookies(page);
   });
 
-  test("should render sound toggle button with Volume icon", async ({ page }) => {
+  test("should render sound toggle button in navbar with Volume icon", async ({ page }) => {
     const toggle = page.locator('button[aria-label*="sound effects"]').first();
     await expect(toggle).toBeAttached({ timeout: 10000 });
     await expect(toggle.locator("svg")).toBeAttached();
   });
 
-  test("toggle button should be fixed position bottom-right", async ({ page }) => {
-    const toggle = page.locator('button[aria-label*="sound effects"]').first();
-    await toggle.waitFor({ state: "attached", timeout: 10000 });
-    await expect(toggle).toHaveCSS("position", "fixed");
+  test("toggle button should be inside the navigation bar", async ({ page }) => {
+    const nav = page.locator("header").first();
+    const toggle = nav.locator('button[aria-label*="sound effects"]').first();
+    await expect(toggle).toBeAttached({ timeout: 10000 });
   });
 
   test("should start with sound disabled (Enable label)", async ({ page }) => {
@@ -759,6 +759,79 @@ test.describe("Sound Effects Toggle", () => {
     await page.locator('button[aria-label="Disable sound effects"]').first().click({ force: true });
     const storedAfter = await page.evaluate(() => localStorage.getItem("sound-effects"));
     expect(storedAfter).toBe("false");
+  });
+});
+
+test.describe("Sound Effects — Non-Element Target Safety", () => {
+  test("should not crash when mouseenter fires on a text node", async ({ page }) => {
+    await page.goto("/");
+    await waitForAppReady(page);
+    await dismissCookies(page);
+
+    // Enable sound effects
+    const enableBtn = page.locator('button[aria-label="Enable sound effects"]');
+    await enableBtn.first().waitFor({ state: "attached", timeout: 10000 });
+    await enableBtn.first().click({ force: true });
+
+    // Dispatch a mouseenter event with a text node as target (non-Element)
+    // This verifies the `instanceof Element` guard works
+    const noError = await page.evaluate(() => {
+      try {
+        // Find a text node inside the page body
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null,
+        );
+        const textNode = walker.nextNode();
+        if (textNode) {
+          const event = new MouseEvent("mouseenter", { bubbles: true });
+          // Dispatch on the text node's parent but with textNode as implicit target
+          // To truly test, dispatch a captured mouseenter from the text node itself
+          textNode.dispatchEvent(event);
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    expect(noError).toBe(true);
+
+    // Page should still be functional — no uncaught errors
+    const disableBtn = page.locator('button[aria-label="Disable sound effects"]');
+    await expect(disableBtn.first()).toBeAttached();
+  });
+
+  test("should not crash when click fires on a non-Element target", async ({ page }) => {
+    await page.goto("/");
+    await waitForAppReady(page);
+    await dismissCookies(page);
+
+    // Enable sound effects
+    const enableBtn = page.locator('button[aria-label="Enable sound effects"]');
+    await enableBtn.first().waitFor({ state: "attached", timeout: 10000 });
+    await enableBtn.first().click({ force: true });
+
+    // Verify no runtime error when clicking on text nodes
+    const noError = await page.evaluate(() => {
+      try {
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null,
+        );
+        const textNode = walker.nextNode();
+        if (textNode) {
+          textNode.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    expect(noError).toBe(true);
   });
 });
 

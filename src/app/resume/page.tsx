@@ -17,7 +17,7 @@ export const metadata: Metadata = {
       "Build a professional CV with our interactive builder, or learn how to write a resume that beats ATS systems. Practical tips for IT professionals.",
     url: `${SITE_URL}/resume/`,
     type: "website",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/resume/` },
 };

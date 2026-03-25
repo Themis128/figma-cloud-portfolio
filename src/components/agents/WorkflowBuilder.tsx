@@ -159,7 +159,7 @@ export function WorkflowBuilder({
               onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
               role="button"
               tabIndex={0}
-              aria-label={`${node.label} - ${node.type} node`}
+              aria-label={`${node.label}, ${node.type} node`}
             />
 
             {/* Node label */}
@@ -223,7 +223,7 @@ export function WorkflowBuilder({
       {/* Instructions */}
       <div className="absolute bottom-4 left-4 text-muted-foreground text-sm">
         {readonly
-          ? "View-only mode - workflow visualization"
+          ? "View-only mode: workflow visualization"
           : "Click nodes to select • Drag to reposition"}
       </div>
     </div>

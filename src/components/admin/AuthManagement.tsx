@@ -147,7 +147,7 @@ export default function AuthManagement() {
               <p className="text-xs font-mono text-foreground/80 mt-1">
                 {authInfo.token.expiresAt
                   ? new Date(authInfo.token.expiresAt).toLocaleString()
-                  : "—"}
+                  : "N/A"}
               </p>
             </div>
             <div className="p-3 rounded-lg bg-background/30 border border-border/10">
@@ -155,7 +155,7 @@ export default function AuthManagement() {
                 Issuer
               </p>
               <p className="text-xs font-mono text-foreground/80 truncate mt-1">
-                {authInfo.token.issuer ?? "—"}
+                {authInfo.token.issuer ?? "N/A"}
               </p>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function AuthManagement() {
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono text-foreground/40">User Pool</span>
             <span className="text-[10px] font-mono text-foreground/60">
-              {authInfo.cognitoConfig.userPoolId ?? "—"}
+              {authInfo.cognitoConfig.userPoolId ?? "N/A"}
             </span>
           </div>
           <div className="flex items-center justify-between">

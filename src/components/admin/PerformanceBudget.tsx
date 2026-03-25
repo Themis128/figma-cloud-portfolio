@@ -135,7 +135,7 @@ export default function PerformanceBudget() {
         <div className="flex items-center gap-4 sm:gap-6">
           <div className="text-center">
             <p className={`text-2xl sm:text-3xl font-mono font-bold ${gradeColor}`}>
-              {validScores.length > 0 ? grade : "—"}
+              {validScores.length > 0 ? grade : "N/A"}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
               Grade
@@ -143,7 +143,7 @@ export default function PerformanceBudget() {
           </div>
           <div className="text-center">
             <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">
-              {validScores.length > 0 ? overallScore : "—"}
+              {validScores.length > 0 ? overallScore : "N/A"}
             </p>
             <p className="text-[10px] text-foreground/40 uppercase tracking-wider">
               Score
@@ -192,14 +192,14 @@ export default function PerformanceBudget() {
                   </div>
                 </div>
                 <span className={`font-mono text-lg font-bold ${mColor}`}>
-                  {m.value !== null ? mGrade : "—"}
+                  {m.value !== null ? mGrade : "N/A"}
                 </span>
               </div>
 
               {/* Value + Budget */}
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="font-mono text-xl text-foreground">
-                  {m.value !== null ? m.value : "—"}
+                  {m.value !== null ? m.value : "N/A"}
                 </span>
                 <span className="text-[10px] text-foreground/30 font-mono">
                   {m.unit}

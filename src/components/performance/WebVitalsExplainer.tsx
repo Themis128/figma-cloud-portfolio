@@ -38,7 +38,7 @@ const VITALS: VitalInfo[] = [
     poorThreshold: 4000,
     industryAvg: 4200,
     whatItMeans:
-      'How quickly the main content — image or text block — becomes visible. This is what users experience as "the page loaded".',
+      'How quickly the main content (image or text block) becomes visible. This is what users experience as "the page loaded".',
     tip: "Optimised with Next.js SSR and next/image preloading",
   },
   {
@@ -50,7 +50,7 @@ const VITALS: VitalInfo[] = [
     poorThreshold: 3000,
     industryAvg: 2800,
     whatItMeans:
-      "When something — any content at all — first appears on screen. Users stop staring at a blank white page.",
+      "When something, any content at all, first appears on screen. Users stop staring at a blank white page.",
     tip: "Improved by server rendering and critical CSS inlining",
   },
   {
@@ -62,7 +62,7 @@ const VITALS: VitalInfo[] = [
     poorThreshold: 0.25,
     industryAvg: 0.18,
     whatItMeans:
-      "Whether elements jump around as the page loads. A score near 0 means nothing moved unexpectedly — no accidental button clicks.",
+      "Whether elements jump around as the page loads. A score near 0 means nothing moved unexpectedly, no accidental button clicks.",
     tip: "Eliminated by reserving layout space for images and fonts upfront",
   },
   {
@@ -86,7 +86,7 @@ const VITALS: VitalInfo[] = [
     poorThreshold: 500,
     industryAvg: 350,
     whatItMeans:
-      "How quickly the page responds after you click, tap, or type. INP replaced FID as a Core Web Vital in March 2024 — it measures every interaction, not just the first.",
+      "How quickly the page responds after you click, tap, or type. INP replaced FID as a Core Web Vital in March 2024. It measures every interaction, not just the first.",
     tip: "Kept low with event delegation and non-blocking React transitions",
   },
 ];
@@ -146,7 +146,7 @@ export function WebVitalsExplainer() {
           const status =
             rawValue !== undefined ? getStatus(vital.key, rawValue) : null;
           const displayValue =
-            rawValue !== undefined ? formatValue(vital.key, rawValue) : "—";
+            rawValue !== undefined ? formatValue(vital.key, rawValue) : "N/A";
           const isActive = activeCard === vital.key;
 
           const statusStyle =

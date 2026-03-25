@@ -16,7 +16,7 @@ The work experience data is rendered via the `InteractiveTimeline` component (`s
 
 ### Work Experience Timeline
 
-- **Skaramangas Shipyards**: IT Network Engineer (2025 – Present)
+- **Skaramangas Shipyards**: IT Network Engineer (2025 to Present)
   - Cisco-based network infrastructure for maritime operations
   - Fortinet firewall environments for data center security
   - High availability of core network systems across 1,000+ ports
@@ -33,8 +33,8 @@ The work experience data is rendered via the `InteractiveTimeline` component (`s
   - Active Directory environments and ServiceNow ITSM
   - CyberArk Privileged Access Management
 
-- **Printec Hellas**: Technical Engineer (Jan 2022 – Sep 2022)
-  - Windows and Cisco Systems — servers, switches, routers, firewalls
+- **Printec Hellas**: Technical Engineer (Jan 2022 to Sep 2022)
+  - Windows and Cisco Systems: servers, switches, routers, firewalls
   - Hardware-based network installation and troubleshooting
 
 ### Experience Details

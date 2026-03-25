@@ -24,7 +24,7 @@ scripts\verify-deployment.bat
 pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 ```
 
-Tests both `www.baltzakisthemis.com` and `baltzakisthemis.com` — covers all 9 pages, API health endpoints, contact form, chat API, booking slots, HTTPS, and 404 handling. See [`TESTING.md`](./TESTING.md) for details.
+Tests both `www.baltzakisthemis.com` and `baltzakisthemis.com`. Covers all 9 pages, API health endpoints, contact form, chat API, booking slots, HTTPS, and 404 handling. See [`TESTING.md`](./TESTING.md) for details.
 
 ---
 

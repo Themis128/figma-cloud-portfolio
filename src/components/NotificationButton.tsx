@@ -558,7 +558,7 @@ export function NotificationButton() {
                 {pushLoading
                   ? "Processing..."
                   : pushSubscribed
-                    ? "Subscribed — tap to unsubscribe"
+                    ? "Subscribed, tap to unsubscribe"
                     : "Get push notifications"}
               </button>
             </div>

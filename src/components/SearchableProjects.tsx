@@ -40,7 +40,7 @@ const projects: Project[] = [
     description:
       "Personal portfolio built with Next.js 16, deployed on AWS S3 + CloudFront with Amplify Gen 2 backend. Features AI chatbot (AWS Bedrock), PWA support, and admin dashboard.",
     comment:
-      "My flagship project — a fully serverless portfolio with AI-powered chatbot, 10-tab admin dashboard, CI/CD via GitHub Actions, and Playwright E2E testing. Static export bypasses Amplify Hosting OOM limits.",
+      "My flagship project: a fully serverless portfolio with AI-powered chatbot, 10-tab admin dashboard, CI/CD via GitHub Actions, and Playwright E2E testing. Static export bypasses Amplify Hosting OOM limits.",
     technologies: [
       "Next.js",
       "TypeScript",
@@ -62,7 +62,7 @@ const projects: Project[] = [
     description:
       "Comprehensive monitoring solution for home/SOHO networks featuring security monitoring, network performance tracking, and infrastructure observability.",
     comment:
-      "Built on a Raspberry Pi — collects SNMP metrics from switches and APs, visualizes network health in Grafana, and alerts on anomalies. Great for learning observability in a real network environment.",
+      "Built on a Raspberry Pi. Collects SNMP metrics from switches and APs, visualizes network health in Grafana, and alerts on anomalies. Great for learning observability in a real network environment.",
     technologies: [
       "Raspberry Pi",
       "Prometheus",
@@ -119,7 +119,7 @@ const projects: Project[] = [
     id: "telegram-web-app",
     title: "Telegram Web App",
     description:
-      "Modern Telegram Web App with PWA support — full MTProto API access via Telethon for messaging and automation.",
+      "Modern Telegram Web App with PWA support, featuring full MTProto API access via Telethon for messaging and automation.",
     comment:
       "Full-featured Telegram client built as a PWA. Uses Telethon for direct MTProto protocol access, enabling custom bots, message automation, and channel management from a web browser.",
     technologies: ["Python", "Telethon", "MTProto", "PWA"],
@@ -160,7 +160,7 @@ const projects: Project[] = [
     description:
       "Nuxt 4 application for checking and verifying MATLAB capabilities, featuring a modern web interface for data analysis tools.",
     comment:
-      "Built during my MSc in Data Analytics — provides a web frontend for running MATLAB toolbox checks and capability verification without needing the MATLAB desktop.",
+      "Built during my MSc in Data Analytics. Provides a web frontend for running MATLAB toolbox checks and capability verification without needing the MATLAB desktop.",
     technologies: ["Nuxt.js", "Python", "MATLAB", "Vue.js"],
     category: "tools",
     githubUrl: "https://github.com/Themis128/matlab-nuxt-app",
@@ -173,7 +173,7 @@ const projects: Project[] = [
     description:
       "Full-stack e-commerce platform with product management, cart functionality, and payment integration.",
     comment:
-      "Complete e-commerce solution for cloudless.gr — features product catalog, shopping cart, Stripe checkout, and an admin panel for inventory management.",
+      "Complete e-commerce solution for cloudless.gr, featuring product catalog, shopping cart, Stripe checkout, and an admin panel for inventory management.",
     technologies: ["TypeScript", "React", "Node.js", "Stripe"],
     category: "web",
     year: 2025,

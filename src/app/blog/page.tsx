@@ -32,7 +32,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "Themistoklis Baltzakis — Blog",
+        alt: "Themistoklis Baltzakis | Blog",
       },
     ],
   },
@@ -101,7 +101,7 @@ export default function BlogPage() {
             <AnimatedSection delay={0.2}>
               <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
                 Insights on cloud architecture, cybersecurity, and modern web
-                development — from the trenches of enterprise infrastructure.
+                development, from the trenches of enterprise infrastructure.
               </p>
             </AnimatedSection>
           </div>

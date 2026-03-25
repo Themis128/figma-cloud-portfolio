@@ -152,7 +152,7 @@ CloudFront distribution `E134SCTR0QGQKJ` has two cache behaviors:
 | `/api/*` | Lambda Function URL | Backend API requests |
 | `Default (*)` | S3 bucket | Static frontend assets |
 
-> **Note**: No custom error responses (SPA fallback) — this ensures Lambda JSON errors pass through correctly.
+> **Note**: No custom error responses (SPA fallback). This ensures Lambda JSON errors pass through correctly.
 
 ## Local Development
 
@@ -191,8 +191,8 @@ Two workflows trigger on push to `production` branch or manual dispatch:
 
 | Workflow | File | Description |
 |---|---|---|
-| Deploy to Production | `.github/workflows/deploy.yml` | Standard Actions — build, S3 sync, CloudFront invalidation |
-| Production Deployment (Agentic) | `.github/workflows/deploy-production.md` | Copilot-powered — deploy + smoke tests + deployment report |
+| Deploy to Production | `.github/workflows/deploy.yml` | Standard Actions: build, S3 sync, CloudFront invalidation |
+| Production Deployment (Agentic) | `.github/workflows/deploy-production.md` | Copilot-powered: deploy + smoke tests + deployment report |
 
 Both generate `amplify_outputs.json` before building to ensure the Amplify Gen 2 backend config is included.
 

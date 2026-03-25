@@ -67,7 +67,7 @@ const BADGES: BadgeItem[] = [
     name: 'KNIME Analytics Platform L1',
     issuer: 'KNIME',
     year: '2023',
-    desc: 'Passed L1 exam — data cleaning, transformation, and visual workflow analytics.',
+    desc: 'Passed L1 exam: data cleaning, transformation, and visual workflow analytics.',
     image: 'https://images.credly.com/images/ba8f2415-703b-4d41-a850-5aecbabd5cf4/L1_Large.png',
   },
   {

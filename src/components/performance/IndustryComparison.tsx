@@ -164,7 +164,7 @@ export function IndustryComparison() {
         })}
 
         <p className="text-[10px] text-foreground/25 text-center pt-2 font-mono">
-          Benchmarks: HTTP Archive Web Almanac 2024 — desktop median LCP values
+          Benchmarks: HTTP Archive Web Almanac 2024, desktop median LCP values
         </p>
       </div>
     </div>

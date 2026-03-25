@@ -232,7 +232,7 @@ export default function GoogleAnalyticsExplainer() {
           <code className="font-mono text-foreground/60">Secure</code> flags.
           The <strong>Secure</strong> flag ensures cookies are only sent over
           HTTPS connections. <strong>SameSite=None</strong> allows the cookies to
-          work in cross-origin contexts — required by modern browsers for
+          work in cross-origin contexts, required by modern browsers for
           third-party tracking cookies.
         </ConfigItem>
       </Card>
@@ -305,7 +305,7 @@ trackSearch("aws cloud", 5);`}
             value="(conversionId, label?)"
           >
             Fires a conversion event for high-value actions. Use this when a
-            contact form is submitted or a booking is completed — actions that
+            contact form is submitted or a booking is completed. These are actions that
             represent measurable business outcomes.
           </ConfigItem>
           <CodeBlock

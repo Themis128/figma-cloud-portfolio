@@ -12,7 +12,7 @@ const STACK: StackItem[] = [
     role: "Framework",
     icon: "▲",
     reason:
-      "Server Components deliver pre-rendered HTML — static content ships no JavaScript to the browser at all.",
+      "Server Components deliver pre-rendered HTML. Static content ships no JavaScript to the browser at all.",
     impact: "Cuts initial JS bundle ~40%",
   },
   {
@@ -28,7 +28,7 @@ const STACK: StackItem[] = [
     role: "Components",
     icon: "◎",
     reason:
-      "Unstyled accessible primitives — no layout side effects means zero unexpected Cumulative Layout Shift.",
+      "Unstyled accessible primitives with no layout side effects, meaning zero unexpected Cumulative Layout Shift.",
     impact: "CLS score: 0.000",
   },
   {
@@ -36,7 +36,7 @@ const STACK: StackItem[] = [
     role: "Animation",
     icon: "🌀",
     reason:
-      "GPU-accelerated transforms and opacity only — animations never trigger layout recalculation or block the main thread.",
+      "GPU-accelerated transforms and opacity only. Animations never trigger layout recalculation or block the main thread.",
     impact: "Smooth 60fps, no jank",
   },
   {
@@ -44,7 +44,7 @@ const STACK: StackItem[] = [
     role: "Deployment",
     icon: "☁️",
     reason:
-      "Static export served from S3, distributed via CloudFront edge CDN to 600+ locations worldwide — every visitor fetches from the closest node.",
+      "Static export served from S3, distributed via CloudFront edge CDN to 600+ locations worldwide. Every visitor fetches from the closest node.",
     impact: "TTFB < 100ms globally",
   },
   {
@@ -52,7 +52,7 @@ const STACK: StackItem[] = [
     role: "Monitoring",
     icon: "📊",
     reason:
-      "Real-user monitoring collects actual visitor experience — not synthetic lab scores from a single data centre.",
+      "Real-user monitoring collects actual visitor experience, not synthetic lab scores from a single data centre.",
     impact: "Real-world measurement",
   },
 ];

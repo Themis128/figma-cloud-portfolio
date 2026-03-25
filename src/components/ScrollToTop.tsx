@@ -24,7 +24,7 @@ export function ScrollToTop() {
     <button
       onClick={scrollToTop}
       className="fixed right-5 z-40 flex h-11 w-11 items-center justify-center rounded-lg border border-cyan-400/20 bg-background/80 backdrop-blur-sm text-foreground/50 shadow-lg shadow-cyan-500/5 hover:text-cyan-400 hover:border-cyan-400/40 hover:bg-background/90 transition-all duration-200"
-      style={{ bottom: "max(5rem, calc(3.5rem + var(--safe-area-bottom)))" }}
+      style={{ bottom: "max(1.5rem, calc(0.5rem + var(--safe-area-bottom)))" }}
       aria-label="Scroll to top"
       title="Back to top"
     >

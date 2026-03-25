@@ -20,14 +20,14 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "Performance",
   description:
-    "Real-time performance metrics, Core Web Vitals, and an interactive speed test for baltzakisthemis.com — built for speed.",
+    "Real-time performance metrics, Core Web Vitals, and an interactive speed test for baltzakisthemis.com, built for speed.",
   openGraph: {
     title: "Performance | Themistoklis Baltzakis",
     description:
-      "See how fast this portfolio loads on your device — live Core Web Vitals and interactive speed test.",
+      "See how fast this portfolio loads on your device: live Core Web Vitals and interactive speed test.",
     url: `${SITE_URL}/performance/`,
     type: "website",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/performance/` },
 };
@@ -91,7 +91,7 @@ export default function PerformancePage() {
                 </span>
               </h1>
               <p className="text-cyan-400 text-sm font-semibold tracking-wide uppercase">
-                Measured live — on your device, your connection
+                Measured live on your device, your connection
               </p>
               <div className="w-12 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
             </div>
@@ -140,7 +140,7 @@ export default function PerformancePage() {
               Real-User Field Data
             </h2>
             <p className="text-center text-foreground/40 text-sm mb-8 max-w-2xl mx-auto">
-              Chrome UX Report (CrUX) data from real visitors over the last 28 days — the ground truth for Core Web Vitals.
+              Chrome UX Report (CrUX) data from real visitors over the last 28 days: the ground truth for Core Web Vitals.
             </p>
             <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto mb-8" />
           </AnimatedSection>

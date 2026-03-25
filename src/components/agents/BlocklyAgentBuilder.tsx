@@ -315,7 +315,7 @@ function defineAgentBlocks(BlocklyModule: BlocklyModule, pythonGenerator?: Pytho
         previousStatement: null,
         nextStatement: null,
         style: "loop_blocks",
-        tooltip: "The agent repeats steps in a loop — this is the agentic loop!",
+        tooltip: "The agent repeats steps in a loop. This is the agentic loop!",
       });
     },
   };
@@ -900,7 +900,7 @@ class AgentRuntime {
     switch (what) {
       case "clock": {
         const now = new Date();
-        result = `${now.toLocaleTimeString()} — ${now.toLocaleDateString()} (${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
+        result = `${now.toLocaleTimeString()} | ${now.toLocaleDateString()} (${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
         break;
       }
       case "room": {
@@ -984,7 +984,7 @@ class AgentRuntime {
         } else if (entries.length > 15) {
           result = `⚠ Alert: High resource count (${entries.length} loaded)`;
         } else {
-          result = "No alerts — all systems nominal";
+          result = "No alerts: all systems nominal";
         }
         break;
       }
@@ -1026,7 +1026,7 @@ class AgentRuntime {
       case "email": {
         const draft = {
           to: "team@company.com",
-          subject: `Agent Report — ${new Date().toLocaleTimeString()}`,
+          subject: `Agent Report | ${new Date().toLocaleTimeString()}`,
           body: this.memory.slice(-3).join("; "),
           created: new Date().toISOString(),
         };
@@ -1039,7 +1039,7 @@ class AgentRuntime {
       }
       case "lights":
         document.documentElement.classList.toggle("agent-lights-dimmed");
-        result = `Lights ${document.documentElement.classList.contains("agent-lights-dimmed") ? "dimmed" : "restored"} — CSS filter applied`;
+        result = `Lights ${document.documentElement.classList.contains("agent-lights-dimmed") ? "dimmed" : "restored"}, CSS filter applied`;
         this.lastSuccess = true;
         break;
       case "search": {
@@ -1076,7 +1076,7 @@ class AgentRuntime {
       case "deploy": {
         const version = `v1.${Math.floor(performance.now() / 1000)}.0`;
         const hash = Math.random().toString(36).slice(2, 10);
-        result = `Deployed ${version} (commit ${hash}) — build passed, 0 errors`;
+        result = `Deployed ${version} (commit ${hash}), build passed, 0 errors`;
         this.lastSuccess = true;
         break;
       }
@@ -1378,7 +1378,7 @@ export default function BlocklyAgentBuilder() {
         workspace.addChangeListener(() => {
           try {
             const generated = pythonGenerator.workspaceToCode(workspace);
-            setCode(generated || "# Empty workspace — drag some blocks!");
+            setCode(generated || "# Empty workspace, drag some blocks!");
           } catch {
             setCode("# Drag blocks to build your agent!");
           }
@@ -1536,7 +1536,7 @@ export default function BlocklyAgentBuilder() {
         await executeStatement(block, rt, controller.signal, highlight);
       }
       if (!controller.signal.aborted) {
-        rt.log(`✅ Agent completed — ${rt.memory.length} memories, ${rt.iteration} iterations`);
+        rt.log(`✅ Agent completed: ${rt.memory.length} memories, ${rt.iteration} iterations`);
       }
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
@@ -1549,7 +1549,7 @@ export default function BlocklyAgentBuilder() {
         setOutput((prev) => [
           ...prev,
           {
-            time: "—",
+            time: "N/A",
             text: `❌ Error: ${e instanceof Error ? e.message : "Unknown"}`,
             indent: false,
           },

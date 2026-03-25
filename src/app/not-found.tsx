@@ -4,7 +4,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
-  title: "404 — Page Not Found",
+  title: "404 | Page Not Found",
   robots: { index: false, follow: false },
 };
 

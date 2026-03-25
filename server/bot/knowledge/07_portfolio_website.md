@@ -21,7 +21,7 @@
 - **Package Manager**: pnpm
 
 ## Design Language
-- Dark cyberpunk aesthetic with animated circuit board background (theme-aware — adjusts for light mode)
+- Dark cyberpunk aesthetic with animated circuit board background (theme-aware, adjusts for light mode)
 - Cyberpunk-light theme: cool slate background with cyan primary, muted glass effects
 - Primary accent color: Cyan
 - Glass morphism cards with backdrop blur
@@ -35,7 +35,7 @@
 ## Deployment & Infrastructure
 - **Frontend**: S3 bucket + CloudFront CDN with targeted invalidation (only changed files)
 - **Backend**: AWS Amplify Gen 2 (Cognito auth with TOTP MFA + AppSync GraphQL + DynamoDB)
-- **Lambda**: `figma-portfolio-api` — 1024MB memory, 30s timeout, CloudWatch alarms (errors, throttles, duration)
+- **Lambda**: `figma-portfolio-api`: 1024MB memory, 30s timeout, CloudWatch alarms (errors, throttles, duration)
 - **CI/CD**: GitHub Actions (pnpm caching, Lighthouse CI post-deploy) + 11 GitHub Agentic Workflows
 - **Security headers**: HSTS (1 year + preload), Permissions-Policy, CORP, CSP, X-Frame-Options, X-Content-Type-Options
 - **Monitoring**: Sentry (error tracking + session replay), CloudWatch (Lambda alarms), Uptime Monitor (6-hourly)
@@ -51,7 +51,7 @@
 7. **Resume Builder** (`/resume/`): Interactive CV builder with 7 HTML/CSS templates (Classic, Modern, Minimal, Executive, Creative, Bold, Emerald), live preview, PDF download, JSON export/import, localStorage auto-save, plus an ATS optimization guide
 8. **Performance** (`/performance/`): Live Core Web Vitals, interactive speed test runner, web vitals explainer cards, industry comparison chart, 8-item optimization checklist, tech stack rationale
 9. **AI Agents** (`/agents/`): Educational guide on AI agents with core concepts (Observe → Think → Act → Evaluate), architecture patterns, key terminology (RAG, ReAct, MCP, Guardrails), network engineering use cases, 5 agent templates, and a Blockly drag-and-drop agent builder for kids
-10. **Admin Dashboard** (`/admin/`): Internal dashboard with 10 tabs — Health (API monitoring), Console (HTTP request builder), Deploy (production status), Errors (real-time capture with type filters, search, grouping, severity levels, sparkline, sound alerts, session persistence, copy-to-clipboard), Performance (CWV budgets), SEO (page audit), Push (notification tester), Analytics (GA4), Auth (session details), Environment (build info)
+10. **Admin Dashboard** (`/admin/`): Internal dashboard with 10 tabs: Health (API monitoring), Console (HTTP request builder), Deploy (production status), Errors (real-time capture with type filters, search, grouping, severity levels, sparkline, sound alerts, session persistence, copy-to-clipboard), Performance (CWV budgets), SEO (page audit), Push (notification tester), Analytics (GA4), Auth (session details), Environment (build info)
 11. **Builder** (`/builder/`): Visual page builder powered by Builder.io with drag-and-drop content creation
 12. **Settings** (`/settings/`): Theme, animations, notifications, analytics consent
 13. **Privacy Policy** (`/privacy/`): GDPR/CCPA compliant privacy policy
@@ -65,7 +65,7 @@
 - Progressive Web App (PWA) with offline support, push notifications, install prompt, update detection on tab focus, proper maskable icons, screenshots in manifest, and Windows tile support
 - Interactive CV builder with 7 templates and client-side PDF generation
 - Command palette (Ctrl+K) for quick navigation across all pages
-- Automated announcement system — announcements auto-generated from git commits at build time, with per-item dismiss and push notification integration
+- Automated announcement system: announcements auto-generated from git commits at build time, with per-item dismiss and push notification integration
 - Accessibility panel with font size adjustment, high contrast mode, reduced motion, and screen reader hints
 - Voice commands for hands-free navigation (go home, go to about, contact, agents)
 - Sticky dot navigation (SectionNav) on long pages (performance, about, contact, agents)
@@ -74,7 +74,7 @@
 - Contact form with reCAPTCHA v3 spam protection (score threshold 0.7, action/hostname/challenge_ts validation)
 - Interactive 3D AI Brain visualization on homepage
 - Matrix Rain animation toggle with glow effects
-- Dark/Light theme toggle with system preference detection — cyberpunk-light theme with cool slate bg and cyan primary
+- Dark/Light theme toggle with system preference detection, cyberpunk-light theme with cool slate bg and cyan primary
 - Blockly visual agent builder for educational purposes
 - Cookie consent banner with granular category controls
 - Availability status badge on homepage

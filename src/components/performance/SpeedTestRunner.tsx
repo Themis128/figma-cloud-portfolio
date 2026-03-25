@@ -102,24 +102,24 @@ function getOverallGrade(items: TestItem[], metrics: Record<string, number>) {
     return {
       label: "A+",
       color: "text-green-400",
-      tagline: "Excellent — blazing fast",
+      tagline: "Excellent: blazing fast",
     };
   if (avg >= 1.5)
     return {
       label: "A",
       color: "text-green-400",
-      tagline: "Great — above average",
+      tagline: "Great: above average",
     };
   if (avg >= 1.2)
     return {
       label: "B",
       color: "text-yellow-400",
-      tagline: "Good — room to improve",
+      tagline: "Good: room to improve",
     };
   return {
     label: "C",
     color: "text-orange-400",
-    tagline: "Fair — optimizations needed",
+    tagline: "Fair: optimizations needed",
   };
 }
 
@@ -209,7 +209,7 @@ export function SpeedTestRunner() {
     )
       .map((t) => {
         const v = capturedMetrics[t.metricKey];
-        return `${t.label}: ${v !== undefined ? formatValue(t.metricKey, v) : "—"}`;
+        return `${t.label}: ${v !== undefined ? formatValue(t.metricKey, v) : "N/A"}`;
       })
       .join("\n");
 
@@ -217,7 +217,7 @@ export function SpeedTestRunner() {
 
     if (navigator.share) {
       void navigator.share({
-        title: "baltzakisthemis.com — Performance Results",
+        title: "baltzakisthemis.com | Performance Results",
         text,
       });
     } else {

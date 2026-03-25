@@ -2182,6 +2182,61 @@ test.describe("AI Chatbot Widget", () => {
 
   // ── Conversation history ────────────────────────────────────────────
 
+  test.describe("Cover letter generation", () => {
+    test("should accept a job description and generate a tailored cover letter", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await openChat(page);
+      const input = chatInput(page);
+
+      // Paste a job description and ask for a cover letter
+      await input.fill(
+        "Can you write a cover letter for this job? Cloud Architect needed with AWS experience, networking, and security certifications. Must have Cisco and Terraform skills.",
+      );
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      // The response should contain cover-letter-style content referencing Themis's skills
+      const panel = chatPanel(page);
+      const replyText = await panel
+        .locator("div[class*='bg-white/5']")
+        .filter({ hasNotText: "Hi! I'm Themis's AI assistant" })
+        .first()
+        .innerText();
+
+      // Should mention relevant skills from the knowledge base
+      const lowerReply = replyText.toLowerCase();
+      const relevantTerms = ["aws", "cloud", "cisco", "network", "security", "architect"];
+      const matchedTerms = relevantTerms.filter((t) => lowerReply.includes(t));
+      expect(matchedTerms.length).toBeGreaterThanOrEqual(2);
+    });
+
+    test("should produce multi-paragraph response for cover letter request", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await openChat(page);
+      const input = chatInput(page);
+
+      await input.fill(
+        "Write me a cover letter for a DevOps Engineer role. Requirements: CI/CD, Kubernetes, infrastructure as code.",
+      );
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const panel = chatPanel(page);
+      const replyText = await panel
+        .locator("div[class*='bg-white/5']")
+        .filter({ hasNotText: "Hi! I'm Themis's AI assistant" })
+        .first()
+        .innerText();
+
+      // Cover letters should be substantive (more than a one-liner)
+      expect(replyText.length).toBeGreaterThan(200);
+    });
+  });
+
   test.describe("Conversation history", () => {
     test("should maintain context across messages (last 6 turns)", async ({ page }) => {
       test.skip(!(await isChatAvailable()), "Express server not running");

@@ -32,7 +32,7 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
 
     // Default values
     const defaultTitle =
-      "Themistoklis Baltzakis - IT Network Engineer";
+      "Themistoklis Baltzakis | IT Network Engineer";
     const defaultDescription =
       "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.";
     const defaultImage = `${baseURL}/logo.svg`;
@@ -239,7 +239,7 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
 export const metadataConfigs = {
   home: {
     title:
-      "Themistoklis Baltzakis - IT Network Engineer",
+      "Themistoklis Baltzakis | IT Network Engineer",
     description:
       "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
     keywords: [
@@ -263,7 +263,7 @@ export const metadataConfigs = {
   },
 
   about: {
-    title: "About Themistoklis Baltzakis - IT Network Engineer",
+    title: "About Themistoklis Baltzakis | IT Network Engineer",
     description:
       "Learn more about my journey in network engineering and IT infrastructure, with 15+ years of experience in Cisco systems and security solutions.",
     keywords: [
@@ -279,7 +279,7 @@ export const metadataConfigs = {
   },
 
   projects: {
-    title: "Projects & Portfolio - Network Infrastructure & Security",
+    title: "Projects & Portfolio | Network Infrastructure & Security",
     description:
       "Explore my latest work and technical projects in network infrastructure, security, and enterprise IT.",
     keywords: [
@@ -295,7 +295,7 @@ export const metadataConfigs = {
   },
 
   resume: {
-    title: "Resume & Career Guide - Beat ATS Systems",
+    title: "Resume & Career Guide | Beat ATS Systems",
     description:
       "How to write a resume that beats ATS systems. Practical tips for IT professionals, network engineers, and cybersecurity specialists.",
     keywords: [
@@ -311,9 +311,9 @@ export const metadataConfigs = {
   },
 
   agents: {
-    title: "Understanding AI Agents - Educational Guide",
+    title: "Understanding AI Agents | Educational Guide",
     description:
-      "Learn how AI agents work — from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
+      "Learn how AI agents work, from LLM fundamentals to multi-agent architectures. Interactive guide with visual workflow builder.",
     keywords: [
       "AI Agents",
       "LLM",
@@ -328,7 +328,7 @@ export const metadataConfigs = {
   },
 
   contact: {
-    title: "Contact - Themistoklis Baltzakis",
+    title: "Contact | Themistoklis Baltzakis",
     description:
       "Get in touch with me for cloud architecture consultations, cybersecurity advice, or collaboration opportunities.",
     keywords: ["Contact", "Email", "LinkedIn", "Portfolio", "Collaboration"],

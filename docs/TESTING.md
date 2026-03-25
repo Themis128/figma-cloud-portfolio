@@ -18,7 +18,7 @@ This project uses **Playwright** for end-to-end (E2E) testing, targeting 100% co
 
 **File:** `playwright.config.ts`
 
-- Base URL (local dev): `http://localhost:3000` (Next.js dev server) — backend: `http://localhost:3001` (Express dev server)
+- Base URL (local dev): `http://localhost:3000` (Next.js dev server), backend: `http://localhost:3001` (Express dev server)
 - Override with `PLAYWRIGHT_BASE_URL` for CI or production testing.
 - Browsers: Chromium, Firefox, WebKit (desktop + mobile viewports)
 - Test timeout: 30 seconds
@@ -71,7 +71,7 @@ Shared helpers used across spec files:
 
 ### Core Application Tests
 
-#### `playwright-tests/app.spec.ts` — Main Application Suite
+#### `playwright-tests/app.spec.ts` | Main Application Suite
 
 **Coverage:** Home page, Navigation, Contact Form, Theme, About, Settings, Performance
 
@@ -105,11 +105,11 @@ Shared helpers used across spec files:
 - ✅ Accessibility compliance (axe)
 - ✅ Performance monitoring
 
-#### `playwright-tests/routing-test.spec.ts` — SPA Routing
+#### `playwright-tests/routing-test.spec.ts` | SPA Routing
 
 - ✅ /projects URL navigation
 
-#### `playwright-tests/navigation-spa.spec.ts` — SPA Navigation (Link-based)
+#### `playwright-tests/navigation-spa.spec.ts` | SPA Navigation (Link-based)
 
 - ✅ All routes navigate without full page reload
 - ✅ Browser back/forward buttons
@@ -117,7 +117,7 @@ Shared helpers used across spec files:
 - ✅ 404 fallback for unknown routes
 - ✅ Mobile navigation for all routes
 
-#### `playwright-tests/product.spec.ts` — Work Experience Page
+#### `playwright-tests/product.spec.ts` | Work Experience Page
 
 - ✅ Page loads at /product
 - ✅ Experience cards render via InteractiveTimeline (dual desktop/mobile views)
@@ -130,9 +130,9 @@ Shared helpers used across spec files:
 - ✅ No broken links
 - ✅ Text is readable (contrast)
 
-#### `playwright-tests/interactive-components.spec.ts` — Interactive Engagement Components (28 tests)
+#### `playwright-tests/interactive-components.spec.ts` | Interactive Engagement Components (28 tests)
 
-**Coverage:** All 7 interactive components — ScrollProgress, MatrixRain, CyberTerminal, TypeWriter, SkillsRadar, InteractiveTimeline, CursorTrail
+**Coverage:** All 7 interactive components: ScrollProgress, MatrixRain, CyberTerminal, TypeWriter, SkillsRadar, InteractiveTimeline, CursorTrail
 
 **ScrollProgress (2 tests)**
 - ✅ Progressbar element with ARIA attributes (aria-label, aria-valuemin, aria-valuemax)
@@ -172,7 +172,7 @@ Shared helpers used across spec files:
 **CursorTrail (1 test)**
 - ✅ Trail container has aria-hidden="true" (graceful on CI/mobile)
 
-#### `playwright-tests/admin.spec.ts` — Admin Dashboard Suite (138 tests)
+#### `playwright-tests/admin.spec.ts` | Admin Dashboard Suite (138 tests)
 
 **Coverage:** Authentication, all 10 tabs (Health, Console, Deploy, Errors, Perf, SEO, Push, Analytics, Auth, Env), Tab Navigation, SEO
 
@@ -270,7 +270,7 @@ Shared helpers used across spec files:
 - ✅ Filter/category buttons work
 - ✅ Responsive grid layout
 
-#### `playwright-tests/resume.spec.ts` — Resume & Career Guide (12 tests)
+#### `playwright-tests/resume.spec.ts` | Resume & Career Guide (12 tests)
 
 **Coverage:** Educational resume guide with ATS tips, keyword categories, and career advice
 
@@ -286,14 +286,14 @@ Shared helpers used across spec files:
 - ✅ Navigation links to About (/about/) and Work Experience (/product/)
 - ✅ Responsive layout on mobile viewport (375×667)
 
-#### `playwright-tests/agents.spec.ts` — AI Agents Educational Page (18 tests)
+#### `playwright-tests/agents.spec.ts` | AI Agents Educational Page (18 tests)
 
 **Coverage:** Educational AI agents guide with concepts, architectures, terminology, use cases, and interactive builder
 
 **Educational Content (12 tests)**
 - ✅ Page heading ("Understanding AI Agents") and subtitle ("From Language Models to Autonomous Systems")
 - ✅ What Is an AI Agent section (agent capabilities: break tasks into steps, call external tools)
-- ✅ The Agentic Loop section with 4 phases (Observe, Think, Act, Evaluate) — scrolls into view on mobile
+- ✅ The Agentic Loop section with 4 phases (Observe, Think, Act, Evaluate), scrolls into view on mobile
 - ✅ Core Components section (LLM, Tools & APIs, Memory & Retrieval, Planning & Reasoning)
 - ✅ Architecture Patterns (Single Agent, Router Agent, Multi-Agent Collaboration)
 - ✅ Difficulty levels for patterns (Beginner, Intermediate, Advanced)
@@ -312,7 +312,7 @@ Shared helpers used across spec files:
 - ✅ Mobile responsive (375×667 viewport)
 - ✅ Screen reader support (sr-only, aria-label, aria-labelledby)
 
-#### `playwright-tests/agent-builder.spec.ts` — Agent Builder Interactive Section (13 tests)
+#### `playwright-tests/agent-builder.spec.ts` | Agent Builder Interactive Section (13 tests)
 
 **Coverage:** Interactive agent builder embedded in the educational agents page
 
@@ -330,7 +330,7 @@ Shared helpers used across spec files:
 - ✅ Responsive design (mobile 375×667, desktop 1920×1080)
 - ✅ Accessibility (SVG aria-label, rect aria-label attributes)
 
-#### `playwright-tests/ai-agents.spec.ts` — AI Agent Functionality (3 tests)
+#### `playwright-tests/ai-agents.spec.ts` | AI Agent Functionality (3 tests)
 
 - ✅ Page loads successfully (document.readyState === "complete")
 - ✅ Window object available
@@ -338,7 +338,7 @@ Shared helpers used across spec files:
 
 ---
 
-#### `playwright-tests/legal-pages.spec.ts` — Legal Pages Suite
+#### `playwright-tests/legal-pages.spec.ts` | Legal Pages Suite
 
 **Coverage:** Cookie Policy, Privacy Policy, Terms of Service, Cross Navigation
 
@@ -355,7 +355,7 @@ Shared helpers used across spec files:
 - ✅ Cross navigation: cookies→privacy, privacy→cookies, terms→privacy links
 - ✅ All legal pages use trailing slashes in URLs
 
-#### `playwright-tests/settings-page.spec.ts` — Settings Page Suite
+#### `playwright-tests/settings-page.spec.ts` | Settings Page Suite
 
 **Coverage:** Appearance, Accessibility, Notifications, Privacy, Persistence
 
@@ -372,7 +372,7 @@ Shared helpers used across spec files:
 - ✅ Reset to defaults functionality
 - ✅ Responsive layout on mobile viewport (375×812)
 
-#### `playwright-tests/chatbot.spec.ts` — AI Chatbot Widget (41 tests)
+#### `playwright-tests/chatbot.spec.ts` | AI Chatbot Widget (41 tests)
 
 **Coverage:** Toggle behaviour, panel structure, welcome message, suggested questions, message sending, streaming UI, multi-turn conversation, booking flow, keyboard interaction, accessibility, state persistence
 
@@ -515,13 +515,13 @@ The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests 
 
 #### `playwright-tests/api-integration.spec.ts`
 
-- ✅ `POST /api/contact` — valid submission
-- ✅ `POST /api/contact` — validation errors
-- ✅ `POST /api/contact` — reCAPTCHA failure
-- ✅ `GET /api/github/user` — profile data
-- ✅ `GET /api/github/repos` — repository list
-- ✅ `GET /api/resume` — resume data
-- ✅ `POST /api/analytics` — event logging
+- ✅ `POST /api/contact`: valid submission
+- ✅ `POST /api/contact`: validation errors
+- ✅ `POST /api/contact`: reCAPTCHA failure
+- ✅ `GET /api/github/user`: profile data
+- ✅ `GET /api/github/repos`: repository list
+- ✅ `GET /api/resume`: resume data
+- ✅ `POST /api/analytics`: event logging
 
 #### `playwright-tests/github-api-integration.spec.ts`
 
@@ -682,9 +682,9 @@ pnpm exec playwright test playwright-tests/production-smoke.spec.ts
 | Cookie Consent             | `tests/cookie-consent.spec.ts`                                             | ✅ Covered |
 | Accessibility Button       | `tests/accessibility-button.spec.ts`                                       | ✅ Covered |
 | PWA Update Notification    | `tests/pwa-update-notification.spec.ts`                                    | ✅ Covered |
-| Push Notifications API     | `push-notifications-api.spec.ts` (14 tests — CRUD, S3 persistence, VAPID) | ✅ Covered |
-| GitHub Repos Section       | `projects.spec.ts` (4 tests — heading, cards, stats, profile link)         | ✅ Covered |
-| CommandPalette Search      | `command-palette.spec.ts` (2 tests — server search, debounce)              | ✅ Covered |
+| Push Notifications API     | `push-notifications-api.spec.ts` (14 tests: CRUD, S3 persistence, VAPID)  | ✅ Covered |
+| GitHub Repos Section       | `projects.spec.ts` (4 tests: heading, cards, stats, profile link)          | ✅ Covered |
+| CommandPalette Search      | `command-palette.spec.ts` (2 tests: server search, debounce)               | ✅ Covered |
 | API Keys CRUD              | `api-keys.spec.ts`                                                         | ✅ Covered |
 
 **Total coverage: 100% of pages and major features**
@@ -720,7 +720,7 @@ test.describe("Feature Name", () => {
 4. **Mock external APIs** in `beforeEach` to avoid network dependency
 5. **Test accessibility** with `runAccessibilityAudit()` on every page
 6. **Use `test.describe`** to group related tests
-7. **Avoid hard-coded waits** (`page.waitForTimeout`) — prefer `waitForSelector` / `waitForResponse`
+7. **Avoid hard-coded waits** (`page.waitForTimeout`). Prefer `waitForSelector` / `waitForResponse`
 
 ---
 

@@ -1,6 +1,6 @@
 # Portfolio Chatbot
 
-An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using **AWS Bedrock** (Claude 3.5 Haiku) with the full knowledge base loaded into the system prompt, **Bedrock tool use** for live data, and **blog RAG** for article search — fast, accurate, and cost-effective.
+An AI-powered chat assistant embedded in the portfolio site. It answers visitor questions about Themistoklis Baltzakis's background, skills, experience, and certifications using **AWS Bedrock** (Claude 3.5 Haiku) with the full knowledge base loaded into the system prompt, **Bedrock tool use** for live data, and **blog RAG** for article search. Fast, accurate, and cost-effective.
 
 ## Architecture
 
@@ -18,26 +18,26 @@ Browser (ChatbotWidget.tsx)
                       └─ check_booking_availability — Cal.com slot availability
 ```
 
-The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock-runtime` SDK. All 10 knowledge files are loaded into the system prompt at startup — no separate vector database needed. Blog posts are indexed from MDX source files for RAG search. When the model requests a tool, the server executes it and re-invokes Bedrock with the result.
+The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock-runtime` SDK. All 10 knowledge files are loaded into the system prompt at startup, no separate vector database needed. Blog posts are indexed from MDX source files for RAG search. When the model requests a tool, the server executes it and re-invokes Bedrock with the result.
 
 ## Features
 
-- **Fast responses** — ~1-3 seconds per query via AWS Bedrock (longer when tools are used)
-- **Grounded answers** — full knowledge base in the system prompt prevents hallucination
-- **Tool use** — Bedrock native tool use for live data (GitHub stats, booking slots, portfolio/blog search)
-- **Blog RAG** — MDX blog posts indexed at startup; keyword search returns titles, descriptions, and excerpts
-- **Action tokens** — special tokens trigger UI interactions:
-  - `[BOOK_CALL]` — opens the BookingCard component (Cal.com integration)
-  - `[CONTACT]` — navigates to the contact page
-  - `[GOTO:/path/]` — renders a clickable navigation link in the chat bubble
-- **Low cost** — Claude 3.5 Haiku: ~$0.005 per query (~$5/month for 1,000 queries)
-- **Conversation history** — multi-turn context preserved per session (last 6 messages)
-- **SSE streaming** — incremental token-by-token Server-Sent Events delivery to the browser
-- **Thinking indicator** — animated dots shown while tools execute server-side
-- **Cyberpunk UI** — dark glass-morphism panel, cyan accent, `font-mono`
-- **Suggested questions** — 3 randomly selected prompts from a pool of ~40, plus pinned contact and booking prompts
-- **AI cover letter generator** — visitors can paste a job description and the chatbot generates a tailored 3-4 paragraph cover letter highlighting Themis's relevant experience
-- **Graceful errors** — failures displayed inline without crashing
+- **Fast responses**: ~1-3 seconds per query via AWS Bedrock (longer when tools are used)
+- **Grounded answers**: full knowledge base in the system prompt prevents hallucination
+- **Tool use**: Bedrock native tool use for live data (GitHub stats, booking slots, portfolio/blog search)
+- **Blog RAG**: MDX blog posts indexed at startup; keyword search returns titles, descriptions, and excerpts
+- **Action tokens**: special tokens trigger UI interactions:
+  - `[BOOK_CALL]`: opens the BookingCard component (Cal.com integration)
+  - `[CONTACT]`: navigates to the contact page
+  - `[GOTO:/path/]`: renders a clickable navigation link in the chat bubble
+- **Low cost**: Claude 3.5 Haiku: ~$0.005 per query (~$5/month for 1,000 queries)
+- **Conversation history**: multi-turn context preserved per session (last 6 messages)
+- **SSE streaming**: incremental token-by-token Server-Sent Events delivery to the browser
+- **Thinking indicator**: animated dots shown while tools execute server-side
+- **Cyberpunk UI**: dark glass-morphism panel, cyan accent, `font-mono`
+- **Suggested questions**: 3 randomly selected prompts from a pool of ~40, plus pinned contact and booking prompts
+- **AI cover letter generator**: visitors can paste a job description and the chatbot generates a tailored 3-4 paragraph cover letter highlighting Themis's relevant experience
+- **Graceful errors**: failures displayed inline without crashing
 
 ## Files
 
@@ -45,7 +45,7 @@ The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock
 | --- | --- |
 | `src/components/ChatbotWidget.tsx` | React UI component (floating button + chat panel, handles all action types) |
 | `src/components/BookingCard.tsx` | Booking UI triggered by `[BOOK_CALL]` action |
-| `server/routes/chat.ts` | Express route — Bedrock with tool use, blog RAG, action tokens, SSE streaming |
+| `server/routes/chat.ts` | Express route: Bedrock with tool use, blog RAG, action tokens, SSE streaming |
 | `server/bot/knowledge/*.md` | 10 knowledge base files (identity, experience, skills, etc.) |
 | `content/blog/*.mdx` | Blog posts indexed for RAG search at startup |
 
@@ -72,19 +72,19 @@ All files are loaded into the system prompt at startup (~33 KB, ~8,000 tokens). 
 
 All search tools share a common NLP pipeline that processes queries before matching:
 
-1. **Tokenization** — split query into words, strip punctuation
-2. **Stop-word removal** — filters 100+ common English words ("what", "the", "is", "does", etc.)
-3. **Synonym expansion** — maps domain-specific terms to knowledge base vocabulary:
+1. **Tokenization**: split query into words, strip punctuation
+2. **Stop-word removal**: filters 100+ common English words ("what", "the", "is", "does", etc.)
+3. **Synonym expansion**: maps domain-specific terms to knowledge base vocabulary:
    - `infosec` → cybersecurity, security
    - `k8s` → kubernetes
    - `certs` → certifications, certified
    - `IAM` → identity, access, management, cyberark
    - `datacenter` → cisco, ucs, hyperflex, aci
    - 30+ mappings covering cybersecurity, cloud, networking, and general terms
-4. **Stemming** — reduces words to approximate roots (e.g., "certifications" → "certif", "networking" → "network")
-5. **TF-IDF scoring** — term frequency weighted by inverse document frequency; rarer terms score higher
+4. **Stemming**: reduces words to approximate roots (e.g., "certifications" → "certif", "networking" → "network")
+5. **TF-IDF scoring**: term frequency weighted by inverse document frequency; rarer terms score higher
 
-This means a query like "What infosec certs does he have?" becomes search terms `["infosec", "cybersecurity", "security", "cert", "certif", "certified"]` — matching across word forms and domain synonyms.
+This means a query like "What infosec certs does he have?" becomes search terms `["infosec", "cybersecurity", "security", "cert", "certif", "certified"]`, matching across word forms and domain synonyms.
 
 ## Tool Use (Bedrock Native)
 
@@ -149,7 +149,7 @@ pnpm dev:all
 
 This starts:
 - Next.js dev server (port 3000)
-- Express dev server (port 3001) — handles `/api/chat` via Bedrock
+- Express dev server (port 3001), handles `/api/chat` via Bedrock
 
 Open the portfolio in your browser and click **Chat with AI** in the bottom-left corner.
 
@@ -167,9 +167,9 @@ Open the portfolio in your browser and click **Chat with AI** in the bottom-left
 | `AWS_ACCESS_KEY_ID` | Yes | (from AWS config) | AWS credentials |
 | `AWS_SECRET_ACCESS_KEY` | Yes | (from AWS config) | AWS credentials |
 | `GITHUB_USERNAME` | No | `Themis128` | GitHub username for `get_github_stats` tool |
-| `GITHUB_TOKEN` | No | — | GitHub PAT for higher API rate limits |
-| `CAL_API_KEY` | No | — | Cal.com API key for `check_booking_availability` tool |
-| `CAL_EVENT_TYPE_ID` | No | — | Cal.com event type ID for booking slot queries |
+| `GITHUB_TOKEN` | No | - | GitHub PAT for higher API rate limits |
+| `CAL_API_KEY` | No | - | Cal.com API key for `check_booking_availability` tool |
+| `CAL_EVENT_TYPE_ID` | No | - | Cal.com event type ID for booking slot queries |
 
 ## Model
 

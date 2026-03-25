@@ -357,7 +357,7 @@ export function PushNotificationTester() {
             <div className="flex items-center gap-2">
               <Users className="w-3.5 h-3.5 text-cyan-400" />
               <span className="font-mono text-lg text-cyan-400">
-                {subscriptionCount !== null ? subscriptionCount : "—"}
+                {subscriptionCount !== null ? subscriptionCount : "N/A"}
               </span>
             </div>
           </div>

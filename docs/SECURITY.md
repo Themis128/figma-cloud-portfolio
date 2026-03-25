@@ -64,7 +64,7 @@ Authentication uses **AWS Amplify Gen 2 Cognito** for all environments. The admi
 
 - **`src/contexts/AuthContext.tsx`**: Uses Amplify Hub to listen for auth events (`signedIn`, `signedOut`, `tokenRefresh`) + `getCurrentUser()` on mount
 - **`src/components/admin/useAdminAuth.ts`**: Wraps Amplify `signIn`/`signOut` with timeout and Cognito error code mapping. Uses `USER_PASSWORD_AUTH` flow (not SRP) because admin users are created via `admin-set-user-password`, which breaks SRP's password verifier
-- **`server/middleware/requireAuth.ts`**: Validates Cognito ID tokens using `aws-jwt-verify` — extracts `sub`, `email`, and `cognito:groups` from the JWT payload
+- **`server/middleware/requireAuth.ts`**: Validates Cognito ID tokens using `aws-jwt-verify`. Extracts `sub`, `email`, and `cognito:groups` from the JWT payload
 
 ---
 
@@ -138,10 +138,10 @@ if (isValidPath(path)) {
 
 **Server-side** (`server/routes/contact.ts`) validates four fields from Google's `/siteverify` response:
 
-1. **Score** — must be ≥ 0.7 (configurable via `RECAPTCHA_THRESHOLD` env var)
-2. **Action** — must match an allowed action (`contact`, `quick_contact`)
-3. **Hostname** — must match an allowed domain (`www.baltzakisthemis.com`, `baltzakisthemis.com`, `localhost`)
-4. **Token age** — `challenge_ts` must be < 2 minutes old (tokens expire after 2 min per Google docs)
+1. **Score**: must be ≥ 0.7 (configurable via `RECAPTCHA_THRESHOLD` env var)
+2. **Action**: must match an allowed action (`contact`, `quick_contact`)
+3. **Hostname**: must match an allowed domain (`www.baltzakisthemis.com`, `baltzakisthemis.com`, `localhost`)
+4. **Token age**: `challenge_ts` must be < 2 minutes old (tokens expire after 2 min per Google docs)
 
 **Client-side** (`src/hooks/useRecaptcha.ts`):
 - Shared `useRecaptcha` hook used by both `ContactPage` and `QuickContactForm`
@@ -345,15 +345,15 @@ The project uses [Snyk](https://snyk.io/) for continuous security scanning acros
 
 ### When Scans Run
 
-- **Weekly** (Monday 6am UTC) — scheduled full scan
-- **On PRs** to `production` or `main` — all 3 scan types
-- **On push** to `production` — all 3 scan types + `snyk monitor` (updates Snyk dashboard)
-- **Pre-deploy** — `deploy.yml` runs `snyk test --severity-threshold=critical` as a **blocking** deployment gate (critical vulnerabilities fail the deploy)
+- **Weekly** (Monday 6am UTC): scheduled full scan
+- **On PRs** to `production` or `main`: all 3 scan types
+- **On push** to `production`: all 3 scan types + `snyk monitor` (updates Snyk dashboard)
+- **Pre-deploy**: `deploy.yml` runs `snyk test --severity-threshold=critical` as a **blocking** deployment gate (critical vulnerabilities fail the deploy)
 
 ### Configuration
 
-- **`.snyk`** — Policy file with exclude rules for non-production code (`playwright-tests/`, `scripts/test-*`)
-- **`.github/workflows/snyk-security.yml`** — Workflow with pinned CLI version
+- **`.snyk`**: Policy file with exclude rules for non-production code (`playwright-tests/`, `scripts/test-*`)
+- **`.github/workflows/snyk-security.yml`**: Workflow with pinned CLI version
 - **GitHub Secrets**: `SNYK_TOKEN`, `SNYK_ORG`
 - **Snyk Dashboard**: Results are uploaded via `snyk monitor` on production pushes
 

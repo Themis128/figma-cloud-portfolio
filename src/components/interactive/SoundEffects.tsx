@@ -2,6 +2,7 @@
 
 import { Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 
 // Web Audio API context (shared, created on first interaction)
 let audioCtx: AudioContext | null = null;
@@ -69,7 +70,8 @@ export default function SoundEffects() {
   useEffect(() => {
     function onHover(e: Event) {
       if (!enabledRef.current) return;
-      const target = e.target as HTMLElement;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
       if (
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
@@ -82,7 +84,8 @@ export default function SoundEffects() {
 
     function onClick(e: Event) {
       if (!enabledRef.current) return;
-      const target = e.target as HTMLElement;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
       if (
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
@@ -103,13 +106,16 @@ export default function SoundEffects() {
   }, []);
 
   return (
-    <button
+    <Button
+      variant="outline"
+      size="icon"
       onClick={toggle}
       aria-label={enabled ? "Disable sound effects" : "Enable sound effects"}
       title={enabled ? "Sound on" : "Sound off"}
-      className="fixed bottom-[max(1.5rem,var(--safe-area-bottom))] right-[max(1.5rem,var(--safe-area-right))] z-40 p-2.5 rounded-full border border-border/20 bg-card/60 backdrop-blur-sm text-foreground/40 hover:text-cyan-400 hover:border-cyan-500/30 transition-all"
+      className="border-border/40 hover:border-cyan-400/60 hover:bg-transparent"
     >
-      {enabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-    </button>
+      {enabled ? <Volume2 className="h-[1.2rem] w-[1.2rem]" /> : <VolumeX className="h-[1.2rem] w-[1.2rem]" />}
+      <span className="sr-only">Sound effects</span>
+    </Button>
   );
 }

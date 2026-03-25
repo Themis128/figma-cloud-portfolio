@@ -73,7 +73,7 @@ export default function CrUXFieldData() {
       <div className="bg-card/40 backdrop-blur-sm border border-border/20 rounded-lg p-6 text-center">
         <Globe className="w-8 h-8 text-foreground/20 mx-auto mb-2" />
         <p className="text-foreground/40 font-mono text-sm">
-          {data?.message ?? "Field data not available yet — CrUX requires sufficient real-user traffic (typically 28 days)."}
+          {data?.message ?? "Field data not available yet. CrUX requires sufficient real-user traffic (typically 28 days)."}
         </p>
       </div>
     );

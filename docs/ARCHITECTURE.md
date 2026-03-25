@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a **Next.js 16 application** with the App Router, deployed as a **static export** on **S3 + CloudFront** (frontend) with an **AWS Lambda** function (backend). It serves as the personal portfolio of Themistoklis Baltzakis — a Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise.
+This is a **Next.js 16 application** with the App Router, deployed as a **static export** on **S3 + CloudFront** (frontend) with an **AWS Lambda** function (backend). It serves as the personal portfolio of Themistoklis Baltzakis | Cloud Architect & Cybersecurity Specialist with 15+ years of IT expertise.
 
 ---
 
@@ -27,7 +27,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Performance monitoring | web-vitals library                                |
 | Real-time features     | Socket.IO                                         |
 | 3D visualizations      | Three.js + @react-three/fiber v9 + @react-three/drei v10 |
-| Blog / Content         | Velite (MDX → typed JSON), rehype-pretty-code      |
+| Blog / Content         | Velite (MDX to typed JSON), rehype-pretty-code      |
 | Testing                | Playwright 1.58+ E2E, Vitest 4 unit tests         |
 
 ---
@@ -57,7 +57,7 @@ portfolio-nextjs/
 │   ├── components/           # Reusable UI components
 │   │   ├── admin/            # Admin dashboard components (10 tab panels)
 │   │   ├── agents/           # Agent builder components (Blockly visual builder + template playground)
-│   │   ├── interactive/      # Interactive engagement components (7 in folder)
+│   │   ├── interactive/      # Interactive engagement components (13 in folder)
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
 │   ├── hooks/                # Custom React hooks
@@ -69,7 +69,7 @@ portfolio-nextjs/
 │   └── blog/                # MDX blog posts (processed by Velite at build time)
 ├── velite.config.ts           # Velite content schema (Zod) + MDX pipeline config
 ├── .velite/                   # Generated typed content (gitignored)
-├── server/                   # Express dev server (port 3001) — all API routes
+├── server/                   # Express dev server (port 3001), all API routes
 ├── playwright-tests/         # E2E test suite
 ├── docs/                     # Project documentation
 ├── public/                   # Static assets
@@ -97,13 +97,13 @@ The app uses the Next.js App Router Server/Client component model:
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery + live GitHub repos (via `GitHubRepos` component) |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
 | `/agents`      | `agents/page.tsx`      | Educational AI agents guide with Blockly drag-and-drop builder + interactive builder |
-| `/blog`        | `blog/page.tsx`        | Blog listing — MDX posts via Velite, tags, reading time  |
+| `/blog`        | `blog/page.tsx`        | Blog listing: MDX posts via Velite, tags, reading time  |
 | `/blog/[slug]` | `blog/[slug]/page.tsx` | Individual blog post with syntax highlighting    |
 | `/contact`     | `contact/page.tsx`     | Server component wrapper with metadata; renders `ContactPage` client component |
 | `/settings`    | `settings/page.tsx`    | Server component wrapper with metadata; renders `SettingsPage` client component |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |
 | `/builder`     | `builder/page.tsx`     | Server component wrapper with metadata; renders `BuilderPage` client component |
-| `/admin`       | `admin/page.tsx`       | Admin dashboard (10 tabs — see below)           |
+| `/admin`       | `admin/page.tsx`       | Admin dashboard (10 tabs, see below)           |
 | `/cookies`     | `cookies/page.tsx`     | Cookie policy                                   |
 | `/privacy`     | `privacy/page.tsx`     | Privacy policy                                   |
 | `/terms`       | `terms/page.tsx`       | Terms of service                                 |
@@ -122,8 +122,8 @@ All public pages include:
   - `BlogPosting` on blog post pages with author, dates, keywords
 
 **AI Agent Discovery**:
-- `/llms.txt` — Curated Markdown site map for AI agents (follows llmstxt.org spec)
-- `/llms-full.txt` — Extended context with professional summary, services, and technical details
+- `/llms.txt`: Curated Markdown site map for AI agents (follows llmstxt.org spec)
+- `/llms-full.txt`: Extended context with professional summary, services, and technical details
 - `robots.txt` explicitly allows AI search bots (GPTBot, ClaudeBot, PerplexityBot, etc.) while blocking training-only scrapers (CCBot, Bytespider)
 
 The sitemap (`public/sitemap.xml`) includes all public pages and blog posts. The `/admin/` page is excluded and marked `noindex, nofollow`.
@@ -138,7 +138,7 @@ Pages that needed server component wrappers for Next.js metadata export have the
 | `src/components/SettingsPage.tsx`   | `/settings/page.tsx`  | App preferences (theme, notifications, privacy)|
 | `src/components/BuilderPage.tsx`    | `/builder/page.tsx`   | Builder.io page UI                            |
 | `src/components/BreadcrumbSchema.tsx` | Multiple pages      | Reusable breadcrumb JSON-LD structured data   |
-| `src/components/GitHubRepos.tsx`     | `/projects/page.tsx` | Live GitHub repository cards — fetches from `/api/github/repos` and `/api/github/stats`, shows repo name, description, topics, language, stars, forks, updated date, plus stats header (repos count, stars, followers, profile link) |
+| `src/components/GitHubRepos.tsx`     | `/projects/page.tsx` | Live GitHub repository cards. Fetches from `/api/github/repos` and `/api/github/stats`, shows repo name, description, topics, language, stars, forks, updated date, plus stats header (repos count, stars, followers, profile link) |
 
 ---
 
@@ -157,7 +157,7 @@ Used on:
 
 | Page | Sections | `ariaLabel` |
 | --- | --- | --- |
-| `/performance` | hero, speed-test, vitals, lighthouse, comparison, methodology | Performance page sections |
+| `/performance` | hero, speed-test, vitals, field-data, lighthouse, comparison, methodology | Performance page sections |
 | `/about` | hero, summary, focus-areas, skills, badges, awards | About page sections |
 | `/contact` | hero, contact-info, contact-form, more-info | Contact page sections |
 | `/agents` | hero, what-is-agent, agentic-loop, components, architecture, terminology, use-cases, block-builder, playground | Agents page sections |
@@ -168,19 +168,20 @@ Used on:
 
 ## Performance Page (`/performance`)
 
-A public-facing showcase demonstrating real performance metrics and technical optimisation choices. Designed to engage **recruiters, clients, and fellow developers** — not an internal monitoring dashboard.
+A public-facing showcase demonstrating real performance metrics and technical optimisation choices. Designed to engage **recruiters, clients, and fellow developers**, not an internal monitoring dashboard.
 
 ### Architecture
 
-The page is a **Server Component shell** with **Client Component islands** for live data. A sticky dot-nav (`SectionNav` — shared component, see below) on the right edge (desktop only) tracks the active section via IntersectionObserver.
+The page is a **Server Component shell** with **Client Component islands** for live data. A sticky dot-nav (`SectionNav`, shared component, see below) on the right edge (desktop only) tracks the active section via IntersectionObserver.
 
 | Component                 | Type       | Purpose                                                                                                  |
 | ------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
 | `performance/page.tsx`    | Server     | Layout shell, metadata, `Suspense` wrappers, section IDs for nav                                        |
 | `SectionNav` (shared)     | Client     | Sticky right-side dot navigation with smooth-scroll and active-section tracking (see Shared Components)  |
 | `LiveLoadHero`            | Client     | Animated LCP counter + spring-animated grade badge + 4 stat chips (LCP, FCP, CLS, INP)                  |
-| `SpeedTestRunner`         | Client     | Interactive test — reveals 5 live Web Vitals sequentially with share (toast feedback) / re-measure       |
+| `SpeedTestRunner`         | Client     | Interactive test: reveals 5 live Web Vitals sequentially with share (toast feedback) / re-measure       |
 | `WebVitalsExplainer`      | Client     | 5 interactive cards (LCP, FCP, CLS, TTFB, INP) with AnimatePresence expand/collapse + live values       |
+| `CrUXFieldData`           | Client     | Chrome UX Report real-user field data: 5 metric cards (LCP, FCP, CLS, INP, TTFB) with p75 values, color-coded thresholds, and good/needs-improvement/poor distribution bars. Fetches from `/api/crux` with loading skeleton and graceful unavailable state |
 | `LighthouseScore`         | Client     | Animated SVG score rings for Performance, Accessibility, Best Practices, SEO (count-up on scroll)        |
 | `IndustryComparison`      | Client     | Animated bar chart with live LCP vs. industry benchmarks + Top 10% + Google threshold (sorted by value)  |
 | `PerformanceMethodology`  | Client     | Tabbed section ("Techniques" / "Tech Stack") merging the former OptimizationChecklist + TechStackRationale |
@@ -189,9 +190,10 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 | Data                       | Source                                                                |
 | -------------------------- | --------------------------------------------------------------------- |
-| LCP, FCP, CLS, TTFB, INP  | `web-vitals` library — real-user measurement in the visitor's browser |
+| LCP, FCP, CLS, TTFB, INP  | `web-vitals` library: real-user measurement in the visitor's browser |
+| CrUX field data (p75, distributions) | Chrome UX Report API via `/api/crux`. Real-user data from the last 28 days. Server-side 1-hour cache. Phone form factor (primary) with All fallback. Requires `CRUX_API_KEY` env var |
 | Performance grade          | Computed from live vitals thresholds (Google CWV standards)           |
-| Industry benchmarks        | HTTP Archive Web Almanac 2024 — desktop median LCP values             |
+| Industry benchmarks        | HTTP Archive Web Almanac 2024, desktop median LCP values             |
 | Lighthouse scores          | Latest lab audit (hardcoded, update after each audit)                 |
 | Stack / technique content  | Static content in component file                                      |
 
@@ -201,15 +203,15 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 - Uses `usePerformanceMonitoring` hook which wraps `web-vitals` `onLCP/onFCP/onCLS/onTTFB/onINP`
 - Animated count-up to the visitor's actual LCP value (ease-out cubic via `requestAnimationFrame`)
-- Spring-animated circular grade badge (A+ → D) with cyan glow, computed from combined metric scores
-- 4 stat chips: LCP, FCP, CLS, INP — colour-coded green/yellow/red by threshold (responsive 2-col mobile / 4-col desktop)
+- Spring-animated circular grade badge (A+ to D) with cyan glow, computed from combined metric scores
+- 4 stat chips: LCP, FCP, CLS, INP, colour-coded green/yellow/red by threshold (responsive 2-col mobile / 4-col desktop)
 
 #### `SpeedTestRunner`
 
 - Collects Web Vitals passively on mount via `useEffect` (LCP, FCP, CLS, TTFB, INP)
 - "Start Speed Test" button triggers a 3-second animated progress bar
 - Snapshots collected metrics, then reveals 5 results one-by-one with a 450ms stagger
-- Overall grade (A+ → C) computed from revealed results
+- Overall grade (A+ to C) computed from revealed results
 - Share button uses `navigator.share` (with clipboard fallback + toast notification)
 - "Re-measure" button reloads the page for fresh metrics (web-vitals only reports once per page load)
 
@@ -223,13 +225,13 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 - 4 animated SVG score rings (Performance, Accessibility, Best Practices, SEO)
 - Count-up animation triggered by IntersectionObserver on scroll-in
-- Scores are hardcoded from latest Lighthouse 12 audit — update after each audit
+- Scores are hardcoded from latest Lighthouse 12 audit. Update after each audit
 
 #### `IndustryComparison`
 
 - Animated horizontal bars triggered by `IntersectionObserver` (fires once on scroll-in)
 - Uses live LCP from `usePerformanceMonitoring` (shows "(measuring…)" until captured)
-- Benchmarks: e-commerce (5.1s) → news (4.2s) → avg portfolio (3.1s) → Google "Good" (2.5s) → Top 10% (1.2s) → this site (live LCP)
+- Benchmarks: e-commerce (5.1s), news (4.2s), avg portfolio (3.1s), Google "Good" (2.5s), Top 10% (1.2s), this site (live LCP)
 - Bars sorted longest-first; CSS `transition` with staggered delays
 
 #### `PerformanceMethodology`
@@ -254,7 +256,7 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 | **Errors**     | `ErrorLogViewer`           | Client     | Real-time error capture with type filters, text search, error grouping, severity levels, error rate sparkline, session persistence, sound alerts, copy-to-clipboard, and JSON export |
 | **Perf**       | `PerformanceBudget`        | Client     | Live Core Web Vitals (LCP/FCP/CLS/TTFB) from `web-vitals` with budget bars and grades     |
 | **SEO**        | `SeoAudit`                 | Client     | Scans all pages for title, description, og:image, canonical, JSON-LD; shows pass/warn/error|
-| **Push**       | `PushNotificationTester`   | Client     | Web Push API tester — permission, SW registration, subscriber list (S3-persisted), send test/custom messages |
+| **Push**       | `PushNotificationTester`   | Client     | Web Push API tester: permission, SW registration, subscriber list (S3-persisted), send test/custom messages |
 | **Analytics**  | `GoogleAnalyticsExplainer` | Client     | Live session info (time on page, referrer), GA4 config reference, event helper docs        |
 | **Auth**       | `AuthManagement`           | Client     | Current session details (user ID, token expiry), Cognito config status                     |
 | **Env**        | `EnvironmentInfo`          | Client     | Build version, Node env, site URL, integrations (GA/Sentry/reCAPTCHA), client device info  |
@@ -279,13 +281,13 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 
 ### Components (all in `src/components/admin/`)
 
-- `AdminDashboard` — Main client component with tab management (mobile dropdown + desktop tabs)
-- `AdminLayout` — Header bar with logout, session timeout, theme toggle, offline indicator
-- `AdminLogin` — Cognito email/password login gate with ARIA accessibility
-- `useAdminAuth` — Auth hook wrapping Cognito sign-in with timeout and error mapping
-- `ApiEndpointCard` — Individual endpoint status card with sparkline, trend indicator, and status icons
+- `AdminDashboard`: Main client component with tab management (mobile dropdown + desktop tabs)
+- `AdminLayout`: Header bar with logout, session timeout, theme toggle, offline indicator
+- `AdminLogin`: Cognito email/password login gate with ARIA accessibility
+- `useAdminAuth`: Auth hook wrapping Cognito sign-in with timeout and error mapping
+- `ApiEndpointCard`: Individual endpoint status card with sparkline, trend indicator, and status icons
 
-### Testing (`playwright-tests/admin.spec.ts` — 138 tests)
+### Testing (`playwright-tests/admin.spec.ts`, 138 tests)
 
 | Section           | Tests | Auth-gated | Coverage                                                                   |
 | ----------------- | ----- | ---------- | -------------------------------------------------------------------------- |
@@ -315,24 +317,25 @@ Interactive components enhance user engagement across the site. Most are Client 
 
 | Component           | Type   | Purpose                                                                                  |
 | ------------------- | ------ | ---------------------------------------------------------------------------------------- |
-| `ScrollProgress`    | Client | Fixed top-of-page progress bar — tracks scroll position via `requestAnimationFrame`, cyan gradient, `role="progressbar"` with ARIA attributes |
-| `MatrixRain`        | Client | Canvas-based matrix rain effect — toggled via floating button (bottom-right), auto-disables after 15s with 1s fade-out, SVG countdown ring on button, respects `prefers-reduced-motion` (hidden entirely), cyan glow on active state, Katakana + Latin + digit characters |
-| `CyberTerminal`     | Client | Full-screen terminal easter egg — opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
-| `CursorTrail`       | Client | 10-particle trailing cursor effect — desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
-| `CommandPalette`    | Client | Ctrl+K / Cmd+K command palette — search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility, retro terminal toggle), cyberpunk glass panel. **Server-powered search**: queries `/api/search?q=` with 300ms debounce when 2+ chars typed; results shown in a "Search Results" section between Pages and Actions |
-| `KonamiEasterEgg`   | Client | Global easter egg — ↑↑↓↓←→←→BA triggers Matrix rain with Greek characters (lazy-loaded via `LazyInteractive`) |
-| `SoundEffects`      | Client | Subtle Web Audio hover/click blips with toggle button — provides ambient audio feedback on interactive elements (lazy-loaded via `LazyInteractive`) |
+| `ScrollProgress`    | Client | Fixed top-of-page progress bar. Tracks scroll position via `requestAnimationFrame`, cyan gradient, `role="progressbar"` with ARIA attributes |
+| `MatrixRain`        | Client | Canvas-based matrix rain effect. Toggled via `MatrixRainToggle` navbar button (custom event `toggle-matrix-rain`), auto-disables after 15s with 1s fade-out, respects `prefers-reduced-motion` (canvas hidden entirely), Katakana + Latin + digit characters |
+| `CyberTerminal`     | Client | Full-screen terminal easter egg. Opened with backtick key, commands: `help`, `whoami`, `skills`, `certs`, `projects`, `contact`, `experience`, `matrix`, `clear`, `exit`, `sudo hire me` |
+| `CursorTrail`       | Client | 10-particle trailing cursor effect. Desktop only (hover-capable devices), respects `prefers-reduced-motion`, renders nothing on mobile/touch |
+| `CommandPalette`    | Client | Ctrl+K / Cmd+K command palette. Search pages and actions, keyboard navigation (↑↓ Enter), 9 nav items + 4 actions (theme, chat, accessibility, retro terminal toggle), cyberpunk glass panel. **Server-powered search**: queries `/api/search?q=` with 300ms debounce when 2+ chars typed; results shown in a "Search Results" section between Pages and Actions |
+| `KonamiEasterEgg`   | Client | Global easter egg. ↑↑↓↓←→←→BA triggers Matrix rain with Greek characters (lazy-loaded via `LazyInteractive`) |
+| `SoundEffects`      | Client | Subtle Web Audio hover/click blips. Navbar toggle button (Volume icon), provides ambient audio feedback on interactive elements, `instanceof Element` guard for non-Element event targets |
+| `MatrixRainToggle`  | Client | Navbar button for toggling MatrixRain canvas via custom event, reflects active state with cyan glow styling |
 
 ### Homepage Components
 
 | Component            | Page       | Purpose                                                                                  |
 | -------------------- | ---------- | ---------------------------------------------------------------------------------------- |
-| `SiteStats`          | Home (`/`) | Lighthouse score, tech stack count, pages, and uptime badges — social-proof stats section |
+| `SiteStats`          | Home (`/`) | Lighthouse score, tech stack count, pages, and uptime badges. Social-proof stats section |
 | `GitHubHeatmap`      | Home (`/`) | Live GitHub contribution heatmap fetched from the GitHub Events API                      |
 | `Testimonials`       | Home (`/`) | Carousel with colleague quotes (3 entries), prev/next navigation                         |
 | `CyberQuiz`          | Home (`/`) | 5-question cybersecurity & cloud quiz with scoring and grades                            |
 
-> **Homepage section order**: Hero → Core Expertise → SiteStats → GitHubHeatmap → Testimonials → CyberQuiz → Quick Contact
+> **Homepage section order**: Hero, Core Expertise, SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, Quick Contact
 
 ### Blog Components
 
@@ -345,9 +348,9 @@ Interactive components enhance user engagement across the site. Most are Client 
 
 | Component            | Page      | Purpose                                                                                  |
 | -------------------- | --------- | ---------------------------------------------------------------------------------------- |
-| `TypeWriter`         | Home (`/`) | Cycling text animation in hero — types/deletes through `['IT Network Engineer', 'Cloud Architect', 'Cybersecurity Specialist', 'DevOps Engineer']` with blinking cursor |
-| `SkillsRadar`        | About (`/about`) | SVG radar chart with 6 skill axes (Networking, Security, Cloud, DevOps, Programming, Systems) — click labels for detail panel with proficiency bar, certifications, and years of experience |
-| `InteractiveTimeline`| Product (`/product`) | Vertical timeline with animated line, clickable expand/collapse nodes (desktop), all-expanded cards (mobile) — renders both desktop (`hidden md:block`) and mobile (`md:hidden`) views |
+| `TypeWriter`         | Home (`/`) | Cycling text animation in hero. Types/deletes through `['IT Network Engineer', 'Cloud Architect', 'Cybersecurity Specialist', 'DevOps Engineer']` with blinking cursor |
+| `SkillsRadar`        | About (`/about`) | SVG radar chart with 6 skill axes (Networking, Security, Cloud, DevOps, Programming, Systems). Click labels for detail panel with proficiency bar, certifications, and years of experience |
+| `InteractiveTimeline`| Product (`/product`) | Vertical timeline with animated line, clickable expand/collapse nodes (desktop), all-expanded cards (mobile). Renders both desktop (`hidden md:block`) and mobile (`md:hidden`) views |
 
 ---
 
@@ -357,15 +360,15 @@ Interactive components enhance user engagement across the site. Most are Client 
 | ----------------------------------------- | ---------------------------------------------------------- |
 | `CircuitBackground`                       | SVG circuit board background with CSS `drop-shadow` glow (used on most pages, no SVG filters) |
 | `AnimatedSection`                         | Framer Motion scroll-triggered reveal wrapper (20px offset, skips animation on low-end devices) |
-| `Navigation`                              | Top navbar with active link highlighting. Mobile: bell + theme toggle + hamburger in top bar; hamburger opens nav links + accessibility + CTA. Desktop: horizontal nav links + bell + theme + accessibility buttons |
+| `Navigation`                              | Sticky glassmorphic navbar (`bg-background/80 backdrop-blur-xl`). **Desktop**: horizontal nav links + toolbar (bell, theme | sound, matrix, a11y) with Radix Separator between groups. **Mobile**: bell + theme + hamburger in top bar; hamburger opens shadcn Sheet (slide-from-right) with icon-labeled nav links, Effects & Settings row, and CTA |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot — AWS Bedrock with tool use + blog RAG (lazy-loaded via `LazyInteractive`, `inert` when collapsed). Action tokens: `[BOOK_CALL]` (booking), `[CONTACT]` (contact form), `[GOTO:/path/]` (navigation links). Tools: search_portfolio, search_blog, get_github_stats, check_booking_availability |
-| `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette, KonamiEasterEgg, SoundEffects via `next/dynamic` (ssr: false) |
+| `ChatbotWidget`                           | Global AI chatbot. AWS Bedrock with tool use + blog RAG (lazy-loaded via `LazyInteractive`, `inert` when collapsed). Action tokens: `[BOOK_CALL]` (booking), `[CONTACT]` (contact form), `[GOTO:/path/]` (navigation links). Tools: search_portfolio, search_blog, get_github_stats, check_booking_availability. **Cover letter generation**: visitors can paste a job description and the bot writes a tailored 3 to 4 paragraph cover letter highlighting Themis's relevant experience from the knowledge base |
+| `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette, KonamiEasterEgg via `next/dynamic` (ssr: false). SoundEffects and MatrixRainToggle moved to Navigation |
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
-| `NotificationButton`                      | Bell icon with dropdown announcement panel. Announcements auto-generated from git commits at build time (`scripts/generate-announcements.sh` → `public/announcements.json`). Per-item dismiss (persisted in localStorage), read/unread tracking, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |
-| `AvailabilityBadge`                       | Hero section badge with pulsing green dot — "Available for Consulting" |
+| `NotificationButton`                      | Bell icon with dropdown announcement panel. Announcements auto-generated from git commits at build time (`scripts/generate-announcements.sh` to `public/announcements.json`). Per-item dismiss (persisted in localStorage), read/unread tracking, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |
+| `AvailabilityBadge`                       | Hero section badge with pulsing green dot: "Available for Consulting" |
 | `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
 | `StructuredData`                          | Schema.org JSON-LD for SEO                                 |
@@ -390,9 +393,9 @@ Interactive components enhance user engagement across the site. Most are Client 
 
 ## Backend Architecture
 
-The frontend is a **static export** (`output: "export"`) — no server-side rendering or API routes in Next.js. All backend logic runs on a **single AWS Lambda function** (`figma-portfolio-api`) fronted by CloudFront at `/api/*`.
+The frontend is a **static export** (`output: "export"`), with no server-side rendering or API routes in Next.js. All backend logic runs on a **single AWS Lambda function** (`figma-portfolio-api`) fronted by CloudFront at `/api/*`.
 
-> **Same-origin API routing**: The frontend calls `/api/*` using relative paths (empty origin string from `getApiOrigin()`). CloudFront routes these requests to the Lambda Function URL origin. This eliminates CORS preflight requests, avoids Edge Tracking Prevention in Safari/Brave, and simplifies the security model. The direct Lambda Function URL is no longer used at runtime — it is retained in `LAMBDA_API_URL` as a fallback reference only.
+> **Same-origin API routing**: The frontend calls `/api/*` using relative paths (empty origin string from `getApiOrigin()`). CloudFront routes these requests to the Lambda Function URL origin. This eliminates CORS preflight requests, avoids Edge Tracking Prevention in Safari/Brave, and simplifies the security model. The direct Lambda Function URL is no longer used at runtime. It is retained in `LAMBDA_API_URL` as a fallback reference only.
 
 ### Production (Lambda)
 
@@ -400,7 +403,7 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 - **Runtime**: Node.js, Express 5 + serverless-http
 - **Memory**: 256 MB
 - **Timeout**: 15 seconds
-- **Environment Variables**: 16 (see Deployment section below)
+- **Environment Variables**: 17 (see Deployment section below)
 
 | Route                                     | Method       | Description                                           |
 | ----------------------------------------- | ------------ | ----------------------------------------------------- |
@@ -410,8 +413,8 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 | `/api/monitor`                            | GET          | Server monitoring (requests, errors, memory)          |
 | `/api/webhook`                            | POST         | Generic webhook receiver                              |
 | `/api/docs`                               | GET          | API endpoint documentation (JSON)                     |
-| `/api/contact`                            | POST         | Contact form — reCAPTCHA v3, SES email, Sentry        |
-| `/api/chat`                               | POST         | AI assistant — Claude 3.5 Haiku via Bedrock (SSE, tool use, blog RAG) |
+| `/api/contact`                            | POST         | Contact form: reCAPTCHA v3, SES email, Sentry        |
+| `/api/chat`                               | POST         | AI assistant: Claude 3.5 Haiku via Bedrock (SSE, tool use, blog RAG) |
 | `/api/booking/slots`                      | GET          | Available booking slots (Cal.com)                     |
 | `/api/booking/create`                     | POST         | Create booking with Google Meet link (Cal.com)        |
 | `/api/resume/download`                    | GET          | Resume PDF download (jsPDF-generated with full content) |
@@ -419,6 +422,7 @@ The frontend is a **static export** (`output: "export"`) — no server-side rend
 | `/api/github/stats`                       | GET          | GitHub profile statistics (repos, stars, followers)   |
 | `/api/github/repos`                       | GET          | Public repositories (paginated, with topics)          |
 | `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID, S3-persisted, dev poll fallback) |
+| `/api/crux`                               | GET          | Chrome UX Report field data (1-hour server cache, requires `CRUX_API_KEY`) |
 | `/api/organizations/api_keys`             | GET/POST     | List / create API keys (Slack notifications)          |
 | `/api/organizations/api_keys/:id`         | GET/POST/DELETE | Get / update / delete API key (Slack notifications)|
 
@@ -430,11 +434,12 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | --------------------------------- | ------------------------------ |
 | `/api/ping`, `/api/health`, `/api/search`, `/api/monitor`, `/api/webhook`, `/api/docs` | `server/routes/general.ts` |
 | `/api/resume`                     | `server/routes/resume.ts` (jsPDF-generated PDF) |
-| `/api/chat`                       | `server/routes/chat.ts` (AWS Bedrock — Claude 3.5 Haiku) |
-| `/api/github`                     | `server/routes/github.ts` (GitHub API — stats, repos) |
+| `/api/chat`                       | `server/routes/chat.ts` (AWS Bedrock, Claude 3.5 Haiku) |
+| `/api/github`                     | `server/routes/github.ts` (GitHub API: stats, repos) |
 | `/api/push-notifications`         | `server/routes/pushNotifications.ts` (VAPID, S3-persisted) |
 | `/api/organizations/api_keys`     | `server/routes/apiKeys.ts` (Slack notifications) |
 | `/api/booking`                    | `server/routes/booking.ts` (Cal.com integration) |
+| `/api/crux`                       | `server/routes/crux.ts` (Chrome UX Report API proxy) |
 | `/api/contact`                    | `server/routes/contact.ts` (reCAPTCHA, SES) |
 
 ---
@@ -446,6 +451,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - App manifest with 192x192 + 512x512 icons, maskable icon, screenshots, 4 shortcuts (About, Projects, Blog, Contact)
 - PWA install button (`PWAInstallButton`) rendered in root layout with 30s delay prompt
 - SW update detection: 60-minute interval + visibilitychange (tab focus) check
+- **Dev-mode guard**: In non-production environments, `ServiceWorkerRegistration` automatically unregisters any stale service workers to prevent Workbox from serving cached chunks that Turbopack has replaced. This eliminates `ChunkLoadError` and `no-response` console errors during development
 - Meta tags: `application-name`, `color-scheme`, `msapplication-TileColor`, `msapplication-TileImage`
 - IndexedDB-backed offline analytics queue and failed request retry
 - Background sync for contact form (when offline)
@@ -456,8 +462,38 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - **In-app push toasts** (`src/components/PushToast.tsx`): Cyberpunk-themed toast notifications that slide in from the top-right when the service worker receives a push message. Listens for `PUSH_RECEIVED` postMessage from `sw.js`, glass morphism styling with cyan accents, auto-dismiss after 8s with animated progress bar, stacks up to 5 toasts, dismiss button, and optional "View" link. Added to the root layout.
 - **Push notifications in Announcements dropdown**: `NotificationButton` listens for `PUSH_RECEIVED` messages from the service worker. Received push notifications are saved to `localStorage` (key: `site-push-notifications`, max 20 items) and displayed with a purple "Push" badge and timestamp. The dropdown merges push notifications (newest first) with static announcements.
 - **Service worker push forwarding**: `public/sw.js` sends `postMessage({ type: "PUSH_RECEIVED", title, body, url })` to all open client tabs after displaying the OS notification. SW also supports `CLAIM_CLIENTS` message for on-demand `clients.claim()`.
-- **Dev poll fallback**: Edge/WNS returns 401 for VAPID push from localhost — a known platform limitation. In development (`NODE_ENV !== "production"`), when all push sends fail, notifications are queued in-memory on the server. The client polls `GET /api/push-notifications/poll?since=<timestamp>` every 3s and shows native notifications + adds them to the bell dropdown. This is dev-only; production uses real Web Push via WNS/FCM.
+- **Dev poll fallback**: Edge/WNS returns 401 for VAPID push from localhost, a known platform limitation. In development (`NODE_ENV !== "production"`), when all push sends fail, notifications are queued in-memory on the server. The client polls `GET /api/push-notifications/poll?since=<timestamp>` every 3s and shows native notifications + adds them to the bell dropdown. This is dev-only; production uses real Web Push via WNS/FCM.
 - **Per-step subscribe timeouts**: Each async step in the subscribe flow (permission, SW ready, VAPID fetch, PushManager.subscribe, server PUT) has its own timeout via `withTimeout()` helper, preventing any single step from hanging the UI. Edge's "Quiet notification requests" is detected with a 5s timeout and actionable console warning.
+
+---
+
+## MCP Server (Model Context Protocol)
+
+A local MCP server (`server/mcp/index.ts`) exposes portfolio data for AI coding agents (Claude Code, Cursor, etc.) via stdio JSON-RPC transport.
+
+**Run**: `pnpm mcp:start` or `npx tsx server/mcp/index.ts`
+
+### Resources
+
+| URI                     | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `knowledge://all`       | Full chatbot knowledge base (10 MD files, ~33KB)         |
+| `blog://all`            | All MDX blog posts from `content/blog/`                  |
+| `docs://architecture`   | Architecture documentation (`docs/ARCHITECTURE.md`)      |
+| `project://package.json`| Package manifest with dependencies                       |
+
+### Tools
+
+| Tool                | Description                                                       |
+| ------------------- | ----------------------------------------------------------------- |
+| `search_knowledge`  | Full-text search across chatbot knowledge base files              |
+| `search_blog`       | Search blog articles by keyword (title + content)                 |
+| `github_stats`      | Fetch GitHub profile statistics (repos, followers, bio)           |
+| `project_structure` | List files in a project directory                                 |
+| `read_file`         | Read file contents (with path traversal security guard)           |
+| `deployment_info`   | Get deployment configuration (S3, CloudFront, region, URLs)       |
+
+**Security**: `read_file` rejects paths containing `..` or starting with `/` to prevent directory traversal.
 
 ---
 
@@ -466,7 +502,8 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | Tool                 | Purpose                                                              |
 | -------------------- | -------------------------------------------------------------------- |
 | Google Analytics GA4 | Page views, events, user journeys                                    |
-| `web-vitals` library | Real-user CWV measurement — LCP, FCP, CLS, TTFB, INP reported to GA4 |
+| `web-vitals` library | Real-user CWV measurement: LCP, FCP, CLS, TTFB, INP reported to GA4 |
+| Chrome UX Report     | CrUX field data (p75 percentiles + distributions) via `/api/crux`. Real-user data aggregated over 28 days |
 
 ---
 
@@ -492,13 +529,13 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | S3 bucket    | `figma-portfolio-static`                                |
 | CloudFront   | Distribution `E134SCTR0QGQKJ`                          |
 | Domain       | `www.baltzakisthemis.com` / `baltzakisthemis.com`       |
-| Build        | `pnpm build` → `out/` directory (static export)         |
+| Build        | `pnpm build` produces `out/` directory (static export)         |
 | Deploy       | `aws s3 sync out/ s3://figma-portfolio-static --delete` |
 | Invalidation | `aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"` |
 | CI/CD        | GitHub Actions (`deploy.yml`) + Agentic Workflow (`deploy-production.md`) |
 | Local deploy | `./scripts/deploy.sh`                                   |
 
-> **Note**: Amplify Hosting auto-build is bypassed — Next.js 16 OOMs on the Amplify build instance. Frontend deploys directly to S3.
+> **Note**: Amplify Hosting auto-build is bypassed. Next.js 16 OOMs on the Amplify build instance. Frontend deploys directly to S3.
 
 ### Amplify Gen 2 Backend
 
@@ -520,10 +557,10 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | Region        | `us-east-1`                       |
 | Memory        | 1024 MB                           |
 | Timeout       | 30 seconds                        |
-| Routing       | CloudFront `/api/*` → Lambda      |
+| Routing       | CloudFront `/api/*` to Lambda      |
 | Monitoring    | CloudWatch alarms (errors >5/5min, throttles >0, avg duration >10s) |
 
-### Lambda Environment Variables (14)
+### Lambda Environment Variables (15)
 
 ```
 NODE_ENV                          # production
@@ -540,6 +577,7 @@ VAPID_PRIVATE_KEY                 # Web push VAPID private key
 VAPID_EMAIL                       # VAPID contact email
 COGNITO_USER_POOL_ID              # Cognito user pool ID for JWT verification
 COGNITO_CLIENT_ID                 # Cognito app client ID for JWT verification
+CRUX_API_KEY                      # Google Chrome UX Report API key
 GOOGLE_ANALYTICS_MEASUREMENT_ID   # GA4 measurement ID
 GOOGLE_ANALYTICS_API_SECRET       # GA4 Measurement Protocol secret
 ```
@@ -573,9 +611,9 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
 
 Authentication is handled by **AWS Amplify Gen 2 Cognito** in all environments (local development and production). A single auth provider simplifies the stack and eliminates the need for dual auth configuration.
 
-- `src/contexts/AuthContext.tsx` — `AuthProvider` uses Amplify Hub to listen for `signedIn`/`signedOut` events + `getCurrentUser()` on mount
-- `src/components/admin/useAdminAuth.ts` — Admin login hook wrapping Amplify `signIn`/`signOut` with timeout and error mapping
-- `src/lib/amplify.ts` — Configures Amplify with auth + data from `amplify_outputs.json`
+- `src/contexts/AuthContext.tsx`: `AuthProvider` uses Amplify Hub to listen for `signedIn`/`signedOut` events + `getCurrentUser()` on mount
+- `src/components/admin/useAdminAuth.ts`: Admin login hook wrapping Amplify `signIn`/`signOut` with timeout and error mapping
+- `src/lib/amplify.ts`: Configures Amplify with auth + data from `amplify_outputs.json`
 
 ### Admin Access
 
@@ -587,17 +625,20 @@ The Express backend (`server/middleware/requireAuth.ts`) uses `aws-jwt-verify` t
 
 ### API Health Dashboard Authentication
 
-The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cognito Bearer tokens in health check requests for endpoints marked with `requiresAuth: true`. Currently the `/api/organizations/api_keys` endpoint requires auth — the health check sends the logged-in user's Cognito ID token in the `Authorization` header to avoid 401 responses.
+The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cognito Bearer tokens in health check requests for endpoints marked with `requiresAuth: true`. Currently the `/api/organizations/api_keys` endpoint requires auth. The health check sends the logged-in user's Cognito ID token in the `Authorization` header to avoid 401 responses.
 
 ---
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/` — 88+ spec files)
+- **E2E Tests**: Playwright (`playwright-tests/`, 101+ spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
-- **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (114 tests) — toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history
-- **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (77 tests) — SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects, KonamiEasterEgg, Retro Terminal theme, section ordering
-- **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts` — API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
+- **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (116 tests): toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history, cover letter generation
+- **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (79 tests): SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects (incl. non-Element target safety), KonamiEasterEgg, Retro Terminal theme, section ordering
+- **CrUX Field Data Tests**: `playwright-tests/crux-field-data.spec.ts` (16 tests): section structure, loading skeleton, success state with mocked data (5 metrics, p75 values, distribution bars, color coding), error/unavailable state, threshold color coding
+- **MCP Server Tests**: `playwright-tests/mcp-server.spec.ts` (9 tests): initialization, resource listing/reading (knowledge base, package.json), tool listing/calling (deployment info, project structure, path traversal security, knowledge search)
+- **Performance Page Tests**: `playwright-tests/performance-page.spec.ts`: structure (incl. field-data section), speed test, Web Vitals, Lighthouse, methodology, industry comparison
+- **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts`: API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
 
 See [`docs/TESTING.md`](./TESTING.md) for the complete testing guide.

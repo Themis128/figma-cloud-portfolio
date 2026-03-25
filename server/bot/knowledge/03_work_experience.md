@@ -2,8 +2,8 @@
 
 Themis has 15+ years of professional IT experience across multiple organizations spanning network infrastructure, Cisco systems, Fortinet security, cloud architecture, cybersecurity, and technical support.
 
-## 1. Skaramangas Shipyards — IT Network Engineer
-**Period**: 2025 – Present
+## 1. Skaramangas Shipyards | IT Network Engineer
+**Period**: 2025 to Present
 **Location**: Skaramangas, Attiki, Greece
 
 ### Responsibilities:
@@ -17,8 +17,8 @@ Themis has 15+ years of professional IT experience across multiple organizations
 
 ---
 
-## 2. Estarta Solutions — Network and Systems Engineer
-**Period**: Recent (approximately Dec 2024 – Mar 2025)
+## 2. Estarta Solutions | Network and Systems Engineer
+**Period**: Recent (approximately Dec 2024 to Mar 2025)
 **Location**: Greece
 
 ### Achievements:
@@ -30,8 +30,8 @@ Themis has 15+ years of professional IT experience across multiple organizations
 
 ---
 
-## 3. Cosmos Business Systems — IT Consultant Analyst
-**Period**: Recent (approximately Mar 2023 – May 2024)
+## 3. Cosmos Business Systems | IT Consultant Analyst
+**Period**: Recent (approximately Mar 2023 to May 2024)
 **Location**: Greece
 
 ### Responsibilities:
@@ -46,7 +46,7 @@ Themis has 15+ years of professional IT experience across multiple organizations
 
 ---
 
-## 4. CPI SA (outsourced @ Nielsen Hellas) — IT Consultant Analyst
+## 4. CPI SA (outsourced @ Nielsen Hellas) | IT Consultant Analyst
 **Period**: March 2023
 **Location**: Greece
 
@@ -60,8 +60,8 @@ Themis has 15+ years of professional IT experience across multiple organizations
 
 ---
 
-## 5. Printec Hellas — Technical Engineer
-**Period**: January 2022 – September 2022 (9 months)
+## 5. Printec Hellas | Technical Engineer
+**Period**: January 2022 to September 2022 (9 months)
 **Location**: Greece
 
 ### Responsibilities:
@@ -75,8 +75,8 @@ Themis has 15+ years of professional IT experience across multiple organizations
 
 ---
 
-## 6. Germanos — TechExpert
-**Period**: February 2007 – October 2021 (14 years 9 months)
+## 6. Germanos | TechExpert
+**Period**: February 2007 to October 2021 (14 years 9 months)
 **Location**: Vari, Markopoulo, Paiania, Attiki, Greece
 
 ### Responsibilities:
@@ -90,8 +90,8 @@ This was Themis's longest-held role (nearly 15 years), demonstrating deep expert
 
 ---
 
-## 7. E.O.F. | INFORM — IT Department
-**Period**: 2000 – 2006 (approximately 6 years)
+## 7. E.O.F. | INFORM | IT Department
+**Period**: 2000 to 2006 (approximately 6 years)
 **Location**: Greece
 
 ### Achievements:

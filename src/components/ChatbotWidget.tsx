@@ -26,7 +26,7 @@ const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "assistant",
   content:
-    "Hi! I'm Themis's AI assistant. Ask me anything about his skills, experience, or background — or book a teleconference call.",
+    "Hi! I'm Themis's AI assistant. Ask me anything about his skills, experience, or background, or book a teleconference call.",
 };
 
 const BOOKING_QUESTION = "Book a call with Themis.";

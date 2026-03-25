@@ -1,18 +1,18 @@
 # Progressive Web App (PWA) Setup
 
-This project includes full Progressive Web App functionality — installable, offline-capable, with push notifications and background sync.
+This project includes full Progressive Web App functionality: installable, offline-capable, with push notifications and background sync.
 
 ## Features
 
-- **Installable** — users can add the app to their home screen / desktop
-- **Offline fallback** — dedicated `/offline.html` page served when the network is unavailable and no cached page exists
-- **Offline indicator** — banner at the top of the page warns users when they lose connectivity
-- **Service worker caching** — Workbox 7 with NetworkFirst (pages, API), CacheFirst (images, CDN), StaleWhileRevalidate (JS/CSS/fonts)
-- **Background sync** — failed API requests are queued in IndexedDB and retried when connectivity returns
-- **Offline analytics** — analytics events stored in IndexedDB and synced when back online
-- **Push notifications** — Web Push API with VAPID keys, notification actions, and click handling
-- **Update notifications** — users are prompted when a new service worker version is available
-- **App shortcuts** — manifest shortcuts to /about/, /projects/, /contact/
+- **Installable**: users can add the app to their home screen / desktop
+- **Offline fallback**: dedicated `/offline.html` page served when the network is unavailable and no cached page exists
+- **Offline indicator**: banner at the top of the page warns users when they lose connectivity
+- **Service worker caching**: Workbox 7 with NetworkFirst (pages, API), CacheFirst (images, CDN), StaleWhileRevalidate (JS/CSS/fonts)
+- **Background sync**: failed API requests are queued in IndexedDB and retried when connectivity returns
+- **Offline analytics**: analytics events stored in IndexedDB and synced when back online
+- **Push notifications**: Web Push API with VAPID keys, notification actions, and click handling
+- **Update notifications**: users are prompted when a new service worker version is available
+- **App shortcuts**: manifest shortcuts to /about/, /projects/, /contact/
 
 ## Architecture
 
@@ -39,7 +39,7 @@ Service Worker (public/sw.js)
 | File | Purpose |
 | --- | --- |
 | `public/manifest.webmanifest` | Web App Manifest (name, icons, shortcuts, display) |
-| `public/sw.js` | Service worker — Workbox caching, offline fallback, IndexedDB sync |
+| `public/sw.js` | Service worker: Workbox caching, offline fallback, IndexedDB sync |
 | `public/offline.html` | Static offline fallback page (self-contained HTML/CSS) |
 | `src/components/ServiceWorkerRegistration.tsx` | Registers SW in production, auto-update checks |
 | `src/components/OfflineIndicator.tsx` | Amber banner shown when `navigator.onLine` is false |
@@ -74,10 +74,10 @@ Expired entries (older than 7 days) are cleaned up during periodic sync.
 
 ## Offline Behaviour
 
-1. **Navigation to cached page** — served from `pages-cache` (NetworkFirst)
-2. **Navigation to uncached page while offline** — `/offline.html` is served from `offline-fallback` cache
-3. **Offline indicator** — amber banner with "You are currently offline" appears at the top of the page (uses `online`/`offline` events)
-4. **Auto-reconnect** — `offline.html` listens for the `online` event and reloads automatically
+1. **Navigation to cached page**: served from `pages-cache` (NetworkFirst)
+2. **Navigation to uncached page while offline**: `/offline.html` is served from `offline-fallback` cache
+3. **Offline indicator**: amber banner with "You are currently offline" appears at the top of the page (uses `online`/`offline` events)
+4. **Auto-reconnect**: `offline.html` listens for the `online` event and reloads automatically
 
 ## Manifest
 
@@ -106,9 +106,9 @@ Announcements are **auto-generated from git commits at build time**:
 **Per-item dismiss**: Users can dismiss individual announcements via an X button. Dismissed IDs are persisted in `localStorage` (`site-announcements-dismissed`).
 
 **localStorage keys**:
-- `site-announcements-read` — JSON array of read announcement IDs
-- `site-announcements-dismissed` — JSON array of dismissed announcement IDs
-- `site-announcements-last-seen` — timestamp of last seen announcement
+- `site-announcements-read`: JSON array of read announcement IDs
+- `site-announcements-dismissed`: JSON array of dismissed announcement IDs
+- `site-announcements-last-seen`: timestamp of last seen announcement
 
 ## Push Notifications
 
@@ -132,12 +132,12 @@ Announcements are **auto-generated from git commits at build time**:
 
 ### Dev Poll Fallback
 
-Edge/WNS returns **401 Unauthorized** for VAPID-authenticated push from `localhost` — a known Microsoft platform limitation. In development:
+Edge/WNS returns **401 Unauthorized** for VAPID-authenticated push from `localhost`, a known Microsoft platform limitation. In development:
 
 1. When all Web Push sends fail (e.g. WNS 401), the server queues the notification in memory
 2. The client (`NotificationButton`) polls `/api/push-notifications/poll` every 3s
 3. New notifications trigger a native `Notification` and appear in the bell dropdown
-4. This fallback is **dev-only** (`NODE_ENV !== "production"`) — production uses real Web Push
+4. This fallback is **dev-only** (`NODE_ENV !== "production"`). Production uses real Web Push
 
 ### Subscribe Flow
 
@@ -193,11 +193,11 @@ Run in Chrome DevTools → Lighthouse → Progressive Web App category.
 
 ### Manual Testing
 
-1. **Installability** — check install prompt in browser
-2. **Offline** — DevTools → Network → Offline, then navigate
-3. **Caching** — DevTools → Application → Cache Storage
-4. **Service Worker** — DevTools → Application → Service Workers
-5. **IndexedDB** — DevTools → Application → IndexedDB → sw-store
+1. **Installability**: check install prompt in browser
+2. **Offline**: DevTools → Network → Offline, then navigate
+3. **Caching**: DevTools → Application → Cache Storage
+4. **Service Worker**: DevTools → Application → Service Workers
+5. **IndexedDB**: DevTools → Application → IndexedDB → sw-store
 
 ## Troubleshooting
 

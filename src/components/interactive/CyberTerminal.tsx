@@ -79,7 +79,7 @@ function processCommand(cmd: string): OutputLine[] {
         { text: '', type: 'response' },
         { text: '  ── Certifications ──', type: 'response' },
         { text: '', type: 'response' },
-        { text: '  [✓] AWS Solutions Architect – Associate', type: 'response' },
+        { text: '  [✓] AWS Solutions Architect, Associate', type: 'response' },
         { text: '  [✓] AWS Cloud Practitioner', type: 'response' },
         { text: '  [✓] CompTIA Security+', type: 'response' },
         { text: '  [✓] CompTIA Network+', type: 'response' },

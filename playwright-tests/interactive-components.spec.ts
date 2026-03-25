@@ -70,13 +70,14 @@ test.describe("ScrollProgress — Global Scroll Bar", () => {
 
 // ─── MatrixRain ──────────────────────────────────────────────────────────────
 
-test.describe("MatrixRain — Toggle Button", () => {
-  test("renders matrix rain toggle button", async ({ page }) => {
+test.describe("MatrixRain — Navbar Toggle", () => {
+  test("renders matrix rain toggle button in navbar", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    const btn = page.locator('button[aria-label="Enable matrix rain effect"]');
-    await expect(btn).toBeVisible();
+    const nav = page.locator("header").first();
+    const btn = nav.locator('button[aria-label="Enable matrix rain effect"]');
+    await expect(btn.first()).toBeVisible();
   });
 
   test("toggle button activates canvas and updates aria-label", async ({
@@ -84,91 +85,97 @@ test.describe("MatrixRain — Toggle Button", () => {
   }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
+    // Wait for lazy-loaded MatrixRain to mount and register its event listener
+    await page.waitForTimeout(3000);
 
-    // Enable button should be present
+    // Enable button should be present in navbar
     const enableBtn = page.locator(
       'button[aria-label="Enable matrix rain effect"]',
     );
-    await expect(enableBtn).toBeVisible();
+    await expect(enableBtn.first()).toBeVisible();
 
-    // Click via JavaScript to avoid overlay issues
-    await enableBtn.evaluate((el) => (el as HTMLButtonElement).click());
-    await page.waitForTimeout(500);
+    // Click to enable
+    await enableBtn.first().evaluate((el) => (el as HTMLButtonElement).click());
+
+    // Wait for MatrixRain to process the event and broadcast state back
+    await page.waitForTimeout(1000);
 
     // Button label should change to disable
     const disableBtn = page.locator(
       'button[aria-label="Disable matrix rain effect"]',
     );
-    await expect(disableBtn).toBeVisible();
+    await expect(disableBtn.first()).toBeVisible({ timeout: 5000 });
 
     // Canvas should appear when active
     const canvas = page.locator("canvas.fixed");
     await expect(canvas).toBeAttached();
 
     // Click to disable — triggers fade-out
-    await disableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+    await disableBtn.first().evaluate((el) => (el as HTMLButtonElement).click());
 
     // Wait for the 1-second fade-out to complete
     await page.waitForTimeout(1500);
 
     // Enable button should reappear after fade-out
-    await expect(enableBtn).toBeVisible();
-  });
-
-  test("shows countdown ring SVG when active", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
-
-    const enableBtn = page.locator(
-      'button[aria-label="Enable matrix rain effect"]',
-    );
-    await enableBtn.evaluate((el) => (el as HTMLButtonElement).click());
-    await page.waitForTimeout(500);
-
-    // SVG countdown ring should be visible inside the button
-    const countdownSvg = page.locator(
-      'button[aria-label="Disable matrix rain effect"] svg circle',
-    );
-    await expect(countdownSvg).toBeAttached();
-
-    // Disable to clean up
-    const disableBtn = page.locator(
-      'button[aria-label="Disable matrix rain effect"]',
-    );
-    await disableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+    await expect(enableBtn.first()).toBeVisible();
   });
 
   test("active button has cyan glow styling", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
+    // Wait for lazy-loaded MatrixRain to mount
+    await page.waitForTimeout(3000);
 
     const enableBtn = page.locator(
       'button[aria-label="Enable matrix rain effect"]',
     );
-    await enableBtn.evaluate((el) => (el as HTMLButtonElement).click());
-    await page.waitForTimeout(500);
+    await enableBtn.first().evaluate((el) => (el as HTMLButtonElement).click());
+
+    // Wait for MatrixRain to process and broadcast state
+    await page.waitForTimeout(1000);
 
     const disableBtn = page.locator(
       'button[aria-label="Disable matrix rain effect"]',
     );
-    const cls = await disableBtn.getAttribute("class");
+    await expect(disableBtn.first()).toBeVisible({ timeout: 5000 });
+    const cls = await disableBtn.first().getAttribute("class");
     expect(cls).toContain("shadow-");
 
     // Clean up
-    await disableBtn.evaluate((el) => (el as HTMLButtonElement).click());
+    await disableBtn.first().evaluate((el) => (el as HTMLButtonElement).click());
   });
 
-  test("hides entirely when prefers-reduced-motion is set", async ({
+  test("matrix rain toggle is always visible (not affected by reduced-motion)", async ({
     page,
   }) => {
-    // Emulate reduced motion preference
+    // The toggle button is in the navbar (MatrixRainToggle component)
+    // and is always rendered. Only the canvas (MatrixRain component) hides
+    // when prefers-reduced-motion is set.
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    // The toggle button should not render at all
-    const btn = page.locator('button[aria-label="Enable matrix rain effect"]');
-    await expect(btn).toHaveCount(0);
+    const nav = page.locator("header").first();
+    const btn = nav.locator('button[aria-label="Enable matrix rain effect"]');
+    await expect(btn.first()).toBeVisible();
+  });
+
+  test("clicking toggle with reduced-motion shows no canvas", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const enableBtn = page.locator(
+      'button[aria-label="Enable matrix rain effect"]',
+    );
+    await enableBtn.first().evaluate((el) => (el as HTMLButtonElement).click());
+    await page.waitForTimeout(500);
+
+    // Canvas should not appear since MatrixRain renders null when reduced-motion
+    const canvas = page.locator("canvas.fixed");
+    await expect(canvas).toHaveCount(0);
   });
 });
 

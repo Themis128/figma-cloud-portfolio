@@ -70,7 +70,7 @@ import Image from 'next/image';
 - Sharp.js for build-time image optimization (`scripts/optimize-images.mjs`)
 - Pre-compresses all PNG/JPG to WebP (quality 80) and AVIF (quality 65)
 - Run `node scripts/optimize-images.mjs` to generate optimized variants
-- Static export uses `unoptimized: true` — Next.js image optimization is disabled in production
+- Static export uses `unoptimized: true`. Next.js image optimization is disabled in production
 
 ### 3. Code Splitting
 
@@ -215,7 +215,7 @@ const MatrixRain = dynamic(() => import("@/components/interactive/MatrixRain"), 
 - Animation offset reduced from 40px to 20px for faster visual reveal
 - Hero headings (Home, About, Blog) render without animation wrappers for instant LCP
 - `CircuitBackground` uses CSS `drop-shadow` instead of SVG `feGaussianBlur` filter
-- `AIBrain` SVG removed `feGaussianBlur` and `animate-pulse` — uses CSS `drop-shadow` instead
+- `AIBrain` SVG removed `feGaussianBlur` and `animate-pulse`, uses CSS `drop-shadow` instead
 
 **Event Delegation**:
 ```tsx

@@ -744,7 +744,7 @@ Stream a chat response from the portfolio AI assistant. This is a Next.js route 
 | message | string | ✓        | The user's message                                                              |
 | history | array  | -        | Prior conversation turns (`{ role: "user" \| "assistant", content: string }[]`) |
 
-**Response (200) — SSE stream:**
+**Response (200), SSE stream:**
 
 ```
 Content-Type: text/event-stream
@@ -760,7 +760,7 @@ data: [DONE]
 
 Each `data:` line carries either a `{"token": "..."}` object (a text chunk) or the sentinel `[DONE]`.
 
-**Response (502/503) — Backend unavailable:**
+**Response (502/503), Backend unavailable:**
 
 ```json
 {
@@ -777,13 +777,13 @@ Each `data:` line carries either a `{"token": "..."}` object (a text chunk) or t
 
 **Environment Variables:**
 
-- `PYTHON_BOT_URL` — URL of the Python FastAPI backend (default: `http://localhost:8001`)
+- `PYTHON_BOT_URL`: URL of the Python FastAPI backend (default: `http://localhost:8001`)
 
 ---
 
 ### Python Chatbot Backend (port 8001)
 
-The Python FastAPI service (`server/bot/main.py`) provides the underlying LLM interface. It is **not** called directly from the browser — all traffic goes through the Next.js `/api/chat` proxy.
+The Python FastAPI service (`server/bot/main.py`) provides the underlying LLM interface. It is **not** called directly from the browser. All traffic goes through the Next.js `/api/chat` proxy.
 
 #### POST /api/chat/stream
 

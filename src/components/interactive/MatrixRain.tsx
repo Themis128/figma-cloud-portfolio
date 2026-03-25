@@ -125,6 +125,27 @@ export default function MatrixRain() {
     };
   }, [active, fadingOut, stop]);
 
+  // Listen for toggle event from navbar button
+  useEffect(() => {
+    const handleToggle = () => {
+      if (fadingOut) return;
+      if (active) {
+        stop();
+      } else {
+        setActive(true);
+      }
+    };
+    window.addEventListener("toggle-matrix-rain", handleToggle);
+    return () => window.removeEventListener("toggle-matrix-rain", handleToggle);
+  }, [active, fadingOut, stop]);
+
+  // Broadcast state so navbar button can reflect it
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("matrix-rain-state", { detail: { active: active && !fadingOut } }),
+    );
+  }, [active, fadingOut]);
+
   // Don't render anything if user prefers reduced motion
   if (prefersReducedMotion) return null;
 
@@ -133,75 +154,14 @@ export default function MatrixRain() {
     ? Math.max(0, 1 - (performance.now() - fadeStartRef.current) / FADE_DURATION_MS)
     : 1;
 
+  if (!active && !fadingOut) return null;
+
   return (
-    <>
-      {(active || fadingOut) && (
-        <canvas
-          ref={canvasRef}
-          className="fixed inset-0 z-30 pointer-events-none transition-opacity duration-1000"
-          style={{ opacity: fadingOut ? canvasOpacity : 1 }}
-          aria-hidden="true"
-        />
-      )}
-
-      <button
-        type="button"
-        onClick={() => {
-          if (fadingOut) return;
-          if (active) {
-            stop();
-          } else {
-            setActive(true);
-          }
-        }}
-        className={`fixed z-30 flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-sm border transition-all duration-300 ${
-          active && !fadingOut
-            ? 'bg-cyan-400/20 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.4)]'
-            : 'bg-card/60 border-border/30 text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50'
-        }`}
-        style={{ bottom: 'max(9rem, calc(6.5rem + var(--safe-area-bottom)))', right: 'max(1.25rem, var(--safe-area-right))' }}
-        aria-label={active ? 'Disable matrix rain effect' : 'Enable matrix rain effect'}
-        title={active ? 'Disable matrix rain' : 'Enable matrix rain'}
-      >
-        {/* Countdown ring (SVG circle that depletes over AUTO_DISABLE_MS) */}
-        {active && !fadingOut && (
-          <svg
-            className="absolute inset-0 -rotate-90"
-            viewBox="0 0 40 40"
-            aria-hidden="true"
-          >
-            <circle
-              cx="20"
-              cy="20"
-              r="18"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeDasharray={`${2 * Math.PI * 18}`}
-              strokeDashoffset="0"
-              className="text-cyan-400/50"
-              style={{
-                animation: `matrix-countdown ${AUTO_DISABLE_MS}ms linear forwards`,
-              }}
-            />
-          </svg>
-        )}
-        <span className="text-lg leading-none relative z-10" aria-hidden="true">
-          {'\u26A1'}
-        </span>
-      </button>
-
-      {/* Keyframe for countdown ring */}
-      <style jsx>{`
-        @keyframes matrix-countdown {
-          from {
-            stroke-dashoffset: 0;
-          }
-          to {
-            stroke-dashoffset: ${2 * Math.PI * 18};
-          }
-        }
-      `}</style>
-    </>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 z-30 pointer-events-none transition-opacity duration-1000"
+      style={{ opacity: fadingOut ? canvasOpacity : 1 }}
+      aria-hidden="true"
+    />
   );
 }

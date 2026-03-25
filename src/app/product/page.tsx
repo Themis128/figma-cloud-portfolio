@@ -11,14 +11,14 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "Work Experience",
   description:
-    "Work experience of Themistoklis Baltzakis — Cisco, Fortinet, Azure AD, and enterprise IT infrastructure expertise.",
+    "Work experience of Themistoklis Baltzakis: Cisco, Fortinet, Azure AD, and enterprise IT infrastructure expertise.",
   openGraph: {
     title: "Work Experience | Themistoklis Baltzakis",
     description:
-      "Work experience of Themistoklis Baltzakis — Cisco, Fortinet, Azure AD, and enterprise IT infrastructure expertise.",
+      "Work experience of Themistoklis Baltzakis: Cisco, Fortinet, Azure AD, and enterprise IT infrastructure expertise.",
     url: `${SITE_URL}/product/`,
     type: "website",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — IT Network Engineer & Cloud Architect" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect" }],
   },
   alternates: { canonical: `${SITE_URL}/product/` },
 };
@@ -27,7 +27,7 @@ const experiences = [
   {
     company: "Skaramangas Shipyards",
     position: "IT Network Engineer",
-    period: "2025 – Present",
+    period: "2025 to Present",
     location: "Skaramangas, Attiki, Greece",
     responsibilities: [
       "Design, maintain, and troubleshoot Cisco-based network infrastructure for a maritime transportation company managing 8.1M+ deadweight tonnes fleet",
@@ -76,7 +76,7 @@ const experiences = [
   {
     company: "Printec Hellas",
     position: "Technical Engineer",
-    period: "Jan 2022 – Sep 2022",
+    period: "Jan 2022 to Sep 2022",
     location: "Greece",
     responsibilities: [
       "Specialized use of Windows and Cisco Systems, servers, switches, routers, firewalls, LAN, WAN",

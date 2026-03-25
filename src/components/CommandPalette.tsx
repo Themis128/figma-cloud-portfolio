@@ -221,7 +221,7 @@ export default function CommandPalette() {
       {
         id: "retro-theme",
         label: "Retro Terminal Theme",
-        description: "Secret theme — green on black CRT",
+        description: "Secret theme: green on black CRT",
         icon: <Monitor className="h-4 w-4" />,
         action: () => {
           close();

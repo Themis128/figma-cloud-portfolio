@@ -156,7 +156,7 @@ export function LighthouseScore() {
       </div>
 
       <p className="text-[10px] text-foreground/25 text-center font-mono">
-        Measured with Lighthouse 12 — Chrome DevTools, desktop preset
+        Measured with Lighthouse 12, Chrome DevTools, desktop preset
       </p>
     </div>
   );

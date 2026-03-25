@@ -86,7 +86,7 @@ export function DefaultStructuredData() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
-    name: "Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist",
+    name: "Themistoklis Baltzakis | Cloud Architect & Cybersecurity Specialist",
     description:
       "Portfolio of IT Network Engineer & Cloud Architect with 15+ years of experience in Cisco, Fortinet, AWS, and enterprise security.",
     url: SITE_URL,
@@ -109,7 +109,7 @@ export function DefaultStructuredData() {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
     "@id": `${SITE_URL}/#profilepage`,
-    name: "Themistoklis Baltzakis — Portfolio",
+    name: "Themistoklis Baltzakis | Portfolio",
     url: SITE_URL,
     mainEntity: { "@id": `${SITE_URL}/#person` },
     dateCreated: "2024-01-01",

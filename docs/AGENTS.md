@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `/agents` page is an **educational guide** that teaches visitors how AI agents work — from LLM fundamentals to multi-agent architectures. It combines static educational content (Server Component) with an interactive agent builder (Client Component) for hands-on learning.
+The `/agents` page is an **educational guide** that teaches visitors how AI agents work, from LLM fundamentals to multi-agent architectures. It combines static educational content (Server Component) with an interactive agent builder (Client Component) for hands-on learning.
 
 ## Page Architecture
 
@@ -38,17 +38,17 @@ Four-phase cycle that all AI agents follow:
 | --- | --- |
 | **Observe** | Receive input or observe environment state |
 | **Think** | LLM reasons about next action using goal, tools, and context |
-| **Act** | Execute chosen action — call tool, generate response, update memory |
+| **Act** | Execute chosen action: call tool, generate response, update memory |
 | **Evaluate** | Check result; loop back to Observe if goal not met |
 
 ### 3. Core Components
 
 Four building blocks of any AI agent:
 
-- **LLM (The Brain)** — Foundation model that processes language and generates responses
-- **Tools & APIs** — External services the agent can invoke (search, databases, code execution)
-- **Memory & Retrieval** — Short-term conversation history + long-term knowledge via RAG
-- **Planning & Reasoning** — Chain-of-thought, ReAct, task decomposition strategies
+- **LLM (The Brain)**: Foundation model that processes language and generates responses
+- **Tools & APIs**: External services the agent can invoke (search, databases, code execution)
+- **Memory & Retrieval**: Short-term conversation history + long-term knowledge via RAG
+- **Planning & Reasoning**: Chain-of-thought, ReAct, task decomposition strategies
 
 ### 4. Architecture Patterns
 
@@ -77,10 +77,10 @@ Six key terms with abbreviations and full names:
 
 Four practical applications relevant to the portfolio owner's domain:
 
-- **Security Monitoring Agent** — SIEM analysis, Fortinet/Splunk integration
-- **Network Troubleshooting Agent** — Cisco IOS diagnostics, SNMP monitoring
-- **Infrastructure Automation Agent** — Ansible/Terraform, DevNet, compliance checking
-- **Documentation Agent** — Auto-generate network diagrams, change logs, runbooks
+- **Security Monitoring Agent**: SIEM analysis, Fortinet/Splunk integration
+- **Network Troubleshooting Agent**: Cisco IOS diagnostics, SNMP monitoring
+- **Infrastructure Automation Agent**: Ansible/Terraform, DevNet, compliance checking
+- **Documentation Agent**: Auto-generate network diagrams, change logs, runbooks
 
 ## Interactive Agent Builder
 
@@ -90,13 +90,13 @@ The `/agents` page includes two interactive builders:
 
 The `AgentPlayground` Client Component provides hands-on learning:
 
-- **Template browser** — Predefined agent templates (chatbot, code reviewer, data analyzer, etc.)
-- **Category filtering** — Filter templates by category (All, Basic, Advanced, Specialized)
-- **Template search** — Search templates by name or description
-- **Workflow builder** — SVG-based visual workflow with draggable nodes and connections
-- **Agent configuration** — Form to edit name, description, category
-- **Test & simulate** — Run agent in test mode with simulated responses
-- **Save & export** — Save agent configurations, export as JSON
+- **Template browser**: Predefined agent templates (chatbot, code reviewer, data analyzer, etc.)
+- **Category filtering**: Filter templates by category (All, Basic, Advanced, Specialized)
+- **Template search**: Search templates by name or description
+- **Workflow builder**: SVG-based visual workflow with draggable nodes and connections
+- **Agent configuration**: Form to edit name, description, category
+- **Test & simulate**: Run agent in test mode with simulated responses
+- **Save & export**: Save agent configurations, export as JSON
 
 #### Template System
 
@@ -113,7 +113,7 @@ The `BlocklyAgentBuilder` Client Component provides a visual drag-and-drop progr
 
 | Component | Purpose |
 | --- | --- |
-| `BlocklyAgentBuilder.tsx` | Main component — Blockly workspace, custom blocks, code generation, runtime |
+| `BlocklyAgentBuilder.tsx` | Main component: Blockly workspace, custom blocks, code generation, runtime |
 | `BlocklyAgentBuilderWrapper.tsx` | Lazy-loading wrapper with `dynamic()` import |
 
 #### Custom Blocks
@@ -122,10 +122,10 @@ The `BlocklyAgentBuilder` Client Component provides a visual drag-and-drop progr
 
 | Block | Type | Purpose |
 | --- | --- | --- |
-| `agent_loop` | Statement | Repeating observation loop with configurable max iterations (1–20) |
+| `agent_loop` | Statement | Repeating observation loop with configurable max iterations (1 to 20) |
 | `agent_scan` | Statement | Scan a data source (inbox, network, room, logs) |
-| `agent_see` | Value | Observe environment — returns `[code, order]` tuple |
-| `agent_listen` | Value | Listen for input — returns `[code, order]` tuple |
+| `agent_see` | Value | Observe environment. Returns `[code, order]` tuple |
+| `agent_listen` | Value | Listen for input. Returns `[code, order]` tuple |
 | `agent_decide` | Statement | If-then-otherwise decision based on a condition value |
 | `agent_remember` | Statement | Store information in memory |
 | `agent_say` | Statement | Speak or output a message |
@@ -137,12 +137,12 @@ The `BlocklyAgentBuilder` Client Component provides a visual drag-and-drop progr
 
 Each template is an XML workspace with blocks nested inside loops via `<next>` chains:
 
-1. **My First Agent** — Basic observe → think → act cycle
-2. **Email Assistant** — Inbox scanning → message detection → draft/send reply
-3. **Security Monitor** — Network scanning → threat detection → blocking → escalation
-4. **Smart Home** — Room scanning → temperature/motion detection → adjustments
-5. **DevOps Agent** — Log scanning → error detection → restart → rollback
-6. **Custom Agent** — Empty workspace for free-form building
+1. **My First Agent**: Basic observe → think → act cycle
+2. **Email Assistant**: Inbox scanning → message detection → draft/send reply
+3. **Security Monitor**: Network scanning → threat detection → blocking → escalation
+4. **Smart Home**: Room scanning → temperature/motion detection → adjustments
+5. **DevOps Agent**: Log scanning → error detection → restart → rollback
+6. **Custom Agent**: Empty workspace for free-form building
 
 #### AgentRuntime
 
@@ -152,7 +152,7 @@ A simulated execution engine that walks the Blockly block tree:
 - Handles nested statement blocks (loop body, decide if/otherwise branches, check yes/no)
 - Decision triggers use regex pattern matching to detect meaningful observations vs. "no data" responses
 - Supports cancellation via `AbortController`
-- **Step-by-step mode** — pause after each action, advance with "Next Step" button
+- **Step-by-step mode**: pause after each action, advance with "Next Step" button
 - Produces timestamped execution logs displayed in a cyberpunk-styled console
 
 #### Code Generation
@@ -165,18 +165,18 @@ A simulated execution engine that walks the Blockly block tree:
 
 #### UI Features
 
-- **Block counter** — live count of blocks in workspace
-- **Step-by-step execution** — toggle step mode, then advance one action at a time
-- **Responsive workspace** — height scales with viewport (`clamp(280px, 50vh, 420px)`)
-- **Accessibility** — ARIA labels, roles (`listbox`, `option`, `log`), `aria-live` for output, `aria-pressed` for toggles
+- **Block counter**: live count of blocks in workspace
+- **Step-by-step execution**: toggle step mode, then advance one action at a time
+- **Responsive workspace**: height scales with viewport (`clamp(280px, 50vh, 420px)`)
+- **Accessibility**: ARIA labels, roles (`listbox`, `option`, `log`), `aria-live` for output, `aria-pressed` for toggles
 
 ## Testing
 
 See [TESTING.md](./TESTING.md) for complete test coverage:
 
-- `playwright-tests/agents.spec.ts` — 18 tests (educational content + builder + accessibility)
-- `playwright-tests/agent-builder.spec.ts` — 108 tests (Blockly builder + template loading + code generation + runtime)
-- `playwright-tests/ai-agents.spec.ts` — 3 tests (basic page load verification)
+- `playwright-tests/agents.spec.ts`: 18 tests (educational content + builder + accessibility)
+- `playwright-tests/agent-builder.spec.ts`: 108 tests (Blockly builder + template loading + code generation + runtime)
+- `playwright-tests/ai-agents.spec.ts`: 3 tests (basic page load verification)
 
 ## Metadata
 

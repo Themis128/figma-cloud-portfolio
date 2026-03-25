@@ -24,7 +24,7 @@ const resumeSections = [
     icon: Target,
     title: "Professional Summary",
     description:
-      "A 2-3 sentence snapshot of your career. Lead with your title, years of experience, and core specialization. This is the first thing recruiters read — make it count.",
+      "A 2-3 sentence snapshot of your career. Lead with your title, years of experience, and core specialization. This is the first thing recruiters read, so make it count.",
     doExample:
       '"IT Network Engineer with 10+ years of experience in Cisco infrastructure and Fortinet security. Proven track record in enterprise data center management and network automation."',
     dontExample:
@@ -54,7 +54,7 @@ const resumeSections = [
     icon: Zap,
     title: "Technical Skills",
     description:
-      "Group skills by category (Networking, Security, Cloud, etc.). Match keywords from the job description. ATS systems scan this section heavily — be specific.",
+      "Group skills by category (Networking, Security, Cloud, etc.). Match keywords from the job description. ATS systems scan this section heavily, so be specific.",
     doExample:
       '"Networking: Cisco ACI, Nexus, UCS | Security: Fortinet, CyberArk PAM | Cloud: AWS, Azure AD"',
     dontExample:
@@ -81,7 +81,7 @@ const atsSteps = [
     step: "3",
     title: "Ranking",
     description:
-      "Candidates are ranked by match percentage. Top-scoring resumes are forwarded to human recruiters. Low scores are filtered out — often automatically.",
+      "Candidates are ranked by match percentage. Top-scoring resumes are forwarded to human recruiters. Low scores are filtered out, often automatically.",
     color: "from-teal-500 to-green-600",
   },
   {
@@ -190,7 +190,7 @@ export function ATSGuideContent() {
               <Lightbulb className="w-4 h-4 text-cyan-400 inline mr-2" />
               <strong className="text-cyan-400">Key takeaway:</strong>{" "}
               Your resume needs to be optimized for{" "}
-              <em>two audiences</em> — the ATS algorithm that scores it
+              <em>two audiences</em>: the ATS algorithm that scores it
               and the human recruiter who skims it in seconds.
             </p>
           </div>
@@ -293,7 +293,7 @@ export function ATSGuideContent() {
           <p className="text-muted-foreground text-sm mb-8 max-w-3xl">
             These are the high-value keywords that ATS systems and IT
             recruiters scan for. Include the ones relevant to your
-            experience — but only if you can back them up in an interview.
+            experience, but only if you can back them up in an interview.
           </p>
           <div className="space-y-6">
             {Object.entries(itKeywords).map(([category, keywords]) => (

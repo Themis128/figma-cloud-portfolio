@@ -50,8 +50,8 @@ function getContentGroup(pathname: string): string {
 
 function getPageTitle(pathname: string): string {
   const group = getContentGroup(pathname);
-  if (group === "Home") return "Themis Baltzakis — Portfolio";
-  return `${group} — Themis Baltzakis`;
+  if (group === "Home") return "Themis Baltzakis | Portfolio";
+  return `${group} | Themis Baltzakis`;
 }
 
 /** Read analytics consent from localStorage */

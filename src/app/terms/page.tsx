@@ -11,15 +11,15 @@ const SITE_URL = "https://www.baltzakisthemis.com";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service for baltzakisthemis.com — the rules governing your use of this website and its services.",
+    "Terms of Service for baltzakisthemis.com. The rules governing your use of this website and its services.",
   alternates: { canonical: `${SITE_URL}/terms/` },
   openGraph: {
     title: "Terms of Service | Themistoklis Baltzakis",
     description:
-      "Terms of Service for baltzakisthemis.com — the rules governing your use of this website and its services.",
+      "Terms of Service for baltzakisthemis.com. The rules governing your use of this website and its services.",
     url: `${SITE_URL}/terms/`,
     type: "website",
-    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis — Terms of Service" }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | Terms of Service" }],
   },
 };
 
