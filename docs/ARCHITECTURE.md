@@ -57,7 +57,7 @@ portfolio-nextjs/
 │   ├── components/           # Reusable UI components
 │   │   ├── admin/            # Admin dashboard components (10 tab panels)
 │   │   ├── agents/           # Agent builder components (Blockly visual builder + template playground)
-│   │   ├── interactive/      # Interactive engagement components (13 in folder)
+│   │   ├── interactive/      # Interactive engagement components (22 in folder)
 │   │   ├── performance/      # Performance page components
 │   │   └── ui/               # shadcn/ui primitives
 │   ├── hooks/                # Custom React hooks
@@ -287,7 +287,7 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 - `useAdminAuth`: Auth hook wrapping Cognito sign-in with timeout and error mapping
 - `ApiEndpointCard`: Individual endpoint status card with sparkline, trend indicator, and status icons
 
-### Testing (`playwright-tests/admin.spec.ts`, 138 tests)
+### Testing (`playwright-tests/admin.spec.ts`, 155 tests)
 
 | Section           | Tests | Auth-gated | Coverage                                                                   |
 | ----------------- | ----- | ---------- | -------------------------------------------------------------------------- |
@@ -388,6 +388,13 @@ Interactive components enhance user engagement across the site. Most are Client 
 | `usePWA`                   | PWA install prompt management                                                         |
 | `usePushNotifications`     | Web Push API subscription management                                                  |
 | `useSocket`                | Socket.IO connection for real-time features                                           |
+| `useRecaptcha`             | reCAPTCHA v3 on-demand loading and token generation; `preload()` on form focus, `getToken(action)` on submit |
+| `useConsent`               | Cookie consent state management (localStorage-persisted)                              |
+| `useAgentRealtime`         | Real-time agent execution state for Blockly agent builder                             |
+| `useTypingIndicator`       | Typing animation state for chatbot messages                                           |
+| `useVoiceCommands`         | Voice command recognition for accessibility                                           |
+| `use-toast`                | shadcn/ui toast notification state management                                         |
+| `use-mobile`               | Mobile viewport detection hook                                                        |
 
 ---
 
@@ -401,8 +408,8 @@ The frontend is a **static export** (`output: "export"`), with no server-side re
 
 - **Function URL**: `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
 - **Runtime**: Node.js, Express 5 + serverless-http
-- **Memory**: 256 MB
-- **Timeout**: 15 seconds
+- **Memory**: 1024 MB
+- **Timeout**: 30 seconds
 - **Environment Variables**: 17 (see Deployment section below)
 
 | Route                                     | Method       | Description                                           |
@@ -507,11 +514,32 @@ A local MCP server (`server/mcp/index.ts`) exposes portfolio data for AI coding 
 
 ---
 
+## Performance Optimizations
+
+| Optimization | Impact | Details |
+| --- | --- | --- |
+| `CircuitBackground` `content-visibility: auto` | LCP | Defers rendering of 240-line SVG until visible, prevents blocking hero text paint |
+| `AIBrain` `content-visibility: auto` | LCP | Defers 109-line hero SVG with `containIntrinsicSize: 0 500px` placeholder |
+| `AvailabilityBadge` removed `AnimatedSection` | LCP | Hero badge renders at full opacity immediately (was starting at opacity:0) |
+| Hero text removed `AnimatedSection` | LCP | TypeWriter and description paragraphs render immediately without scroll-reveal delay |
+| reCAPTCHA on-demand loading | TBT | Removed global script from layout; loaded by `useRecaptcha.preload()` on form focus (saves 214KB initial load) |
+| Sentry replay lazy-load | TBT | `replayIntegration` loaded via `lazyLoadIntegration()` 2s after page load (saves ~94KB initial bundle) |
+| Third-party script deferral | TBT | Ahrefs analytics and reCAPTCHA use `lazyOnload` strategy |
+| `AnimatedSection` low-end skip | LCP | Skips Framer Motion entirely on low-end devices, renders plain `<div>` |
+| Image pre-compression | Transfer | `scripts/optimize-images.mjs` converts PNG/JPG to WebP/AVIF at build time |
+| `LazyInteractive` wrapper | TTI | MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette, KonamiEasterEgg loaded via `next/dynamic` (ssr: false) |
+
+**Measured results** (local Lighthouse, median of 3 runs):
+- LCP: 8-11s to 3.8-5.3s (~50% improvement)
+- TBT: 690-1900ms to 670-860ms (~30% improvement)
+
+---
+
 ## Security
 
 | Layer              | Implementation                                                      |
 | ------------------ | ------------------------------------------------------------------- |
-| reCAPTCHA v3       | Applied to contact form submissions                                 |
+| reCAPTCHA v3       | Applied to contact form submissions; script loaded on-demand via `useRecaptcha.preload()` on form focus (not globally) |
 | Input sanitisation | XSS, SQL injection patterns blocked in API routes                   |
 | Security headers   | X-DNS-Prefetch-Control, X-Content-Type-Options, Referrer-Policy, X-Frame-Options, X-XSS-Protection via `amplify.yml` `customHeaders` (`**/*.html` pattern) |
 | Cache headers      | Cache-Control, CORS for JS/CSS/images/fonts via `amplify.yml` customHeaders |
@@ -635,8 +663,8 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (116 tests): toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history, cover letter generation
 - **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (79 tests): SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects (incl. non-Element target safety), KonamiEasterEgg, Retro Terminal theme, section ordering
-- **CrUX Field Data Tests**: `playwright-tests/crux-field-data.spec.ts` (16 tests): section structure, loading skeleton, success state with mocked data (5 metrics, p75 values, distribution bars, color coding), error/unavailable state, threshold color coding
-- **MCP Server Tests**: `playwright-tests/mcp-server.spec.ts` (9 tests): initialization, resource listing/reading (knowledge base, package.json), tool listing/calling (deployment info, project structure, path traversal security, knowledge search)
+- **CrUX Field Data Tests**: `playwright-tests/crux-field-data.spec.ts` (18 tests): section structure, loading skeleton, success state with mocked data (5 metrics, p75 values, distribution bars, color coding), error/unavailable state, threshold color coding
+- **MCP Server Tests**: `playwright-tests/mcp-server.spec.ts` (10 tests): initialization, resource listing/reading (knowledge base, package.json), tool listing/calling (deployment info, project structure, path traversal security, knowledge search)
 - **Performance Page Tests**: `playwright-tests/performance-page.spec.ts`: structure (incl. field-data section), speed test, Web Vitals, Lighthouse, methodology, industry comparison
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts`: API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
