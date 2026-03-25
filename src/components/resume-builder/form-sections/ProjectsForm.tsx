@@ -163,6 +163,7 @@ function ProjectEntry({
               <button
                 type="button"
                 onClick={() => removeTech(tIdx)}
+                aria-label={`Remove ${tech}`}
                 className="hover:text-red-400"
               >
                 <X className="h-3 w-3" />

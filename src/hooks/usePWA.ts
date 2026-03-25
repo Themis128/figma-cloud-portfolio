@@ -86,7 +86,9 @@ export function usePWA() {
 
       setDeferredPrompt(null);
       setIsInstallable(false);
-    } catch (_error) {}
+    } catch {
+      // PWA install prompt dismissed or unsupported — non-critical
+    }
   };
 
   return {

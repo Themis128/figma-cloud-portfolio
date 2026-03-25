@@ -151,7 +151,9 @@ const setupPerformanceMonitoring = () => {
       if (PerformanceObserver.supportedEntryTypes?.includes("longtask")) {
         longTaskObserver.observe({ entryTypes: ["longtask"] });
       }
-    } catch (_error) {}
+    } catch {
+      // PerformanceObserver for longtask not supported — non-critical
+    }
   }
 };
 

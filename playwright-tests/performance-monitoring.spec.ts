@@ -271,16 +271,13 @@ test.describe("Performance Monitoring", () => {
       (page.viewportSize()?.width || 0) < 768
     ) {
       // Navigate to about page
-      await page.goto("/about");
-      await page.waitForURL("**/about/");
+      await page.goto("/about/", { waitUntil: "domcontentloaded" });
 
       // Navigate back to home
-      await page.goto("/");
-      await page.waitForURL("**/");
+      await page.goto("/", { waitUntil: "domcontentloaded" });
 
       // Navigate to contact page
-      await page.goto("/contact");
-      await page.waitForURL("**/contact/");
+      await page.goto("/contact/", { waitUntil: "domcontentloaded" });
     } else {
       // Desktop navigation
       // Open mobile menu if present

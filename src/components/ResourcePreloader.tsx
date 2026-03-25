@@ -84,7 +84,9 @@ const ResourcePreloader: React.FC<ResourcePreloaderProps> = ({ children }) => {
         if ("fonts" in document) {
           await document.fonts.ready;
         }
-      } catch (_error) {}
+      } catch {
+        // Font loading API unavailable — non-critical
+      }
     };
 
     initializeCriticalResources();

@@ -19,6 +19,7 @@ import booking from "./routes/booking";
 import contact from "./routes/contact";
 import pushNotifications from "./routes/pushNotifications";
 import github from "./routes/github";
+import admin from "./routes/admin";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
@@ -34,7 +35,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Security headers
@@ -59,6 +60,7 @@ app.use("/api/github", github);
 
 // Protected routes (require Cognito Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);
+app.use("/api/admin", requireAuth, admin);
 
 // 404 for unknown API routes
 app.use((req, res, next) => {

@@ -56,7 +56,7 @@ test.describe("Performance Page — Structure", () => {
     await page.evaluate(() => window.scrollTo(0, 600));
     await page.waitForTimeout(500);
 
-    const sectionNav = page.locator('nav[aria-label="Performance page sections"]');
+    const sectionNav = page.locator('nav[aria-label="Page sections"]');
     await expect(sectionNav).toBeAttached();
   });
 });

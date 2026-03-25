@@ -45,7 +45,9 @@ export function usePushNotifications() {
 
       setSubscription(existingSubscription);
       setIsSubscribed(!!existingSubscription);
-    } catch (_error) {}
+    } catch {
+      // Push API unavailable — subscription check is non-critical
+    }
   }, []);
 
   useEffect(() => {
@@ -141,7 +143,9 @@ export function usePushNotifications() {
 
       // Remove from server
       await pushNotificationsApi.removeSubscription(subscription.endpoint);
-    } catch (_error) {}
+    } catch {
+      // Server removal failed — subscription already unsubscribed locally
+    }
   };
 
   return {

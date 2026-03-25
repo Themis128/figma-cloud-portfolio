@@ -43,7 +43,7 @@ app.use("/api/contact", contact);
 app.use("/api/push-notifications", pushNotifications);
 app.use("/api/github", github);
 
-// Protected routes (require Firebase Auth)
+// Protected routes (require Cognito Auth)
 app.use("/api/organizations/api_keys", requireAuth, apiKeys);
 app.use("/api/admin", requireAuth, admin);
 

@@ -196,6 +196,7 @@ function ExperienceEntry({
               <button
                 type="button"
                 onClick={() => removeHighlight(hIdx)}
+                aria-label="Remove highlight"
                 className="text-foreground/30 hover:text-red-400 mt-0.5"
               >
                 <X className="h-3 w-3" />

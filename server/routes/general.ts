@@ -1,5 +1,5 @@
 // General utility API routes — ping, health, search, webhook, monitor, docs, upload
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 
 const router = Router();
 
@@ -123,7 +123,7 @@ router.get("/docs", (_req: Request, res: Response) => {
 });
 
 // Error counter middleware
-router.use((err: Error, _req: Request, res: Response, next: Function) => {
+router.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
   errorCount++;
   next(err);
 });

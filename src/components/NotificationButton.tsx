@@ -236,10 +236,10 @@ export function NotificationButton() {
 
     try {
       // 1. Check / request notification permission
-      console.log("[Push] Step 1: checking permission…", Notification.permission);
+      // Step 1: Check / request notification permission
       let permission = Notification.permission;
       if (permission === "denied") {
-        console.warn("[Push] Notifications are blocked — check browser settings");
+        // Notifications blocked by user
         setPushLoading(false);
         return;
       }
@@ -249,31 +249,27 @@ export function NotificationButton() {
           // the prompt, causing requestPermission() to hang indefinitely.
           permission = await withTimeout(Notification.requestPermission(), 5000, "Permission prompt");
         } catch {
-          console.warn(
-            "[Push] Permission prompt timed out — your browser may be silently blocking it.\n" +
-            "Fix: open browser notification settings and allow this site, or disable 'Quiet notification requests'.",
-          );
+          // Permission prompt timed out — browser may be silently blocking
           setPushLoading(false);
           return;
         }
       }
       if (permission !== "granted") {
-        console.log("[Push] Permission denied:", permission);
+        // Permission not granted
         setPushLoading(false);
         return;
       }
-      console.log("[Push] Step 1 done: permission granted");
+      // Permission granted
 
       // 2. Get a ready SW registration via navigator.serviceWorker.ready
       //    This is the spec-recommended way to wait for an active SW.
       //    Falls back to manual register + activation wait.
-      console.log("[Push] Step 2: getting ready SW registration…");
+      // Step 2: Get a ready SW registration
       let registration: ServiceWorkerRegistration;
       try {
         // Ensure the SW is registered so .ready can resolve
         const existing = await navigator.serviceWorker.getRegistration("/");
         if (!existing) {
-          console.log("[Push] No existing registration — registering /sw.js…");
           await navigator.serviceWorker.register("/sw.js", { scope: "/" });
         }
         // .ready resolves when a SW is active for the page's scope
@@ -284,10 +280,7 @@ export function NotificationButton() {
         if (!fallback?.active) throw new Error("No active service worker available");
         registration = fallback;
       }
-      console.log("[Push] Step 2 done: SW active (" + (registration.active?.state ?? "unknown") + ")");
-
-      // 3. Get VAPID key from the Express backend
-      console.log("[Push] Step 3: fetching VAPID key…");
+      // Step 3: Get VAPID key from the Express backend
       const vapidRes = await withTimeout(
         fetch("/api/push-notifications?action=vapid-public-key"),
         8000,
@@ -295,19 +288,14 @@ export function NotificationButton() {
       );
       if (!vapidRes.ok) throw new Error(`VAPID fetch failed: ${vapidRes.status}`);
       const { publicKey } = await vapidRes.json() as { publicKey: string };
-      console.log("[Push] Step 3 done: VAPID key received");
 
-      // 4. Clear stale subscription (avoids key-mismatch errors)
-      console.log("[Push] Step 4: clearing stale subscription…");
+      // Step 4: Clear stale subscription (avoids key-mismatch errors)
       const existingSub = await registration.pushManager.getSubscription();
       if (existingSub) {
-        console.log("[Push] Unsubscribing stale subscription");
         await existingSub.unsubscribe();
       }
-      console.log("[Push] Step 4 done");
 
-      // 5. Subscribe via PushManager — timeout protects against Chrome hanging
-      console.log("[Push] Step 5: subscribing via PushManager…");
+      // Step 5: Subscribe via PushManager — timeout protects against Chrome hanging
       const subscription = await withTimeout(
         registration.pushManager.subscribe({
           userVisibleOnly: true,
@@ -316,10 +304,7 @@ export function NotificationButton() {
         10000,
         "pushManager.subscribe()",
       );
-      console.log("[Push] Step 5 done: subscribed");
-
-      // 6. Store subscription on the server
-      console.log("[Push] Step 6: sending to server…");
+      // Step 6: Store subscription on the server
       const subJSON = subscription.toJSON();
       const putRes = await withTimeout(
         fetch("/api/push-notifications", {
@@ -331,12 +316,10 @@ export function NotificationButton() {
         "PUT subscription",
       );
       if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
-      console.log("[Push] Step 6 done: saved to server");
 
       setPushSubscribed(true);
-      console.log("[Push] Subscribe complete!");
-    } catch (err) {
-      console.error("[Push] Failed:", err instanceof Error ? err.message : err);
+    } catch {
+      // Push subscription failed — user will see the button remains unsubscribed
     } finally {
       setPushLoading(false);
     }
@@ -361,8 +344,8 @@ export function NotificationButton() {
         }
       }
       setPushSubscribed(false);
-    } catch (err) {
-      console.error("Push unsubscribe failed:", err);
+    } catch {
+      // Unsubscribe failed — button state will reflect the mismatch
     } finally {
       setPushLoading(false);
     }

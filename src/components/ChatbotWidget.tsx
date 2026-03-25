@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import BookingCard from "@/components/BookingCard";
 import { trackGA4, trackLead } from "@/components/GoogleAnalytics";
@@ -8,14 +10,16 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { sendChatMessage } from "@/lib/api";
 
-type MessageAction = "start_booking";
+type MessageAction = "start_booking" | "open_contact" | "navigate";
 
 type Message = {
   id: string;
   role: "user" | "assistant";
   content: string;
   streaming?: boolean;
+  thinking?: boolean;
   action?: MessageAction;
+  navigateTo?: string;
 };
 
 const WELCOME_MESSAGE: Message = {
@@ -26,8 +30,9 @@ const WELCOME_MESSAGE: Message = {
 };
 
 const BOOKING_QUESTION = "Book a call with Themis.";
+const CONTACT_QUESTION = "Send a message to Themis.";
 
-// Large pool — 3 are randomly selected per session; booking is always pinned
+// Large pool — 3 are randomly selected per session; booking + contact are always pinned
 const QUESTION_POOL = [
   // Networking & infrastructure
   "What Cisco technologies do you specialize in?",
@@ -67,6 +72,11 @@ const QUESTION_POOL = [
   // Education & background
   "What is your educational background?",
   "Tell me about your Master's in Data Analytics.",
+  // Blog & content
+  "What blog articles has Themis written?",
+  "Tell me about the cloud architecture blog post.",
+  // GitHub
+  "What's on Themis's GitHub?",
 ];
 
 function pickRandomQuestions(pool: string[], count: number): string[] {
@@ -80,7 +90,34 @@ function TypingCursor() {
   );
 }
 
+function ThinkingIndicator() {
+  return (
+    <span className="inline-flex items-center gap-1 text-cyan-500/60 font-mono text-xs">
+      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0ms]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:150ms]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:300ms]" />
+      <span className="ml-1">Looking up…</span>
+    </span>
+  );
+}
+
+function NavigateLink({ path }: { path: string }) {
+  const label = path.replace(/^\/|\/$/g, "") || "home";
+  return (
+    <Link
+      href={path}
+      className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 font-mono text-xs hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+      Go to {label}
+    </Link>
+  );
+}
+
 export default function ChatbotWidget() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
@@ -90,7 +127,11 @@ export default function ChatbotWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setSuggestedQuestions([...pickRandomQuestions(QUESTION_POOL, 3), BOOKING_QUESTION]);
+    setSuggestedQuestions([
+      ...pickRandomQuestions(QUESTION_POOL, 3),
+      CONTACT_QUESTION,
+      BOOKING_QUESTION,
+    ]);
   }, []);
 
   useEffect(() => {
@@ -105,8 +146,6 @@ export default function ChatbotWidget() {
 
   function handleBookingComplete(assistantId: string) {
     trackLead("booking", "chatbot");
-    // Replace the booking card message with a completion note.
-    // Use destructuring to drop the `action` key (exactOptionalPropertyTypes requirement).
     setMessages((prev) =>
       prev.map((m) => {
         if (m.id !== assistantId) return m;
@@ -188,7 +227,9 @@ export default function ChatbotWidget() {
             const parsed = JSON.parse(raw) as {
               token?: string;
               error?: string;
-              action?: MessageAction;
+              action?: string;
+              path?: string;
+              status?: string;
             };
 
             if (parsed.error) {
@@ -206,6 +247,19 @@ export default function ChatbotWidget() {
               return;
             }
 
+            // Status updates (thinking indicator while tools execute)
+            if (parsed.status === "thinking") {
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId
+                    ? { ...m, thinking: true }
+                    : m,
+                ),
+              );
+              continue;
+            }
+
+            // Booking action
             if (parsed.action === "start_booking") {
               setMessages((prev) =>
                 prev.map((m) =>
@@ -215,6 +269,7 @@ export default function ChatbotWidget() {
                         content: "",
                         action: "start_booking",
                         streaming: false,
+                        thinking: false,
                       }
                     : m,
                 ),
@@ -222,11 +277,50 @@ export default function ChatbotWidget() {
               return;
             }
 
+            // Contact action — navigate to contact page
+            if (parsed.action === "open_contact") {
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId
+                    ? {
+                        ...m,
+                        content: "Opening the contact form for you…",
+                        action: "open_contact",
+                        streaming: false,
+                        thinking: false,
+                      }
+                    : m,
+                ),
+              );
+              trackGA4("chat_action", { action: "open_contact" });
+              router.push("/contact/");
+              return;
+            }
+
+            // Navigation action — show a link in the message
+            if (parsed.action === "navigate" && parsed.path) {
+              const navPath = parsed.path;
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId
+                    ? {
+                        ...m,
+                        ...(navPath !== undefined && { navigateTo: navPath }),
+                        thinking: false,
+                      }
+                    : m,
+                ),
+              );
+              trackGA4("chat_action", { action: "navigate", path: navPath });
+              continue;
+            }
+
+            // Text token
             if (parsed.token) {
               setMessages((prev) =>
                 prev.map((m) =>
                   m.id === assistantId
-                    ? { ...m, content: m.content + parsed.token }
+                    ? { ...m, content: m.content + parsed.token, thinking: false }
                     : m,
                 ),
               );
@@ -248,7 +342,7 @@ export default function ChatbotWidget() {
     } finally {
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantId ? { ...m, streaming: false } : m,
+          m.id === assistantId ? { ...m, streaming: false, thinking: false } : m,
         ),
       );
       setIsStreaming(false);
@@ -368,8 +462,15 @@ export default function ChatbotWidget() {
                         : "bg-white/5 border border-white/10 text-gray-300",
                     ].join(" ")}
                   >
-                    {msg.content || (msg.streaming ? null : "…")}
-                    {msg.streaming && <TypingCursor />}
+                    {msg.thinking && !msg.content ? (
+                      <ThinkingIndicator />
+                    ) : (
+                      <>
+                        {msg.content || (msg.streaming ? null : "…")}
+                        {msg.streaming && <TypingCursor />}
+                        {msg.navigateTo && <NavigateLink path={msg.navigateTo} />}
+                      </>
+                    )}
                   </div>
                 )}
               </div>

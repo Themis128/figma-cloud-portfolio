@@ -6,7 +6,6 @@
 import { fetchAuthSession } from "aws-amplify/auth";
 import type {
   ContactFormRequest,
-  ResumeData,
   APIKey,
   BookingSlotsResponse,
   BookingCreateRequest,
@@ -23,13 +22,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const LAMBDA_URLS = {
   contact:
     process.env.NEXT_PUBLIC_LAMBDA_CONTACT_URL || `${API_BASE_URL}/contact`,
-  resume:
-    process.env.NEXT_PUBLIC_LAMBDA_RESUME_URL || `${API_BASE_URL}/resume`,
   "push-notifications":
     process.env.NEXT_PUBLIC_LAMBDA_PUSH_NOTIFICATIONS_URL ||
     `${API_BASE_URL}/push-notifications`,
   ping: process.env.NEXT_PUBLIC_LAMBDA_PING_URL || `${API_BASE_URL}/ping`,
-  demo: process.env.NEXT_PUBLIC_LAMBDA_DEMO_URL || `${API_BASE_URL}/demo`,
   chat: process.env.NEXT_PUBLIC_LAMBDA_CHAT_URL || `${API_BASE_URL}/chat`,
   "booking-slots": process.env.NEXT_PUBLIC_LAMBDA_BOOKING_URL
     ? `${process.env.NEXT_PUBLIC_LAMBDA_BOOKING_URL}/slots`
@@ -39,8 +35,6 @@ const LAMBDA_URLS = {
     : `${API_BASE_URL}/booking/create`,
   health:
     process.env.NEXT_PUBLIC_LAMBDA_HEALTH_URL || `${API_BASE_URL}/health`,
-  agents:
-    process.env.NEXT_PUBLIC_LAMBDA_AGENTS_URL || `${API_BASE_URL}/agents`,
   "api-keys":
     process.env.NEXT_PUBLIC_LAMBDA_API_KEYS_URL ||
     `${API_BASE_URL}/organizations/api_keys`,
@@ -130,23 +124,6 @@ export async function submitContactForm(
     body: JSON.stringify(data),
   });
   return response.json();
-}
-
-// ---------------------------------------------------------------------------
-// Resume
-// ---------------------------------------------------------------------------
-
-/**
- * Resume PDF generation
- */
-export async function generateResumePDF(
-  resumeData: ResumeData,
-): Promise<Blob> {
-  const response = await apiRequest("resume", {
-    method: "POST",
-    body: JSON.stringify(resumeData),
-  });
-  return response.blob();
 }
 
 // ---------------------------------------------------------------------------
@@ -285,14 +262,6 @@ export const pushNotificationsApi = {
  */
 export async function ping(): Promise<{ message: string; timestamp: string }> {
   const response = await apiRequest("ping");
-  return response.json();
-}
-
-/**
- * Demo endpoint
- */
-export async function getDemo(): Promise<{ message: string }> {
-  const response = await apiRequest("demo");
   return response.json();
 }
 

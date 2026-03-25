@@ -124,7 +124,7 @@ function SkillCategoryEntry({
 
       <div>
         <Label className="text-xs text-foreground/70">Skills</Label>
-        <div className="flex flex-wrap gap-1.5 mt-1 min-h-[28px]">
+        <div className="flex flex-wrap gap-1.5 mt-1 min-h-7">
           {items.map((skill, sIdx) => (
             <Badge
               key={sIdx}
@@ -135,6 +135,7 @@ function SkillCategoryEntry({
               <button
                 type="button"
                 onClick={() => removeSkill(sIdx)}
+                aria-label={`Remove ${skill}`}
                 className="hover:text-red-400"
               >
                 <X className="h-3 w-3" />
