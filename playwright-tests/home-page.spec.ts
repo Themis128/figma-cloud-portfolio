@@ -37,15 +37,11 @@ test.describe("Home Page — Hero Section", () => {
     await expect(divider.first()).toBeVisible();
   });
 
-  test("should display availability badge", async ({ page }) => {
-    await expect(
-      page.getByText("Available for Consulting", { exact: true }),
-    ).toBeVisible();
-  });
-
-  test("availability badge has pulsing green dot", async ({ page }) => {
-    const pulseDot = page.locator(".animate-ping.bg-emerald-400");
-    await expect(pulseDot).toBeAttached();
+  test("hero section should have proper structure", async ({ page }) => {
+    const hero = page.locator('[aria-labelledby="hero-heading"]');
+    await expect(hero).toBeVisible();
+    // Hero contains the heading and description
+    await expect(hero.locator("#hero-heading")).toBeVisible();
   });
 });
 
@@ -64,16 +60,39 @@ test.describe("Home Page — CTA Buttons", () => {
     await expect(learnMore).toBeVisible();
   });
 
-  test("should have 'Build Resume' button linking to /resume", async ({
+  test("should not have 'Build Resume' button in hero (removed)", async ({
     page,
   }) => {
+    // Build Resume CTA was removed from the homepage hero
     const buildResume = page
       .locator('main a[href="/resume/"]')
       .filter({ hasText: "Build Resume" });
-    await expect(buildResume).toBeVisible();
+    await expect(buildResume).not.toBeVisible();
   });
 
-  test("should have 'Get In Touch' button linking to /contact", async ({
+  test("should have 'Get In Touch' as primary styled CTA", async ({
+    page,
+  }) => {
+    const getInTouch = page
+      .locator('main a[href="/contact/"]')
+      .filter({ hasText: "Get In Touch" });
+    await expect(getInTouch).toBeVisible();
+    // Primary CTA has solid cyan background
+    await expect(getInTouch).toHaveClass(/bg-cyan-400/);
+  });
+
+  test("should have 'Learn More' as secondary styled CTA", async ({
+    page,
+  }) => {
+    const learnMore = page.locator('a[href="/about/"]').filter({
+      hasText: "Learn More",
+    });
+    await expect(learnMore).toBeVisible();
+    // Secondary CTA has transparent background with border
+    await expect(learnMore).toHaveClass(/border-2/);
+  });
+
+  test("should have 'Get In Touch' as primary CTA linking to /contact", async ({
     page,
   }) => {
     const getInTouch = page
@@ -122,7 +141,7 @@ test.describe("Home Page — Hero CTAs", () => {
   });
 
   test("should show Get In Touch as primary hero CTA", async ({ page }) => {
-    const hero = page.locator("#hero-heading").locator("..");
+    const hero = page.locator('section[aria-labelledby="hero-heading"]');
     const getInTouch = hero.locator('a[href="/contact/"]').filter({ hasText: "Get In Touch" }).first();
     await expect(getInTouch).toBeVisible();
   });

@@ -262,6 +262,52 @@ test.describe("AI Chatbot Widget", () => {
         await expect(toggle).toBeVisible();
       }
     });
+
+    test("should show auto-nudge bounce animation after 30 seconds of inactivity", async ({
+      page,
+    }) => {
+      await dismissCookieConsent(page);
+      const toggle = chatToggle(page);
+      await expect(toggle).toBeVisible();
+
+      // Initially no bounce
+      const classes = await toggle.getAttribute("class");
+      expect(classes).not.toContain("animate-bounce");
+
+      // Fast-forward past the 30s nudge timer
+      await page.evaluate(() => {
+        // Trigger all pending timers by advancing time
+        // The nudge uses setTimeout(30_000)
+      });
+      // Wait for the 30s timeout (use clock manipulation if available, otherwise skip)
+      // This test verifies the bounce class is applied after timeout fires
+      await page.waitForTimeout(31_000);
+
+      const updatedClasses = await toggle.getAttribute("class");
+      expect(updatedClasses).toContain("animate-bounce");
+    });
+
+    test("should remove auto-nudge bounce when chat is opened", async ({
+      page,
+    }) => {
+      await dismissCookieConsent(page);
+      const toggle = chatToggle(page);
+
+      // Wait for nudge to appear
+      await page.waitForTimeout(31_000);
+      const classesBefore = await toggle.getAttribute("class");
+      expect(classesBefore).toContain("animate-bounce");
+
+      // Open chat — bounce should be removed
+      await toggle.click();
+      await expect(chatPanel(page).locator("text=AI Assistant").first()).toBeVisible();
+
+      // Close chat and check toggle no longer bounces
+      const close = chatPanel(page).locator('button[aria-label="Close chat"]');
+      await close.click();
+      const classesAfter = await toggle.getAttribute("class");
+      expect(classesAfter).not.toContain("animate-bounce");
+    });
   });
 
   // ── Panel structure ───────────────────────────────────────────────────

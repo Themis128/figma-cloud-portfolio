@@ -91,7 +91,7 @@ The app uses the Next.js App Router Server/Client component model:
 
 | Path           | Component              | Description                                     |
 | -------------- | ---------------------- | ----------------------------------------------- |
-| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation, TypeWriter hero, AvailabilityBadge, 2 CTAs (Get In Touch primary + Learn More secondary) |
+| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation, TypeWriter hero, 2 CTAs (Get In Touch primary + Learn More secondary) |
 | `/about`       | `about/page.tsx`       | Professional bio, skills, SkillsRadar chart, career timeline |
 | `/product`     | `product/page.tsx`     | Work experience InteractiveTimeline              |
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery + live GitHub repos (via `GitHubRepos` component) |
@@ -368,7 +368,7 @@ Interactive components enhance user engagement across the site. Most are Client 
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
 | `NotificationButton`                      | Bell icon with dropdown announcement panel. Announcements auto-generated from git commits at build time (`scripts/generate-announcements.sh` to `public/announcements.json`). Per-item dismiss (persisted in localStorage), read/unread tracking, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |
-| `AvailabilityBadge`                       | Hero section badge with pulsing green dot: "Available for Consulting" |
+| `AvailabilityBadge`                       | Badge with pulsing green dot: "Available for Consulting" (component exists but no longer used on homepage) |
 | `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
 | `RouteProgressBar`                        | Thin cyan progress bar at top of page during route changes, provides visual navigation feedback |
@@ -521,7 +521,7 @@ A local MCP server (`server/mcp/index.ts`) exposes portfolio data for AI coding 
 | --- | --- | --- |
 | `CircuitBackground` `content-visibility: auto` | LCP | Defers rendering of 240-line SVG until visible, prevents blocking hero text paint |
 | `AIBrain` `content-visibility: auto` | LCP | Defers 109-line hero SVG with `containIntrinsicSize: 0 500px` placeholder |
-| `AvailabilityBadge` removed `AnimatedSection` | LCP | Hero badge renders at full opacity immediately (was starting at opacity:0) |
+| `AvailabilityBadge` removed from homepage | LCP | Simplified hero section, removed badge that was delaying LCP with AnimatedSection wrapper |
 | Hero text removed `AnimatedSection` | LCP | TypeWriter and description paragraphs render immediately without scroll-reveal delay |
 | reCAPTCHA on-demand loading | TBT | Removed global script from layout; loaded by `useRecaptcha.preload()` on form focus (saves 214KB initial load) |
 | Sentry replay lazy-load | TBT | `replayIntegration` loaded via `lazyLoadIntegration()` 2s after page load (saves ~94KB initial bundle) |
@@ -660,18 +660,20 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/`, 111 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/`, 106 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
-- **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (121 tests): toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history, cover letter generation
-- **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (79 tests): SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects (incl. non-Element target safety), KonamiEasterEgg, Retro Terminal theme, section ordering
+- **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (123 tests): toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history, cover letter generation, auto-nudge bounce
+- **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (81 tests): SiteStats, GitHubHeatmap, Testimonials (incl. auto-rotate, pause on hover), CyberQuiz, ReadingProgress, BlogReactions, SoundEffects (incl. non-Element target safety), KonamiEasterEgg, Retro Terminal theme, section ordering
 - **CrUX Field Data Tests**: `playwright-tests/crux-field-data.spec.ts` (18 tests): section structure, loading skeleton, success state with mocked data (5 metrics, p75 values, distribution bars, color coding), error/unavailable state, threshold color coding
 - **MCP Server Tests**: `playwright-tests/mcp-server.spec.ts` (10 tests): initialization, resource listing/reading (knowledge base, package.json), tool listing/calling (deployment info, project structure, path traversal security, knowledge search)
 - **About Page Tests**: `playwright-tests/about-page.spec.ts` (23 tests): hero, summary, focus areas, SkillsRadar interaction, badges grid, CountUpStats, responsive layout
 - **Cookie Consent Tests**: `playwright-tests/cookie-consent.spec.ts` (11 tests): banner lifecycle, accept/reject, customise toggles, localStorage persistence, accessibility
 - **Footer Tests**: `playwright-tests/footer-links.spec.ts` (15 tests): nav/legal/social links, hrefs, target attributes, mailto, copyright, tech stack, mobile layout
-- **Theme Toggle Tests**: `playwright-tests/theme-toggle.spec.ts` (12 tests): dark/light mode, body class toggle, persistence after reload, rapid toggles, mobile toolbar
+- **Theme Toggle Tests**: `playwright-tests/theme-toggle.spec.ts` (13 tests): dark/light mode, body class toggle, persistence after reload, rapid toggles, mobile toolbar, tooltip
 - **Projects Tests**: `playwright-tests/projects-comprehensive.spec.ts` (17 tests): search, category filters, combined search+filter, featured badges, GitHub links, mobile layout
-- **Navigation Tests**: `playwright-tests/navigation.spec.ts` (18 tests): sticky header, Sheet menu, toolbar separator, active link highlighting, mobile bell/theme
+- **Navigation Tests**: `playwright-tests/navigation.spec.ts` (20 tests): sticky header, Sheet menu, toolbar separator, active link highlighting, mobile bell/theme, Get In Touch CTA, accessibility tooltip
+- **Route Progress Tests**: `playwright-tests/route-progress.spec.ts` (3 tests): progress bar during navigation, component rendered in layout, ARIA attributes
+- **Home Page Tests**: `playwright-tests/home-page.spec.ts` (19 tests): hero content, social links, hero CTAs (Get In Touch primary, Learn More secondary), CTA styling verification, layout
 - **Performance Page Tests**: `playwright-tests/performance-page.spec.ts`: structure (incl. field-data section), speed test, Web Vitals, Lighthouse, methodology, industry comparison
 - **PWA Tests**: `playwright-tests/pwa.spec.ts` (5 tests): manifest, offline fallback, sw.js, dev-mode SW unregistration
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts`: API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)

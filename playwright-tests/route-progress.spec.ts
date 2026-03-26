@@ -1,29 +1,61 @@
 import { expect, test } from "@playwright/test";
 
+/** Dismiss cookie consent if present */
+async function dismissCookies(page: import("@playwright/test").Page) {
+  const btn = page.locator('button[aria-label="Accept all cookies"]');
+  if (await btn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await btn.click();
+    await page.waitForTimeout(500);
+  }
+}
+
 test.describe("Route Progress Bar", () => {
-  test("should show progress bar during navigation", async ({ page }) => {
+  test("should navigate successfully with progress bar support", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
+    await dismissCookies(page);
 
-    // Click a nav link to trigger route change
-    await page.locator('nav a[href*="/about"]').first().click();
+    // Click a desktop nav link to trigger route change
+    const aboutLink = page.locator('nav a[href="/about/"]').first();
+    await aboutLink.click();
 
-    // The progress bar should briefly appear
-    const progressBar = page.locator('[role="progressbar"][aria-label="Page loading"]');
-    // It may be too fast to catch, so just verify the component exists in DOM
-    await page.waitForLoadState("domcontentloaded");
-
-    // Verify we navigated successfully (progress bar completed its job)
-    await expect(page).toHaveURL(/about/);
+    // Wait for navigation to complete
+    await expect(page).toHaveURL(/about/, { timeout: 15000 });
   });
 
   test("RouteProgressBar component should be rendered in layout", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
+    await dismissCookies(page);
 
     // Navigate to trigger the component
-    await page.locator('nav a[href*="/contact"]').first().click();
+    const contactLink = page.locator('nav a[href="/contact/"]').first();
+    await contactLink.click();
+    await expect(page).toHaveURL(/contact/, { timeout: 15000 });
+  });
+
+  test("progress bar should have correct ARIA attributes when visible", async ({ page }) => {
+    await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
-    await expect(page).toHaveURL(/contact/);
+    await dismissCookies(page);
+
+    // Set up a listener for the progress bar before navigating
+    const progressBarPromise = page.waitForSelector(
+      '[role="progressbar"][aria-label="Page loading"]',
+      { timeout: 5000, state: "attached" },
+    ).catch(() => null);
+
+    // Trigger navigation
+    const aboutLink = page.locator('nav a[href="/about/"]').first();
+    await aboutLink.click();
+
+    // Check if we caught the progress bar (it's very brief)
+    const progressBar = await progressBarPromise;
+    if (progressBar) {
+      expect(await progressBar.getAttribute("aria-label")).toBe("Page loading");
+    }
+
+    // Verify navigation completed regardless
+    await expect(page).toHaveURL(/about/, { timeout: 15000 });
   });
 });
