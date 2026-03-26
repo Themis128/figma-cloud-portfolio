@@ -19,6 +19,8 @@ import { useState } from "react";
 import { HoverButton } from "@/components/HoverAnimations";
 import { MatrixRainToggle } from "@/components/interactive/MatrixRainToggle";
 import { NotificationButton } from "@/components/NotificationButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -27,8 +29,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { Button } from "@/components/ui/button";
 
 const SoundEffects = dynamic(
   () => import("@/components/interactive/SoundEffects"),

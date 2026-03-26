@@ -14,8 +14,6 @@ export function PWAUpdateNotification() {
   const initialCommitRef = useRef<string | null>(null);
 
   useEffect(() => {
-    let intervalId: ReturnType<typeof setInterval>;
-
     async function checkForUpdate() {
       try {
         // Cache-bust to always get fresh version.json from origin
@@ -50,7 +48,7 @@ export function PWAUpdateNotification() {
 
     // Check on load, then periodically
     checkForUpdate();
-    intervalId = setInterval(checkForUpdate, CHECK_INTERVAL);
+    const intervalId = setInterval(checkForUpdate, CHECK_INTERVAL);
 
     // Also check when user returns to the tab
     function handleVisibility() {
