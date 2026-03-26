@@ -78,7 +78,7 @@ export default function PushToast() {
                 <p className="text-xs text-slate-400 mt-1 leading-relaxed line-clamp-2">
                   {toast.body}
                 </p>
-                {toast.url && toast.url !== "/" && (
+                {toast.url && toast.url !== "/" && toast.url.startsWith("/") && !toast.url.startsWith("//") && (
                   <Link
                     href={toast.url}
                     onClick={() => dismiss(toast.id)}

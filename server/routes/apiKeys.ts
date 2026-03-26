@@ -147,18 +147,22 @@ router.post("/", (req: Request, res: Response) => {
 // GET /api/organizations/api_keys/{api_key_id} - Get API Key details
 router.get("/:api_key_id", (req: Request, res: Response) => {
   const { api_key_id } = req.params;
-  
-  const apiKey = findApiKeyById(api_key_id);
-  
-  if (!apiKey) {
-    return res.status(404).json({
-      error: {
-        code: "NOT_FOUND",
-        message: `API key with ID ${api_key_id} not found`
-      }
+
+  // Validate ID format (alphanumeric + hyphens only)
+  if (!api_key_id || !/^[\w-]+$/.test(api_key_id)) {
+    return res.status(400).json({
+      error: { code: "INVALID_ID", message: "Invalid API key ID format" },
     });
   }
-  
+
+  const apiKey = findApiKeyById(api_key_id);
+
+  if (!apiKey) {
+    return res.status(404).json({
+      error: { code: "NOT_FOUND", message: "API key not found" },
+    });
+  }
+
   res.json(apiKey);
 });
 
