@@ -1,0 +1,72 @@
+[
+  {
+    "id": "2026-03-26-b08aa9e",
+    "title": "New Feature",
+    "description": "UI/UX improvements for engagement and conversion",
+    "date": "2026-03-26T06:44:17+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-26-0b2b05e",
+    "title": "New Feature",
+    "description": "Add 6 new chatbot tools with tests and documentation",
+    "date": "2026-03-26T04:39:15+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-26-afe5001",
+    "title": "New Feature",
+    "description": "Add budget killswitch for Bedrock chatbot",
+    "date": "2026-03-26T04:31:09+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-26-b87da0a",
+    "title": "Bug Fix",
+    "description": "Update chatbot model reference and reduce AWS costs",
+    "date": "2026-03-26T04:02:52+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-25-70e579e",
+    "title": "Bug Fix",
+    "description": "CrUX API double /api/ prefix causing 404",
+    "date": "2026-03-25T22:01:49+02:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-25-4eb249e",
+    "title": "Performance",
+    "description": "Defer reCAPTCHA and Sentry replay to reduce TBT",
+    "date": "2026-03-25T21:22:00+02:00",
+    "type": "perf"
+  },
+  {
+    "id": "2026-03-25-c74e3ad",
+    "title": "Performance",
+    "description": "Optimize LCP by deferring CircuitBackground and removing hero animations",
+    "date": "2026-03-25T21:12:14+02:00",
+    "type": "perf"
+  },
+  {
+    "id": "2026-03-25-ded0ccd",
+    "title": "New Feature",
+    "description": "Redesign navbar, fix SoundEffects crash, remove dashes, add tests",
+    "date": "2026-03-25T20:39:33+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-25-b08d673",
+    "title": "New Feature",
+    "description": "Add MCP server, CrUX field data, and fix Playwright trace/video",
+    "date": "2026-03-25T17:08:27+02:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-25-b932ac9",
+    "title": "New Feature",
+    "description": "Add 10 engagement features — quiz, testimonials, heatmap, easter eggs",
+    "date": "2026-03-25T11:34:58+02:00",
+    "type": "feat"
+  }
+]
