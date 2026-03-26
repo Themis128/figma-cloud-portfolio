@@ -300,6 +300,34 @@ test.describe("Homepage — Testimonials", () => {
     expect(classes).toContain("bg-cyan-400");
   });
 
+  test("should auto-rotate to next testimonial after 5 seconds", async ({ page }) => {
+    const section = page.locator('section[aria-label="Testimonials"]');
+    const quote = section.locator("blockquote").first();
+    const initialText = await quote.textContent();
+
+    // Wait longer than the 5-second auto-rotation interval
+    await page.waitForTimeout(6000);
+
+    const newText = await quote.textContent();
+    expect(newText).not.toBe(initialText);
+  });
+
+  test("should pause auto-rotation on hover", async ({ page }) => {
+    const section = page.locator('section[aria-label="Testimonials"]');
+    const quote = section.locator("blockquote").first();
+
+    // Hover over the testimonials section to pause rotation
+    await section.hover();
+
+    const initialText = await quote.textContent();
+
+    // Wait longer than the 5-second auto-rotation interval
+    await page.waitForTimeout(6000);
+
+    const textAfterWait = await quote.textContent();
+    expect(textAfterWait).toBe(initialText);
+  });
+
   test("testimonial card should have glass-morphism and border separator", async ({ page }) => {
     const section = page.locator('section[aria-label="Testimonials"]');
     const card = section.locator("div.rounded-lg").first();

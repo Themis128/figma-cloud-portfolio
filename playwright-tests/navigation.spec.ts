@@ -105,6 +105,22 @@ test.describe("Navigation | Desktop Toolbar", () => {
     await expect(a11yButton).toBeVisible();
   });
 
+  test("should have Get In Touch CTA button on desktop", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const cta = page.locator('header a[href="/contact/"]').filter({ hasText: "Get In Touch" });
+    await expect(cta).toBeVisible();
+  });
+
+  test("should have tooltip on accessibility button", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const a11yButton = page.locator('button[aria-label="Open accessibility settings"]');
+    await expect(a11yButton).toHaveAttribute("title", /.+/);
+  });
+
   test("should have notification bell", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");

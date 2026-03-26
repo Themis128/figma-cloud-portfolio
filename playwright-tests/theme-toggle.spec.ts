@@ -123,6 +123,11 @@ test.describe("Theme Toggle | Desktop", () => {
     const srText = toggle.locator(".sr-only");
     await expect(srText).toHaveText("Toggle theme");
   });
+
+  test("should have tooltip on theme toggle", async ({ page }) => {
+    const toggle = page.getByTestId("theme-toggle").first();
+    await expect(toggle).toHaveAttribute("title", /theme/i);
+  });
 });
 
 test.describe("Theme Toggle | Mobile", () => {

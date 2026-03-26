@@ -115,6 +115,24 @@ test.describe("Home Page — Social Links", () => {
   });
 });
 
+test.describe("Home Page — Hero CTAs", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should show Get In Touch as primary hero CTA", async ({ page }) => {
+    const hero = page.locator("#hero-heading").locator("..");
+    const getInTouch = hero.locator('a[href="/contact/"]').filter({ hasText: "Get In Touch" }).first();
+    await expect(getInTouch).toBeVisible();
+  });
+
+  test("should show Learn More as secondary hero CTA", async ({ page }) => {
+    const learnMore = page.locator('a[href="/about/"]').filter({ hasText: "Learn More" });
+    await expect(learnMore).toBeVisible();
+  });
+});
+
 test.describe("Home Page — Layout", () => {
   test("should display navigation with logo", async ({ page }) => {
     await page.goto("/");

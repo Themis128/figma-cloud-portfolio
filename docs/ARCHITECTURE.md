@@ -91,7 +91,7 @@ The app uses the Next.js App Router Server/Client component model:
 
 | Path           | Component              | Description                                     |
 | -------------- | ---------------------- | ----------------------------------------------- |
-| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation, TypeWriter hero, AvailabilityBadge |
+| `/`            | `page.tsx`             | Home / landing with AIBrain visualisation, TypeWriter hero, AvailabilityBadge, 2 CTAs (Get In Touch primary + Learn More secondary) |
 | `/about`       | `about/page.tsx`       | Professional bio, skills, SkillsRadar chart, career timeline |
 | `/product`     | `product/page.tsx`     | Work experience InteractiveTimeline              |
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery + live GitHub repos (via `GitHubRepos` component) |
@@ -332,7 +332,7 @@ Interactive components enhance user engagement across the site. Most are Client 
 | -------------------- | ---------- | ---------------------------------------------------------------------------------------- |
 | `SiteStats`          | Home (`/`) | Lighthouse score, tech stack count, pages, and uptime badges. Social-proof stats section |
 | `GitHubHeatmap`      | Home (`/`) | Live GitHub contribution heatmap fetched from the GitHub Events API                      |
-| `Testimonials`       | Home (`/`) | Carousel with colleague quotes (3 entries), prev/next navigation                         |
+| `Testimonials`       | Home (`/`) | Carousel with colleague quotes (3 entries), prev/next navigation, auto-rotates every 5s, pauses on hover/focus |
 | `CyberQuiz`          | Home (`/`) | 5-question cybersecurity & cloud quiz with scoring and grades                            |
 
 > **Homepage section order**: Hero, Core Expertise, SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, Quick Contact
@@ -360,10 +360,10 @@ Interactive components enhance user engagement across the site. Most are Client 
 | ----------------------------------------- | ---------------------------------------------------------- |
 | `CircuitBackground`                       | SVG circuit board background with CSS `drop-shadow` glow (used on most pages, no SVG filters) |
 | `AnimatedSection`                         | Framer Motion scroll-triggered reveal wrapper (20px offset, skips animation on low-end devices) |
-| `Navigation`                              | Sticky glassmorphic navbar (`bg-background/80 backdrop-blur-xl`). **Desktop**: horizontal nav links + toolbar (bell, theme | sound, matrix, a11y) with Radix Separator between groups. **Mobile**: bell + theme + hamburger in top bar; hamburger opens shadcn Sheet (slide-from-right) with icon-labeled nav links, Effects & Settings row, and CTA |
+| `Navigation`                              | Sticky glassmorphic navbar (`bg-background/80 backdrop-blur-xl`). **Desktop**: horizontal nav links + "Get In Touch" CTA button + toolbar (bell, theme | sound, matrix, a11y) with Radix Separator between groups. **Mobile**: bell + theme + hamburger in top bar; hamburger opens shadcn Sheet (slide-from-right) with icon-labeled nav links, Effects & Settings row, and CTA |
 | `HoverButton` / `HoverCard` / `HoverIcon` | Framer Motion hover interaction wrappers                   |
 | `ThemeProvider`                           | Light/dark/system theme via CSS custom properties          |
-| `ChatbotWidget`                           | Global AI chatbot. AWS Bedrock with tool use + blog RAG (lazy-loaded via `LazyInteractive`, `inert` when collapsed). Action tokens: `[BOOK_CALL]` (booking), `[CONTACT]` (contact form), `[GOTO:/path/]` (navigation links). Tools: search_portfolio, search_blog, get_github_stats, check_booking_availability, get_resume_link, get_site_performance, search_projects, send_message_to_themis, get_system_health. **Cover letter generation**: visitors can paste a job description and the bot writes a tailored 3 to 4 paragraph cover letter highlighting Themis's relevant experience from the knowledge base |
+| `ChatbotWidget`                           | Global AI chatbot. AWS Bedrock with tool use + blog RAG (lazy-loaded via `LazyInteractive`, `inert` when collapsed). Auto-nudge bounce animation after 30s idle. Action tokens: `[BOOK_CALL]` (booking), `[CONTACT]` (contact form), `[GOTO:/path/]` (navigation links). Tools: search_portfolio, search_blog, get_github_stats, check_booking_availability, get_resume_link, get_site_performance, search_projects, send_message_to_themis, get_system_health. **Cover letter generation**: visitors can paste a job description and the bot writes a tailored 3 to 4 paragraph cover letter highlighting Themis's relevant experience from the knowledge base |
 | `LazyInteractive`                         | Lazy-loads MatrixRain, CursorTrail, CyberTerminal, ChatbotWidget, CommandPalette, KonamiEasterEgg via `next/dynamic` (ssr: false). SoundEffects and MatrixRainToggle moved to Navigation |
 | `AuthProvider`                            | Amplify Cognito auth context (Hub listener + getCurrentUser)|
 | `AccessibilityEnhancer`                   | Accessibility panel (opened via `open-accessibility-panel` custom event, no floating button) |
@@ -371,6 +371,7 @@ Interactive components enhance user engagement across the site. Most are Client 
 | `AvailabilityBadge`                       | Hero section badge with pulsing green dot: "Available for Consulting" |
 | `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
+| `RouteProgressBar`                        | Thin cyan progress bar at top of page during route changes, provides visual navigation feedback |
 | `StructuredData`                          | Schema.org JSON-LD for SEO                                 |
 | `OptimizedImage`                          | Wrapper around `next/image` with lazy loading              |
 | `Skeleton`                                | Animated loading placeholders                              |
@@ -659,7 +660,7 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/`, 110 spec files)
+- **E2E Tests**: Playwright (`playwright-tests/`, 111 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (121 tests): toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history, cover letter generation
 - **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (79 tests): SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects (incl. non-Element target safety), KonamiEasterEgg, Retro Terminal theme, section ordering
