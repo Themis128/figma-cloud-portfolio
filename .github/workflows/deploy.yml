@@ -64,6 +64,11 @@ jobs:
           # Sync and capture changed paths for targeted invalidation
           SYNC_OUTPUT=$(aws s3 sync out/ s3://figma-portfolio-static --delete --region us-east-1 2>&1) || true
           echo "$SYNC_OUTPUT"
+
+          # Force-upload version.json and sw.js (these must always be fresh)
+          aws s3 cp out/version.json s3://figma-portfolio-static/version.json --cache-control "no-cache, no-store, must-revalidate" --region us-east-1
+          aws s3 cp out/sw.js s3://figma-portfolio-static/sw.js --cache-control "no-cache, no-store, must-revalidate" --region us-east-1
+
           # Extract uploaded/deleted paths — handle filenames with spaces safely
           CHANGED=$(echo "$SYNC_OUTPUT" | awk '
             /^upload:/ { sub(/^upload: out\//, "/"); sub(/ to s3:.*/, ""); print }
@@ -71,31 +76,45 @@ jobs:
           ' | head -50)
           CHANGED_COUNT=$(echo "$CHANGED" | grep -c . || true)
           if [ "$CHANGED_COUNT" -eq 0 ]; then
-            echo "No files changed — skipping invalidation"
-            echo "paths=none" >> "$GITHUB_OUTPUT"
+            echo "No other files changed — invalidating version.json and sw.js only"
+            echo "paths<<EOF" >> "$GITHUB_OUTPUT"
+            echo "/version.json" >> "$GITHUB_OUTPUT"
+            echo "/sw.js" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
           elif [ "$CHANGED_COUNT" -gt 49 ]; then
             echo "$CHANGED_COUNT files changed — using wildcard invalidation"
             echo "paths=/*" >> "$GITHUB_OUTPUT"
           else
             echo "$CHANGED_COUNT files changed — targeted invalidation"
+            # Always include version.json and sw.js in invalidation
             echo "paths<<EOF" >> "$GITHUB_OUTPUT"
             echo "$CHANGED" >> "$GITHUB_OUTPUT"
+            echo "/version.json" >> "$GITHUB_OUTPUT"
+            echo "/sw.js" >> "$GITHUB_OUTPUT"
             echo "EOF" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Invalidate CloudFront
-        if: steps.s3sync.outputs.paths != 'none'
         run: |
           if [ "${{ steps.s3sync.outputs.paths }}" = "/*" ]; then
-            PATHS="/*"
+            PATHS_ARRAY=("/*")
           else
-            PATHS=$(echo "${{ steps.s3sync.outputs.paths }}" | tr '\n' ' ')
+            # Read paths into an array, deduplicate
+            mapfile -t RAW_PATHS <<< "${{ steps.s3sync.outputs.paths }}"
+            declare -A SEEN
+            PATHS_ARRAY=()
+            for p in "${RAW_PATHS[@]}"; do
+              [ -z "$p" ] && continue
+              [ "${SEEN[$p]+_}" ] && continue
+              SEEN[$p]=1
+              PATHS_ARRAY+=("$p")
+            done
           fi
           INVALIDATION_ID=$(aws cloudfront create-invalidation \
             --distribution-id E134SCTR0QGQKJ \
-            --paths "$PATHS" \
+            --paths "${PATHS_ARRAY[@]}" \
             --query 'Invalidation.Id' --output text)
-          echo "CloudFront invalidation: ${INVALIDATION_ID} ($(echo $PATHS | wc -w) paths)"
+          echo "CloudFront invalidation: ${INVALIDATION_ID} (${#PATHS_ARRAY[@]} paths)"
           aws cloudfront wait invalidation-completed \
             --distribution-id E134SCTR0QGQKJ \
             --id "${INVALIDATION_ID}"

@@ -18,7 +18,7 @@
     "amplify:outputs:sandbox": "bash scripts/amplify-outputs-sandbox.sh",
     "amplify:delete": "bash scripts/amplify-delete.sh",
     "typecheck": "tsc --noEmit",
-    "build": "bash scripts/generate-announcements.sh && velite build && next build",
+    "build": "bash scripts/generate-announcements.sh && bash scripts/generate-version.sh && velite build && next build",
     "build:analyze": "ANALYZE=true pnpm build",
     "build:server": "tsc --project server/tsconfig.server.json && mv dist/server/index.js dist/server/node-build.mjs",
     "start": "next start",

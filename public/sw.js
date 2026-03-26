@@ -1,5 +1,6 @@
 // Enhanced Service Worker with React 19 optimizations and advanced PWA features
 // Uses Workbox from CDN (compatible with both dev and production)
+// v7 — version polling + SW event detection
 
 importScripts(
   "https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js",
@@ -12,8 +13,9 @@ if (workbox) {
   // Claim all clients immediately
   workbox.core.clientsClaim();
 
-  // Skip waiting for immediate updates (using self.skipWaiting instead of deprecated workbox.core.skipWaiting)
-  self.skipWaiting();
+  // Do NOT call self.skipWaiting() here — let the new SW wait in the
+  // "installed" state so PWAUpdateNotification can show the "Update Now"
+  // button. The user triggers skipWaiting via postMessage({ type: "SKIP_WAITING" }).
 
   // Clean up old caches
   workbox.precaching.cleanupOutdatedCaches();
@@ -183,11 +185,13 @@ if (workbox) {
 
 // Install event — precache the offline fallback page
 self.addEventListener("install", (event) => {
-  console.log("Service Worker: Install event");
+  console.log("Service Worker: Install event — waiting for user to accept update");
   event.waitUntil(
     caches.open("offline-fallback").then((cache) => cache.add("/offline.html")),
   );
-  self.skipWaiting();
+  // Do NOT call self.skipWaiting() here — the new SW stays in "waiting"
+  // state until the user clicks "Update Now" in PWAUpdateNotification,
+  // which sends a SKIP_WAITING message (handled in the message listener).
 });
 
 // Activate event
