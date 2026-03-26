@@ -21,10 +21,22 @@ import crux from "./routes/crux";
 import pushNotifications from "./routes/pushNotifications";
 import github from "./routes/github";
 import admin from "./routes/admin";
+import rateLimit from "express-rate-limit";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
 app.disable("x-powered-by");
+
+// Global rate limiting: 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later" },
+});
+app.use(limiter);
+
 app.use(compression());
 app.use(
   cors({

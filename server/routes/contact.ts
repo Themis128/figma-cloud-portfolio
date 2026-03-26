@@ -373,8 +373,11 @@ router.post("/", async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: "Name, email, and message are required" });
     }
 
-    // Basic email format check
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    // Basic email format check (linear-time string ops, no regex)
+    const trimmedEmail = email.trim();
+    const atIndex = trimmedEmail.indexOf("@");
+    const dotAfterAt = atIndex > 0 ? trimmedEmail.indexOf(".", atIndex + 1) : -1;
+    if (atIndex < 1 || dotAfterAt < atIndex + 2 || dotAfterAt >= trimmedEmail.length - 1 || trimmedEmail.length > 254) {
       return res.status(400).json({ success: false, message: "Invalid email format" });
     }
 

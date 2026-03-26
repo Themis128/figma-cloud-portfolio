@@ -89,6 +89,7 @@
     "embla-carousel-react": "^8.6.0",
     "esbuild": "^0.27.3",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
     "framer-motion": "^12.35.2",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
@@ -170,7 +171,10 @@
       "socket.io-parser": ">=4.2.6",
       "fast-xml-parser": ">=5.5.7",
       "minimatch": ">=10.2.3",
-      "immutable": ">=3.8.3"
+      "immutable": ">=3.8.3",
+      "picomatch": ">=4.0.4",
+      "brace-expansion": ">=5.0.5",
+      "handlebars": ">=4.7.9"
     }
   }
 }

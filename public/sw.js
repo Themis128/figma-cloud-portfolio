@@ -683,7 +683,7 @@ async function clearSpecificCache(cacheName) {
   try {
     if (!cacheName) return false;
     const deleted = await caches.delete(cacheName);
-    console.log(`Cache ${cacheName} cleared:`, deleted);
+    console.log("Cache cleared:", cacheName, deleted);
     return deleted;
   } catch (error) {
     console.error("Error clearing cache:", error);

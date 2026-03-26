@@ -282,9 +282,17 @@ function getBlogIndex(): BlogPost[] {
         : [];
 
       const body = raw.slice(fmMatch[0].length);
-      const plainText = body
-        .replace(/```[\s\S]*?```/g, "")
-        .replace(/<[^>]+>/g, "")
+      // Strip markdown to plain text (apply tag removal in a loop until stable)
+      let plainText = body;
+      // Remove code blocks first
+      plainText = plainText.replace(/```[\s\S]*?```/g, "");
+      // Remove HTML tags iteratively until no more are found
+      let prev = "";
+      while (prev !== plainText) {
+        prev = plainText;
+        plainText = plainText.replace(/<[^>]+>/g, "");
+      }
+      plainText = plainText
         .replace(/!\[.*?]\(.*?\)/g, "")
         .replace(/\[(.+?)]\(.*?\)/g, "$1")
         .replace(/#{1,6}\s+/g, "")

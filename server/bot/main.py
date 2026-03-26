@@ -217,8 +217,8 @@ async def stream_local_response(messages: list[dict[str, str]]) -> AsyncGenerato
         else:
             yield f"data: {json.dumps({'token': accumulated})}\n\n"
 
-    except Exception as e:
-        yield f"data: {json.dumps({'error': f'LLM error: {str(e)}'})}\n\n"
+    except Exception:
+        yield f"data: {json.dumps({'error': 'An error occurred processing your request'})}\n\n"
 
     yield "data: [DONE]\n\n"
 
