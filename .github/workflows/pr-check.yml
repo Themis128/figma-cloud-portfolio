@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+# Shared setup anchors — DRY across jobs
+env:
+  NODE_VERSION: '22'
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -22,13 +26,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create mock amplify_outputs.json for CI
+      - name: Create mock amplify_outputs.json
         run: |
           cat > amplify_outputs.json << 'MOCK'
           {
@@ -73,7 +77,7 @@ jobs:
   e2e-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: quality
+    # Runs in parallel with quality — no needs: dependency
 
     steps:
       - name: Checkout
@@ -85,7 +89,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: Install dependencies
@@ -118,24 +122,43 @@ jobs:
           }
           MOCK
 
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
       - name: Install Playwright (Chromium only)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium --with-deps
 
-      - name: Start Express backend
+      - name: Install Playwright system deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Start servers
         run: |
+          # Start Express and Next.js in parallel
           PORT=3001 npx tsx server/index.ts &
           echo $! > /tmp/express.pid
-          timeout 30 bash -c 'until curl -sf http://localhost:3001/api/ping > /dev/null 2>&1; do sleep 2; done' \
-            || (echo "::error::Express backend failed to start"; kill "$(cat /tmp/express.pid)" 2>/dev/null; exit 1)
-        env:
-          NODE_ENV: test
-
-      - name: Start Next.js dev server
-        run: |
           pnpm dev &
           echo $! > /tmp/nextjs.pid
+
+          # Wait for both servers concurrently
+          timeout 30 bash -c 'until curl -sf http://localhost:3001/api/ping > /dev/null 2>&1; do sleep 2; done' \
+            || (echo "::error::Express backend failed to start"; exit 1) &
+          WAIT_EXPRESS=$!
+
           timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done' \
-            || (echo "::error::Next.js dev server failed to start"; kill "$(cat /tmp/nextjs.pid)" 2>/dev/null; exit 1)
+            || (echo "::error::Next.js dev server failed to start"; exit 1) &
+          WAIT_NEXTJS=$!
+
+          wait $WAIT_EXPRESS || exit 1
+          wait $WAIT_NEXTJS || exit 1
+          echo "Both servers ready"
+        env:
+          NODE_ENV: test
 
       - name: Run E2E smoke tests (Chromium only)
         run: npx playwright test --project=chromium --grep="@smoke" --reporter=list

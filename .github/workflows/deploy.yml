@@ -44,6 +44,12 @@ jobs:
       - name: Generate Amplify outputs
         run: npx ampx generate outputs --branch production --app-id ${{ secrets.AMPLIFY_PRODUCTION_APP_ID }}
 
+      - name: Cache Velite output
+        uses: actions/cache@v4
+        with:
+          path: .velite
+          key: velite-${{ hashFiles('content/blog/**', 'velite.config.ts') }}
+
       - name: Build
         run: pnpm run build
         env:
