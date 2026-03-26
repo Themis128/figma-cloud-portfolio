@@ -474,6 +474,65 @@ const toolConfig: ToolConfiguration = {
         },
       },
     },
+    {
+      toolSpec: {
+        name: "get_resume_link",
+        description: "Get a download link for Themis's resume PDF. Use when a visitor asks to download, view, or get Themis's resume or CV.",
+        inputSchema: {
+          json: { type: "object", properties: {} },
+        },
+      },
+    },
+    {
+      toolSpec: {
+        name: "get_site_performance",
+        description: "Fetch live Core Web Vitals and CrUX field data for baltzakisthemis.com. Use when asked about site speed, performance, or how fast the portfolio loads.",
+        inputSchema: {
+          json: { type: "object", properties: {} },
+        },
+      },
+    },
+    {
+      toolSpec: {
+        name: "search_projects",
+        description: "Search and filter Themis's portfolio projects by technology, category, or keyword. Returns project names, descriptions, tech stacks, and links.",
+        inputSchema: {
+          json: {
+            type: "object",
+            properties: {
+              query: { type: "string", description: "Search term (technology, category, or keyword)" },
+            },
+            required: ["query"],
+          },
+        },
+      },
+    },
+    {
+      toolSpec: {
+        name: "send_message_to_themis",
+        description: "Send a contact message to Themis on behalf of the visitor. Use ONLY when the visitor explicitly provides their name, email, and a message they want to send. Never fabricate contact details.",
+        inputSchema: {
+          json: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Visitor's name" },
+              email: { type: "string", description: "Visitor's email address" },
+              message: { type: "string", description: "The message to send" },
+            },
+            required: ["name", "email", "message"],
+          },
+        },
+      },
+    },
+    {
+      toolSpec: {
+        name: "get_system_health",
+        description: "Check the health status of the portfolio API and services. Use when asked about site status, uptime, or if something is working.",
+        inputSchema: {
+          json: { type: "object", properties: {} },
+        },
+      },
+    },
   ],
 };
 
@@ -545,6 +604,96 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
         return JSON.stringify({ error: "Failed to check booking availability" });
       }
     }
+    case "get_resume_link": {
+      const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+      return JSON.stringify({
+        downloadUrl: `${siteUrl}/api/resume/download`,
+        viewUrl: `${siteUrl}/resume/`,
+        format: "PDF",
+        note: "The resume is generated with the latest information from the portfolio.",
+      });
+    }
+    case "get_site_performance": {
+      try {
+        const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+        const res = await fetch(`${siteUrl}/api/crux`);
+        if (!res.ok) {
+          return JSON.stringify({ error: `Performance API returned ${res.status}`, hint: "CrUX data may not be available yet" });
+        }
+        const data = await res.json() as Record<string, unknown>;
+        if (data.error) {
+          return JSON.stringify({ message: "CrUX field data not yet available (needs 28 days of traffic)", lighthouse: "Check /performance/ for live metrics" });
+        }
+        return JSON.stringify({
+          source: "Chrome UX Report (real users)",
+          ...data,
+          liveMetricsPage: "/performance/",
+        });
+      } catch {
+        return JSON.stringify({ error: "Failed to fetch performance data", fallback: "Visit /performance/ for live metrics" });
+      }
+    }
+    case "search_projects": {
+      const query = typeof input.query === "string" ? input.query.toLowerCase() : "";
+      const projectsPath = join(__dirname, "..", "bot", "knowledge", "06_projects.md");
+      if (!existsSync(projectsPath)) return JSON.stringify({ results: [], total: 0 });
+      const content = readFileSync(projectsPath, "utf-8");
+      const sections = content.split(/^## /m).filter(Boolean);
+      const matches = sections
+        .filter((s: string) => s.toLowerCase().includes(query))
+        .map((s: string) => {
+          const lines = s.trim().split("\n");
+          const title = lines[0] ?? "";
+          const desc = lines[1] ?? "";
+          const techLine = lines.find((l: string) => l.startsWith("**Technologies**")) ?? "";
+          const liveLine = lines.find((l: string) => l.startsWith("**Live**")) ?? "";
+          const githubLine = lines.find((l: string) => l.startsWith("**GitHub**")) ?? "";
+          return { title: title.trim(), description: desc.trim(), tech: techLine.replace("**Technologies**: ", ""), live: liveLine.replace("**Live**: ", ""), github: githubLine.replace("**GitHub**: ", "") };
+        });
+      return JSON.stringify({ results: matches, total: matches.length, query });
+    }
+    case "send_message_to_themis": {
+      const name = typeof input.name === "string" ? input.name.trim() : "";
+      const email = typeof input.email === "string" ? input.email.trim() : "";
+      const message = typeof input.message === "string" ? input.message.trim() : "";
+      if (!name || !email || !message) {
+        return JSON.stringify({ error: "Name, email, and message are all required" });
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return JSON.stringify({ error: "Invalid email address format" });
+      }
+      try {
+        const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+        const res = await fetch(`${siteUrl}/api/contact`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, message, subject: "Message via AI Chatbot" }),
+        });
+        const result = await res.json() as { success?: boolean; message?: string };
+        if (result.success) {
+          return JSON.stringify({ sent: true, message: "Message delivered to Themis" });
+        }
+        return JSON.stringify({ sent: false, error: result.message ?? "Failed to send" });
+      } catch {
+        return JSON.stringify({ sent: false, error: "Contact service unavailable" });
+      }
+    }
+    case "get_system_health": {
+      try {
+        const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+        const res = await fetch(`${siteUrl}/api/health`);
+        if (!res.ok) return JSON.stringify({ status: "degraded", httpStatus: res.status });
+        const data = await res.json() as Record<string, unknown>;
+        return JSON.stringify({
+          status: "healthy",
+          uptime: data.uptime,
+          memory: data.memory,
+          environment: data.environment,
+        });
+      } catch {
+        return JSON.stringify({ status: "unreachable", error: "Health endpoint not responding" });
+      }
+    }
     default:
       return JSON.stringify({ error: "Unknown tool" });
   }
@@ -602,6 +751,24 @@ You have access to tools for live data and deeper search. Use this decision fram
 
 5. **Use check_booking_availability** when:
    - The visitor asks if Themis is free, what times are available, or how soon they can meet
+
+6. **Use get_resume_link** when:
+   - The visitor asks to download, view, or get Themis's resume or CV
+
+7. **Use get_site_performance** when:
+   - The visitor asks about site speed, load times, Core Web Vitals, or performance scores
+
+8. **Use search_projects** when:
+   - The visitor asks about specific projects, technologies used, or wants to see portfolio work
+   - The visitor asks "show me AWS projects" or "what have you built with React"
+
+9. **Use send_message_to_themis** when:
+   - The visitor explicitly provides their name, email, and a message they want to send
+   - NEVER fabricate contact details. Ask for name, email, and message if not provided
+   - Confirm the details with the visitor before sending
+
+10. **Use get_system_health** when:
+    - The visitor asks if the site is working, about uptime, or system status
 
 Do NOT use tools for questions you can answer directly from the knowledge base — it adds latency.
 </tools_guidance>

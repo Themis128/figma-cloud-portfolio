@@ -2290,4 +2290,119 @@ test.describe("AI Chatbot Widget", () => {
       await expect(panel.locator("text=Are any of those expiring").first()).toBeVisible();
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // New chatbot tools
+  // ---------------------------------------------------------------------------
+
+  test.describe("New chatbot tools", () => {
+    test("resume download — get_resume_link", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await waitForAppReady(page);
+      await openChat(page);
+
+      const input = chatInput(page);
+      await input.fill("Can I download Themis's resume?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const panel = chatPanel(page);
+      const replyText = (await panel.locator("div[class*='bg-white/5']").allTextContents()).join(" ").toLowerCase();
+      expect(
+        replyText.includes("resume") ||
+        replyText.includes("cv") ||
+        replyText.includes("download") ||
+        replyText.includes("pdf"),
+      ).toBeTruthy();
+    });
+
+    test("site performance — get_site_performance", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await waitForAppReady(page);
+      await openChat(page);
+
+      const input = chatInput(page);
+      await input.fill("How fast is this website?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const panel = chatPanel(page);
+      const replyText = (await panel.locator("div[class*='bg-white/5']").allTextContents()).join(" ").toLowerCase();
+      expect(
+        replyText.includes("performance") ||
+        replyText.includes("speed") ||
+        replyText.includes("vitals") ||
+        replyText.includes("metrics"),
+      ).toBeTruthy();
+    });
+
+    test("project search — search_projects", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await waitForAppReady(page);
+      await openChat(page);
+
+      const input = chatInput(page);
+      await input.fill("Show me Themis's AWS projects");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const panel = chatPanel(page);
+      const replyText = (await panel.locator("div[class*='bg-white/5']").allTextContents()).join(" ").toLowerCase();
+      expect(
+        replyText.includes("project") ||
+        replyText.includes("aws"),
+      ).toBeTruthy();
+    });
+
+    test("system health — get_system_health", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await waitForAppReady(page);
+      await openChat(page);
+
+      const input = chatInput(page);
+      await input.fill("Is the site working?");
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const panel = chatPanel(page);
+      const replyText = (await panel.locator("div[class*='bg-white/5']").allTextContents()).join(" ").toLowerCase();
+      expect(
+        replyText.includes("healthy") ||
+        replyText.includes("online") ||
+        replyText.includes("status") ||
+        replyText.includes("uptime"),
+      ).toBeTruthy();
+    });
+
+    test("contact via chat — send_message_to_themis", async ({ page }) => {
+      test.skip(!(await isChatAvailable()), "Express server not running");
+      test.setTimeout(API_TIMEOUT * 2);
+
+      await waitForAppReady(page);
+      await openChat(page);
+
+      const input = chatInput(page);
+      await input.fill(
+        "I want to send Themis a message. My name is Test User, email test@example.com, message: Hello from the chatbot test",
+      );
+      await sendButton(page).click();
+      await waitForAssistantReply(page);
+
+      const panel = chatPanel(page);
+      const replyText = (await panel.locator("div[class*='bg-white/5']").allTextContents()).join(" ").toLowerCase();
+      expect(
+        replyText.includes("sent") ||
+        replyText.includes("delivered") ||
+        replyText.includes("confirm"),
+      ).toBeTruthy();
+    });
+  });
 });

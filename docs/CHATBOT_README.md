@@ -15,7 +15,12 @@ Browser (ChatbotWidget.tsx)
                       ├─ search_portfolio — keyword search across skills, pages, experience
                       ├─ search_blog — full-text search of blog MDX posts with excerpts
                       ├─ get_github_stats — live GitHub profile via API
-                      └─ check_booking_availability — Cal.com slot availability
+                      ├─ check_booking_availability — Cal.com slot availability
+                      ├─ get_resume_link — resume download/view URLs
+                      ├─ get_site_performance — CrUX field data (Core Web Vitals)
+                      ├─ search_projects — keyword search across portfolio projects
+                      ├─ send_message_to_themis — send contact form message via /api/contact
+                      └─ get_system_health — system health status from /api/health
 ```
 
 The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock-runtime` SDK. All 10 knowledge files are loaded into the system prompt at startup, no separate vector database needed. Blog posts are indexed from MDX source files for RAG search. When the model requests a tool, the server executes it and re-invokes Bedrock with the result.
@@ -24,7 +29,7 @@ The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock
 
 - **Fast responses**: ~1-3 seconds per query via AWS Bedrock (longer when tools are used)
 - **Grounded answers**: full knowledge base in the system prompt prevents hallucination
-- **Tool use**: Bedrock native tool use for live data (GitHub stats, booking slots, portfolio/blog search)
+- **Tool use**: Bedrock native tool use for live data (10 tools: portfolio/blog/project search, GitHub stats, booking slots, resume links, site performance, contact form, system health)
 - **Blog RAG**: MDX blog posts indexed at startup; keyword search returns titles, descriptions, and excerpts
 - **Action tokens**: special tokens trigger UI interactions:
   - `[BOOK_CALL]`: opens the BookingCard component (Cal.com integration)
@@ -96,8 +101,29 @@ The chatbot uses Bedrock's native `toolConfig` parameter in `ConverseStreamComma
 | `search_blog` | Questions about blog articles or written content | MDX files indexed at startup, dense excerpt extraction |
 | `get_github_stats` | Questions about GitHub activity or open source work | GitHub REST API |
 | `check_booking_availability` | Questions about scheduling or availability | Cal.com API |
+| `get_resume_link` | Questions about resume, CV, or downloading credentials | Static resume URLs |
+| `get_site_performance` | Questions about site speed or Core Web Vitals | CrUX API (Chrome User Experience Report) |
+| `search_projects` | Questions about specific portfolio projects or tech used | Project index with title, description, tech stack |
+| `send_message_to_themis` | Visitor wants to send a message or get in touch | POST to `/api/contact` endpoint |
+| `get_system_health` | Questions about site status, uptime, or system health | GET from `/api/health` endpoint |
 
 The system prompt includes an **intent classification framework** that guides the model on when to use tools vs answer directly from the knowledge base, reducing unnecessary tool calls and latency.
+
+### Tool Reference
+
+Detailed specification for each of the 10 tools:
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `search_portfolio` | `query` (string): search keywords | `{ results: [{ title, description, keywords, category, score }], total, query }` |
+| `search_blog` | `query` (string): search keywords | `{ results: [{ title, description, url, excerpt }], total, query }` |
+| `get_github_stats` | None | `{ username, public_repos, followers, following, recent_repos: [{ name, description, language, stars, url }] }` |
+| `check_booking_availability` | `date` (string, optional): ISO date | `{ available_slots: [{ start, end }], date, timezone }` |
+| `get_resume_link` | None | `{ downloadUrl, viewUrl, format, note }` |
+| `get_site_performance` | None | `{ lcp, fcp, cls, inp, ttfb }` each with `p75` value and `distributions` array, or fallback message if CrUX data unavailable |
+| `search_projects` | `query` (string): search keywords | `{ results: [{ title, description, tech, live, github }], total, query }` |
+| `send_message_to_themis` | `name` (string), `email` (string), `message` (string) | `{ sent: boolean, message }` on success, `{ error }` on failure. Validates email format before sending. Calls `/api/contact` |
+| `get_system_health` | None | `{ status, uptime, memory, environment }` from `/api/health` |
 
 The tool-use loop sends a `{ status: "thinking" }` SSE event to the client while executing, which renders an animated "Looking up…" indicator.
 
