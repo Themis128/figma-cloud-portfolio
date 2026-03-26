@@ -4,47 +4,73 @@ import { RefreshCw, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
+const CHECK_INTERVAL = 5 * 60 * 1000; // Check every 5 minutes
+
 export function PWAUpdateNotification() {
   const [showUpdate, setShowUpdate] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [registration, setRegistration] =
-    useState<ServiceWorkerRegistration | null>(null);
   const progressRef = useRef<ReturnType<typeof setInterval>>(undefined);
+  const initialCommitRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Listen for update events dispatched by ServiceWorkerRegistration
-    const handleUpdateAvailable = (event: Event) => {
-      const customEvent = event as CustomEvent<{
-        registration: ServiceWorkerRegistration;
-      }>;
-      console.log("[PWA Update] Received sw-update-available event"); // eslint-disable-line no-console
-      setRegistration(customEvent.detail.registration);
-      setShowUpdate(true);
-    };
+    let intervalId: ReturnType<typeof setInterval>;
 
-    window.addEventListener("sw-update-available", handleUpdateAvailable);
+    async function checkForUpdate() {
+      try {
+        // Cache-bust to always get fresh version.json from origin
+        const res = await fetch(`/version.json?_=${Date.now()}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
 
-    // Also check on mount if there's already a waiting worker
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        for (const reg of registrations) {
-          if (reg.waiting) {
-            console.log("[PWA Update] Found waiting worker on mount"); // eslint-disable-line no-console
-            setRegistration(reg);
-            setShowUpdate(true);
-            break;
-          }
+        const data = (await res.json()) as { commit: string };
+        const serverCommit = data.commit;
+
+        if (!initialCommitRef.current) {
+          // First check — store the current version
+          initialCommitRef.current = serverCommit;
+          return;
         }
-      });
+
+        if (serverCommit !== initialCommitRef.current) {
+          console.log( // eslint-disable-line no-console
+            `[Update] New version detected: ${initialCommitRef.current} → ${serverCommit}`,
+          );
+          setShowUpdate(true);
+        }
+      } catch {
+        // Network error — silently ignore
+      }
     }
 
+    // Check on load, then periodically
+    checkForUpdate();
+    intervalId = setInterval(checkForUpdate, CHECK_INTERVAL);
+
+    // Also check when user returns to the tab
+    function handleVisibility() {
+      if (document.visibilityState === "visible") {
+        checkForUpdate();
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    // Also listen for SW-based update events (bonus, not primary)
+    function handleSWUpdate() {
+      console.log("[Update] SW update event received"); // eslint-disable-line no-console
+      setShowUpdate(true);
+    }
+    window.addEventListener("sw-update-available", handleSWUpdate);
+
     return () => {
-      window.removeEventListener("sw-update-available", handleUpdateAvailable);
+      clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("sw-update-available", handleSWUpdate);
     };
   }, []);
 
-  // Clean up interval on unmount
+  // Clean up progress interval on unmount
   useEffect(() => {
     return () => {
       if (progressRef.current) clearInterval(progressRef.current);
@@ -52,35 +78,24 @@ export function PWAUpdateNotification() {
   }, []);
 
   const handleUpdate = useCallback(() => {
-    if (!registration?.waiting) return;
-
     setUpdating(true);
     setProgress(0);
 
-    // Animate progress bar while SW activates
+    // Animate progress bar then reload
     let current = 0;
     progressRef.current = setInterval(() => {
       current += Math.random() * 15 + 5;
-      if (current >= 90) {
-        current = 90; // Hold at 90% until controllerchange fires
+      if (current >= 100) {
         if (progressRef.current) clearInterval(progressRef.current);
+        setProgress(100);
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
+        return;
       }
-      setProgress(Math.min(current, 90));
-    }, 150);
-
-    // Tell the waiting service worker to skip waiting
-    registration.waiting.postMessage({ type: "SKIP_WAITING" });
-
-    // Listen for the controlling change
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (progressRef.current) clearInterval(progressRef.current);
-      setProgress(100);
-      // Brief pause at 100% before reload so user sees completion
-      setTimeout(() => {
-        window.location.reload();
-      }, 400);
-    });
-  }, [registration]);
+      setProgress(current);
+    }, 120);
+  }, []);
 
   const handleDismiss = () => {
     setShowUpdate(false);
@@ -109,7 +124,7 @@ export function PWAUpdateNotification() {
               <div className="mb-3">
                 <div className="flex items-center justify-between mb-1.5">
                   <p className="text-slate-300 text-xs">
-                    Installing latest version
+                    Loading latest version
                   </p>
                   <span className="text-cyan-400 text-xs font-mono">
                     {Math.round(progress)}%

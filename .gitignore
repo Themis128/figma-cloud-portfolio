@@ -10,6 +10,9 @@ lerna-debug.log*
 # Velite build output
 .velite
 
+# Build-time generated
+public/version.json
+
 # Dependencies
 node_modules/
 

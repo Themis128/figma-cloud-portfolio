@@ -1,6 +1,6 @@
 // Enhanced Service Worker with React 19 optimizations and advanced PWA features
 // Uses Workbox from CDN (compatible with both dev and production)
-// v4 — update detection via custom event from ServiceWorkerRegistration
+// v5 — version polling + SW event detection
 
 importScripts(
   "https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js",
