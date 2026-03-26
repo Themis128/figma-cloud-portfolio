@@ -13,31 +13,24 @@ export function PWAUpdateNotification() {
   const progressRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
   useEffect(() => {
+    // Listen for update events dispatched by ServiceWorkerRegistration
+    const handleUpdateAvailable = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        registration: ServiceWorkerRegistration;
+      }>;
+      console.log("[PWA Update] Received sw-update-available event"); // eslint-disable-line no-console
+      setRegistration(customEvent.detail.registration);
+      setShowUpdate(true);
+    };
+
+    window.addEventListener("sw-update-available", handleUpdateAvailable);
+
+    // Also check on mount if there's already a waiting worker
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.ready.then((reg) => {
-        setRegistration(reg);
-
-        // Listen for updates
-        reg.addEventListener("updatefound", () => {
-          const newWorker = reg.installing;
-          if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
-              if (
-                newWorker.state === "installed" &&
-                navigator.serviceWorker.controller
-              ) {
-                // New version available
-                setShowUpdate(true);
-              }
-            });
-          }
-        });
-      });
-
-      // Also check for waiting service worker on load
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         for (const reg of registrations) {
           if (reg.waiting) {
+            console.log("[PWA Update] Found waiting worker on mount"); // eslint-disable-line no-console
             setRegistration(reg);
             setShowUpdate(true);
             break;
@@ -45,6 +38,10 @@ export function PWAUpdateNotification() {
         }
       });
     }
+
+    return () => {
+      window.removeEventListener("sw-update-available", handleUpdateAvailable);
+    };
   }, []);
 
   // Clean up interval on unmount
@@ -87,12 +84,9 @@ export function PWAUpdateNotification() {
 
   const handleDismiss = () => {
     setShowUpdate(false);
-    // Remember dismissal for this session
-    sessionStorage.setItem("pwa-update-dismissed", "true");
   };
 
-  // Don't show if dismissed in this session
-  if (!showUpdate || sessionStorage.getItem("pwa-update-dismissed")) {
+  if (!showUpdate) {
     return null;
   }
 
