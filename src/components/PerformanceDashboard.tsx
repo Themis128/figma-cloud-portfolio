@@ -180,32 +180,27 @@ export function PerformanceDashboard({
             const { color } = getMetricStatus(key, value);
 
             // Define thresholds for progress bars
-            let maxValue = 100;
-            let progressValue = 0;
-            let targetValue = 0;
+            let maxValue: number;
+            let targetValue: number;
 
             if (key.includes("LCP")) {
               maxValue = LCP_NEEDS_IMPROVEMENT_THRESHOLD; // 4s
               targetValue = LCP_GOOD_THRESHOLD; // 2.5s
-              progressValue = Math.min(
-                (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
-                PROGRESS_BAR_MAX_PERCENTAGE,
-              );
             } else if (key.includes("CLS")) {
               maxValue = CLS_NEEDS_IMPROVEMENT_THRESHOLD;
               targetValue = CLS_GOOD_THRESHOLD;
-              progressValue = Math.min(
-                (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
-                PROGRESS_BAR_MAX_PERCENTAGE,
-              );
             } else if (key.includes("FCP") || key.includes("TTFB")) {
               maxValue = FCP_TTFB_NEEDS_IMPROVEMENT_THRESHOLD; // 3s
               targetValue = FCP_TTFB_GOOD_THRESHOLD; // 1.8s
-              progressValue = Math.min(
-                (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
-                PROGRESS_BAR_MAX_PERCENTAGE,
-              );
+            } else {
+              maxValue = 100;
+              targetValue = 0;
             }
+
+            const progressValue = Math.min(
+              (numericValue / maxValue) * PROGRESS_BAR_MAX_PERCENTAGE,
+              PROGRESS_BAR_MAX_PERCENTAGE,
+            );
 
             return (
               <div key={key} className="space-y-3">

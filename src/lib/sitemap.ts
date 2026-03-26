@@ -279,9 +279,8 @@ Allow: /resume.pdf`;
    * Generate robots meta tags for individual pages
    */
   generateRobotsMetaTags(pageType: keyof typeof metadataConfigs): string {
-    let robotsContent = "index, follow";
-
     // Adjust robots directives based on page type
+    let robotsContent: string;
     switch (pageType) {
       case "home":
         robotsContent = "index, follow, max-image-preview:large";

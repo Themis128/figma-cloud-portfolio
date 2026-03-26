@@ -58,10 +58,7 @@ export function OptimizedImage({
       {/* Placeholder/Skeleton */}
       {!hasLoaded && (
         <div
-          className={cn(
-            "absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse",
-            hasLoaded && "opacity-0 transition-opacity duration-300",
-          )}
+          className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse"
           aria-hidden="true"
         >
           {placeholder && (
