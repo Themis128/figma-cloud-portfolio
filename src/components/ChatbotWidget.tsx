@@ -125,6 +125,7 @@ export default function ChatbotWidget() {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+  const [showNudge, setShowNudge] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -135,6 +136,18 @@ export default function ChatbotWidget() {
       BOOKING_QUESTION,
     ]);
   }, []);
+
+  // Auto-nudge: show a subtle pulse after 30s if chat hasn't been opened
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowNudge((prev) => {
+        // Only nudge if chat hasn't been opened yet
+        if (!isOpen) return true;
+        return prev;
+      });
+    }, 30_000);
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -365,6 +378,7 @@ export default function ChatbotWidget() {
       {/* Floating toggle button */}
       <button
         onClick={() => {
+          setShowNudge(false);
           setIsOpen((o) => {
             if (!o) trackGA4("chat_open", { method: "fab_button" });
             return !o;
@@ -384,6 +398,7 @@ export default function ChatbotWidget() {
           isOpen
             ? "opacity-0 pointer-events-none scale-90"
             : "opacity-100 scale-100",
+          showNudge && !isOpen ? "animate-bounce" : "",
         ].join(" ")}
       >
         <span className="relative flex h-2 w-2">

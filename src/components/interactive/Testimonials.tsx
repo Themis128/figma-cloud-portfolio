@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Testimonial {
   name: string;
@@ -31,17 +31,38 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
+const AUTO_ROTATE_MS = 5_000;
+
 export default function Testimonials() {
   const [active, setActive] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+  const pausedRef = useRef(false);
 
-  const prev = () => setActive((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
-  const next = () => setActive((i) => (i + 1) % TESTIMONIALS.length);
+  const next = useCallback(() => setActive((i) => (i + 1) % TESTIMONIALS.length), []);
+  const prev = useCallback(() => setActive((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length), []);
+
+  // Auto-rotate, pause on hover/focus
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      if (!pausedRef.current) next();
+    }, AUTO_ROTATE_MS);
+    return () => clearInterval(timerRef.current);
+  }, [next]);
+
+  const pause = useCallback(() => { pausedRef.current = true; }, []);
+  const resume = useCallback(() => { pausedRef.current = false; }, []);
 
   const t = TESTIMONIALS[active];
   if (!t) return null;
 
   return (
-    <div className="bg-card/40 backdrop-blur-sm border border-border/20 rounded-lg p-6 relative overflow-hidden">
+    <div
+      className="bg-card/40 backdrop-blur-sm border border-border/20 rounded-lg p-6 relative overflow-hidden"
+      onMouseEnter={pause}
+      onMouseLeave={resume}
+      onFocus={pause}
+      onBlur={resume}
+    >
       {/* Decorative quote mark */}
       <Quote className="absolute top-4 right-4 w-8 h-8 text-cyan-400/10" />
 

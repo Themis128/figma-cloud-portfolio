@@ -17,6 +17,7 @@ import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import SentryInit from "@/components/SentryInit";
+import { RouteProgressBar } from "@/components/RouteProgressBar";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { DefaultStructuredData } from "@/components/StructuredData";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -164,6 +165,7 @@ export default function RootLayout({
             <MotionProvider>
               <DefaultStructuredData />
               <AccessibilityEnhancer />
+              <RouteProgressBar />
               <ScrollProgress />
               {children}
               <ScrollToTop />

@@ -30,6 +30,7 @@ export function ThemeToggle() {
       onClick={toggle}
       data-testid="theme-toggle"
       aria-label="Toggle theme"
+      title="Toggle dark/light theme"
       className="relative border-border/40 hover:border-cyan-400/60 hover:bg-transparent"
     >
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

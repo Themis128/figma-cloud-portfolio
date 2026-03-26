@@ -109,11 +109,21 @@ export default function Navigation() {
                 onClick={openAccessibilityPanel}
                 data-testid="accessibility-toggle"
                 aria-label="Open accessibility settings"
+                title="Accessibility settings"
                 className="border-border/40 hover:border-cyan-400/60 hover:bg-transparent"
               >
                 <Accessibility className="h-[1.2rem] w-[1.2rem]" />
                 <span className="sr-only">Accessibility</span>
               </Button>
+
+              <Separator orientation="vertical" className="h-5 mx-1 bg-border/30" />
+
+              <Link
+                href="/contact/"
+                className="px-4 py-1.5 bg-cyan-400 hover:bg-cyan-500 text-black text-xs font-semibold uppercase tracking-wider rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+              >
+                Get In Touch
+              </Link>
             </div>
 
             {/* Mobile: bell + theme + hamburger Sheet */}

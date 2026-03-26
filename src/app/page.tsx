@@ -112,28 +112,19 @@ export default function HomePage() {
               >
                 <HoverButton>
                   <a
+                    href="/contact/"
+                    className="group relative px-8 sm:px-10 py-3.5 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30 uppercase text-sm tracking-wider text-center min-h-11 flex items-center justify-center"
+                  >
+                    <span className="relative z-10">Get In Touch</span>
+                  </a>
+                </HoverButton>
+                <HoverButton>
+                  <a
                     href="/about/"
-                    className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/60 hover:border-cyan-400 text-foreground/90 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
+                    className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/40 hover:border-cyan-400 text-foreground/80 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
                   >
                     <span className="relative z-10">Learn More</span>
                     <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/10 transition-colors duration-300 rounded-md" />
-                  </a>
-                </HoverButton>
-                <HoverButton>
-                  <a
-                    href="/resume/"
-                    className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-border/30 hover:border-border/60 text-foreground/80 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-foreground/10 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
-                  >
-                    <span className="relative z-10">Build Resume</span>
-                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 rounded-md" />
-                  </a>
-                </HoverButton>
-                <HoverButton>
-                  <a
-                    href="/contact/"
-                    className="group relative px-6 sm:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
-                  >
-                    <span className="relative z-10">Get In Touch</span>
                   </a>
                 </HoverButton>
               </AnimatedSection>
