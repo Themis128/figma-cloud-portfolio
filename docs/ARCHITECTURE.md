@@ -659,13 +659,20 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 
 ## Testing
 
-- **E2E Tests**: Playwright (`playwright-tests/`, 101+ spec files)
+- **E2E Tests**: Playwright (`playwright-tests/`, 110 spec files)
 - **Unit/Integration**: Vitest (`vitest.config.ts`)
 - **Chatbot Tests**: `playwright-tests/chatbot.spec.ts` (116 tests): toggle, panel, welcome, sending, streaming, multi-turn, response quality, NLP synonyms, booking/contact/navigation actions, thinking indicator, blog search, SSE protocol (route interception), knowledge base coverage, conversation history, cover letter generation
 - **Engagement Tests**: `playwright-tests/engagement-features.spec.ts` (79 tests): SiteStats, GitHubHeatmap, Testimonials, CyberQuiz, ReadingProgress, BlogReactions, SoundEffects (incl. non-Element target safety), KonamiEasterEgg, Retro Terminal theme, section ordering
 - **CrUX Field Data Tests**: `playwright-tests/crux-field-data.spec.ts` (18 tests): section structure, loading skeleton, success state with mocked data (5 metrics, p75 values, distribution bars, color coding), error/unavailable state, threshold color coding
 - **MCP Server Tests**: `playwright-tests/mcp-server.spec.ts` (10 tests): initialization, resource listing/reading (knowledge base, package.json), tool listing/calling (deployment info, project structure, path traversal security, knowledge search)
+- **About Page Tests**: `playwright-tests/about-page.spec.ts` (23 tests): hero, summary, focus areas, SkillsRadar interaction, badges grid, CountUpStats, responsive layout
+- **Cookie Consent Tests**: `playwright-tests/cookie-consent.spec.ts` (11 tests): banner lifecycle, accept/reject, customise toggles, localStorage persistence, accessibility
+- **Footer Tests**: `playwright-tests/footer-links.spec.ts` (15 tests): nav/legal/social links, hrefs, target attributes, mailto, copyright, tech stack, mobile layout
+- **Theme Toggle Tests**: `playwright-tests/theme-toggle.spec.ts` (12 tests): dark/light mode, body class toggle, persistence after reload, rapid toggles, mobile toolbar
+- **Projects Tests**: `playwright-tests/projects-comprehensive.spec.ts` (17 tests): search, category filters, combined search+filter, featured badges, GitHub links, mobile layout
+- **Navigation Tests**: `playwright-tests/navigation.spec.ts` (18 tests): sticky header, Sheet menu, toolbar separator, active link highlighting, mobile bell/theme
 - **Performance Page Tests**: `playwright-tests/performance-page.spec.ts`: structure (incl. field-data section), speed test, Web Vitals, Lighthouse, methodology, industry comparison
+- **PWA Tests**: `playwright-tests/pwa.spec.ts` (5 tests): manifest, offline fallback, sw.js, dev-mode SW unregistration
 - **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts`: API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
 

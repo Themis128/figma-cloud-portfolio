@@ -99,7 +99,7 @@ export default function KonamiEasterEgg() {
   if (!showToast) return null;
 
   return (
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[10000] animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-10000 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="bg-black/90 border border-cyan-500/50 rounded-lg px-6 py-3 shadow-[0_0_30px_rgba(34,211,238,0.3)] backdrop-blur-lg">
         <p className="text-cyan-400 font-mono text-sm font-bold tracking-wider">
           ↑↑↓↓←→←→BA KONAMI CODE ACTIVATED!

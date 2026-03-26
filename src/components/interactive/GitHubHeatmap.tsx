@@ -108,13 +108,13 @@ export default function GitHubHeatmap() {
       </div>
 
       {/* Heatmap grid */}
-      <div className="flex gap-[3px] overflow-hidden">
+      <div className="flex gap-0.75 overflow-hidden">
         {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-[3px]">
+          <div key={wi} className="flex flex-col gap-0.75">
             {week.map((day) => (
               <div
                 key={day.date}
-                className={`w-[10px] h-[10px] rounded-[2px] ${levelColors[day.level]} transition-colors`}
+                className={`w-2.5 h-2.5 rounded-xs ${levelColors[day.level]} transition-colors`}
                 title={`${day.date}: ${day.count} contributions`}
               />
             ))}

@@ -80,7 +80,7 @@ export default function AuthManagement() {
 
   if (!authInfo) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
+      <div className="flex items-center justify-center min-h-50">
         <div className="w-6 h-6 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
       </div>
     );

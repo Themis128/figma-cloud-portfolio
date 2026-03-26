@@ -220,7 +220,7 @@ function ConsentRow({
   const id = `consent-${label.toLowerCase()}`;
 
   return (
-    <div className="flex items-start justify-between gap-4 rounded-lg border border-cyan-500/10 bg-white/[0.03] px-4 py-3">
+    <div className="flex items-start justify-between gap-4 rounded-lg border border-cyan-500/10 bg-white/3 px-4 py-3">
       <div className="space-y-0.5">
         <label
           htmlFor={id}

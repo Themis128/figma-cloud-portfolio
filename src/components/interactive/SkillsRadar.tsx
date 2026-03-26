@@ -101,7 +101,7 @@ export default function SkillsRadar() {
       <div className="flex justify-center">
         <svg
           viewBox="0 0 300 300"
-          className="w-full max-w-[280px] sm:max-w-[360px] md:max-w-[420px]"
+          className="w-full max-w-70 sm:max-w-90 md:max-w-105"
           role="img"
           aria-label="Radar chart showing skill proficiency levels"
         >
