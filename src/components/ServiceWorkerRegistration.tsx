@@ -21,11 +21,11 @@ export function ServiceWorkerRegistration() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((registration) => {
-          // Check for updates every 60 minutes
-          const HOUR = 60 * 60 * 1000;
+          // Check for updates every 10 minutes
+          const TEN_MINUTES = 10 * 60 * 1000;
           setInterval(() => {
             registration.update();
-          }, HOUR);
+          }, TEN_MINUTES);
 
           // Also check for updates when user returns to the tab
           document.addEventListener("visibilitychange", () => {
