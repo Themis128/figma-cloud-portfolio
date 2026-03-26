@@ -87,7 +87,7 @@ jobs:
           fi
           INVALIDATION_ID=$(aws cloudfront create-invalidation \
             --distribution-id E134SCTR0QGQKJ \
-            --paths $PATHS \
+            --paths "$PATHS" \
             --query 'Invalidation.Id' --output text)
           echo "CloudFront invalidation: ${INVALIDATION_ID} ($(echo $PATHS | wc -w) paths)"
           aws cloudfront wait invalidation-completed \

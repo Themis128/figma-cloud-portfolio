@@ -40,6 +40,9 @@ jobs:
             fi
           done
 
+          if [ "$FAILED" -gt 0 ]; then
+            echo "::error::$FAILED URL(s) failed health check"
+          fi
           echo "failed=$FAILED" >> "$GITHUB_OUTPUT"
           echo "report<<EOF" >> "$GITHUB_OUTPUT"
           echo -e "$REPORT" >> "$GITHUB_OUTPUT"
@@ -47,7 +50,7 @@ jobs:
 
       - name: Create issue if down
         if: steps.health.outputs.failed != '0'
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const existing = await github.rest.issues.listForRepo({
