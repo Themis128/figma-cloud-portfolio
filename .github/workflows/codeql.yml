@@ -1,42 +1,46 @@
-name: CodeQL Analysis
+name: "CodeQL Advanced"
 
 on:
   push:
     branches: [production]
   pull_request:
-    branches: [production, main]
+    branches: [production]
   schedule:
-    - cron: '0 4 * * 1' # Weekly on Monday at 04:00 UTC
-
-permissions:
-  security-events: write
-  contents: read
+    - cron: '30 7 * * 6'
 
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
 
     strategy:
       fail-fast: false
       matrix:
-        language: [javascript-typescript, python, actions]
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: python
+            build-mode: none
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
           queries: security-and-quality
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: '/language:${{ matrix.language }}'
+          category: "/language:${{ matrix.language }}"
