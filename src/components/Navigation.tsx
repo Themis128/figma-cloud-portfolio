@@ -137,6 +137,7 @@ export default function Navigation() {
                     type="button"
                     className="p-2 min-w-11 min-h-11 flex items-center justify-center rounded-md text-foreground hover:text-cyan-400 hover:bg-foreground/10 transition-colors"
                     aria-label="Toggle menu"
+                    suppressHydrationWarning
                   >
                     <Menu className="w-6 h-6" />
                   </button>
