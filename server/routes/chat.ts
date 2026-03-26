@@ -735,6 +735,13 @@ async function processStream(
 
 // POST /api/chat
 router.post("/", async (req: Request, res: Response) => {
+  // Budget killswitch: when BUDGET_EXCEEDED is set, disable Bedrock calls
+  if (process.env.BUDGET_EXCEEDED === "true") {
+    return res.status(503).json({
+      error: "The AI assistant is temporarily offline due to budget limits. The site and all other features are still available. Please try again next month or contact Themis directly.",
+    });
+  }
+
   const clientIp = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
     || req.socket.remoteAddress
     || "unknown";
