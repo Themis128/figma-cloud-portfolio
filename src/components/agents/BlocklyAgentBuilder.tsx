@@ -1211,7 +1211,7 @@ async function executeStatement(
       const cond = block.getInputTargetBlock("CONDITION");
       let val = "";
       if (cond) val = await executeValue(cond, rt);
-      const negativePatterns = /^No (new |alerts)|nothing received|no data source|all systems nominal/i;
+      const negativePatterns = /^(?:No (?:new |alerts)|nothing received|no data source|all systems nominal)$/i;
       const triggered = val.length > 0 && !negativePatterns.test(val);
       rt.log(`🧠 Decision: ${triggered ? "TRIGGERED ✓" : "NOT TRIGGERED ✗"}`);
       if (triggered) {

@@ -368,39 +368,39 @@ router.post("/", async (req: Request, res: Response) => {
     const message = typeof body.message === "string" ? body.message : "";
     const recaptchaToken = typeof body.recaptchaToken === "string" ? body.recaptchaToken : undefined;
 
+    // Sanitize all user input upfront
+    const trimmedName = name.trim().slice(0, 200);
+    const trimmedEmail = email.trim().slice(0, 254);
+    const trimmedSubject = (subject ?? "No subject").trim().slice(0, 500);
+    const trimmedMessage = message.trim().slice(0, 5000);
+
     // Validate required fields
-    if (!name.trim() || !email.trim() || !message.trim()) {
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
       return res.status(400).json({ success: false, message: "Name, email, and message are required" });
     }
 
     // Basic email format check (linear-time string ops, no regex)
-    const trimmedEmail = email.trim();
     const atIndex = trimmedEmail.indexOf("@");
     const dotAfterAt = atIndex > 0 ? trimmedEmail.indexOf(".", atIndex + 1) : -1;
-    if (atIndex < 1 || dotAfterAt < atIndex + 2 || dotAfterAt >= trimmedEmail.length - 1 || trimmedEmail.length > 254) {
+    if (atIndex < 1 || dotAfterAt < atIndex + 2 || dotAfterAt >= trimmedEmail.length - 1) {
       return res.status(400).json({ success: false, message: "Invalid email format" });
     }
 
-    // Verify reCAPTCHA if configured (skip in development when NODE_ENV !== "production")
+    // Verify reCAPTCHA — always required in production
     let recaptchaScore: number | null = null;
-    const isDev = process.env.NODE_ENV !== "production";
-    if (RECAPTCHA_SECRET_KEY && !isDev) {
+    if (process.env.NODE_ENV === "production") {
       if (!recaptchaToken) {
         return res.status(400).json({ success: false, message: "reCAPTCHA verification required" });
+      }
+      if (!RECAPTCHA_SECRET_KEY) {
+        return res.status(500).json({ success: false, message: "Server configuration error" });
       }
       const captcha = await verifyRecaptcha(recaptchaToken);
       if (!captcha.success) {
         return res.status(403).json({ success: false, message: "reCAPTCHA verification failed. Please try again." });
       }
       recaptchaScore = captcha.score;
-    } else if (isDev) {
-      console.log("reCAPTCHA skipped (development mode)");
     }
-
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
-    const trimmedSubject = (subject ?? "No subject").trim();
-    const trimmedMessage = message.trim();
     const meta = extractMeta(req, recaptchaScore);
 
     // If no delivery channels are configured, accept the message (dev/test mode)

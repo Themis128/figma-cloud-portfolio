@@ -70,7 +70,9 @@ router.post("/webhook", (req: Request, res: Response) => {
     return res.status(400).json({ error: "Event type is required" });
   }
 
-  console.log("Webhook received: %s %o", event, body.data);
+  // Sanitize event name for logging (prevent log injection via newlines/control chars)
+  const safeEvent = event.replace(/[\n\r\t]/g, "").slice(0, 100);
+  console.log("Webhook received:", safeEvent);
 
   return res.json({
     status: "received",

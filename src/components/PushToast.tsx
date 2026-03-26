@@ -24,6 +24,8 @@ export default function PushToast() {
     if (!("serviceWorker" in navigator)) return;
 
     const handler = (event: MessageEvent) => {
+      // Only accept messages from our own service worker (origin is empty string for SW messages)
+      if (event.origin !== "" && event.origin !== window.location.origin) return;
       if (event.data?.type === "PUSH_RECEIVED") {
         const msg: PushMessage = {
           id: `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,

@@ -1,6 +1,5 @@
 """Knowledge base indexer — reads markdown docs, chunks them, and stores embeddings in ChromaDB."""
 
-import os
 import re
 from pathlib import Path
 
@@ -69,8 +68,8 @@ def build_index() -> int:
     # Delete existing collection if it exists (full rebuild)
     try:
         client.delete_collection(COLLECTION_NAME)
-    except Exception:
-        pass
+    except ValueError:
+        pass  # Collection doesn't exist yet — that's fine
 
     collection = client.create_collection(
         name=COLLECTION_NAME,

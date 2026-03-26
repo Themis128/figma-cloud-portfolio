@@ -13,6 +13,9 @@ lerna-debug.log*
 # Build-time generated
 public/version.json
 
+# Stale Lighthouse cache (Windows paths)
+C:\\*
+
 # Dependencies
 node_modules/
 

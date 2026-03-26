@@ -719,7 +719,9 @@ async function prefetchRoutes(routes) {
 
     console.log("Prefetching routes:", routes);
 
-    const prefetchPromises = routes.map(async (route) => {
+    // Only prefetch safe relative paths (no external URLs or protocol-relative)
+    const safeRoutes = routes.filter((r) => typeof r === "string" && r.startsWith("/") && !r.startsWith("//"));
+    const prefetchPromises = safeRoutes.map(async (route) => {
       try {
         const response = await fetch(route, {
           method: "GET",
