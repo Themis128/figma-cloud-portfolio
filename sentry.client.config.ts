@@ -52,7 +52,7 @@ if (SENTRY_DSN) {
     },
 
     // Only send errors from our domain
-    allowUrls: [/^https:\/\/(?:www\.)?baltzakisthemis\.com/, /^https?:\/\/localhost/],
+    allowUrls: [/^https:\/\/(?:www\.)?baltzakisthemis\.com\//, /^https?:\/\/localhost\//],
   });
 
   // Lazy-load replay integration after page is interactive
