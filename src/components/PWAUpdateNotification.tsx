@@ -22,7 +22,10 @@ export function PWAUpdateNotification() {
         const res = await fetch(`/version.json?_=${Date.now()}`, {
           cache: "no-store",
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          console.warn("[Update] version.json fetch failed:", res.status); // eslint-disable-line no-console
+          return;
+        }
 
         const data = (await res.json()) as { commit: string };
         const serverCommit = data.commit;
@@ -30,6 +33,7 @@ export function PWAUpdateNotification() {
         if (!initialCommitRef.current) {
           // First check — store the current version
           initialCommitRef.current = serverCommit;
+          console.log("[Update] Initialized with version:", serverCommit); // eslint-disable-line no-console
           return;
         }
 
@@ -39,8 +43,8 @@ export function PWAUpdateNotification() {
           );
           setShowUpdate(true);
         }
-      } catch {
-        // Network error — silently ignore
+      } catch (err) {
+        console.warn("[Update] version check error:", err); // eslint-disable-line no-console
       }
     }
 
