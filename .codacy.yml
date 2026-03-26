@@ -1,0 +1,8 @@
+---
+exclude_paths:
+  - "playwright-tests/**"
+  - "C:\\**"
+  - "test-results/**"
+  - "public/sw.js"
+  - ".velite/**"
+  - "scripts/**"

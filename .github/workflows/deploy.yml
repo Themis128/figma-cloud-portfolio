@@ -115,10 +115,12 @@ jobs:
             --paths "${PATHS_ARRAY[@]}" \
             --query 'Invalidation.Id' --output text)
           echo "CloudFront invalidation: ${INVALIDATION_ID} (${#PATHS_ARRAY[@]} paths)"
-          aws cloudfront wait invalidation-completed \
+          # Wait up to 5 minutes for invalidation (non-blocking if it times out)
+          timeout 300 aws cloudfront wait invalidation-completed \
             --distribution-id E134SCTR0QGQKJ \
-            --id "${INVALIDATION_ID}"
-          echo "Invalidation completed"
+            --id "${INVALIDATION_ID}" \
+            || echo "::warning::Invalidation ${INVALIDATION_ID} still in progress after 5 minutes (will complete in background)"
+          echo "Invalidation step completed"
 
       - name: Lighthouse CI smoke test
         timeout-minutes: 5
