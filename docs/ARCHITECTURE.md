@@ -372,6 +372,7 @@ Interactive components enhance user engagement across the site. Most are Client 
 | `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
 | `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
 | `RouteProgressBar`                        | Thin cyan progress bar at top of page during route changes, provides visual navigation feedback |
+| `PWAUpdateNotification`                   | Version-based update detection popup with animated progress bar. Polls `/version.json` every 5min + on tab focus. Shows "Update Now" button when new deploy detected |
 | `StructuredData`                          | Schema.org JSON-LD for SEO                                 |
 | `OptimizedImage`                          | Wrapper around `next/image` with lazy loading              |
 | `Skeleton`                                | Animated loading placeholders                              |
@@ -458,7 +459,8 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - Offline-first caching: CacheFirst for images (30d), StaleWhileRevalidate for static assets (7d), NetworkFirst for pages (7d) and API (5min)
 - App manifest with 192x192 + 512x512 icons, maskable icon, screenshots, 4 shortcuts (About, Projects, Blog, Contact)
 - PWA install button (`PWAInstallButton`) rendered in root layout with 30s delay prompt
-- SW update detection: 60-minute interval + visibilitychange (tab focus) check
+- **Version-based update detection**: `PWAUpdateNotification` polls `/version.json` every 5 minutes and on tab focus. `version.json` is generated at build time by `scripts/generate-version.sh` (git commit hash + build timestamp). When the commit hash changes, an "Update Available" popup appears with an animated progress bar. Works in all browsers without SW dependency. SW `updatefound` events are kept as a secondary trigger.
+- SW update check: 10-minute interval + visibilitychange (tab focus). SW does NOT call `self.skipWaiting()` automatically — the new SW waits in "installed" state until the user clicks "Update Now"
 - **Dev-mode guard**: In non-production environments, `ServiceWorkerRegistration` automatically unregisters any stale service workers to prevent Workbox from serving cached chunks that Turbopack has replaced. This eliminates `ChunkLoadError` and `no-response` console errors during development
 - Meta tags: `application-name`, `color-scheme`, `msapplication-TileColor`, `msapplication-TileImage`
 - IndexedDB-backed offline analytics queue and failed request retry
@@ -467,7 +469,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - Subscribe/unsubscribe toggle in the Announcements bell dropdown (public site)
 - Service worker registration automatic on subscribe; manual from admin Push tab
 - **Same-origin API routing**: All `/api/*` requests route through CloudFront to the Lambda origin. The frontend uses relative paths (empty origin), eliminating third-party domain issues (CORS, Edge Tracking Prevention). The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only.
-- **In-app push toasts** (`src/components/PushToast.tsx`): Cyberpunk-themed toast notifications that slide in from the top-right when the service worker receives a push message. Listens for `PUSH_RECEIVED` postMessage from `sw.js`, glass morphism styling with cyan accents, auto-dismiss after 8s with animated progress bar, stacks up to 5 toasts, dismiss button, and optional "View" link. Added to the root layout.
+- **In-app push toasts** (`src/components/PushToast.tsx`): Cyberpunk-themed toast notifications that slide in from the top-right when the service worker receives a push message. Listens for `PUSH_RECEIVED` postMessage from `sw.js` (with origin verification), glass morphism styling with cyan accents, auto-dismiss after 8s with animated progress bar, stacks up to 5 toasts, dismiss button, and optional "View" link (validated to safe relative paths only). Added to the root layout.
 - **Push notifications in Announcements dropdown**: `NotificationButton` listens for `PUSH_RECEIVED` messages from the service worker. Received push notifications are saved to `localStorage` (key: `site-push-notifications`, max 20 items) and displayed with a purple "Push" badge and timestamp. The dropdown merges push notifications (newest first) with static announcements.
 - **Service worker push forwarding**: `public/sw.js` sends `postMessage({ type: "PUSH_RECEIVED", title, body, url })` to all open client tabs after displaying the OS notification. SW also supports `CLAIM_CLIENTS` message for on-demand `clients.claim()`.
 - **Dev poll fallback**: Edge/WNS returns 401 for VAPID push from localhost, a known platform limitation. In development (`NODE_ENV !== "production"`), when all push sends fail, notifications are queued in-memory on the server. The client polls `GET /api/push-notifications/poll?since=<timestamp>` every 3s and shows native notifications + adds them to the bell dropdown. This is dev-only; production uses real Web Push via WNS/FCM.
@@ -655,6 +657,18 @@ The Express backend (`server/middleware/requireAuth.ts`) uses `aws-jwt-verify` t
 ### API Health Dashboard Authentication
 
 The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cognito Bearer tokens in health check requests for endpoints marked with `requiresAuth: true`. Currently the `/api/organizations/api_keys` endpoint requires auth. The health check sends the logged-in user's Cognito ID token in the `Authorization` header to avoid 401 responses.
+
+---
+
+## Security Scanning
+
+- **CodeQL Advanced**: Custom workflow (`.github/workflows/codeql.yml`) — scans JavaScript/TypeScript, Python, and Actions on push/PR/weekly. Uses `security-and-quality` query suite. All actions pinned to `@v6`/`@v3`.
+- **Codacy Security Scan**: Semgrep-based scanning (`.github/workflows/codacy.yml`) — runs on push/PR/weekly. Static assets excluded via `.codacy.yml`. SARIF results uploaded to GitHub Security tab.
+- **Dependabot**: Automated dependency vulnerability alerts + PR creation for npm packages.
+- **pnpm overrides**: Transitive dependency patches for `picomatch >=4.0.4`, `brace-expansion >=5.0.5`, `handlebars >=4.7.9` (CVE-2026-33916).
+- **Rate limiting**: `express-rate-limit` on both Express servers (100 req/15min/IP).
+- **Auth hardening**: `requireAuth` middleware throws in production if `COGNITO_USER_POOL_ID` is missing (no fallback to sandbox pool). reCAPTCHA always required in production (no env-variable bypass).
+- **Input sanitization**: Contact form inputs trimmed + length-limited upfront. Email validation uses linear-time string ops (no regex ReDoS). Log injection prevention on webhook events. PostMessage origin verification on PushToast.
 
 ---
 
