@@ -250,16 +250,13 @@ test.describe("Admin Page — Health Tab", () => {
     await expect(
       cardArea.getByText("/api/contact", { exact: false }),
     ).toBeVisible();
-    await expect(
-      cardArea.getByText("/api/push-notifications", { exact: false }),
-    ).toBeVisible();
   });
 
-  test("should render exactly 16 endpoint cards", async ({ page }) => {
+  test("should render exactly 15 endpoint cards", async ({ page }) => {
     const cardArea = page.locator('[role="tabpanel"]');
     // Each endpoint card is a Card with endpoint path
     const cards = cardArea.locator(".grid > div");
-    await expect(cards).toHaveCount(16);
+    await expect(cards).toHaveCount(15);
   });
 
   test("should show summary stats", async ({ page }) => {
@@ -269,12 +266,12 @@ test.describe("Admin Page — Health Tab", () => {
     await expect(page.locator("text=Healthy").first()).toBeVisible();
   });
 
-  test("should display total endpoint count of 16", async ({ page }) => {
-    // The total count should be 16
+  test("should display total endpoint count of 15", async ({ page }) => {
+    // The total count should be 15
     const totalStat = page
       .locator("div.text-center")
       .filter({ hasText: "Total" });
-    await expect(totalStat.locator(".font-mono.font-bold")).toContainText("16");
+    await expect(totalStat.locator(".font-mono.font-bold")).toContainText("15");
   });
 
   test("should show Refresh All button", async ({ page }) => {
@@ -284,7 +281,6 @@ test.describe("Admin Page — Health Tab", () => {
   test("should display service labels on cards", async ({ page }) => {
     await expect(page.locator("text=Lambda").first()).toBeVisible();
     await expect(page.locator("text=Cal.com").first()).toBeVisible();
-    await expect(page.locator("text=Web Push")).toBeVisible();
     await expect(page.locator("text=GitHub API").first()).toBeVisible();
   });
 
@@ -332,9 +328,6 @@ test.describe("Admin Page — Health Tab", () => {
     ).toBeVisible();
     await expect(
       cardArea.getByText("Contact form submission", { exact: false }),
-    ).toBeVisible();
-    await expect(
-      cardArea.getByText("Push notification management", { exact: false }),
     ).toBeVisible();
     // New endpoints may be below the fold — check they exist in the DOM
     await expect(
@@ -507,7 +500,6 @@ test.describe("Admin Page — Console Tab", () => {
     await expect(panel.getByText("Resume", { exact: true })).toBeVisible();
     await expect(panel.getByText("Slots", { exact: true })).toBeVisible();
     await expect(panel.getByText("API Keys", { exact: true })).toBeVisible();
-    await expect(panel.getByText("Push Subs", { exact: true })).toBeVisible();
     await expect(panel.getByText("Docs", { exact: true })).toBeVisible();
     // "Health" preset button — distinguish from tab by scoping to preset row
     const presetButtons = panel
@@ -544,18 +536,6 @@ test.describe("Admin Page — Console Tab", () => {
 
     const urlInput = page.locator('input[placeholder="/api/..."]');
     await expect(urlInput).toHaveValue("/api/organizations/api_keys");
-  });
-
-  test("should populate URL when clicking Push Subs preset", async ({
-    page,
-  }) => {
-    const panel = page.locator('[role="tabpanel"]');
-    await panel.getByText("Push Subs", { exact: true }).click();
-
-    const urlInput = page.locator('input[placeholder="/api/..."]');
-    await expect(urlInput).toHaveValue(
-      "/api/push-notifications?action=subscriptions",
-    );
   });
 
   test("should populate URL when clicking GitHub preset", async ({ page }) => {
@@ -814,178 +794,6 @@ test.describe("Admin Page — Console Tab", () => {
 
     // The trash icon button should appear in the history section
     await expect(page.getByText("History").first()).toBeVisible();
-  });
-});
-
-// ─── Push Tab ────────────────────────────────────────────────────────────────
-
-test.describe("Admin Page — Push Tab", () => {
-  test.beforeEach(async ({ page }) => {
-    await adminLoginOrSkip(page);
-    await page.locator('[role="tab"]', { hasText: "Push" }).click();
-  });
-
-  test("should switch to Push tab and show permission card", async ({
-    page,
-  }) => {
-    await expect(page.getByText("Permission", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Check Subscriptions" })).toBeVisible();
-  });
-
-  test("should display notification permission status", async ({ page }) => {
-    await expect(page.getByText("Permission", { exact: true })).toBeVisible();
-    // Should show one of: Granted, Denied, Not Requested
-    const granted = page.getByText("Granted", { exact: true });
-    const denied = page.getByText("Denied", { exact: true });
-    const notRequested = page.getByText("Not Requested", { exact: true });
-    const count =
-      (await granted.count()) +
-      (await denied.count()) +
-      (await notRequested.count());
-    expect(count).toBeGreaterThanOrEqual(1);
-  });
-
-  test("should display service worker status", async ({ page }) => {
-    await expect(page.getByText("Service Worker", { exact: true })).toBeVisible();
-    // Should show one of: Active, Inactive, Missing
-    const active = page.getByText("Active", { exact: true });
-    const inactive = page.getByText("Inactive", { exact: true });
-    const missing = page.getByText("Missing", { exact: true });
-    const count =
-      (await active.count()) +
-      (await inactive.count()) +
-      (await missing.count());
-    expect(count).toBeGreaterThanOrEqual(1);
-  });
-
-  test("should display subscriptions section", async ({ page }) => {
-    await expect(page.getByText("Subscriptions", { exact: true })).toBeVisible();
-    // Initially shows "—" before checking
-    await expect(page.getByText("—", { exact: true })).toBeVisible();
-  });
-
-  test("should have Check Subscriptions button", async ({ page }) => {
-    const checkButton = page.getByRole("button", {
-      name: "Check Subscriptions",
-    });
-    await expect(checkButton).toBeVisible();
-    await expect(checkButton).toBeEnabled();
-  });
-
-  test("should have Send Test Notification button", async ({ page }) => {
-    const sendButton = page.getByRole("button", {
-      name: "Send Test Notification",
-    });
-    await expect(sendButton).toBeVisible();
-  });
-
-  test("should have Send Custom Notification button", async ({ page }) => {
-    const customButton = page.getByRole("button", {
-      name: "Send Custom Notification",
-    });
-    await expect(customButton).toBeVisible();
-  });
-
-  test("should display Custom Notification form", async ({
-    page,
-  }) => {
-    await expect(
-      page.getByText("Custom Notification", { exact: true }),
-    ).toBeVisible();
-  });
-
-  test("should have title input with default value", async ({ page }) => {
-    const titleInput = page.locator("#push-title");
-    await expect(titleInput).toBeVisible();
-    await expect(titleInput).toHaveValue("Custom Test Notification");
-  });
-
-  test("should have URL input with default value", async ({ page }) => {
-    const urlInput = page.locator("#push-url");
-    await expect(urlInput).toBeVisible();
-    await expect(urlInput).toHaveValue("/about");
-  });
-
-  test("should have message body textarea with default value", async ({
-    page,
-  }) => {
-    const bodyInput = page.locator("#push-body");
-    await expect(bodyInput).toBeVisible();
-    await expect(bodyInput).toHaveValue(
-      "This is a custom push notification using Web Push API!",
-    );
-  });
-
-  test("should allow editing custom notification fields", async ({
-    page,
-  }) => {
-    const titleInput = page.locator("#push-title");
-    await titleInput.clear();
-    await titleInput.fill("My Custom Title");
-    await expect(titleInput).toHaveValue("My Custom Title");
-
-    const urlInput = page.locator("#push-url");
-    await urlInput.clear();
-    await urlInput.fill("/projects");
-    await expect(urlInput).toHaveValue("/projects");
-
-    const bodyInput = page.locator("#push-body");
-    await bodyInput.clear();
-    await bodyInput.fill("Custom body text");
-    await expect(bodyInput).toHaveValue("Custom body text");
-  });
-
-  test("should display requirements checklist", async ({ page }) => {
-    await expect(page.getByText("Requirements", { exact: true })).toBeVisible();
-    await expect(
-      page.getByText("Notification permission granted"),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Service Worker registered and active"),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Subscribed via Notification Button"),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Web Push API configured with VAPID keys"),
-    ).toBeVisible();
-  });
-
-  test("should have bell icon in header", async ({ page }) => {
-    const panel = page.locator('[role="tabpanel"]');
-    const bellIcon = panel.locator("svg").first();
-    await expect(bellIcon).toBeVisible();
-  });
-
-  test("should show form labels for all inputs", async ({ page }) => {
-    await expect(page.getByText("Title", { exact: true })).toBeVisible();
-    await expect(
-      page.getByText("URL (optional)", { exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Message Body", { exact: true }),
-    ).toBeVisible();
-  });
-
-  test("should show Register Service Worker button when SW is not registered", async ({ page }) => {
-    // In test environment, SW is typically not registered
-    const registerButton = page.getByRole("button", { name: "Register Service Worker" });
-    // Button is shown only when SW is not registered — check it exists or is absent
-    const count = await registerButton.count();
-    // Either visible (SW missing) or absent (SW already registered) — both valid
-    expect(count).toBeLessThanOrEqual(1);
-  });
-
-  test("should show subscribers list after checking subscriptions", async ({ page }) => {
-    const checkButton = page.getByRole("button", { name: "Check Subscriptions" });
-    await checkButton.click();
-    // Wait for result message
-    await expect(page.getByText(/Found \d+ active subscription/)).toBeVisible({ timeout: 10_000 });
-    // If subscribers exist, the list section should appear
-    const subscribersList = page.locator('[role="list"][aria-label="Push notification subscribers"]');
-    const count = await subscribersList.count();
-    // List appears only if >0 subscribers — both cases are valid
-    expect(count).toBeLessThanOrEqual(1);
   });
 });
 
@@ -1610,9 +1418,6 @@ test.describe("Admin Page — Tab Navigation", () => {
     await page.locator('[role="tab"]', { hasText: "SEO" }).click();
     await expect(page.getByText("Pages").first()).toBeVisible();
 
-    await page.locator('[role="tab"]', { hasText: "Push" }).click();
-    await expect(page.getByText("Check Subscriptions")).toBeVisible();
-
     await page.locator('[role="tab"]', { hasText: "Analytics" }).click();
     await expect(page.getByText("Measurement ID").first()).toBeVisible();
 
@@ -1626,9 +1431,9 @@ test.describe("Admin Page — Tab Navigation", () => {
     await expect(page.locator("text=Refresh All")).toBeVisible();
   });
 
-  test("should have exactly 10 tabs", async ({ page }) => {
+  test("should have exactly 9 tabs", async ({ page }) => {
     const tabs = page.locator('[role="tab"]');
-    await expect(tabs).toHaveCount(10);
+    await expect(tabs).toHaveCount(9);
   });
 
   test("should mark only the active tab with data-state active", async ({
@@ -1639,7 +1444,7 @@ test.describe("Admin Page — Tab Navigation", () => {
     await expect(healthTab).toHaveAttribute("data-state", "active");
 
     // All other tabs should be inactive
-    const tabNames = ["Console", "Deploy", "Errors", "Perf", "SEO", "Push", "Analytics", "Auth", "Env"];
+    const tabNames = ["Console", "Deploy", "Errors", "Perf", "SEO", "Analytics", "Auth", "Env"];
     for (const name of tabNames) {
       const tab = page.locator('[role="tab"]', { hasText: name });
       await expect(tab).toHaveAttribute("data-state", "inactive");
@@ -1677,7 +1482,7 @@ test.describe("Admin Page — Tab Navigation", () => {
     // Each tab has an SVG icon (lucide icons)
     const tabs = page.locator('[role="tab"]');
     const count = await tabs.count();
-    expect(count).toBe(10);
+    expect(count).toBe(9);
     for (let i = 0; i < count; i++) {
       const tab = tabs.nth(i);
       const svg = tab.locator("svg");

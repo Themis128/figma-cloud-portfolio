@@ -1,13 +1,12 @@
 # Baltzakis Themistoklis Portfolio
 
-A production-ready full-stack React application for a professional portfolio, featuring Next.js 16 App Router, TypeScript, Tailwind CSS v4, PWA capabilities, and Web Push API notifications.
+A production-ready full-stack React application for a professional portfolio, featuring Next.js 16 App Router, TypeScript, Tailwind CSS v4, and PWA capabilities.
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19 + Next.js 16 (App Router) + TypeScript + Tailwind CSS v4
 - **Backend**: AWS Lambda (production), Express dev server (local)
 - **PWA**: Service worker with offline caching and installable features
-- **Notifications**: Web Push API with VAPID keys (no external services required)
 - **Testing**: Vitest 4 + Playwright E2E
 - **UI**: Radix UI + shadcn/ui + Tailwind CSS v4 + Lucide React icons
 - **Package Manager**: PNPM
@@ -33,7 +32,7 @@ docs/                 # Documentation
 ## ⚡ Key Features
 
 - **App Router**: Next.js 16 file-based routing with trailing slashes
-- **PWA Ready**: Offline caching, installable, push notifications
+- **PWA Ready**: Offline caching, installable, background sync
 - **Type Safety**: Full TypeScript throughout client, server, and shared code
 - **Modern UI**: Radix UI components with TailwindCSS styling
 - **Performance**: Optimized images, lazy loading, performance monitoring
@@ -73,8 +72,6 @@ pnpm dev
 pnpm dev:server
 ```
 
-> **Note**: For push notifications to work in development, you need both servers running. The Next.js dev server proxies `/api` requests to the Express server.
-
 ## 📋 Available Scripts
 
 ```bash
@@ -91,10 +88,6 @@ pnpm test:e2e                   # Run Playwright E2E tests
 
 - `GET /api/ping` - Health check
 - `GET /api/demo` - Demo endpoint
-- `GET /api/push-notifications?action=vapid-public-key` - Get VAPID public key
-- `PUT /api/push-notifications` - Store push subscription
-- `POST /api/push-notifications` - Send push notification
-- `DELETE /api/push-notifications` - Remove subscription
 - `GET /api/github/stats` - GitHub profile statistics (repos, stars, followers)
 - `GET /api/github/repos` - Public repositories with languages and topics
 - `GET /api/search?q=` - Search portfolio content (skills, pages, experience)

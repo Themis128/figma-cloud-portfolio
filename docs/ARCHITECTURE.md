@@ -55,7 +55,7 @@ portfolio-nextjs/
 │   │   ├── terms/            # Terms of service
 │   │   └── builder/          # Builder.io page (optional)
 │   ├── components/           # Reusable UI components
-│   │   ├── admin/            # Admin dashboard components (10 tab panels)
+│   │   ├── admin/            # Admin dashboard components (9 tab panels)
 │   │   ├── agents/           # Agent builder components (Blockly visual builder + template playground)
 │   │   ├── interactive/      # Interactive engagement components (22 in folder)
 │   │   ├── performance/      # Performance page components
@@ -246,7 +246,7 @@ The page is a **Server Component shell** with **Client Component islands** for l
 
 A Cognito-authenticated internal dashboard for site monitoring and management. Protected by `noindex, nofollow` and a login gate.
 
-### Tabs (10)
+### Tabs (9)
 
 | Tab            | Component                  | Type       | Purpose                                                                                    |
 | -------------- | -------------------------- | ---------- | ------------------------------------------------------------------------------------------ |
@@ -256,7 +256,6 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 | **Errors**     | `ErrorLogViewer`           | Client     | Real-time error capture with type filters, text search, error grouping, severity levels, error rate sparkline, session persistence, sound alerts, copy-to-clipboard, and JSON export |
 | **Perf**       | `PerformanceBudget`        | Client     | Live Core Web Vitals (LCP/FCP/CLS/TTFB) from `web-vitals` with budget bars and grades     |
 | **SEO**        | `SeoAudit`                 | Client     | Scans all pages for title, description, og:image, canonical, JSON-LD; shows pass/warn/error|
-| **Push**       | `PushNotificationTester`   | Client     | Web Push API tester: permission, SW registration, subscriber list (S3-persisted), send test/custom messages |
 | **Analytics**  | `GoogleAnalyticsExplainer` | Client     | Live session info (time on page, referrer), GA4 config reference, event helper docs        |
 | **Auth**       | `AuthManagement`           | Client     | Current session details (user ID, token expiry), Cognito config status                     |
 | **Env**        | `EnvironmentInfo`          | Client     | Build version, Node env, site URL, integrations (GA/Sentry/reCAPTCHA), client device info  |
@@ -298,11 +297,10 @@ A Cognito-authenticated internal dashboard for site monitoring and management. P
 | Errors Tab        | 14    | Yes        | Error count, type filters, search, group/flat, sound toggle, sparkline, Live/Paused, Export, Clear, capture status, empty state, copy-to-clipboard |
 | Perf Tab          | 8     | Yes        | Grade, score, Within Budget, CWV metrics, descriptions, budget thresholds  |
 | SEO Audit Tab     | 5     | Yes        | Pages count, Re-scan, page paths, status labels, metadata badges           |
-| Push Tab          | 15    | Yes        | Permission status, service worker, subscriptions, custom notification form |
 | Analytics Tab     | 20    | Yes        | GA4 config, event helpers, code snippets, dashboard link, session info     |
 | Auth Tab          | 9     | Yes        | Session details, Cognito config, ID Token                                  |
 | Env Tab           | 9     | Yes        | Build info, integrations, Git, client device info                          |
-| Tab Navigation    | 5     | Yes        | 10-tab switching, active state, content isolation, icons                   |
+| Tab Navigation    | 5     | Yes        | 9-tab switching, active state, content isolation, icons                    |
 | SEO (noindex)     | 2     | No         | noindex meta tag, login gate for unauthenticated users                     |
 
 > Auth-gated tests skip gracefully via `adminLoginOrSkip()` when Cognito auth is not available in the test environment.
@@ -388,7 +386,6 @@ Interactive components enhance user engagement across the site. Most are Client 
 | `useDeviceType`            | Detects mobile/desktop; used to reduce animation intensity                            |
 | `useLazyImage`             | IntersectionObserver-based image lazy loading                                         |
 | `usePWA`                   | PWA install prompt management                                                         |
-| `usePushNotifications`     | Web Push API subscription management                                                  |
 | `useSocket`                | Socket.IO connection for real-time features                                           |
 | `useRecaptcha`             | reCAPTCHA v3 on-demand loading and token generation; `preload()` on form focus, `getToken(action)` on submit |
 | `useConsent`               | Cookie consent state management (localStorage-persisted)                              |
@@ -430,7 +427,6 @@ The frontend is a **static export** (`output: "export"`), with no server-side re
 | `/api/resume/generate`                    | GET          | Resume data as JSON with PDF link                     |
 | `/api/github/stats`                       | GET          | GitHub profile statistics (repos, stars, followers)   |
 | `/api/github/repos`                       | GET          | Public repositories (paginated, with topics)          |
-| `/api/push-notifications`                 | GET/PUT/POST/DELETE | Web push subscription management (VAPID, S3-persisted, dev poll fallback) |
 | `/api/crux`                               | GET          | Chrome UX Report field data (1-hour server cache, requires `CRUX_API_KEY`) |
 | `/api/organizations/api_keys`             | GET/POST     | List / create API keys (Slack notifications)          |
 | `/api/organizations/api_keys/:id`         | GET/POST/DELETE | Get / update / delete API key (Slack notifications)|
@@ -445,7 +441,6 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 | `/api/resume`                     | `server/routes/resume.ts` (jsPDF-generated PDF) |
 | `/api/chat`                       | `server/routes/chat.ts` (AWS Bedrock, Claude 3.5 Haiku) |
 | `/api/github`                     | `server/routes/github.ts` (GitHub API: stats, repos) |
-| `/api/push-notifications`         | `server/routes/pushNotifications.ts` (VAPID, S3-persisted) |
 | `/api/organizations/api_keys`     | `server/routes/apiKeys.ts` (Slack notifications) |
 | `/api/booking`                    | `server/routes/booking.ts` (Cal.com integration) |
 | `/api/crux`                       | `server/routes/crux.ts` (Chrome UX Report API proxy) |
@@ -465,15 +460,7 @@ The `server/` directory runs an Express server on **port 3001** for local develo
 - Meta tags: `application-name`, `color-scheme`, `msapplication-TileColor`, `msapplication-TileImage`
 - IndexedDB-backed offline analytics queue and failed request retry
 - Background sync for contact form (when offline)
-- Push notification support via Web Push API (VAPID keys, S3-persisted subscriptions)
-- Subscribe/unsubscribe toggle in the Announcements bell dropdown (public site)
-- Service worker registration automatic on subscribe; manual from admin Push tab
 - **Same-origin API routing**: All `/api/*` requests route through CloudFront to the Lambda origin. The frontend uses relative paths (empty origin), eliminating third-party domain issues (CORS, Edge Tracking Prevention). The `LAMBDA_API_URL` constant in `src/lib/admin-constants.ts` is retained as a fallback reference only.
-- **In-app push toasts** (`src/components/PushToast.tsx`): Cyberpunk-themed toast notifications that slide in from the top-right when the service worker receives a push message. Listens for `PUSH_RECEIVED` postMessage from `sw.js` (with origin verification), glass morphism styling with cyan accents, auto-dismiss after 8s with animated progress bar, stacks up to 5 toasts, dismiss button, and optional "View" link (validated to safe relative paths only). Added to the root layout.
-- **Push notifications in Announcements dropdown**: `NotificationButton` listens for `PUSH_RECEIVED` messages from the service worker. Received push notifications are saved to `localStorage` (key: `site-push-notifications`, max 20 items) and displayed with a purple "Push" badge and timestamp. The dropdown merges push notifications (newest first) with static announcements.
-- **Service worker push forwarding**: `public/sw.js` sends `postMessage({ type: "PUSH_RECEIVED", title, body, url })` to all open client tabs after displaying the OS notification. SW also supports `CLAIM_CLIENTS` message for on-demand `clients.claim()`.
-- **Dev poll fallback**: Edge/WNS returns 401 for VAPID push from localhost, a known platform limitation. In development (`NODE_ENV !== "production"`), when all push sends fail, notifications are queued in-memory on the server. The client polls `GET /api/push-notifications/poll?since=<timestamp>` every 3s and shows native notifications + adds them to the bell dropdown. This is dev-only; production uses real Web Push via WNS/FCM.
-- **Per-step subscribe timeouts**: Each async step in the subscribe flow (permission, SW ready, VAPID fetch, PushManager.subscribe, server PUT) has its own timeout via `withTimeout()` helper, preventing any single step from hanging the UI. Edge's "Quiet notification requests" is detected with a 5s timeout and actionable console warning.
 
 ---
 
@@ -591,7 +578,7 @@ A local MCP server (`server/mcp/index.ts`) exposes portfolio data for AI coding 
 | Routing       | CloudFront `/api/*` to Lambda      |
 | Monitoring    | CloudWatch alarms (errors >5/5min, throttles >0, avg duration >10s) |
 
-### Lambda Environment Variables (15)
+### Lambda Environment Variables (12)
 
 ```
 NODE_ENV                          # production
@@ -603,9 +590,6 @@ PING_MESSAGE                      # Health check response
 SLACK_WEBHOOK_URL                 # Slack incoming webhook
 SLACK_CHANNEL                     # Slack channel for notifications
 ANTHROPIC_API_KEY                 # Claude API key
-VAPID_PUBLIC_KEY                  # Web push VAPID public key
-VAPID_PRIVATE_KEY                 # Web push VAPID private key
-VAPID_EMAIL                       # VAPID contact email
 COGNITO_USER_POOL_ID              # Cognito user pool ID for JWT verification
 COGNITO_CLIENT_ID                 # Cognito app client ID for JWT verification
 CRUX_API_KEY                      # Google Chrome UX Report API key
@@ -668,7 +652,7 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 - **pnpm overrides**: Transitive dependency patches for `picomatch >=4.0.4`, `brace-expansion >=5.0.5`, `handlebars >=4.7.9` (CVE-2026-33916).
 - **Rate limiting**: `express-rate-limit` on both Express servers (100 req/15min/IP).
 - **Auth hardening**: `requireAuth` middleware throws in production if `COGNITO_USER_POOL_ID` is missing (no fallback to sandbox pool). reCAPTCHA always required in production (no env-variable bypass).
-- **Input sanitization**: Contact form inputs trimmed + length-limited upfront. Email validation uses linear-time string ops (no regex ReDoS). Log injection prevention on webhook events. PostMessage origin verification on PushToast.
+- **Input sanitization**: Contact form inputs trimmed + length-limited upfront. Email validation uses linear-time string ops (no regex ReDoS). Log injection prevention on webhook events.
 
 ---
 

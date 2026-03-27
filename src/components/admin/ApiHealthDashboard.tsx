@@ -102,18 +102,7 @@ const ENDPOINTS: EndpointDef[] = [
       }),
     },
   },
-  {
-    id: "push-notifications",
-    name: "Push Notifications",
-    method: "GET",
-    path: "/api/push-notifications",
-    service: "Web Push",
-    description: "Push notification management (VAPID, subscriptions)",
-    healthCheck: {
-      method: "GET",
-      path: "/api/push-notifications?action=subscriptions",
-    },
-  },
+
   {
     id: "github-stats",
     name: "GitHub Stats",

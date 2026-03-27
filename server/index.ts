@@ -14,7 +14,7 @@ import github from "./routes/github";
 import general from "./routes/general";
 import admin from "./routes/admin";
 import crux from "./routes/crux";
-import pushNotifications from "./routes/pushNotifications";
+
 import rateLimit from "express-rate-limit";
 import { requireAuth } from "./middleware/requireAuth";
 
@@ -52,7 +52,7 @@ app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
-app.use("/api/push-notifications", pushNotifications);
+
 app.use("/api/github", github);
 app.use("/api/crux", crux);
 

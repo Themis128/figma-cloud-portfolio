@@ -101,7 +101,7 @@ export default function PrivacyPolicyPage() {
               <p>The data controller for this website is:</p>
               <div className="bg-background/50 rounded-lg p-4 border border-border/10 font-mono text-sm">
                 <p className="text-foreground">Themistoklis Baltzakis</p>
-                <p>Cloud Architect &amp; Cybersecurity Specialist</p>
+                <p>IT Network Engineer &amp; Cloud Architect</p>
                 <p>Athens, Greece</p>
                 <p className="mt-2">
                   <Mail className="w-4 h-4 inline-block mr-2 text-cyan-400" />

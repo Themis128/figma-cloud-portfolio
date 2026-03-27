@@ -97,9 +97,6 @@ SENTRY_ENVIRONMENT=production
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
 SLACK_CHANNEL=#personal-website
 ANTHROPIC_API_KEY=your-anthropic-api-key
-VAPID_PUBLIC_KEY=your-vapid-public-key          # Generate with: npx web-push generate-vapid-keys
-VAPID_PRIVATE_KEY=your-vapid-private-key        # Must persist across deploys
-VAPID_EMAIL=mailto:your-email@domain.com
 GOOGLE_ANALYTICS_MEASUREMENT_ID=GA_MEASUREMENT_ID
 GOOGLE_ANALYTICS_API_SECRET=GA_API_SECRET
 ```
@@ -262,11 +259,6 @@ The Lambda execution role (`newsletter-lambda-role`) needs:
 |---|---|---|
 | `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream` | `arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-haiku-*`, `arn:aws:bedrock:us-east-1:<account>:inference-profile/us.anthropic.claude-3-5-haiku-*` | AI chat (cross-region inference profile) |
 | `ses:SendEmail`, `ses:SendRawEmail` | `*` | Contact form emails |
-| `s3:GetObject`, `s3:PutObject` | `arn:aws:s3:::figma-portfolio-static/_data/*` | Push notification subscription storage |
-
-#### Push Notification Subscription Storage
-
-Subscriptions are persisted as a JSON file on S3 at `s3://figma-portfolio-static/_data/push-subscriptions.json`. The Lambda loads from S3 on first request and caches in memory, writing back on mutations. This survives cold starts and redeploys.
 
 ### 2. Configure Environment Variables
 
@@ -281,9 +273,6 @@ aws lambda update-function-configuration \
     \"SENTRY_DSN\":\"https://your-sentry-dsn@sentry.io/project\",
     \"SLACK_WEBHOOK_URL\":\"https://hooks.slack.com/services/your/webhook/url\",
     \"ANTHROPIC_API_KEY\":\"your-anthropic-key\",
-    \"VAPID_PUBLIC_KEY\":\"your-vapid-public-key\",
-    \"VAPID_PRIVATE_KEY\":\"your-vapid-private-key\",
-    \"VAPID_EMAIL\":\"mailto:your-email@domain.com\",
     \"GOOGLE_ANALYTICS_MEASUREMENT_ID\":\"GA_MEASUREMENT_ID\",
     \"GOOGLE_ANALYTICS_API_SECRET\":\"GA_API_SECRET\",
     \"GITHUB_TOKEN\":\"ghp_your_fine_grained_pat\",

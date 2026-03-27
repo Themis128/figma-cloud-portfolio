@@ -12,7 +12,7 @@ import { LazyInteractive } from "@/components/LazyInteractive";
 import { MotionProvider } from "@/components/MotionProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { Providers } from "@/components/providers";
-import PushToast from "@/components/PushToast";
+
 import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
 import { RouteProgressBar } from "@/components/RouteProgressBar";
@@ -80,24 +80,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://www.baltzakisthemis.com",
-    title: "Themistoklis Baltzakis | Cloud Architect & Full-Stack Developer",
+    title: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect",
     description:
-      "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
+      "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
     siteName: "Themistoklis Baltzakis Portfolio",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Themistoklis Baltzakis | Cloud Architect & Full-Stack Developer",
+        alt: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Themistoklis Baltzakis | Cloud Architect & Full-Stack Developer",
+    title: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect",
     description:
-      "Technical Leadership and Cloud Innovation with 15+ years of IT expertise.",
+      "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
     creator: "@baltzakis_themis",
     images: ["/og-image.jpg"],
   },
@@ -171,7 +171,7 @@ export default function RootLayout({
               <ScrollToTop />
               <Footer />
               <LazyInteractive />
-              <PushToast />
+
               <PWAInstallButton />
             </MotionProvider>
           </AuthProvider>

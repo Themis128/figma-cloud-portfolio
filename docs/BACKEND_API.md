@@ -372,85 +372,6 @@ Delete an API key.
 
 ---
 
-### Push Notifications API
-
-**Source**: [`server/routes/pushNotifications.ts`](../server/routes/pushNotifications.ts)
-**External Service**: Web Push protocol
-**Env Vars**: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (auto-generated if not set)
-
-#### `GET /api/push-notifications?action=vapid-public-key`
-
-Get the VAPID public key for client-side subscription.
-
-**Response** `200 OK`:
-```json
-{
-  "publicKey": "BNz..."
-}
-```
-
-#### `GET /api/push-notifications?action=subscriptions`
-
-Get subscription count and list.
-
-**Response** `200 OK`:
-```json
-{
-  "subscriptions": 3,
-  "list": [{ "endpoint": "https://fcm.googleapis.com/..." }]
-}
-```
-
-#### `GET /api/push-notifications` (no action)
-
-Send test notification to all subscriptions.
-
-**Response** `200 OK`:
-```json
-{
-  "success": true,
-  "message": "Notifications sent",
-  "results": [{ "endpoint": "...", "success": true, "statusCode": 201 }],
-  "totalSubscriptions": 3
-}
-```
-
-**Error** `400`: No subscriptions found.
-
-#### `POST /api/push-notifications`
-
-Send custom notification.
-
-**Request Body**:
-```json
-{
-  "message": {
-    "title": "Hello",
-    "body": "World",
-    "icon": "/icon.png",
-    "url": "https://baltzakis.dev"
-  }
-}
-```
-
-#### `PUT /api/push-notifications`
-
-Store a push subscription.
-
-**Request Body**:
-```json
-{
-  "endpoint": "https://fcm.googleapis.com/...",
-  "keys": { "p256dh": "...", "auth": "..." }
-}
-```
-
-#### `DELETE /api/push-notifications?endpoint=<encoded_url>`
-
-Remove a push subscription.
-
----
-
 ### Resume API
 
 **Source**: [`server/routes/resume.ts`](../server/routes/resume.ts)
@@ -499,8 +420,6 @@ These rules proxy frontend `/api/*` requests to the Lambda backend.
 | `/api/ai/<*>` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/ai/<*>` |
 | `/api/agents` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/agents` |
 | `/api/agents/<*>` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/agents/<*>` |
-| `/api/push-notifications` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/push-notifications` |
-| `/api/push-notifications/<*>` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/push-notifications/<*>` |
 | `/api/analytics` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/analytics` |
 | `/api/analytics/<*>` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/analytics/<*>` |
 | `/api/ping` | `https://wctxhmfzgk.execute-api.us-east-1.amazonaws.com/api/ping` |
@@ -521,8 +440,6 @@ These rules proxy frontend `/api/*` requests to the Lambda backend.
 | `CAL_EVENT_TYPE_ID` | Booking API | Cal.com event type ID |
 | `SLACK_WEBHOOK_URL` | API Keys | Slack incoming webhook URL |
 | `SLACK_CHANNEL` | API Keys | Slack channel (default: `#personal-website`) |
-| `VAPID_PUBLIC_KEY` | Push Notifications | VAPID public key (auto-generated if not set) |
-| `VAPID_PRIVATE_KEY` | Push Notifications | VAPID private key (auto-generated if not set) |
 
 ### Frontend Environment Variables
 
@@ -531,7 +448,6 @@ These rules proxy frontend `/api/*` requests to the Lambda backend.
 | `NEXT_PUBLIC_API_BASE_URL` | `/api` | API base URL prefix |
 | `NEXT_PUBLIC_LAMBDA_CONTACT_URL` | `/api/contact` | Contact form Lambda URL |
 | `NEXT_PUBLIC_LAMBDA_RESUME_URL` | `/api/resume` | Resume Lambda URL |
-| `NEXT_PUBLIC_LAMBDA_PUSH_NOTIFICATIONS_URL` | `/api/push-notifications` | Push notifications Lambda URL |
 | `NEXT_PUBLIC_LAMBDA_PING_URL` | `/api/ping` | Ping Lambda URL |
 | `NEXT_PUBLIC_LAMBDA_DEMO_URL` | `/api/demo` | Demo Lambda URL |
 | `NEXT_PUBLIC_LAMBDA_CHAT_URL` | `/api/chat` | Chat SSE streaming Lambda URL |
@@ -550,7 +466,7 @@ Centralized fetch wrapper with error handling. All functions throw on non-2xx re
 
 ```typescript
 import {
-  submitContactForm, generateResumePDF, pushNotificationsApi,
+  submitContactForm, generateResumePDF,
   ping, getDemo, getHealth,
   sendChatMessage, getBookingSlots, createBooking,
   listAPIKeys, getAPIKey, createAPIKey, updateAPIKey, deleteAPIKey,

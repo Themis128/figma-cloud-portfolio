@@ -452,11 +452,6 @@ test.describe("Missing Functionality Detection", () => {
       await expect(backgroundSync).toBeVisible();
     }
 
-    // Check for push notifications
-    const pushNotifications = page.locator('[data-testid="push-notifications"]');
-    if (await pushNotifications.isVisible()) {
-      await expect(pushNotifications).toBeVisible();
-    }
   });
 
   test("should check for missing modern web APIs", async ({ page }) => {

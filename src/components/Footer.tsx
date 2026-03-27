@@ -59,8 +59,8 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-xs text-foreground/40 leading-relaxed max-w-xs">
-              Cloud Architect & Cybersecurity Specialist building secure,
-              scalable infrastructure and modern web applications.
+              IT Network Engineer building secure, scalable
+              infrastructure and modern web applications.
             </p>
             {/* Social links */}
             <div className="flex items-center gap-2 pt-1">

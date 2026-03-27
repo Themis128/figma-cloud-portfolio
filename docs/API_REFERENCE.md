@@ -23,8 +23,7 @@ This document is the source-of-truth for the server API and the shared TypeScrip
 4. [Analytics](#analytics)
 5. [Resume](#resume)
 6. [GitHub Proxy](#github-proxy)
-7. [Push Notifications](#push-notifications)
-8. [API Keys Management](#api-keys-management)
+7. [API Keys Management](#api-keys-management)
 9. [Portfolio Chatbot](#portfolio-chatbot)
 9. [AI / Agent Endpoints](#ai--agent-endpoints)
 10. [Agents Management](#agents-management)
@@ -468,165 +467,6 @@ Validate a GitHub token.
 - Max cache entries: `GITHUB_CACHE_MAX_ENTRIES` (default: 200)
 - Rate limit: `GITHUB_RATE_LIMIT_MAX` (default: 120 per hour per IP)
 - Requires `GITHUB_TOKEN` for authenticated requests
-
----
-
-### Push Notifications
-
-Web Push API endpoints for subscription management and notification sending.
-
-#### GET /api/push-notifications?action=vapid-public-key
-
-Get the VAPID public key for client subscription.
-
-**Response (200):**
-
-```json
-{
-  "publicKey": "BM9x9x..."
-}
-```
-
----
-
-#### GET /api/push-notifications?action=subscriptions
-
-List current subscription count.
-
-**Response (200):**
-
-```json
-{
-  "subscriptions": 5,
-  "list": [{ "endpoint": "https://fcm.googleapis.com/..." }]
-}
-```
-
----
-
-#### GET /api/push-notifications (no action)
-
-Send test notification to all stored subscriptions.
-
-**Response (200):**
-
-```json
-{
-  "success": true,
-  "message": "Test notifications sent",
-  "results": [
-    { "endpoint": "https://...", "success": true, "statusCode": 201 }
-  ],
-  "totalSubscriptions": 5
-}
-```
-
-**Response (400):**
-
-```json
-{
-  "error": "No subscriptions found. Subscribe first using the client."
-}
-```
-
----
-
-#### POST /api/push-notifications
-
-Send push notification to specified subscriptions or all stored subscriptions.
-
-**Request Body:**
-
-```json
-{
-  "subscriptions": [
-    {
-      "endpoint": "https://fcm.googleapis.com/...",
-      "keys": {
-        "p256dh": "key...",
-        "auth": "auth..."
-      }
-    }
-  ],
-  "message": {
-    "title": "New Update",
-    "body": "Check out the latest features!",
-    "icon": "/logo.jpg",
-    "badge": "/logo.jpg",
-    "image": "/og-image.png",
-    "url": "/updates",
-    "data": { "type": "update" }
-  }
-}
-```
-
-**Response (200):**
-
-```json
-{
-  "success": true,
-  "results": [
-    { "endpoint": "https://...", "success": true, "statusCode": 201 }
-  ],
-  "totalSent": 5,
-  "totalFailed": 0
-}
-```
-
----
-
-#### PUT /api/push-notifications
-
-Store/subscribe a new push subscription.
-
-**Request Body:**
-
-```json
-{
-  "endpoint": "https://fcm.googleapis.com/...",
-  "keys": {
-    "p256dh": "public_key...",
-    "auth": "auth_secret..."
-  }
-}
-```
-
-**Response (200):**
-
-```json
-{
-  "success": true,
-  "message": "Subscription stored",
-  "totalSubscriptions": 6
-}
-```
-
----
-
-#### DELETE /api/push-notifications?endpoint=...
-
-Remove a subscription.
-
-**Query Parameters:**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| endpoint | string | Subscription endpoint URL (URL-encoded) |
-
-**Response (200):**
-
-```json
-{
-  "success": true,
-  "message": "Removed 1 subscription(s)",
-  "totalSubscriptions": 5
-}
-```
-
-**Configuration:**
-
-- `VAPID_PUBLIC_KEY` - VAPID public key (permanent, set in Lambda env vars)
-- `VAPID_PRIVATE_KEY` - VAPID private key (permanent, set in Lambda env vars)
-- `VAPID_EMAIL` - Contact email for VAPID (mailto:noreply@cloudless.gr)
 
 ---
 
@@ -1233,7 +1073,6 @@ Single Lambda function (`figma-portfolio-api`) handling all API routes, fronted 
 | /api/demo                         | GET          | Demo endpoint                    |
 | /api/contact                      | POST         | Contact form (reCAPTCHA + SES)   |
 | /api/resume                       | GET          | 302 redirect to resume.pdf       |
-| /api/push-notifications           | GET/PUT/POST/DELETE | Push notification management |
 | /api/organizations/api_keys       | GET/POST     | List / create API keys           |
 | /api/organizations/api_keys/:id   | GET/POST/DELETE | Get / update / delete API key |
 
@@ -1744,34 +1583,6 @@ curl -X POST http://localhost:3001/api/ai/agent \
 curl http://localhost:3001/api/github/workflows?owner=Themis128&repo=figma-cloud-portfolio
 ```
 
-### Push Notification Subscription
-
-```bash
-# Get VAPID public key
-curl http://localhost:3001/api/push-notifications?action=vapid-public-key
-
-# Subscribe
-curl -X PUT http://localhost:3001/api/push-notifications \
-  -H "Content-Type: application/json" \
-  -d '{
-    "endpoint": "https://fcm.googleapis.com/...",
-    "keys": {
-      "p256dh": "public_key...",
-      "auth": "auth_secret..."
-    }
-  }'
-
-# Send notification
-curl -X POST http://localhost:3001/api/push-notifications \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": {
-      "title": "Update",
-      "body": "New features available!"
-    }
-  }'
-```
-
 ### Resume
 
 ```bash
@@ -1863,7 +1674,6 @@ All endpoints follow a consistent error response format:
 - All POST/PUT endpoints require `Content-Type: application/json`
 - Contact form inputs are sanitized against XSS, SQL injection, and command injection
 - GitHub proxy implements rate limiting per IP (120 requests per hour by default)
-- VAPID keys should be set in production (auto-generated in development)
 
 ### Caching
 
@@ -1891,14 +1701,10 @@ All endpoints follow a consistent error response format:
 | `AWS_SECRET_ACCESS_KEY`           | Optional            | AWS secret key for SES                                        |
 | `SES_VERIFIED_EMAIL`              | Optional            | SES verified sender email                                     |
 | `SLACK_WEBHOOK_URL`               | Optional            | Slack webhook for notifications                               |
-| `VAPID_PUBLIC_KEY`                | Optional            | VAPID public key for push                                     |
-| `VAPID_PRIVATE_KEY`               | Optional            | VAPID private key for push                                    |
-| `VAPID_EMAIL`                     | Optional            | Contact email for VAPID                                       |
 
 ### Development vs Production
 
 - Test reCAPTCHA key used in development
-- VAPID keys auto-generated if not configured
 - Debug endpoints enabled in development
 - More verbose error messages in development
 

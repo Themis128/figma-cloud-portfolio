@@ -123,22 +123,6 @@ test.describe("Advanced PWA Features", () => {
     }
   });
 
-  test("should handle push notification subscription", async ({ page }) => {
-    await page.goto("/");
-
-    await page.waitForLoadState("domcontentloaded");
-
-    // Check if push notifications are supported
-    const pushSupport = await page.evaluate(() => {
-      return "serviceWorker" in navigator && "PushManager" in window;
-    });
-
-    // Push notification infrastructure check — VAPID endpoint on port 3002 is not available
-    // Just verify the browser supports push and the page loaded
-    expect(typeof pushSupport).toBe("boolean");
-    await expect(page.locator("body")).toBeVisible();
-  });
-
   test("should have proper web app manifest", async ({ page }) => {
     await page.goto("/");
 
@@ -406,28 +390,6 @@ test.describe("Advanced PWA Features", () => {
 
     // Should have made some network requests (may be fewer due to caching)
     expect(cachedRequests.length).toBeGreaterThan(0);
-  });
-
-  test("should handle push notification permissions", async ({ page }) => {
-    await page.goto("/");
-
-    // Check notification permission state
-    // const _initialPermission = await context.grantPermissions([], {
-    //   origin: page.url(),
-    // })
-
-    // Request notification permission
-    const permissionGranted = await page.evaluate(async () => {
-      if ("Notification" in window) {
-        const permission = await Notification.requestPermission();
-        return permission === "granted";
-      }
-      return false;
-    });
-
-    // Permission may or may not be granted depending on browser settings
-    // The important thing is that the request doesn't crash
-    expect(typeof permissionGranted).toBe("boolean");
   });
 
   test("should validate PWA security headers", async ({ page }) => {

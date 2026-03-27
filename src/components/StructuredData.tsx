@@ -65,8 +65,7 @@ const PERSON = {
   ],
   worksFor: {
     "@type": "Organization" as const,
-    name: "Cloudless.gr",
-    url: "https://cloudless.gr",
+    name: "Skaramangas Shipyards",
   },
   address: {
     "@type": "PostalAddress" as const,
@@ -86,7 +85,7 @@ export function DefaultStructuredData() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
-    name: "Themistoklis Baltzakis | Cloud Architect & Cybersecurity Specialist",
+    name: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect",
     description:
       "Portfolio of IT Network Engineer & Cloud Architect with 15+ years of experience in Cisco, Fortinet, AWS, and enterprise security.",
     url: SITE_URL,

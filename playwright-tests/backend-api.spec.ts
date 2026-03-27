@@ -133,19 +133,6 @@ test.describe("Backend API — Agents (not deployed)", () => {
   });
 });
 
-// ─── Push Notifications API ─────────────────────────────────────────────────────
-// The push-notifications endpoint is available on the Express dev server (port 3001)
-// but not deployed to the production Lambda.
-
-test.describe("Backend API — Push Notifications", () => {
-  test("GET /api/push-notifications returns 200 or 404 depending on backend", async ({
-    request,
-  }) => {
-    const res = await request.get(`${API_BASE}/api/push-notifications`);
-    expect([200, 404]).toContain(res.status());
-  });
-});
-
 // ─── API Keys — Auth Protection ─────────────────────────────────────────────────
 // API Keys endpoints are protected by Cognito Auth (requireAuth middleware).
 // All requests without a valid Bearer token should return 401.

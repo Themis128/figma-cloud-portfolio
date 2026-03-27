@@ -43,10 +43,6 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
 RECAPTCHA_SECRET_KEY=your-recaptcha-secret-key
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
 ANTHROPIC_API_KEY=your-anthropic-api-key
-VAPID_PUBLIC_KEY=your-vapid-public-key
-VAPID_PRIVATE_KEY=your-vapid-private-key
-VAPID_EMAIL=mailto:your-email@example.com
-
 # AWS Bedrock chatbot (uses AWS credentials from ~/.aws/credentials or env vars)
 BEDROCK_REGION=us-east-1
 BEDROCK_MODEL_ID=us.anthropic.claude-3-5-haiku-20241022-v1:0

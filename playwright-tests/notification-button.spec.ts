@@ -133,9 +133,9 @@ test.describe("NotificationButton — Announcements", () => {
     await bellBtn.click();
     await page.waitForTimeout(300);
 
-    // Footer shows "{n} announcement(s)"
+    // Footer shows "{n} item(s)"
     await expect(
-      page.getByText(/\d+ announcements?/),
+      page.getByText(/\d+ items?/),
     ).toBeVisible();
   });
 

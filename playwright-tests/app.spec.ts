@@ -1345,7 +1345,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
     test("should handle notification settings", async ({ page }) => {
       // Check for any notification-related elements
       const notificationElements = page.locator(
-        "text=/notification|subscribe|push/i",
+        "text=/notification|subscribe/i",
       );
 
       // If notification elements exist, test them
@@ -1436,23 +1436,6 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
 
       // Metrics may or may not be displayed
       await expect(page.locator("h1")).toBeVisible();
-    });
-
-    test("should display push notification tester", async ({ page }) => {
-      // Check for any push notification related content
-      const pushContent = page.locator(
-        "text=/push|notification|subscribe|tester|Web Push API Tester/i",
-      );
-
-      // Push notification tester may or may not be visible depending on backend availability
-      // Just verify the page loads and has some content
-      await expect(page.locator("h1")).toBeVisible();
-
-      // If push content exists, it's okay if it's not visible (may be hidden on mobile or when backend unavailable)
-      if ((await pushContent.count()) > 0) {
-        // Just check that the element exists (visibility depends on conditions)
-        await expect(pushContent.first()).toBeAttached();
-      }
     });
 
     test("should display performance sections", async ({ page }) => {
@@ -1583,67 +1566,6 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       await expect(
         page.getByRole("heading", { name: "Network Infrastructure" }),
       ).toBeVisible();
-    });
-  });
-
-  test.describe("Push Notification Features", () => {
-    test("should display notification button", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForSelector("h1", { timeout: 10000 });
-
-      // Button may not be visible if notifications are not supported or already subscribed
-      // Just check that the page loads without errors
-      await expect(page.locator("h1")).toBeVisible();
-    });
-
-    test("should handle notification permissions", async ({ page }) => {
-      await page.goto("/");
-      await waitForAppReady(page);
-      await page.waitForSelector("h1", { timeout: 10000 });
-
-      // Check notification permission status (only if Notification API is available)
-      const permission = await page.evaluate(() => {
-        if (typeof Notification === "undefined") {
-          return "not-supported";
-        }
-        return Notification.permission;
-      });
-
-      // Permission should be one of: 'default', 'granted', 'denied', or 'not-supported'
-      expect(["default", "granted", "denied", "not-supported"]).toContain(
-        permission,
-      );
-    });
-
-    test("should display push notification tester on performance page", async ({
-      page,
-    }) => {
-      await page.goto("/performance");
-      await waitForAppReady(page);
-      await page.waitForSelector("h1", { timeout: 10000 });
-
-      // Check for push notification status (may show "blocked" or other status, may be hidden on mobile)
-      const notificationStatus = page.locator(
-        "text=/notifications blocked|push notifications|notification|Web Push API Tester/i",
-      );
-
-      // If notification status exists, it may be visible or hidden depending on viewport
-      // Either way is acceptable - the important thing is the page loads
-      if ((await notificationStatus.count()) > 0) {
-        // Just check that the element exists (visibility depends on responsive design)
-        await expect(notificationStatus.first()).toBeAttached();
-      }
-
-      // Check for buttons, but they may be hidden
-      const buttons = page.locator("button");
-      if ((await buttons.count()) > 0) {
-        // Just check that buttons exist, not that they're visible
-        await expect(buttons.first()).toBeAttached();
-      }
-
-      // Just verify the page loads
-      await expect(page.locator("h1")).toBeVisible();
     });
   });
 

@@ -1,49 +1,20 @@
 "use client";
 
-import { Bell, BellOff, BellRing, ExternalLink, Megaphone, X } from "lucide-react";
+import { Bell, BellOff, ExternalLink, Megaphone, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { getApiOrigin } from "@/lib/admin-constants";
 
 const LAST_SEEN_KEY = "site-announcements-last-seen";
 const READ_IDS_KEY = "site-announcements-read";
 const DISMISSED_IDS_KEY = "site-announcements-dismissed";
-const PUSH_NOTIFICATIONS_KEY = "site-push-notifications";
-const MAX_PUSH_NOTIFICATIONS = 20;
 
 interface Announcement {
   id: string;
   title: string;
   description: string;
-  /** Optional link to the relevant page */
   href?: string;
-  /** ISO date string — announcement hidden after this date */
   expires?: string;
-  /** Whether this came from a push notification */
-  isPush?: boolean;
-  /** Timestamp for push notifications */
-  receivedAt?: string;
-}
-
-/** Load push notifications from localStorage */
-function getPushNotifications(): Announcement[] {
-  const raw = storageGet(PUSH_NOTIFICATIONS_KEY);
-  if (!raw) return [];
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed as Announcement[];
-  } catch { /* ignore */ }
-  return [];
-}
-
-/** Save a new push notification to localStorage */
-function savePushNotification(notification: Announcement): void {
-  const existing = getPushNotifications();
-  // Avoid duplicates by ID
-  if (existing.some((n) => n.id === notification.id)) return;
-  const updated = [notification, ...existing].slice(0, MAX_PUSH_NOTIFICATIONS);
-  storageSet(PUSH_NOTIFICATIONS_KEY, JSON.stringify(updated));
 }
 
 /** Safe localStorage wrapper */
@@ -93,49 +64,29 @@ function saveDismissedIds(ids: Set<string>): void {
   storageSet(DISMISSED_IDS_KEY, JSON.stringify([...ids]));
 }
 
-/** Convert a base64url string to ArrayBuffer (for VAPID applicationServerKey). */
-function urlBase64ToArrayBuffer(base64String: string): ArrayBuffer {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(base64);
-  const buf = new ArrayBuffer(raw.length);
-  const view = new Uint8Array(buf);
-  for (let i = 0; i < raw.length; ++i) view[i] = raw.charCodeAt(i);
-  return buf;
-}
-
 export function NotificationButton() {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
-  const [autoAnnouncements, setAutoAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Push subscription state
-  const [pushSupported, setPushSupported] = useState(false);
-  const [pushSubscribed, setPushSubscribed] = useState(false);
-  const [pushLoading, setPushLoading] = useState(false);
-  const [pushNotifications, setPushNotifications] = useState<Announcement[]>([]);
-
-  // Merge auto-generated announcements + push notifications, filter dismissed
   const allItems = useMemo(
     () =>
       mounted
-        ? [...pushNotifications, ...autoAnnouncements].filter((a) => !dismissedIds.has(a.id))
+        ? announcements.filter((a) => !dismissedIds.has(a.id))
         : [],
-    [mounted, pushNotifications, autoAnnouncements, dismissedIds],
+    [mounted, announcements, dismissedIds],
   );
   const unreadCount = mounted
     ? allItems.filter((a) => !readIds.has(a.id)).length
     : 0;
 
-  // Check push support, load saved push notifications, fetch auto announcements
   useEffect(() => {
     setMounted(true);
     setReadIds(getReadIds());
     setDismissedIds(getDismissedIds());
-    setPushNotifications(getPushNotifications());
 
     // Fetch build-time generated announcements
     fetch("/announcements.json")
@@ -143,213 +94,13 @@ export function NotificationButton() {
       .then((data: unknown) => {
         if (Array.isArray(data)) {
           const now = new Date().toISOString();
-          setAutoAnnouncements(
+          setAnnouncements(
             (data as Announcement[]).filter((a) => !a.expires || a.expires > now),
           );
         }
       })
       .catch(() => { /* announcements.json may not exist yet */ });
-
-    // Check Web Push API support
-    if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
-      setPushSupported(true);
-      // Check if already subscribed
-      navigator.serviceWorker.getRegistration("/").then((reg) => {
-        if (reg) {
-          reg.pushManager.getSubscription().then((sub) => {
-            setPushSubscribed(sub !== null);
-          }).catch(() => { /* ignore */ });
-        }
-      }).catch(() => { /* ignore */ });
-    }
-
-    // Listen for push notifications forwarded from the service worker
-    const handleSwMessage = (event: MessageEvent) => {
-      if (event.data?.type === "PUSH_RECEIVED") {
-        const { title, body, url } = event.data;
-        const notification: Announcement = {
-          id: `push-${Date.now()}`,
-          title: title ?? "New Notification",
-          description: body ?? "",
-          ...(url ? { href: url } : {}),
-          isPush: true,
-          receivedAt: new Date().toISOString(),
-        };
-        savePushNotification(notification);
-        setPushNotifications(getPushNotifications());
-      }
-    };
-
-    navigator.serviceWorker?.addEventListener("message", handleSwMessage);
-
-    // Dev fallback: poll for notifications when WNS/FCM rejects push from localhost.
-    // Only active in development. Checks every 3s for new notifications.
-    let pollTimer: ReturnType<typeof setInterval> | null = null;
-    let lastPollTs = Date.now();
-    if (process.env.NODE_ENV !== "production") {
-      pollTimer = setInterval(async () => {
-        try {
-          const res = await fetch("/api/push-notifications/poll?since=" + lastPollTs);
-          if (!res.ok) return;
-          const items = await res.json() as Array<{ title?: string; body?: string; url?: string; ts?: number }>;
-          for (const data of items) {
-            const notification: Announcement = {
-              id: `push-poll-${data.ts ?? Date.now()}`,
-              title: data.title ?? "New Notification",
-              description: data.body ?? "",
-              ...(data.url ? { href: data.url } : {}),
-              isPush: true,
-              receivedAt: new Date().toISOString(),
-            };
-            savePushNotification(notification);
-            if (Notification.permission === "granted") {
-              new Notification(notification.title, { body: notification.description, icon: "/logo.jpg" });
-            }
-          }
-          if (items.length > 0) {
-            setPushNotifications(getPushNotifications());
-            lastPollTs = Date.now();
-          }
-        } catch { /* ignore poll errors */ }
-      }, 3000);
-    }
-
-    return () => {
-      navigator.serviceWorker?.removeEventListener("message", handleSwMessage);
-      if (pollTimer) clearInterval(pollTimer);
-    };
   }, []);
-
-  const subscribeToPush = useCallback(async () => {
-    if (!pushSupported || pushLoading) return;
-    setPushLoading(true);
-
-    /** Race a promise against a timeout — prevents any single step from hanging. */
-    function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-      return Promise.race([
-        promise,
-        new Promise<never>((_resolve, reject) =>
-          setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms),
-        ),
-      ]);
-    }
-
-    try {
-      // 1. Check / request notification permission
-      // Step 1: Check / request notification permission
-      let permission = Notification.permission;
-      if (permission === "denied") {
-        // Notifications blocked by user
-        setPushLoading(false);
-        return;
-      }
-      if (permission === "default") {
-        try {
-          // 5s timeout — Edge with "Quiet notification requests" silently suppresses
-          // the prompt, causing requestPermission() to hang indefinitely.
-          permission = await withTimeout(Notification.requestPermission(), 5000, "Permission prompt");
-        } catch {
-          // Permission prompt timed out — browser may be silently blocking
-          setPushLoading(false);
-          return;
-        }
-      }
-      if (permission !== "granted") {
-        // Permission not granted
-        setPushLoading(false);
-        return;
-      }
-      // Permission granted
-
-      // 2. Get a ready SW registration via navigator.serviceWorker.ready
-      //    This is the spec-recommended way to wait for an active SW.
-      //    Falls back to manual register + activation wait.
-      // Step 2: Get a ready SW registration
-      let registration: ServiceWorkerRegistration;
-      try {
-        // Ensure the SW is registered so .ready can resolve
-        const existing = await navigator.serviceWorker.getRegistration("/");
-        if (!existing) {
-          await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        }
-        // .ready resolves when a SW is active for the page's scope
-        registration = await withTimeout(navigator.serviceWorker.ready, 8000, "SW ready");
-      } catch {
-        // Last resort: get whatever registration exists
-        const fallback = await navigator.serviceWorker.getRegistration("/");
-        if (!fallback?.active) throw new Error("No active service worker available");
-        registration = fallback;
-      }
-      // Step 3: Get VAPID key from the Express backend
-      const vapidRes = await withTimeout(
-        fetch("/api/push-notifications?action=vapid-public-key"),
-        8000,
-        "VAPID fetch",
-      );
-      if (!vapidRes.ok) throw new Error(`VAPID fetch failed: ${vapidRes.status}`);
-      const { publicKey } = await vapidRes.json() as { publicKey: string };
-
-      // Step 4: Clear stale subscription (avoids key-mismatch errors)
-      const existingSub = await registration.pushManager.getSubscription();
-      if (existingSub) {
-        await existingSub.unsubscribe();
-      }
-
-      // Step 5: Subscribe via PushManager — timeout protects against Chrome hanging
-      const subscription = await withTimeout(
-        registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToArrayBuffer(publicKey),
-        }),
-        10000,
-        "pushManager.subscribe()",
-      );
-      // Step 6: Store subscription on the server
-      const subJSON = subscription.toJSON();
-      const putRes = await withTimeout(
-        fetch("/api/push-notifications", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subJSON.endpoint, keys: subJSON.keys }),
-        }),
-        8000,
-        "PUT subscription",
-      );
-      if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
-
-      setPushSubscribed(true);
-    } catch {
-      // Push subscription failed — user will see the button remains unsubscribed
-    } finally {
-      setPushLoading(false);
-    }
-  }, [pushSupported, pushLoading]);
-
-  const unsubscribeFromPush = useCallback(async () => {
-    if (pushLoading) return;
-    setPushLoading(true);
-    try {
-      const registration = await navigator.serviceWorker.getRegistration("/");
-      if (registration) {
-        const subscription = await registration.pushManager.getSubscription();
-        if (subscription) {
-          // Remove from server
-          const origin = getApiOrigin();
-          await fetch(
-            `${origin}/api/push-notifications?endpoint=${encodeURIComponent(subscription.endpoint)}`,
-            { method: "DELETE" },
-          );
-          // Unsubscribe locally
-          await subscription.unsubscribe();
-        }
-      }
-      setPushSubscribed(false);
-    } catch {
-      // Unsubscribe failed — button state will reflect the mismatch
-    } finally {
-      setPushLoading(false);
-    }
-  }, [pushLoading]);
 
   // Close on outside click
   useEffect(() => {
@@ -474,18 +225,14 @@ export function NotificationButton() {
                     <li
                       key={announcement.id}
                       className={`px-4 py-3 transition-colors ${
-                        isRead
-                          ? "opacity-60"
-                          : announcement.isPush
-                            ? "bg-purple-400/5"
-                            : "bg-cyan-400/5"
+                        isRead ? "opacity-60" : "bg-cyan-400/5"
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         {/* Unread dot */}
                         <div className="mt-1.5 shrink-0">
                           {!isRead ? (
-                            <span className={`block h-2 w-2 rounded-full ${announcement.isPush ? "bg-purple-400" : "bg-cyan-400"}`} />
+                            <span className="block h-2 w-2 rounded-full bg-cyan-400" />
                           ) : (
                             <span className="block h-2 w-2 rounded-full bg-slate-600" />
                           )}
@@ -506,32 +253,20 @@ export function NotificationButton() {
                             >
                               <X className="h-3 w-3" />
                             </button>
-                            {announcement.isPush && (
-                              <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/20">
-                                Push
-                              </span>
-                            )}
                           </div>
                           <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
                             {announcement.description}
                           </p>
-                          <div className="flex items-center gap-3 mt-2">
-                            {announcement.href && (
-                              <Link
-                                href={announcement.href}
-                                onClick={() => setOpen(false)}
-                                className="inline-flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
-                              >
-                                Check it out
-                                <ExternalLink className="h-3 w-3" />
-                              </Link>
-                            )}
-                            {announcement.receivedAt && (
-                              <span className="text-[10px] text-slate-600 font-mono">
-                                {new Date(announcement.receivedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                              </span>
-                            )}
-                          </div>
+                          {announcement.href && (
+                            <Link
+                              href={announcement.href}
+                              onClick={() => setOpen(false)}
+                              className="inline-flex items-center gap-1 mt-2 text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+                            >
+                              Check it out
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </li>
@@ -541,36 +276,10 @@ export function NotificationButton() {
             )}
           </div>
 
-          {/* Push Subscription Toggle */}
-          {pushSupported && (
-            <div className="border-t border-cyan-400/10 px-4 py-3">
-              <button
-                onClick={() => void (pushSubscribed ? unsubscribeFromPush() : subscribeToPush())}
-                disabled={pushLoading}
-                className={`flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-mono transition-all ${
-                  pushSubscribed
-                    ? "bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20"
-                    : "bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20"
-                } ${pushLoading ? "opacity-50 cursor-wait" : ""}`}
-                aria-label={pushSubscribed ? "Unsubscribe from push notifications" : "Subscribe to push notifications"}
-              >
-                <BellRing className="w-3.5 h-3.5" />
-                {pushLoading
-                  ? "Processing..."
-                  : pushSubscribed
-                    ? "Subscribed, tap to unsubscribe"
-                    : "Get push notifications"}
-              </button>
-            </div>
-          )}
-
           {/* Footer */}
           <div className="border-t border-cyan-400/10 px-4 py-2">
             <p className="text-[10px] text-slate-500 text-center font-mono">
               {allItems.length} item{allItems.length !== 1 ? "s" : ""}
-              {pushNotifications.length > 0 && (
-                <span className="text-purple-400/60"> · {pushNotifications.length} push</span>
-              )}
             </p>
           </div>
         </div>

@@ -80,12 +80,6 @@ test.describe("Settings Page", () => {
     ).toBeVisible();
   });
 
-  test("should have push notifications toggle", async ({ page }) => {
-    await expect(
-      page.getByText("Push Notifications", { exact: true }),
-    ).toBeVisible();
-  });
-
   // ─── Privacy Section ────────────────────────────────────────────────────
 
   test("should display Privacy section", async ({ page }) => {

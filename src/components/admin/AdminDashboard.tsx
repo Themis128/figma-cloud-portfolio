@@ -3,7 +3,7 @@
 import {
   Activity,
   AlertTriangle,
-  Bell,
+
   Cloud,
   ExternalLink,
   Gauge,
@@ -27,7 +27,7 @@ import SeoAudit from "@/components/admin/SeoAudit";
 import { useAdminAuth } from "@/components/admin/useAdminAuth";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
-import { PushNotificationTester } from "@/components/PushNotificationTester";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TAB_ITEMS = [
@@ -37,7 +37,7 @@ const TAB_ITEMS = [
   { value: "errors", label: "Errors", icon: AlertTriangle },
   { value: "performance", label: "Perf", icon: Gauge },
   { value: "seo", label: "SEO", icon: Search },
-  { value: "notifications", label: "Push", icon: Bell },
+
   { value: "analytics", label: "Analytics", icon: ExternalLink },
   { value: "auth", label: "Auth", icon: Shield },
   { value: "environment", label: "Env", icon: Info },
@@ -214,9 +214,8 @@ export default function AdminDashboard() {
                 <SeoAudit />
               </TabsContent>
 
-              <TabsContent value="notifications">
-                <PushNotificationTester />
-              </TabsContent>
+
+
 
               <TabsContent value="analytics">
                 <GoogleAnalyticsExplainer />

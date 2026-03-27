@@ -14,7 +14,7 @@
 4. [Error Tracking & Monitoring](#error-tracking--monitoring)
 5. [Authentication & Security](#authentication--security)
 6. [Analytics & Metrics](#analytics--metrics)
-7. [Push Notifications & Real-time](#push-notifications--real-time)
+7. [Real-time Features](#real-time-features)
 8. [Development Tools](#development-tools)
 9. [UI & Components](#ui--components)
 10. [Performance & Optimization](#performance--optimization)
@@ -27,16 +27,12 @@
 
 ### Firebase (v12.10.0)
 
-**Purpose**: Authentication (admin panel) & Cloud Messaging & Push Notifications
-**Files**: `src/lib/firebase.ts`, `src/hooks/usePushNotifications.ts`, `src/components/admin/useAdminAuth.ts`
+**Purpose**: Authentication (admin panel)
+**Files**: `src/lib/firebase.ts`, `src/components/admin/useAdminAuth.ts`
 
 **Features**:
 
 - Email/password authentication for the admin panel (`/admin`)
-- FCM token generation and management
-- Foreground message handling
-- Cloud messaging integration
-- VAPID key authentication
 
 **Auth Initialization (Mar 2026)**: Uses `initializeAuth()` with explicit `browserLocalPersistence` and `browserPopupRedirectResolver` instead of `getAuth()` to avoid the `_getRecaptchaConfig is not a function` error in Firebase v12+ (which enforces reCAPTCHA for email/password sign-in by default).
 
@@ -49,17 +45,12 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key
 ```
 
 **Setup**:
 
 1. Create Firebase project: https://console.firebase.google.com/
-2. Enable Cloud Messaging in project settings
-3. Generate VAPID key for web push
-4. Add configuration to `.env`
-
-**Documentation**: [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging)
+2. Add configuration to `.env`
 
 ---
 
@@ -741,54 +732,7 @@ onLCP((metric) => trackEvent("Web Vitals", "LCP", metric.value));
 
 ---
 
-## 🔔 Push Notifications & Real-time
-
-### Web Push API (v3.6.7)
-
-**Purpose**: Server-side push notifications
-**Files**: Lambda-based backend
-
-**Features**:
-
-- VAPID key authentication (permanent keys, not ephemeral/auto-generated)
-- Subscription storage (in-memory)
-- Push message sending
-- Subscription lifecycle (subscribe/unsubscribe)
-
-**Configuration**:
-
-```env
-NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key_here
-```
-
-**API Endpoints**:
-
-```bash
-# Subscribe to push notifications
-POST /api/push/subscribe
-{
-  "subscription": {
-    "endpoint": "https://...",
-    "keys": { "p256dh": "...", "auth": "..." }
-  }
-}
-
-# Send push notification
-POST /api/push/send
-{
-  "title": "Hello",
-  "body": "World",
-  "icon": "/logo.png"
-}
-
-# Unsubscribe
-POST /api/push/unsubscribe
-{
-  "endpoint": "https://..."
-}
-```
-
----
+## 🔔 Real-time Features
 
 ### Socket.IO (v4.8.3)
 
@@ -1122,7 +1066,6 @@ AMPLIFY_STAGING_APP_ID=your_staging_app_id
 ```env
 NEXT_PUBLIC_LAMBDA_CONTACT_URL=https://your-contact-function.amazonaws.com
 NEXT_PUBLIC_LAMBDA_RESUME_URL=https://your-resume-function.amazonaws.com
-NEXT_PUBLIC_LAMBDA_PUSH_NOTIFICATIONS_URL=https://your-push-function.amazonaws.com
 NEXT_PUBLIC_LAMBDA_PING_URL=https://your-ping-function.amazonaws.com
 NEXT_PUBLIC_LAMBDA_DEMO_URL=https://your-demo-function.amazonaws.com
 ```
@@ -1193,14 +1136,13 @@ pnpm build  # Wrapped with secrets loader
 # Core
 NODE_ENV=development
 
-# Firebase (for push notifications)
+# Firebase (for admin auth)
 NEXT_PUBLIC_FIREBASE_API_KEY=
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
-NEXT_PUBLIC_FIREBASE_VAPID_KEY=
 
 # reCAPTCHA (for contact form)
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
@@ -1248,7 +1190,6 @@ AWS_SECRETS_MANAGER_ID=portfolio/env
 # Lambda Functions
 NEXT_PUBLIC_LAMBDA_CONTACT_URL=
 NEXT_PUBLIC_LAMBDA_RESUME_URL=
-NEXT_PUBLIC_LAMBDA_PUSH_NOTIFICATIONS_URL=
 NEXT_PUBLIC_LAMBDA_PING_URL=
 NEXT_PUBLIC_LAMBDA_DEMO_URL=
 
@@ -1431,7 +1372,6 @@ AMPLIFY_STAGING_APP_ID=
 - **accessibility-button.spec.ts**: Accessibility button tests
 - **pwa-update-notification.spec.ts**: PWA update notification tests
 - **performance-monitoring.spec.ts**: Performance monitoring tests
-- **push-notifications.spec.ts**: Push notification tests
 
 #### **✅ New API Endpoints**
 
