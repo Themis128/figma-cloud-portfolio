@@ -177,7 +177,7 @@ export default function ContactPage() {
           <AnimatedSection className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-16">
             <div className="space-y-3 md:space-y-4">
               <AnimatedSection delay={0.1}>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground uppercase tracking-wider">
+                <h1 id="contact-heading" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground uppercase tracking-wider">
                   Get In Touch
                 </h1>
                 <div className="w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
@@ -448,9 +448,9 @@ export default function ContactPage() {
             <div id="more-info">
             <AnimatedSection delay={0.5} className="text-center mt-16">
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border max-w-2xl mx-auto">
-                <h3 className="text-xl font-bold text-foreground mb-4">
+                <h2 className="text-xl font-bold text-foreground mb-4">
                   Looking for more information?
-                </h3>
+                </h2>
                 <p className="text-muted-foreground mb-6">
                   Check out my resume or learn more about my background and
                   experience.

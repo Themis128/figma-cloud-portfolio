@@ -446,9 +446,9 @@ export function NotificationButton() {
           <div className="flex items-center justify-between border-b border-cyan-400/10 px-4 py-3">
             <div className="flex items-center gap-2">
               <Megaphone className="h-4 w-4 text-cyan-400" />
-              <h3 className="text-sm font-semibold font-mono uppercase tracking-wider text-cyan-400">
+              <p className="text-sm font-semibold font-mono uppercase tracking-wider text-cyan-400">
                 Announcements
-              </h3>
+              </p>
             </div>
             <button
               onClick={() => setOpen(false)}
