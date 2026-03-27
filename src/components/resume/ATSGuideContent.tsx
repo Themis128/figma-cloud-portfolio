@@ -153,9 +153,10 @@ export function ATSGuideContent() {
   return (
     <div className="space-y-20">
       {/* How ATS Works */}
+      <section aria-labelledby="ats-how-it-works">
       <AnimatedSection delay={0.1}>
         <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
+          <h2 id="ats-how-it-works" className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
             <ScanSearch className="w-8 h-8 text-cyan-400" />
             How ATS Systems Work
           </h2>
@@ -196,10 +197,12 @@ export function ATSGuideContent() {
           </div>
         </div>
       </AnimatedSection>
+      </section>
 
       {/* Anatomy of a Strong Resume */}
+      <section aria-labelledby="ats-anatomy">
       <AnimatedSection delay={0.15}>
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
+        <h2 id="ats-anatomy" className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
           <FileText className="w-8 h-8 text-cyan-400" />
           Anatomy of a Strong IT Resume
         </h2>
@@ -248,10 +251,12 @@ export function ATSGuideContent() {
           ))}
         </div>
       </AnimatedSection>
+      </section>
 
       {/* Common Mistakes */}
+      <section aria-labelledby="ats-mistakes">
       <AnimatedSection delay={0.2}>
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
+        <h2 id="ats-mistakes" className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
           <AlertTriangle className="w-8 h-8 text-cyan-400" />
           6 Mistakes That Get Resumes Rejected
         </h2>
@@ -282,11 +287,13 @@ export function ATSGuideContent() {
           ))}
         </div>
       </AnimatedSection>
+      </section>
 
       {/* ATS Keywords for IT */}
+      <section aria-labelledby="ats-keywords">
       <AnimatedSection delay={0.25}>
         <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
+          <h2 id="ats-keywords" className="text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
             <Filter className="w-8 h-8 text-cyan-400" />
             ATS Keywords for IT Professionals
           </h2>
@@ -317,10 +324,12 @@ export function ATSGuideContent() {
           </div>
         </div>
       </AnimatedSection>
+      </section>
 
       {/* Networking Career Tips */}
+      <section aria-labelledby="ats-career-tips">
       <AnimatedSection delay={0.3}>
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
+        <h2 id="ats-career-tips" className="text-2xl md:text-3xl font-bold text-foreground mb-8 flex items-center gap-3">
           <TrendingUp className="w-8 h-8 text-cyan-400" />
           Career Tips for Network Engineers
         </h2>
@@ -369,11 +378,13 @@ export function ATSGuideContent() {
           ))}
         </div>
       </AnimatedSection>
+      </section>
 
       {/* Quick Reference Checklist */}
+      <section aria-labelledby="ats-checklist">
       <AnimatedSection delay={0.35}>
         <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
+          <h2 id="ats-checklist" className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
             <CheckCircle2 className="w-8 h-8 text-cyan-400" />
             Pre-Submission Checklist
           </h2>
@@ -403,6 +414,7 @@ export function ATSGuideContent() {
           </div>
         </div>
       </AnimatedSection>
+      </section>
 
       {/* CTA */}
       <AnimatedSection delay={0.4}>
