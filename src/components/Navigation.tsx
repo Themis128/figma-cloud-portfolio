@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -151,6 +152,7 @@ export default function Navigation() {
                     <SheetTitle className="text-left font-mono text-lg tracking-wider text-cyan-400">
                       TB
                     </SheetTitle>
+                    <SheetDescription className="sr-only">Site navigation menu</SheetDescription>
                   </SheetHeader>
 
                   {/* Navigation Links */}
