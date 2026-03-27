@@ -94,7 +94,6 @@ export default function QuickContactForm() {
             <Input
               id="quick-name"
               name="name"
-              aria-label="Your name"
               placeholder="Your name"
               required
               value={formData.name}
@@ -112,7 +111,6 @@ export default function QuickContactForm() {
               id="quick-email"
               name="email"
               type="email"
-              aria-label="Your email"
               placeholder="your@email.com"
               required
               value={formData.email}
@@ -129,7 +127,6 @@ export default function QuickContactForm() {
           <Textarea
             id="quick-message"
             name="message"
-            aria-label="Quick message"
             value={formData.message}
             onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
             placeholder="Send me a quick message..."
