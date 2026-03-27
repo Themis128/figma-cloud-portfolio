@@ -7,6 +7,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { trackLead } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRecaptcha } from "@/hooks/useRecaptcha";
 
@@ -86,43 +87,55 @@ export default function QuickContactForm() {
     <AnimatedSection>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input
-            id="quick-name"
-            name="name"
-            aria-label="Your name"
-            placeholder="Your name"
+          <div className="space-y-2">
+            <Label htmlFor="quick-name" className="text-foreground/80">
+              Name
+            </Label>
+            <Input
+              id="quick-name"
+              name="name"
+              placeholder="Your name"
+              required
+              value={formData.name}
+              onFocus={preload}
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+              className={inputClass}
+              disabled={status === "submitting"}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quick-email" className="text-foreground/80">
+              Email
+            </Label>
+            <Input
+              id="quick-email"
+              name="email"
+              type="email"
+              placeholder="your@email.com"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              className={inputClass}
+              disabled={status === "submitting"}
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="quick-message" className="text-foreground/80">
+            Message
+          </Label>
+          <Textarea
+            id="quick-message"
+            name="message"
+            value={formData.message}
+            onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
+            placeholder="Send me a quick message..."
             required
-            value={formData.name}
-            onFocus={preload}
-            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-            className={inputClass}
-            disabled={status === "submitting"}
-          />
-          <Input
-            id="quick-email"
-            name="email"
-            type="email"
-            aria-label="Your email"
-            placeholder="your@email.com"
-            required
-            value={formData.email}
-            onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-            className={inputClass}
+            rows={4}
+            className={`${inputClass} resize-none`}
             disabled={status === "submitting"}
           />
         </div>
-        <Textarea
-          id="quick-message"
-          name="message"
-          aria-label="Quick message"
-          value={formData.message}
-          onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
-          placeholder="Send me a quick message..."
-          required
-          rows={4}
-          className={`${inputClass} resize-none`}
-          disabled={status === "submitting"}
-        />
 
         {status === "error" && (
           <div role="alert" className="flex items-center gap-2 text-red-400 text-sm">
