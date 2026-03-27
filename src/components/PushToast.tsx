@@ -54,7 +54,7 @@ export default function PushToast() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-[200] flex flex-col gap-2 w-80 pointer-events-none">
+    <div className="fixed top-4 right-4 z-200 flex flex-col gap-2 w-80 pointer-events-none">
       {toasts.map((toast, i) => (
         <div
           key={toast.id}
@@ -63,7 +63,7 @@ export default function PushToast() {
           role="alert"
         >
           {/* Cyan top accent line */}
-          <div className="h-[2px] bg-linear-to-r from-cyan-400 to-blue-500" />
+          <div className="h-0.5 bg-linear-to-r from-cyan-400 to-blue-500" />
 
           <div className="p-4">
             <div className="flex items-start gap-3">
@@ -104,7 +104,7 @@ export default function PushToast() {
           </div>
 
           {/* Progress bar — auto-dismiss countdown */}
-          <div className="h-[2px] bg-slate-800">
+          <div className="h-0.5 bg-slate-800">
             <div
               className="h-full bg-cyan-400/40 rounded-full"
               style={{
