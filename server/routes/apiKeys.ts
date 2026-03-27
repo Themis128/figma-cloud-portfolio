@@ -65,35 +65,9 @@ async function sendSlackNotification(message: string, apiKey: APIKey): Promise<v
   }
 }
 
-// Mock API key data store
-const apiKeys: APIKey[] = [
-  {
-    id: "ak_1234567890",
-    created_at: "2024-01-15T10:30:00Z",
-    created_by: {
-      id: "user_123",
-      type: "user"
-    },
-    name: "Development API Key",
-    partial_key_hint: "ak_1234",
-    status: "active",
-    type: "api_key",
-    workspace_id: "ws_123"
-  },
-  {
-    id: "ak_0987654321",
-    created_at: "2024-02-20T14:45:00Z",
-    created_by: {
-      id: "user_456",
-      type: "user"
-    },
-    name: "Production API Key",
-    partial_key_hint: "ak_0987",
-    status: "inactive",
-    type: "api_key",
-    workspace_id: null
-  }
-];
+// In-memory API key store — resets on server restart.
+// TODO: migrate to DynamoDB via Amplify Gen 2 for persistence.
+const apiKeys: APIKey[] = [];
 
 // Helper function to find API key by ID
 function findApiKeyById(id: string): APIKey | undefined {
@@ -112,6 +86,7 @@ router.get("/", (_req: Request, res: Response) => {
 
 // POST /api/organizations/api_keys - Create a new API key
 router.post("/", (req: Request, res: Response) => {
+  const authReq = req as import("../middleware/requireAuth").AuthenticatedRequest;
   const { name, workspace_id }: CreateAPIKeyRequest = req.body;
 
   if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -129,7 +104,7 @@ router.post("/", (req: Request, res: Response) => {
   const newKey: APIKey = {
     id,
     created_at: new Date().toISOString(),
-    created_by: { id: "user_system", type: "user" },
+    created_by: { id: authReq.uid ?? "unknown", type: "user" },
     name: name.trim(),
     partial_key_hint: partialHint,
     status: "active",

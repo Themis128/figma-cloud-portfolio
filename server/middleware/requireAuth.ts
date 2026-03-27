@@ -7,21 +7,30 @@ export interface AuthenticatedRequest extends Request {
   groups?: string[];
 }
 
-// Cognito JWT verifier — uses env vars for user pool config.
-// Falls back to sandbox values for local development.
-const verifier = CognitoJwtVerifier.create({
-  userPoolId:
-    process.env.COGNITO_USER_POOL_ID ?? "us-east-1_ftPxvHt7n",
-  clientId:
-    process.env.COGNITO_CLIENT_ID ?? null,
-  tokenUse: "id",
-});
+// Cognito JWT verifier — requires env vars for user pool config.
+// Fails loudly if not configured (no silent fallback to sandbox pool).
+const userPoolId = process.env.COGNITO_USER_POOL_ID;
+const clientId = process.env.COGNITO_CLIENT_ID ?? null;
+
+if (!userPoolId && process.env.NODE_ENV === "production") {
+  throw new Error("COGNITO_USER_POOL_ID must be set in production");
+}
+
+const verifier = userPoolId
+  ? CognitoJwtVerifier.create({ userPoolId, clientId, tokenUse: "id" })
+  : null;
 
 export async function requireAuth(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  if (!verifier) {
+    // No Cognito configured (local dev without auth) — skip auth
+    next();
+    return;
+  }
+
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
     res.status(401).json({ error: "Missing or invalid authorization header" });

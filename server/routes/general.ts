@@ -1,5 +1,6 @@
 // General utility API routes — ping, health, search, webhook, monitor, docs, upload
 import { Router, Request, Response, NextFunction } from "express";
+import searchIndex from "../data/search-index.json" with { type: "json" };
 
 const router = Router();
 
@@ -38,19 +39,7 @@ router.get("/search", (req: Request, res: Response) => {
     return res.status(400).json({ error: "Query parameter 'q' is required", results: [] });
   }
 
-  // Portfolio content searchable index
-  const content = [
-    { title: "Cloud Architecture", type: "skill", description: "AWS, Azure, multi-cloud environments and migration strategies" },
-    { title: "Cybersecurity", type: "skill", description: "Zero-trust security, CyberArk PAM, Microsoft Sentinel, CISSP" },
-    { title: "Full-Stack Development", type: "skill", description: "React, Next.js, TypeScript, Node.js, Python" },
-    { title: "DevOps & Infrastructure", type: "skill", description: "Cisco ACI/UCS, VMware vSphere, CI/CD pipelines" },
-    { title: "About Themistoklis", type: "page", description: "Cloud Architect & Cybersecurity Specialist with 15+ years IT expertise" },
-    { title: "Contact", type: "page", description: "Get in touch for consulting, collaboration, or career opportunities" },
-    { title: "Performance", type: "page", description: "Live web performance metrics and optimization showcase" },
-    { title: "AI Agents", type: "page", description: "AI agent templates and workflow builder" },
-    { title: "Estarta Solutions", type: "experience", description: "Systems and Network Engineer — Cisco UCS, HyperFlex, ACI" },
-    { title: "Cosmos Business Systems", type: "experience", description: "IT Support Engineer — Azure AD, Microsoft 365, Intune" },
-  ];
+  const content = searchIndex;
 
   const results = content.filter(
     (item) =>
