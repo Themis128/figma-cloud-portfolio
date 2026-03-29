@@ -1,18 +1,30 @@
 import { Globe as GlobeIcon, Linkedin, Mail } from "lucide-react";
 import type { Metadata } from "next";
-import AIBrain from "@/components/AIBrain";
-import { AnimatedSection } from "@/components/AnimatedSection";
+import dynamic from "next/dynamic";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
-import { HoverButton, HoverIcon } from "@/components/HoverAnimations";
-import CyberQuiz from "@/components/interactive/CyberQuiz";
-import GitHubHeatmap from "@/components/interactive/GitHubHeatmap";
-import SiteStats from "@/components/interactive/SiteStats";
-import TerminalHint from "@/components/interactive/TerminalHint";
-import Testimonials from "@/components/interactive/Testimonials";
-import TypeWriter from "@/components/interactive/TypeWriter";
 import Navigation from "@/components/Navigation";
 import QuickContactForm from "@/components/QuickContactForm";
+
+const AIBrain = dynamic(() => import("@/components/AIBrain"));
+const TypeWriter = dynamic(
+  () => import("@/components/interactive/TypeWriter"),
+);
+const TerminalHint = dynamic(
+  () => import("@/components/interactive/TerminalHint"),
+);
+const SiteStats = dynamic(
+  () => import("@/components/interactive/SiteStats"),
+);
+const GitHubHeatmap = dynamic(
+  () => import("@/components/interactive/GitHubHeatmap"),
+);
+const Testimonials = dynamic(
+  () => import("@/components/interactive/Testimonials"),
+);
+const CyberQuiz = dynamic(
+  () => import("@/components/interactive/CyberQuiz"),
+);
 
 const SITE_URL = "https://www.baltzakisthemis.com";
 
@@ -104,67 +116,51 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <AnimatedSection
-                delay={0.4}
-                className="flex flex-col sm:flex-row gap-3 md:gap-4"
-              >
-                <HoverButton>
-                  <a
-                    href="/contact/"
-                    className="group relative px-8 sm:px-10 py-3.5 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30 uppercase text-sm tracking-wider text-center min-h-11 flex items-center justify-center"
-                  >
-                    <span className="relative z-10">Get In Touch</span>
-                  </a>
-                </HoverButton>
-                <HoverButton>
-                  <a
-                    href="/about/"
-                    className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/40 hover:border-cyan-400 text-foreground/80 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
-                  >
-                    <span className="relative z-10">Learn More</span>
-                    <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/10 transition-colors duration-300 rounded-md" />
-                  </a>
-                </HoverButton>
-              </AnimatedSection>
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                <a
+                  href="/contact/"
+                  className="group relative px-8 sm:px-10 py-3.5 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30 hover:scale-105 uppercase text-sm tracking-wider text-center min-h-11 flex items-center justify-center"
+                >
+                  <span className="relative z-10">Get In Touch</span>
+                </a>
+                <a
+                  href="/about/"
+                  className="group relative px-6 sm:px-8 py-3 bg-transparent border-2 border-cyan-400/40 hover:border-cyan-400 text-foreground/80 hover:text-foreground rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:scale-105 uppercase text-xs sm:text-sm tracking-wider font-medium text-center min-h-11 flex items-center justify-center"
+                >
+                  <span className="relative z-10">Learn More</span>
+                  <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/10 transition-colors duration-300 rounded-md" />
+                </a>
+              </div>
 
               {/* Social media icons */}
-              <AnimatedSection
-                delay={0.5}
-                className="flex items-center justify-center sm:justify-start gap-4 md:gap-6 pt-6 md:pt-8"
-              >
-                <HoverIcon>
-                  <a
-                    href="https://www.linkedin.com/in/baltzakis-themis"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-foreground/70 hover:text-cyan-400 transition-colors duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </a>
-                </HoverIcon>
-                <HoverIcon>
-                  <a
-                    href="mailto:baltzakis.themis@gmail.com"
-                    className="text-foreground/70 hover:text-cyan-400 transition-colors duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
-                    aria-label="Email"
-                  >
-                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </a>
-                </HoverIcon>
-                <HoverIcon>
-                  <a
-                    href="https://www.baltzakisthemis.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-foreground/70 hover:text-cyan-400 transition-colors duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
-                    aria-label="Portfolio website"
-                  >
-                    <GlobeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="sr-only">Portfolio website</span>
-                  </a>
-                </HoverIcon>
-              </AnimatedSection>
+              <div className="flex items-center justify-center sm:justify-start gap-4 md:gap-6 pt-6 md:pt-8">
+                <a
+                  href="https://www.linkedin.com/in/baltzakis-themis"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-cyan-400 hover:scale-110 transition-all duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
+                </a>
+                <a
+                  href="mailto:baltzakis.themis@gmail.com"
+                  className="text-foreground/70 hover:text-cyan-400 hover:scale-110 transition-all duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
+                  aria-label="Email"
+                >
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+                </a>
+                <a
+                  href="https://www.baltzakisthemis.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-cyan-400 hover:scale-110 transition-all duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"
+                  aria-label="Portfolio website"
+                >
+                  <GlobeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="sr-only">Portfolio website</span>
+                </a>
+              </div>
             </section>
 
             {/* Right side - AI Brain visualization (deferred for LCP) */}
@@ -185,9 +181,10 @@ export default function HomePage() {
       <section
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
         aria-label="Core expertise"
+        style={{ contain: "layout" }}
       >
         <div className="max-w-3xl mx-auto">
-          <AnimatedSection delay={0.55} className="text-center space-y-4">
+          <div className="text-center space-y-4">
             <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
               Core Expertise
             </h2>
@@ -207,7 +204,7 @@ export default function HomePage() {
               about continuous learning and adopting emerging technologies to
               solve real-world problems.
             </p>
-          </AnimatedSection>
+          </div>
         </div>
       </section>
 
@@ -215,11 +212,10 @@ export default function HomePage() {
       <section
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
         aria-label="Site statistics"
+        style={{ contain: "layout" }}
       >
         <div className="max-w-3xl mx-auto">
-          <AnimatedSection delay={0.6}>
-            <SiteStats />
-          </AnimatedSection>
+          <SiteStats />
         </div>
       </section>
 
@@ -227,17 +223,16 @@ export default function HomePage() {
       <section
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
         aria-label="GitHub activity"
+        style={{ contain: "layout" }}
       >
         <div className="max-w-3xl mx-auto">
-          <AnimatedSection delay={0.65} className="text-center mb-4">
+          <div className="text-center mb-4">
             <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
               Open Source
             </h2>
             <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
-          </AnimatedSection>
-          <AnimatedSection delay={0.7}>
-            <GitHubHeatmap />
-          </AnimatedSection>
+          </div>
+          <GitHubHeatmap />
         </div>
       </section>
 
@@ -245,17 +240,16 @@ export default function HomePage() {
       <section
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
         aria-label="Testimonials"
+        style={{ contain: "layout" }}
       >
         <div className="max-w-2xl mx-auto">
-          <AnimatedSection delay={0.7} className="text-center mb-4">
+          <div className="text-center mb-4">
             <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
               What Colleagues Say
             </h2>
             <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
-          </AnimatedSection>
-          <AnimatedSection delay={0.75}>
-            <Testimonials />
-          </AnimatedSection>
+          </div>
+          <Testimonials />
         </div>
       </section>
 
@@ -263,9 +257,10 @@ export default function HomePage() {
       <section
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-12 md:pb-16"
         aria-label="Challenge quiz"
+        style={{ contain: "layout" }}
       >
         <div className="max-w-xl mx-auto">
-          <AnimatedSection delay={0.75} className="text-center mb-4">
+          <div className="text-center mb-4">
             <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
               Test Your Knowledge
             </h2>
@@ -273,10 +268,8 @@ export default function HomePage() {
               A quick cybersecurity &amp; cloud quiz. How do you score?
             </p>
             <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto mt-2" />
-          </AnimatedSection>
-          <AnimatedSection delay={0.8}>
-            <CyberQuiz />
-          </AnimatedSection>
+          </div>
+          <CyberQuiz />
         </div>
       </section>
 
@@ -285,14 +278,15 @@ export default function HomePage() {
         id="quick-contact"
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 pb-16 md:pb-24"
         aria-label="Quick contact form"
+        style={{ contain: "layout" }}
       >
         <div className="max-w-lg mx-auto">
-          <AnimatedSection delay={0.85} className="text-center mb-6">
+          <div className="text-center mb-6">
             <h2 className="text-foreground/60 uppercase tracking-[0.15em] text-sm font-mono mb-2">
               Quick Contact
             </h2>
             <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
-          </AnimatedSection>
+          </div>
           <QuickContactForm />
         </div>
       </section>

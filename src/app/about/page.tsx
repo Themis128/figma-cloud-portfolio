@@ -7,16 +7,22 @@ import {
   Shield,
 } from "lucide-react";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { AnimatedSection } from "@/components/AnimatedSection";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
-import { HoverCard } from "@/components/HoverAnimations";
-import BadgesGrid from "@/components/interactive/BadgesGrid";
-import CountUpStats from "@/components/interactive/CountUpStats";
-import SkillsRadar from "@/components/interactive/SkillsRadar";
 import Navigation from "@/components/Navigation";
 import { SectionNav } from "@/components/SectionNav";
+
+const SkillsRadar = dynamic(
+  () => import("@/components/interactive/SkillsRadar"),
+);
+const CountUpStats = dynamic(
+  () => import("@/components/interactive/CountUpStats"),
+);
+const BadgesGrid = dynamic(
+  () => import("@/components/interactive/BadgesGrid"),
+);
 
 const SECTIONS = [
   { id: "hero", label: "Overview" },
@@ -61,7 +67,7 @@ export default function AboutPage() {
       <main id="main-content" className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 md:py-20">
           {/* Hero Section */}
-          <div id="hero">
+          <div id="hero" style={{ contain: "layout" }}>
           <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 mb-12 md:mb-20">
             <div className="space-y-3 md:space-y-4">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground uppercase tracking-wider">
@@ -69,7 +75,7 @@ export default function AboutPage() {
                 </h1>
                 <div className="w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
             </div>
-            <AnimatedSection delay={0.2}>
+            <div>
               <p className="text-cyan-400 text-lg sm:text-xl md:text-2xl font-semibold tracking-wide">
                 IT Network Engineer
               </p>
@@ -78,20 +84,19 @@ export default function AboutPage() {
                 in network infrastructure, Cisco systems, and Fortinet security
                 solutions.
               </p>
-            </AnimatedSection>
+            </div>
           </div>
           </div>
 
           {/* Count-Up Stats */}
-          <AnimatedSection delay={0.25} className="mb-12 md:mb-20">
+          <div className="mb-12 md:mb-20" style={{ contain: "layout" }}>
             <CountUpStats />
-          </AnimatedSection>
+          </div>
 
           {/* Main Content */}
           <div className="max-w-6xl mx-auto space-y-16">
             {/* Summary */}
-            <div id="summary">
-            <AnimatedSection delay={0.1}>
+            <div id="summary" style={{ contain: "layout" }}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
                   <Briefcase className="w-8 h-8 text-cyan-400" />
@@ -128,66 +133,56 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-            </AnimatedSection>
             </div>
 
             {/* Key Focus Areas */}
-            <div id="focus-areas">
-            <AnimatedSection delay={0.2}>
+            <div id="focus-areas" style={{ contain: "layout" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                <HoverCard>
-                  <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-border text-center hover:border-cyan-400/50 hover:bg-foreground/10 transition-all duration-300 group min-h-50 flex flex-col justify-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto">
-                      <Network className="w-6 h-6 md:w-8 md:h-8 text-cyan-400" />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">
-                      Network Infrastructure
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Cisco Systems, Data Center Management & Enterprise
-                      Networking
-                    </p>
+                <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-border text-center hover:border-cyan-400/50 hover:bg-foreground/10 hover:scale-[1.02] transition-all duration-300 group min-h-50 flex flex-col justify-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto">
+                    <Network className="w-6 h-6 md:w-8 md:h-8 text-cyan-400" />
                   </div>
-                </HoverCard>
-                <HoverCard>
-                  <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-border text-center hover:border-cyan-400/50 hover:bg-foreground/10 transition-all duration-300 group min-h-50 flex flex-col justify-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto">
-                      <Shield className="w-6 h-6 md:w-8 md:h-8 text-cyan-400" />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">
-                      Network Security
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Fortinet Firewalls, Identity Management & Threat
-                      Protection
-                    </p>
+                  <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">
+                    Network Infrastructure
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Cisco Systems, Data Center Management & Enterprise
+                    Networking
+                  </p>
+                </div>
+                <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-border text-center hover:border-cyan-400/50 hover:bg-foreground/10 hover:scale-[1.02] transition-all duration-300 group min-h-50 flex flex-col justify-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto">
+                    <Shield className="w-6 h-6 md:w-8 md:h-8 text-cyan-400" />
                   </div>
-                </HoverCard>
-                <HoverCard>
-                  <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-border text-center hover:border-cyan-400/50 hover:bg-foreground/10 transition-all duration-300 group min-h-50 flex flex-col justify-center sm:col-span-2 lg:col-span-1">
-                    <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto">
-                      <Server className="w-6 h-6 md:w-8 md:h-8 text-cyan-400" />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">
-                      Cloud & Identity
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Azure AD, Microsoft 365, AWS & Multi-cloud Environments
-                    </p>
+                  <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">
+                    Network Security
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Fortinet Firewalls, Identity Management & Threat
+                    Protection
+                  </p>
+                </div>
+                <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-border text-center hover:border-cyan-400/50 hover:bg-foreground/10 hover:scale-[1.02] transition-all duration-300 group min-h-50 flex flex-col justify-center sm:col-span-2 lg:col-span-1">
+                  <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-cyan-400/10 rounded-full mb-4 md:mb-6 group-hover:bg-cyan-400/20 transition-colors mx-auto">
+                    <Server className="w-6 h-6 md:w-8 md:h-8 text-cyan-400" />
                   </div>
-                </HoverCard>
+                  <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">
+                    Cloud & Identity
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Azure AD, Microsoft 365, AWS & Multi-cloud Environments
+                  </p>
+                </div>
               </div>
-            </AnimatedSection>
             </div>
 
             {/* Skills Radar */}
-            <AnimatedSection delay={0.25}>
+            <div style={{ contain: "layout" }}>
               <SkillsRadar />
-            </AnimatedSection>
+            </div>
 
             {/* Skills & Certifications */}
-            <div id="skills">
-            <AnimatedSection delay={0.3}>
+            <div id="skills" style={{ contain: "layout" }}>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-foreground/5 backdrop-blur-sm rounded-xl p-8 border border-border hover:border-cyan-400/30 transition-all duration-300">
                   <div className="flex items-center gap-3 mb-6">
@@ -253,12 +248,10 @@ export default function AboutPage() {
                   </ul>
                 </div>
               </div>
-            </AnimatedSection>
             </div>
 
             {/* Credly Badges */}
-            <div id="badges">
-            <AnimatedSection delay={0.35}>
+            <div id="badges" style={{ contain: "layout" }}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold text-foreground flex items-center gap-3">
@@ -280,11 +273,10 @@ export default function AboutPage() {
                 </p>
                 <BadgesGrid />
               </div>
-            </AnimatedSection>
             </div>
 
             {/* Languages */}
-            <AnimatedSection delay={0.3}>
+            <div style={{ contain: "layout" }}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <h3 className="text-2xl font-bold text-foreground mb-6">
                   Languages
@@ -304,11 +296,10 @@ export default function AboutPage() {
                   </div>
                 </div>
               </div>
-            </AnimatedSection>
+            </div>
 
             {/* Honors & Awards */}
-            <div id="awards">
-            <AnimatedSection delay={0.4}>
+            <div id="awards" style={{ contain: "layout" }}>
               <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
                 <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
                   <Award className="w-8 h-8 text-cyan-400" />
@@ -337,20 +328,17 @@ export default function AboutPage() {
                   </li>
                 </ul>
               </div>
-            </AnimatedSection>
             </div>
 
             {/* Call to Action */}
-            <AnimatedSection delay={0.5}>
-              <div className="text-center mt-16">
-                <Link
-                  href="/contact/"
-                  className="inline-block px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-background rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium"
-                >
-                  Get In Touch
-                </Link>
-              </div>
-            </AnimatedSection>
+            <div className="text-center mt-16">
+              <Link
+                href="/contact/"
+                className="inline-block px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-background rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 uppercase text-sm tracking-wider font-medium"
+              >
+                Get In Touch
+              </Link>
+            </div>
           </div>
         </div>
       </main>

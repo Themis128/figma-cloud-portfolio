@@ -123,14 +123,16 @@ function MdxTd(props: ComponentPropsWithoutRef<"td">) {
 }
 
 // MDX images use <img> since next/image requires static dimensions
-// which aren't available from MDX content at build time
+// which aren't available from MDX content at build time.
+// aspect-ratio + w-full prevents CLS while images load.
 function MdxImg({ alt, ...props }: ComponentPropsWithoutRef<"img">) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt={alt ?? "Blog content image"}
-      className="mb-4 rounded-lg border border-border/20"
+      className="mb-4 rounded-lg border border-border/20 w-full h-auto"
       loading="lazy"
+      decoding="async"
       {...props}
     />
   );
