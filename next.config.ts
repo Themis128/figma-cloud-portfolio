@@ -175,25 +175,8 @@ const nextConfig: NextConfig = {
     // Velite build plugin — runs content compilation before webpack
     config.plugins.push(new VeliteWebpackPlugin());
 
-    // Optimize bundle size
-    if (!dev) {
-      config.optimization.splitChunks = {
-        chunks: "all",
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "vendors",
-            chunks: "all",
-          },
-          common: {
-            name: "common",
-            minChunks: 2,
-            chunks: "all",
-            enforce: true,
-          },
-        },
-      };
-    }
+    // Let Next.js handle splitChunks — its defaults split vendor code
+    // granularly for better parallel loading and cache efficiency.
 
     // Add SVG support
     config.module.rules.push({
