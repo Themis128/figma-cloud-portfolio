@@ -1,26 +1,28 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import dynamic from "next/dynamic";
 import Script from "next/script";
 import "./globals.css";
-import AccessibilityEnhancer from "@/components/AccessibilityEnhancer";
 import AmplifyProvider from "@/components/AmplifyProvider";
-import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-import ScrollProgress from "@/components/interactive/ScrollProgress";
 import { LazyInteractive } from "@/components/LazyInteractive";
 import { MotionProvider } from "@/components/MotionProvider";
-import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { Providers } from "@/components/providers";
-
-import { PWAInstallButton } from "@/components/PWAInstallButton";
-import { PWAUpdateNotification } from "@/components/PWAUpdateNotification";
-import { RouteProgressBar } from "@/components/RouteProgressBar";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import SentryInit from "@/components/SentryInit";
-import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { DefaultStructuredData } from "@/components/StructuredData";
 import { AuthProvider } from "@/contexts/AuthContext";
+
+// Non-critical client components — code-split from initial bundle
+const AccessibilityEnhancer = dynamic(() => import("@/components/AccessibilityEnhancer"));
+const ScrollProgress = dynamic(() => import("@/components/interactive/ScrollProgress"));
+const RouteProgressBar = dynamic(() => import("@/components/RouteProgressBar").then(m => ({ default: m.RouteProgressBar })));
+const ScrollToTop = dynamic(() => import("@/components/ScrollToTop").then(m => ({ default: m.ScrollToTop })));
+const CookieConsentBanner = dynamic(() => import("@/components/CookieConsentBanner").then(m => ({ default: m.CookieConsentBanner })));
+const OfflineIndicator = dynamic(() => import("@/components/OfflineIndicator").then(m => ({ default: m.OfflineIndicator })));
+const PWAInstallButton = dynamic(() => import("@/components/PWAInstallButton").then(m => ({ default: m.PWAInstallButton })));
+const PWAUpdateNotification = dynamic(() => import("@/components/PWAUpdateNotification").then(m => ({ default: m.PWAUpdateNotification })));
+const ServiceWorkerRegistration = dynamic(() => import("@/components/ServiceWorkerRegistration").then(m => ({ default: m.ServiceWorkerRegistration })));
+const SentryInit = dynamic(() => import("@/components/SentryInit"));
 
 const inter = Inter({
   subsets: ["latin"],
