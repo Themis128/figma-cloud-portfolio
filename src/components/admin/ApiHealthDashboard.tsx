@@ -48,9 +48,8 @@ const ENDPOINTS: EndpointDef[] = [
     service: "Cal.com",
     description: "Create a new booking with Google Meet link",
     healthCheck: {
-      method: "POST",
+      method: "OPTIONS",
       path: "/api/booking/create",
-      body: JSON.stringify({}),
     },
   },
   {
@@ -61,9 +60,8 @@ const ENDPOINTS: EndpointDef[] = [
     service: "AWS Bedrock",
     description: "AI assistant powered by Claude 3.5 Haiku",
     healthCheck: {
-      method: "POST",
+      method: "OPTIONS",
       path: "/api/chat",
-      body: JSON.stringify({ message: "ping", history: [] }),
     },
   },
   {
@@ -83,7 +81,7 @@ const ENDPOINTS: EndpointDef[] = [
     service: "Lambda",
     description: "API key management (CRUD)",
     requiresAuth: true,
-    healthCheck: { method: "GET", path: "/api/organizations/api_keys" },
+    healthCheck: { method: "OPTIONS", path: "/api/organizations/api_keys" },
   },
   {
     id: "contact",
@@ -93,13 +91,8 @@ const ENDPOINTS: EndpointDef[] = [
     service: "reCAPTCHA + SES",
     description: "Contact form submission with reCAPTCHA validation",
     healthCheck: {
-      method: "POST",
+      method: "OPTIONS",
       path: "/api/contact",
-      body: JSON.stringify({
-        name: "healthcheck",
-        email: "hc@test.com",
-        message: "healthcheck",
-      }),
     },
   },
 
@@ -303,7 +296,7 @@ export default function ApiHealthDashboard() {
         setStatuses((prev) => ({
           ...prev,
           [ep.id]: {
-            state: res.ok || res.status === 302 || res.status === 400 || (ep.requiresAuth && res.status === 401) ? "healthy" : "degraded",
+            state: res.ok || res.status === 204 || res.status === 302 ? "healthy" : "degraded",
             statusCode: res.status,
             responseTime: time,
             lastChecked: new Date(),

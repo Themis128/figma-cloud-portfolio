@@ -27,7 +27,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 | Performance monitoring | web-vitals library                                |
 | Real-time features     | Socket.IO                                         |
 | 3D visualizations      | Three.js + @react-three/fiber v9 + @react-three/drei v10 |
-| Blog / Content         | Velite (MDX to typed JSON), rehype-pretty-code      |
+| Blog / Content         | Velite (MDX to typed JSON), rehype-pretty-code, Keystatic CMS (dev-only) |
 | Testing                | Playwright 1.58+ E2E, Vitest 4 unit tests         |
 
 ---
@@ -67,6 +67,7 @@ portfolio-nextjs/
 │   └── styles/               # Global styles
 ├── content/
 │   └── blog/                # MDX blog posts (processed by Velite at build time)
+├── keystatic.config.ts        # Keystatic CMS collection config (local storage mode)
 ├── velite.config.ts           # Velite content schema (Zod) + MDX pipeline config
 ├── .velite/                   # Generated typed content (gitignored)
 ├── server/                   # Express dev server (port 3001), all API routes
@@ -97,8 +98,8 @@ The app uses the Next.js App Router Server/Client component model:
 | `/projects`    | `projects/page.tsx`    | Portfolio projects gallery + live GitHub repos (via `GitHubRepos` component) |
 | `/resume`      | `resume/page.tsx`      | Educational resume & career guide (ATS, keywords, tips) |
 | `/agents`      | `agents/page.tsx`      | Educational AI agents guide with Blockly drag-and-drop builder + interactive builder |
-| `/blog`        | `blog/page.tsx`        | Blog listing: MDX posts via Velite, tags, reading time  |
-| `/blog/[slug]` | `blog/[slug]/page.tsx` | Individual blog post with syntax highlighting    |
+| `/blog`        | `blog/page.tsx`        | Blog listing: search, tag filtering, featured post, post grid |
+| `/blog/[slug]` | `blog/[slug]/page.tsx` | Blog post with TOC sidebar, social share, author bio, related posts |
 | `/contact`     | `contact/page.tsx`     | Server component wrapper with metadata; renders `ContactPage` client component |
 | `/settings`    | `settings/page.tsx`    | Server component wrapper with metadata; renders `SettingsPage` client component |
 | `/performance` | `performance/page.tsx` | **Public performance showcase** (see below)     |
@@ -339,8 +340,14 @@ Interactive components enhance user engagement across the site. Most are Client 
 
 | Component            | Page               | Purpose                                                                                  |
 | -------------------- | ------------------ | ---------------------------------------------------------------------------------------- |
-| `ReadingProgress`    | Blog posts (`/blog/[slug]`) | Sticky progress bar with estimated reading time for blog posts                  |
-| `BlogReactions`      | Blog posts (`/blog/[slug]`) | Per-post helpful/interesting/bookmark reactions persisted in `localStorage`      |
+| `BlogFilterBar`      | Blog listing (`/blog`) | Search input + clickable tag filter pills with counts                              |
+| `BlogPostGrid`       | Blog listing (`/blog`) | Client-side filtered post grid with featured post, search, and tag filtering       |
+| `TableOfContents`    | Blog posts (`/blog/[slug]`) | Sticky sidebar TOC (xl+ screens) with IntersectionObserver active heading tracking |
+| `RelatedPosts`       | Blog posts (`/blog/[slug]`) | Tag-based related articles (up to 3) below post content                            |
+| `SocialShare`        | Blog posts (`/blog/[slug]`) | Share to X, LinkedIn, or copy link                                                 |
+| `AuthorBio`          | Blog posts (`/blog/[slug]`) | Author card with avatar initials, bio, and social links (GitHub, LinkedIn, website)|
+| `ReadingProgress`    | Blog posts (`/blog/[slug]`) | Sticky progress bar with estimated reading time for blog posts                     |
+| `BlogReactions`      | Blog posts (`/blog/[slug]`) | Per-post helpful/interesting/bookmark reactions persisted in `localStorage`         |
 
 ### Page-Specific Components
 

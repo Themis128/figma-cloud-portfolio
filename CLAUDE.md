@@ -15,7 +15,8 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 - **State**: TanStack Query v5
 - **Backend**: AWS Lambda (production), Amplify Gen 2 (Cognito + AppSync + DynamoDB), Express dev server (local, port 3001)
 - **Chatbot**: AWS Bedrock (Claude 3.5 Haiku) via Express route — knowledge base in `server/bot/knowledge/`
-- **Blog**: Velite (MDX → typed JSON at build time), rehype-pretty-code for syntax highlighting
+- **Blog**: Velite (MDX → typed JSON at build time), rehype-pretty-code for syntax highlighting, Keystatic CMS (dev-only admin UI)
+- **CMS**: Keystatic (local mode) — `pnpm cms` launches admin at `/keystatic` for creating/editing posts, uploading images
 - **Testing**: Playwright 1.58+ E2E, Vitest unit tests
 - **Package Manager**: pnpm
 
@@ -26,6 +27,7 @@ src/
   app/              # App Router pages and layouts
   components/
     admin/          # Admin dashboard components (10 tabs)
+    blog/           # Blog UI components (filter bar, post grid, TOC, related posts, social share, author bio)
     interactive/    # Interactive engagement components (13 in folder + CommandPalette in layout)
     performance/    # Performance page components
     ui/             # shadcn/ui primitives (Radix-based)

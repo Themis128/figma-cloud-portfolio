@@ -3,7 +3,8 @@ import { expect, test } from "@playwright/test";
 /**
  * Blog — Listing and Post Page Tests
  *
- * Verifies the blog listing page and individual post pages.
+ * Verifies the blog listing page, individual post pages, search/filter,
+ * table of contents, social sharing, author bio, and related posts.
  */
 
 test.describe("Blog — Listing Page", () => {
@@ -53,11 +54,6 @@ test.describe("Blog — Listing Page", () => {
     ).toBeVisible();
   });
 
-  test("should display topics section with tag counts", async ({ page }) => {
-    const topicsHeading = page.getByRole("heading", { name: "Topics" });
-    await expect(topicsHeading).toBeVisible();
-  });
-
   test("should display featured latest post section", async ({ page }) => {
     await expect(page.getByText("Latest Post")).toBeVisible();
   });
@@ -79,6 +75,60 @@ test.describe("Blog — Listing Page", () => {
     // Should be on a post page
     expect(page.url()).toContain("/blog/");
     await expect(page.locator("h1")).toContainText(postTitle ?? "");
+  });
+});
+
+test.describe("Blog — Search & Filtering", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/blog/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should display search input", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("Search articles...");
+    await expect(searchInput).toBeVisible();
+  });
+
+  test("should display tag filter pills", async ({ page }) => {
+    // Tag pills are buttons within the filter bar
+    const tagButtons = page.locator("button").filter({ hasText: /\w+/ });
+    const count = await tagButtons.count();
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should filter posts by search query", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("Search articles...");
+    await searchInput.fill("Zero Trust");
+    // Should show filtered results count
+    await expect(page.getByText(/article[s]? found/)).toBeVisible();
+  });
+
+  test("should show clear button when search has text", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("Search articles...");
+    await searchInput.fill("test");
+    const clearButton = page.getByLabel("Clear search");
+    await expect(clearButton).toBeVisible();
+  });
+
+  test("should clear search when clear button is clicked", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("Search articles...");
+    await searchInput.fill("test query");
+    await page.getByLabel("Clear search").click();
+    await expect(searchInput).toHaveValue("");
+  });
+
+  test("should toggle tag filter on click", async ({ page }) => {
+    // Find the first tag button and click it
+    const firstTag = page.locator("button").filter({ hasText: /^(?!.*Read).*\w+/ }).first();
+    await firstTag.click();
+    // Active tag should have cyan styling
+    await expect(firstTag).toHaveClass(/text-cyan-400/);
+  });
+
+  test("should show empty state when no posts match", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("Search articles...");
+    await searchInput.fill("xyznonexistentquery12345");
+    await expect(page.getByText("No articles match your search")).toBeVisible();
   });
 });
 
@@ -184,6 +234,123 @@ test.describe("Blog — Post Page", () => {
       }
     }
     expect(foundArticle).toBe(true);
+  });
+});
+
+test.describe("Blog — Social Share", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/blog/building-resilient-cloud-architectures/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should display share buttons", async ({ page }) => {
+    await expect(page.getByText("Share")).toBeVisible();
+  });
+
+  test("should display X share button", async ({ page }) => {
+    const xButton = page.getByLabel("Share on X");
+    await expect(xButton).toBeVisible();
+  });
+
+  test("should display LinkedIn share button", async ({ page }) => {
+    const linkedinButton = page.getByLabel("Share on LinkedIn");
+    await expect(linkedinButton).toBeVisible();
+  });
+
+  test("should display copy link button", async ({ page }) => {
+    const copyButton = page.getByLabel("Copy link");
+    await expect(copyButton).toBeVisible();
+  });
+});
+
+test.describe("Blog — Author Bio", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/blog/building-resilient-cloud-architectures/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should display author name in bio", async ({ page }) => {
+    const bio = page.locator("section").filter({ hasText: "Cloud Architect & Cybersecurity Specialist" });
+    await expect(bio.first()).toBeVisible();
+  });
+
+  test("should display author description", async ({ page }) => {
+    await expect(
+      page.getByText("Building secure, scalable cloud infrastructure"),
+    ).toBeVisible();
+  });
+
+  test("should display social links in author bio", async ({ page }) => {
+    const githubLink = page.getByLabel("GitHub");
+    await expect(githubLink.first()).toBeVisible();
+    const linkedinLink = page.getByLabel("LinkedIn");
+    await expect(linkedinLink.first()).toBeVisible();
+  });
+});
+
+test.describe("Blog — Table of Contents", () => {
+  // TOC only appears on xl+ screens (1280px+)
+  test.use({ viewport: { width: 1400, height: 900 } });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/blog/zero-trust-network-security/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should display table of contents on desktop", async ({ page }) => {
+    const toc = page.getByLabel("Table of contents");
+    await expect(toc).toBeVisible();
+  });
+
+  test("should display 'On this page' heading", async ({ page }) => {
+    await expect(page.getByText("On this page")).toBeVisible();
+  });
+
+  test("should list article headings in TOC", async ({ page }) => {
+    const toc = page.getByLabel("Table of contents");
+    // The zero-trust post has multiple h2 headings
+    const links = toc.locator("a");
+    const count = await links.count();
+    expect(count).toBeGreaterThanOrEqual(2);
+  });
+
+  test("should scroll to heading when TOC link is clicked", async ({ page }) => {
+    const toc = page.getByLabel("Table of contents");
+    const firstLink = toc.locator("a").first();
+    await firstLink.click();
+    // Wait for smooth scroll
+    await page.waitForTimeout(500);
+    // The heading should now be near the top of the viewport
+    const headingId = await firstLink.getAttribute("href");
+    if (headingId) {
+      const heading = page.locator(headingId);
+      await expect(heading).toBeInViewport();
+    }
+  });
+});
+
+test.describe("Blog — Related Posts", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/blog/building-resilient-cloud-architectures/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("should display related articles section", async ({ page }) => {
+    await expect(page.getByText("Related Articles")).toBeVisible();
+  });
+
+  test("should display related post cards with titles", async ({ page }) => {
+    const relatedSection = page.locator("section").filter({ hasText: "Related Articles" });
+    const links = relatedSection.locator("a");
+    const count = await links.count();
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should link to other blog posts", async ({ page }) => {
+    const relatedSection = page.locator("section").filter({ hasText: "Related Articles" });
+    const firstLink = relatedSection.locator("a").first();
+    const href = await firstLink.getAttribute("href");
+    expect(href).toContain("/blog/");
   });
 });
 
