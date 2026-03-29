@@ -15,11 +15,9 @@ import Navigation from "@/components/Navigation";
 
 const ReadingProgress = dynamic(
   () => import("@/components/interactive/ReadingProgress"),
-  { ssr: false },
 );
 const BlogReactions = dynamic(
   () => import("@/components/interactive/BlogReactions"),
-  { ssr: false },
 );
 import type { PostSummary } from "@/types/blog";
 
