@@ -3,14 +3,17 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import "./globals.css";
-import AmplifyProvider from "@/components/AmplifyProvider";
 import Footer from "@/components/Footer";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { LazyInteractive } from "@/components/LazyInteractive";
 import { MotionProvider } from "@/components/MotionProvider";
 import { Providers } from "@/components/providers";
 import { DefaultStructuredData } from "@/components/StructuredData";
-import { AuthProvider } from "@/contexts/AuthContext";
+
+// AmplifyProvider + AuthProvider deferred — only /admin uses auth.
+// They're loaded in src/app/admin/layout.tsx instead.
+const AmplifyProvider = dynamic(() => import("@/components/AmplifyProvider"));
+const AuthProvider = dynamic(() => import("@/contexts/AuthContext").then(m => ({ default: m.AuthProvider })));
 
 // Non-critical client components — code-split from initial bundle
 const AccessibilityEnhancer = dynamic(() => import("@/components/AccessibilityEnhancer"));

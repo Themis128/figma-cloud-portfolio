@@ -15,20 +15,18 @@ if (SENTRY_DSN) {
     release:
       process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0",
 
-    // Performance — 100% sampling for low-traffic site (~127 txns/week)
-    tracesSampleRate: 1.0,
+    // Disable performance tracing — web-vitals library already captures CWV
+    // for the /performance page. Removing browserTracingIntegration saves ~150-200KB.
+    tracesSampleRate: 0,
 
-    // Session Replay
+    // Session Replay (lazy-loaded below, not in initial bundle)
     replaysSessionSampleRate:
       process.env.NODE_ENV === "production" ? 0.1 : 1.0,
     replaysOnErrorSampleRate: 1.0,
 
     integrations: [
-      Sentry.browserTracingIntegration({
-        // Instrument page load and navigation spans automatically
-        enableInp: true,
-      }),
-      // Replay deferred: loaded lazily after page is interactive (~94KB saved from initial bundle)
+      // browserTracingIntegration removed — saves ~150-200KB from initial bundle.
+      // CWV are captured by web-vitals + usePerformanceMonitoring instead.
     ],
 
     // Filter noisy errors that aren't actionable

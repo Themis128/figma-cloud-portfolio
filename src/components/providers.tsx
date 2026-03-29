@@ -1,12 +1,15 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import { ThemeProvider } from "next-themes";
 import { type ReactNode, useState } from "react";
-import { Toaster as Sonner } from "sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+// Defer toast renderers — only needed when a toast fires, not on initial render
+const Toaster = dynamic(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
+const Sonner = dynamic(() => import("sonner").then(m => ({ default: m.Toaster })));
 
 interface ProvidersProps {
   children: ReactNode;

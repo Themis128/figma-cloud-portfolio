@@ -1,6 +1,5 @@
 import { build } from "velite";
 import bundleAnalyzer from "@next/bundle-analyzer";
-import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -213,19 +212,9 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-export default withBundleAnalyzer(withSentryConfig(nextConfig, {
-  // Suppress Sentry CLI source map upload warnings (no auth token in static export)
-  silent: true,
-
-  // Disable source map upload — static export has no build-time server
-  disableServerWebpackPlugin: true,
-  disableClientWebpackPlugin: true,
-
-  // Tree-shake Sentry logger and disable auto-instrumentation (webpack only, not Turbopack)
-  webpack: {
-    disableLogger: true,
-    autoInstrumentServerFunctions: false,
-    autoInstrumentMiddleware: false,
-    autoInstrumentAppDirectory: false,
-  },
-}));
+// Sentry: withSentryConfig removed — its webpack-based optimizations are ignored
+// by Turbopack (Next.js 16 default bundler), and the wrapper force-bundles heavy
+// instrumentation (~200KB). Sentry still works via sentry.client.config.ts which
+// calls Sentry.init() directly. Error capturing (reportError, trackInteraction)
+// is the only Sentry feature used by the app.
+export default withBundleAnalyzer(nextConfig);

@@ -1,5 +1,4 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
-import { reportError } from "@/lib/sentry";
 
 interface Props {
   children: ReactNode;
@@ -22,8 +21,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    reportError(error, {
-      componentStack: errorInfo.componentStack ?? "unknown",
+    // Dynamic import to avoid pulling @sentry/nextjs (~500KB) into initial bundle
+    void import("@/lib/sentry").then(({ reportError }) => {
+      reportError(error, {
+        componentStack: errorInfo.componentStack ?? "unknown",
+      });
     });
   }
 
