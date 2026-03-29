@@ -3,17 +3,24 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { posts } from "#site/content";
-import { AnimatedSection } from "@/components/AnimatedSection";
+import dynamic from "next/dynamic";
 import { AuthorBio } from "@/components/blog/AuthorBio";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { SocialShare } from "@/components/blog/SocialShare";
 import { TableOfContents } from "@/components/blog/TableOfContents";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
-import BlogReactions from "@/components/interactive/BlogReactions";
-import ReadingProgress from "@/components/interactive/ReadingProgress";
 import { MdxContent } from "@/components/MdxContent";
 import Navigation from "@/components/Navigation";
+
+const ReadingProgress = dynamic(
+  () => import("@/components/interactive/ReadingProgress"),
+  { ssr: false },
+);
+const BlogReactions = dynamic(
+  () => import("@/components/interactive/BlogReactions"),
+  { ssr: false },
+);
 import type { PostSummary } from "@/types/blog";
 
 const SITE_URL = "https://www.baltzakisthemis.com";
@@ -140,24 +147,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* Article column */}
             <article className="max-w-3xl mx-auto xl:mx-0 flex-1 min-w-0">
               {/* Breadcrumb nav */}
-              <AnimatedSection>
-                <nav className="flex items-center gap-1.5 text-sm text-muted-foreground font-mono mb-8">
-                  <Link
-                    href="/blog/"
-                    className="hover:text-cyan-400 transition-colors"
-                  >
-                    Blog
-                  </Link>
-                  <ChevronRight className="h-3.5 w-3.5" />
-                  <span className="text-foreground/60 truncate max-w-50 sm:max-w-xs">
-                    {post.title}
-                  </span>
-                </nav>
-              </AnimatedSection>
+              <nav className="flex items-center gap-1.5 text-sm text-muted-foreground font-mono mb-8">
+                <Link
+                  href="/blog/"
+                  className="hover:text-cyan-400 transition-colors"
+                >
+                  Blog
+                </Link>
+                <ChevronRight className="h-3.5 w-3.5" />
+                <span className="text-foreground/60 truncate max-w-50 sm:max-w-xs">
+                  {post.title}
+                </span>
+              </nav>
 
               {/* Header */}
-              <AnimatedSection delay={0.1}>
-                <header className="mb-10">
+              <header className="mb-10">
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-5">
                     {post.tags.map((tag) => (
@@ -212,35 +216,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   {/* Divider */}
                   <div className="w-16 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full" />
                 </header>
-              </AnimatedSection>
 
               {/* Content */}
-              <AnimatedSection delay={0.2}>
-                <MdxContent code={post.body} />
-              </AnimatedSection>
+              <MdxContent code={post.body} />
 
               {/* Author Bio */}
-              <AnimatedSection delay={0.25}>
-                <AuthorBio />
-              </AnimatedSection>
+              <AuthorBio />
 
               {/* Reactions */}
-              <AnimatedSection delay={0.25}>
-                <BlogReactions slug={post.slugAsParams} />
-              </AnimatedSection>
+              <BlogReactions slug={post.slugAsParams} />
 
               {/* Related Posts */}
-              <AnimatedSection delay={0.3}>
-                <RelatedPosts
-                  currentSlug={post.slugAsParams}
-                  currentTags={post.tags}
-                  posts={allSummaries}
-                />
-              </AnimatedSection>
+              <RelatedPosts
+                currentSlug={post.slugAsParams}
+                currentTags={post.tags}
+                posts={allSummaries}
+              />
 
               {/* Post Navigation */}
-              <AnimatedSection delay={0.3}>
-                <footer className="mt-16 pt-8 border-t border-border/20 space-y-6">
+              <footer className="mt-16 pt-8 border-t border-border/20 space-y-6">
                   {(newer ?? older) && (
                     <div className="grid sm:grid-cols-2 gap-4">
                       {older && (
@@ -284,7 +278,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     </Link>
                   </div>
                 </footer>
-              </AnimatedSection>
             </article>
 
             {/* TOC sidebar (desktop only) */}

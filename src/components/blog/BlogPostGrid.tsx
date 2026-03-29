@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
-import { HoverCard } from "@/components/HoverAnimations";
 import type { PostSummary } from "@/types/blog";
 import { BlogFilterBar } from "./BlogFilterBar";
 
@@ -94,8 +93,7 @@ export function BlogPostGrid({ posts, tags }: BlogPostGridProps) {
             </span>
           </div>
           <Link href={latestPost.permalink as never} className="block group">
-            <HoverCard>
-              <article className="relative rounded-xl border border-border bg-foreground/5 backdrop-blur-sm overflow-hidden transition-all duration-300 group-hover:border-cyan-400/40 group-hover:shadow-lg group-hover:shadow-cyan-500/10">
+              <article className="relative rounded-xl border border-border bg-foreground/5 backdrop-blur-sm overflow-hidden transition-all duration-300 group-hover:border-cyan-400/40 group-hover:shadow-lg group-hover:shadow-cyan-500/10 hover:scale-[1.02]">
                 <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-400/50 to-transparent" />
                 <div className="p-6 md:p-8 lg:p-10">
                   <div className="flex flex-col lg:flex-row lg:items-start lg:gap-10">
@@ -138,7 +136,6 @@ export function BlogPostGrid({ posts, tags }: BlogPostGridProps) {
                   </div>
                 </div>
               </article>
-            </HoverCard>
           </Link>
         </div>
       )}
@@ -160,8 +157,7 @@ export function BlogPostGrid({ posts, tags }: BlogPostGridProps) {
                 href={post.permalink as never}
                 className="block group h-full"
               >
-                <HoverCard className="h-full">
-                  <article className="relative h-full rounded-xl border border-border bg-foreground/5 backdrop-blur-sm p-6 transition-all duration-300 group-hover:border-cyan-400/30 group-hover:shadow-lg group-hover:shadow-cyan-500/5 flex flex-col">
+                  <article className="relative h-full rounded-xl border border-border bg-foreground/5 backdrop-blur-sm p-6 transition-all duration-300 group-hover:border-cyan-400/30 group-hover:shadow-lg group-hover:shadow-cyan-500/5 hover:scale-[1.02] flex flex-col">
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {post.tags.slice(0, 3).map((tag) => (
                         <span
@@ -197,7 +193,6 @@ export function BlogPostGrid({ posts, tags }: BlogPostGridProps) {
                       <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-cyan-400 transition-colors" />
                     </div>
                   </article>
-                </HoverCard>
               </Link>
             ))}
           </div>

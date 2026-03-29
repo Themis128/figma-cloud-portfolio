@@ -1,7 +1,6 @@
 import { Rss } from "lucide-react";
 import type { Metadata } from "next";
 import { posts } from "#site/content";
-import { AnimatedSection } from "@/components/AnimatedSection";
 import { BlogPostGrid } from "@/components/blog/BlogPostGrid";
 import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
@@ -93,18 +92,14 @@ export default function BlogPage() {
               </h1>
               <div className="w-16 sm:w-24 h-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full mx-auto" />
             </div>
-            <AnimatedSection delay={0.2}>
-              <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-                Insights on cloud architecture, cybersecurity, and modern web
-                development, from the trenches of enterprise infrastructure.
-              </p>
-            </AnimatedSection>
+            <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+              Insights on cloud architecture, cybersecurity, and modern web
+              development, from the trenches of enterprise infrastructure.
+            </p>
           </div>
 
           <div className="max-w-6xl mx-auto">
-            <AnimatedSection delay={0.1}>
-              <BlogPostGrid posts={publishedPosts} tags={allTags} />
-            </AnimatedSection>
+            <BlogPostGrid posts={publishedPosts} tags={allTags} />
           </div>
         </div>
       </main>

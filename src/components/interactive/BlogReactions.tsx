@@ -41,26 +41,25 @@ export default function BlogReactions({ slug }: BlogReactionsProps) {
   }, [slug]);
 
   function toggleReaction(key: ReactionKey) {
-    setReacted((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-        setCounts((c) => {
-          const updated = { ...c, [key]: Math.max(0, c[key] - 1) };
-          localStorage.setItem(`blog-counts-${slug}`, JSON.stringify(updated));
-          return updated;
-        });
-      } else {
-        next.add(key);
-        setCounts((c) => {
-          const updated = { ...c, [key]: c[key] + 1 };
-          localStorage.setItem(`blog-counts-${slug}`, JSON.stringify(updated));
-          return updated;
-        });
-      }
-      localStorage.setItem(`blog-reactions-${slug}`, JSON.stringify([...next]));
-      return next;
-    });
+    const wasActive = reacted.has(key);
+    const nextReacted = new Set(reacted);
+    if (wasActive) {
+      nextReacted.delete(key);
+    } else {
+      nextReacted.add(key);
+    }
+    const nextCounts = {
+      ...counts,
+      [key]: wasActive ? Math.max(0, counts[key] - 1) : counts[key] + 1,
+    };
+    setReacted(nextReacted);
+    setCounts(nextCounts);
+    try {
+      localStorage.setItem(`blog-reactions-${slug}`, JSON.stringify([...nextReacted]));
+      localStorage.setItem(`blog-counts-${slug}`, JSON.stringify(nextCounts));
+    } catch {
+      // Ignore localStorage errors
+    }
   }
 
   return (
