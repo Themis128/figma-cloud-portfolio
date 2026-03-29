@@ -130,6 +130,7 @@ jobs:
             --collect.url=https://www.baltzakisthemis.com/about/ \
             --collect.url=https://www.baltzakisthemis.com/blog/ \
             --collect.numberOfRuns=3 \
+            --upload.target=temporary-public-storage \
             --assert.assertions.categories:performance=warn \
             --assert.assertions.categories:accessibility=warn \
             --assert.assertions.categories:best-practices=warn \
