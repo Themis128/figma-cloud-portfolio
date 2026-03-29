@@ -103,21 +103,21 @@ export function CookieConsentBanner() {
               <button
                 ref={firstFocusableRef}
                 onClick={rejectAll}
-                className="rounded-md border border-cyan-500/30 bg-transparent px-4 py-2 text-sm font-mono text-cyan-400 transition-colors hover:border-cyan-400 hover:bg-cyan-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-md border border-cyan-500/30 bg-transparent px-4 py-2 text-sm font-mono text-cyan-400 transition-colors hover:border-cyan-400 hover:bg-cyan-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
                 aria-label="Reject non-essential cookies"
               >
                 Reject Non-Essential
               </button>
               <button
                 onClick={() => setShowCustomise(true)}
-                className="rounded-md border border-cyan-500/30 bg-transparent px-4 py-2 text-sm font-mono text-cyan-400 transition-colors hover:border-cyan-400 hover:bg-cyan-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-md border border-cyan-500/30 bg-transparent px-4 py-2 text-sm font-mono text-cyan-400 transition-colors hover:border-cyan-400 hover:bg-cyan-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
                 aria-label="Customise cookie preferences"
               >
                 Customise
               </button>
               <button
                 onClick={acceptAll}
-                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-mono font-semibold text-black transition-colors hover:bg-cyan-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-mono font-semibold text-black transition-colors hover:bg-cyan-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
                 aria-label="Accept all cookies"
               >
                 Accept All
@@ -160,14 +160,14 @@ export function CookieConsentBanner() {
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <button
                 onClick={() => setShowCustomise(false)}
-                className="rounded-md border border-cyan-500/30 bg-transparent px-4 py-2 text-sm font-mono text-cyan-400 transition-colors hover:border-cyan-400 hover:bg-cyan-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-md border border-cyan-500/30 bg-transparent px-4 py-2 text-sm font-mono text-cyan-400 transition-colors hover:border-cyan-400 hover:bg-cyan-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
                 aria-label="Go back to simple cookie banner"
               >
                 Back
               </button>
               <button
                 onClick={handleSavePreferences}
-                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-mono font-semibold text-black transition-colors hover:bg-cyan-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-mono font-semibold text-black transition-colors hover:bg-cyan-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
                 aria-label="Save cookie preferences"
               >
                 Save Preferences
@@ -255,7 +255,7 @@ export function ManageCookiesButton() {
   return (
     <button
       onClick={resetConsent}
-      className="font-mono text-xs text-gray-500 underline underline-offset-2 transition-colors hover:text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+      className="font-mono text-xs text-gray-500 underline underline-offset-2 transition-colors hover:text-cyan-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
       aria-label="Manage cookie preferences"
     >
       Manage Cookies
