@@ -122,6 +122,9 @@ jobs:
           }
           MOCK
 
+      - name: Generate Velite types
+        run: npx velite build
+
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v5
