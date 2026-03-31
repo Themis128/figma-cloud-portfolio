@@ -29,7 +29,7 @@
 name: "Playwright E2E Test Runner"
 "on":
   schedule:
-  - cron: "12 7 * * 1"
+  - cron: "48 8 * * 1"
     # Friendly format: weekly on Monday around 8 AM UTC (scattered)
   workflow_dispatch:
 

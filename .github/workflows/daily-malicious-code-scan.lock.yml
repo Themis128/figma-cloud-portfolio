@@ -29,7 +29,7 @@
 name: "Daily Malicious Code Scan Agent"
 "on":
   schedule:
-  - cron: "35 3 * * 3"
+  - cron: "55 2 * * 3"
     # Friendly format: weekly on Wednesday around 3 AM UTC (scattered)
   workflow_dispatch:
 

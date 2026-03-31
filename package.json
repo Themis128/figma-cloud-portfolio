@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "Modern portfolio built with Next.js 16, React 19, and TypeScript",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "dev:server": "tsx server/index.ts",

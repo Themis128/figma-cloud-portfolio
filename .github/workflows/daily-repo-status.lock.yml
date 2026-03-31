@@ -32,7 +32,7 @@
 name: "Daily Repo Status"
 "on":
   schedule:
-  - cron: "34 7 * * 5"
+  - cron: "38 6 * * 5"
     # Friendly format: weekly on Friday around 7 AM UTC (scattered)
   workflow_dispatch:
 

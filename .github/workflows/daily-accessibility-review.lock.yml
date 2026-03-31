@@ -33,7 +33,7 @@
 name: "Daily Accessibility Review"
 "on":
   schedule:
-  - cron: "36 4 * * 2"
+  - cron: "40 5 * * 2"
     # Friendly format: weekly on Tuesday around 5 AM UTC (scattered)
   workflow_dispatch:
 

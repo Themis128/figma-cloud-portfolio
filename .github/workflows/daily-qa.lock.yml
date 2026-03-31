@@ -32,7 +32,7 @@
 name: "Daily QA"
 "on":
   schedule:
-  - cron: "15 6 * * 4"
+  - cron: "51 5 * * 4"
     # Friendly format: weekly on Thursday around 6 AM UTC (scattered)
   workflow_dispatch:
 

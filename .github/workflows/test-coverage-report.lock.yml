@@ -29,7 +29,7 @@
 name: "Test Coverage Analyzer"
 "on":
   schedule:
-  - cron: "43 9 * * 3"
+  - cron: "55 8 * * 3"
     # Friendly format: weekly on Wednesday around 9 AM UTC (scattered)
   workflow_dispatch:
 

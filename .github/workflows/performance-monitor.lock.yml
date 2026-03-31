@@ -28,7 +28,7 @@
 name: "Performance Monitoring"
 "on":
   schedule:
-  - cron: "38 6 * * 6"
+  - cron: "22 6 * * 6"
     # Friendly format: weekly on Saturday around 6 AM UTC (scattered)
   workflow_dispatch:
 

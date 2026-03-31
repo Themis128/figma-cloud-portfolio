@@ -29,7 +29,7 @@
 name: "Backup and Restore Management"
 "on":
   schedule:
-  - cron: "34 1 * * 0"
+  - cron: "58 1 * * 0"
     # Friendly format: weekly on Sunday around 2 AM UTC (scattered)
   workflow_dispatch:
 

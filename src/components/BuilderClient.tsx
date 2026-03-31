@@ -9,8 +9,7 @@ if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_BUILDER_API_KEY) {
 }
 
 interface BuilderClientProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  content?: any;
+  content?: Record<string, unknown>;
   model?: string;
   url?: string;
 }

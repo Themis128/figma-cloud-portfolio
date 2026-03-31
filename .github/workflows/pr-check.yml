@@ -122,6 +122,9 @@ jobs:
           }
           MOCK
 
+      - name: Generate Velite types
+        run: npx velite build
+
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v5
@@ -164,6 +167,7 @@ jobs:
         run: npx playwright test --project=chromium --grep="@smoke" --reporter=list
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+          PLAYWRIGHT_SKIP_WEBSERVER: 'true'
 
       - name: Cleanup servers
         if: always()
