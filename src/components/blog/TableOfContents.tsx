@@ -2,6 +2,7 @@
 
 import { List } from "lucide-react";
 import { useEffect, useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 
 interface TocHeading {
   id: string;
@@ -78,6 +79,7 @@ export function TableOfContents() {
                 href={`#${h.id}`}
                 onClick={(e) => {
                   e.preventDefault();
+                  trackGA4("toc_click", { section_id: h.id, section_title: h.text });
                   document
                     .getElementById(h.id)
                     ?.scrollIntoView({ behavior: "smooth", block: "start" });

@@ -74,6 +74,8 @@ export async function generateMetadata({
   const post = getPostBySlug(slug);
   if (!post) return {};
 
+  const ogImage = post.image ?? "/og-image.jpg";
+
   return {
     title: post.title,
     description: post.description,
@@ -87,6 +89,20 @@ export async function generateMetadata({
       ...(post.updated !== undefined && { modifiedTime: post.updated }),
       authors: [post.author],
       tags: post.tags,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images: [ogImage],
     },
     alternates: {
       canonical: `${SITE_URL}${post.permalink}`,
@@ -114,11 +130,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     ...(post.updated !== undefined && { dateModified: post.updated }),
     author: {
       "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
       name: post.author,
       url: SITE_URL,
     },
+    publisher: {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: "Themistoklis Baltzakis",
+      url: SITE_URL,
+      image: `${SITE_URL}/og-image.jpg`,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}${post.permalink}`,
+    },
+    image: post.image ? `${SITE_URL}${post.image}` : `${SITE_URL}/og-image.jpg`,
     url: `${SITE_URL}${post.permalink}`,
     keywords: post.tags.join(", "),
+    inLanguage: "en-US",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
   };
 
   return (

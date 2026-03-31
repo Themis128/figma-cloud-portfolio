@@ -1,7 +1,8 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { trackGA4, trackSearch } from "@/components/GoogleAnalytics";
 
 interface BlogFilterBarProps {
   tags: readonly [string, number][];
@@ -18,11 +19,20 @@ export function BlogFilterBar({
 }: BlogFilterBarProps) {
   const [query, setQuery] = useState("");
 
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setQuery(value);
       onSearch(value);
+      // Debounced search tracking
+      clearTimeout(debounceRef.current);
+      if (value.length >= 2) {
+        debounceRef.current = setTimeout(() => {
+          trackSearch(value, -1);
+        }, 800);
+      }
     },
     [onSearch],
   );
@@ -63,7 +73,10 @@ export function BlogFilterBar({
             return (
               <button
                 key={tag}
-                onClick={() => onTagToggle(tag)}
+                onClick={() => {
+                  trackGA4("blog_filter", { tag, action: isActive ? "remove" : "add" });
+                  onTagToggle(tag);
+                }}
                 className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-mono transition-all duration-200 ${
                   isActive
                     ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-400"

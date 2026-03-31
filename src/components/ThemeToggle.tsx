@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
@@ -18,6 +19,7 @@ export function ThemeToggle() {
   const toggle = () => {
     const next = resolvedTheme === "dark" ? "light" : "dark";
     setTheme(next);
+    trackGA4("theme_toggle", { theme: next });
     // Apply to body immediately so tests observe the change right away
     document.body.classList.remove("light", "dark");
     document.body.classList.add(next);

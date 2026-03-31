@@ -1,35 +1,39 @@
-# Themistoklis Baltzakis | Cloud Architect & Cybersecurity Specialist
+# Themistoklis Baltzakis | IT Network Engineer & Cloud Architect
 
 > IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, Fortinet security, Azure AD, Microsoft 365, and AWS cloud environments. Based in Athens, Greece. Available for consulting.
+
+This file follows the llms.txt convention. For full site content, see [llms-full.txt](https://www.baltzakisthemis.com/llms-full.txt).
 
 ## About
 
 - [About Me](https://www.baltzakisthemis.com/about/): Professional background, skills, certifications, and career timeline
-- [Resume](https://www.baltzakisthemis.com/resume/): Downloadable CV with work history and qualifications
-- [Contact](https://www.baltzakisthemis.com/contact/): Get in touch for consulting or collaboration
+- [Work Experience](https://www.baltzakisthemis.com/product/): Career timeline with positions at Skaramangas Shipyards, Cosmos Business Systems, Athens International Airport, and more
+- [Resume Guide](https://www.baltzakisthemis.com/resume/): ATS optimization tips and career advice
+- [Contact](https://www.baltzakisthemis.com/contact/): Contact form and booking for consulting or collaboration
 
 ## Expertise
 
-- Cloud Architecture: AWS, Azure AD, Microsoft 365, multi-cloud environments
-- Cybersecurity: Fortinet firewalls, network security, zero-trust architecture
-- Network Infrastructure: Cisco systems, data center management, enterprise networking
-- Web Development: React, Next.js, TypeScript, Node.js, serverless architectures
-- DevOps: CI/CD pipelines, Docker, infrastructure as code
+- Network Infrastructure: Cisco ACI, UCS, HyperFlex, Meraki, enterprise switching and routing
+- Cybersecurity: Fortinet FortiGate firewalls, Zero Trust architecture, SIEM, IDS/IPS, network segmentation
+- Cloud: AWS (Lambda, S3, CloudFront, Amplify, Bedrock), Azure AD, Microsoft 365, multi-cloud
+- DevOps: Docker, Kubernetes, Terraform, CI/CD pipelines, GitHub Actions
+- Development: TypeScript, React, Next.js, Node.js, Python, serverless architectures
 
 ## Projects
 
 - [Projects](https://www.baltzakisthemis.com/projects/): Portfolio of infrastructure, web, and DevOps projects
+- [AI Agents](https://www.baltzakisthemis.com/agents/): Agent architecture and playground
 
 ## Blog
 
 - [Blog](https://www.baltzakisthemis.com/blog/): Articles on cloud architecture, cybersecurity, and web development
-- [Building Resilient Cloud Architectures](https://www.baltzakisthemis.com/blog/building-resilient-cloud-architectures/): Multi-region AWS design patterns
-- [Next.js Static Export in Production](https://www.baltzakisthemis.com/blog/nextjs-static-export-production/): S3 + CloudFront deployment guide
-- [Zero Trust Network Security](https://www.baltzakisthemis.com/blog/zero-trust-network-security/): Modern network security framework
+- [Building Resilient Cloud Architectures on AWS](https://www.baltzakisthemis.com/blog/building-resilient-cloud-architectures/): Multi-region architectures, auto-scaling, disaster recovery strategies
+- [Implementing Zero Trust Network Security](https://www.baltzakisthemis.com/blog/zero-trust-network-security/): Zero trust principles, microsegmentation, identity-based access control
+- [Next.js Static Export in Production: Lessons Learned](https://www.baltzakisthemis.com/blog/nextjs-static-export-production/): Static export deployment on S3 + CloudFront, performance optimization
 
 ## Optional
 
-- [Performance](https://www.baltzakisthemis.com/performance/): Live Core Web Vitals and performance metrics
+- [Performance](https://www.baltzakisthemis.com/performance/): Live Core Web Vitals and site performance metrics
 - [Privacy Policy](https://www.baltzakisthemis.com/privacy/): Data collection and processing practices
 - [Terms of Service](https://www.baltzakisthemis.com/terms/): Website usage terms
 - [Cookie Policy](https://www.baltzakisthemis.com/cookies/): Cookie and localStorage usage details

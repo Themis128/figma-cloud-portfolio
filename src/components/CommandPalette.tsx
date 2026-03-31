@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 import { getApiOrigin } from "@/lib/admin-constants";
 
 interface PaletteItem {
@@ -54,6 +55,11 @@ export default function CommandPalette() {
     setOpen(false);
     setQuery("");
     setSelectedIndex(0);
+  }, []);
+
+  const runItem = useCallback((item: PaletteItem, method: "click" | "keyboard") => {
+    trackGA4("command_select", { command: item.id, method });
+    item.action();
   }, []);
 
   const navigate = useCallback(
@@ -311,7 +317,7 @@ export default function CommandPalette() {
       setSelectedIndex((prev) => (prev - 1 + filtered.length) % filtered.length);
     } else if (e.key === "Enter" && filtered[selectedIndex]) {
       e.preventDefault();
-      filtered[selectedIndex].action();
+      runItem(filtered[selectedIndex], "keyboard");
     }
   };
 
@@ -376,7 +382,7 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={item.action}
+                    onClick={() => runItem(item, "click")}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
@@ -412,7 +418,7 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={item.action}
+                    onClick={() => runItem(item, "click")}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
@@ -448,7 +454,7 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={item.action}
+                    onClick={() => runItem(item, "click")}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${

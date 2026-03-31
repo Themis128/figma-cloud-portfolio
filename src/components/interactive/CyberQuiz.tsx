@@ -2,6 +2,7 @@
 
 import { CheckCircle2, XCircle, Trophy, RotateCcw } from "lucide-react";
 import { useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 
 interface Question {
   question: string;
@@ -86,6 +87,9 @@ export default function CyberQuiz() {
 
   function handleNext() {
     if (currentQ + 1 >= QUESTIONS.length) {
+      const pct = Math.round((score / QUESTIONS.length) * 100);
+      const grade = pct >= 80 ? "A" : pct >= 60 ? "B" : pct >= 40 ? "C" : "D";
+      trackGA4("quiz_complete", { score, total: QUESTIONS.length, grade, percent: pct });
       setFinished(true);
     } else {
       setCurrentQ((c) => c + 1);

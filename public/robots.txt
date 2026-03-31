@@ -70,3 +70,7 @@ Allow: /
 Disallow: /admin/
 
 Sitemap: https://www.baltzakisthemis.com/sitemap.xml
+
+# AI content discovery
+# See https://llmstxt.org for the llms.txt specification
+llms.txt: https://www.baltzakisthemis.com/llms.txt

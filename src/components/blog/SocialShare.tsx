@@ -2,6 +2,7 @@
 
 import { Check, Copy, Linkedin, Share2 } from "lucide-react";
 import { useCallback, useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 
 interface SocialShareProps {
   title: string;
@@ -28,13 +29,15 @@ export function SocialShare({ title, url }: SocialShareProps) {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      trackGA4("share", { method: "copy_link", content_type: "blog_post", item_id: title });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Fallback for older browsers
     }
-  }, [url]);
+  }, [url, title]);
 
   const shareX = () => {
+    trackGA4("share", { method: "x", content_type: "blog_post", item_id: title });
     window.open(
       `https://x.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
       "_blank",
@@ -43,6 +46,7 @@ export function SocialShare({ title, url }: SocialShareProps) {
   };
 
   const shareLinkedIn = () => {
+    trackGA4("share", { method: "linkedin", content_type: "blog_post", item_id: title });
     window.open(
       `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       "_blank",

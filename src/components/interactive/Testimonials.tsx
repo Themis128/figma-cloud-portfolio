@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 
 interface Testimonial {
   name: string;
@@ -38,8 +39,20 @@ export default function Testimonials() {
   const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const pausedRef = useRef(false);
 
-  const next = useCallback(() => setActive((i) => (i + 1) % TESTIMONIALS.length), []);
-  const prev = useCallback(() => setActive((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length), []);
+  const next = useCallback(() => {
+    setActive((i) => {
+      const nextIdx = (i + 1) % TESTIMONIALS.length;
+      trackGA4("testimonial_view", { index: nextIdx, name: TESTIMONIALS[nextIdx]!.name, direction: "next" });
+      return nextIdx;
+    });
+  }, []);
+  const prev = useCallback(() => {
+    setActive((i) => {
+      const prevIdx = (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length;
+      trackGA4("testimonial_view", { index: prevIdx, name: TESTIMONIALS[prevIdx]!.name, direction: "prev" });
+      return prevIdx;
+    });
+  }, []);
 
   // Auto-rotate, pause on hover/focus
   useEffect(() => {
@@ -96,17 +109,19 @@ export default function Testimonials() {
         </div>
       </div>
 
-      {/* Dots */}
-      <div className="flex justify-center gap-1.5 mt-3">
+      {/* Dots — 24px touch target with small visible dot inside */}
+      <div className="flex justify-center gap-1 mt-3">
         {TESTIMONIALS.map((_, i) => (
           <button
             key={i}
             onClick={() => setActive(i)}
             aria-label={`Testimonial ${i + 1}`}
-            className={`w-1.5 h-1.5 rounded-full transition-colors ${
+            className="w-6 h-6 flex items-center justify-center"
+          >
+            <span className={`block w-1.5 h-1.5 rounded-full transition-colors ${
               i === active ? "bg-cyan-400" : "bg-foreground/20"
-            }`}
-          />
+            }`} />
+          </button>
         ))}
       </div>
     </div>

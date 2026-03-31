@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 
 // Performance monitoring constants
 const NAVIGATION_CHECK_DELAY_MS = 100;
@@ -16,8 +17,7 @@ interface WebVitalsMetric {
 
 function sendToGA(metric: WebVitalsMetric) {
   if (typeof window !== "undefined" && window.gtag) {
-    // GA4-native format: individual metric names surface in GA4 mobile app Events detail
-    window.gtag("event", metric.name, {
+    trackGA4(metric.name, {
       value: Math.round(metric.name === "CLS" ? metric.delta * 1000 : metric.delta),
       metric_id: metric.id,
       metric_value: metric.value,
@@ -81,12 +81,10 @@ export function PerformanceMonitor() {
       for (const threshold of thresholds) {
         if (percent >= threshold && !milestones.has(threshold)) {
           milestones.add(threshold);
-          if (window.gtag) {
-            window.gtag("event", "scroll_depth", {
-              percent_scrolled: threshold,
-              page_path: window.location.pathname,
-            });
-          }
+          trackGA4("scroll_depth", {
+            percent_scrolled: threshold,
+            page_path: window.location.pathname,
+          });
         }
       }
     };
@@ -109,12 +107,10 @@ export function PerformanceMonitor() {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       const nextMilestone = engagementMilestones[milestoneIndex];
       if (nextMilestone !== undefined && elapsed >= nextMilestone) {
-        if (window.gtag) {
-          window.gtag("event", "engaged_time", {
-            engagement_seconds: nextMilestone,
-            page_path: window.location.pathname,
-          });
-        }
+        trackGA4("engaged_time", {
+          engagement_seconds: nextMilestone,
+          page_path: window.location.pathname,
+        });
         milestoneIndex++;
       }
     }, 5000);
