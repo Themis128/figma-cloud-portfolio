@@ -58,7 +58,7 @@ export default function Footer() {
                 Themis Baltzakis
               </span>
             </div>
-            <p className="text-xs text-foreground/40 leading-relaxed max-w-xs">
+            <p className="text-xs text-foreground/60 leading-relaxed max-w-xs">
               IT Network Engineer building secure, scalable
               infrastructure and modern web applications.
             </p>
@@ -70,7 +70,7 @@ export default function Footer() {
                   href={link.href}
                   target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                   rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                  className="flex h-11 w-11 items-center justify-center rounded-lg border border-border/20 text-foreground/40 hover:text-cyan-400 hover:border-cyan-400/30 hover:bg-cyan-400/5 transition-all duration-200"
+                  className="flex h-11 w-11 items-center justify-center rounded-lg border border-border/20 text-foreground/60 hover:text-cyan-400 hover:border-cyan-400/30 hover:bg-cyan-400/5 transition-all duration-200"
                   aria-label={link.label}
                 >
                   <link.icon className="h-3.5 w-3.5" />
@@ -81,7 +81,7 @@ export default function Footer() {
 
           {/* Navigation column */}
           <div>
-            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-400/60 mb-3">
+            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-400 mb-3">
               Navigation
             </h3>
             <nav
@@ -92,7 +92,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-xs font-mono text-foreground/45 hover:text-cyan-400 transition-colors duration-200"
+                  className="text-xs font-mono text-foreground/60 hover:text-cyan-400 transition-colors duration-200"
                 >
                   {link.label}
                 </Link>
@@ -102,7 +102,7 @@ export default function Footer() {
 
           {/* Legal column */}
           <div>
-            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-400/60 mb-3">
+            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-400 mb-3">
               Legal
             </h3>
             <nav aria-label="Legal" className="space-y-1.5">
@@ -110,7 +110,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block text-xs font-mono text-foreground/45 hover:text-cyan-400 transition-colors duration-200"
+                  className="block text-xs font-mono text-foreground/60 hover:text-cyan-400 transition-colors duration-200"
                 >
                   {link.label}
                 </Link>
@@ -134,10 +134,10 @@ export default function Footer() {
 
         {/* Bottom row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-foreground/35 font-mono">
+          <p className="text-[11px] text-foreground/60 font-mono">
             &copy; {new Date().getFullYear()} Themistoklis Baltzakis
           </p>
-          <p className="text-[10px] text-foreground/20 font-mono tracking-wider">
+          <p className="text-[10px] text-foreground/60 font-mono tracking-wider">
             Next.js &middot; Tailwind &middot; AWS &middot; TypeScript
           </p>
         </div>

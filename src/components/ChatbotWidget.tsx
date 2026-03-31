@@ -384,7 +384,7 @@ export default function ChatbotWidget() {
             return !o;
           });
         }}
-        aria-label={isOpen ? "Chat is open" : "Open chat"}
+        aria-label={isOpen ? "Chat with AI — open" : "Chat with AI"}
         tabIndex={isOpen ? -1 : undefined}
         inert={isOpen || undefined}
         suppressHydrationWarning

@@ -73,7 +73,7 @@ export default function Navigation() {
             <Link
               href="/"
               className="text-foreground font-bold text-xl md:text-2xl tracking-wider hover:text-cyan-400 transition-colors"
-              aria-label="Home"
+              aria-label="TB — Home"
             >
               TB
             </Link>

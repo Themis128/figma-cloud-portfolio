@@ -1,5 +1,40 @@
 [
   {
+    "id": "2026-03-29-469eb53",
+    "title": "Performance",
+    "description": "Dynamic-import non-critical layout components",
+    "date": "2026-03-29T11:56:48+03:00",
+    "type": "perf"
+  },
+  {
+    "id": "2026-03-29-5b936b9",
+    "title": "Performance",
+    "description": "Strip AnimatedSection/HoverCard from home & about, lazy-load heavy components",
+    "date": "2026-03-29T10:24:42+03:00",
+    "type": "perf"
+  },
+  {
+    "id": "2026-03-29-09ba397",
+    "title": "Bug Fix",
+    "description": "Use dynamic import without ssr:false for Server Component compat",
+    "date": "2026-03-29T10:10:37+03:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-29-581f8d2",
+    "title": "Bug Fix",
+    "description": "Upgrade CI actions and improve blog page performance",
+    "date": "2026-03-29T10:07:11+03:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-29-11f85a9",
+    "title": "New Feature",
+    "description": "Add Keystatic CMS and enhanced blog UI components",
+    "date": "2026-03-29T09:50:28+03:00",
+    "type": "feat"
+  },
+  {
     "id": "2026-03-27-c42e60e",
     "title": "Bug Fix",
     "description": "Add missing DialogDescription to CommandDialog and Navigation Sheet",
@@ -32,41 +67,6 @@
     "title": "Bug Fix",
     "description": "Use single-line echo for SARIF fallback (heredoc indentation issue)",
     "date": "2026-03-27T03:38:13+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-3bd6568",
-    "title": "Bug Fix",
-    "description": "Ensure valid SARIF file for Codacy upload step",
-    "date": "2026-03-27T03:26:09+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-d42a203",
-    "title": "Bug Fix: a11y",
-    "description": "Resolve heading hierarchy violations across UI components",
-    "date": "2026-03-27T03:10:41+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-caa7486",
-    "title": "Bug Fix",
-    "description": "Add visible Labels to QuickContactForm for WCAG 2.2 compliance",
-    "date": "2026-03-27T03:10:39+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-bf116ed",
-    "title": "Bug Fix",
-    "description": "Create empty SARIF fallback when Codacy CLI skips generation",
-    "date": "2026-03-27T03:03:00+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-3840cc2",
-    "title": "Bug Fix",
-    "description": "Make Codacy scan non-blocking (continue-on-error)",
-    "date": "2026-03-27T02:54:37+02:00",
     "type": "fix"
   }
 ]

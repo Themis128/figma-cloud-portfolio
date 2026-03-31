@@ -255,8 +255,7 @@ export function ManageCookiesButton() {
   return (
     <button
       onClick={resetConsent}
-      className="font-mono text-xs text-gray-500 underline underline-offset-2 transition-colors hover:text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-      aria-label="Manage cookie preferences"
+      className="font-mono text-xs text-muted-foreground underline underline-offset-2 transition-colors hover:text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
     >
       Manage Cookies
     </button>
