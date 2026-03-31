@@ -572,6 +572,11 @@ The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests 
 - ✅ Open Graph tags
 - ✅ Canonical URLs
 - ✅ robots.txt / sitemap.xml
+- ✅ robots.txt contains llms.txt directive
+- ✅ Sitemap URLs have `<lastmod>` dates
+- ✅ BlogPosting JSON-LD enriched (publisher, mainEntityOfPage, image, inLanguage)
+- ✅ Blog posts have per-post og:image and twitter:card metadata
+- ✅ Preconnect hint for googletagmanager.com present
 
 #### `playwright-tests/3d-demos.spec.ts`
 

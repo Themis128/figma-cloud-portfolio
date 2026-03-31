@@ -64,6 +64,13 @@ test.describe("SEO — Metadata", () => {
       expect(href).toContain("baltzakisthemis.com");
     });
   }
+
+  test("blog post should have article-specific OpenGraph tags", async ({ page }) => {
+    await page.goto("/blog/building-resilient-cloud-architectures/");
+    await expect(page.locator('meta[property="og:type"][content="article"]')).toBeAttached();
+    await expect(page.locator('meta[property="og:image"]')).toBeAttached();
+    await expect(page.locator('meta[name="twitter:card"]')).toBeAttached();
+  });
 });
 
 // ─── Structured Data ──────────────────────────────────────────────────────────
@@ -124,6 +131,19 @@ test.describe("SEO — Structured Data", () => {
     const hasBlogPosting = scripts.some((s) => s.includes('"BlogPosting"'));
     expect(hasBlogPosting).toBe(true);
   });
+
+  test("blog post BlogPosting should have publisher and mainEntityOfPage", async ({ page }) => {
+    await page.goto("/blog/building-resilient-cloud-architectures/");
+    const scripts = await page
+      .locator('script[type="application/ld+json"]')
+      .allTextContents();
+    const blogPosting = scripts.find((s) => s.includes('"BlogPosting"'));
+    expect(blogPosting).toBeDefined();
+    expect(blogPosting).toContain('"publisher"');
+    expect(blogPosting).toContain('"mainEntityOfPage"');
+    expect(blogPosting).toContain('"image"');
+    expect(blogPosting).toContain('"inLanguage"');
+  });
 });
 
 // ─── Sitemap & Robots ─────────────────────────────────────────────────────────
@@ -181,6 +201,19 @@ test.describe("SEO — Sitemap & Robots", () => {
     const text = (await page.textContent("body")) ?? "";
     expect(text).not.toContain("/admin/");
   });
+
+  test("sitemap should include lastmod dates", async ({ page }) => {
+    await page.goto("/sitemap.xml");
+    const text = (await page.textContent("body")) ?? "";
+    expect(text).toContain("<lastmod>");
+  });
+
+  test("robots.txt should reference llms.txt", async ({ page }) => {
+    const res = await page.goto("/robots.txt");
+    expect(res?.status()).toBe(200);
+    const text = await page.textContent("body");
+    expect(text).toContain("llms.txt");
+  });
 });
 
 // ─── AI Visibility ───────────────────────────────────────────────────────────
@@ -193,6 +226,15 @@ test.describe("SEO — AI Visibility", () => {
     expect(text).toContain("Themistoklis Baltzakis");
     expect(text).toContain("## About");
     expect(text).toContain("## Blog");
+  });
+
+  test("llms.txt should reference llms-full.txt", async ({ page }) => {
+    const res = await page.goto("/llms.txt");
+    expect(res?.status()).toBe(200);
+    const text = await page.textContent("body");
+    expect(text).toContain("llms-full.txt");
+    expect(text).toContain("## Expertise");
+    expect(text).toContain("## Projects");
   });
 
   test("llms-full.txt should be accessible", async ({ page }) => {
@@ -237,4 +279,14 @@ test.describe("SEO — Heading Hierarchy", () => {
       await expect(h1).toHaveText(pg.h1Pattern);
     });
   }
+});
+
+// ─── Resource Hints ──────────────────────────────────────────────────────────
+
+test.describe("SEO — Resource Hints", () => {
+  test("should have preconnect for Google Tag Manager", async ({ page }) => {
+    await page.goto("/");
+    const preconnect = page.locator('link[rel="preconnect"][href*="googletagmanager"]');
+    await expect(preconnect).toBeAttached();
+  });
 });

@@ -8,7 +8,7 @@ import {
 /**
  * Sentry Error Tracking and Performance Monitoring Testing Suite
  * Tests for error tracking, performance monitoring, and Sentry integration
- * Integration: @sentry/nextjs v10.43.0 with browserTracingIntegration + replayIntegration
+ * Integration: @sentry/nextjs v10.43.0 with browserTracingIntegration + replayIntegration (lazy-loaded from @sentry/browser)
  */
 
 test.describe("Sentry Error Tracking", () => {

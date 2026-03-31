@@ -38,7 +38,7 @@ This is a **Next.js 16 application** with the App Router, deployed as a **static
 portfolio-nextjs/
 ├── src/
 │   ├── app/                  # Next.js App Router
-│   │   ├── layout.tsx        # Root layout (providers, Navigation, ChatbotWidget, interactive components)
+│   │   ├── layout.tsx        # Root layout (providers, Navigation, ChatbotWidget, interactive components). Preconnect hints for `googletagmanager.com` in `<head>`
 │   │   ├── page.tsx          # Home page
 │   │   ├── about/            # About page
 │   │   ├── agents/           # AI Agents educational guide
@@ -120,14 +120,15 @@ All public pages include:
   - `Person` schema with `knowsAbout`, `sameAs`, `worksFor`, `image`
   - `ProfilePage` schema linking to Person via `mainEntity`
   - `BreadcrumbList` on all pages (via `BreadcrumbSchema` component)
-  - `BlogPosting` on blog post pages with author, dates, keywords
+  - `BlogPosting` on blog post pages with author, dates, keywords, publisher, mainEntityOfPage, image, inLanguage, isPartOf
 
 **AI Agent Discovery**:
 - `/llms.txt`: Curated Markdown site map for AI agents (follows llmstxt.org spec)
 - `/llms-full.txt`: Extended context with professional summary, services, and technical details
 - `robots.txt` explicitly allows AI search bots (GPTBot, ClaudeBot, PerplexityBot, etc.) while blocking training-only scrapers (CCBot, Bytespider)
+- `robots.txt` includes `llms.txt:` directive for AI crawler discovery
 
-The sitemap (`public/sitemap.xml`) includes all public pages and blog posts. The `/admin/` page is excluded and marked `noindex, nofollow`.
+The sitemap is auto-generated at build time by `scripts/generate-sitemap.mjs` (reads blog MDX frontmatter for `<lastmod>` dates). Includes all public pages and blog posts. The `/admin/` page is excluded and marked `noindex, nofollow`.
 
 #### Extracted Client Components
 
@@ -375,10 +376,10 @@ Interactive components enhance user engagement across the site. Most are Client 
 | `NotificationButton`                      | Bell icon with dropdown announcement panel. Announcements auto-generated from git commits at build time (`scripts/generate-announcements.sh` to `public/announcements.json`). Per-item dismiss (persisted in localStorage), read/unread tracking, auto-expire support. Responsive: fixed full-width panel on mobile (`left-4 right-4 top-16`), absolute `w-80` dropdown on `sm`+. Rendered in both mobile and desktop nav groups |
 | `AvailabilityBadge`                       | Badge with pulsing green dot: "Available for Consulting" (component exists but no longer used on homepage) |
 | `Footer`                                  | Mini sitemap nav, social icon circles (LinkedIn, GitHub, Email), legal links, "Built with" tech line |
-| `GoogleAnalytics`                         | GA4 page view and Web Vitals reporting                     |
+| `GoogleAnalytics`                         | GA4 with Consent Mode v2, manual page_view tracking, content groups, user properties, and event helpers (trackGA4, trackLead, trackContentClick, trackOutboundClick, trackFileDownload, trackSearch). Events tracked: theme_toggle, quiz_complete, testimonial_view, share, blog_filter, toc_click, command_select |
 | `RouteProgressBar`                        | Thin cyan progress bar at top of page during route changes, provides visual navigation feedback |
 | `PWAUpdateNotification`                   | Version-based update detection popup with animated progress bar. Polls `/version.json` every 5min + on tab focus. Shows "Update Now" button when new deploy detected |
-| `StructuredData`                          | Schema.org JSON-LD for SEO                                 |
+| `StructuredData`                          | Schema.org JSON-LD for SEO (WebSite, Person, ProfilePage, BreadcrumbList, BlogPosting with publisher/mainEntityOfPage/image) |
 | `OptimizedImage`                          | Wrapper around `next/image` with lazy loading              |
 | `Skeleton`                                | Animated loading placeholders                              |
 
@@ -388,7 +389,7 @@ Interactive components enhance user engagement across the site. Most are Client 
 
 | Hook                       | Purpose                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------- |
-| `usePerformanceMonitoring` | Wraps `web-vitals` library; exposes `metrics`, `performanceScore`, `formattedMetrics` |
+| `usePerformanceMonitoring` | Wraps `web-vitals` library; exposes `metrics`, `performanceScore`, `formattedMetrics`. Uses `trackGA4()` helper for Web Vitals, scroll depth, and engagement time tracking |
 | `useScrollAnimation`       | IntersectionObserver hook for `AnimatedSection`                                       |
 | `useDeviceType`            | Detects mobile/desktop; used to reduce animation intensity                            |
 | `useLazyImage`             | IntersectionObserver-based image lazy loading                                         |

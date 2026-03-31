@@ -548,6 +548,7 @@ const ExpensiveComponent = ({ data }) => {
 ```typescript
 // Enhanced measurement enabled
 // Tracks page views, scrolls, clicks, site search
+// PerformanceMonitor uses trackGA4() helper instead of direct window.gtag calls
 ```
 
 **Sentry Performance Monitoring**:

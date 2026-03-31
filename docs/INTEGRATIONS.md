@@ -70,6 +70,14 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
   - Resume downloads
   - Error tracking
 - Supports both GA4 and legacy ReactGA APIs
+- Interactive engagement events (added Mar 2026):
+  - `theme_toggle` — theme switch (light/dark/system)
+  - `quiz_complete` — CyberQuiz completion with score
+  - `testimonial_view` — testimonial carousel navigation
+  - `share` — social share (X, LinkedIn, copy link)
+  - `blog_filter` — blog search/tag filter usage
+  - `toc_click` — table of contents heading click
+  - `command_select` — command palette selection
 
 **Configuration**:
 
@@ -481,6 +489,7 @@ test('renders component', () => {
 - Session Replay (10% production, 100% dev; 100% on error)
 - GDPR-compliant consent-based enable/disable (not init/no-init)
 - Custom error filtering (network errors, chunk load failures, script errors)
+- `replayIntegration` imported from `@sentry/browser` (the `lazyLoadIntegration` API was removed in Sentry v10)
 - `allowUrls` filter for `baltzakisthemis.com` and `localhost`
 - 100% trace sampling (low-traffic site ~127 txns/week)
 - Performance helpers: `measurePerformance`, `reportError`, `trackPageView`, `trackInteraction`
@@ -1333,8 +1342,8 @@ AMPLIFY_STAGING_APP_ID=
 
 ---
 
-**Last Updated**: 2026-03-10
-**Version**: 1.2.0
+**Last Updated**: 2026-03-31
+**Version**: 1.3.0
 **Maintainer**: Themistoklis Baltzakis
 
 ## 🆕 Latest Updates - February 22, 2026
