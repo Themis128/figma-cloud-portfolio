@@ -46,17 +46,14 @@ export default function SentryInit() {
         ],
       });
 
-      // Lazy-load replay after 2s
-      const loadReplay = () => {
-        void Sentry.lazyLoadIntegration("replayIntegration").then(
-          (replay) => {
-            Sentry.addIntegration(
-              replay({ maskAllText: true, blockAllMedia: true }),
-            );
-          },
-        );
-      };
-      setTimeout(loadReplay, 2000);
+      // Lazy-load replay after 2s to keep initial bundle small
+      setTimeout(() => {
+        void import("@sentry/browser").then(({ replayIntegration }) => {
+          Sentry.addIntegration(
+            replayIntegration({ maskAllText: true, blockAllMedia: true }),
+          );
+        });
+      }, 2000);
 
       // Set up consent listener
       void import("@/lib/sentry").then(({ setupSentryConsentListener }) => {

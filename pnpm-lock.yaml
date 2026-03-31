@@ -127,6 +127,9 @@ importers:
       '@react-three/fiber':
         specifier: ^9.5.0
         version: 9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2)
+      '@sentry/browser':
+        specifier: 10.43.0
+        version: 10.43.0
       '@sentry/nextjs':
         specifier: ^10.43.0
         version: 10.43.0(@opentelemetry/context-async-hooks@2.6.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.6.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.6.0(@opentelemetry/api@1.9.0))(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(webpack@5.104.1(esbuild@0.27.3))
@@ -10851,10 +10854,6 @@ packages:
 
 snapshots:
 
-  '@0no-co/graphql.web@1.2.0(graphql@15.10.1)':
-    optionalDependencies:
-      graphql: 15.10.1
-
   '@0no-co/graphql.web@1.2.0(graphql@16.13.2)':
     optionalDependencies:
       graphql: 16.13.2
@@ -15571,7 +15570,7 @@ snapshots:
       '@toeverything/y-indexeddb': 0.10.0-canary.9(yjs@13.6.30)
       '@ts-gql/tag': 0.7.3(graphql@16.13.2)
       '@types/react': 19.2.14
-      '@urql/core': 5.2.0(graphql@15.10.1)
+      '@urql/core': 5.2.0(graphql@16.13.2)
       '@urql/exchange-auth': 2.2.1(@urql/core@5.2.0(graphql@16.13.2))
       '@urql/exchange-graphcache': 7.2.4(@urql/core@5.2.0(graphql@16.13.2))(graphql@16.13.2)
       '@urql/exchange-persisted': 4.3.1(@urql/core@5.2.0(graphql@16.13.2))
@@ -19408,29 +19407,29 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@urql/core@5.2.0(graphql@15.10.1)':
+  '@urql/core@5.2.0(graphql@16.13.2)':
     dependencies:
-      '@0no-co/graphql.web': 1.2.0(graphql@15.10.1)
+      '@0no-co/graphql.web': 1.2.0(graphql@16.13.2)
       wonka: 6.3.6
     transitivePeerDependencies:
       - graphql
 
   '@urql/exchange-auth@2.2.1(@urql/core@5.2.0(graphql@16.13.2))':
     dependencies:
-      '@urql/core': 5.2.0(graphql@15.10.1)
+      '@urql/core': 5.2.0(graphql@16.13.2)
       wonka: 6.3.6
 
   '@urql/exchange-graphcache@7.2.4(@urql/core@5.2.0(graphql@16.13.2))(graphql@16.13.2)':
     dependencies:
       '@0no-co/graphql.web': 1.2.0(graphql@16.13.2)
-      '@urql/core': 5.2.0(graphql@15.10.1)
+      '@urql/core': 5.2.0(graphql@16.13.2)
       wonka: 6.3.6
     transitivePeerDependencies:
       - graphql
 
   '@urql/exchange-persisted@4.3.1(@urql/core@5.2.0(graphql@16.13.2))':
     dependencies:
-      '@urql/core': 5.2.0(graphql@15.10.1)
+      '@urql/core': 5.2.0(graphql@16.13.2)
       wonka: 6.3.6
 
   '@use-gesture/core@10.3.1': {}
@@ -24859,7 +24858,7 @@ snapshots:
 
   urql@4.2.2(@urql/core@5.2.0(graphql@16.13.2))(react@19.2.4):
     dependencies:
-      '@urql/core': 5.2.0(graphql@15.10.1)
+      '@urql/core': 5.2.0(graphql@16.13.2)
       react: 19.2.4
       wonka: 6.3.6
 
