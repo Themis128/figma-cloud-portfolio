@@ -1,9 +1,11 @@
 # Services & What Themis Can Help With
 
 ## Core Services
+
 Based on Themis's expertise and experience, he can help organizations with:
 
-### Network Infrastructure & Cisco Systems
+### service: Network Infrastructure & Cisco Systems
+- domains: networking, infrastructure
 - Enterprise network design, maintenance, and troubleshooting
 - Cisco-based infrastructure (UCS, HyperFlex, ACI, Nexus)
 - Data center management and optimization
@@ -11,34 +13,39 @@ Based on Themis's expertise and experience, he can help organizations with:
 - High-availability network topologies
 - VMware vSphere virtualization
 
-### Network Security & Fortinet
+### service: Network Security & Fortinet
+- domains: cybersecurity, networking
 - Fortinet firewall deployment and management
 - Critical infrastructure protection
 - Firewall policy management and network segmentation
 - Network security assessments
 
-### Cloud & Identity Management
+### service: Cloud & Identity Management
+- domains: cloud, cybersecurity
 - Azure Active Directory administration and troubleshooting
 - Microsoft 365 deployment and support
 - AWS cloud architecture
 - Multi-cloud migration strategies
 - Identity and Access Management (IAM)
 
-### Cybersecurity
+### service: Cybersecurity
+- domains: cybersecurity
 - Zero-trust security architecture design and implementation
 - CyberArk Privileged Access Management (PAM)
 - Okta IAM, SSO, MFA implementation
 - Conditional Access policies and RBAC
 - Endpoint security with Microsoft Intune
 
-### IT Consulting
+### service: IT Consulting
+- domains: infrastructure
 - Technology roadmap development
 - IT strategy planning
 - Infrastructure modernization assessment
 - ServiceNow ITSM implementation
 - Digital transformation initiatives
 
-### Software Development
+### service: Software Development
+- domains: development
 - Full-stack web development (React, Next.js, TypeScript, Node.js, Python)
 - AI/ML integration into business processes
 - Custom dashboard development

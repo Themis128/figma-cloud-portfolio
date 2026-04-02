@@ -2,60 +2,108 @@
 
 Themis's portfolio showcases projects spanning network infrastructure, web development, DevOps, and AI/data tools. Projects are hosted on GitHub under the username Themis128.
 
-## 1. Portfolio Website (2026) | Web Application (Featured)
-Personal portfolio built with Next.js 16, deployed on AWS S3 + CloudFront with Amplify Gen 2 backend. Features AI chatbot powered by AWS Bedrock (Claude 3.5 Haiku), PWA support, and a 10-tab admin dashboard.
-**Technologies**: Next.js, TypeScript, Tailwind CSS, AWS Bedrock, Amplify Gen 2, Lambda
-**Live**: https://www.baltzakisthemis.com
+## Project 1: Portfolio Website
+- year: 2026
+- category: Web Application
+- featured: true
+- domains: development, cloud
+- technologies: Next.js, TypeScript, Tailwind CSS, AWS Bedrock, Amplify Gen 2, Lambda
+- live: https://www.baltzakisthemis.com
+- description: Personal portfolio built with Next.js 16, deployed on AWS S3 + CloudFront with Amplify Gen 2 backend. Features AI chatbot powered by AWS Bedrock (Claude 3.5 Haiku), PWA support, and a 10-tab admin dashboard.
 
-## 2. Network Monitoring Stack (2025) | Infrastructure (Featured)
-Comprehensive monitoring solution for home/SOHO networks featuring security monitoring, network performance tracking, and infrastructure observability using Raspberry Pi.
-**Technologies**: Raspberry Pi, Prometheus, Grafana, Docker, SNMP
+## Project 2: Network Monitoring Stack
+- year: 2025
+- category: Infrastructure
+- featured: true
+- domains: networking, infrastructure
+- technologies: Raspberry Pi, Prometheus, Grafana, Docker, SNMP
+- description: Comprehensive monitoring solution for home/SOHO networks featuring security monitoring, network performance tracking, and infrastructure observability using Raspberry Pi.
 
-## 3. AP Pinpoint (2026) | Infrastructure
-Access point mapping and visualization tool for network infrastructure planning and wireless coverage analysis.
-**Technologies**: Network Mapping, Wireless, Infrastructure
+## Project 3: AP Pinpoint
+- year: 2026
+- category: Infrastructure
+- featured: false
+- domains: networking, infrastructure
+- technologies: Network Mapping, Wireless, Infrastructure
+- description: Access point mapping and visualization tool for network infrastructure planning and wireless coverage analysis.
 
-## 4. Network Automation Lab (2025) | Infrastructure
-Network automation and containerlab project for enterprise network management. Uses containerized network devices for testing and development.
-**Technologies**: Containerlab, Network Automation, Docker, Python
+## Project 4: Network Automation Lab
+- year: 2025
+- category: Infrastructure
+- featured: false
+- domains: networking, infrastructure
+- technologies: Containerlab, Network Automation, Docker, Python
+- description: Network automation and containerlab project for enterprise network management. Uses containerized network devices for testing and development.
 
-## 5. Stable Diffusion Web UI (2026) | AI / Data
-Self-hosted Stable Diffusion web interface for AI image generation with custom models and configurations.
-**Technologies**: Python, Stable Diffusion, PyTorch, Gradio
-**GitHub**: https://github.com/Themis128/stable-diffusion-webui
+## Project 5: Stable Diffusion Web UI
+- year: 2026
+- category: AI / Data
+- featured: false
+- domains: data, development
+- technologies: Python, Stable Diffusion, PyTorch, Gradio
+- github: https://github.com/Themis128/stable-diffusion-webui
+- description: Self-hosted Stable Diffusion web interface for AI image generation with custom models and configurations.
 
-## 6. Telegram Web App (2025) | Web Application
-Modern Telegram Web App with PWA support, full MTProto API access via Telethon for messaging and automation.
-**Technologies**: Python, Telethon, MTProto, PWA
-**GitHub**: https://github.com/Themis128/telegram-web-app
+## Project 6: Telegram Web App
+- year: 2025
+- category: Web Application
+- featured: false
+- domains: development
+- technologies: Python, Telethon, MTProto, PWA
+- github: https://github.com/Themis128/telegram-web-app
+- description: Modern Telegram Web App with PWA support, full MTProto API access via Telethon for messaging and automation.
 
-## 7. Portfolio on AWS Amplify (2026) | DevOps
-Portfolio website deployed with AWS Amplify, featuring CI/CD pipeline, authentication, and serverless backend.
-**Technologies**: Python, AWS Amplify, S3, CloudFront
-**GitHub**: https://github.com/Themis128/my-portfolio-aws
+## Project 7: Portfolio on AWS Amplify
+- year: 2026
+- category: DevOps
+- featured: false
+- domains: cloud, development
+- technologies: Python, AWS Amplify, S3, CloudFront
+- github: https://github.com/Themis128/my-portfolio-aws
+- description: Portfolio website deployed with AWS Amplify, featuring CI/CD pipeline, authentication, and serverless backend.
 
-## 8. Docker Labs (2025) | DevOps
-Collection of Docker-based lab environments for learning containerization, networking, and microservices architecture.
-**Technologies**: Docker, Docker Compose, Python, Networking
-**GitHub**: https://github.com/Themis128/dockerlabs
+## Project 8: Docker Labs
+- year: 2025
+- category: DevOps
+- featured: false
+- domains: infrastructure, development
+- technologies: Docker, Docker Compose, Python, Networking
+- github: https://github.com/Themis128/dockerlabs
+- description: Collection of Docker-based lab environments for learning containerization, networking, and microservices architecture.
 
-## 9. MATLAB Capabilities Checker (2025) | Tools
-Nuxt 4 application for checking and verifying MATLAB capabilities, featuring a modern web interface for data analysis tools.
-**Technologies**: Nuxt.js, Python, MATLAB, Vue.js
-**GitHub**: https://github.com/Themis128/matlab-nuxt-app
+## Project 9: MATLAB Capabilities Checker
+- year: 2025
+- category: Tools
+- featured: false
+- domains: development
+- technologies: Nuxt.js, Python, MATLAB, Vue.js
+- github: https://github.com/Themis128/matlab-nuxt-app
+- description: Nuxt 4 application for checking and verifying MATLAB capabilities, featuring a modern web interface for data analysis tools.
 
-## 10. Cloudless E-Commerce (2025) | Web Application
-Full-stack e-commerce platform with product management, cart functionality, and payment integration.
-**Technologies**: TypeScript, React, Node.js, Stripe
+## Project 10: Cloudless E-Commerce
+- year: 2025
+- category: Web Application
+- featured: false
+- domains: development
+- technologies: TypeScript, React, Node.js, Stripe
+- description: Full-stack e-commerce platform with product management, cart functionality, and payment integration.
 
-## 11. Supabase Monorepo (2025) | DevOps
-Monorepo for Supabase-based apps and UI, including Next.js, Tailwind, Payload CMS, and more.
-**Technologies**: TypeScript, Supabase, Next.js, Tailwind CSS
-**GitHub**: https://github.com/Themis128/supabase-master
+## Project 11: Supabase Monorepo
+- year: 2025
+- category: DevOps
+- featured: false
+- domains: development, cloud
+- technologies: TypeScript, Supabase, Next.js, Tailwind CSS
+- github: https://github.com/Themis128/supabase-master
+- description: Monorepo for Supabase-based apps and UI, including Next.js, Tailwind, Payload CMS, and more.
 
-## 12. Data Infographics (2026) | AI / Data
-Python-based data visualization and infographic generation tool for creating professional charts and reports.
-**Technologies**: Python, Matplotlib, Pandas, Data Viz
+## Project 12: Data Infographics
+- year: 2026
+- category: AI / Data
+- featured: false
+- domains: data, development
+- technologies: Python, Matplotlib, Pandas, Data Viz
+- description: Python-based data visualization and infographic generation tool for creating professional charts and reports.
 
 ## Project Categories
 - **Web Applications**: Full-stack web development projects (Next.js, React, Vue.js)
