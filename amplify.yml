@@ -1,6 +1,9 @@
 version: 1
 backend:
   phases:
+    preBuild:
+      commands:
+        - export JAVA_TOOL_OPTIONS="-DentityExpansionLimit=10000 -Djdk.xml.entityExpansionLimit=10000"
     build:
       commands:
         - npm install -g pnpm
