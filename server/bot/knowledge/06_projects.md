@@ -105,6 +105,42 @@ Themis's portfolio showcases projects spanning network infrastructure, web devel
 - technologies: Python, Matplotlib, Pandas, Data Viz
 - description: Python-based data visualization and infographic generation tool for creating professional charts and reports.
 
+## Project 13: T-Pot Honeypot Deployment
+- year: 2025
+- category: Infrastructure
+- featured: false
+- domains: cybersecurity, infrastructure
+- technologies: Python, T-Pot, Docker, Honeypot
+- github: https://github.com/Themis128/tpot-deploy
+- description: Deployment and configuration of T-Pot honeypot platform for network security monitoring and threat intelligence gathering.
+
+## Project 14: Wine Analytics Dashboard
+- year: 2025
+- category: AI / Data
+- featured: false
+- domains: data, development
+- technologies: Python, Streamlit, Together AI, Data Viz
+- github: https://github.com/Themis128/tpot-wine
+- description: Streamlit-based wine analytics dashboard with Together AI chatbot integration for interactive data exploration.
+
+## Project 15: Master's Thesis — Data-Driven Agriculture
+- year: 2024
+- category: AI / Data
+- featured: false
+- domains: data, cloud
+- technologies: Python, Docker, Weather APIs, Data Analytics
+- github: https://github.com/Themis128/Bolton-Uni-Thesis-Paper
+- description: Master's thesis project exploring data-driven agricultural innovations using weather data producers and predictive models in containerized environments.
+
+## Project 16: Cloudless.gr
+- year: 2026
+- category: Web Application
+- featured: false
+- domains: development
+- technologies: TypeScript
+- github: https://github.com/Themis128/cloudless-gr
+- description: Website for cloudless.gr — Themis's professional web presence and consulting brand.
+
 ## Project Categories
 - **Web Applications**: Full-stack web development projects (Next.js, React, Vue.js)
 - **Infrastructure**: Network monitoring, automation, and mapping tools
