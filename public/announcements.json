@@ -1,5 +1,54 @@
 [
   {
+    "id": "2026-03-31-1c685d2",
+    "title": "Bug Fix",
+    "description": "Resolve Sentry replayIntegration runtime error",
+    "date": "2026-03-31T08:31:16+03:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-31-16a45f8",
+    "title": "Bug Fix: a11y,ui",
+    "description": "Improve contrast, aria-labels, and update announcements",
+    "date": "2026-03-31T08:15:06+03:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-31-1a4a62f",
+    "title": "New Feature: analytics,seo",
+    "description": "Add GA4 event tracking and SEO improvements",
+    "date": "2026-03-31T08:11:34+03:00",
+    "type": "feat"
+  },
+  {
+    "id": "2026-03-30-81e855f",
+    "title": "Bug Fix: ci",
+    "description": "Set PLAYWRIGHT_SKIP_WEBSERVER for e2e-smoke job",
+    "date": "2026-03-30T09:51:59+00:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-30-ed65785",
+    "title": "Bug Fix: ci",
+    "description": "Add missing Velite build step to e2e-smoke job",
+    "date": "2026-03-30T09:34:01+00:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-29-c4645dd",
+    "title": "Bug Fix",
+    "description": "Resolve daily maintenance issues — any type, Tailwind v4 classes, engines field",
+    "date": "2026-03-29T23:21:21+00:00",
+    "type": "fix"
+  },
+  {
+    "id": "2026-03-29-eecd769",
+    "title": "Performance",
+    "description": "Defer Sentry SDK + Amplify from initial bundle (-537KB)",
+    "date": "2026-03-29T13:51:55+03:00",
+    "type": "perf"
+  },
+  {
     "id": "2026-03-29-469eb53",
     "title": "Performance",
     "description": "Dynamic-import non-critical layout components",
@@ -18,55 +67,6 @@
     "title": "Bug Fix",
     "description": "Use dynamic import without ssr:false for Server Component compat",
     "date": "2026-03-29T10:10:37+03:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-29-581f8d2",
-    "title": "Bug Fix",
-    "description": "Upgrade CI actions and improve blog page performance",
-    "date": "2026-03-29T10:07:11+03:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-29-11f85a9",
-    "title": "New Feature",
-    "description": "Add Keystatic CMS and enhanced blog UI components",
-    "date": "2026-03-29T09:50:28+03:00",
-    "type": "feat"
-  },
-  {
-    "id": "2026-03-27-c42e60e",
-    "title": "Bug Fix",
-    "description": "Add missing DialogDescription to CommandDialog and Navigation Sheet",
-    "date": "2026-03-27T21:04:08+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-301f6dc",
-    "title": "Improvement",
-    "description": "Remove push notifications and update profile title",
-    "date": "2026-03-27T20:50:32+02:00",
-    "type": "refactor"
-  },
-  {
-    "id": "2026-03-27-8f6b7bb",
-    "title": "Bug Fix",
-    "description": "Remove mock data and hardcoded security fallbacks",
-    "date": "2026-03-27T08:17:21+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-2510840",
-    "title": "Bug Fix",
-    "description": "Rm root-owned results.sarif before writing fallback (permission denied)",
-    "date": "2026-03-27T03:48:34+02:00",
-    "type": "fix"
-  },
-  {
-    "id": "2026-03-27-10ddc23",
-    "title": "Bug Fix",
-    "description": "Use single-line echo for SARIF fallback (heredoc indentation issue)",
-    "date": "2026-03-27T03:38:13+02:00",
     "type": "fix"
   }
 ]
