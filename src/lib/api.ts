@@ -100,6 +100,8 @@ export async function apiStreamRequest(
   const url = LAMBDA_URLS[endpoint];
   return fetch(url, {
     ...options,
+    // Chat/SSE responses should never be served from HTTP cache.
+    cache: "no-store",
     headers: {
       "Content-Type": "application/json",
       ...options.headers,
@@ -164,10 +166,42 @@ export async function sendChatMessage(
   message: string,
   history: Array<{ role: string; content: string }>,
 ): Promise<Response> {
-  return apiStreamRequest("chat", {
-    method: "POST",
-    body: JSON.stringify({ message, history }),
-  });
+  const payload = JSON.stringify({ message, history });
+
+  try {
+    const primary = await apiStreamRequest("chat", {
+      method: "POST",
+      body: payload,
+    });
+
+    // If the configured chat URL fails, retry once against same-origin /api/chat.
+    // This protects production users with stale bundles or misconfigured env vars.
+    if (!primary.ok && resolveApiUrl("chat") !== "/api/chat") {
+      return fetch("/api/chat", {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: payload,
+      });
+    }
+
+    return primary;
+  } catch {
+    if (resolveApiUrl("chat") === "/api/chat") {
+      throw new Error("Chat request failed");
+    }
+
+    return fetch("/api/chat", {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: payload,
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
