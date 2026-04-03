@@ -482,7 +482,7 @@ A local MCP server (`server/mcp/index.ts`) exposes portfolio data for AI coding 
 
 | URI                     | Description                                              |
 | ----------------------- | -------------------------------------------------------- |
-| `knowledge://all`       | Full chatbot knowledge base (10 MD files, ~33KB)         |
+| `knowledge://all`       | Full chatbot knowledge base (10 MD files, ~35KB)         |
 | `blog://all`            | All MDX blog posts from `content/blog/`                  |
 | `docs://architecture`   | Architecture documentation (`docs/ARCHITECTURE.md`)      |
 | `project://package.json`| Package manifest with dependencies                       |

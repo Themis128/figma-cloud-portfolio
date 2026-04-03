@@ -60,18 +60,26 @@ The knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
 
 | File | Content |
 | --- | --- |
-| `01_identity.md` | Name, title, location, contact info |
+| `01_identity.md` | Name, title, location, contact info, GitHub profile stats (54 repos, language breakdown), Credly profile link |
 | `02_professional_summary.md` | Career overview, key strengths |
 | `03_work_experience.md` | 7 roles across 15+ years |
 | `04_education.md` | Degrees, certifications, academy programs |
-| `05_certifications_skills.md` | 4 professional certs + 16 Credly badges + 6 skill categories |
-| `06_projects.md` | 12 portfolio projects |
-| `07_portfolio_website.md` | Portfolio tech stack, 14 pages, features, deployment |
+| `05_certifications_skills.md` | 4 professional certs + 16 Credly badges + 6 skill domains — structured metadata (`id`, `issuer`, `domain`, `issued`) for tool parsing |
+| `06_projects.md` | 16 portfolio projects — structured metadata (`year`, `category`, `featured`, `domains`, `technologies`) for tool parsing |
+| `07_portfolio_website.md` | Portfolio tech stack, 15 pages, features, deployment |
 | `08_ai_agents.md` | AI agent concepts, patterns, templates, Blockly builder |
-| `09_services_offerings.md` | Services, project types, contact methods |
+| `09_services_offerings.md` | Services with domain tags for cross-referencing, project types, contact methods |
 | `10_booking_faq.md` | Booking instructions, FAQ |
 
-All files are loaded into the system prompt at startup (~33 KB, ~8,000 tokens). Knowledge is wrapped in `<knowledge_base>` XML tags and instructions in `<instructions>` tags per Bedrock best practices. To update the chatbot's knowledge, edit the markdown files and restart the Express server.
+All files are loaded into the system prompt at startup (~35 KB, ~8,500 tokens). Knowledge is wrapped in `<knowledge_base>` XML tags and instructions in `<instructions>` tags per Bedrock best practices. To update the chatbot's knowledge, edit the markdown files and restart the Express server.
+
+### Knowledge Base Format
+
+Knowledge files use structured metadata for reliable tool parsing:
+
+- **Certifications** (`05_certifications_skills.md`): Each cert/badge has `id`, `name`, `issuer`, `domain`, `issued`, `description` fields. Skills are grouped under `### domain:` headers (networking, cybersecurity, cloud, data, development, infrastructure).
+- **Projects** (`06_projects.md`): Each project has `year`, `category`, `featured`, `domains`, `technologies`, `github`/`live` URL, and `description` fields.
+- **Services** (`09_services_offerings.md`): Each service has `### service:` header with `domains` field for cross-referencing with skills and certifications.
 
 ## NLP Pipeline
 
