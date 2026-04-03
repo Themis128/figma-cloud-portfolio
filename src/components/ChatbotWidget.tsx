@@ -26,11 +26,11 @@ const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "assistant",
   content:
-    "Hi! I'm Themis's AI assistant. Ask me anything about his skills, experience, or background, or book a teleconference call.",
+    "Hey there! I'm Themis's AI assistant. I can tell you about his cloud & security expertise, walk you through his projects, or help you get in touch. What would you like to know?",
 };
 
-const BOOKING_QUESTION = "Book a call with Themis.";
-const CONTACT_QUESTION = "Send a message to Themis.";
+const BOOKING_QUESTION = "I'd like to book a call";
+const CONTACT_QUESTION = "I want to get in touch";
 
 // Large pool — 3 are randomly selected per session; booking + contact are always pinned
 const QUESTION_POOL = [
@@ -361,6 +361,12 @@ export default function ChatbotWidget() {
         ),
       );
       setIsStreaming(false);
+      // Refresh suggested questions with new random picks
+      setSuggestedQuestions([
+        ...pickRandomQuestions(QUESTION_POOL, 2),
+        CONTACT_QUESTION,
+        BOOKING_QUESTION,
+      ]);
     }
   }
 
@@ -371,7 +377,9 @@ export default function ChatbotWidget() {
     }
   }
 
-  const showSuggestions = messages.length === 1 && !isStreaming && suggestedQuestions.length > 0;
+  // Show suggestions when last message is from assistant and not streaming
+  const lastMsg = messages[messages.length - 1];
+  const showSuggestions = !isStreaming && suggestedQuestions.length > 0 && lastMsg?.role === "assistant" && !lastMsg.streaming;
 
   return (
     <>
@@ -497,7 +505,7 @@ export default function ChatbotWidget() {
             {showSuggestions && (
               <div className="flex flex-col gap-1.5 mt-2">
                 <p className="text-cyan-500/50 font-mono text-xs">
-                  Suggested questions:
+                  {messages.length <= 1 ? "Try asking:" : "Ask something else:"}
                 </p>
                 {suggestedQuestions.map((q) => (
                   <button

@@ -23,19 +23,19 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should render floating chat button", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await expect(chatBtn).toBeVisible({ timeout: 10000 });
   });
 
   test("should show Chat with AI text on button", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     if (await chatBtn.isVisible().catch(() => false)) {
       await expect(chatBtn).toContainText("Chat with AI");
     }
   });
 
   test("should open chat panel on click", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -45,30 +45,30 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should show welcome message when opened", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
-    const welcome = page.getByText("Hi! I'm Themis's AI assistant", { exact: false });
+    const welcome = page.getByText("Hey there! I'm Themis's AI assistant", { exact: false });
     await expect(welcome).toBeVisible();
   });
 
   test("should display suggested questions", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
-    // Should show "Suggested questions:" section
-    const suggestedLabel = page.getByText("Suggested questions:", { exact: false });
+    // Should show "Try asking:" section
+    const suggestedLabel = page.getByText("Try asking:", { exact: false });
     await expect(suggestedLabel).toBeVisible();
 
     // "Book a call" should always be present as the pinned booking suggestion
-    const bookCall = page.getByText("Book a call with Themis", { exact: false });
+    const bookCall = page.getByText("I'd like to book a call", { exact: false });
     await expect(bookCall).toBeVisible();
   });
 
   test("should have input field and send button", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -81,7 +81,7 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should disable send when input is empty", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -90,7 +90,7 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should enable send when text is entered", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -102,7 +102,7 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should have close button", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -111,7 +111,7 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should close panel on close button click", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -120,13 +120,13 @@ test.describe("ChatbotWidget @smoke", () => {
     await page.waitForTimeout(500);
 
     // FAB should reappear with "Open chat" label (panel uses CSS opacity/pointer-events, not DOM removal)
-    await expect(page.locator('button[aria-label="Open chat"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="Chat with AI"]')).toBeVisible();
     // FAB button should be interactive again (not inert)
-    await expect(page.locator('button[aria-label="Open chat"]')).toBeEnabled();
+    await expect(page.locator('button[aria-label="Chat with AI"]')).toBeEnabled();
   });
 
   test("should show TB initials in chat header", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 
@@ -136,7 +136,7 @@ test.describe("ChatbotWidget @smoke", () => {
   });
 
   test("should auto-focus input when opened", async ({ page }) => {
-    const chatBtn = page.locator('button[aria-label="Open chat"]');
+    const chatBtn = page.locator('button[aria-label="Chat with AI"]');
     await chatBtn.click();
     await page.waitForTimeout(500);
 

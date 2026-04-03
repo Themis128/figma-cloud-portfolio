@@ -107,7 +107,7 @@ async function waitForAssistantReply(page: import("@playwright/test").Page) {
         const text = b.textContent?.trim() ?? "";
         if (
           text.length > 0 &&
-          !text.startsWith("Hi! I'm Themis's AI assistant")
+          !text.startsWith("Hey there! I'm Themis's AI assistant")
         ) {
           return true;
         }
@@ -126,7 +126,7 @@ async function countAssistantReplies(page: import("@playwright/test").Page): Pro
     let count = 0;
     for (const b of bubbles) {
       const text = b.textContent?.trim() ?? "";
-      if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) {
+      if (text.length > 0 && !text.startsWith("Hey there! I'm Themis's AI assistant")) {
         count++;
       }
     }
@@ -442,13 +442,13 @@ test.describe("AI Chatbot Widget", () => {
 
       const panel = chatPanel(page);
       const welcomeText = panel.locator(
-        "text=Hi! I'm Themis's AI assistant",
+        "text=Hey there! I'm Themis's AI assistant",
       ).first();
       await expect(welcomeText).toBeVisible();
 
-      // The full welcome message mentions booking
+      // The full welcome message mentions getting in touch
       await expect(
-        panel.locator("text=book a teleconference call").first(),
+        panel.locator("text=help you get in touch").first(),
       ).toBeVisible();
     });
 
@@ -491,11 +491,11 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
 
       const panel = chatPanel(page);
-      await expect(panel.locator("text=Suggested questions:")).toBeVisible();
+      await expect(panel.locator("text=Try asking:")).toBeVisible();
 
       // The booking and contact questions are always present
-      await expect(panel.locator("text=Book a call with Themis.").first()).toBeVisible();
-      await expect(panel.locator("text=Send a message to Themis.").first()).toBeVisible();
+      await expect(panel.locator("text=I'd like to book a call").first()).toBeVisible();
+      await expect(panel.locator("text=I want to get in touch").first()).toBeVisible();
 
       // 3 randomly selected from pool + 1 pinned contact + 1 pinned booking = 5 suggestion buttons
       const buttons = suggestionButtons(page);
@@ -506,7 +506,7 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
       const buttons = suggestionButtons(page);
       const last = buttons.last();
-      await expect(last).toContainText("Book a call with Themis.");
+      await expect(last).toContainText("I'd like to book a call");
     });
 
     test("contact question should be second-to-last suggestion", async ({ page }) => {
@@ -514,7 +514,7 @@ test.describe("AI Chatbot Widget", () => {
       const buttons = suggestionButtons(page);
       const count = await buttons.count();
       const secondToLast = buttons.nth(count - 2);
-      await expect(secondToLast).toContainText("Send a message to Themis.");
+      await expect(secondToLast).toContainText("I want to get in touch");
     });
 
     test("suggested questions should be clickable buttons", async ({
@@ -545,13 +545,13 @@ test.describe("AI Chatbot Widget", () => {
 
     test("suggested questions label should have muted styling", async ({ page }) => {
       await openChat(page);
-      const label = chatPanel(page).locator("text=Suggested questions:");
+      const label = chatPanel(page).locator("text=Try asking:");
       await expect(label).toBeVisible();
       const tag = await label.evaluate((el) => el.tagName.toLowerCase());
       expect(tag).toBe("p");
     });
 
-    test("suggested questions should not appear after sending a message", async ({
+    test("suggested questions should hide during streaming and reappear after reply", async ({
       page,
     }) => {
       test.skip(!(await isChatAvailable()), "Express server not running (start with pnpm dev:all)");
@@ -561,17 +561,23 @@ test.describe("AI Chatbot Widget", () => {
       const panel = chatPanel(page);
 
       // Suggested questions are visible initially
-      await expect(panel.locator("text=Suggested questions:")).toBeVisible();
+      await expect(panel.locator("text=Try asking:")).toBeVisible();
 
       // Send a message
       const input = chatInput(page);
       await input.fill("Hello");
       await sendButton(page).click();
 
-      // Suggested questions should disappear immediately (before LLM responds)
+      // Suggested questions should disappear while streaming
       await expect(
-        panel.locator("text=Suggested questions:"),
+        panel.locator("text=Try asking:").or(panel.locator("text=Ask something else:")),
       ).not.toBeVisible();
+
+      // After assistant replies, suggestions should reappear with "Ask something else:" label
+      await waitForAssistantReply(page);
+      await expect(
+        panel.locator("text=Ask something else:"),
+      ).toBeVisible();
     });
 
     test("three random questions should differ between sessions", async ({ page, context }) => {
@@ -631,10 +637,10 @@ test.describe("AI Chatbot Widget", () => {
       // Wait for assistant response from Bedrock
       await waitForAssistantReply(page);
 
-      // Suggested questions should disappear after the first user message
+      // Suggested questions should reappear with updated label after reply
       await expect(
-        panel.locator("text=Suggested questions:"),
-      ).not.toBeVisible();
+        panel.locator("text=Ask something else:"),
+      ).toBeVisible();
     });
 
     test("user message should be right-aligned", async ({ page }) => {
@@ -717,10 +723,10 @@ test.describe("AI Chatbot Widget", () => {
       // Wait for the assistant to respond
       await waitForAssistantReply(page);
 
-      // Suggested questions should disappear
+      // Suggested questions should reappear with updated label
       await expect(
-        panel.locator("text=Suggested questions:"),
-      ).not.toBeVisible();
+        panel.locator("text=Ask something else:"),
+      ).toBeVisible();
     });
 
     test("should send message on Enter key press", async ({ page }) => {
@@ -954,7 +960,7 @@ test.describe("AI Chatbot Widget", () => {
           let count = 0;
           for (const b of bubbles) {
             const text = b.textContent?.trim() ?? "";
-            if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) {
+            if (text.length > 0 && !text.startsWith("Hey there! I'm Themis's AI assistant")) {
               count++;
             }
           }
@@ -991,7 +997,7 @@ test.describe("AI Chatbot Widget", () => {
           let count = 0;
           for (const b of bubbles) {
             const text = b.textContent?.trim() ?? "";
-            if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) {
+            if (text.length > 0 && !text.startsWith("Hey there! I'm Themis's AI assistant")) {
               count++;
             }
           }
@@ -1156,7 +1162,7 @@ test.describe("AI Chatbot Widget", () => {
       const panel = chatPanel(page);
 
       // Click the booking suggested question
-      await panel.locator("text=Book a call with Themis.").click();
+      await panel.locator("text=I'd like to book a call").click();
 
       // Bedrock should return [BOOK_CALL] → triggers BookingCard
       // or respond with a natural-language message about booking.
@@ -1176,7 +1182,7 @@ test.describe("AI Chatbot Widget", () => {
       const hasTextReply = await panel
         .locator("div[class*='bg-white/5']")
         .filter({
-          hasNotText: "Hi! I'm Themis's AI assistant",
+          hasNotText: "Hey there! I'm Themis's AI assistant",
         })
         .first()
         .isVisible()
@@ -1197,11 +1203,11 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
 
       const panel = chatPanel(page);
-      await panel.locator("text=Book a call with Themis.").click();
+      await panel.locator("text=I'd like to book a call").click();
 
       // The booking question should appear as a user bubble
       const userBubble = panel.locator("div[class*='bg-cyan-500/20']").filter({
-        hasText: "Book a call with Themis.",
+        hasText: "I'd like to book a call",
       });
       await expect(userBubble.first()).toBeVisible();
     });
@@ -1228,7 +1234,7 @@ test.describe("AI Chatbot Widget", () => {
 
       const hasTextReply = await panel
         .locator("div[class*='bg-white/5']")
-        .filter({ hasNotText: "Hi! I'm Themis's AI assistant" })
+        .filter({ hasNotText: "Hey there! I'm Themis's AI assistant" })
         .first()
         .isVisible()
         .catch(() => false);
@@ -1249,11 +1255,11 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
 
       const panel = chatPanel(page);
-      await panel.locator("text=Send a message to Themis.").click();
+      await panel.locator("text=I want to get in touch").click();
 
       // The contact question should appear as a user bubble
       const userBubble = panel.locator("div[class*='bg-cyan-500/20']").filter({
-        hasText: "Send a message to Themis.",
+        hasText: "I want to get in touch",
       });
       await expect(userBubble.first()).toBeVisible();
     });
@@ -1265,7 +1271,7 @@ test.describe("AI Chatbot Widget", () => {
       await openChat(page);
 
       const panel = chatPanel(page);
-      await panel.locator("text=Send a message to Themis.").click();
+      await panel.locator("text=I want to get in touch").click();
 
       // Should navigate to /contact/ (either via router.push or text response with link)
       // The model may respond with [CONTACT] or a text response — either is valid
@@ -1848,12 +1854,12 @@ test.describe("AI Chatbot Widget", () => {
 
       // Welcome message should still be there
       await expect(
-        chatPanel(page).locator("text=Hi! I'm Themis's AI assistant").first(),
+        chatPanel(page).locator("text=Hey there! I'm Themis's AI assistant").first(),
       ).toBeVisible();
 
       // Suggested questions should also persist
       await expect(
-        chatPanel(page).locator("text=Suggested questions:"),
+        chatPanel(page).locator("text=Try asking:"),
       ).toBeVisible();
     });
 
@@ -2247,7 +2253,7 @@ test.describe("AI Chatbot Widget", () => {
       const panel = chatPanel(page);
       const replyText = await panel
         .locator("div[class*='bg-white/5']")
-        .filter({ hasNotText: "Hi! I'm Themis's AI assistant" })
+        .filter({ hasNotText: "Hey there! I'm Themis's AI assistant" })
         .first()
         .innerText();
 
@@ -2274,7 +2280,7 @@ test.describe("AI Chatbot Widget", () => {
       const panel = chatPanel(page);
       const replyText = await panel
         .locator("div[class*='bg-white/5']")
-        .filter({ hasNotText: "Hi! I'm Themis's AI assistant" })
+        .filter({ hasNotText: "Hey there! I'm Themis's AI assistant" })
         .first()
         .innerText();
 
@@ -2304,7 +2310,7 @@ test.describe("AI Chatbot Widget", () => {
           let count = 0;
           for (const b of bubbles) {
             const text = b.textContent?.trim() ?? "";
-            if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) count++;
+            if (text.length > 0 && !text.startsWith("Hey there! I'm Themis's AI assistant")) count++;
           }
           return count >= 2;
         },
@@ -2321,7 +2327,7 @@ test.describe("AI Chatbot Widget", () => {
           let count = 0;
           for (const b of bubbles) {
             const text = b.textContent?.trim() ?? "";
-            if (text.length > 0 && !text.startsWith("Hi! I'm Themis's AI assistant")) count++;
+            if (text.length > 0 && !text.startsWith("Hey there! I'm Themis's AI assistant")) count++;
           }
           return count >= 3;
         },

@@ -17,6 +17,19 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+/**
+ * Resolve base directories for file-system reads (knowledge base, blog MDX).
+ *
+ * - **Local dev** (`tsx server/routes/chat.ts`): __dirname is `<project>/server/routes`.
+ *   SERVER_ROOT → `<project>/server/`, PROJECT_ROOT → `<project>/`.
+ * - **Lambda** (esbuild bundle at `/var/task/index.js`): __dirname is `/var/task`.
+ *   The deploy script copies `bot/` and `content/` into the Lambda zip root,
+ *   so both roots resolve to `/var/task/`.
+ */
+const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+const SERVER_ROOT = isLambda ? __dirname : join(__dirname, "..");
+const PROJECT_ROOT = isLambda ? __dirname : join(__dirname, "..", "..");
+
 const router = Router();
 
 // ── Simple in-memory rate limiter ────────────────────────────────────────────
@@ -68,7 +81,7 @@ let _knowledgeBase: string | null = null;
 function getKnowledgeBase(): string {
   if (_knowledgeBase !== null) return _knowledgeBase;
 
-  const knowledgeDir = join(__dirname, "..", "bot", "knowledge");
+  const knowledgeDir = join(SERVER_ROOT, "bot", "knowledge");
   try {
     const files = readdirSync(knowledgeDir)
       .filter((f) => f.endsWith(".md"))
@@ -254,7 +267,7 @@ let _blogIndex: BlogPost[] | null = null;
 function getBlogIndex(): BlogPost[] {
   if (_blogIndex !== null) return _blogIndex;
 
-  const blogDir = join(__dirname, "..", "..", "content", "blog");
+  const blogDir = join(PROJECT_ROOT, "content", "blog");
   _blogIndex = [];
 
   if (!existsSync(blogDir)) {
@@ -643,7 +656,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
     }
     case "search_projects": {
       const query = typeof input.query === "string" ? input.query.toLowerCase() : "";
-      const projectsPath = join(__dirname, "..", "bot", "knowledge", "06_projects.md");
+      const projectsPath = join(SERVER_ROOT, "bot", "knowledge", "06_projects.md");
       if (!existsSync(projectsPath)) return JSON.stringify({ results: [], total: 0 });
       const content = readFileSync(projectsPath, "utf-8");
       const sections = content.split(/^## /m).filter(Boolean);
@@ -770,9 +783,10 @@ You have access to tools for live data and deeper search. Use this decision fram
    - The visitor asks about specific projects, technologies used, or wants to see portfolio work
    - The visitor asks "show me AWS projects" or "what have you built with React"
 
-9. **Use send_message_to_themis** when:
-   - The visitor explicitly provides their name, email, and a message they want to send
-   - NEVER fabricate contact details. Ask for name, email, and message if not provided
+9. **Use send_message_to_themis** ONLY when:
+   - The visitor has ALREADY provided all three: their name, email, AND a message in the conversation
+   - NEVER ask for these details one by one — if any are missing, use [CONTACT] instead to open the contact form
+   - NEVER fabricate contact details
    - Confirm the details with the visitor before sending
 
 10. **Use get_system_health** when:
@@ -785,7 +799,7 @@ Do NOT use tools for questions you can answer directly from the knowledge base �
 Special action tokens trigger UI interactions:
 
 - [BOOK_CALL] — Opens the booking form. Use ONLY when the user explicitly wants to book, schedule, or arrange a meeting or call. Respond with ONLY this token, no other text.
-- [CONTACT] — Opens the contact form. Use ONLY when the user explicitly wants to send a message, get in touch, or email Themis. Respond with ONLY this token, no other text.
+- [CONTACT] — Opens the contact form. Use when the user wants to send a message, get in touch, or email Themis. This is the DEFAULT action for contact requests — do NOT collect name/email/message in chat. Respond with ONLY this token, no other text.
 - When a visitor pastes a job description and asks for a cover letter or proposal, write a tailored 3-4 paragraph cover letter highlighting Themis's relevant experience from the knowledge base. Match skills to the job requirements. Keep it professional and concise.
 - [GOTO:/path/] — Navigates to a page. Append at the END of your text response when you're referring the visitor to a specific page. Valid pages:
 ${pageList}
@@ -963,6 +977,12 @@ router.post("/", async (req: Request, res: Response) => {
 
     while (toolRounds <= MAX_TOOL_ROUNDS) {
       const isLastRound = toolRounds === MAX_TOOL_ROUNDS;
+      // Always include toolConfig when messages contain toolUse/toolResult blocks —
+      // Bedrock requires it even on the final round.
+      const hasToolBlocks = messages.some((m) =>
+        Array.isArray(m.content) &&
+        m.content.some((b) => "toolUse" in b || "toolResult" in b),
+      );
       const commandInput: ConverseStreamCommandInput = {
         modelId: BEDROCK_MODEL_ID,
         system: [{ text: buildSystemPrompt() }],
@@ -972,7 +992,7 @@ router.post("/", async (req: Request, res: Response) => {
           temperature: 0.3,
           topP: 0.9,
         },
-        ...(!isLastRound ? { toolConfig } : {}),
+        ...(!isLastRound || hasToolBlocks ? { toolConfig } : {}),
       };
 
       const response = await bedrockClient.send(new ConverseStreamCommand(commandInput));

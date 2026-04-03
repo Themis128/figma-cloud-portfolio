@@ -6,24 +6,57 @@ An AI-powered chat assistant embedded in the portfolio site. It answers visitor 
 
 ```
 Browser (ChatbotWidget.tsx)
-  └─ POST /api/chat  ←── Express server (server/routes/chat.ts, port 3001)
-       └─ ConverseStream API (with toolConfig)
-            └─ AWS Bedrock (Claude 3.5 Haiku)
-                 ├─ System prompt includes full knowledge base (~33 KB, 10 markdown files)
-                 ├─ Blog index (MDX posts loaded at startup for RAG search)
-                 └─ Tool use loop (up to 2 rounds):
-                      ├─ search_portfolio — keyword search across skills, pages, experience
-                      ├─ search_blog — full-text search of blog MDX posts with excerpts
-                      ├─ get_github_stats — live GitHub profile via API
-                      ├─ check_booking_availability — Cal.com slot availability
-                      ├─ get_resume_link — resume download/view URLs
-                      ├─ get_site_performance — CrUX field data (Core Web Vitals)
-                      ├─ search_projects — keyword search across portfolio projects
-                      ├─ send_message_to_themis — send contact form message via /api/contact
-                      └─ get_system_health — system health status from /api/health
+  └─ POST /api/chat
+       ├─ Development: Express server (port 3001) via Next.js proxy
+       └─ Production: CloudFront /api/* → Lambda (figma-portfolio-api)
+            └─ Express app wrapped in serverless-http
+                 └─ ConverseStream API (with toolConfig)
+                      └─ AWS Bedrock (Claude 3.5 Haiku)
+                           ├─ System prompt includes full knowledge base (~35 KB, 10 markdown files)
+                           ├─ Blog index (MDX posts loaded at startup for RAG search)
+                           └─ Tool use loop (up to 2 rounds):
+                                ├─ search_portfolio — keyword search across skills, pages, experience
+                                ├─ search_blog — full-text search of blog MDX posts with excerpts
+                                ├─ get_github_stats — live GitHub profile via API
+                                ├─ check_booking_availability — Cal.com slot availability
+                                ├─ get_resume_link — resume download/view URLs
+                                ├─ get_site_performance — CrUX field data (Core Web Vitals)
+                                ├─ search_projects — keyword search across portfolio projects
+                                ├─ send_message_to_themis — send contact form message via /api/contact
+                                └─ get_system_health — system health status from /api/health
 ```
 
 The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock-runtime` SDK. All 10 knowledge files are loaded into the system prompt at startup, no separate vector database needed. Blog posts are indexed from MDX source files for RAG search. When the model requests a tool, the server executes it and re-invokes Bedrock with the result.
+
+### Production Deployment
+
+The chatbot backend runs as an **AWS Lambda function** (`figma-portfolio-api`, Node.js 20.x) behind CloudFront:
+
+- **Lambda Function URL**: `https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws/`
+- **CloudFront routing**: `/api/*` → Lambda origin, all other paths → S3 static
+- **Invoke mode**: BUFFERED (via `serverless-http` — Lambda translates `{ statusCode, body, headers }` to HTTP)
+- **Bundle**: esbuild ESM bundle (`.mjs`), ~1.8 MB
+- **Assets**: Knowledge base (`bot/knowledge/*.md`) and blog posts (`content/blog/*.mdx`) are copied into the Lambda zip alongside the bundle
+
+#### Path Resolution
+
+The chat route uses `SERVER_ROOT` and `PROJECT_ROOT` constants to resolve file paths in both environments:
+
+- **Local dev** (`tsx server/routes/chat.ts`): `__dirname` = `<project>/server/routes`
+  - `SERVER_ROOT` = `<project>/server/` (knowledge base at `server/bot/knowledge/`)
+  - `PROJECT_ROOT` = `<project>/` (blog at `content/blog/`)
+- **Lambda** (esbuild bundle at `/var/task/index.mjs`): `__dirname` = `/var/task`
+  - `SERVER_ROOT` = `/var/task/` (knowledge base at `/var/task/bot/knowledge/`)
+  - `PROJECT_ROOT` = `/var/task/` (blog at `/var/task/content/blog/`)
+
+#### Deploy Lambda
+
+```bash
+pnpm deploy:lambda          # full build + deploy
+pnpm build:lambda            # build only (no deploy)
+```
+
+The deploy script (`scripts/deploy-lambda.sh`) runs esbuild, copies assets, zips, deploys, and verifies the endpoint.
 
 ## Features
 
@@ -40,7 +73,7 @@ The Express server calls AWS Bedrock directly using the `@aws-sdk/client-bedrock
 - **SSE streaming**: incremental token-by-token Server-Sent Events delivery to the browser
 - **Thinking indicator**: animated dots shown while tools execute server-side
 - **Cyberpunk UI**: dark glass-morphism panel, cyan accent, `font-mono`
-- **Suggested questions**: 3 randomly selected prompts from a pool of ~40, plus pinned contact and booking prompts
+- **Suggested questions**: randomly selected prompts from a pool of ~30, plus pinned "I want to get in touch" and "I'd like to book a call" actions. Suggestions reappear after each assistant reply with fresh picks and an "Ask something else:" label
 - **AI cover letter generator**: visitors can paste a job description and the chatbot generates a tailored 3-4 paragraph cover letter highlighting Themis's relevant experience
 - **Graceful errors**: failures displayed inline without crashing
 
@@ -63,7 +96,7 @@ The knowledge base consists of 10 markdown files in `server/bot/knowledge/`:
 | `01_identity.md` | Name, title, location, contact info, GitHub profile stats (54 repos, language breakdown), Credly profile link |
 | `02_professional_summary.md` | Career overview, key strengths |
 | `03_work_experience.md` | 7 roles across 15+ years |
-| `04_education.md` | Degrees, certifications, academy programs |
+| `04_education.md` | M.Sc. Data Analytics, B.Sc. Computer Science, Cisco programs, honors — structured metadata (`id`, `institution`, `domain`, `skills`) for tool parsing |
 | `05_certifications_skills.md` | 4 professional certs + 16 Credly badges + 6 skill domains — structured metadata (`id`, `issuer`, `domain`, `issued`) for tool parsing |
 | `06_projects.md` | 16 portfolio projects — structured metadata (`year`, `category`, `featured`, `domains`, `technologies`) for tool parsing |
 | `07_portfolio_website.md` | Portfolio tech stack, 15 pages, features, deployment |
@@ -112,7 +145,7 @@ The chatbot uses Bedrock's native `toolConfig` parameter in `ConverseStreamComma
 | `get_resume_link` | Questions about resume, CV, or downloading credentials | Static resume URLs |
 | `get_site_performance` | Questions about site speed or Core Web Vitals | CrUX API (Chrome User Experience Report) |
 | `search_projects` | Questions about specific portfolio projects or tech used | Project index with title, description, tech stack |
-| `send_message_to_themis` | Visitor wants to send a message or get in touch | POST to `/api/contact` endpoint |
+| `send_message_to_themis` | Visitor has already provided name, email, and message in chat | POST to `/api/contact` endpoint. Default contact flow uses `[CONTACT]` action to open the contact page instead |
 | `get_system_health` | Questions about site status, uptime, or system health | GET from `/api/health` endpoint |
 
 The system prompt includes an **intent classification framework** that guides the model on when to use tools vs answer directly from the knowledge base, reducing unnecessary tool calls and latency.
@@ -170,7 +203,7 @@ Action tokens are special strings in the model's response that trigger client-si
 | `[CONTACT]` | `{ action: "open_contact" }` | Navigates to `/contact/` via Next.js router |
 | `[GOTO:/path/]` | `{ action: "navigate", path: "/path/" }` | Renders a clickable link below the message text |
 
-- `[BOOK_CALL]` and `[CONTACT]` are emitted as the sole response (no surrounding text)
+- `[BOOK_CALL]` and `[CONTACT]` are emitted as the sole response (no surrounding text). `[CONTACT]` is the default action for contact requests — the `send_message_to_themis` tool is only used when the visitor has already provided all three details (name, email, message) in the conversation
 - `[GOTO:/path/]` is appended to the end of a text response; the token is stripped from the streamed text and the path is sent as a separate SSE event
 
 ## Local Development
@@ -293,7 +326,9 @@ The chatbot widget follows WCAG 2.2 guidelines:
 | "Access denied" from Bedrock | Missing model access | Enable Claude 3.5 Haiku in AWS Bedrock console |
 | "Invalid payment instrument" | AWS billing not set up | Add payment method in AWS Billing console |
 | "Credentials not found" | AWS not configured | Run `aws configure` or set `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` |
-| Empty responses | Knowledge base not found | Verify `server/bot/knowledge/*.md` files exist |
+| Empty responses | Knowledge base not found | Verify `server/bot/knowledge/*.md` files exist; in Lambda, run `pnpm deploy:lambda` to rebundle assets |
+| "I don't have information about…" | Lambda missing knowledge files | Redeploy with `pnpm deploy:lambda` — the deploy script copies `bot/knowledge/` and `content/blog/` into the zip |
+| Bedrock `toolConfig` error | Messages contain tool blocks without config | Fixed in chat.ts — `toolConfig` is always included when messages have `toolUse`/`toolResult` blocks |
 | Tool use times out | External API unreachable | Check GitHub/Cal.com API connectivity |
 | Blog search returns nothing | No MDX files found | Verify `content/blog/*.mdx` files exist |
 | "Looking up…" stuck | Tool execution failed | Check server logs for API errors |
