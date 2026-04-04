@@ -741,8 +741,8 @@ test.describe("Chat API — SSE Response Format", () => {
     const res = await request.post(`${API}/api/chat`, {
       data: { message: "Hello" },
     });
-    // If HF_TOKEN is configured, should return SSE stream
-    // If not, returns 503 JSON
+    // If Bedrock is configured, should return SSE stream
+    // If budget exceeded, returns 503 JSON
     if (res.status() === 200) {
       const contentType = res.headers()["content-type"] ?? "";
       expect(contentType).toContain("text/event-stream");
@@ -753,7 +753,7 @@ test.describe("Chat API — SSE Response Format", () => {
     }
   });
 
-  test("returns 503 when HF_TOKEN is not configured", async ({ request }) => {
+  test("returns 503 when chat service is unavailable", async ({ request }) => {
     const res = await request.post(`${API}/api/chat`, {
       data: { message: "Hello" },
     });

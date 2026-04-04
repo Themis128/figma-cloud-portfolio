@@ -266,29 +266,11 @@ NEXT_PUBLIC_AI_PROVIDER=together
 NEXT_PUBLIC_TOGETHER_API_KEY=your_together_api_key
 ```
 
-#### 3. Ollama (Local LLMs)
+#### 3. Ollama (Local LLMs) — Deprecated
 
-**Models**:
-
-- llama2
-- codellama
-- mistral
-- Any Ollama-supported model
-
-**Configuration**:
-
-```env
-NEXT_PUBLIC_AI_PROVIDER=ollama
-NEXT_PUBLIC_OLLAMA_BASE_URL=http://localhost:11434/v1
-NEXT_PUBLIC_AI_MODEL=llama2
-```
-
-**Setup Ollama**:
+> **Note:** Local LLM support has been removed. The chatbot now uses AWS Bedrock (Claude 3.5 Haiku).
 
 ```bash
-# Install Ollama
-# Download from: https://ollama.ai/
-
 # Pull a model
 ollama pull llama2
 
@@ -1367,12 +1349,6 @@ AMPLIFY_STAGING_APP_ID=
 - **Offline Mode**: Built-in analysis without external dependencies
 - **Real-time Configuration**: Dynamic configuration updates without redeployment
 - **Intelligent Suggestions**: AI-powered test failure analysis with confidence scores
-
-#### **✅ DistilGPT2 Lambda Integration**
-
-- **Text Generation**: Serverless text generation using HuggingFace Transformers
-- **Deployment Scripts**: Automated deployment scripts for AWS Lambda
-- **Layer Packaging**: Instructions for packaging ML dependencies
 
 #### **✅ Enhanced Test Coverage**
 

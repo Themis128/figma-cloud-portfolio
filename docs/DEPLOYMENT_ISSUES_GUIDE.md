@@ -60,7 +60,6 @@ NEXT_PUBLIC_GA_ID=G-FT79QM66D3
 # Server-side (API routes)
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret
 GITHUB_TOKEN=your_github_token
-HF_TOKEN=your_huggingface_token
 CAL_API_KEY=your_cal_api_key
 CAL_EVENT_TYPE_ID=your_event_type_id
 ```

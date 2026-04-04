@@ -79,7 +79,7 @@ export default function Navigation() {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+            <div className="hidden md:flex items-center space-x-3 lg:space-x-6 xl:space-x-8">
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}

@@ -11,7 +11,6 @@
     "dev": "next dev",
     "dev:server": "tsx server/index.ts",
     "mcp:start": "tsx server/mcp/index.ts",
-    "dev:bot": "cd server/bot && ./venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8001",
     "predev": "pnpm amplify:outputs:sandbox >/dev/null 2>&1 || true",
     "predev:all": "pnpm amplify:outputs:sandbox >/dev/null 2>&1 || true && bash scripts/amplify-status.sh",
     "dev:all": "concurrently -n \"next,server\" -c \"cyan,yellow\" \"next dev\" \"tsx server/index.ts\"",

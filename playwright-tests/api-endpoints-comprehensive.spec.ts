@@ -543,7 +543,7 @@ test.describe("Chat — POST /api/chat", () => {
 
     if (status === 503) {
       const body = await res.json();
-      expect(body.error).toContain("HF_TOKEN");
+      expect(body).toHaveProperty("error");
     } else {
       expect(status).toBe(200);
       const ct = res.headers()["content-type"] ?? "";
@@ -575,14 +575,13 @@ test.describe("Chat — POST /api/chat", () => {
     expect([200, 503]).toContain(res.status());
   });
 
-  test("503 response includes descriptive error about HF_TOKEN", async ({ request }) => {
+  test("503 response includes descriptive error message", async ({ request }) => {
     const res = await request.post(`${API}/api/chat`, {
       data: { message: "test" },
     });
     if (res.status() === 503) {
       const body = await res.json();
       expect(body).toHaveProperty("error");
-      expect(body.error).toContain("HF_TOKEN");
     }
   });
 });

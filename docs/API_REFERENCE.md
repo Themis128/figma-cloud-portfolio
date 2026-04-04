@@ -610,64 +610,10 @@ Each `data:` line carries either a `{"token": "..."}` object (a text chunk) or t
 
 **Notes:**
 
-- Model: `mistralai/Mistral-7B-Instruct-v0.3` via HuggingFace Inference API
-- System prompt: hardcoded portfolio context (experience, skills, certifications)
+- Model: Claude 3.5 Haiku via AWS Bedrock (inference profile `us.anthropic.claude-3-5-haiku-20241022-v1:0`)
+- Knowledge base in `server/bot/knowledge/` (10 markdown files)
+- SSE streaming with Bedrock tool use (search_portfolio, search_blog, get_github_stats, check_booking_availability)
 - Conversation history is forwarded to maintain multi-turn context
-- The Next.js route reads `PYTHON_BOT_URL` env var (default `http://localhost:8001`)
-
-**Environment Variables:**
-
-- `PYTHON_BOT_URL`: URL of the Python FastAPI backend (default: `http://localhost:8001`)
-
----
-
-### Python Chatbot Backend (port 8001)
-
-The Python FastAPI service (`server/bot/main.py`) provides the underlying LLM interface. It is **not** called directly from the browser. All traffic goes through the Next.js `/api/chat` proxy.
-
-#### POST /api/chat/stream
-
-Stream a chat completion from Mistral-7B via HuggingFace Inference API.
-
-**Request Body:** Same schema as `/api/chat` above.
-
-**Response:** SSE stream with `data: {"token": "..."}` lines, terminated by `data: [DONE]`.
-
-**Error chunk:**
-
-```
-data: {"error": "HF API error 503: ..."}
-```
-
-#### GET /api/health
-
-Health check for the Python service.
-
-**Response (200):**
-
-```json
-{
-  "status": "ok",
-  "model": "mistralai/Mistral-7B-Instruct-v0.3"
-}
-```
-
-**Python service environment variables:**
-
-| Variable           | Required | Description                                                           |
-| ------------------ | -------- | --------------------------------------------------------------------- |
-| `HF_TOKEN`         | ✓        | HuggingFace API token                                                 |
-| `PORTFOLIO_ORIGIN` | -        | Allowed CORS origin (default: `*`). Set to your domain in production. |
-| `PORT`             | -        | Port to listen on (default: `8001`)                                   |
-
-**Running the Python backend:**
-
-```bash
-cd server/bot
-cp .env.example .env   # fill in HF_TOKEN
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8001
-```
 
 ---
 
@@ -1690,8 +1636,6 @@ All endpoints follow a consistent error response format:
 
 | Variable                          | Required            | Description                                                   |
 | --------------------------------- | ------------------- | ------------------------------------------------------------- |
-| `PYTHON_BOT_URL`                  | For chatbot         | Python FastAPI backend URL (default: `http://localhost:8001`) |
-| `HF_TOKEN`                        | For chatbot backend | HuggingFace API token for Mistral inference                   |
 | `ANTHROPIC_API_KEY`               | For AI endpoints    | Anthropic API key                                             |
 | `GITHUB_TOKEN`                    | For GitHub proxy    | GitHub personal access token                                  |
 | `RECAPTCHA_SECRET_KEY`            | For contact form    | reCAPTCHA v3 secret key                                       |

@@ -87,7 +87,7 @@ test.describe("API Endpoints", () => {
       },
     });
 
-    // 200 if HF_TOKEN is configured, 503 if not
+    // 200 if Bedrock is configured, 503 if budget exceeded
     expect([200, 503]).toContain(chatResponse.status());
 
     if (chatResponse.status() === 200) {

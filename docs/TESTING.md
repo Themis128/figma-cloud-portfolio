@@ -188,7 +188,7 @@ Shared helpers used across spec files:
 **Health Tab (16 tests)**
 - ✅ Endpoint cards (9 endpoints), refresh all, individual refresh buttons
 - ✅ Summary stats (total, healthy count), average response time with sparkline
-- ✅ Service labels (Lambda, Cal.com, HuggingFace, Web Push, reCAPTCHA + SES)
+- ✅ Service labels (Lambda, Cal.com, AWS Bedrock, Web Push, reCAPTCHA + SES)
 - ✅ Method badges (GET, POST), endpoint descriptions
 - ✅ Auto-run health checks, response times in ms, status labels (Healthy/Degraded/Down)
 - ✅ "Checked" timestamps, auth header for API Keys endpoint
@@ -402,7 +402,7 @@ The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests 
 - ✅ Suggested questions disappear after sending a message (bot-dependent, skips)
 
 **Sending messages (8 tests)**
-- ✅ Typed message sent and local LLM response received (bot-dependent)
+- ✅ Typed message sent and chatbot response received (bot-dependent)
 - ✅ User messages have distinct styling from assistant (cyan vs white, bot-dependent)
 - ✅ Suggested question click sends message and gets response (bot-dependent)
 - ✅ Enter key sends message (bot-dependent)

@@ -172,7 +172,6 @@ pnpm format                     # Format code with Prettier
 
 - **AWS Lambda**: Single function handling all API routes
 - **Express.js**: Local development server (port 3001)
-- **Python FastAPI**: Chatbot backend (port 8001)
 - **Socket.IO**: Real-time communication
 - **AWS SDK**: Integration with AWS services
 - **Serverless HTTP**: Lambda function wrapper
@@ -200,13 +199,6 @@ Single Lambda function (`figma-portfolio-api`) fronted by CloudFront at `/api/*`
 - Function URL: `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
 - Runtime: Node.js, 256MB memory, 15s timeout
 - 14 environment variables (see [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md))
-
-### Python Chatbot (AWS Lambda)
-
-- Function URL: `https://3qwsvw4rykz7ohbywemjeq5vxq0bekyw.lambda-url.us-east-1.on.aws`
-- Runtime: Python 3.10
-- Memory: 512MB, 30s timeout
-- HuggingFace Inference API integration
 
 ### Documentation
 

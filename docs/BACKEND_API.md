@@ -12,7 +12,7 @@
                                                               │
                                                ┌──────────────┼───────────────────┐
                                                │              │                   │
-                                          Cal.com v2    HuggingFace API     Slack Webhooks
+                                          Cal.com v2    AWS Bedrock         Slack Webhooks
                                           (Booking)     (AI Chat)           (Notifications)
 ```
 
@@ -28,13 +28,6 @@
 3. Request is proxied to API Gateway → Lambda
 4. Lambda invokes the Express.js handler
 5. Express routes the request and returns a response
-
-### Legacy Servers (Development Only)
-
-| Server | File | Port | Purpose |
-|--------|------|------|---------|
-| Express Bot | `server/bot.ts` | 3010 | Simple keyword-match chatbot (`POST /api/chatbot`) |
-| FastAPI Bot | `server/bot/main.py` | 8001 | Mistral-7B streaming chat (`POST /api/chat/stream`) |
 
 ---
 
@@ -388,19 +381,6 @@ Download resume as PDF.
 
 #### `POST /api/chatbot` (port 3010)
 
-**Source**: [`server/bot.ts`](../server/bot.ts)
-
-Simple keyword-match chatbot (not deployed to Lambda).
-
-**Request Body**: `{ "message": "What is this website about?" }`
-**Response**: `{ "reply": "This is a modern portfolio built with Next.js..." }`
-
-#### `POST /api/chat/stream` (port 8001)
-
-**Source**: [`server/bot/main.py`](../server/bot/main.py)
-
-FastAPI streaming chatbot using Mistral-7B (not deployed to Lambda).
-
 ---
 
 ## Amplify Rewrite Rules
@@ -435,7 +415,6 @@ These rules proxy frontend `/api/*` requests to the Lambda backend.
 
 | Variable | Used By | Description |
 |----------|---------|-------------|
-| `HF_TOKEN` | Chat API | HuggingFace API token |
 | `CAL_API_KEY` | Booking API | Cal.com API v2 key |
 | `CAL_EVENT_TYPE_ID` | Booking API | Cal.com event type ID |
 | `SLACK_WEBHOOK_URL` | API Keys | Slack incoming webhook URL |
