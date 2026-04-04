@@ -47,7 +47,7 @@ test.describe("PWA Features", () => {
     const body = await response.text();
     expect(body).toContain("workbox");
     expect(body).toContain("offline-fallback");
-    expect(body).toContain("sw-store");
+    expect(body).toContain("SKIP_WAITING");
   });
 });
 

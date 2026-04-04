@@ -46,6 +46,13 @@
       "type": "image/jpeg",
       "form_factor": "wide",
       "label": "Portfolio homepage — Cloud Architect & Cybersecurity Specialist"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Portfolio logo — T. Baltzakis"
     }
   ],
   "shortcuts": [
