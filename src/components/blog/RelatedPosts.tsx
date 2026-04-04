@@ -1,5 +1,8 @@
+"use client";
+
 import { ArrowRight, Calendar, Clock, Tag } from "lucide-react";
 import Link from "next/link";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 import type { PostSummary } from "@/types/blog";
 
 interface RelatedPostsProps {
@@ -37,6 +40,7 @@ export function RelatedPosts({
             key={post.slug}
             href={post.permalink as never}
             className="group rounded-lg border border-border/20 bg-foreground/5 backdrop-blur-sm p-4 hover:border-cyan-400/30 transition-all"
+            onClick={() => trackGA4("select_content", { content_type: "related_post", item_id: post.slug })}
           >
             <div className="flex flex-wrap gap-1.5 mb-2">
               {post.tags.slice(0, 2).map((tag) => (

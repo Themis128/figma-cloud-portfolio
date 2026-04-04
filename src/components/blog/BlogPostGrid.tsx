@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 import type { PostSummary } from "@/types/blog";
 import { BlogFilterBar } from "./BlogFilterBar";
 
@@ -92,7 +93,7 @@ export function BlogPostGrid({ posts, tags }: BlogPostGridProps) {
               Latest Post
             </span>
           </div>
-          <Link href={latestPost.permalink as never} className="block group">
+          <Link href={latestPost.permalink as never} className="block group" onClick={() => trackGA4("select_content", { content_type: "blog_post", item_id: latestPost.slug, featured: true })}>
               <article className="relative rounded-xl border border-border bg-foreground/5 backdrop-blur-sm overflow-hidden transition-all duration-300 group-hover:border-cyan-400/40 group-hover:shadow-lg group-hover:shadow-cyan-500/10 hover:scale-[1.02]">
                 <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-400/50 to-transparent" />
                 <div className="p-6 md:p-8 lg:p-10">
@@ -156,6 +157,7 @@ export function BlogPostGrid({ posts, tags }: BlogPostGridProps) {
                 key={post.slug}
                 href={post.permalink as never}
                 className="block group h-full"
+                onClick={() => trackGA4("select_content", { content_type: "blog_post", item_id: post.slug })}
               >
                   <article className="relative h-full rounded-xl border border-border bg-foreground/5 backdrop-blur-sm p-6 transition-all duration-300 group-hover:border-cyan-400/30 group-hover:shadow-lg group-hover:shadow-cyan-500/5 hover:scale-[1.02] flex flex-col">
                     <div className="flex flex-wrap gap-1.5 mb-3">

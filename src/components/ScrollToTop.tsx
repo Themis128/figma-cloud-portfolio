@@ -2,6 +2,7 @@
 
 import { ArrowUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { trackGA4 } from "@/components/GoogleAnalytics";
 
 export function ScrollToTop() {
   const [visible, setVisible] = useState(false);
@@ -15,6 +16,7 @@ export function ScrollToTop() {
   }, []);
 
   const scrollToTop = useCallback(() => {
+    trackGA4("scroll_to_top", { from_position: Math.round(window.scrollY) });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
