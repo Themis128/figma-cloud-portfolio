@@ -1,9 +1,9 @@
 import { ArrowLeft, Calendar, ChevronRight, Clock, Tag, User } from "lucide-react";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { posts } from "#site/content";
-import dynamic from "next/dynamic";
 import { AuthorBio } from "@/components/blog/AuthorBio";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { SocialShare } from "@/components/blog/SocialShare";
@@ -12,6 +12,7 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { MdxContent } from "@/components/MdxContent";
 import Navigation from "@/components/Navigation";
+import type { PostSummary } from "@/types/blog";
 
 const ReadingProgress = dynamic(
   () => import("@/components/interactive/ReadingProgress"),
@@ -19,7 +20,6 @@ const ReadingProgress = dynamic(
 const BlogReactions = dynamic(
   () => import("@/components/interactive/BlogReactions"),
 );
-import type { PostSummary } from "@/types/blog";
 
 const SITE_URL = "https://www.baltzakisthemis.com";
 

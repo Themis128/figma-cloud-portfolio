@@ -27,7 +27,6 @@ import SeoAudit from "@/components/admin/SeoAudit";
 import { useAdminAuth } from "@/components/admin/useAdminAuth";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TAB_ITEMS = [
