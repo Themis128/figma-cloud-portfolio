@@ -29,6 +29,7 @@ const SECTIONS = [
   { id: "summary", label: "Summary" },
   { id: "focus-areas", label: "Focus Areas" },
   { id: "skills", label: "Skills" },
+  { id: "education", label: "Education" },
   { id: "badges", label: "Badges" },
   { id: "awards", label: "Awards" },
 ] as const;
@@ -246,6 +247,114 @@ export default function AboutPage() {
                       </li>
                     ))}
                   </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Education */}
+            <div id="education" style={{ contain: "layout" }}>
+              <div className="bg-foreground/5 backdrop-blur-sm rounded-lg p-8 border border-border">
+                <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
+                  <GraduationCap className="w-8 h-8 text-cyan-400" />
+                  Education
+                </h3>
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors">
+                    <div className="w-3 h-3 bg-cyan-400 rounded-full mt-1.5 shrink-0" />
+                    <div>
+                      <div className="font-bold text-foreground">
+                        M.Sc. Data Analytics and Technologies
+                      </div>
+                      <div className="text-cyan-400 font-medium text-sm">
+                        Bolton University | New York College
+                      </div>
+                      <div className="text-muted-foreground text-sm mt-1">
+                        2025
+                      </div>
+                      <p className="text-foreground/70 text-sm mt-2">
+                        Specialized in data analytics, machine learning, and
+                        modern data technologies. Research focus on applying
+                        analytics techniques to cybersecurity and network
+                        performance optimization.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors">
+                    <div className="w-3 h-3 bg-cyan-400 rounded-full mt-1.5 shrink-0" />
+                    <div>
+                      <div className="font-bold text-foreground">
+                        B.Sc. Computer Science
+                      </div>
+                      <div className="text-cyan-400 font-medium text-sm">
+                        Hellenic Open University
+                      </div>
+                      <div className="text-muted-foreground text-sm mt-1">
+                        2014 &ndash; 2022
+                      </div>
+                      <p className="text-foreground/70 text-sm mt-2">
+                        Comprehensive foundation in computer science covering
+                        algorithms, data structures, operating systems,
+                        databases, software engineering, and networking. Studied
+                        part-time alongside full-time professional career.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors">
+                    <div className="w-3 h-3 bg-cyan-400 rounded-full mt-1.5 shrink-0" />
+                    <div>
+                      <div className="font-bold text-foreground">
+                        Cisco Incubator 12.0 EMEA &mdash; Customer Experience
+                      </div>
+                      <div className="text-cyan-400 font-medium text-sm">
+                        Cisco Networking Academy
+                      </div>
+                      <div className="text-muted-foreground text-sm mt-1">
+                        2024 &ndash; 2025
+                      </div>
+                      <p className="text-foreground/70 text-sm mt-2">
+                        Selected for Cisco&apos;s competitive European
+                        incubator program. Developed innovative customer
+                        experience solutions and placed 3rd in the final
+                        competition.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors">
+                    <div className="w-3 h-3 bg-cyan-400 rounded-full mt-1.5 shrink-0" />
+                    <div>
+                      <div className="font-bold text-foreground">
+                        DevNet Associate Program
+                      </div>
+                      <div className="text-cyan-400 font-medium text-sm">
+                        Cisco Networking Academy
+                      </div>
+                      <div className="text-muted-foreground text-sm mt-1">
+                        2023 &ndash; 2024
+                      </div>
+                      <p className="text-foreground/70 text-sm mt-2">
+                        Software development and automation for Cisco platforms
+                        using Python, REST APIs, and network programmability.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors">
+                    <div className="w-3 h-3 bg-cyan-400 rounded-full mt-1.5 shrink-0" />
+                    <div>
+                      <div className="font-bold text-foreground">
+                        CCNA Program &mdash; Networking &amp; Telecommunications
+                      </div>
+                      <div className="text-cyan-400 font-medium text-sm">
+                        Cisco Networking Academy
+                      </div>
+                      <div className="text-muted-foreground text-sm mt-1">
+                        2021 &ndash; 2022
+                      </div>
+                      <p className="text-foreground/70 text-sm mt-2">
+                        Comprehensive networking curriculum covering routing,
+                        switching, network security, and enterprise architecture.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

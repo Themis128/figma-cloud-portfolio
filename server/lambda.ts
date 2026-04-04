@@ -18,7 +18,6 @@ import chat from "./routes/chat";
 import booking from "./routes/booking";
 import contact from "./routes/contact";
 import crux from "./routes/crux";
-import pushNotifications from "./routes/pushNotifications";
 import github from "./routes/github";
 import admin from "./routes/admin";
 import rateLimit from "express-rate-limit";
@@ -68,7 +67,6 @@ app.use("/api/resume", resume);
 app.use("/api/chat", chat);
 app.use("/api/booking", booking);
 app.use("/api/contact", contact);
-app.use("/api/push-notifications", pushNotifications);
 app.use("/api/github", github);
 app.use("/api/crux", crux);
 

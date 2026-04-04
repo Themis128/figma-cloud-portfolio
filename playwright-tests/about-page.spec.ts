@@ -26,7 +26,7 @@ test.describe("About Page — Structure", () => {
     expect(title).toContain("About");
   });
 
-  test("has all section IDs (hero, summary, focus-areas, skills, badges, awards)", async ({
+  test("has all section IDs (hero, summary, focus-areas, skills, education, badges, awards)", async ({
     page,
   }) => {
     const sectionIds = [
@@ -34,6 +34,7 @@ test.describe("About Page — Structure", () => {
       "summary",
       "focus-areas",
       "skills",
+      "education",
       "badges",
       "awards",
     ];
@@ -235,6 +236,88 @@ test.describe("About Page — Skills Section", () => {
     // Experience section
     const experienceLabel = page.getByText("Experience");
     await expect(experienceLabel.first()).toBeVisible({ timeout: 10000 });
+  });
+});
+
+test.describe("About Page — Education", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/about/");
+    await page.waitForLoadState("domcontentloaded");
+  });
+
+  test("education section is visible with heading", async ({ page }) => {
+    const educationSection = page.locator("#education");
+    await educationSection.scrollIntoViewIfNeeded();
+
+    await expect(educationSection.getByText("Education")).toBeVisible({
+      timeout: 10000,
+    });
+  });
+
+  test("displays Master's degree from Bolton University", async ({ page }) => {
+    const educationSection = page.locator("#education");
+    await educationSection.scrollIntoViewIfNeeded();
+
+    await expect(
+      educationSection.getByText("M.Sc. Data Analytics and Technologies"),
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      educationSection.getByText("Bolton University"),
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test("displays Bachelor's degree from Hellenic Open University", async ({
+    page,
+  }) => {
+    const educationSection = page.locator("#education");
+    await educationSection.scrollIntoViewIfNeeded();
+
+    await expect(
+      educationSection.getByText("B.Sc. Computer Science"),
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      educationSection.getByText("Hellenic Open University"),
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test("displays Cisco programs", async ({ page }) => {
+    const educationSection = page.locator("#education");
+    await page.evaluate((el) => el?.scrollIntoView({ block: "center" }), await educationSection.elementHandle());
+    await page.waitForTimeout(500);
+
+    await expect(
+      educationSection.getByText("Cisco Incubator 12.0 EMEA"),
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      educationSection.getByText("DevNet Associate Program"),
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      educationSection.getByText("CCNA Program"),
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test("education entries have institution and period", async ({ page }) => {
+    const educationSection = page.locator("#education");
+    await educationSection.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+
+    // Check for institution names (these are unique and not ambiguous)
+    await expect(
+      educationSection.getByText("Cisco Networking Academy").first(),
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      educationSection.getByText("New York College"),
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test("education has at least 5 entries", async ({ page }) => {
+    const educationSection = page.locator("#education");
+    await educationSection.scrollIntoViewIfNeeded();
+
+    // Each entry has a cyan dot indicator (w-3 h-3 bg-cyan-400 rounded-full)
+    const entries = educationSection.locator(".rounded-lg");
+    const count = await entries.count();
+    expect(count).toBeGreaterThanOrEqual(5);
   });
 });
 
