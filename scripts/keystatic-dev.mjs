@@ -6,7 +6,7 @@
  * and cleans up when the process exits. This keeps Keystatic routes out of
  * the production build (which uses output: "export").
  */
-import { execSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
