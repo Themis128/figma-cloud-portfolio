@@ -55,8 +55,8 @@ docs/                 # Documentation
 
 ```bash
 # Clone the repository
-git clone https://github.com/Themis128/new-portfolio.git
-cd new-portfolio
+git clone https://github.com/Themis128/figma-cloud-portfolio.git
+cd figma-cloud-portfolio
 
 # Install dependencies
 pnpm install
