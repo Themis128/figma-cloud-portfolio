@@ -9,7 +9,7 @@ Follow this checklist **before pushing to production** for the first time.
 ### Step-by-Step:
 
 1. **Open GitHub Repository**
-   - Go to: https://github.com/Themis128/new-portfolio
+   - Go to: https://github.com/Themis128/figma-cloud-portfolio
    - Click: **Settings** tab (top menu)
 
 2. **Navigate to Secrets**
@@ -180,7 +180,7 @@ cat amplify.yml | grep load-secrets
    ```
 
 3. **Watch GitHub Actions**
-   - Go to: https://github.com/Themis128/new-portfolio/actions
+   - Go to: https://github.com/Themis128/figma-cloud-portfolio/actions
    - Find workflow: **Build & Deploy** (most recent)
    - Click: View workflow run
    - Watch stages:
