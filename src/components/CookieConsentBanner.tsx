@@ -14,6 +14,7 @@ export function CookieConsentBanner() {
     useConsent();
 
   const [showCustomise, setShowCustomise] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
 
@@ -53,8 +54,14 @@ export function CookieConsentBanner() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [hasConsented, showCustomise]);
 
-  // Don't render anything if the user already consented
-  if (hasConsented) return null;
+  // Render only after mount: the banner is interactive (focus trap, buttons)
+  // and SSR/hydration would otherwise show dead controls and flash it for
+  // users who already consented.
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || hasConsented) return null;
 
   const handleSavePreferences = () => {
     // Saving preferences via individual toggles already persists via
