@@ -75,7 +75,7 @@ jobs:
           NEXT_PUBLIC_API_BASE_URL: /api
 
   e2e-smoke:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     # Runs in parallel with quality — no needs: dependency
 
