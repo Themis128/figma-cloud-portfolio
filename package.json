@@ -84,7 +84,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@sentry/browser": "10.43.0",
-    "@sentry/nextjs": "^10.43.0",
+    "@sentry/nextjs": "^10.75.2",
     "@tanstack/react-query": "^5.90.21",
     "@testing-library/dom": "^10.4.1",
     "aws-amplify": "^6.16.3",
@@ -126,7 +126,7 @@
     "vaul": "^1.1.2",
     "velite": "^0.3.1",
     "web-vitals": "^5.1.0",
-    "zod": "^4.3.6"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.21.1",
@@ -168,7 +168,7 @@
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@10.32.1",
   "type": "module",
