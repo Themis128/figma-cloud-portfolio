@@ -1,0 +1,89 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Enable corepack and pnpm
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # amplify_outputs.json is gitignored and was previously generated from a
+      # retired AWS account. Auth is overridden to the hardcoded production pool
+      # in src/lib/amplify.ts at runtime; this stub only satisfies the build-time
+      # import. Admin/Cognito features need AWS to work and are inactive.
+      - name: Write Amplify outputs stub
+        run: |
+          cat > amplify_outputs.json <<'JSON'
+          {
+            "version": "1",
+            "auth": {
+              "aws_region": "us-east-1",
+              "user_pool_id": "us-east-1_EM9ipdfSA",
+              "user_pool_client_id": "47j0rigp21afji3u407g42gt75",
+              "identity_pool_id": "us-east-1:3e125cf2-cd62-4ce4-86ee-907b43b9bfe7",
+              "mfa_methods": [],
+              "standard_required_attributes": ["email"],
+              "username_attributes": ["email"],
+              "user_verification_types": ["email"],
+              "mfa_configuration": "NONE",
+              "unauthenticated_identities_enabled": true
+            }
+          }
+          JSON
+
+      - name: Cache Velite output
+        uses: actions/cache@v5
+        with:
+          path: .velite
+          key: velite-${{ hashFiles('content/blog/**', 'velite.config.ts') }}
+
+      - name: Build
+        run: pnpm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://www.baltzakisthemis.com
+          NEXT_PUBLIC_API_BASE_URL: /api
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler@4 deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Lighthouse CI smoke test
+        timeout-minutes: 5
+        run: |
+          npx -y @lhci/cli@0.14.x autorun \
+            --collect.url=https://baltzakisthemis-portfolio.baltzakis-themis.workers.dev/ \
+            --collect.url=https://baltzakisthemis-portfolio.baltzakis-themis.workers.dev/about/ \
+            --collect.url=https://baltzakisthemis-portfolio.baltzakis-themis.workers.dev/blog/ \
+            --collect.numberOfRuns=3 \
+            --upload.target=temporary-public-storage \
+            --assert.assertions.categories:performance=warn \
+            --assert.assertions.categories:accessibility=warn \
+            --assert.assertions.categories:best-practices=warn \
+            --assert.assertions.categories:seo=warn
