@@ -82,7 +82,8 @@ safe-outputs:
   noop:
 
 engine:
-  id: agy
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Automated Code Review
