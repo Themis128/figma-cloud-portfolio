@@ -67,6 +67,17 @@ source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9
 engine:
   id: gemini
   model: gemini-2.5-flash
+graders:
+  # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
+  # corrupting these metrics for every engine — disable until upstream fix.
+  tool-success-rate:
+    enabled: false
+  tool-failure-count:
+    enabled: false
+  loops:
+    enabled: false
+  trajectory-efficiency:
+    enabled: false
 ---
 
 # Daily Accessibility Review
