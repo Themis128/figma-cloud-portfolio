@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { buildPaletteItems, type PaletteItem } from "@/components/commandPaletteItems";
+import { PALETTE_ITEM_DEFS, type PaletteItem } from "@/components/commandPaletteItems";
 import { trackGA4 } from "@/components/GoogleAnalytics";
 import { getApiOrigin } from "@/lib/admin-constants";
 
@@ -71,9 +71,54 @@ export default function CommandPalette() {
     };
   }, [query, open]);
 
+  const runDomAction = useCallback((id: string) => {
+    const root = document.documentElement;
+    switch (id) {
+      case "theme-dark":
+        root.classList.remove("light");
+        root.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+        return;
+      case "theme-light":
+        root.classList.remove("dark");
+        root.classList.add("light");
+        localStorage.setItem("theme", "light");
+        return;
+      case "chat": {
+        const btn = document.querySelector<HTMLButtonElement>(
+          '[aria-label*="chat" i], [aria-label*="Chat" i]',
+        );
+        btn?.click();
+        return;
+      }
+      case "accessibility":
+        window.dispatchEvent(new CustomEvent("open-accessibility-panel"));
+        return;
+      case "retro-theme":
+        root.classList.toggle("retro-terminal");
+        return;
+    }
+  }, []);
+
   const items = useMemo<PaletteItem[]>(
-    () => buildPaletteItems(navigate, close),
-    [navigate, close],
+    () =>
+      PALETTE_ITEM_DEFS.map((def) => ({
+        id: def.id,
+        label: def.label,
+        description: def.description,
+        icon: def.icon,
+        keywords: def.keywords,
+        category: def.category,
+        action: () => {
+          if (def.href) {
+            navigate(def.href);
+          } else {
+            close();
+            runDomAction(def.id);
+          }
+        },
+      })),
+    [navigate, close, runDomAction],
   );
 
   const filtered = useMemo(() => {
