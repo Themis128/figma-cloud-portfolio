@@ -104,7 +104,9 @@ safe-outputs:
     max: 1
   noop:
 
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Backup and Restore Management

@@ -40,7 +40,9 @@ tools:
   bash: true
   cache-memory: true
 
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Daily Maintenance

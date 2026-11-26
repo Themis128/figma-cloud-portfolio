@@ -92,7 +92,9 @@ safe-outputs:
     max: 2
   noop:
 
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Performance Monitoring

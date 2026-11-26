@@ -44,7 +44,9 @@ safe-outputs:
     max: 3
   noop:
 
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Test Coverage Analyzer

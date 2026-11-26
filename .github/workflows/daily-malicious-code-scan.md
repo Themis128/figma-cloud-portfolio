@@ -22,7 +22,9 @@ safe-outputs:
 timeout-minutes: 15
 strict: true
 source: githubnext/agentics/workflows/daily-malicious-code-scan.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Daily Malicious Code Scan Agent

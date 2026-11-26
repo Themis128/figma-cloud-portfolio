@@ -96,7 +96,9 @@ safe-outputs:
     max: 5
   noop:
 
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Playwright E2E Test Runner

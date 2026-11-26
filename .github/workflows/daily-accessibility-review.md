@@ -64,7 +64,9 @@ steps:
       echo "App is running on http://localhost:3000"
     shell: bash
 source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: gemini
+engine:
+  id: gemini
+  model: gemini-2.5-flash
 ---
 
 # Daily Accessibility Review
