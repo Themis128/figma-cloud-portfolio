@@ -33,6 +33,7 @@ tools:
   cache-memory: true
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -43,7 +44,7 @@ safe-outputs:
     max: 3
   noop:
 
-engine: copilot
+engine: gemini
 ---
 
 # Test Coverage Analyzer

@@ -25,6 +25,7 @@ tools:
   cache-memory: true
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -33,7 +34,7 @@ safe-outputs:
     close-older-issues: true
     expires: 7d
 source: githubnext/agentics/workflows/daily-repo-status.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine: gemini
 ---
 
 # Daily Repo Status

@@ -85,6 +85,7 @@ tools:
   cache-memory: true
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -95,7 +96,7 @@ safe-outputs:
     max: 5
   noop:
 
-engine: copilot
+engine: gemini
 ---
 
 # Playwright E2E Test Runner

@@ -17,6 +17,7 @@ permissions: read-all
 network: defaults
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -39,7 +40,7 @@ tools:
   bash: true
   cache-memory: true
 
-engine: copilot
+engine: gemini
 ---
 
 # Daily Maintenance

@@ -16,6 +16,7 @@ permissions: read-all
 network: defaults
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -38,7 +39,7 @@ tools:
   cache-memory: true
 
 source: githubnext/agentics/workflows/daily-qa.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine: gemini
 ---
 
 # Daily QA

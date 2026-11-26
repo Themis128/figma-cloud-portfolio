@@ -101,6 +101,7 @@ tools:
   web-fetch:
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-pull-request:
@@ -110,7 +111,7 @@ safe-outputs:
     if-no-changes: "warn"
   noop:
 source: githubnext/agentics/workflows/link-checker.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine: gemini
 ---
 
 # Daily Link Checker & Fixer

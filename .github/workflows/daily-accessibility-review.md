@@ -15,6 +15,7 @@ permissions: read-all
 network: defaults
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -53,7 +54,6 @@ steps:
     run: pnpm install --frozen-lockfile
     shell: bash
 
-    shell: bash
 
   - name: Build and serve static export
     run: |
@@ -64,7 +64,7 @@ steps:
       echo "App is running on http://localhost:3000"
     shell: bash
 source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine: gemini
 ---
 
 # Daily Accessibility Review

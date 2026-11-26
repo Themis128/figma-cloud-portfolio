@@ -36,7 +36,6 @@ steps:
     run: npx playwright install chromium --with-deps
     shell: bash
 
-    shell: bash
 
   - name: Build application
     run: |
@@ -82,6 +81,7 @@ tools:
   cache-memory: true
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -92,7 +92,7 @@ safe-outputs:
     max: 2
   noop:
 
-engine: copilot
+engine: gemini
 ---
 
 # Performance Monitoring
