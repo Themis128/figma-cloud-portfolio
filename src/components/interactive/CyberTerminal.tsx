@@ -222,14 +222,16 @@ export default function CyberTerminal() {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === '`' && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        const el = e.target as HTMLElement;
         // Don't trigger if typing in an input/textarea (other than our terminal input)
+        const target = e.target;
         if (
-          el.tagName === 'INPUT' ||
-          el.tagName === 'TEXTAREA' ||
-          el.isContentEditable
+          target instanceof HTMLElement &&
+          (target.tagName === 'INPUT' ||
+            target.tagName === 'TEXTAREA' ||
+            target.isContentEditable) &&
+          target !== inputRef.current
         ) {
-          if (el !== inputRef.current) return;
+          return;
         }
         e.preventDefault();
         setIsOpen((prev) => !prev);
@@ -311,7 +313,7 @@ export default function CyberTerminal() {
       const result = processCommand(cmd);
 
       // Handle special commands
-      const firstResult = result[0];
+      const firstResult = result.at(0);
       if (!firstResult) return;
       if (result.length === 1 && firstResult.text === '__EXIT__') {
         setIsOpen(false);

@@ -25,10 +25,9 @@ export function StructuredData({ type, data }: StructuredDataProps) {
   };
 
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }}
-    />
+    <script type="application/ld+json">
+          {safeJsonLd(structuredData)}
+        </script>
   );
 }
 
@@ -120,18 +119,15 @@ export function DefaultStructuredData() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(personData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(profilePageData) }}
-      />
+      <script type="application/ld+json">
+          {safeJsonLd(websiteData)}
+        </script>
+      <script type="application/ld+json">
+          {safeJsonLd(personData)}
+        </script>
+      <script type="application/ld+json">
+          {safeJsonLd(profilePageData)}
+        </script>
     </>
   );
 }

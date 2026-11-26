@@ -162,10 +162,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           { name: post.title, url: `${SITE_URL}${post.permalink}` },
         ]}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(articleSchema) }}
-      />
+      <script type="application/ld+json">
+          {safeJsonLd(articleSchema)}
+        </script>
       <CircuitBackground />
       <Navigation />
       <ReadingProgress />

@@ -4,8 +4,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 interface MetadataConfig {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   keywords?: string[];
   image?: string;
   type?: "website" | "article" | "profile";
