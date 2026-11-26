@@ -43,6 +43,7 @@ steps:
   - name: Run TypeScript type checking
     run: |
       echo "Running TypeScript type checking..."
+      npx velite build
       pnpm typecheck 2>&1 | tee /tmp/typescript-results.txt || true
       echo "TypeScript checking completed"
     shell: bash
