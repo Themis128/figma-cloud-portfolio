@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 const DOMAINS = [
-  "https://www.baltzakisthemis.com",
-  "https://baltzakisthemis.com",
+  "https://portfolio.cloudless.gr",
+  "https://portfolio.cloudless.gr",
 ];
 
 const PAGES = [

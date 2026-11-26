@@ -84,7 +84,7 @@ interface AwsUptimeSummary {
   errors: number;
 }
 
-const PRODUCTION_URL = "https://www.baltzakisthemis.com";
+const PRODUCTION_URL = "https://portfolio.cloudless.gr";
 const API_HEALTH_URL = `${LAMBDA_API_URL}/api/health`;
 const UPTIME_SUMMARY_URL = `${LAMBDA_API_URL}/api/uptime/summary`;
 const UPTIME_HISTORY_STORAGE_KEY = "admin-deployment-uptime-history-v1";
@@ -208,7 +208,7 @@ export default function DeploymentStatus() {
         cloudfrontId: "E134SCTR0QGQKJ",
         region: "us-east-1",
         amplifyAppId: "d1zjif7pi1h3om",
-        domain: "baltzakisthemis.com",
+        domain: "portfolio.cloudless.gr",
       },
     };
 

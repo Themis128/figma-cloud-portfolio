@@ -26,7 +26,7 @@ const CyberQuiz = dynamic(
   () => import("@/components/interactive/CyberQuiz"),
 );
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Home | Themistoklis Baltzakis",
@@ -151,7 +151,7 @@ export default function HomePage() {
                   <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
                 <a
-                  href="https://www.baltzakisthemis.com"
+                  href="https://portfolio.cloudless.gr"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-foreground/70 hover:text-cyan-400 hover:scale-110 transition-all duration-300 p-2 min-w-11 min-h-11 flex items-center justify-center"

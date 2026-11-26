@@ -35,8 +35,8 @@ interface RequestMeta {
 
 const ALLOWED_ACTIONS = new Set(["contact", "quick_contact"]);
 const ALLOWED_HOSTNAMES = new Set([
-  "www.baltzakisthemis.com",
-  "baltzakisthemis.com",
+  "portfolio.cloudless.gr",
+  "portfolio.cloudless.gr",
   "localhost",
 ]);
 
@@ -185,7 +185,7 @@ async function sendSlackNotification(
         elements: [
           {
             type: "mrkdwn",
-            text: `📍 Sent from *baltzakisthemis.com* contact form · ${meta.timestamp}`,
+            text: `📍 Sent from *portfolio.cloudless.gr* contact form · ${meta.timestamp}`,
           },
         ],
       },
@@ -234,7 +234,7 @@ async function sendSesEmail(
     `  Timestamp:       ${meta.timestamp}`,
     "",
     "─────────────────────────────────────────",
-    "Sent from baltzakisthemis.com contact form",
+    "Sent from portfolio.cloudless.gr contact form",
   ].join("\n");
 
   const htmlBody = `
@@ -273,7 +273,7 @@ async function sendSesEmail(
   <div class="container">
     <div class="header">
       <h1>📬 New Contact Form Submission</h1>
-      <p>Someone reached out via baltzakisthemis.com</p>
+      <p>Someone reached out via portfolio.cloudless.gr</p>
     </div>
     <div class="body">
       <div style="display: table; width: 100%;">
@@ -313,7 +313,7 @@ async function sendSesEmail(
       </div>
     </div>
     <div class="footer">
-      <p>Sent from <strong>baltzakisthemis.com</strong> contact form · ${meta.timestamp}</p>
+      <p>Sent from <strong>portfolio.cloudless.gr</strong> contact form · ${meta.timestamp}</p>
     </div>
   </div>
 </body>

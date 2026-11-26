@@ -5,7 +5,7 @@ const router = Router();
 
 const CRUX_API_URL = "https://chromeuxreport.googleapis.com/v1/records:queryRecord";
 const CRUX_API_KEY = process.env.CRUX_API_KEY ?? "";
-const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://www.baltzakisthemis.com";
+const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://portfolio.cloudless.gr";
 
 // Cache CrUX data for 1 hour (updated daily by Google anyway)
 let cachedData: Record<string, unknown> | null = null;

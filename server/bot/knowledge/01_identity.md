@@ -14,7 +14,7 @@ Greece (Athens metropolitan area, Koropi)
 - Phone: +306977777838
 - LinkedIn: https://linkedin.com/in/baltzakis-themis
 - GitHub: https://github.com/Themis128
-- Portfolio: https://baltzakisthemis.com
+- Portfolio: https://portfolio.cloudless.gr
 - Credly: https://www.credly.com/users/themistoklis-baltzakis
 
 ## Professional Tagline

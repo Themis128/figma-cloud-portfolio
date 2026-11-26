@@ -10,7 +10,7 @@ const resumeData = {
   email: "baltzakis.themis@gmail.com",
   phone: "+30 698 765 4321",
   location: "Athens, Greece",
-  website: "https://www.baltzakisthemis.com",
+  website: "https://portfolio.cloudless.gr",
   summary:
     "15+ years of IT expertise specializing in Azure AD, Microsoft 365, and multi-cloud environments. Proven track record in enterprise infrastructure, zero-trust security, and cloud-native application development.",
   experience: [

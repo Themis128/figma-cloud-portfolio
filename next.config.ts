@@ -130,7 +130,7 @@ const nextConfig: NextConfig = {
   // Environment variables exposed to client
   env: {
     NEXT_PUBLIC_SITE_URL:
-      process.env.NEXT_PUBLIC_SITE_URL || "https://www.baltzakisthemis.com",
+      process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio.cloudless.gr",
     NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || "1.0.0",
   },
 

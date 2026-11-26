@@ -133,7 +133,7 @@ RECAPTCHA_SECRET_KEY=your_secret_key
 3. Add your domains
 4. Get site key (public) and secret key (private)
 
-**Production Keys**: Real reCAPTCHA v3 keys registered for `baltzakisthemis.com` are used in production.
+**Production Keys**: Real reCAPTCHA v3 keys registered for `portfolio.cloudless.gr` are used in production.
 
 **Test Keys** (for development only):
 
@@ -472,7 +472,7 @@ test('renders component', () => {
 - GDPR-compliant consent-based enable/disable (not init/no-init)
 - Custom error filtering (network errors, chunk load failures, script errors)
 - `replayIntegration` imported from `@sentry/browser` (the `lazyLoadIntegration` API was removed in Sentry v10)
-- `allowUrls` filter for `baltzakisthemis.com` and `localhost`
+- `allowUrls` filter for `portfolio.cloudless.gr` and `localhost`
 - 100% trace sampling (low-traffic site ~127 txns/week)
 - Performance helpers: `measurePerformance`, `reportError`, `trackPageView`, `trackInteraction`
 - User context: `setUser`, `setTag`, `setContext`

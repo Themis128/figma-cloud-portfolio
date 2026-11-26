@@ -112,7 +112,7 @@ test.describe("Backend API — Health & Status", () => {
       // Verify via OPTIONS preflight which always returns CORS headers
       const preflight = await request.fetch(`${API_BASE}/api/health`, {
         method: "OPTIONS",
-        headers: { Origin: "https://baltzakisthemis.com" },
+        headers: { Origin: "https://portfolio.cloudless.gr" },
       });
       const preflightCors =
         preflight.headers()["access-control-allow-origin"];
@@ -568,7 +568,7 @@ test.describe("Backend API — Error Handling", () => {
       } else {
         const preflight = await request.fetch(`${API_BASE}${endpoint}`, {
           method: "OPTIONS",
-          headers: { Origin: "https://baltzakisthemis.com" },
+          headers: { Origin: "https://portfolio.cloudless.gr" },
         });
         expect(preflight.headers()["access-control-allow-origin"]).toBeTruthy();
       }

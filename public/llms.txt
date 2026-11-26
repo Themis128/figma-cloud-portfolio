@@ -2,14 +2,14 @@
 
 > IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, Fortinet security, Azure AD, Microsoft 365, and AWS cloud environments. Based in Athens, Greece. Available for consulting.
 
-This file follows the llms.txt convention. For full site content, see [llms-full.txt](https://www.baltzakisthemis.com/llms-full.txt).
+This file follows the llms.txt convention. For full site content, see [llms-full.txt](https://portfolio.cloudless.gr/llms-full.txt).
 
 ## About
 
-- [About Me](https://www.baltzakisthemis.com/about/): Professional background, skills, certifications, and career timeline
-- [Work Experience](https://www.baltzakisthemis.com/product/): Career timeline with positions at Skaramangas Shipyards, Cosmos Business Systems, Athens International Airport, and more
-- [Resume Guide](https://www.baltzakisthemis.com/resume/): ATS optimization tips and career advice
-- [Contact](https://www.baltzakisthemis.com/contact/): Contact form and booking for consulting or collaboration
+- [About Me](https://portfolio.cloudless.gr/about/): Professional background, skills, certifications, and career timeline
+- [Work Experience](https://portfolio.cloudless.gr/product/): Career timeline with positions at Skaramangas Shipyards, Cosmos Business Systems, Athens International Airport, and more
+- [Resume Guide](https://portfolio.cloudless.gr/resume/): ATS optimization tips and career advice
+- [Contact](https://portfolio.cloudless.gr/contact/): Contact form and booking for consulting or collaboration
 
 ## Expertise
 
@@ -21,19 +21,19 @@ This file follows the llms.txt convention. For full site content, see [llms-full
 
 ## Projects
 
-- [Projects](https://www.baltzakisthemis.com/projects/): Portfolio of infrastructure, web, and DevOps projects
-- [AI Agents](https://www.baltzakisthemis.com/agents/): Agent architecture and playground
+- [Projects](https://portfolio.cloudless.gr/projects/): Portfolio of infrastructure, web, and DevOps projects
+- [AI Agents](https://portfolio.cloudless.gr/agents/): Agent architecture and playground
 
 ## Blog
 
-- [Blog](https://www.baltzakisthemis.com/blog/): Articles on cloud architecture, cybersecurity, and web development
-- [Building Resilient Cloud Architectures on AWS](https://www.baltzakisthemis.com/blog/building-resilient-cloud-architectures/): Multi-region architectures, auto-scaling, disaster recovery strategies
-- [Implementing Zero Trust Network Security](https://www.baltzakisthemis.com/blog/zero-trust-network-security/): Zero trust principles, microsegmentation, identity-based access control
-- [Next.js Static Export in Production: Lessons Learned](https://www.baltzakisthemis.com/blog/nextjs-static-export-production/): Static export deployment on S3 + CloudFront, performance optimization
+- [Blog](https://portfolio.cloudless.gr/blog/): Articles on cloud architecture, cybersecurity, and web development
+- [Building Resilient Cloud Architectures on AWS](https://portfolio.cloudless.gr/blog/building-resilient-cloud-architectures/): Multi-region architectures, auto-scaling, disaster recovery strategies
+- [Implementing Zero Trust Network Security](https://portfolio.cloudless.gr/blog/zero-trust-network-security/): Zero trust principles, microsegmentation, identity-based access control
+- [Next.js Static Export in Production: Lessons Learned](https://portfolio.cloudless.gr/blog/nextjs-static-export-production/): Static export deployment on S3 + CloudFront, performance optimization
 
 ## Optional
 
-- [Performance](https://www.baltzakisthemis.com/performance/): Live Core Web Vitals and site performance metrics
-- [Privacy Policy](https://www.baltzakisthemis.com/privacy/): Data collection and processing practices
-- [Terms of Service](https://www.baltzakisthemis.com/terms/): Website usage terms
-- [Cookie Policy](https://www.baltzakisthemis.com/cookies/): Cookie and localStorage usage details
+- [Performance](https://portfolio.cloudless.gr/performance/): Live Core Web Vitals and site performance metrics
+- [Privacy Policy](https://portfolio.cloudless.gr/privacy/): Data collection and processing practices
+- [Terms of Service](https://portfolio.cloudless.gr/terms/): Website usage terms
+- [Cookie Policy](https://portfolio.cloudless.gr/cookies/): Cookie and localStorage usage details

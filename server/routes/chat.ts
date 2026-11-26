@@ -507,7 +507,7 @@ const toolConfig: ToolConfiguration = {
     {
       toolSpec: {
         name: "get_site_performance",
-        description: "Fetch live Core Web Vitals and CrUX field data for baltzakisthemis.com. Use when asked about site speed, performance, or how fast the portfolio loads.",
+        description: "Fetch live Core Web Vitals and CrUX field data for portfolio.cloudless.gr. Use when asked about site speed, performance, or how fast the portfolio loads.",
         inputSchema: {
           json: { type: "object", properties: {} },
         },
@@ -626,7 +626,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
       }
     }
     case "get_resume_link": {
-      const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+      const siteUrl = process.env.SITE_URL ?? "https://portfolio.cloudless.gr";
       return JSON.stringify({
         downloadUrl: `${siteUrl}/api/resume/download`,
         viewUrl: `${siteUrl}/resume/`,
@@ -636,7 +636,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
     }
     case "get_site_performance": {
       try {
-        const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+        const siteUrl = process.env.SITE_URL ?? "https://portfolio.cloudless.gr";
         const res = await fetch(`${siteUrl}/api/crux`);
         if (!res.ok) {
           return JSON.stringify({ error: `Performance API returned ${res.status}`, hint: "CrUX data may not be available yet" });
@@ -684,7 +684,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
         return JSON.stringify({ error: "Invalid email address format" });
       }
       try {
-        const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+        const siteUrl = process.env.SITE_URL ?? "https://portfolio.cloudless.gr";
         const res = await fetch(`${siteUrl}/api/contact`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -701,7 +701,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
     }
     case "get_system_health": {
       try {
-        const siteUrl = process.env.SITE_URL ?? "https://www.baltzakisthemis.com";
+        const siteUrl = process.env.SITE_URL ?? "https://portfolio.cloudless.gr";
         const res = await fetch(`${siteUrl}/api/health`);
         if (!res.ok) return JSON.stringify({ status: "degraded", httpStatus: res.status });
         const data = await res.json() as Record<string, unknown>;
@@ -743,7 +743,7 @@ function buildSystemPrompt(): string {
 
   const pageList = VALID_PAGES.map((p) => `  ${p.path} — ${p.label}`).join("\n");
 
-  return `You are an AI assistant on Themistoklis Baltzakis's portfolio website (baltzakisthemis.com).
+  return `You are an AI assistant on Themistoklis Baltzakis's portfolio website (portfolio.cloudless.gr).
 Your job is to help visitors learn about Themis — his skills, experience, certifications, and services.
 Visitors are typically recruiters, potential clients, or fellow engineers.
 

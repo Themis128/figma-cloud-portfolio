@@ -37,8 +37,8 @@ app.use(
     origin:
       process.env.NODE_ENV === "production"
         ? [
-            "https://www.baltzakisthemis.com",
-            "https://baltzakisthemis.com",
+            "https://portfolio.cloudless.gr",
+            "https://portfolio.cloudless.gr",
           ]
         : true, // Allow all origins in development
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

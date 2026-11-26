@@ -15,12 +15,12 @@ import { LiveLoadHero } from "@/components/performance/LiveLoadHero";
 import { PerformanceMethodology } from "@/components/performance/PerformanceMethodology";
 import { SectionNav } from "@/components/SectionNav";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Performance",
   description:
-    "Real-time performance metrics, Core Web Vitals, and an interactive speed test for baltzakisthemis.com, built for speed.",
+    "Real-time performance metrics, Core Web Vitals, and an interactive speed test for portfolio.cloudless.gr, built for speed.",
   openGraph: {
     title: "Performance | Themistoklis Baltzakis",
     description:

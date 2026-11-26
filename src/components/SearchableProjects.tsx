@@ -50,7 +50,7 @@ const projects: Project[] = [
       "Lambda",
     ],
     category: "web",
-    liveUrl: "https://www.baltzakisthemis.com",
+    liveUrl: "https://portfolio.cloudless.gr",
     year: 2026,
     featured: true,
     isPrivate: true,

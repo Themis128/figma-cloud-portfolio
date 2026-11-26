@@ -69,8 +69,8 @@ Allow: /
 # Admin dashboard — no indexing
 Disallow: /admin/
 
-Sitemap: https://www.baltzakisthemis.com/sitemap.xml
+Sitemap: https://portfolio.cloudless.gr/sitemap.xml
 
 # AI content discovery
 # See https://llmstxt.org for the llms.txt specification
-llms.txt: https://www.baltzakisthemis.com/llms.txt
+llms.txt: https://portfolio.cloudless.gr/llms.txt

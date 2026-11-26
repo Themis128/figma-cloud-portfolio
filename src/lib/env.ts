@@ -6,7 +6,7 @@ import { z } from "zod";
  * Validates on first access — logs warnings for missing optional vars.
  */
 const clientEnvSchema = z.object({
-  NEXT_PUBLIC_SITE_URL: z.string().url().default("https://www.baltzakisthemis.com"),
+  NEXT_PUBLIC_SITE_URL: z.string().url().default("https://portfolio.cloudless.gr"),
   NEXT_PUBLIC_API_BASE_URL: z.string().default("/api"),
   NEXT_PUBLIC_RECAPTCHA_SITE_KEY: z.string().optional(),
   NEXT_PUBLIC_GA_ID: z.string().optional(),

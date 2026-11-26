@@ -70,7 +70,7 @@ steps:
   - name: Run performance tests against production
     run: |
       echo "Running performance tests against production..."
-      PLAYWRIGHT_BASE_URL=https://www.baltzakisthemis.com \
+      PLAYWRIGHT_BASE_URL=https://portfolio.cloudless.gr \
       npx playwright test --config=playwright.config.fast.ts \
         --reporter=list \
         --grep="performance" \

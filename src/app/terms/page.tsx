@@ -6,17 +6,17 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service for baltzakisthemis.com. The rules governing your use of this website and its services.",
+    "Terms of Service for portfolio.cloudless.gr. The rules governing your use of this website and its services.",
   alternates: { canonical: `${SITE_URL}/terms/` },
   openGraph: {
     title: "Terms of Service | Themistoklis Baltzakis",
     description:
-      "Terms of Service for baltzakisthemis.com. The rules governing your use of this website and its services.",
+      "Terms of Service for portfolio.cloudless.gr. The rules governing your use of this website and its services.",
     url: `${SITE_URL}/terms/`,
     type: "website",
     images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | Terms of Service" }],
@@ -82,7 +82,7 @@ export default function TermsOfServicePage() {
               <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
                 Please read these Terms of Service carefully before using{" "}
                 <span className="text-cyan-400 font-mono">
-                  baltzakisthemis.com
+                  portfolio.cloudless.gr
                 </span>
                 .
               </p>

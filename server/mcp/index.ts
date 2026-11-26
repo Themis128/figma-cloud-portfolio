@@ -222,7 +222,7 @@ server.tool(
       s3Bucket: "figma-portfolio-static",
       cloudFrontId: "E134SCTR0QGQKJ",
       region: "us-east-1",
-      siteUrl: "https://www.baltzakisthemis.com",
+      siteUrl: "https://portfolio.cloudless.gr",
       framework: "Next.js 16 (App Router, static export)",
       packageManager: "pnpm",
     };

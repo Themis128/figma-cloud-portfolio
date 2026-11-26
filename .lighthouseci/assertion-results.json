@@ -12,7 +12,7 @@
     "passed": false,
     "auditId": "bootup-time",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Reduce JavaScript execution time",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/bootup-time/"
   },
@@ -29,7 +29,7 @@
     "passed": false,
     "auditId": "color-contrast",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Background and foreground colors do not have a sufficient contrast ratio.",
     "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.9/color-contrast"
   },
@@ -46,7 +46,7 @@
     "passed": false,
     "auditId": "errors-in-console",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Browser errors were logged to the console",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/"
   },
@@ -63,7 +63,7 @@
     "passed": false,
     "auditId": "label-content-name-mismatch",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Elements with visible text labels do not have matching accessible names.",
     "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.9/label-content-name-mismatch"
   },
@@ -80,7 +80,7 @@
     "passed": false,
     "auditId": "largest-contentful-paint",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Largest Contentful Paint",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/"
   },
@@ -98,7 +98,7 @@
     "message": "Audit did not produce a value at all. \"minScore\" might not be a valid assertion for this audit.",
     "auditId": "lcp-lazy-loaded",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Largest Contentful Paint image was not lazily loaded",
     "auditDocumentationLink": "https://web.dev/articles/lcp-lazy-loading"
   },
@@ -115,7 +115,7 @@
     "passed": false,
     "auditId": "legacy-javascript",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Avoid serving legacy JavaScript to modern browsers",
     "auditDocumentationLink": "https://web.dev/articles/publish-modern-javascript"
   },
@@ -132,7 +132,7 @@
     "passed": false,
     "auditId": "link-text",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Links do not have descriptive text",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/link-text/"
   },
@@ -149,7 +149,7 @@
     "passed": false,
     "auditId": "mainthread-work-breakdown",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Minimize main-thread work",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown/"
   },
@@ -166,7 +166,7 @@
     "passed": false,
     "auditId": "max-potential-fid",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Max Potential First Input Delay",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/lighthouse-max-potential-fid/"
   },
@@ -184,7 +184,7 @@
     "message": "Audit did not produce a value at all. \"minScore\" might not be a valid assertion for this audit.",
     "auditId": "non-composited-animations",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Avoid non-composited animations",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/non-composited-animations/"
   },
@@ -202,7 +202,7 @@
     "message": "Audit did not produce a value at all. \"minScore\" might not be a valid assertion for this audit.",
     "auditId": "prioritize-lcp-image",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Preload Largest Contentful Paint image",
     "auditDocumentationLink": "https://web.dev/articles/optimize-lcp#optimize_when_the_resource_is_discovered"
   },
@@ -219,7 +219,7 @@
     "passed": false,
     "auditId": "target-size",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Touch targets do not have sufficient size or spacing.",
     "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.9/target-size"
   },
@@ -236,7 +236,7 @@
     "passed": false,
     "auditId": "unused-javascript",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Reduce unused JavaScript",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/"
   },
@@ -253,7 +253,7 @@
     "passed": false,
     "auditId": "uses-long-cache-ttl",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Serve static assets with an efficient cache policy",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/uses-long-cache-ttl/"
   },
@@ -270,7 +270,7 @@
     "passed": false,
     "auditId": "uses-rel-preconnect",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Preconnect to required origins",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/"
   },
@@ -287,7 +287,7 @@
     "passed": false,
     "auditId": "valid-source-maps",
     "level": "error",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Missing source maps for large first-party JavaScript",
     "auditDocumentationLink": "https://developer.chrome.com/docs/devtools/javascript/source-maps/"
   },
@@ -304,7 +304,7 @@
     "passed": false,
     "auditId": "interactive",
     "level": "warn",
-    "url": "https://www.baltzakisthemis.com/",
+    "url": "https://portfolio.cloudless.gr/",
     "auditTitle": "Time to Interactive",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/interactive/"
   }

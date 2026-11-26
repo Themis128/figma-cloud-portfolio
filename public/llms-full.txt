@@ -22,7 +22,7 @@ Themistoklis (Themis) Baltzakis is an IT Network Engineer and Cloud Architect wi
 - Email: baltzakis.themis@gmail.com
 - LinkedIn: linkedin.com/in/baltzakis-themis
 - GitHub: github.com/Themis128
-- Website: baltzakisthemis.com
+- Website: portfolio.cloudless.gr
 
 ## Services
 
@@ -47,7 +47,7 @@ Modern network security framework moving beyond perimeter-based defenses. Covers
 
 ## Technical Portfolio
 
-This website (baltzakisthemis.com) is itself a technical showcase:
+This website (portfolio.cloudless.gr) is itself a technical showcase:
 
 - **Frontend**: Next.js 16, TypeScript, Tailwind CSS v4, Framer Motion
 - **Backend**: AWS Lambda, Amplify Gen 2 (Cognito + AppSync + DynamoDB)

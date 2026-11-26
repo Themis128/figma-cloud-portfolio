@@ -40,8 +40,8 @@ app.use(compression());
 app.use(
   cors({
     origin: [
-      "https://www.baltzakisthemis.com",
-      "https://baltzakisthemis.com",
+      "https://portfolio.cloudless.gr",
+      "https://portfolio.cloudless.gr",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

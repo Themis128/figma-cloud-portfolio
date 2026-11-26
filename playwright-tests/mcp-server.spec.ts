@@ -236,7 +236,7 @@ test.describe("MCP Server — Tools", () => {
     expect(info.s3Bucket).toBe("figma-portfolio-static");
     expect(info.cloudFrontId).toBe("E134SCTR0QGQKJ");
     expect(info.region).toBe("us-east-1");
-    expect(info.siteUrl).toBe("https://www.baltzakisthemis.com");
+    expect(info.siteUrl).toBe("https://portfolio.cloudless.gr");
     expect(info.framework).toContain("Next.js");
     expect(info.packageManager).toBe("pnpm");
   });

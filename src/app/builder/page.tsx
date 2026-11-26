@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import BuilderPage from "@/components/BuilderPage";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Builder",

@@ -6,17 +6,17 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "Privacy Policy for baltzakisthemis.com. How we collect, use, and protect your personal data under GDPR and CCPA.",
+    "Privacy Policy for portfolio.cloudless.gr. How we collect, use, and protect your personal data under GDPR and CCPA.",
   alternates: { canonical: `${SITE_URL}/privacy/` },
   openGraph: {
     title: "Privacy Policy | Themistoklis Baltzakis",
     description:
-      "Privacy Policy for baltzakisthemis.com. How we collect, use, and protect your personal data under GDPR and CCPA.",
+      "Privacy Policy for portfolio.cloudless.gr. How we collect, use, and protect your personal data under GDPR and CCPA.",
     url: `${SITE_URL}/privacy/`,
     type: "website",
     images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | Privacy Policy" }],
@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
                 This Privacy Policy explains how we collect, use, disclose, and
                 protect your personal data when you visit{" "}
                 <span className="text-cyan-400 font-mono">
-                  baltzakisthemis.com
+                  portfolio.cloudless.gr
                 </span>
                 .
               </p>

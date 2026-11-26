@@ -43,7 +43,7 @@ export function AuthorBio() {
               <Linkedin className="h-3.5 w-3.5" />
             </a>
             <a
-              href="https://www.baltzakisthemis.com"
+              href="https://portfolio.cloudless.gr"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center w-7 h-7 rounded border border-border/20 text-muted-foreground hover:text-cyan-400 hover:border-cyan-400/30 transition-colors"
