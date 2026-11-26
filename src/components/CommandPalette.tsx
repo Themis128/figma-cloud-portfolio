@@ -81,10 +81,16 @@ export default function CommandPalette() {
       const origin = getApiOrigin();
       fetch(`${origin}/api/search?q=${encodeURIComponent(query)}`)
         .then((r) => (r.ok ? r.json() : { results: [] }))
-        .then((data: { results: SearchResult[] }) => setSearchResults(data.results))
-        .catch(() => setSearchResults([]));
+        .then((data: { results: SearchResult[] }) => {
+            setSearchResults(data.results);
+          })
+        .catch(() => {
+            setSearchResults([]);
+          });
     }, 300);
-    return () => clearTimeout(searchTimerRef.current);
+    return () => {
+      clearTimeout(searchTimerRef.current);
+    };
   }, [query, open]);
 
   const items = useMemo<PaletteItem[]>(
@@ -94,7 +100,9 @@ export default function CommandPalette() {
         id: "home",
         label: "Home",
         icon: <Home className="h-4 w-4" />,
-        action: () => navigate("/"),
+        action: () => {
+            navigate("/");
+          },
         keywords: ["home", "main", "landing"],
         category: "navigation",
       },
@@ -103,7 +111,9 @@ export default function CommandPalette() {
         label: "About",
         description: "Skills, certifications & badges",
         icon: <User className="h-4 w-4" />,
-        action: () => navigate("/about/"),
+        action: () => {
+            navigate("/about/");
+          },
         keywords: ["about", "skills", "certifications", "badges", "bio"],
         category: "navigation",
       },
@@ -112,7 +122,9 @@ export default function CommandPalette() {
         label: "Work Experience",
         description: "Career timeline & positions",
         icon: <Briefcase className="h-4 w-4" />,
-        action: () => navigate("/product/"),
+        action: () => {
+            navigate("/product/");
+          },
         keywords: ["experience", "work", "career", "jobs", "timeline", "product"],
         category: "navigation",
       },
@@ -121,7 +133,9 @@ export default function CommandPalette() {
         label: "Projects",
         description: "Portfolio & open source work",
         icon: <Laptop className="h-4 w-4" />,
-        action: () => navigate("/projects/"),
+        action: () => {
+            navigate("/projects/");
+          },
         keywords: ["projects", "portfolio", "github", "open source"],
         category: "navigation",
       },
@@ -130,7 +144,9 @@ export default function CommandPalette() {
         label: "Resume Guide",
         description: "ATS tips & career advice",
         icon: <FileText className="h-4 w-4" />,
-        action: () => navigate("/resume/"),
+        action: () => {
+            navigate("/resume/");
+          },
         keywords: ["resume", "cv", "ats", "career"],
         category: "navigation",
       },
@@ -139,7 +155,9 @@ export default function CommandPalette() {
         label: "Contact",
         description: "Get in touch",
         icon: <Mail className="h-4 w-4" />,
-        action: () => navigate("/contact/"),
+        action: () => {
+            navigate("/contact/");
+          },
         keywords: ["contact", "email", "message", "hire"],
         category: "navigation",
       },
@@ -148,7 +166,9 @@ export default function CommandPalette() {
         label: "Performance",
         description: "Live Web Vitals & benchmarks",
         icon: <Gauge className="h-4 w-4" />,
-        action: () => navigate("/performance/"),
+        action: () => {
+            navigate("/performance/");
+          },
         keywords: ["performance", "speed", "vitals", "lighthouse"],
         category: "navigation",
       },
@@ -157,7 +177,9 @@ export default function CommandPalette() {
         label: "AI Agents",
         description: "Agent architecture & playground",
         icon: <Zap className="h-4 w-4" />,
-        action: () => navigate("/agents/"),
+        action: () => {
+            navigate("/agents/");
+          },
         keywords: ["agents", "ai", "llm", "automation"],
         category: "navigation",
       },
@@ -233,12 +255,13 @@ export default function CommandPalette() {
   const filtered = useMemo(() => {
     const localItems = !query.trim()
       ? items
-      : items.filter(
-          (item) =>
-            item.label.toLowerCase().includes(query.toLowerCase()) ||
-            item.description?.toLowerCase().includes(query.toLowerCase()) ||
-            item.keywords.some((k) => k.includes(query.toLowerCase())),
-        );
+      : items.filter((item) => {
+            const q = query.toLowerCase();
+            const inLabel = item.label.toLowerCase().includes(q);
+            const inDesc = item.description?.toLowerCase().includes(q) ?? false;
+            const inKw = item.keywords.some((k) => k.includes(q));
+            return inLabel || inDesc || inKw;
+          });
 
     // Merge server search results as "search" category items
     const serverItems: PaletteItem[] = searchResults
@@ -276,7 +299,9 @@ export default function CommandPalette() {
       }
     };
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    return () => {
+      document.removeEventListener("keydown", handler);
+    };
   }, [open, close]);
 
   // Focus input when opened
@@ -305,9 +330,12 @@ export default function CommandPalette() {
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((prev) => (prev - 1 + filtered.length) % filtered.length);
-    } else if (e.key === "Enter" && filtered[selectedIndex]) {
-      e.preventDefault();
-      runItem(filtered[selectedIndex], "keyboard");
+    } else if (e.key === "Enter") {
+      const item = filtered.at(selectedIndex);
+      if (item) {
+        e.preventDefault();
+        runItem(item, "keyboard");
+      }
     }
   };
 
@@ -330,8 +358,12 @@ export default function CommandPalette() {
       {/* Panel */}
       <div
         className="relative w-full max-w-lg mx-4 rounded-xl border border-cyan-400/20 bg-slate-900/95 backdrop-blur-md shadow-[0_0_30px_rgba(6,182,212,0.1)] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
         role="dialog"
         aria-label="Command palette"
       >
@@ -342,7 +374,9 @@ export default function CommandPalette() {
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
             onKeyDown={handleKeyDown}
             placeholder="Search pages, skills, actions..."
             className="flex-1 bg-transparent text-sm text-slate-200 placeholder:text-slate-500 outline-none font-mono"
@@ -372,8 +406,12 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => runItem(item, "click")}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onClick={() => {
+                      runItem(item, "click");
+                    }}
+                    onMouseEnter={() => {
+                      setSelectedIndex(idx);
+                    }}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       idx === selectedIndex
@@ -408,8 +446,12 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => runItem(item, "click")}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onClick={() => {
+                      runItem(item, "click");
+                    }}
+                    onMouseEnter={() => {
+                      setSelectedIndex(idx);
+                    }}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       idx === selectedIndex
@@ -444,8 +486,12 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => runItem(item, "click")}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onClick={() => {
+                      runItem(item, "click");
+                    }}
+                    onMouseEnter={() => {
+                      setSelectedIndex(idx);
+                    }}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       idx === selectedIndex

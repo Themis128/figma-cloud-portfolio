@@ -12,7 +12,7 @@ const CONSENT_EVENT = "consent-updated";
 // Initialize gtag
 declare global {
   interface Window {
-    gtag?: (...args: unknown[]) => void;
+    gtag?(...args: unknown[]): void;
     dataLayer?: unknown[];
   }
 }
@@ -37,14 +37,16 @@ const CONTENT_GROUP_MAP: Record<string, string> = {
 };
 
 function getContentGroup(pathname: string): string {
+  const groups = Object.entries(CONTENT_GROUP_MAP);
   // Exact match first
-  const exact = CONTENT_GROUP_MAP[pathname] ?? CONTENT_GROUP_MAP[pathname.replace(/\/$/, "")];
+  const exact = (groups.find(([key]) => key === pathname) ??
+    groups.find(([key]) => key === pathname.replace(/\/$/, "")))?.[1];
   if (exact) return exact;
   // Prefix match (e.g., /admin/settings → Admin)
-  const prefix = Object.keys(CONTENT_GROUP_MAP).find(
-    (key) => key !== "/" && pathname.startsWith(key),
+  const prefixEntry = groups.find(
+    ([key]) => key !== "/" && pathname.startsWith(key),
   );
-  return prefix ? CONTENT_GROUP_MAP[prefix]! : "Other";
+  return prefixEntry ? prefixEntry[1] : "Other";
 }
 
 function getPageTitle(pathname: string): string {
@@ -69,9 +71,10 @@ function hasAnalyticsConsent(): boolean {
 /** Bootstrap the dataLayer + gtag function + consent-mode defaults */
 function bootstrapGtag(): void {
   if (typeof window === "undefined") return;
-  window.dataLayer = window.dataLayer || [];
+  const dataLayer = window.dataLayer ?? [];
+  window.dataLayer = dataLayer;
   window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer!.push(args as unknown as Record<string, unknown>);
+    dataLayer.push(args as unknown as Record<string, unknown>);
   };
   window.gtag("js", new Date());
   // Consent Mode v2: default to denied
@@ -132,9 +135,8 @@ function GoogleAnalyticsInner() {
 
     // Defer to allow Next.js to update document.title after navigation
     const timeoutId = setTimeout(() => {
-      const url =
-        pathname +
-        (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+      const qs = searchParams.toString();
+      const url = pathname + (qs ? `?${qs}` : "");
 
       const pageTitle = document.title || getPageTitle(pathname);
       const contentGroup = getContentGroup(pathname);
@@ -147,7 +149,9 @@ function GoogleAnalyticsInner() {
       });
     }, 100);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [pathname, searchParams]);
 
   return null;
@@ -202,7 +206,7 @@ function ConsentAwareGA() {
 
   // When consent is granted and scripts haven't loaded, configure GA
   const handleScriptLoad = useCallback(() => {
-    if (scriptLoadedRef.current) return;
+    if (scriptLoadedRef.current || !GA_TRACKING_ID) return;
     scriptLoadedRef.current = true;
     grantAnalyticsConsent();
 
@@ -211,7 +215,7 @@ function ConsentAwareGA() {
 
     // Configure with send_page_view: false — we send manual page_view events
     // with content_group and page_title to avoid "(not set)" in GA4 reports
-    window.gtag?.("config", GA_TRACKING_ID!, {
+    window.gtag?.("config", GA_TRACKING_ID, {
       send_page_view: false,
       anonymize_ip: true,
       cookie_flags: "SameSite=None;Secure",
@@ -321,7 +325,7 @@ export function trackConversion(
   if (!GA_TRACKING_ID || typeof window === "undefined") return;
 
   window.gtag?.("event", "conversion", {
-    send_to: `${GA_TRACKING_ID}/${conversionLabel || conversionId}`,
+    send_to: `${GA_TRACKING_ID}/${conversionLabel?.length ? conversionLabel : conversionId}`,
   });
 }
 

@@ -51,7 +51,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio.cloudless.gr",
+    process.env.NEXT_PUBLIC_SITE_URL?.length
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : "https://portfolio.cloudless.gr",
   ),
   title: {
     default: "Themistoklis Baltzakis | IT Network Engineer",
