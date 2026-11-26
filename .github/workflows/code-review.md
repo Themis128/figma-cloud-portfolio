@@ -83,7 +83,6 @@ safe-outputs:
 
 engine:
   id: agy
-  model: gemini-2.5-flash
 ---
 
 # Automated Code Review
