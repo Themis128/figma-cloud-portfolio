@@ -315,7 +315,9 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
           <input
             placeholder="Search projects..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
             className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 font-mono text-sm focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
           />
         </div>
@@ -349,7 +351,9 @@ const SearchableProjects: React.FC<SearchableProjectsProps> = ({
           <span>Sort:</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as "year" | "title")}
+            onChange={(e) => {
+              setSortBy(e.target.value as "year" | "title");
+            }}
             className="bg-white/5 border border-white/10 rounded px-2 py-1 text-sm text-white/70 focus:outline-none focus:border-cyan-500/50"
           >
             <option value="year">Year</option>

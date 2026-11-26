@@ -9,7 +9,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 // Velite webpack plugin — triggers content build before Next.js compilation
 class VeliteWebpackPlugin {
   static started = false;
-  apply(compiler: { hooks: { beforeCompile: { tapPromise: (name: string, fn: () => Promise<void>) => void } } }) {
+  apply(compiler: { hooks: { beforeCompile: { tapPromise: (...args: [string, () => Promise<void>]) => void } } }) {
     compiler.hooks.beforeCompile.tapPromise("VeliteWebpackPlugin", async () => {
       if (VeliteWebpackPlugin.started) return;
       VeliteWebpackPlugin.started = true;
@@ -120,8 +120,8 @@ const nextConfig: NextConfig = {
   // Environment variables exposed to client
   env: {
     NEXT_PUBLIC_SITE_URL:
-      process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio.cloudless.gr",
-    NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || "1.0.0",
+      process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio.cloudless.gr",
+    NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version ?? "1.0.0",
   },
 
   // Compiler options for optimization
@@ -152,16 +152,7 @@ const nextConfig: NextConfig = {
   compress: true,
 
   // Custom webpack configuration for advanced optimizations
-  webpack: (
-    config,
-    {
-      buildId: _buildId,
-      dev,
-      isServer: _isServer,
-      defaultLoaders: _defaultLoaders,
-      webpack: _webpack,
-    },
-  ) => {
+  webpack: (config) => {
     // Velite build plugin — runs content compilation before webpack
     config.plugins.push(new VeliteWebpackPlugin());
 

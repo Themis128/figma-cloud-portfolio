@@ -209,7 +209,7 @@ export default function ContactPage() {
                             rel={
                               info.external ? "noopener noreferrer" : undefined
                             }
-                            onClick={() => trackOutboundClick(info.href!, info.label)}
+                            onClick={() => info.href && trackOutboundClick(info.href, info.label)}
                             className="block"
                           >
                             <ContactCard info={info} index={index} />
@@ -230,15 +230,7 @@ export default function ContactPage() {
                             asChild
                             className="bg-cyan-400 hover:bg-cyan-500 text-background font-medium"
                           >
-                            <Link
-                              href={action.href}
-                              target={action.external ? "_blank" : undefined}
-                              rel={
-                                action.external
-                                  ? "noopener noreferrer"
-                                  : undefined
-                              }
-                            >
+                            <Link href={action.href}>
                               <action.icon className="w-4 h-4 mr-2" />
                               {action.label}
                             </Link>
@@ -249,15 +241,7 @@ export default function ContactPage() {
                             variant="outline"
                             className="border-border text-foreground hover:bg-foreground/10"
                           >
-                            <Link
-                              href={action.href}
-                              target={action.external ? "_blank" : undefined}
-                              rel={
-                                action.external
-                                  ? "noopener noreferrer"
-                                  : undefined
-                              }
-                            >
+                            <Link href={action.href}>
                               <action.icon className="w-4 h-4 mr-2" />
                               {action.label}
                             </Link>
@@ -301,7 +285,7 @@ export default function ContactPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="name" className="text-foreground/80">

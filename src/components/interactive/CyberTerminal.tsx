@@ -222,14 +222,14 @@ export default function CyberTerminal() {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === '`' && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        const target = e.target as HTMLElement;
+        const el = e.target as HTMLElement;
         // Don't trigger if typing in an input/textarea (other than our terminal input)
         if (
-          target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.isContentEditable
+          el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA' ||
+          el.isContentEditable
         ) {
-          if (target !== inputRef.current) return;
+          if (el !== inputRef.current) return;
         }
         e.preventDefault();
         setIsOpen((prev) => !prev);
@@ -239,7 +239,9 @@ export default function CyberTerminal() {
       }
     }
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen]);
 
   // Typing animation effect
@@ -249,7 +251,7 @@ export default function CyberTerminal() {
       return;
     }
 
-    const currentLine = typingLines[typingIndex];
+    const currentLine = typingLines.at(typingIndex);
     if (!currentLine) return;
 
     const timer = setTimeout(() => {
@@ -257,7 +259,9 @@ export default function CyberTerminal() {
       setTypingIndex((i) => i + 1);
     }, 30);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [isTyping, typingIndex, typingLines]);
 
   // Matrix rain effect
@@ -308,12 +312,13 @@ export default function CyberTerminal() {
 
       // Handle special commands
       const firstResult = result[0];
-      if (result.length === 1 && firstResult?.text === '__EXIT__') {
+      if (!firstResult) return;
+      if (result.length === 1 && firstResult.text === '__EXIT__') {
         setIsOpen(false);
         return;
       }
 
-      if (result.length === 1 && firstResult?.text === '__MATRIX__') {
+      if (result.length === 1 && firstResult.text === '__MATRIX__') {
         startMatrix();
         return;
       }
@@ -356,7 +361,9 @@ export default function CyberTerminal() {
             </span>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+            }}
             className="text-cyan-400/60 transition-colors hover:text-cyan-400"
             aria-label="Close terminal"
           >
@@ -414,7 +421,9 @@ export default function CyberTerminal() {
             ref={inputRef}
             type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
             className="flex-1 bg-transparent font-mono text-cyan-400 caret-cyan-400 outline-none placeholder:text-cyan-400/30"
             placeholder="Enter command..."
             autoComplete="off"

@@ -12,6 +12,7 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { MdxContent } from "@/components/MdxContent";
 import Navigation from "@/components/Navigation";
+import { safeJsonLd } from "@/lib/json-ld";
 import type { PostSummary } from "@/types/blog";
 
 const ReadingProgress = dynamic(
@@ -163,7 +164,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(articleSchema) }}
       />
       <CircuitBackground />
       <Navigation />

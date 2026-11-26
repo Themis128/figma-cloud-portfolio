@@ -25,7 +25,7 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
 
   useEffect(() => {
     const baseURL = window.location.origin;
-    const search = searchParams?.toString()
+    const search = searchParams.toString()
       ? `?${searchParams.toString()}`
       : "";
     const currentURL = `${baseURL}${pathname}${search}`;
@@ -46,15 +46,15 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
     ];
 
     // Use provided config or defaults
-    const title = config.title || defaultTitle;
-    const description = config.description || defaultDescription;
-    const keywords = config.keywords || defaultKeywords;
-    const image = config.image || defaultImage;
-    const type = config.type || "website";
-    const author = config.author || "Themistoklis Baltzakis";
-    const publishedAt = config.publishedAt || new Date().toISOString();
-    const modifiedAt = config.modifiedAt || new Date().toISOString();
-    const tags = config.tags || [];
+    const title = config.title ?? defaultTitle;
+    const description = config.description ?? defaultDescription;
+    const keywords = config.keywords ?? defaultKeywords;
+    const image = config.image ?? defaultImage;
+    const type = config.type ?? "website";
+    const author = config.author ?? "Themistoklis Baltzakis";
+    const publishedAt = config.publishedAt ?? new Date().toISOString();
+    const modifiedAt = config.modifiedAt ?? new Date().toISOString();
+    const tags = config.tags ?? [];
 
     // Remove existing meta tags to avoid duplicates
     const removeExistingMetaTags = () => {

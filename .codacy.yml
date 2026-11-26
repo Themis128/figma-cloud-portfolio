@@ -6,6 +6,7 @@ exclude_paths:
   - "public/**"
   - ".velite/**"
   - "scripts/**"
+  - "server/**"
   - "src/app/favicon.ico"
   - "content/**"
   - "docs/**"

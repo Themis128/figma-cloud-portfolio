@@ -1,3 +1,5 @@
+import { safeJsonLd } from "@/lib/json-ld";
+
 interface StructuredDataProps {
   type:
     | "WebSite"
@@ -25,7 +27,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }}
     />
   );
 }
@@ -120,15 +122,15 @@ export function DefaultStructuredData() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteData) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personData) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(personData) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageData) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(profilePageData) }}
       />
     </>
   );
