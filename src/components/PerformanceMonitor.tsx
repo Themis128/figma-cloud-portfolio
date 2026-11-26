@@ -16,7 +16,7 @@ interface WebVitalsMetric {
 }
 
 function sendToGA(metric: WebVitalsMetric) {
-  if (typeof window !== "undefined" && window.gtag) {
+  if (typeof window !== "undefined" && "gtag" in window) {
     trackGA4(metric.name, {
       value: Math.round(metric.name === "CLS" ? metric.delta * 1000 : metric.delta),
       metric_id: metric.id,

@@ -12,7 +12,6 @@ const CONSENT_EVENT = "consent-updated";
 // Initialize gtag
 declare global {
   interface Window {
-    gtag?(...args: unknown[]): void;
     dataLayer?: unknown[];
   }
 }
