@@ -82,7 +82,7 @@ safe-outputs:
   noop:
 
 engine:
-  id: gemini
+  id: agy
   model: gemini-2.5-flash
 ---
 
