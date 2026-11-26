@@ -1,9 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const DOMAINS = [
-  "https://portfolio.cloudless.gr",
-  "https://portfolio.cloudless.gr",
-];
+const DOMAINS = ["https://portfolio.cloudless.gr"];
 
 const PAGES = [
   { path: "/", name: "Home" },
