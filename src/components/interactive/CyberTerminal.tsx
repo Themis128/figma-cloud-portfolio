@@ -310,6 +310,12 @@ export default function CyberTerminal() {
       // Add command to output
       setOutput((prev) => [...prev, { text: `> ${cmd}`, type: 'command' }]);
 
+      // Handle clear before the empty-result early return
+      if (cmd.trim().toLowerCase() === 'clear') {
+        setOutput([]);
+        return;
+      }
+
       const result = processCommand(cmd);
 
       // Handle special commands
@@ -322,12 +328,6 @@ export default function CyberTerminal() {
 
       if (result.length === 1 && firstResult.text === '__MATRIX__') {
         startMatrix();
-        return;
-      }
-
-      // Handle clear
-      if (cmd.trim().toLowerCase() === 'clear') {
-        setOutput([]);
         return;
       }
 

@@ -14,8 +14,6 @@
     "typecheck": "tsc --noEmit",
     "build": "bash scripts/generate-announcements.sh && bash scripts/generate-version.sh && velite build && node scripts/generate-sitemap.mjs && next build",
     "build:analyze": "ANALYZE=true pnpm build",
-    "build:lambda": "bash scripts/deploy-lambda.sh --build",
-    "deploy:lambda": "bash scripts/deploy-lambda.sh",
     "start": "next start",
     "lint": "eslint src/",
     "test": "vitest run",

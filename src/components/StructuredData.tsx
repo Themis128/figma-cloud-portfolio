@@ -25,9 +25,10 @@ export function StructuredData({ type, data }: StructuredDataProps) {
   };
 
   return (
-    <script type="application/ld+json">
-          {safeJsonLd(structuredData)}
-        </script>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }}
+    />
   );
 }
 

@@ -34,7 +34,6 @@ const CONTENT_GROUP_MAP: Record<string, string> = {
   "/privacy": "Legal",
   "/terms": "Legal",
   "/cookies": "Legal",
-  "/admin": "Admin",
 };
 
 function getContentGroup(pathname: string): string {

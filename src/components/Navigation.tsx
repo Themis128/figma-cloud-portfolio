@@ -9,7 +9,6 @@ import {
   FileText,
   Mail,
   Menu,
-  Shield,
   User,
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -44,7 +43,6 @@ const navigationItems = [
   { name: "Blog", href: "/blog/", icon: BookOpen },
   { name: "Performance", href: "/performance/", icon: Gauge },
   { name: "Agents", href: "/agents/", icon: Bot },
-  { name: "Admin", href: "/admin/", icon: Shield },
 ];
 
 export default function Navigation() {

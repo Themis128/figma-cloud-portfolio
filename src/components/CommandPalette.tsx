@@ -15,7 +15,6 @@ import {
   Monitor,
   Moon,
   Search,
-  Shield,
   Sun,
   User,
   Zap,
@@ -160,15 +159,6 @@ export default function CommandPalette() {
         icon: <Zap className="h-4 w-4" />,
         action: () => navigate("/agents/"),
         keywords: ["agents", "ai", "llm", "automation"],
-        category: "navigation",
-      },
-      {
-        id: "admin",
-        label: "Admin Dashboard",
-        description: "Site monitoring & management",
-        icon: <Shield className="h-4 w-4" />,
-        action: () => navigate("/admin/"),
-        keywords: ["admin", "dashboard", "monitoring"],
         category: "navigation",
       },
       // Actions
