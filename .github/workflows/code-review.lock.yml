@@ -329,7 +329,7 @@ jobs:
         run: |
           echo "Running TypeScript type checking..."
           npx velite build
-      pnpm typecheck 2>&1 | tee /tmp/typescript-results.txt || true
+          pnpm typecheck 2>&1 | tee /tmp/typescript-results.txt || true
           echo "TypeScript checking completed"
         shell: bash
       - name: Run security audit
