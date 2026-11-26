@@ -79,7 +79,10 @@ safe-outputs:
     max: 3
   noop:
 
-engine: copilot
+engine:
+  id: copilot
+  model: claude-sonnet-5.5
+  fallback-models: [gpt-5.6-luna, mai-code-1.1-flash]
 ---
 
 # Automated Code Review
