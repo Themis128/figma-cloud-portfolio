@@ -82,7 +82,7 @@ safe-outputs:
 engine:
   id: copilot
   model: gpt-4.1
-  fallback-models: [gpt-4o, gpt-5-mini]
+  fallback-models: [gpt-41-copilot]
 ---
 
 # Automated Code Review
