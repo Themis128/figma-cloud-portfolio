@@ -110,7 +110,9 @@ safe-outputs:
     if-no-changes: "warn"
   noop:
 source: githubnext/agentics/workflows/link-checker.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine:
+  id: copilot
+  copilot-sdk: true
 ---
 
 # Daily Link Checker & Fixer
