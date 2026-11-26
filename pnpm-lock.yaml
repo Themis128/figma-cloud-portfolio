@@ -37,9 +37,9 @@ overrides:
   nanoid@5: ^5.1.16
   picomatch: '>=4.0.4'
   postcss: '>=8.5.23'
-  postcss-selector-parser: '>=7.1.6'
-  postcss-selector-parser@6: '>=6.1.5'
+  postcss-selector-parser@6: 6.1.6
   postcss-selector-parser@7: '>=7.1.6'
+  '@tailwindcss/typography>postcss-selector-parser': 6.1.6
   postcss@4: 8.5.23
   prosemirror-view: '>=1.42.3'
   proxy-addr: '>=2.0.8'
@@ -54,6 +54,7 @@ overrides:
   vite: '>=7.3.7'
   ws@7: '>=7.5.11'
   ws@8: '>=8.21.0'
+  postcss-selector-parser: '>=7.1.6'
 
 importers:
 
@@ -4141,11 +4142,6 @@ packages:
   css.escape@1.5.1:
     resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
 
-  cssesc@3.0.0:
-    resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
-    engines: {node: '>=4'}
-    hasBin: true
-
   cssstyle@4.6.0:
     resolution: {integrity: sha512-2z+rWdzbbSZv6/rhtvzvqeZQHrBaqgogqt85sqFNbabZOuFbCVFb8kPeEtZjiKkbrm395irpNKiYeFeLiQnFPg==}
     engines: {node: '>=18'}
@@ -5974,8 +5970,8 @@ packages:
     peerDependencies:
       postcss: '>=8.5.23'
 
-  postcss-selector-parser@7.1.1:
-    resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
+  postcss-selector-parser@6.1.6:
+    resolution: {integrity: sha512-BK87/Qgti3DIcgS2PaCVoteFIkjIFvCJBizZDIVSjdlFNg4Jv+SRqbN2JONb/qQUH4ZFqfXYF+izg15W2HVRvA==}
     engines: {node: '>=4'}
 
   postcss-selector-parser@7.2.1:
@@ -10625,7 +10621,7 @@ snapshots:
 
   '@tailwindcss/typography@0.5.19(tailwindcss@4.2.1)':
     dependencies:
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 6.1.6
       tailwindcss: 4.2.1
 
   '@tanstack/query-core@5.90.20': {}
@@ -11601,8 +11597,6 @@ snapshots:
       source-map-js: 1.2.2
 
   css.escape@1.5.1: {}
-
-  cssesc@3.0.0: {}
 
   cssstyle@4.6.0:
     dependencies:
@@ -13927,9 +13921,8 @@ snapshots:
       postcss: 8.5.32
       postcss-selector-parser: 7.2.1
 
-  postcss-selector-parser@7.1.1:
+  postcss-selector-parser@6.1.6:
     dependencies:
-      cssesc: 3.0.0
       util-deprecate: 1.0.2
 
   postcss-selector-parser@7.2.1:
