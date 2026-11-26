@@ -9,7 +9,7 @@ import { expect, test } from "@playwright/test";
  */
 
 const MOCK_CRUX_DATA = {
-  origin: "https://www.baltzakisthemis.com",
+  origin: "https://portfolio.cloudless.gr",
   formFactor: "PHONE",
   timestamp: "2026-03-25T12:00:00.000Z",
   lcp: { p75: 2100, good: 75, needsImprovement: 15, poor: 10 },
@@ -191,7 +191,7 @@ test.describe("CrUX Field Data — Success State", () => {
     const fieldDataSection = page.locator("#field-data");
 
     await expect(
-      fieldDataSection.getByText("https://www.baltzakisthemis.com"),
+      fieldDataSection.getByText("https://portfolio.cloudless.gr"),
     ).toBeVisible({ timeout: 10000 });
   });
 

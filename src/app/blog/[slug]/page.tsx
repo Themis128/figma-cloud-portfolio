@@ -12,6 +12,7 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import { MdxContent } from "@/components/MdxContent";
 import Navigation from "@/components/Navigation";
+import { safeJsonLd } from "@/lib/json-ld";
 import type { PostSummary } from "@/types/blog";
 
 const ReadingProgress = dynamic(
@@ -21,7 +22,7 @@ const BlogReactions = dynamic(
   () => import("@/components/interactive/BlogReactions"),
 );
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -161,10 +162,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           { name: post.title, url: `${SITE_URL}${post.permalink}` },
         ]}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      <script type="application/ld+json">
+          {safeJsonLd(articleSchema)}
+        </script>
       <CircuitBackground />
       <Navigation />
       <ReadingProgress />

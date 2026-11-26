@@ -5,7 +5,7 @@
 - **Frontend**: Static export (`velite build && next build` with `output: "export"`) → S3 bucket → CloudFront CDN
 - **Lambda Backend**: Single AWS Lambda function (`figma-portfolio-api`) → CloudFront `/api/*` routing
 - **Amplify Gen 2 Backend**: Cognito auth + AppSync GraphQL + DynamoDB (App ID: `d1zjif7pi1h3om`)
-- **Domain**: `www.baltzakisthemis.com` / `baltzakisthemis.com` via CloudFront
+- **Domain**: `portfolio.cloudless.gr` / `portfolio.cloudless.gr` via CloudFront
 
 ## Prerequisites
 
@@ -75,7 +75,7 @@ aws cloudfront create-invalidation \
 # Check all routes return 200
 for route in "" about agents contact performance product projects resume settings; do
   echo -n "/$route: "
-  curl -s -o /dev/null -w "%{http_code}" "https://baltzakisthemis.com/$route"
+  curl -s -o /dev/null -w "%{http_code}" "https://portfolio.cloudless.gr/$route"
   echo
 done
 ```
@@ -135,10 +135,10 @@ aws lambda update-function-code \
 
 ```bash
 # Health check
-curl https://baltzakisthemis.com/api/ping
+curl https://portfolio.cloudless.gr/api/ping
 
 # Contact endpoint
-curl -X POST https://baltzakisthemis.com/api/contact \
+curl -X POST https://portfolio.cloudless.gr/api/contact \
   -H "Content-Type: application/json" \
   -d '{"name":"Test","email":"test@test.com","message":"Test"}'
 ```

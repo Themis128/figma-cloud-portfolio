@@ -30,29 +30,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # amplify_outputs.json is gitignored and was previously generated from a
-      # retired AWS account. Auth is overridden to the hardcoded production pool
-      # in src/lib/amplify.ts at runtime; this stub only satisfies the build-time
-      # import. Admin/Cognito features need AWS to work and are inactive.
-      - name: Write Amplify outputs stub
-        run: |
-          cat > amplify_outputs.json <<'JSON'
-          {
-            "version": "1",
-            "auth": {
-              "aws_region": "us-east-1",
-              "user_pool_id": "us-east-1_EM9ipdfSA",
-              "user_pool_client_id": "47j0rigp21afji3u407g42gt75",
-              "identity_pool_id": "us-east-1:3e125cf2-cd62-4ce4-86ee-907b43b9bfe7",
-              "mfa_methods": [],
-              "standard_required_attributes": ["email"],
-              "username_attributes": ["email"],
-              "user_verification_types": ["email"],
-              "mfa_configuration": "NONE",
-              "unauthenticated_identities_enabled": true
-            }
-          }
-          JSON
 
       - name: Cache Velite output
         uses: actions/cache@v5
@@ -63,7 +40,7 @@ jobs:
       - name: Build
         run: pnpm run build
         env:
-          NEXT_PUBLIC_SITE_URL: https://www.baltzakisthemis.com
+          NEXT_PUBLIC_SITE_URL: https://portfolio.cloudless.gr
           NEXT_PUBLIC_API_BASE_URL: /api
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
           NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}

@@ -8,7 +8,7 @@ Themis's portfolio showcases projects spanning network infrastructure, web devel
 - featured: true
 - domains: development, cloud
 - technologies: Next.js, TypeScript, Tailwind CSS, AWS Bedrock, Amplify Gen 2, Lambda
-- live: https://www.baltzakisthemis.com
+- live: https://portfolio.cloudless.gr
 - description: Personal portfolio built with Next.js 16, deployed on AWS S3 + CloudFront with Amplify Gen 2 backend. Features AI chatbot powered by AWS Bedrock (Claude 3.5 Haiku), PWA support, and a 10-tab admin dashboard.
 
 ## Project 2: Network Monitoring Stack

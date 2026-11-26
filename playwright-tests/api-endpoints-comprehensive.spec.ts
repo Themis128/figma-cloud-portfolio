@@ -943,7 +943,7 @@ test.describe("Cross-Cutting — CORS", () => {
       } else {
         const preflight = await request.fetch(`${API}${endpoint}`, {
           method: "OPTIONS",
-          headers: { Origin: "https://baltzakisthemis.com" },
+          headers: { Origin: "https://portfolio.cloudless.gr" },
         });
         expect(preflight.headers()["access-control-allow-origin"]).toBeTruthy();
       }

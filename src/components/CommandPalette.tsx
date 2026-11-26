@@ -1,39 +1,16 @@
 "use client";
 
 import {
-  Accessibility,
-  Briefcase,
   ChevronRight,
   Command,
-  FileText,
-  Gauge,
   Globe,
-  Home,
-  Laptop,
-  Mail,
-  MessageSquare,
-  Monitor,
-  Moon,
   Search,
-  Shield,
-  Sun,
-  User,
-  Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PALETTE_ITEM_DEFS, type PaletteItem } from "@/components/commandPaletteItems";
 import { trackGA4 } from "@/components/GoogleAnalytics";
 import { getApiOrigin } from "@/lib/admin-constants";
-
-interface PaletteItem {
-  id: string;
-  label: string;
-  description?: string;
-  icon: React.ReactNode;
-  action: () => void;
-  keywords: string[];
-  category: "navigation" | "action" | "search";
-}
 
 interface SearchResult {
   title: string;
@@ -82,173 +59,78 @@ export default function CommandPalette() {
       const origin = getApiOrigin();
       fetch(`${origin}/api/search?q=${encodeURIComponent(query)}`)
         .then((r) => (r.ok ? r.json() : { results: [] }))
-        .then((data: { results: SearchResult[] }) => setSearchResults(data.results))
-        .catch(() => setSearchResults([]));
+        .then((data: { results: SearchResult[] }) => {
+            setSearchResults(data.results);
+          })
+        .catch(() => {
+            setSearchResults([]);
+          });
     }, 300);
-    return () => clearTimeout(searchTimerRef.current);
+    return () => {
+      clearTimeout(searchTimerRef.current);
+    };
   }, [query, open]);
 
+  const runDomAction = useCallback((id: string) => {
+    const root = document.documentElement;
+    switch (id) {
+      case "theme-dark":
+        root.classList.remove("light");
+        root.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+        return;
+      case "theme-light":
+        root.classList.remove("dark");
+        root.classList.add("light");
+        localStorage.setItem("theme", "light");
+        return;
+      case "chat": {
+        const btn = document.querySelector<HTMLButtonElement>(
+          '[aria-label*="chat" i], [aria-label*="Chat" i]',
+        );
+        btn?.click();
+        return;
+      }
+      case "accessibility":
+        window.dispatchEvent(new CustomEvent("open-accessibility-panel"));
+        return;
+      case "retro-theme":
+        root.classList.toggle("retro-terminal");
+        return;
+    }
+  }, []);
+
   const items = useMemo<PaletteItem[]>(
-    () => [
-      // Navigation
-      {
-        id: "home",
-        label: "Home",
-        icon: <Home className="h-4 w-4" />,
-        action: () => navigate("/"),
-        keywords: ["home", "main", "landing"],
-        category: "navigation",
-      },
-      {
-        id: "about",
-        label: "About",
-        description: "Skills, certifications & badges",
-        icon: <User className="h-4 w-4" />,
-        action: () => navigate("/about/"),
-        keywords: ["about", "skills", "certifications", "badges", "bio"],
-        category: "navigation",
-      },
-      {
-        id: "experience",
-        label: "Work Experience",
-        description: "Career timeline & positions",
-        icon: <Briefcase className="h-4 w-4" />,
-        action: () => navigate("/product/"),
-        keywords: ["experience", "work", "career", "jobs", "timeline", "product"],
-        category: "navigation",
-      },
-      {
-        id: "projects",
-        label: "Projects",
-        description: "Portfolio & open source work",
-        icon: <Laptop className="h-4 w-4" />,
-        action: () => navigate("/projects/"),
-        keywords: ["projects", "portfolio", "github", "open source"],
-        category: "navigation",
-      },
-      {
-        id: "resume",
-        label: "Resume Guide",
-        description: "ATS tips & career advice",
-        icon: <FileText className="h-4 w-4" />,
-        action: () => navigate("/resume/"),
-        keywords: ["resume", "cv", "ats", "career"],
-        category: "navigation",
-      },
-      {
-        id: "contact",
-        label: "Contact",
-        description: "Get in touch",
-        icon: <Mail className="h-4 w-4" />,
-        action: () => navigate("/contact/"),
-        keywords: ["contact", "email", "message", "hire"],
-        category: "navigation",
-      },
-      {
-        id: "performance",
-        label: "Performance",
-        description: "Live Web Vitals & benchmarks",
-        icon: <Gauge className="h-4 w-4" />,
-        action: () => navigate("/performance/"),
-        keywords: ["performance", "speed", "vitals", "lighthouse"],
-        category: "navigation",
-      },
-      {
-        id: "agents",
-        label: "AI Agents",
-        description: "Agent architecture & playground",
-        icon: <Zap className="h-4 w-4" />,
-        action: () => navigate("/agents/"),
-        keywords: ["agents", "ai", "llm", "automation"],
-        category: "navigation",
-      },
-      {
-        id: "admin",
-        label: "Admin Dashboard",
-        description: "Site monitoring & management",
-        icon: <Shield className="h-4 w-4" />,
-        action: () => navigate("/admin/"),
-        keywords: ["admin", "dashboard", "monitoring"],
-        category: "navigation",
-      },
-      // Actions
-      {
-        id: "theme-dark",
-        label: "Switch to Dark Mode",
-        icon: <Moon className="h-4 w-4" />,
+    () =>
+      PALETTE_ITEM_DEFS.map((def) => ({
+        id: def.id,
+        label: def.label,
+        description: def.description,
+        icon: def.icon,
+        keywords: def.keywords,
+        category: def.category,
         action: () => {
-          close();
-          document.documentElement.classList.remove("light");
-          document.documentElement.classList.add("dark");
-          localStorage.setItem("theme", "dark");
+          if (def.href) {
+            navigate(def.href);
+          } else {
+            close();
+            runDomAction(def.id);
+          }
         },
-        keywords: ["dark", "theme", "night", "mode"],
-        category: "action",
-      },
-      {
-        id: "theme-light",
-        label: "Switch to Light Mode",
-        icon: <Sun className="h-4 w-4" />,
-        action: () => {
-          close();
-          document.documentElement.classList.remove("dark");
-          document.documentElement.classList.add("light");
-          localStorage.setItem("theme", "light");
-        },
-        keywords: ["light", "theme", "day", "mode"],
-        category: "action",
-      },
-      {
-        id: "chat",
-        label: "Open Chat Assistant",
-        description: "Ask the AI chatbot",
-        icon: <MessageSquare className="h-4 w-4" />,
-        action: () => {
-          close();
-          const btn = document.querySelector<HTMLButtonElement>(
-            '[aria-label*="chat" i], [aria-label*="Chat" i]',
-          );
-          btn?.click();
-        },
-        keywords: ["chat", "bot", "assistant", "ai", "ask"],
-        category: "action",
-      },
-      {
-        id: "accessibility",
-        label: "Accessibility Settings",
-        icon: <Accessibility className="h-4 w-4" />,
-        action: () => {
-          close();
-          window.dispatchEvent(new CustomEvent("open-accessibility-panel"));
-        },
-        keywords: ["accessibility", "a11y", "font", "contrast"],
-        category: "action",
-      },
-      {
-        id: "retro-theme",
-        label: "Retro Terminal Theme",
-        description: "Secret theme: green on black CRT",
-        icon: <Monitor className="h-4 w-4" />,
-        action: () => {
-          close();
-          document.documentElement.classList.toggle("retro-terminal");
-        },
-        keywords: ["retro", "terminal", "crt", "green", "secret", "easter egg", "hacker"],
-        category: "action",
-      },
-    ],
-    [navigate, close],
+      })),
+    [navigate, close, runDomAction],
   );
 
   const filtered = useMemo(() => {
     const localItems = !query.trim()
       ? items
-      : items.filter(
-          (item) =>
-            item.label.toLowerCase().includes(query.toLowerCase()) ||
-            item.description?.toLowerCase().includes(query.toLowerCase()) ||
-            item.keywords.some((k) => k.includes(query.toLowerCase())),
-        );
+      : items.filter((item) => {
+            const q = query.toLowerCase();
+            const inLabel = item.label.toLowerCase().includes(q);
+            const inDesc = item.description?.toLowerCase().includes(q) ?? false;
+            const inKw = item.keywords.some((k) => k.includes(q));
+            return inLabel || inDesc || inKw;
+          });
 
     // Merge server search results as "search" category items
     const serverItems: PaletteItem[] = searchResults
@@ -286,7 +168,9 @@ export default function CommandPalette() {
       }
     };
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    return () => {
+      document.removeEventListener("keydown", handler);
+    };
   }, [open, close]);
 
   // Focus input when opened
@@ -315,9 +199,12 @@ export default function CommandPalette() {
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((prev) => (prev - 1 + filtered.length) % filtered.length);
-    } else if (e.key === "Enter" && filtered[selectedIndex]) {
-      e.preventDefault();
-      runItem(filtered[selectedIndex], "keyboard");
+    } else if (e.key === "Enter") {
+      const item = filtered.at(selectedIndex);
+      if (item) {
+        e.preventDefault();
+        runItem(item, "keyboard");
+      }
     }
   };
 
@@ -340,8 +227,12 @@ export default function CommandPalette() {
       {/* Panel */}
       <div
         className="relative w-full max-w-lg mx-4 rounded-xl border border-cyan-400/20 bg-slate-900/95 backdrop-blur-md shadow-[0_0_30px_rgba(6,182,212,0.1)] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
         role="dialog"
         aria-label="Command palette"
       >
@@ -352,7 +243,9 @@ export default function CommandPalette() {
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
             onKeyDown={handleKeyDown}
             placeholder="Search pages, skills, actions..."
             className="flex-1 bg-transparent text-sm text-slate-200 placeholder:text-slate-500 outline-none font-mono"
@@ -382,8 +275,12 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => runItem(item, "click")}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onClick={() => {
+                      runItem(item, "click");
+                    }}
+                    onMouseEnter={() => {
+                      setSelectedIndex(idx);
+                    }}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       idx === selectedIndex
@@ -418,8 +315,12 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => runItem(item, "click")}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onClick={() => {
+                      runItem(item, "click");
+                    }}
+                    onMouseEnter={() => {
+                      setSelectedIndex(idx);
+                    }}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       idx === selectedIndex
@@ -454,8 +355,12 @@ export default function CommandPalette() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => runItem(item, "click")}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onClick={() => {
+                      runItem(item, "click");
+                    }}
+                    onMouseEnter={() => {
+                      setSelectedIndex(idx);
+                    }}
                     data-selected={idx === selectedIndex}
                     className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       idx === selectedIndex

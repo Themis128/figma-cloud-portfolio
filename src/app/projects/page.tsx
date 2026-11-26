@@ -6,7 +6,7 @@ import GitHubRepos from "@/components/GitHubRepos";
 import Navigation from "@/components/Navigation";
 import SearchableProjects from "@/components/SearchableProjects";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Projects",

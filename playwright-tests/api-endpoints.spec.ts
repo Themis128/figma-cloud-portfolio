@@ -148,7 +148,7 @@ test.describe("API Endpoints", () => {
       // Verify via OPTIONS preflight
       const preflight = await page.request.fetch(`${apiBase}/api/ping`, {
         method: "OPTIONS",
-        headers: { Origin: "https://baltzakisthemis.com" },
+        headers: { Origin: "https://portfolio.cloudless.gr" },
       });
       expect(
         preflight.headers()["access-control-allow-origin"],

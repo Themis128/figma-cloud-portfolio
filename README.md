@@ -1,6 +1,6 @@
 # Baltzakis Themistoklis Portfolio
 
-A production-ready portfolio built with **Next.js 16**, **React 19**, **TypeScript 5**, **Tailwind CSS v4**, and a dark cyberpunk aesthetic. Static export deployed to S3 + CloudFront with a Lambda backend.
+A production-ready portfolio built with **Next.js 16**, **React 19**, **TypeScript 5**, **Tailwind CSS v4**, and a dark cyberpunk aesthetic. Static export deployed to **Cloudflare Workers static assets** (canonical `https://portfolio.cloudless.gr`). All AWS services were removed 2026-11-26 — the backend migrates to Cloudflare (issue #358).
 
 ## Tech Stack
 
@@ -8,8 +8,8 @@ A production-ready portfolio built with **Next.js 16**, **React 19**, **TypeScri
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS v4 + Radix UI + shadcn/ui
 - **Animation**: Framer Motion
-- **Backend**: AWS Lambda (production), Express dev server (local)
-- **Hosting**: S3 + CloudFront (frontend), Lambda Function URL (backend)
+- **Backend**: Cloudflare Pages Functions / Worker routes (AWS Lambda + Express removed)
+- **Hosting**: Cloudflare Workers static assets (frontend + future API routes)
 - **PWA**: Service worker with offline caching and push notifications
 - **Blog**: Velite (MDX → typed JSON at build time) with rehype-pretty-code syntax highlighting
 - **Testing**: Playwright 1.58+ E2E (103 test files)
@@ -41,8 +41,9 @@ src/
   styles/               # Global styles
 content/
   blog/                 # MDX blog posts (processed by Velite at build time)
-server/                 # Express dev server (port 3001)
-  routes/               # API handlers (resume, apiKeys, playwrightAutofix)
+server/
+  mcp/                  # MCP server (tsx, stdio — exposes portfolio data)
+  bot/knowledge/        # Chatbot knowledge base (markdown → Workers AI bot)
 playwright-tests/       # E2E test suite (103 specs)
 docs/                   # Documentation (~55 reference files)
 public/                 # Static assets and PWA files
@@ -51,7 +52,7 @@ public/                 # Static assets and PWA files
 ## Key Features
 
 - **Dark Cyberpunk Design**: Circuit board backgrounds, cyan accents, glass morphism
-- **Static Export**: Pre-rendered HTML served from CloudFront CDN
+- **Static Export**: Pre-rendered HTML served from Cloudflare Workers static assets
 - **PWA Ready**: Offline caching, installable, web push notifications
 - **Type Safety**: Full TypeScript with strict mode
 - **Performance Showcase**: Live Web Vitals, industry benchmarks, optimization checklist
@@ -80,24 +81,16 @@ pnpm install
 ### Running Development Servers
 
 ```bash
-# Terminal 1: Start Next.js dev server (frontend on port 8082)
+# Start Next.js dev server (frontend)
 pnpm dev
-
-# Terminal 2: Start Express API server (backend on port 3001)
-npx tsx server/index.ts
-
-# Or run all servers concurrently
-pnpm dev:all
 ```
 
 ## Available Scripts
 
 ```bash
 pnpm dev                        # Start Next.js dev server
-pnpm dev:server               # Start Express API server
-pnpm dev:all                  # Start all development servers (Next.js + Express)
 pnpm build                      # Production static export (out/)
-pnpm build:server             # Build server for Lambda deployment
+pnpm mcp:start                  # Start the portfolio MCP server (stdio)
 pnpm typecheck                  # TypeScript validation
 pnpm test                       # Run Vitest unit tests
 pnpm test:e2e                   # Run Playwright E2E tests
@@ -168,37 +161,19 @@ pnpm format                     # Format code with Prettier
 - **React Query**: Server state management
 - **Next Themes**: Theme switching with CSS custom properties
 
-### Backend Architecture
+### Backend Architecture (Cloudflare)
 
-- **AWS Lambda**: Single function handling all API routes
-- **Express.js**: Local development server (port 3001)
-- **Socket.IO**: Real-time communication
-- **AWS SDK**: Integration with AWS services
-- **Serverless HTTP**: Lambda function wrapper
-
-### Database & Storage
-
-- **AWS Amplify GraphQL**: AppSync API for data management
-- **S3**: Static asset storage and hosting
-- **CloudFront**: CDN for global content delivery
-- **Lambda**: Serverless compute for API endpoints
+- **Workers static assets**: frontend hosting (`wrangler.toml`, `./out`)
+- **Workers AI**: chatbot LLM (`@cf/meta/llama-3.1-8b-instruct`) — knowledge base in `server/bot/knowledge/`
+- **Pages Functions / Worker routes**: `/api/*` replacements (contact form → Turnstile + Resend; admin auth → Firebase Auth)
+- Deployed by `.github/workflows/deploy-cloudflare.yml` on push to `production`
 
 ## Deployment
 
-### Frontend (S3 + CloudFront)
-
 ```bash
-pnpm build
-aws s3 sync out/ s3://figma-portfolio-static --delete
-aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"
+pnpm build          # produces out/
+wrangler deploy     # uploads static assets to the baltzakisthemis-portfolio Worker
 ```
-
-### Backend (AWS Lambda)
-
-Single Lambda function (`figma-portfolio-api`) fronted by CloudFront at `/api/*`.
-- Function URL: `oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
-- Runtime: Node.js, 256MB memory, 15s timeout
-- 14 environment variables (see [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md))
 
 ### Documentation
 
@@ -273,11 +248,11 @@ NEXT_PUBLIC_SENTRY_DSN            # Sentry error tracking
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
 ```
 
-#### Server-side (Lambda environment)
+#### Server-side (Cloudflare Worker environment — planned)
 ```
 NODE_ENV                          # production
 RECAPTCHA_SECRET_KEY              # reCAPTCHA v3 secret
-SES_VERIFIED_EMAIL                # SES sender email
+RESEND_API_KEY                    # Transactional mail relay
 SENTRY_DSN                        # Sentry error tracking
 SLACK_WEBHOOK_URL                 # Slack notifications
 ANTHROPIC_API_KEY                 # Claude API key

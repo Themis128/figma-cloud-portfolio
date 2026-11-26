@@ -2,7 +2,7 @@
 
 ## Cloud Architect & Cybersecurity Specialist
 
-📧 baltzakis.themis@gmail.com | 📱 LinkedIn: [baltzakis-themis](https://www.linkedin.com/in/baltzakis-themis) | 🌐 [www.baltzakisthemis.com](https://www.baltzakisthemis.com)
+📧 baltzakis.themis@gmail.com | 📱 LinkedIn: [baltzakis-themis](https://www.linkedin.com/in/baltzakis-themis) | 🌐 [portfolio.cloudless.gr](https://portfolio.cloudless.gr)
 
 ---
 
@@ -166,7 +166,7 @@ National Technical University of Athens, Greece
 - **Phone**: +306977777838 (Mobile)
 - **Email**: baltzakis.themis@gmail.com
 - **LinkedIn**: www.linkedin.com/in/baltzakis-themis
-- **Company Website**: baltzakisthemis.com
+- **Company Website**: portfolio.cloudless.gr
 
 ---
 

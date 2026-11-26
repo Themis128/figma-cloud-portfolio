@@ -94,7 +94,7 @@ function processCommand(cmd: string): OutputLine[] {
         { text: '', type: 'response' },
         { text: '  [1] Portfolio Site', type: 'response' },
         { text: '      Next.js 16 · Tailwind · AWS S3 + CloudFront', type: 'response' },
-        { text: '      https://baltzakisthemis.com', type: 'response' },
+        { text: '      https://portfolio.cloudless.gr', type: 'response' },
         { text: '', type: 'response' },
         { text: '  [2] GitHub Repositories', type: 'response' },
         { text: '      https://github.com/tbaltzakis', type: 'response' },
@@ -106,7 +106,7 @@ function processCommand(cmd: string): OutputLine[] {
         { text: '', type: 'response' },
         { text: '  ── Contact ──', type: 'response' },
         { text: '', type: 'response' },
-        { text: '  Web      : https://baltzakisthemis.com', type: 'response' },
+        { text: '  Web      : https://portfolio.cloudless.gr', type: 'response' },
         { text: '  GitHub   : https://github.com/tbaltzakis', type: 'response' },
         { text: '  LinkedIn : https://linkedin.com/in/tbaltzakis', type: 'response' },
         { text: '', type: 'response' },
@@ -222,14 +222,16 @@ export default function CyberTerminal() {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === '`' && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        const target = e.target as HTMLElement;
         // Don't trigger if typing in an input/textarea (other than our terminal input)
+        const target = e.target;
         if (
-          target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.isContentEditable
+          target instanceof HTMLElement &&
+          (target.tagName === 'INPUT' ||
+            target.tagName === 'TEXTAREA' ||
+            target.isContentEditable) &&
+          target !== inputRef.current
         ) {
-          if (target !== inputRef.current) return;
+          return;
         }
         e.preventDefault();
         setIsOpen((prev) => !prev);
@@ -239,7 +241,9 @@ export default function CyberTerminal() {
       }
     }
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen]);
 
   // Typing animation effect
@@ -249,7 +253,7 @@ export default function CyberTerminal() {
       return;
     }
 
-    const currentLine = typingLines[typingIndex];
+    const currentLine = typingLines.at(typingIndex);
     if (!currentLine) return;
 
     const timer = setTimeout(() => {
@@ -257,7 +261,9 @@ export default function CyberTerminal() {
       setTypingIndex((i) => i + 1);
     }, 30);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [isTyping, typingIndex, typingLines]);
 
   // Matrix rain effect
@@ -304,23 +310,24 @@ export default function CyberTerminal() {
       // Add command to output
       setOutput((prev) => [...prev, { text: `> ${cmd}`, type: 'command' }]);
 
+      // Handle clear before the empty-result early return
+      if (cmd.trim().toLowerCase() === 'clear') {
+        setOutput([]);
+        return;
+      }
+
       const result = processCommand(cmd);
 
       // Handle special commands
-      const firstResult = result[0];
-      if (result.length === 1 && firstResult?.text === '__EXIT__') {
+      const firstResult = result.at(0);
+      if (!firstResult) return;
+      if (result.length === 1 && firstResult.text === '__EXIT__') {
         setIsOpen(false);
         return;
       }
 
-      if (result.length === 1 && firstResult?.text === '__MATRIX__') {
+      if (result.length === 1 && firstResult.text === '__MATRIX__') {
         startMatrix();
-        return;
-      }
-
-      // Handle clear
-      if (cmd.trim().toLowerCase() === 'clear') {
-        setOutput([]);
         return;
       }
 
@@ -356,7 +363,9 @@ export default function CyberTerminal() {
             </span>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+            }}
             className="text-cyan-400/60 transition-colors hover:text-cyan-400"
             aria-label="Close terminal"
           >
@@ -414,7 +423,9 @@ export default function CyberTerminal() {
             ref={inputRef}
             type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
             className="flex-1 bg-transparent font-mono text-cyan-400 caret-cyan-400 outline-none placeholder:text-cyan-400/30"
             placeholder="Enter command..."
             autoComplete="off"

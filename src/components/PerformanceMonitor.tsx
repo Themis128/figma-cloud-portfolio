@@ -16,7 +16,7 @@ interface WebVitalsMetric {
 }
 
 function sendToGA(metric: WebVitalsMetric) {
-  if (typeof window !== "undefined" && window.gtag) {
+  if (typeof window !== "undefined" && "gtag" in window) {
     trackGA4(metric.name, {
       value: Math.round(metric.name === "CLS" ? metric.delta * 1000 : metric.delta),
       metric_id: metric.id,
@@ -90,7 +90,9 @@ export function PerformanceMonitor() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   // Track engaged time (30s, 60s, 120s, 300s milestones)
@@ -105,7 +107,7 @@ export function PerformanceMonitor() {
         return;
       }
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const nextMilestone = engagementMilestones[milestoneIndex];
+      const nextMilestone = engagementMilestones.at(milestoneIndex);
       if (nextMilestone !== undefined && elapsed >= nextMilestone) {
         trackGA4("engaged_time", {
           engagement_seconds: nextMilestone,
@@ -115,7 +117,9 @@ export function PerformanceMonitor() {
       }
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   // Track memory usage (Chrome only)
@@ -151,7 +155,9 @@ export function PerformanceMonitor() {
     };
 
     const interval = setInterval(trackMemory, MEMORY_CHECK_INTERVAL_MS);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   return null;

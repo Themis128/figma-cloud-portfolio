@@ -19,10 +19,10 @@ jobs:
         id: health
         run: |
           URLS=(
-            "https://www.baltzakisthemis.com/"
-            "https://www.baltzakisthemis.com/about/"
-            "https://www.baltzakisthemis.com/contact/"
-            "https://www.baltzakisthemis.com/performance/"
+            "https://portfolio.cloudless.gr/"
+            "https://portfolio.cloudless.gr/about/"
+            "https://portfolio.cloudless.gr/contact/"
+            "https://portfolio.cloudless.gr/performance/"
           )
 
           FAILED=0

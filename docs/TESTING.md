@@ -628,7 +628,7 @@ The chatbot uses **AWS Bedrock** (Claude 3 Haiku) via the Express server. Tests 
 
 #### `playwright-tests/production-smoke.spec.ts`
 
-Tests both `https://www.baltzakisthemis.com` and `https://baltzakisthemis.com` across 9 browser configs (Chromium, Firefox, WebKit × desktop + mobile viewports).
+Tests both `https://portfolio.cloudless.gr` and `https://portfolio.cloudless.gr` across 9 browser configs (Chromium, Firefox, WebKit × desktop + mobile viewports).
 
 - ✅ All 10 frontend pages return 200 (`/`, `/about/`, `/blog/`, `/contact/`, `/resume/`, `/projects/`, `/performance/`, `/agents/`, `/settings/`, `/product/`)
 - ✅ API health endpoints (`/api/ping`, `/api/health`)

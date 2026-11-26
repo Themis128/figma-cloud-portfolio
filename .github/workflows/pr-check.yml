@@ -32,32 +32,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create mock amplify_outputs.json
-        run: |
-          cat > amplify_outputs.json << 'MOCK'
-          {
-            "version": "1.3",
-            "auth": {
-              "user_pool_id": "us-east-1_CImock",
-              "aws_region": "us-east-1",
-              "user_pool_client_id": "ci-mock-client-id",
-              "identity_pool_id": "us-east-1:00000000-0000-0000-0000-000000000000",
-              "mfa_methods": [],
-              "standard_required_attributes": ["email"],
-              "username_attributes": ["email"],
-              "user_verification_types": ["email"],
-              "mfa_configuration": "NONE",
-              "password_policy": {
-                "min_length": 8,
-                "require_numbers": true,
-                "require_lowercase": true,
-                "require_uppercase": true,
-                "require_symbols": true
-              },
-              "unauthenticated_identities_enabled": true
-            }
-          }
-          MOCK
 
       - name: Generate Velite types
         run: npx velite build
@@ -71,7 +45,7 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          NEXT_PUBLIC_SITE_URL: https://www.baltzakisthemis.com
+          NEXT_PUBLIC_SITE_URL: https://portfolio.cloudless.gr
           NEXT_PUBLIC_API_BASE_URL: /api
 
   e2e-smoke:
@@ -95,32 +69,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create mock amplify_outputs.json
-        run: |
-          cat > amplify_outputs.json << 'MOCK'
-          {
-            "version": "1.3",
-            "auth": {
-              "user_pool_id": "us-east-1_CImock",
-              "aws_region": "us-east-1",
-              "user_pool_client_id": "ci-mock-client-id",
-              "identity_pool_id": "us-east-1:00000000-0000-0000-0000-000000000000",
-              "mfa_methods": [],
-              "standard_required_attributes": ["email"],
-              "username_attributes": ["email"],
-              "user_verification_types": ["email"],
-              "mfa_configuration": "NONE",
-              "password_policy": {
-                "min_length": 8,
-                "require_numbers": true,
-                "require_lowercase": true,
-                "require_uppercase": true,
-                "require_symbols": true
-              },
-              "unauthenticated_identities_enabled": true
-            }
-          }
-          MOCK
 
       - name: Generate Velite types
         run: npx velite build
@@ -142,24 +90,12 @@ jobs:
 
       - name: Start servers
         run: |
-          # Start Express and Next.js in parallel
-          PORT=3001 npx tsx server/index.ts &
-          echo $! > /tmp/express.pid
           pnpm dev &
           echo $! > /tmp/nextjs.pid
 
-          # Wait for both servers concurrently
-          timeout 30 bash -c 'until curl -sf http://localhost:3001/api/ping > /dev/null 2>&1; do sleep 2; done' \
-            || (echo "::error::Express backend failed to start"; exit 1) &
-          WAIT_EXPRESS=$!
-
           timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done' \
-            || (echo "::error::Next.js dev server failed to start"; exit 1) &
-          WAIT_NEXTJS=$!
-
-          wait $WAIT_EXPRESS || exit 1
-          wait $WAIT_NEXTJS || exit 1
-          echo "Both servers ready"
+            || (echo "::error::Next.js dev server failed to start"; exit 1)
+          echo "Dev server ready"
         env:
           NODE_ENV: test
 
@@ -172,5 +108,4 @@ jobs:
       - name: Cleanup servers
         if: always()
         run: |
-          kill "$(cat /tmp/express.pid 2>/dev/null)" 2>/dev/null || true
           kill "$(cat /tmp/nextjs.pid 2>/dev/null)" 2>/dev/null || true

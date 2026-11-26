@@ -2,7 +2,7 @@
 
 All endpoints and forms to verify after deployment.
 
-**Production domain**: `https://www.baltzakisthemis.com`
+**Production domain**: `https://portfolio.cloudless.gr`
 **Lambda URL**: `https://oh4rscben2kxm32mhbtoiw7lbi0hkujs.lambda-url.us-east-1.on.aws`
 **Local dev**: `http://localhost:3001` (Express) / `http://localhost:3000` (Next.js)
 
@@ -28,16 +28,16 @@ All endpoints and forms to verify after deployment.
 
 ```bash
 # Basic ping
-curl https://www.baltzakisthemis.com/api/ping
+curl https://portfolio.cloudless.gr/api/ping
 
 # Detailed health (uptime, memory, environment)
-curl https://www.baltzakisthemis.com/api/health
+curl https://portfolio.cloudless.gr/api/health
 
 # Demo endpoint
-curl https://www.baltzakisthemis.com/api/demo
+curl https://portfolio.cloudless.gr/api/demo
 
 # Server monitoring
-curl https://www.baltzakisthemis.com/api/monitor
+curl https://portfolio.cloudless.gr/api/monitor
 ```
 
 ---
@@ -56,7 +56,7 @@ curl https://www.baltzakisthemis.com/api/monitor
 
 ```bash
 # POST /api/contact
-curl -X POST https://www.baltzakisthemis.com/api/contact \
+curl -X POST https://portfolio.cloudless.gr/api/contact \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test User",
@@ -76,7 +76,7 @@ curl -X POST https://www.baltzakisthemis.com/api/contact \
 
 ```bash
 # POST /api/chat (Server-Sent Events stream)
-curl -X POST https://www.baltzakisthemis.com/api/chat \
+curl -X POST https://portfolio.cloudless.gr/api/chat \
   -H "Content-Type: application/json" \
   -d '{
     "message": "Tell me about Themis",
@@ -93,10 +93,10 @@ curl -X POST https://www.baltzakisthemis.com/api/chat \
 
 ```bash
 # GET available slots (next 7 days)
-curl https://www.baltzakisthemis.com/api/booking/slots
+curl https://portfolio.cloudless.gr/api/booking/slots
 
 # POST create booking
-curl -X POST https://www.baltzakisthemis.com/api/booking/create \
+curl -X POST https://portfolio.cloudless.gr/api/booking/create \
   -H "Content-Type: application/json" \
   -d '{
     "start": "2026-03-15T09:00:00Z",
@@ -112,10 +112,10 @@ curl -X POST https://www.baltzakisthemis.com/api/booking/create \
 
 ```bash
 # GET resume data as JSON
-curl https://www.baltzakisthemis.com/api/resume/generate
+curl https://portfolio.cloudless.gr/api/resume/generate
 
 # GET resume PDF download
-curl -o resume.pdf https://www.baltzakisthemis.com/api/resume/download
+curl -o resume.pdf https://portfolio.cloudless.gr/api/resume/download
 ```
 
 ---
@@ -124,10 +124,10 @@ curl -o resume.pdf https://www.baltzakisthemis.com/api/resume/download
 
 ```bash
 # GET GitHub user stats
-curl https://www.baltzakisthemis.com/api/github/stats
+curl https://portfolio.cloudless.gr/api/github/stats
 
 # GET public repos (paginated)
-curl "https://www.baltzakisthemis.com/api/github/repos?page=1&limit=5"
+curl "https://portfolio.cloudless.gr/api/github/repos?page=1&limit=5"
 ```
 
 ---
@@ -136,8 +136,8 @@ curl "https://www.baltzakisthemis.com/api/github/repos?page=1&limit=5"
 
 ```bash
 # GET search portfolio content
-curl "https://www.baltzakisthemis.com/api/search?q=cloud"
-curl "https://www.baltzakisthemis.com/api/search?q=security"
+curl "https://portfolio.cloudless.gr/api/search?q=cloud"
+curl "https://portfolio.cloudless.gr/api/search?q=security"
 ```
 
 ---
@@ -161,19 +161,19 @@ curl "https://www.baltzakisthemis.com/api/search?q=security"
 AUTH="Authorization: Bearer <token>"
 
 # List API keys
-curl -H "$AUTH" https://www.baltzakisthemis.com/api/organizations/api_keys
+curl -H "$AUTH" https://portfolio.cloudless.gr/api/organizations/api_keys
 
 # Create API key
 curl -X POST -H "$AUTH" -H "Content-Type: application/json" \
-  https://www.baltzakisthemis.com/api/organizations/api_keys \
+  https://portfolio.cloudless.gr/api/organizations/api_keys \
   -d '{"name": "Test Key", "workspace_id": "ws_test"}'
 
 # Get/Update/Delete by ID
-curl -H "$AUTH" https://www.baltzakisthemis.com/api/organizations/api_keys/{id}
+curl -H "$AUTH" https://portfolio.cloudless.gr/api/organizations/api_keys/{id}
 curl -X POST -H "$AUTH" -H "Content-Type: application/json" \
-  https://www.baltzakisthemis.com/api/organizations/api_keys/{id} \
+  https://portfolio.cloudless.gr/api/organizations/api_keys/{id} \
   -d '{"name": "Updated Name"}'
-curl -X DELETE -H "$AUTH" https://www.baltzakisthemis.com/api/organizations/api_keys/{id}
+curl -X DELETE -H "$AUTH" https://portfolio.cloudless.gr/api/organizations/api_keys/{id}
 ```
 
 ---
@@ -194,7 +194,7 @@ curl http://localhost:3001/api/playwright-autofix/patterns
 #!/usr/bin/env bash
 # Run after deployment to verify all critical endpoints
 set -euo pipefail
-BASE="https://www.baltzakisthemis.com"
+BASE="https://portfolio.cloudless.gr"
 
 echo "=== Frontend Pages ==="
 for path in "" about/ contact/ resume/ projects/ performance/ agents/ settings/ product/; do
@@ -247,7 +247,7 @@ echo "  GET /api/github/stats → ${GH}"
 
 ## Playwright Production Smoke Tests
 
-The `playwright-tests/production-smoke.spec.ts` file automates verification of all critical endpoints above against both production domains (`www.baltzakisthemis.com` and `baltzakisthemis.com`).
+The `playwright-tests/production-smoke.spec.ts` file automates verification of all critical endpoints above against both production domains (`portfolio.cloudless.gr` and `portfolio.cloudless.gr`).
 
 ```bash
 # Run smoke tests (9 browser configs × 2 domains × 15 tests = 288 test cases)

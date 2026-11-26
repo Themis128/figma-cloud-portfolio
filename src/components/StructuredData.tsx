@@ -1,3 +1,5 @@
+import { safeJsonLd } from "@/lib/json-ld";
+
 interface StructuredDataProps {
   type:
     | "WebSite"
@@ -23,14 +25,13 @@ export function StructuredData({ type, data }: StructuredDataProps) {
   };
 
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-    />
+    <script type="application/ld+json">
+          {safeJsonLd(structuredData)}
+        </script>
   );
 }
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 const PERSON = {
   "@type": "Person" as const,
@@ -118,18 +119,15 @@ export function DefaultStructuredData() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageData) }}
-      />
+      <script type="application/ld+json">
+          {safeJsonLd(websiteData)}
+        </script>
+      <script type="application/ld+json">
+          {safeJsonLd(personData)}
+        </script>
+      <script type="application/ld+json">
+          {safeJsonLd(profilePageData)}
+        </script>
     </>
   );
 }

@@ -101,6 +101,7 @@ tools:
   web-fetch:
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-pull-request:
@@ -110,7 +111,20 @@ safe-outputs:
     if-no-changes: "warn"
   noop:
 source: githubnext/agentics/workflows/link-checker.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine:
+  id: gemini
+  model: gemini-3.1-flash-lite
+graders:
+  # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
+  # corrupting these metrics for every engine — disable until upstream fix.
+  tool-success-rate:
+    enabled: false
+  tool-failure-count:
+    enabled: false
+  loops:
+    enabled: false
+  trajectory-efficiency:
+    enabled: false
 ---
 
 # Daily Link Checker & Fixer

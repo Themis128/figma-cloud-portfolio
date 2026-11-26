@@ -22,7 +22,20 @@ safe-outputs:
 timeout-minutes: 15
 strict: true
 source: githubnext/agentics/workflows/daily-malicious-code-scan.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine:
+  id: gemini
+  model: gemini-3.1-flash-lite
+graders:
+  # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
+  # corrupting these metrics for every engine — disable until upstream fix.
+  tool-success-rate:
+    enabled: false
+  tool-failure-count:
+    enabled: false
+  loops:
+    enabled: false
+  trajectory-efficiency:
+    enabled: false
 ---
 
 # Daily Malicious Code Scan Agent

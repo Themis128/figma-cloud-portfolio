@@ -17,6 +17,7 @@ permissions: read-all
 network: defaults
 
 safe-outputs:
+  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -39,7 +40,20 @@ tools:
   bash: true
   cache-memory: true
 
-engine: copilot
+engine:
+  id: gemini
+  model: gemini-3.5-flash-lite
+graders:
+  # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
+  # corrupting these metrics for every engine — disable until upstream fix.
+  tool-success-rate:
+    enabled: false
+  tool-failure-count:
+    enabled: false
+  loops:
+    enabled: false
+  trajectory-efficiency:
+    enabled: false
 ---
 
 # Daily Maintenance

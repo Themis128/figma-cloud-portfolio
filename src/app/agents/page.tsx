@@ -36,7 +36,7 @@ const SECTIONS = [
   { id: "playground", label: "Playground" },
 ] as const;
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Understanding AI Agents",

@@ -85,7 +85,7 @@ function formatValue(metricKey: string, value: number): string {
   return `${Math.round(value)}ms`;
 }
 
-function getOverallGrade(items: TestItem[], metrics: Record<string, number>) {
+function getOverallGrade(items: TestItem[], metrics: Partial<Record<string, number>>) {
   const scores: number[] = items
     .filter((t) => metrics[t.metricKey] !== undefined)
     .map((t) => {
@@ -150,10 +150,10 @@ export function SpeedTestRunner() {
   const [progress, setProgress] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
   const [capturedMetrics, setCapturedMetrics] = useState<
-    Record<string, number>
+    Partial<Record<string, number>>
   >({});
   const [showConfetti, setShowConfetti] = useState(false);
-  const metricsRef = useRef<Record<string, number>>({});
+  const metricsRef = useRef<Partial<Record<string, number>>>({});
 
   // Passively collect metrics as the page loads
   useEffect(() => {
@@ -213,11 +213,12 @@ export function SpeedTestRunner() {
       })
       .join("\n");
 
-    const text = `Portfolio performance results:\n${lines}\nbaltzakisthemis.com`;
+    const text = `Portfolio performance results:\n${lines}\nportfolio.cloudless.gr`;
 
-    if (navigator.share) {
-      void navigator.share({
-        title: "baltzakisthemis.com | Performance Results",
+    const shareFn = (navigator as { share?: Navigator["share"] }).share;
+    if (shareFn) {
+      void shareFn.call(navigator, {
+        title: "portfolio.cloudless.gr | Performance Results",
         text,
       });
     } else {
@@ -296,7 +297,14 @@ export function SpeedTestRunner() {
               const value = capturedMetrics[test.metricKey];
               const status =
                 value !== undefined ? getStatus(test, value) : null;
-              const colors = status ? STATUS_COLORS[status] : null;
+              const colors =
+                status === "good"
+                  ? STATUS_COLORS.good
+                  : status === "warn"
+                    ? STATUS_COLORS.warn
+                    : status === "poor"
+                      ? STATUS_COLORS.poor
+                      : null;
 
               return (
                 <div

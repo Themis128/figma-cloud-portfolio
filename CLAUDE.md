@@ -3,7 +3,7 @@
 ## Project Overview
 
 Next.js portfolio for Themistoklis Baltzakis — Cloud Architect & Cybersecurity Specialist.
-Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen 2 (auth + data).
+Deployed as a static export on **Cloudflare Workers static assets** (canonical URL `https://portfolio.cloudless.gr`, mirror `*.workers.dev`). All AWS services were excised 2026-11-26 — never reintroduce them (issue #358).
 
 ## Tech Stack
 
@@ -13,8 +13,8 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 - **Animation**: Framer Motion
 - **3D**: Three.js + @react-three/fiber
 - **State**: TanStack Query v5
-- **Backend**: AWS Lambda (production), Amplify Gen 2 (Cognito + AppSync + DynamoDB), Express dev server (local, port 3001)
-- **Chatbot**: AWS Bedrock (Claude 3.5 Haiku) via Express route — knowledge base in `server/bot/knowledge/`
+- **Backend**: Cloudflare-native — Pages Functions / Worker routes (replacements landing per issue #358: chatbot → Workers AI, contact form → Pages Function + Turnstile → Resend, admin auth → Firebase Auth)
+- **Chatbot**: Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct`) — knowledge base preserved in `server/bot/knowledge/`
 - **Blog**: Velite (MDX → typed JSON at build time), rehype-pretty-code for syntax highlighting, Keystatic CMS (dev-only admin UI)
 - **CMS**: Keystatic (local mode) — `pnpm cms` launches admin at `/keystatic` for creating/editing posts, uploading images
 - **Testing**: Playwright 1.58+ E2E, Vitest unit tests
@@ -26,7 +26,6 @@ Deployed as static export on S3 + CloudFront with Lambda backend and Amplify Gen
 src/
   app/              # App Router pages and layouts
   components/
-    admin/          # Admin dashboard components (10 tabs)
     blog/           # Blog UI components (filter bar, post grid, TOC, related posts, social share, author bio)
     interactive/    # Interactive engagement components (13 in folder + CommandPalette in layout)
     performance/    # Performance page components
@@ -37,7 +36,9 @@ src/
   styles/           # Global CSS
 content/
   blog/             # MDX blog posts (frontmatter + content, processed by Velite)
-server/             # Express backend (tsx)
+server/
+  mcp/              # MCP server (tsx, stdio — exposes portfolio data)
+  bot/knowledge/    # Chatbot knowledge base (markdown, feeds Workers AI bot)
 playwright-tests/   # E2E tests (103 spec files)
 public/             # Static assets and PWA files
 docs/               # Documentation

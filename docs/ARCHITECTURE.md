@@ -114,7 +114,7 @@ The app uses the Next.js App Router Server/Client component model:
 
 All public pages include:
 - **OpenGraph tags**: `og:title`, `og:description`, `og:url`, `og:image` for social sharing (including legal pages)
-- **Canonical URLs**: `<link rel="canonical">` pointing to `https://www.baltzakisthemis.com/...`
+- **Canonical URLs**: `<link rel="canonical">` pointing to `https://portfolio.cloudless.gr/...`
 - **Server-rendered JSON-LD**: Structured data output in static HTML at build time (not client-side injected) via `<script type="application/ld+json">`
   - `WebSite` schema with `SearchAction` and `@id` entity linking
   - `Person` schema with `knowsAbout`, `sameAs`, `worksFor`, `image`
@@ -554,7 +554,7 @@ A local MCP server (`server/mcp/index.ts`) exposes portfolio data for AI coding 
 | ------------ | ------------------------------------------------------- |
 | S3 bucket    | `figma-portfolio-static`                                |
 | CloudFront   | Distribution `E134SCTR0QGQKJ`                          |
-| Domain       | `www.baltzakisthemis.com` / `baltzakisthemis.com`       |
+| Domain       | `portfolio.cloudless.gr` / `portfolio.cloudless.gr`       |
 | Build        | `pnpm build` produces `out/` directory (static export)         |
 | Deploy       | `aws s3 sync out/ s3://figma-portfolio-static --delete` |
 | Invalidation | `aws cloudfront create-invalidation --distribution-id E134SCTR0QGQKJ --paths "/*"` |
@@ -608,7 +608,7 @@ GOOGLE_ANALYTICS_API_SECRET       # GA4 Measurement Protocol secret
 ### Client-side Environment Variables (bundled into JS)
 
 ```
-NEXT_PUBLIC_SITE_URL              # Canonical URL (https://www.baltzakisthemis.com)
+NEXT_PUBLIC_SITE_URL              # Canonical URL (https://portfolio.cloudless.gr)
 NEXT_PUBLIC_GA_ID                 # Google Analytics GA4 measurement ID
 NEXT_PUBLIC_SENTRY_DSN            # Sentry error tracking
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY    # reCAPTCHA v3 site key
@@ -682,7 +682,7 @@ The API Health Dashboard (`ApiHealthDashboard.tsx`) automatically includes Cogni
 - **Home Page Tests**: `playwright-tests/home-page.spec.ts` (19 tests): hero content, social links, hero CTAs (Get In Touch primary, Learn More secondary), CTA styling verification, layout
 - **Performance Page Tests**: `playwright-tests/performance-page.spec.ts`: structure (incl. field-data section), speed test, Web Vitals, Lighthouse, methodology, industry comparison
 - **PWA Tests**: `playwright-tests/pwa.spec.ts` (5 tests): manifest, offline fallback, sw.js, dev-mode SW unregistration
-- **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts`: API-level tests against both `www.baltzakisthemis.com` and `baltzakisthemis.com` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
+- **Production Smoke Tests**: `playwright-tests/production-smoke.spec.ts`: API-level tests against both `portfolio.cloudless.gr` and `portfolio.cloudless.gr` (pages, health endpoints, contact form, chat API, booking, HTTPS, 404 handling)
 - **Accessibility**: Playwright accessibility assertions on all pages
 
 See [`docs/TESTING.md`](./TESTING.md) for the complete testing guide.

@@ -6,7 +6,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import InteractiveTimeline from "@/components/interactive/InteractiveTimeline";
 import Navigation from "@/components/Navigation";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Work Experience",

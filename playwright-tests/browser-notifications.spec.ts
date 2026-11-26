@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("AWS Notifications Integration @smoke", () => {
+test.describe("Browser Notifications @smoke", () => {
   test("should load AWS notifications module", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");

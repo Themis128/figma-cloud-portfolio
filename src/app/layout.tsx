@@ -10,10 +10,9 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { Providers } from "@/components/providers";
 import { DefaultStructuredData } from "@/components/StructuredData";
 
-// AmplifyProvider + AuthProvider deferred — only /admin uses auth.
-// They're loaded in src/app/admin/layout.tsx instead.
-const AmplifyProvider = dynamic(() => import("@/components/AmplifyProvider"));
-const AuthProvider = dynamic(() => import("@/contexts/AuthContext").then(m => ({ default: m.AuthProvider })));
+// AmplifyProvider + AuthProvider removed — all AWS services (Cognito,
+// Amplify, Lambda, SES) were excised; the platform migrated to Cloudflare
+// (issue #358). Admin auth will return as a Cloudflare-native replacement.
 
 // Non-critical client components — code-split from initial bundle
 const AccessibilityEnhancer = dynamic(() => import("@/components/AccessibilityEnhancer"));
@@ -52,7 +51,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.baltzakisthemis.com",
+    process.env.NEXT_PUBLIC_SITE_URL?.length
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : "https://portfolio.cloudless.gr",
   ),
   title: {
     default: "Themistoklis Baltzakis | IT Network Engineer",
@@ -73,7 +74,7 @@ export const metadata: Metadata = {
     "Cybersecurity",
     "Portfolio",
   ],
-  authors: [{ name: "Themistoklis Baltzakis", url: "https://www.baltzakisthemis.com" }],
+  authors: [{ name: "Themistoklis Baltzakis", url: "https://portfolio.cloudless.gr" }],
   creator: "Themistoklis Baltzakis",
   publisher: "Themistoklis Baltzakis",
   formatDetection: {
@@ -84,7 +85,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.baltzakisthemis.com",
+    url: "https://portfolio.cloudless.gr",
     title: "Themistoklis Baltzakis | IT Network Engineer & Cloud Architect",
     description:
       "IT Network Engineer with 15+ years of experience in network infrastructure, Cisco systems, and Fortinet security solutions.",
@@ -121,9 +122,9 @@ export const metadata: Metadata = {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
   },
   alternates: {
-    canonical: "https://www.baltzakisthemis.com",
+    canonical: "https://portfolio.cloudless.gr",
     languages: {
-      "en-US": "https://www.baltzakisthemis.com",
+      "en-US": "https://portfolio.cloudless.gr",
     },
   },
   manifest: "/manifest.webmanifest",
@@ -169,9 +170,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
-          <AmplifyProvider>
-          <AuthProvider>
-            <MotionProvider>
+          <MotionProvider>
               <DefaultStructuredData />
               <AccessibilityEnhancer />
               <RouteProgressBar />
@@ -183,8 +182,6 @@ export default function RootLayout({
 
               <PWAInstallButton />
             </MotionProvider>
-          </AuthProvider>
-          </AmplifyProvider>
         </Providers>
         <Script
           src="https://analytics.ahrefs.com/analytics.js"

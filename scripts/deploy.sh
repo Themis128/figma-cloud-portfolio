@@ -8,7 +8,7 @@ set -euo pipefail
 S3_BUCKET="figma-portfolio-static"
 CF_DISTRIBUTION="E134SCTR0QGQKJ"
 AWS_REGION="us-east-1"
-SITE_URL="https://www.baltzakisthemis.com"
+SITE_URL="https://portfolio.cloudless.gr"
 
 echo "══════════════════════════════════════════"
 echo "  Deploy → ${SITE_URL}"

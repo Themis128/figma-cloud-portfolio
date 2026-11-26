@@ -4,8 +4,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 interface MetadataConfig {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   keywords?: string[];
   image?: string;
   type?: "website" | "article" | "profile";
@@ -25,7 +25,7 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
 
   useEffect(() => {
     const baseURL = window.location.origin;
-    const search = searchParams?.toString()
+    const search = searchParams.toString()
       ? `?${searchParams.toString()}`
       : "";
     const currentURL = `${baseURL}${pathname}${search}`;
@@ -46,15 +46,15 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
     ];
 
     // Use provided config or defaults
-    const title = config.title || defaultTitle;
-    const description = config.description || defaultDescription;
-    const keywords = config.keywords || defaultKeywords;
-    const image = config.image || defaultImage;
-    const type = config.type || "website";
-    const author = config.author || "Themistoklis Baltzakis";
-    const publishedAt = config.publishedAt || new Date().toISOString();
-    const modifiedAt = config.modifiedAt || new Date().toISOString();
-    const tags = config.tags || [];
+    const title = config.title ?? defaultTitle;
+    const description = config.description ?? defaultDescription;
+    const keywords = config.keywords ?? defaultKeywords;
+    const image = config.image ?? defaultImage;
+    const type = config.type ?? "website";
+    const author = config.author ?? "Themistoklis Baltzakis";
+    const publishedAt = config.publishedAt ?? new Date().toISOString();
+    const modifiedAt = config.modifiedAt ?? new Date().toISOString();
+    const tags = config.tags ?? [];
 
     // Remove existing meta tags to avoid duplicates
     const removeExistingMetaTags = () => {
@@ -155,7 +155,7 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
       ...(type === "website" && {
         sameAs: [
           "https://www.linkedin.com/in/baltzakis-themis",
-          "https://www.baltzakisthemis.com",
+          "https://portfolio.cloudless.gr",
         ],
       }),
       ...(tags.length > 0 && { keywords: tags.join(", ") }),

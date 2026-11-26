@@ -941,8 +941,8 @@ test.describe("Contact Page — Contact Information Cards", () => {
     await expect(link).toHaveAttribute("rel", /noopener/);
   });
 
-  test("Portfolio card links to baltzakisthemis.com", async ({ page }) => {
-    const link = page.locator('a[href*="baltzakisthemis.com"]');
+  test("Portfolio card links to portfolio.cloudless.gr", async ({ page }) => {
+    const link = page.locator('a[href*="portfolio.cloudless.gr"]');
     await expect(link).toBeAttached();
     await expect(link).toHaveAttribute("target", "_blank");
   });

@@ -10,7 +10,7 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 const BLOG_DIR = join(process.cwd(), "content/blog");
 const OUTPUT = join(process.cwd(), "public/sitemap.xml");
 
