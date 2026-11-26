@@ -36,16 +36,24 @@ DEFAULT_MODELS = [
     "gemini-3-pro-preview",
 ]
 
-PAYLOAD = {
+# Heavy probe by default: a tiny "ping" returns ALIVE even when the model has
+# only a sliver of daily quota left — the gh-aw agent's first ~33K-token turn
+# then dies mid-run with TerminalQuotaError. A ~400-token generation is a much
+# better predictor of "can an agent session run on this model right now".
+HEAVY_PAYLOAD = {
+    "contents": [{"parts": [{"text": "Write a 200-word explanation of what a CI/CD pipeline is."}]}],
+    "generationConfig": {"maxOutputTokens": 400},
+}
+LIGHT_PAYLOAD = {
     "contents": [{"parts": [{"text": "ping"}]}],
     "generationConfig": {"maxOutputTokens": 8},
 }
 
 
-def probe(model: str, key: str, timeout: int = 20) -> dict:
+def probe(model: str, key: str, timeout: int = 60, heavy: bool = True) -> dict:
     req = urllib.request.Request(
         API.format(m=model, k=key),
-        data=json.dumps(PAYLOAD).encode(),
+        data=json.dumps(HEAVY_PAYLOAD if heavy else LIGHT_PAYLOAD).encode(),
         headers={"Content-Type": "application/json"},
         method="POST",
     )
@@ -72,6 +80,9 @@ def main() -> int:
     ap.add_argument("--key", default=os.environ.get("GEMINI_API_KEY"))
     ap.add_argument("--models", help="comma-separated model list")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--light", action="store_true",
+                    help="cheap 8-token probe (fast but ALIVE can still mean 'quota too thin for an agent')")
+    ap.add_argument("--timeout", type=int, default=60)
     args = ap.parse_args()
 
     if not args.key:
@@ -79,7 +90,7 @@ def main() -> int:
         return 2
 
     models = args.models.split(",") if args.models else DEFAULT_MODELS
-    results = [probe(m.strip(), args.key) for m in models]
+    results = [probe(m.strip(), args.key, timeout=args.timeout, heavy=not args.light) for m in models]
 
     if args.json:
         print(json.dumps(results, indent=2))

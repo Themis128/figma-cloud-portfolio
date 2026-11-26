@@ -29,7 +29,7 @@ free-tier quota pressure, compilation, and the known gh-aw failure modes.
 
 | Script | Purpose |
 |---|---|
-| `scripts/gemini_quota.py` | Probe models via AI Studio API. `ALIVE`/`QUOTA`/`DEAD`(404)/`REJECTED`. Needs `GEMINI_API_KEY` env or `--key`. |
+| `scripts/gemini_quota.py` | Probe models via AI Studio API. `ALIVE`/`QUOTA`/`DEAD`(404)/`REJECTED`. **Heavy probe by default** (~400 output tokens) — a tiny ping returns ALIVE with only a sliver of quota left, then the agent's first ~33K-token turn dies mid-run (`TerminalQuotaError`). `--light` for cheap checks, `--json`, `--timeout`. Needs `GEMINI_API_KEY` env or `--key`. |
 | `scripts/assign_models.py` | Round-robin live models across all 11 `engine.model` frontmatter lines. `--dry-run`, `--models`, `--probe`, `--compile`, `--aw-bin`. |
 
 Key source: repo secret `GEMINI_API_KEY`; locally fetch from Infisical
