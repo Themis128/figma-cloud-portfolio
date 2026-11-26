@@ -81,8 +81,8 @@ safe-outputs:
 
 engine:
   id: copilot
-  model: claude-sonnet-5.5
-  fallback-models: [gpt-5.6-luna, mai-code-1.1-flash]
+  model: gpt-5.6-luna
+  fallback-models: [gpt-5.6-sol, gpt-4.1]
 ---
 
 # Automated Code Review
