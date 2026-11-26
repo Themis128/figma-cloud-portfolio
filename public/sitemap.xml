@@ -1,94 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.baltzakisthemis.com/</loc>
+    <loc>https://portfolio.cloudless.gr/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/about/</loc>
+    <loc>https://portfolio.cloudless.gr/about/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/contact/</loc>
+    <loc>https://portfolio.cloudless.gr/contact/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/blog/</loc>
+    <loc>https://portfolio.cloudless.gr/blog/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/resume/</loc>
+    <loc>https://portfolio.cloudless.gr/resume/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/projects/</loc>
+    <loc>https://portfolio.cloudless.gr/projects/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/product/</loc>
+    <loc>https://portfolio.cloudless.gr/product/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/performance/</loc>
+    <loc>https://portfolio.cloudless.gr/performance/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/agents/</loc>
+    <loc>https://portfolio.cloudless.gr/agents/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/builder/</loc>
+    <loc>https://portfolio.cloudless.gr/builder/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/privacy/</loc>
+    <loc>https://portfolio.cloudless.gr/privacy/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/terms/</loc>
+    <loc>https://portfolio.cloudless.gr/terms/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/cookies/</loc>
+    <loc>https://portfolio.cloudless.gr/cookies/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/blog/building-resilient-cloud-architectures/</loc>
+    <loc>https://portfolio.cloudless.gr/blog/building-resilient-cloud-architectures/</loc>
     <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/blog/nextjs-static-export-production/</loc>
+    <loc>https://portfolio.cloudless.gr/blog/nextjs-static-export-production/</loc>
     <lastmod>2026-03-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.baltzakisthemis.com/blog/zero-trust-network-security/</loc>
+    <loc>https://portfolio.cloudless.gr/blog/zero-trust-network-security/</loc>
     <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

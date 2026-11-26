@@ -61,7 +61,7 @@ test.describe("SEO — Metadata", () => {
       const canonical = page.locator('link[rel="canonical"]');
       await expect(canonical).toBeAttached();
       const href = await canonical.getAttribute("href");
-      expect(href).toContain("baltzakisthemis.com");
+      expect(href).toContain("portfolio.cloudless.gr");
     });
   }
 

@@ -299,25 +299,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
         shell: bash
-      - name: Write Amplify outputs stub
-        run: |
-          cat > amplify_outputs.json <<'JSON'
-          {
-            "version": "1",
-            "auth": {
-              "aws_region": "us-east-1",
-              "user_pool_id": "us-east-1_EM9ipdfSA",
-              "user_pool_client_id": "47j0rigp21afji3u407g42gt75",
-              "identity_pool_id": "us-east-1:3e125cf2-cd62-4ce4-86ee-907b43b9bfe7",
-              "mfa_methods": [],
-              "standard_required_attributes": ["email"],
-              "username_attributes": ["email"],
-              "user_verification_types": ["email"],
-              "mfa_configuration": "NONE",
-              "unauthenticated_identities_enabled": true
-            }
-          }
-          JSON
         shell: bash
       - env:
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
@@ -329,7 +310,7 @@ jobs:
           echo "Build completed"
         shell: bash
       - name: Run performance tests against production
-        run: "echo \"Running performance tests against production...\"\nPLAYWRIGHT_BASE_URL=https://www.baltzakisthemis.com \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  --grep=\"performance\" \\\n  2>&1 | tee /tmp/performance-results.txt || true\necho \"Performance tests completed\"\n"
+        run: "echo \"Running performance tests against production...\"\nPLAYWRIGHT_BASE_URL=https://portfolio.cloudless.gr \\\nnpx playwright test --config=playwright.config.fast.ts \\\n  --reporter=list \\\n  --grep=\"performance\" \\\n  2>&1 | tee /tmp/performance-results.txt || true\necho \"Performance tests completed\"\n"
         shell: bash
       - name: Analyze bundle size
         run: "echo \"Analyzing bundle size from build output...\"\nif [ -d \"out\" ]; then\n  echo \"## Static Export Size\" > /tmp/bundle-analysis.txt\n  du -sh out/ >> /tmp/bundle-analysis.txt\n  echo \"\" >> /tmp/bundle-analysis.txt\n  echo \"## Largest Files\" >> /tmp/bundle-analysis.txt\n  find out/ -type f -name \"*.js\" -o -name \"*.css\" | xargs du -sh 2>/dev/null | sort -rh | head -20 >> /tmp/bundle-analysis.txt\nelse\n  echo \"No build output found\" > /tmp/bundle-analysis.txt\nfi\ncat /tmp/bundle-analysis.txt\necho \"Bundle analysis completed\"\n"

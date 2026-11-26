@@ -21,7 +21,7 @@ const BlogReactions = dynamic(
   () => import("@/components/interactive/BlogReactions"),
 );
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;

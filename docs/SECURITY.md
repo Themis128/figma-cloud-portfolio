@@ -140,7 +140,7 @@ if (isValidPath(path)) {
 
 1. **Score**: must be ≥ 0.7 (configurable via `RECAPTCHA_THRESHOLD` env var)
 2. **Action**: must match an allowed action (`contact`, `quick_contact`)
-3. **Hostname**: must match an allowed domain (`www.baltzakisthemis.com`, `baltzakisthemis.com`, `localhost`)
+3. **Hostname**: must match an allowed domain (`portfolio.cloudless.gr`, `portfolio.cloudless.gr`, `localhost`)
 4. **Token age**: `challenge_ts` must be < 2 minutes old (tokens expire after 2 min per Google docs)
 
 **Client-side** (`src/hooks/useRecaptcha.ts`):
@@ -152,7 +152,7 @@ if (isValidPath(path)) {
 ```typescript
 // server/routes/contact.ts — verification checks
 const ALLOWED_ACTIONS = new Set(["contact", "quick_contact"]);
-const ALLOWED_HOSTNAMES = new Set(["www.baltzakisthemis.com", "baltzakisthemis.com", "localhost"]);
+const ALLOWED_HOSTNAMES = new Set(["portfolio.cloudless.gr", "portfolio.cloudless.gr", "localhost"]);
 const MAX_TOKEN_AGE_MS = 120_000; // 2 minutes
 
 // After siteverify response:

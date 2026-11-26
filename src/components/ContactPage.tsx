@@ -87,8 +87,8 @@ const contactInfo = [
   {
     icon: Globe,
     label: "Portfolio",
-    value: "baltzakisthemis.com",
-    href: "https://baltzakisthemis.com",
+    value: "portfolio.cloudless.gr",
+    href: "https://portfolio.cloudless.gr",
     color: "text-orange-400",
     bgColor: "bg-orange-400/10",
     external: true,

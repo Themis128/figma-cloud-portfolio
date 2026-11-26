@@ -1,7 +1,7 @@
 # Portfolio Website Technical Details
 
 ## Website
-- URL: https://baltzakisthemis.com and https://www.baltzakisthemis.com
+- URL: https://portfolio.cloudless.gr and https://portfolio.cloudless.gr
 - SSL covers both domains
 
 ## Tech Stack

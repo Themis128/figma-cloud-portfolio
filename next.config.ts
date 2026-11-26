@@ -114,23 +114,13 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // Security & cache headers are in amplify.yml customHeaders (CloudFront level)
-  // Rewrites for local dev only — not used in production static export
-  ...(process.env.NODE_ENV !== "production" && {
-    async rewrites() {
-      return [
-        {
-          source: "/api/:path*",
-          destination: "http://localhost:3001/api/:path*",
-        },
-      ];
-    },
-  }),
+  // Backend moves to Cloudflare (Pages Functions / Worker routes) — the old
+  // Express dev server and its /api rewrite are gone (issue #358).
 
   // Environment variables exposed to client
   env: {
     NEXT_PUBLIC_SITE_URL:
-      process.env.NEXT_PUBLIC_SITE_URL || "https://www.baltzakisthemis.com",
+      process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio.cloudless.gr",
     NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || "1.0.0",
   },
 
@@ -147,10 +137,11 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
 
-  // Generate /about/index.html instead of /about.html for clean URL support on S3
+  // Generate /about/index.html instead of /about.html for clean URL support
+  // on Cloudflare Workers static assets
   trailingSlash: true,
 
-  // Static export for S3 + CloudFront hosting (production builds only)
+  // Static export for Cloudflare Workers static-assets hosting (production)
   // Dev server needs full Next.js features (rewrites, headers, etc.)
   ...(process.env.NODE_ENV === "production" && { output: "export" as const }),
 

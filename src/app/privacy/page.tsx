@@ -6,17 +6,17 @@ import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "Privacy Policy for baltzakisthemis.com. How we collect, use, and protect your personal data under GDPR and CCPA.",
+    "Privacy Policy for portfolio.cloudless.gr. How we collect, use, and protect your personal data under GDPR and CCPA.",
   alternates: { canonical: `${SITE_URL}/privacy/` },
   openGraph: {
     title: "Privacy Policy | Themistoklis Baltzakis",
     description:
-      "Privacy Policy for baltzakisthemis.com. How we collect, use, and protect your personal data under GDPR and CCPA.",
+      "Privacy Policy for portfolio.cloudless.gr. How we collect, use, and protect your personal data under GDPR and CCPA.",
     url: `${SITE_URL}/privacy/`,
     type: "website",
     images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | Privacy Policy" }],
@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
                 This Privacy Policy explains how we collect, use, disclose, and
                 protect your personal data when you visit{" "}
                 <span className="text-cyan-400 font-mono">
-                  baltzakisthemis.com
+                  portfolio.cloudless.gr
                 </span>
                 .
               </p>
@@ -155,7 +155,8 @@ export default function PrivacyPolicyPage() {
                 <span className="text-foreground">name</span>,{" "}
                 <span className="text-foreground">email address</span>, and{" "}
                 <span className="text-foreground">message</span>. This data is
-                sent to AWS Lambda and forwarded via Amazon SES to our email.
+                processed by a Cloudflare Worker and forwarded to our email
+                via our transactional mail relay.
               </p>
 
               <h3 className="text-foreground font-semibold text-lg mt-4">
@@ -205,8 +206,8 @@ export default function PrivacyPolicyPage() {
               </h3>
               <p>
                 Messages you send in the AI chat are forwarded to{" "}
-                <span className="text-foreground">AWS Bedrock</span> (Anthropic
-                Claude) for processing. Messages are rate-limited to 15 requests
+                <span className="text-foreground">Cloudflare Workers AI</span>{" "}
+                (open-weight LLM) for processing. Messages are rate-limited to 15 requests
                 per minute per IP address. Messages are not permanently stored on
                 our servers and are cleared when the session ends.
               </p>
@@ -224,8 +225,8 @@ export default function PrivacyPolicyPage() {
                 3.8 Authentication
               </h3>
               <p>
-                AWS Cognito is used for admin-only access. No visitor
-                authentication data is collected.
+                Admin access uses a private login. No visitor authentication
+                data is collected.
               </p>
 
               <h3 className="text-foreground font-semibold text-lg mt-4">
@@ -314,16 +315,16 @@ export default function PrivacyPolicyPage() {
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-3 pr-4 text-foreground">Amazon Web Services</td>
-                      <td className="py-3 pr-4">Hosting, email delivery, serverless functions</td>
+                      <td className="py-3 pr-4 text-foreground">Cloudflare</td>
+                      <td className="py-3 pr-4">Hosting, Workers AI, serverless functions</td>
                       <td className="py-3">
                         <a
-                          href="https://aws.amazon.com/privacy/"
+                          href="https://www.cloudflare.com/privacypolicy/"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-cyan-400 hover:underline"
                         >
-                          aws.amazon.com/privacy
+                          cloudflare.com/privacypolicy
                         </a>
                       </td>
                     </tr>
@@ -342,8 +343,8 @@ export default function PrivacyPolicyPage() {
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-3 pr-4 text-foreground">Anthropic (via AWS Bedrock)</td>
-                      <td className="py-3 pr-4">AI chat processing (Claude model)</td>
+                      <td className="py-3 pr-4 text-foreground">Cloudflare Workers AI</td>
+                      <td className="py-3 pr-4">AI chat processing (open-weight model)</td>
                       <td className="py-3">
                         <a
                           href="https://www.anthropic.com/privacy"
@@ -521,7 +522,7 @@ export default function PrivacyPolicyPage() {
             <SectionCard id="data-transfers" title="10. International Data Transfers" delay={0.15}>
               <p>
                 Some of our third-party service providers are based in the
-                United States, including Amazon Web Services, Google, Sentry, and
+                United States, including Cloudflare, Google, Sentry, and
                 Anthropic. When your data is transferred outside the EEA, we
                 rely on:
               </p>

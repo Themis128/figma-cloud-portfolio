@@ -5,7 +5,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import { ResumePageTabs } from "@/components/resume/ResumePageTabs";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "CV Builder & Career Guide",

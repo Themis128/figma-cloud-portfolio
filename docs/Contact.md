@@ -25,7 +25,7 @@ The Contact page provides multiple ways for visitors to get in touch with Themis
 - **Mobile**: +30 697 777 7838
 - **Email**: baltzakis.themis@gmail.com ([mailto link](mailto:baltzakis.themis@gmail.com))
 - **LinkedIn**: [https://linkedin.com/in/baltzakis-themis](https://linkedin.com/in/baltzakis-themis) (external link)
-- **Portfolio**: [https://baltzakisthemis.com](https://baltzakisthemis.com) (external link)
+- **Portfolio**: [https://portfolio.cloudless.gr](https://portfolio.cloudless.gr) (external link)
 
 ### Quick Actions
 

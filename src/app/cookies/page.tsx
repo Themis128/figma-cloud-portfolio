@@ -7,17 +7,17 @@ import CircuitBackground from "@/components/CircuitBackground";
 import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import Navigation from "@/components/Navigation";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description:
-    "Cookie Policy for baltzakisthemis.com. What cookies we use, why, and how to manage your preferences.",
+    "Cookie Policy for portfolio.cloudless.gr. What cookies we use, why, and how to manage your preferences.",
   alternates: { canonical: `${SITE_URL}/cookies/` },
   openGraph: {
     title: "Cookie Policy | Themistoklis Baltzakis",
     description:
-      "Cookie Policy for baltzakisthemis.com. What cookies we use, why, and how to manage your preferences.",
+      "Cookie Policy for portfolio.cloudless.gr. What cookies we use, why, and how to manage your preferences.",
     url: `${SITE_URL}/cookies/`,
     type: "website",
     images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Themistoklis Baltzakis | Cookie Policy" }],
@@ -117,7 +117,7 @@ export default function CookiePolicyPage() {
               <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
                 This Cookie Policy explains what cookies are, how we use them on{" "}
                 <span className="text-cyan-400 font-mono">
-                  baltzakisthemis.com
+                  portfolio.cloudless.gr
                 </span>
                 , and how you can manage your preferences.
               </p>

@@ -7,7 +7,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import Navigation from "@/components/Navigation";
 import type { PostSummary } from "@/types/blog";
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 export const metadata: Metadata = {
   title: "Blog",

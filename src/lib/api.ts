@@ -1,9 +1,9 @@
 /**
- * API client for handling requests to AWS Lambda functions in Amplify
- * This replaces the direct /api/* routes with Lambda function URLs
+ * API client for backend requests.
+ * Targets Cloudflare Pages Functions / Worker routes (/api/*) — the AWS
+ * Lambda + Express backend was excised (issue #358).
  */
 
-import { fetchAuthSession } from "aws-amplify/auth";
 import type {
   ContactFormRequest,
   APIKey,
@@ -45,21 +45,6 @@ type EndpointKey = keyof typeof LAMBDA_URLS;
  */
 export function resolveApiUrl(endpoint: EndpointKey): string {
   return LAMBDA_URLS[endpoint];
-}
-
-/**
- * Get Authorization header with Cognito access token for the current user.
- * Returns empty object if no user is signed in.
- */
-async function getAuthHeaders(): Promise<Record<string, string>> {
-  try {
-    const session = await fetchAuthSession();
-    const token = session.tokens?.idToken?.toString();
-    if (!token) return {};
-    return { Authorization: `Bearer ${token}` };
-  } catch {
-    return {};
-  }
 }
 
 /**
@@ -245,8 +230,7 @@ export async function createBooking(
  * List all API keys (requires auth)
  */
 export async function listAPIKeys(): Promise<APIKey[]> {
-  const headers = await getAuthHeaders();
-  const response = await apiRequest("api-keys", { headers });
+  const response = await apiRequest("api-keys", {});
   return response.json();
 }
 
@@ -254,10 +238,9 @@ export async function listAPIKeys(): Promise<APIKey[]> {
  * Get an API key by ID (requires auth)
  */
 export async function getAPIKey(apiKeyId: string): Promise<APIKey> {
-  const headers = await getAuthHeaders();
   const response = await apiRequest(
     `${LAMBDA_URLS["api-keys"]}/${apiKeyId}`,
-    { headers },
+    {},
   );
   return response.json();
 }
@@ -268,10 +251,8 @@ export async function getAPIKey(apiKeyId: string): Promise<APIKey> {
 export async function createAPIKey(
   data: { name: string; workspace_id?: string | null },
 ): Promise<APIKey> {
-  const headers = await getAuthHeaders();
   const response = await apiRequest(LAMBDA_URLS["api-keys"], {
     method: "POST",
-    headers,
     body: JSON.stringify(data),
   });
   return response.json();
@@ -284,12 +265,10 @@ export async function updateAPIKey(
   apiKeyId: string,
   data: { name?: string; status?: "active" | "inactive" | "archived" },
 ): Promise<APIKey> {
-  const headers = await getAuthHeaders();
   const response = await apiRequest(
     `${LAMBDA_URLS["api-keys"]}/${apiKeyId}`,
     {
       method: "POST",
-      headers,
       body: JSON.stringify(data),
     },
   );
@@ -302,12 +281,10 @@ export async function updateAPIKey(
 export async function deleteAPIKey(
   apiKeyId: string,
 ): Promise<{ id: string; deleted: boolean }> {
-  const headers = await getAuthHeaders();
   const response = await apiRequest(
     `${LAMBDA_URLS["api-keys"]}/${apiKeyId}`,
     {
       method: "DELETE",
-      headers,
     },
   );
   return response.json();

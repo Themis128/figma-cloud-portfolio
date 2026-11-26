@@ -83,7 +83,7 @@ The portfolio uses a **static export** architecture with **S3 + CloudFront** for
 
 ```env
 # Client-side variables (bundled into JS)
-NEXT_PUBLIC_SITE_URL=https://www.baltzakisthemis.com
+NEXT_PUBLIC_SITE_URL=https://portfolio.cloudless.gr
 NEXT_PUBLIC_GA_ID=GA_MEASUREMENT_ID
 NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
@@ -185,7 +185,7 @@ aws cloudfront create-distribution \
 ```bash
 # Create SSL certificate in ACM (us-east-1 for CloudFront)
 aws acm request-certificate \
-  --domain-name baltzakisthemis.com \
+  --domain-name portfolio.cloudless.gr \
   --validation-method DNS \
   --region us-east-1
 
@@ -201,7 +201,7 @@ aws cloudfront update-distribution \
   "CallerReference": "portfolio-frontend",
   "Aliases": {
     "Quantity": 1,
-    "Items": ["baltzakisthemis.com"]
+    "Items": ["portfolio.cloudless.gr"]
   },
   "DefaultRootObject": "index.html",
   "Origins": {
@@ -360,13 +360,13 @@ aws lambda create-function \
   --role arn:aws:iam::account:role/lambda-execution-role \
   --handler main:app \
   --zip-file fileb://lambda-chatbot.zip \
-  --environment Variables="{HF_TOKEN=your-hf-token,PORTFOLIO_ORIGIN=https://baltzakisthemis.com}"
+  --environment Variables="{HF_TOKEN=your-hf-token,PORTFOLIO_ORIGIN=https://portfolio.cloudless.gr}"
 
 # Create function URL
 aws lambda create-function-url-config \
   --function-name figma-portfolio-chatbot \
   --auth-type NONE \
-  --cors '{"AllowOrigins":["https://baltzakisthemis.com"],"AllowMethods":["GET","POST"],"AllowHeaders":["*"]}'
+  --cors '{"AllowOrigins":["https://portfolio.cloudless.gr"],"AllowMethods":["GET","POST"],"AllowHeaders":["*"]}'
 ```
 
 ## CI/CD Pipeline
@@ -483,13 +483,13 @@ netlify deploy --prod
 
 ```bash
 # Check frontend health
-curl -I https://baltzakisthemis.com
+curl -I https://portfolio.cloudless.gr
 
 # Check API health
-curl https://baltzakisthemis.com/api/health
+curl https://portfolio.cloudless.gr/api/health
 
 # Check chatbot health
-curl https://baltzakisthemis.com/api/chat/health
+curl https://portfolio.cloudless.gr/api/chat/health
 ```
 
 ### Performance Monitoring

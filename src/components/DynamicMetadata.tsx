@@ -155,7 +155,7 @@ const DynamicMetadata: React.FC<DynamicMetadataProps> = ({ config }) => {
       ...(type === "website" && {
         sameAs: [
           "https://www.linkedin.com/in/baltzakis-themis",
-          "https://www.baltzakisthemis.com",
+          "https://portfolio.cloudless.gr",
         ],
       }),
       ...(tags.length > 0 && { keywords: tags.join(", ") }),

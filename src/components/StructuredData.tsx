@@ -30,7 +30,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
   );
 }
 
-const SITE_URL = "https://www.baltzakisthemis.com";
+const SITE_URL = "https://portfolio.cloudless.gr";
 
 const PERSON = {
   "@type": "Person" as const,

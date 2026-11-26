@@ -57,8 +57,7 @@ steps:
     run: |
       echo "Backing up deployment configurations..."
       cp -r .github/workflows /tmp/backup-$(date +%Y-%m-%d)/
-      cp -r amplify /tmp/backup-$(date +%Y-%m-%d)/
-      cp amplify.yml /tmp/backup-$(date +%Y-%m-%d)/
+      cp wrangler.toml /tmp/backup-$(date +%Y-%m-%d)/
       echo "Deployment configurations backed up"
     shell: bash
 
@@ -157,8 +156,7 @@ Create an issue with this structure:
 
 ### Deployment Configurations
 - .github/workflows/ (all workflow files)
-- amplify/ (Amplify configuration)
-- amplify.yml
+- wrangler.toml (Cloudflare Workers deployment)
 
 ### Documentation
 - docs/ (all documentation files)

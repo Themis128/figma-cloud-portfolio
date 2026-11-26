@@ -213,11 +213,11 @@ export function SpeedTestRunner() {
       })
       .join("\n");
 
-    const text = `Portfolio performance results:\n${lines}\nbaltzakisthemis.com`;
+    const text = `Portfolio performance results:\n${lines}\nportfolio.cloudless.gr`;
 
     if (navigator.share) {
       void navigator.share({
-        title: "baltzakisthemis.com | Performance Results",
+        title: "portfolio.cloudless.gr | Performance Results",
         text,
       });
     } else {

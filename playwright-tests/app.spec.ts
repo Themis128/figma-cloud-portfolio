@@ -810,7 +810,7 @@ test.describe("Baltzakis Themistoklis Portfolio", () => {
       await expect(linkedinLink).toBeAttached();
 
       // Check portfolio link (actual href in the codebase)
-      const portfolioLink = page.locator('a[href="https://baltzakisthemis.com"]').first();
+      const portfolioLink = page.locator('a[href="https://portfolio.cloudless.gr"]').first();
       await expect(portfolioLink).toBeAttached();
     });
 
