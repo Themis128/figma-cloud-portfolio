@@ -38,7 +38,9 @@ tools:
   cache-memory: true
 
 source: githubnext/agentics/workflows/daily-qa.md@ec7d342403c9912c87320110f8822a8fbb817a0c
-engine: copilot
+engine:
+  id: copilot
+  copilot-sdk: true
 ---
 
 # Daily QA
