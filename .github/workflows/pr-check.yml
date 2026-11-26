@@ -90,24 +90,12 @@ jobs:
 
       - name: Start servers
         run: |
-          # Start Express and Next.js in parallel
-          PORT=3001 npx tsx server/index.ts &
-          echo $! > /tmp/express.pid
           pnpm dev &
           echo $! > /tmp/nextjs.pid
 
-          # Wait for both servers concurrently
-          timeout 30 bash -c 'until curl -sf http://localhost:3001/api/ping > /dev/null 2>&1; do sleep 2; done' \
-            || (echo "::error::Express backend failed to start"; exit 1) &
-          WAIT_EXPRESS=$!
-
           timeout 120 bash -c 'until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 3; done' \
-            || (echo "::error::Next.js dev server failed to start"; exit 1) &
-          WAIT_NEXTJS=$!
-
-          wait $WAIT_EXPRESS || exit 1
-          wait $WAIT_NEXTJS || exit 1
-          echo "Both servers ready"
+            || (echo "::error::Next.js dev server failed to start"; exit 1)
+          echo "Dev server ready"
         env:
           NODE_ENV: test
 
@@ -120,5 +108,4 @@ jobs:
       - name: Cleanup servers
         if: always()
         run: |
-          kill "$(cat /tmp/express.pid 2>/dev/null)" 2>/dev/null || true
           kill "$(cat /tmp/nextjs.pid 2>/dev/null)" 2>/dev/null || true
