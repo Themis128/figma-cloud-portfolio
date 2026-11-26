@@ -9,6 +9,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 // Velite webpack plugin — triggers content build before Next.js compilation
 class VeliteWebpackPlugin {
   static started = false;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- param names in the tapPromise signature are documentation-only
   apply(compiler: { hooks: { beforeCompile: { tapPromise: (_name: string, _fn: () => Promise<void>) => void } } }) {
     compiler.hooks.beforeCompile.tapPromise("VeliteWebpackPlugin", async () => {
       if (VeliteWebpackPlugin.started) return;
