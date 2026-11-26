@@ -15,9 +15,9 @@ import type {
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 /**
- * Lambda function URLs - these will be set as environment variables in Amplify.
- * In development, the Next.js rewrite rule proxies /api/* to Express on port 3001.
- * In production, Amplify CloudFront rewrites proxy /api/* to Lambda.
+ * Backend routes are being replaced with Cloudflare Pages Functions /
+ * Worker routes (issue #358, item 3). Until they land, /api/* 404s are
+ * expected on the deployed site.
  */
 const LAMBDA_URLS = {
   contact:
