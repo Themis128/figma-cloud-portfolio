@@ -15,15 +15,46 @@ free-tier quota pressure, compilation, and the known gh-aw failure modes.
 - `copilot` engine blocked: no Copilot subscription (`api.githubcopilot.com`
   rejects the PAT; `COPILOT_GITHUB_TOKEN` secret set but subscription absent).
 
-## The quota model (root cause of all agent failures)
+## Quota mechanics (researched 2026-11-26, Google AI Studio docs)
 
-- Gemini free-tier quotas are **per-model, per-day**. A 429 on one model says
-  nothing about siblings.
-- gh-aw `engine.fallback-models` exists but **explicitly does NOT switch on
-  HTTP 429** — useless for quota failures. Do not rely on it.
-- Working pattern: **pin each workflow to a different live model** so the
-  11 workflows share 4-5 quota pools. Re-probe daily; quotas reset ~midnight
-  PT.
+- Quotas are **per-GCP-project, per-model** — NOT per API key. Multiple keys
+  in one project share the quota; **separate AI Studio projects each get
+  their own free-tier allowance**. Scaling path: create 1-2 extra projects
+  in AI Studio (free, ~5 min, needs Google login) → set `GEMINI_API_KEY_2/3`
+  repo secrets → split workflows across keys. Currently single-key.
+- Dimensions: RPM + TPM + **RPD** (requests/day, resets midnight Pacific).
+  Any one trips → 429. Agent sessions burn ~30-80 requests with ~33K-token
+  turns — TPM/RPM can 429 mid-run and gemini-cli may label it
+  `TerminalQuotaError` (daily) even when it's a per-minute limit
+  (misclassification bugs: gemini-cli#18050, PR#18073).
+- **Prefer lite models for agent workloads**: free tier ≈ 500 RPD for
+  `gemini-3.5-flash-lite` / `gemini-3.1-flash-lite` vs ~20-250 RPD for
+  flash/preview models. All 11 workflows currently sit on lite models.
+- `fallback-models` does NOT switch on 429 (documented) — useless here.
+- gemini-cli itself falls back toward flash on TerminalQuotaError
+  (gemini-cli#13791) but gh-aw pins the model explicitly.
+
+## gh-aw daily-AIC guardrail (the "agent skipped" trap)
+
+- Every agent run counts toward `GH_AW_DEFAULT_MAX_DAILY_AI_CREDITS`
+  (repo variable, currently **100000**). Runs that die before writing
+  `token_usage` artifacts are charged **assumed-max 1000 credits each** —
+  ~20 quota-failed test runs in one day = 20000+ phantom credits →
+  `daily_ai_credits_exceeded=true` → `agent` job silently SKIPPED while
+  `conclusion` still passes green. Symptom: green run, no review posted.
+- Fix: `gh variable set GH_AW_DEFAULT_MAX_DAILY_AI_CREDITS --body <n>`;
+  counter resets daily. Keep it high on free-tier keys (no real spend).
+
+## Safe outputs on gemini engine — actual state
+
+- The safeoutputs MCP gateway **does** register its tools (visible in run
+  logs as `rpc_response` with the full tool list). Failures are the MODEL
+  calling bare names (`update_topic`, `create_issue` without namespace) —
+  a model-behavior issue, not a wiring gap. Upstream fixes already in:
+  gh-aw#29814 (localhost gateway URL), gh-aw#48602 (zero-tools detection).
+- `missing_terminal_safe_output` grader failure = agent died (quota)
+  before emitting its terminal output — it resolves itself once runs
+  complete; not independently fixable.
 
 ## Scripts
 
