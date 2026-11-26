@@ -79,7 +79,9 @@ safe-outputs:
     max: 3
   noop:
 
-engine: copilot
+engine:
+  id: copilot
+  copilot-sdk: true
 ---
 
 # Automated Code Review
