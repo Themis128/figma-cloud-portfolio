@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 const DOMAINS = [
   "https://portfolio.cloudless.gr",
-  "https://portfolio.cloudless.gr",
+  "https://baltzakisthemis-portfolio.baltzakis-themis.workers.dev",
 ];
 
 const PAGES = [
