@@ -1,0 +1,54 @@
+name: gh-aw quota rotation
+# Daily probe of both Gemini quota pools; if the live-model assignment has
+# drifted (model died / recovered), re-rotates, recompiles, and opens a PR.
+on:
+  schedule:
+    - cron: "15 7 * * *"  # ~09:15 Athens — before the daily-* fleet runs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install gh-aw compiler (v1.4.0)
+        run: |
+          curl -sSfL -o /tmp/gh-aw \
+            https://github.com/github/gh-aw/releases/download/v1.4.0/linux-amd64
+          chmod +x /tmp/gh-aw
+          /tmp/gh-aw version
+
+      - name: Probe pools and re-assign
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+        run: |
+          python3 .devin/skills/gh-aw-ops/scripts/assign_models.py \
+            --pools GEMINI_API_KEY,GEMINI_API_KEY_2 --probe --compile \
+            --aw-bin /tmp/gh-aw
+
+      - name: Open PR if assignment drifted
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "assignment stable — nothing to do"
+            exit 0
+          fi
+          BRANCH="chore/quota-rotation-$(date +%Y%m%d)"
+          git config user.name "gh-aw-quota-rotate[bot]"
+          git config user.email "quota-rotate@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "chore(gh-aw): quota rotation — live-model drift
+
+          Automated probe found pool/model drift; re-assigned and recompiled
+          with gh-aw v1.4.0."
+          git push -u origin "$BRANCH"
+          gh pr create --fill --base production \
+            --title "chore(gh-aw): quota rotation $(date +%Y-%m-%d)" || true
