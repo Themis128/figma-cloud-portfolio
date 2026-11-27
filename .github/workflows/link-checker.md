@@ -113,7 +113,9 @@ safe-outputs:
 source: githubnext/agentics/workflows/link-checker.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 engine:
   id: gemini
-  model: gemini-3.1-flash-lite
+  model: gemini-3.5-flash-lite
+  env:
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_2 }}
 graders:
   # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
   # corrupting these metrics for every engine — disable until upstream fix.

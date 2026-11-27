@@ -42,7 +42,9 @@ tools:
 
 engine:
   id: gemini
-  model: gemini-3.5-flash-lite
+  model: gemini-3.1-flash-lite
+  env:
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_2 }}
 graders:
   # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
   # corrupting these metrics for every engine — disable until upstream fix.
