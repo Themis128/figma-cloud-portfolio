@@ -83,7 +83,7 @@ safe-outputs:
 
 engine:
   id: gemini
-  model: gemini-3-flash-preview
+  model: gemini-3.5-flash-lite
   env:
     GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_2 }}
 graders:
