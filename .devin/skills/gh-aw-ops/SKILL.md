@@ -91,6 +91,16 @@ python .devin/skills/gh-aw-ops/scripts/assign_models.py \
 `--compile` with a new secret triggers gh-aw "safe update mode" warnings —
 expected; add a security-review note to the PR listing `GEMINI_API_KEY_2`.
 
+## Automation
+
+`.github/workflows/quota-rotate.yml` runs the probe+compile daily (09:15
+Athens, before the `daily-*` fleet) plus `workflow_dispatch`. It opens a PR
+only when the lite-model assignment drifted; steady-state = "assignment
+stable" + no PR. Push auth uses repo secret `WORKFLOW_PAT` (workflow-scoped
+token — `GITHUB_TOKEN` cannot push `.github/workflows` changes, and
+`VITE_GITHUB_TOKEN` is empty/invalid). `--probe` keeps only **lite** models
+(~500 RPD); `--include-heavy` opts into flash/preview.
+
 ## Compile
 
 ```bash
