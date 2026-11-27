@@ -80,9 +80,7 @@ safe-outputs:
   noop:
 
 engine:
-  id: copilot
-  model: gpt-4.1
-  fallback-models: [gpt-41-copilot]
+  id: gemini
 ---
 
 # Automated Code Review
