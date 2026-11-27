@@ -43,7 +43,6 @@ steps:
   - name: Run TypeScript type checking
     run: |
       echo "Running TypeScript type checking..."
-      npx velite build
       pnpm typecheck 2>&1 | tee /tmp/typescript-results.txt || true
       echo "TypeScript checking completed"
     shell: bash
@@ -72,7 +71,6 @@ tools:
   cache-memory: true
 
 safe-outputs:
-  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -82,21 +80,9 @@ safe-outputs:
   noop:
 
 engine:
-  id: gemini
-  model: gemini-3.5-flash-lite
-  env:
-    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_2 }}
-graders:
-  # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
-  # corrupting these metrics for every engine — disable until upstream fix.
-  tool-success-rate:
-    enabled: false
-  tool-failure-count:
-    enabled: false
-  loops:
-    enabled: false
-  trajectory-efficiency:
-    enabled: false
+  id: copilot
+  model: gpt-4.1
+  fallback-models: [gpt-41-copilot]
 ---
 
 # Automated Code Review

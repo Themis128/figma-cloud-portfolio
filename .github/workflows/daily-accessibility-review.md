@@ -15,7 +15,6 @@ permissions: read-all
 network: defaults
 
 safe-outputs:
-  threat-detection: false
   mentions: false
   allowed-github-references: []
   create-issue:
@@ -54,6 +53,33 @@ steps:
     run: pnpm install --frozen-lockfile
     shell: bash
 
+  - name: Create mock amplify_outputs.json for CI
+    run: |
+      cat > amplify_outputs.json << 'EOF'
+      {
+        "version": "1.3",
+        "auth": {
+          "user_pool_id": "us-east-1_CImock",
+          "aws_region": "us-east-1",
+          "user_pool_client_id": "ci-mock-client-id",
+          "identity_pool_id": "us-east-1:00000000-0000-0000-0000-000000000000",
+          "mfa_methods": [],
+          "standard_required_attributes": ["email"],
+          "username_attributes": ["email"],
+          "user_verification_types": ["email"],
+          "mfa_configuration": "NONE",
+          "password_policy": {
+            "min_length": 8,
+            "require_numbers": true,
+            "require_lowercase": true,
+            "require_uppercase": true,
+            "require_symbols": true
+          },
+          "unauthenticated_identities_enabled": true
+        }
+      }
+      EOF
+    shell: bash
 
   - name: Build and serve static export
     run: |
@@ -65,19 +91,8 @@ steps:
     shell: bash
 source: githubnext/agentics/workflows/daily-accessibility-review.md@ec7d342403c9912c87320110f8822a8fbb817a0c
 engine:
-  id: gemini
-  model: gemini-3.1-flash-lite
-graders:
-  # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
-  # corrupting these metrics for every engine — disable until upstream fix.
-  tool-success-rate:
-    enabled: false
-  tool-failure-count:
-    enabled: false
-  loops:
-    enabled: false
-  trajectory-efficiency:
-    enabled: false
+  id: copilot
+  copilot-sdk: true
 ---
 
 # Daily Accessibility Review
