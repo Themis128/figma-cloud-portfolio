@@ -17,8 +17,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           # GITHUB_TOKEN cannot push .github/workflows changes (GitHub App
-          # lacks the workflows permission); needs a PAT with workflow scope.
-          token: ${{ secrets.VITE_GITHUB_TOKEN }}
+          # lacks the workflows permission); needs a token with `workflow`
+          # scope. WORKFLOW_PAT = repo secret holding a workflow-scoped token.
+          token: ${{ secrets.WORKFLOW_PAT }}
 
       - name: Install gh-aw compiler (v1.4.0)
         run: |
