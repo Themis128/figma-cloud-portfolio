@@ -106,7 +106,7 @@ safe-outputs:
 
 engine:
   id: gemini
-  model: gemini-3.5-flash-lite
+  model: gemini-3-flash-preview
 graders:
   # gh-aw#81196: MCP gateway tool calls are double-counted as failures,
   # corrupting these metrics for every engine — disable until upstream fix.
