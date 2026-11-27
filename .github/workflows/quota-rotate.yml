@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          # GITHUB_TOKEN cannot push .github/workflows changes (GitHub App
+          # lacks the workflows permission); needs a PAT with workflow scope.
+          token: ${{ secrets.VITE_GITHUB_TOKEN }}
 
       - name: Install gh-aw compiler (v1.4.0)
         run: |
