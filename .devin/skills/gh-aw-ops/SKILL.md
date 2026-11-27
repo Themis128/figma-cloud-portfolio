@@ -68,17 +68,20 @@ free-tier quota pressure, compilation, and the known gh-aw failure modes.
 |---|---|
 | `scripts/gemini_quota.py` | Probe models via AI Studio API. `ALIVE`/`QUOTA`/`DEAD`(404)/`REJECTED`. **Heavy probe by default** (~400 output tokens) — a tiny ping returns ALIVE with only a sliver of quota left, then the agent's first ~33K-token turn dies mid-run (`TerminalQuotaError`). `--light` for cheap checks, `--json`, `--timeout`. Needs `GEMINI_API_KEY` env or `--key`. |
 | `scripts/assign_models.py` | Round-robin live models across all 11 `engine.model` frontmatter lines AND across key pools via `--pools GEMINI_API_KEY,GEMINI_API_KEY_2` (writes `engine.env` for non-default pools; strips it for pool 1). `--dry-run`, `--models`, `--probe`, `--compile`, `--aw-bin`. |
+| `scripts/fetch_keys.sh` | Fetch both pool keys from Infisical, print eval-ready `KEY=value` lines — no plaintext file on disk. WSL-side (docker `infisical` container). **LF line endings required** (`set -euo pipefail` breaks on CRLF). |
 
 Key source: repo secrets `GEMINI_API_KEY` + `GEMINI_API_KEY_2`; locally fetch
 from Infisical (`cloudless-infra` project, same key names, instance
-`localhost:8090`) or export before running. **Read keys from a file, never
-inline them in a command** — a secrets hook blocks exec calls containing API
-key literals, and CRLF in env files breaks JSON posts (`tr -d '\r'`).
+`localhost:8090`) via `scripts/fetch_keys.sh` — it prints eval-ready
+`KEY=value` lines and nothing touches disk. **Never inline keys in a
+command** — a secrets hook blocks exec calls containing API key literals,
+and CRLF in env files breaks JSON posts (`tr -d '\r'`).
 
-Typical rotation (dual-pool):
+Typical rotation (dual-pool, no plaintext key file):
 
 ```bash
-set -a; source ~/gemini-pools.env; set +a   # GEMINI_API_KEY + GEMINI_API_KEY_2
+eval "$(wsl -e bash -lc \
+  'bash /mnt/c/Users/tbaltzakis/figma-cloud-portfolio/.devin/skills/gh-aw-ops/scripts/fetch_keys.sh')"
 python .devin/skills/gh-aw-ops/scripts/assign_models.py \
     --pools GEMINI_API_KEY,GEMINI_API_KEY_2 --probe --dry-run
 python .devin/skills/gh-aw-ops/scripts/assign_models.py \
