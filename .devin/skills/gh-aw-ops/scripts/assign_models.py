@@ -43,6 +43,16 @@ ENV_KEY_RE = re.compile(r"(?m)^([ \t]*)GEMINI_API_KEY:")
 
 DEFAULT_SECRET = "GEMINI_API_KEY"
 
+# Lite models get ~500 RPD free tier vs ~20-250 for flash/preview — the only
+# tiers that survive an agent session's request volume. Probing is filtered
+# to these unless --include-heavy is passed.
+LITE_MODELS = {
+    "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite-preview",
+    "gemini-2.5-flash-lite",
+}
+
 
 def workflow_files() -> list[Path]:
     return sorted(WORKFLOWS.glob("*.md"))
@@ -125,7 +135,7 @@ def assign(pools: list[tuple[str, list[str]]], dry_run: bool) -> list[tuple[Path
     return changes
 
 
-def probe(secret: str) -> list[str]:
+def probe(secret: str, include_heavy: bool = False) -> list[str]:
     key = os.environ.get(secret) or os.environ.get("GEMINI_API_KEY" if secret != DEFAULT_SECRET else "")
     if not key:
         sys.exit(f"{secret} not in env — export the key value under that name (or --models)")
@@ -134,7 +144,9 @@ def probe(secret: str) -> list[str]:
         [sys.executable, str(here / "gemini_quota.py"), "--json", "--key", key],
         capture_output=True, text=True, check=True,
     )
-    return [r["model"] for r in json.loads(out.stdout) if r["status"] == "ALIVE"]
+    alive = [r["model"] for r in json.loads(out.stdout) if r["status"] == "ALIVE"]
+    lite = [m for m in alive if m in LITE_MODELS]
+    return alive if include_heavy or not lite else lite
 
 
 def compile_all(aw_bin: str) -> int:
@@ -147,6 +159,8 @@ def main() -> int:
                     help="comma-separated repo-secret names, one per GCP project")
     ap.add_argument("--models", help="comma-separated live models, applied to ALL pools")
     ap.add_argument("--probe", action="store_true", help="probe each pool via gemini_quota.py")
+    ap.add_argument("--include-heavy", action="store_true",
+                    help="allow non-lite models (flash/preview, ~20-250 RPD)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--compile", action="store_true")
     ap.add_argument("--aw-bin", default=DEFAULT_AW)
@@ -158,7 +172,7 @@ def main() -> int:
         if args.models:
             models = [m.strip() for m in args.models.split(",") if m.strip()]
         elif args.probe or len(secrets) == 1:
-            models = probe(secret)
+            models = probe(secret, args.include_heavy)
         else:
             sys.exit("multi-pool needs --probe or --models")
         if not models:
