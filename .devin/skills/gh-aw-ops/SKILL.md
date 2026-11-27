@@ -19,9 +19,15 @@ free-tier quota pressure, compilation, and the known gh-aw failure modes.
 
 - Quotas are **per-GCP-project, per-model** — NOT per API key. Multiple keys
   in one project share the quota; **separate AI Studio projects each get
-  their own free-tier allowance**. Scaling path: create 1-2 extra projects
-  in AI Studio (free, ~5 min, needs Google login) → set `GEMINI_API_KEY_2/3`
-  repo secrets → split workflows across keys. Currently single-key.
+  their own free-tier allowance**. LIVE since 2026-11-27: two pools —
+  `GEMINI_API_KEY` (project `gen-lang-client-0524292946`) and
+  `GEMINI_API_KEY_2` (project `baltzakisthemis-12514`, key `gh-aw-pool2`
+  created via CDP-automated AI Studio import). Workflows round-robin across
+  both via `engine.env.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_2 }}` —
+  gh-aw v1.4.0 recompiles the whole secret chain (validate step, awf env,
+  `GH_AW_SECRET_NAMES`/`SECRET_*` masking, manifest). To add a third pool:
+  import another GCP project in AI Studio → create key →
+  `gh secret set GEMINI_API_KEY_3` + Infisical → add to `--pools`.
 - Dimensions: RPM + TPM + **RPD** (requests/day, resets midnight Pacific).
   Any one trips → 429. Agent sessions burn ~30-80 requests with ~33K-token
   turns — TPM/RPM can 429 mid-run and gemini-cli may label it
@@ -61,19 +67,26 @@ free-tier quota pressure, compilation, and the known gh-aw failure modes.
 | Script | Purpose |
 |---|---|
 | `scripts/gemini_quota.py` | Probe models via AI Studio API. `ALIVE`/`QUOTA`/`DEAD`(404)/`REJECTED`. **Heavy probe by default** (~400 output tokens) — a tiny ping returns ALIVE with only a sliver of quota left, then the agent's first ~33K-token turn dies mid-run (`TerminalQuotaError`). `--light` for cheap checks, `--json`, `--timeout`. Needs `GEMINI_API_KEY` env or `--key`. |
-| `scripts/assign_models.py` | Round-robin live models across all 11 `engine.model` frontmatter lines. `--dry-run`, `--models`, `--probe`, `--compile`, `--aw-bin`. |
+| `scripts/assign_models.py` | Round-robin live models across all 11 `engine.model` frontmatter lines AND across key pools via `--pools GEMINI_API_KEY,GEMINI_API_KEY_2` (writes `engine.env` for non-default pools; strips it for pool 1). `--dry-run`, `--models`, `--probe`, `--compile`, `--aw-bin`. |
 
-Key source: repo secret `GEMINI_API_KEY`; locally fetch from Infisical
-(`cloudless-infra` project, key `GEMINI_API_KEY`, instance `localhost:8090`)
-or export before running.
+Key source: repo secrets `GEMINI_API_KEY` + `GEMINI_API_KEY_2`; locally fetch
+from Infisical (`cloudless-infra` project, same key names, instance
+`localhost:8090`) or export before running. **Read keys from a file, never
+inline them in a command** — a secrets hook blocks exec calls containing API
+key literals, and CRLF in env files breaks JSON posts (`tr -d '\r'`).
 
-Typical rotation:
+Typical rotation (dual-pool):
 
 ```bash
-export GEMINI_API_KEY=...
-python .devin/skills/gh-aw-ops/scripts/assign_models.py --probe --dry-run
-python .devin/skills/gh-aw-ops/scripts/assign_models.py --probe --compile
+set -a; source ~/gemini-pools.env; set +a   # GEMINI_API_KEY + GEMINI_API_KEY_2
+python .devin/skills/gh-aw-ops/scripts/assign_models.py \
+    --pools GEMINI_API_KEY,GEMINI_API_KEY_2 --probe --dry-run
+python .devin/skills/gh-aw-ops/scripts/assign_models.py \
+    --pools GEMINI_API_KEY,GEMINI_API_KEY_2 --probe --compile
 ```
+
+`--compile` with a new secret triggers gh-aw "safe update mode" warnings —
+expected; add a security-review note to the PR listing `GEMINI_API_KEY_2`.
 
 ## Compile
 
