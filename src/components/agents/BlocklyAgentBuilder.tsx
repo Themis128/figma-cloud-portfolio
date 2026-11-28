@@ -4,6 +4,7 @@ import type * as BlocklyNS from "blockly";
 import { Bot, BookOpen, Code, Copy, Download, Play, RotateCcw, SkipForward } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { withResolvers } from "@/lib/promise-with-resolvers";
 
 // Blockly will be dynamically imported to avoid SSR issues
 type BlocklyModule = typeof BlocklyNS;
@@ -1504,7 +1505,7 @@ export default function BlocklyAgentBuilder() {
     const waitForStep = isStepMode
       ? async () => {
           setWaitingForStep(true);
-          const { promise, resolve } = Promise.withResolvers<unknown>();
+          const { promise, resolve } = withResolvers<unknown>();
           stepResolveRef.current = () => {
             resolve(undefined);
           };

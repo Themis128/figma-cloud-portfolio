@@ -45,15 +45,19 @@ export default function SettingsPage() {
     let colorScheme = "light dark";
     if (selected === "light") {
       root.classList.remove("dark");
+      root.classList.add("light");
       colorScheme = "light";
     } else if (selected === "dark") {
+      root.classList.remove("light");
       root.classList.add("dark");
       colorScheme = "dark";
     } else {
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)",
       ).matches;
+      root.classList.remove("light", "dark");
       root.classList.toggle("dark", prefersDark);
+      if (!prefersDark) root.classList.add("light");
     }
     document
       .querySelector('meta[name="color-scheme"]')
