@@ -1,6 +1,16 @@
 name = "baltzakisthemis-portfolio"
 compatibility_date = "2026-11-25"
+main = "worker.ts"
 
 [assets]
 directory = "./out"
+binding = "ASSETS"
 not_found_handling = "404-page"
+
+[ai]
+binding = "AI"
+
+[[rules]]
+type = "Text"
+globs = ["**/server/bot/knowledge/*.md"]
+fallback = false
