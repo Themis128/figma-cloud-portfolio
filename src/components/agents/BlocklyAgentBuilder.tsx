@@ -1504,9 +1504,9 @@ export default function BlocklyAgentBuilder() {
     const waitForStep = isStepMode
       ? async () => {
           setWaitingForStep(true);
-          await new Promise<void>((resolve) => {
-            stepResolveRef.current = resolve;
-          });
+          const { promise, resolve } = Promise.withResolvers<void>();
+          stepResolveRef.current = resolve;
+          await promise;
           setWaitingForStep(false);
           if (controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
         }

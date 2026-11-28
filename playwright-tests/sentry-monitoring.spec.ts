@@ -625,16 +625,10 @@ test.describe("Sentry Error Tracking", () => {
           { message: "Error 3", release: "1.0.1" },
         ];
 
-        const errorsByRelease = errors.reduce(
-          (acc, error) => {
-            if (!acc[error.release]) {
-              acc[error.release] = [];
-            }
-            acc[error.release].push(error);
-            return acc;
-          },
-          {} as Record<string, typeof errors>,
-        );
+        const errorsByRelease = Object.groupBy(
+          errors,
+          (error) => error.release,
+        ) as Record<string, typeof errors>;
 
         return {
           releaseCount: Object.keys(errorsByRelease).length,

@@ -42,16 +42,22 @@ export default function SettingsPage() {
   const applyTheme = (selected: Theme) => {
     setTheme(selected);
     const root = document.documentElement;
+    let colorScheme = "light dark";
     if (selected === "light") {
       root.classList.remove("dark");
+      colorScheme = "light";
     } else if (selected === "dark") {
       root.classList.add("dark");
+      colorScheme = "dark";
     } else {
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)",
       ).matches;
       root.classList.toggle("dark", prefersDark);
     }
+    document
+      .querySelector('meta[name="color-scheme"]')
+      ?.setAttribute("content", colorScheme);
   };
 
   const handleSave = () => {

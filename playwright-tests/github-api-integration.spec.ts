@@ -602,17 +602,13 @@ test.describe("GitHub API Integration", () => {
 
       const timeoutTest = await page.evaluate(async () => {
         try {
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 3000);
-
           const response = await fetch(
             "http://localhost:3001/api/github/workflows/test-repo",
             {
-              signal: controller.signal,
+              signal: AbortSignal.timeout(3000),
             },
           );
 
-          clearTimeout(timeout);
           return { timedOut: false, status: response.status };
         } catch (error) {
           return { timedOut: true, error: String(error) };

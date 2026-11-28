@@ -127,6 +127,19 @@
   --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
+/* Keep native UI (scrollbars, form controls) in sync with the active scheme */
+:root {
+  color-scheme: light dark;
+}
+
+.light {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
 
 /* Base styles */
 * {

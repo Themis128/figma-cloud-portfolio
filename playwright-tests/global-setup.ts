@@ -231,6 +231,7 @@ async function checkBrowserCompatibility(): Promise<void> {
   } catch (error) {
     throw new Error(
       `Browser compatibility check failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      { cause: error },
     );
   }
 }

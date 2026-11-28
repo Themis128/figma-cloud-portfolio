@@ -151,6 +151,8 @@ function SkillCategoryEntry({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
+                if (e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229)
+                  return;
                 addSkill();
               }
             }}
