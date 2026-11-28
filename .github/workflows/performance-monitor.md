@@ -9,6 +9,10 @@ on:
 
 timeout-minutes: 20
 
+# gh-aw#411: pin agent job — Playwright 1.58.2 lacks deps for ubuntu-latest
+# (Ubuntu 26.04); --with-deps fails. ubuntu-24.04 is supported.
+runs-on: ubuntu-24.04
+
 permissions: read-all
 
 network: defaults
