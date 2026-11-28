@@ -22,7 +22,7 @@ const KNOWLEDGE_BASE = [
   bookingFaq,
 ].join("\n\n---\n\n");
 
-const MODEL = "@cf/meta/llama-3.1-8b-instruct";
+const MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
 const MAX_MESSAGE_CHARS = 4000;
 const MAX_HISTORY_TURNS = 12;
 
