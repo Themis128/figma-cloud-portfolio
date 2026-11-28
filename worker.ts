@@ -32,12 +32,12 @@ interface ChatMessage {
 }
 
 interface Env {
-  ASSETS: { fetch(request: Request): Promise<Response> };
+  ASSETS: { fetch: typeof fetch };
   AI: {
-    run(
-      model: string,
-      inputs: Record<string, unknown>,
-    ): Promise<unknown>;
+    run: (
+      _model: string,
+      _inputs: Record<string, unknown>,
+    ) => Promise<unknown>;
   };
   TURNSTILE_SECRET_KEY?: string;
   RESEND_API_KEY?: string;
@@ -66,16 +66,19 @@ function buildSystemPrompt(): string {
   ].join("\n");
 }
 
+function isChatMessage(m: unknown): m is ChatMessage {
+  if (typeof m !== "object" || m === null) return false;
+  const candidate = m as Partial<ChatMessage>;
+  return (
+    typeof candidate.role === "string" &&
+    typeof candidate.content === "string"
+  );
+}
+
 function sanitizeHistory(history: unknown): ChatMessage[] {
   if (!Array.isArray(history)) return [];
   return history
-    .filter(
-      (m): m is ChatMessage =>
-        typeof m === "object" &&
-        m !== null &&
-        (m as ChatMessage).role !== undefined &&
-        typeof (m as ChatMessage).content === "string",
-    )
+    .filter(isChatMessage)
     .slice(-MAX_HISTORY_TURNS)
     .map((m) => ({
       role: m.role === "assistant" ? "assistant" : "user",
@@ -83,88 +86,129 @@ function sanitizeHistory(history: unknown): ChatMessage[] {
     }));
 }
 
-async function handleChat(request: Request, env: Env): Promise<Response> {
-  let body: { message?: unknown; history?: unknown };
-  try {
-    body = (await request.json()) as typeof body;
-  } catch {
-    return jsonError("Invalid JSON body", 400);
+function sseEncode(payload: unknown): Uint8Array {
+  return new TextEncoder().encode(`data: ${JSON.stringify(payload)}\n\n`);
+}
+
+function isModelTokenChunk(value: unknown): value is { response: string } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { response?: unknown }).response === "string"
+  );
+}
+
+async function pumpModelStream(
+  result: ReadableStream<Uint8Array>,
+  send: (payload: unknown) => void,
+): Promise<void> {
+  const reader = result.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
+    buffer += decoder.decode(chunk.value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      try {
+        const parsed: unknown = JSON.parse(trimmed);
+        if (isModelTokenChunk(parsed)) send({ token: parsed.response });
+      } catch {
+        // non-JSON keep-alive lines from the model stream
+      }
+    }
   }
 
-  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const tail = buffer.trim();
+  if (tail) {
+    try {
+      const parsed: unknown = JSON.parse(tail);
+      if (isModelTokenChunk(parsed)) send({ token: parsed.response });
+    } catch {
+      // ignore trailing noise
+    }
+  }
+}
+
+async function emitModelReply(
+  env: Env,
+  messages: ChatMessage[],
+  send: (payload: unknown) => void,
+): Promise<void> {
+  const result = await env.AI.run(MODEL, {
+    messages,
+    stream: true,
+    max_tokens: 1024,
+  });
+
+  if (result instanceof ReadableStream) {
+    await pumpModelStream(result, send);
+    return;
+  }
+
+  const text = isModelTokenChunk(result) ? result.response : "";
+  // Non-streaming fallback: emit the reply in word-ish chunks.
+  for (const part of text.split(/(\s+)/)) {
+    if (part) send({ token: part });
+  }
+}
+
+function parseChatBody(
+  body: unknown,
+): { message: string; history: ChatMessage[] } | Response {
+  if (typeof body !== "object" || body === null) {
+    return jsonError("Invalid JSON body", 400);
+  }
+  const record = body as { message?: unknown; history?: unknown };
+  const message = typeof record.message === "string" ? record.message.trim() : "";
   if (!message) return jsonError("message is required", 400);
   if (message.length > MAX_MESSAGE_CHARS) {
     return jsonError("message too long", 413);
   }
+  return { message, history: sanitizeHistory(record.history) };
+}
+
+async function handleChat(request: Request, env: Env): Promise<Response> {
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return jsonError("Invalid JSON body", 400);
+  }
+
+  const parsed = parseChatBody(raw);
+  if (parsed instanceof Response) return parsed;
 
   const messages = [
     { role: "system", content: buildSystemPrompt() },
-    ...sanitizeHistory(body.history),
-    { role: "user", content: message },
+    ...parsed.history,
+    { role: "user", content: parsed.message },
   ];
 
-  const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      const send = (payload: unknown) =>
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify(payload)}\n\n`),
-        );
+      const send = (payload: unknown) => {
+        try {
+          controller.enqueue(sseEncode(payload));
+        } catch {
+          // stream already closed/cancelled
+        }
+      };
 
       try {
-        const result = await env.AI.run(MODEL, {
-          messages,
-          stream: true,
-          max_tokens: 1024,
-        });
-
-        if (result instanceof ReadableStream) {
-          const reader = result.getReader();
-          const decoder = new TextDecoder();
-          let buffer = "";
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() ?? "";
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed) continue;
-              try {
-                const chunk = JSON.parse(trimmed) as { response?: string };
-                if (chunk.response) send({ token: chunk.response });
-              } catch {
-                // non-JSON keep-alive lines from the model stream
-              }
-            }
-          }
-          // flush any trailing buffered line
-          if (buffer.trim()) {
-            try {
-              const chunk = JSON.parse(buffer.trim()) as { response?: string };
-              if (chunk.response) send({ token: chunk.response });
-            } catch {
-              // ignore
-            }
-          }
-        } else {
-          const text =
-            typeof result === "object" && result !== null && "response" in result
-              ? String((result as { response: unknown }).response)
-              : "";
-          // Non-streaming fallback: emit the reply in word-ish chunks.
-          const words = text.split(/(\s+)/);
-          for (const part of words) {
-            if (part) send({ token: part });
-          }
-        }
-
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        await emitModelReply(env, messages, send);
+        controller.enqueue(new TextEncoder().encode("data: [DONE]\n\n"));
       } catch (err) {
         send({ error: err instanceof Error ? err.message : "chat failed" });
       } finally {
-        controller.close();
+        try {
+          controller.close();
+        } catch {
+          // already closed
+        }
       }
     },
   });
@@ -180,6 +224,45 @@ async function handleChat(request: Request, env: Env): Promise<Response> {
 
 const CONTACT_MAX_FIELD = 2000;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface ContactPayload {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+function parseContactBody(body: unknown): ContactPayload | Response {
+  if (typeof body !== "object" || body === null) {
+    return jsonError("Invalid JSON body", 400);
+  }
+  const record = body as Record<string, unknown>;
+  const name = typeof record.name === "string" ? record.name.trim() : "";
+  const email = typeof record.email === "string" ? record.email.trim() : "";
+  const subject =
+    typeof record.subject === "string" ? record.subject.trim() : "";
+  const message =
+    typeof record.message === "string" ? record.message.trim() : "";
+
+  if (!name || !email || !message) {
+    return jsonError("name, email and message are required", 400);
+  }
+  if (!EMAIL_RE.test(email)) return jsonError("invalid email", 400);
+  if (
+    name.length > CONTACT_MAX_FIELD ||
+    email.length > 320 ||
+    subject.length > CONTACT_MAX_FIELD ||
+    message.length > CONTACT_MAX_FIELD
+  ) {
+    return jsonError("field too long", 413);
+  }
+  return {
+    name,
+    email,
+    subject: subject || "Portfolio contact form",
+    message,
+  };
+}
 
 async function verifyTurnstile(
   token: string,
@@ -202,110 +285,114 @@ async function verifyTurnstile(
   }
 }
 
-async function handleContact(request: Request, env: Env): Promise<Response> {
-  let body: Record<string, unknown>;
+async function deliverViaWebhook(
+  url: string,
+  payload: ContactPayload,
+): Promise<boolean> {
   try {
-    body = (await request.json()) as Record<string, unknown>;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...payload,
+        submitted_at: new Date().toISOString(),
+      }),
+    });
+    if (!res.ok) console.error("contact webhook failed", res.status);
+    return res.ok;
+  } catch (err) {
+    console.error("contact webhook error", err);
+    return false;
+  }
+}
+
+async function deliverViaResend(
+  env: Env,
+  payload: ContactPayload,
+): Promise<boolean> {
+  const from = env.CONTACT_FROM ?? "portfolio@cloudless.gr";
+  const to = env.CONTACT_TO ?? "tbaltzakis@cloudless.gr";
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        reply_to: payload.email,
+        subject: `[portfolio] ${payload.subject}`,
+        text: [
+          `Name: ${payload.name}`,
+          `Email: ${payload.email}`,
+          `Subject: ${payload.subject}`,
+          "",
+          payload.message,
+        ].join("\n"),
+      }),
+    });
+    if (!res.ok) {
+      console.error("resend failed", res.status, await res.text());
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("resend error", err);
+    return false;
+  }
+}
+
+async function deliverContact(env: Env, payload: ContactPayload): Promise<Response> {
+  const delivered = env.CONTACT_WEBHOOK_URL
+    ? await deliverViaWebhook(env.CONTACT_WEBHOOK_URL, payload)
+    : env.RESEND_API_KEY
+      ? await deliverViaResend(env, payload)
+      : false;
+
+  if (!env.CONTACT_WEBHOOK_URL && !env.RESEND_API_KEY) {
+    console.error("contact form hit but no delivery configured");
+    return jsonError("Contact form is not configured yet", 503);
+  }
+  if (!delivered) return jsonError("Failed to deliver message", 502);
+  return Response.json({ success: true, message: "Message sent" });
+}
+
+async function handleContact(request: Request, env: Env): Promise<Response> {
+  let raw: unknown;
+  try {
+    raw = await request.json();
   } catch {
     return jsonError("Invalid JSON body", 400);
   }
 
-  const name = typeof body.name === "string" ? body.name.trim() : "";
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-  const subject = typeof body.subject === "string" ? body.subject.trim() : "";
-  const message = typeof body.message === "string" ? body.message.trim() : "";
-  const recaptchaToken =
-    typeof body.recaptchaToken === "string" ? body.recaptchaToken : "";
-
-  if (!name || !email || !message) {
-    return jsonError("name, email and message are required", 400);
-  }
-  if (!EMAIL_RE.test(email)) return jsonError("invalid email", 400);
-  if (
-    name.length > CONTACT_MAX_FIELD ||
-    email.length > 320 ||
-    subject.length > CONTACT_MAX_FIELD ||
-    message.length > CONTACT_MAX_FIELD
-  ) {
-    return jsonError("field too long", 413);
-  }
+  const record =
+    typeof raw === "object" && raw !== null
+      ? (raw as Record<string, unknown>)
+      : {};
+  const payload = parseContactBody(raw);
+  if (payload instanceof Response) return payload;
 
   if (env.TURNSTILE_SECRET_KEY) {
-    if (!recaptchaToken) return jsonError("captcha required", 400);
+    const token =
+      typeof record.recaptchaToken === "string" ? record.recaptchaToken : "";
+    if (!token) return jsonError("captcha required", 400);
     const ip = request.headers.get("CF-Connecting-IP") ?? "";
-    const ok = await verifyTurnstile(
-      recaptchaToken,
-      env.TURNSTILE_SECRET_KEY,
-      ip,
-    );
+    const ok = await verifyTurnstile(token, env.TURNSTILE_SECRET_KEY, ip);
     if (!ok) return jsonError("captcha verification failed", 403);
   }
 
-  const payload = {
-    name,
-    email,
-    subject: subject || "Portfolio contact form",
-    message,
-    submitted_at: new Date().toISOString(),
-  };
-
-  if (env.CONTACT_WEBHOOK_URL) {
-    try {
-      const res = await fetch(env.CONTACT_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        console.error("contact webhook failed", res.status);
-        return jsonError("Failed to deliver message", 502);
-      }
-      return Response.json({ success: true, message: "Message sent" });
-    } catch (err) {
-      console.error("contact webhook error", err);
-      return jsonError("Failed to deliver message", 502);
-    }
-  }
-
-  if (env.RESEND_API_KEY) {
-    const from = env.CONTACT_FROM ?? "portfolio@cloudless.gr";
-    const to = env.CONTACT_TO ?? "tbaltzakis@cloudless.gr";
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from,
-          to: [to],
-          reply_to: email,
-          subject: `[portfolio] ${subject || name}`,
-          text: [
-            `Name: ${name}`,
-            `Email: ${email}`,
-            `Subject: ${subject || "(none)"}`,
-            "",
-            message,
-          ].join("\n"),
-        }),
-      });
-      if (!res.ok) {
-        console.error("resend failed", res.status, await res.text());
-        return jsonError("Failed to send message", 502);
-      }
-      return Response.json({ success: true, message: "Message sent" });
-    } catch (err) {
-      console.error("resend error", err);
-      return jsonError("Failed to send message", 502);
-    }
-  }
-
-  console.error("contact form hit but no delivery configured");
-  return jsonError("Contact form is not configured yet", 503);
+  return deliverContact(env, payload);
 }
 
+function corsHeaders(): Record<string, string> {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -313,13 +400,7 @@ export default {
 
     if (url.pathname === "/api/contact") {
       if (request.method === "OPTIONS") {
-        return new Response(null, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type",
-          },
-        });
+        return new Response(null, { headers: corsHeaders() });
       }
       if (request.method !== "POST") {
         return jsonError("Method not allowed", 405);
@@ -333,13 +414,7 @@ export default {
 
     if (url.pathname === "/api/chat") {
       if (request.method === "OPTIONS") {
-        return new Response(null, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type",
-          },
-        });
+        return new Response(null, { headers: corsHeaders() });
       }
       if (request.method !== "POST") {
         return jsonError("Method not allowed", 405);
