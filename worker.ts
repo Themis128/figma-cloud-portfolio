@@ -113,8 +113,12 @@ async function pumpModelStream(
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed) continue;
+      const payload = trimmed.startsWith("data:")
+        ? trimmed.slice(5).trim()
+        : trimmed;
+      if (!payload || payload === "[DONE]") continue;
       try {
-        const parsed: unknown = JSON.parse(trimmed);
+        const parsed: unknown = JSON.parse(payload);
         if (isModelTokenChunk(parsed)) send({ token: parsed.response });
       } catch {
         // non-JSON keep-alive lines from the model stream
@@ -123,9 +127,10 @@ async function pumpModelStream(
   }
 
   const tail = buffer.trim();
-  if (tail) {
+  const tailPayload = tail.startsWith("data:") ? tail.slice(5).trim() : tail;
+  if (tailPayload && tailPayload !== "[DONE]") {
     try {
-      const parsed: unknown = JSON.parse(tail);
+      const parsed: unknown = JSON.parse(tailPayload);
       if (isModelTokenChunk(parsed)) send({ token: parsed.response });
     } catch {
       // ignore trailing noise
