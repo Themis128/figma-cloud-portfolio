@@ -39,7 +39,7 @@ interface Env {
       _inputs: Record<string, unknown>,
     ) => Promise<unknown>;
   };
-  TURNSTILE_SECRET_KEY?: string;
+  RECAPTCHA_SECRET_KEY?: string;
   RESEND_API_KEY?: string;
   CONTACT_FROM?: string;
   CONTACT_TO?: string;
@@ -264,22 +264,29 @@ function parseContactBody(body: unknown): ContactPayload | Response {
   };
 }
 
-async function verifyTurnstile(
+async function verifyRecaptcha(
   token: string,
   secret: string,
   ip: string,
 ): Promise<boolean> {
   try {
     const res = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      "https://www.google.com/recaptcha/api/siteverify",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ secret, response: token, remoteip: ip }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret,
+          response: token,
+          remoteip: ip,
+        }),
       },
     );
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
+    const data = (await res.json()) as {
+      success?: boolean;
+      score?: number;
+    };
+    return data.success === true && (data.score ?? 0) >= 0.5;
   } catch {
     return false;
   }
@@ -374,12 +381,12 @@ async function handleContact(request: Request, env: Env): Promise<Response> {
   const payload = parseContactBody(raw);
   if (payload instanceof Response) return payload;
 
-  if (env.TURNSTILE_SECRET_KEY) {
+  if (env.RECAPTCHA_SECRET_KEY) {
     const token =
       typeof record.recaptchaToken === "string" ? record.recaptchaToken : "";
     if (!token) return jsonError("captcha required", 400);
     const ip = request.headers.get("CF-Connecting-IP") ?? "";
-    const ok = await verifyTurnstile(token, env.TURNSTILE_SECRET_KEY, ip);
+    const ok = await verifyRecaptcha(token, env.RECAPTCHA_SECRET_KEY, ip);
     if (!ok) return jsonError("captcha verification failed", 403);
   }
 
