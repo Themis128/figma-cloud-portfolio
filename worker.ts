@@ -39,6 +39,11 @@ interface Env {
       inputs: Record<string, unknown>,
     ): Promise<unknown>;
   };
+  TURNSTILE_SECRET_KEY?: string;
+  RESEND_API_KEY?: string;
+  CONTACT_FROM?: string;
+  CONTACT_TO?: string;
+  CONTACT_WEBHOOK_URL?: string;
 }
 
 function jsonError(message: string, status: number): Response {
@@ -173,9 +178,158 @@ async function handleChat(request: Request, env: Env): Promise<Response> {
   });
 }
 
+const CONTACT_MAX_FIELD = 2000;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+async function verifyTurnstile(
+  token: string,
+  secret: string,
+  ip: string,
+): Promise<boolean> {
+  try {
+    const res = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret, response: token, remoteip: ip }),
+      },
+    );
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch {
+    return false;
+  }
+}
+
+async function handleContact(request: Request, env: Env): Promise<Response> {
+  let body: Record<string, unknown>;
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return jsonError("Invalid JSON body", 400);
+  }
+
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const email = typeof body.email === "string" ? body.email.trim() : "";
+  const subject = typeof body.subject === "string" ? body.subject.trim() : "";
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const recaptchaToken =
+    typeof body.recaptchaToken === "string" ? body.recaptchaToken : "";
+
+  if (!name || !email || !message) {
+    return jsonError("name, email and message are required", 400);
+  }
+  if (!EMAIL_RE.test(email)) return jsonError("invalid email", 400);
+  if (
+    name.length > CONTACT_MAX_FIELD ||
+    email.length > 320 ||
+    subject.length > CONTACT_MAX_FIELD ||
+    message.length > CONTACT_MAX_FIELD
+  ) {
+    return jsonError("field too long", 413);
+  }
+
+  if (env.TURNSTILE_SECRET_KEY) {
+    if (!recaptchaToken) return jsonError("captcha required", 400);
+    const ip = request.headers.get("CF-Connecting-IP") ?? "";
+    const ok = await verifyTurnstile(
+      recaptchaToken,
+      env.TURNSTILE_SECRET_KEY,
+      ip,
+    );
+    if (!ok) return jsonError("captcha verification failed", 403);
+  }
+
+  const payload = {
+    name,
+    email,
+    subject: subject || "Portfolio contact form",
+    message,
+    submitted_at: new Date().toISOString(),
+  };
+
+  if (env.CONTACT_WEBHOOK_URL) {
+    try {
+      const res = await fetch(env.CONTACT_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        console.error("contact webhook failed", res.status);
+        return jsonError("Failed to deliver message", 502);
+      }
+      return Response.json({ success: true, message: "Message sent" });
+    } catch (err) {
+      console.error("contact webhook error", err);
+      return jsonError("Failed to deliver message", 502);
+    }
+  }
+
+  if (env.RESEND_API_KEY) {
+    const from = env.CONTACT_FROM ?? "portfolio@cloudless.gr";
+    const to = env.CONTACT_TO ?? "tbaltzakis@cloudless.gr";
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from,
+          to: [to],
+          reply_to: email,
+          subject: `[portfolio] ${subject || name}`,
+          text: [
+            `Name: ${name}`,
+            `Email: ${email}`,
+            `Subject: ${subject || "(none)"}`,
+            "",
+            message,
+          ].join("\n"),
+        }),
+      });
+      if (!res.ok) {
+        console.error("resend failed", res.status, await res.text());
+        return jsonError("Failed to send message", 502);
+      }
+      return Response.json({ success: true, message: "Message sent" });
+    } catch (err) {
+      console.error("resend error", err);
+      return jsonError("Failed to send message", 502);
+    }
+  }
+
+  console.error("contact form hit but no delivery configured");
+  return jsonError("Contact form is not configured yet", 503);
+}
+
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/contact") {
+      if (request.method === "OPTIONS") {
+        return new Response(null, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+          },
+        });
+      }
+      if (request.method !== "POST") {
+        return jsonError("Method not allowed", 405);
+      }
+      return handleContact(request, env);
+    }
+
+    if (url.pathname === "/api/health") {
+      return Response.json({ ok: true, service: "baltzakisthemis-portfolio" });
+    }
 
     if (url.pathname === "/api/chat") {
       if (request.method === "OPTIONS") {
