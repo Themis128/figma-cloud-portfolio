@@ -9,6 +9,7 @@ exclude_paths:
   - "server/**"
   - ".devin/**"
   - "next.config.ts"
+  - "worker.ts"
   - "src/app/favicon.ico"
   - "content/**"
   - "docs/**"
