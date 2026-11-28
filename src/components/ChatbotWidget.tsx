@@ -82,7 +82,7 @@ const QUESTION_POOL = [
 ];
 
 function pickRandomQuestions(pool: string[], count: number): string[] {
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const shuffled = pool.toSorted(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
 
@@ -373,6 +373,7 @@ export default function ChatbotWidget() {
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229) return;
       void sendMessage();
     }
   }

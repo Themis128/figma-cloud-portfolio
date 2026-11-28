@@ -219,7 +219,7 @@ export function NotificationButton() {
               </div>
             ) : (
               <ul className="divide-y divide-cyan-400/10">
-                {[...allItems].reverse().map((announcement) => {
+                {allItems.toReversed().map((announcement) => {
                   const isRead = readIds.has(announcement.id);
                   return (
                     <li

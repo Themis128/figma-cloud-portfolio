@@ -78,11 +78,17 @@ export default function CommandPalette() {
         root.classList.remove("light");
         root.classList.add("dark");
         localStorage.setItem("theme", "dark");
+        document
+          .querySelector('meta[name="color-scheme"]')
+          ?.setAttribute("content", "dark");
         return;
       case "theme-light":
         root.classList.remove("dark");
         root.classList.add("light");
         localStorage.setItem("theme", "light");
+        document
+          .querySelector('meta[name="color-scheme"]')
+          ?.setAttribute("content", "light");
         return;
       case "chat": {
         const btn = document.querySelector<HTMLButtonElement>(

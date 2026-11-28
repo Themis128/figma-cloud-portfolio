@@ -14,6 +14,9 @@ export function ThemeToggle() {
     if (!resolvedTheme) return;
     document.body.classList.remove("light", "dark");
     document.body.classList.add(resolvedTheme);
+    document
+      .querySelector('meta[name="color-scheme"]')
+      ?.setAttribute("content", resolvedTheme);
   }, [resolvedTheme]);
 
   const toggle = () => {
